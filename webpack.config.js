@@ -6,8 +6,6 @@ module.exports = {
     mode: "development",
     entry: {
         ui: "./src/client-entry.tsx",
-        record: "./src/pages/classroom/live/liveClient/entry-record.ts",
-        player: "./src/pages/classroom/live/liveClient/entry-player.ts"
     },
     module: {
         rules: [
@@ -70,6 +68,9 @@ module.exports = {
     },
     resolve: {
         extensions: [".js", ".jsx", ".tsx", ".ts"],
+        alias: {
+            react: path.resolve("./node_modules/react"),
+        },
     },
     output: {
         filename: "[name].js",
@@ -89,31 +90,27 @@ module.exports = {
             "REGION_ENDPOINT": "http://localhost:8094/",
             "ORGANIZATION_ENDPOINT": "http://localhost:8084/",
             "ASSESSMENT_ENDPOINT": "http://localhost:8065/",
-            "DEFAULT_PROG_ID": "KIDSLOOP-2.0"
-        }),
-        new HtmlWebpackPlugin({
-            filename: "player.html",
-            chunks: ["player"],
-            template: "src/pages/classroom/live/liveClient/player.html"
+            "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
+            "REACT_APP_BASE_API": "/v1",
         })
     ],
     devServer: {
         host: "0.0.0.0",
         historyApiFallback: true,
         proxy: {
-            "/graphql": {
-                target: "http://localhost:8000",
+            // "/v1": {
+            //     target: "https://seoul-beta.assessment-api.badanamu.net",
+            //     secure: false,
+            //     changeOrigin: true,
+            // },
+            "/v1": {
+                target: "https://kl2-test.kidsloop.net/",
+                secure: true,
                 changeOrigin: true,
-                ws: true
             },
             "/h5p": {
-                target: "https://zoo.kidsloop.net/",
-                secure: false,
-                changeOrigin: true,
-            },
-            "/v1": {
-                target: "https://seoul-beta.assessment-api.badanamu.net",
-                secure: false,
+                target: "https://kl2-test.kidsloop.net/",
+                secure: true,
                 changeOrigin: true,
             }
         }

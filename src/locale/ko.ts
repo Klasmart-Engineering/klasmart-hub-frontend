@@ -48,6 +48,7 @@ const messages: Record<string, string> = {
     live_selectAnActivity: "Select an activity or enter a link",
     live_shareSomethingHere: "Share something here",
     live_startActivityButton: "Start Activity for All",
+    live_userNameLabel: "User Name",
     live_waitingForClass: "Waiting for class to start",
     live_waitingForStudents: "Waiting for students to join the room",
     live_zoomIntoActivity: "Zoom in this activity",
@@ -72,6 +73,7 @@ const messages: Record<string, string> = {
 
     navMenu_adminConsoleLabel: "Admin Console",
     navMenu_assessmentsLabel: "Assessments",
+    navMenu_scheduleLabel: "Schedule",
     navMenu_libraryLabel: "Library",
     navMenu_liveLabel: "Live",
     navMenu_peopleLabel: "People",
