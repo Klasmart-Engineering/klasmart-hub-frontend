@@ -69,7 +69,7 @@ export function App() {
                 />
             } />
             <Route path="/schedule" render={() =>
-                <iframe src={"https://kl2-test.kidsloop.net/#/schedule"}
+                <iframe src={"https://kl2-test.kidsloop.net/#/schedule/calendar"}
                     frameBorder="0"
                     style={{
                         width: "100%",
