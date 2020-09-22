@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         title: {
             flex: 1,
-            marginLeft: theme.spacing(2),
+            // marginLeft: theme.spacing(2),
         },
     }),
 );
@@ -71,7 +71,7 @@ function MenuButtons(props: MenuButtonProps) {
                     setActiveComponent(value.name);
                     history.push(value.path);
                 }}
-                isActive={activeComponent === value.path.split("/").filter(x => x)[0]}
+                isActive={activeComponent === value.path.split("/").filter((x) => x)[0]}
                 style={{ minHeight }}
             >
                 <FormattedMessage id={`navMenu_${value.name}Label`} />
@@ -89,12 +89,12 @@ function ClassroomLabel(props: LabelProps) {
         <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
             <Grid item xs={12}>
                 <Typography variant="body1" className={props.classes} noWrap>
-                    Calm Island
+                    KidsLoop Co., Ltd.
                 </Typography>
             </Grid>
             <Grid item xs={12}>
                 <Typography variant="body2" className={props.classes} noWrap>
-                    Pre-production
+                    Alpha Release
                 </Typography>
             </Grid>
         </Grid>
@@ -151,18 +151,6 @@ export default function NavBar(props: Props) {
                                     alignItems="center"
                                     wrap="nowrap"
                                 >
-                                    <Grid item>
-                                        <IconButton
-                                            edge="start"
-                                            onClick={handleClickOpen}
-                                            color="inherit"
-                                            aria-label="settings of current user"
-                                            aria-controls="menu-appbar"
-                                            aria-haspopup="true"
-                                        >
-                                            <SettingsIcon />
-                                        </IconButton>
-                                    </Grid>
                                     <UserSettings />
                                 </Grid>
                             </Hidden>
@@ -185,19 +173,6 @@ export default function NavBar(props: Props) {
                                 alignItems="center"
                                 wrap="nowrap"
                             >
-                                {/* <Grid item>
-                                    <IconButton
-                                        edge="start"
-                                        onClick={handleClickOpen}
-
-                                        color="inherit"
-                                        aria-label="settings of current user"
-                                        aria-controls="menu-appbar"
-                                        aria-haspopup="true"
-                                    >
-                                        <SettingsIcon />
-                                    </IconButton>
-                                </Grid> */}
                                 <UserSettings />
                             </Grid>
                         </Hidden>

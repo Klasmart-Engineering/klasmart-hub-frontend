@@ -1,29 +1,30 @@
 import { v4 as uuid } from "uuid";
 const classId = uuid().substr(0, 5);
+
 import Button from "@material-ui/core/Button";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-
-import LiveBackground from "../../../assets/img/live_bg.svg";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 import StyledFAB from "../../../components/styled/fabButton";
 import StyledTextField from "../../../components/styled/textfield";
 
+import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
+
 const DEMO_LESSON_PLANS = [
     {
-        id: "demo-lesson-plan01", title: "Badanamu Zoo: Snow Leopard"
-    }
+        id: "demo-lesson-plan01", title: "Badanamu Zoo: Snow Leopard",
+    },
 ];
 
 const DEMO_LESSON_MATERIALS = [
@@ -49,10 +50,11 @@ interface LessonPlanData {
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         classInfoContainer: {
-            background: `url(${LiveBackground}) no-repeat`,
-            backgroundColor: "#f0e6cf",
+            background: `url(${KidsloopLogoAlt}) no-repeat`,
+            backgroundColor: "#e0edf7",
             backgroundPosition: "center right",
-            backgroundSize: "30%",
+            backgroundPositionX: "120%",
+            backgroundSize: "75%",
             borderRadius: 12,
             color: "#193d6f",
             height: "100%",
@@ -102,7 +104,7 @@ export default function LiveCard() {
         headers.append("Content-Type", "application/json");
         const response = await fetch("/v1/contents?publish_status=published", {
             headers,
-            method: "GET"
+            method: "GET",
         });
         if (response.status === 200) { return response.json(); }
     }
@@ -113,7 +115,7 @@ export default function LiveCard() {
         headers.append("Content-Type", "application/json");
         const response = await fetch(`v1/contents/${lessonPlanId}/live/token`, {
             headers,
-            method: "GET"
+            method: "GET",
         });
         if (response.status === 200) { return response.json(); }
     }
@@ -184,51 +186,6 @@ export default function LiveCard() {
                     <Grid item xs={12}>
                         <Typography variant="h4">Welcome to KidsLoop</Typography>
                     </Grid>
-                    {/* <Grid container direction="row" alignItems="center" item xs={12}>
-                        <StyledTextField
-                            disabled={userType === "teacher"}
-                            id="class-name-input"
-                            label={<FormattedMessage id={"live_classNameLabel"} />}
-                            onChange={(e) => setClassName(e.target.value)}
-                            value={className}
-                        />
-                        {userType === "teacher" ? null :
-                            <Tooltip arrow placement="right" title="Please enter the 5-character class name from your teacher">
-                                <InfoIcon fontSize="small" style={{ marginLeft: 12 }} />
-                            </Tooltip>
-                        }
-                    </Grid>
-                    <Grid item xs={12}>
-                        <StyledTextField
-                            id="user-name-input"
-                            label={<FormattedMessage id={"live_userNameLabel"} />}
-                            onChange={(e) => setUserName(e.target.value)}
-                            value={userName}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <RadioGroup
-                            aria-label="type of user"
-                            defaultValue={"student"}
-                            name="Type of User"
-                            onChange={(e) => setUserType((e.target as HTMLInputElement).value)}
-                            value={userType}
-                            row
-                        >
-                            <FormControlLabel
-                                value="teacher"
-                                control={<Radio color="primary" style={{ backgroundColor: "transparent" }} />}
-                                label="Teacher"
-                                labelPlacement="end"
-                            />
-                            <FormControlLabel
-                                value="student"
-                                control={<Radio color="primary" style={{ backgroundColor: "transparent" }} />}
-                                label="Student"
-                                labelPlacement="end"
-                            />
-                        </RadioGroup>
-                    </Grid> */}
                     <Grid item xs={12}>
                         <CenterAlignChildren>
                             <Typography variant="h6" style={{ paddingRight: theme.spacing(2) }}>
@@ -283,73 +240,10 @@ const StyledMenu = withStyles({})((props: MenuProps) => (
     />
 ));
 
-// function ClassSelect() {
-//     const classes = useStyles();
-//     const store = useStore();
-
-//     const liveData = useSelector((state: State) => state.account.finishLiveData);
-//     const classInfo = CLASS_LIST.find((element) => element.classId === liveData.classId);
-//     const [className, setClassName] = useState<string>(classInfo ? classInfo.className : "");
-//     const [classNameMenuElement, setClassNameMenuElement] = useState<null | HTMLElement>(null);
-
-//     function classSelect(classInfo: ClassInfo) {
-//         const value = {
-//             classId: classInfo.classId,
-//             className: classInfo.className,
-//             startDate: liveData.students,
-//             students: liveData.students,
-//         };
-//         store.dispatch({ type: ActionTypes.FINISH_LIVE_DATA, payload: value });
-//         setClassName(classInfo.className);
-//     }
-
-//     return (
-//         <>
-//             <Tooltip title={<FormattedMessage id="live_classSelect" />} enterDelay={300}>
-//                 <Button
-//                     color="inherit"
-//                     aria-owns={classNameMenuElement ? "classSelect-menu" : undefined}
-//                     aria-haspopup="true"
-//                     data-ga-event-category="AppBar"
-//                     data-ga-event-action="classSelect"
-//                     onClick={(e) => setClassNameMenuElement(e.currentTarget)}
-//                 >
-//                     <span className={classes.select}>
-//                         {liveData.classId === "" ?
-//                             <FormattedMessage id="live_classSelect" /> :
-//                             className
-//                         }
-//                     </span>
-//                     <ExpandMoreIcon fontSize="small" />
-//                 </Button>
-//             </Tooltip>
-//             <StyledMenu
-//                 id="classSelect-menu"
-//                 anchorEl={classNameMenuElement}
-//                 keepMounted
-//                 open={Boolean(classNameMenuElement)}
-//                 onClose={() => setClassNameMenuElement(null)}
-//             >
-//                 {
-//                     CLASS_LIST.map((classInfo) => (
-//                         <MenuItem
-//                             key={classInfo.classId}
-//                             selected={liveData.classId === classInfo.classId}
-//                             onClick={() => classSelect(classInfo)}
-//                         >
-//                             {classInfo.className}
-//                         </MenuItem>
-//                     ))
-//                 }
-//             </StyledMenu>
-//         </>
-//     );
-// }
-
 function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
     lessonPlans: LessonPlanData[],
     lessonPlan: LessonPlanData,
-    setLessonPlan: React.Dispatch<React.SetStateAction<LessonPlanData>>
+    setLessonPlan: React.Dispatch<React.SetStateAction<LessonPlanData>>,
 }) {
     const classes = useStyles();
 

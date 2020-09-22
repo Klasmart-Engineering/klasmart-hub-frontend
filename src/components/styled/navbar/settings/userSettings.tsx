@@ -8,9 +8,11 @@ import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 import { useSelector } from "react-redux";
-import CalmIslandLogo from "../../../../assets/img/calmisland_logo.png";
 import { State } from "../../../../store/store";
+
+import CalmIslandLogo from "../../../../assets/img/calmisland_logo.png";
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
+import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
 
 const StyledMenu = withStyles({
     paper: {
@@ -39,11 +41,9 @@ const useStyles = makeStyles((theme) => createStyles({
         },
     },
     profileButton: {
-        [theme.breakpoints.up("sm")]: {
-            backgroundColor: "white",
-            border: "1px solid #efefef",
-            borderRadius: 12,
-        },
+        backgroundColor: "white",
+        border: "1px solid #efefef",
+        borderRadius: 12,
     },
 }));
 
@@ -84,11 +84,9 @@ export default function UserSettings() {
                             <Hidden xsDown>
                                 <img className={classes.avatar} src={KidsloopLogo} height={32} />
                             </Hidden>
-                            <Avatar
-                                alt="Shawn Lee"
-                                src={CalmIslandLogo}
-                                className={classes.avatar}
-                            />
+                            <Hidden smUp>
+                                <img className={classes.avatar} src={KidsloopLogoAlt} height={32} />
+                            </Hidden>
                         </Grid>
                     </Button>
                 </Tooltip>

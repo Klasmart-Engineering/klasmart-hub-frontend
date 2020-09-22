@@ -14,9 +14,9 @@ import { PasswordRestore } from "./pages/account/password/password-restore";
 import { Signup } from "./pages/account/signup";
 import { App as CMS } from "./pages/cms/cms-frontend-web/src/App";
 import Home from "./pages/home/home";
-import { ActionTypes } from "./store/actions";
 import LiveLayout from "./pages/home/live/live";
 import ReportLayout from "./pages/home/report/report";
+import { ActionTypes } from "./store/actions";
 
 export const mainNavBar = [{
     name: "live",
@@ -64,7 +64,7 @@ export function App() {
                     frameBorder="0"
                     style={{
                         width: "100%",
-                        height: "100%"
+                        height: "100%",
                     }}
                 />
             } />
@@ -73,7 +73,7 @@ export function App() {
                     frameBorder="0"
                     style={{
                         width: "100%",
-                        height: "100%"
+                        height: "100%",
                     }}
                 />
             } />
@@ -82,7 +82,7 @@ export function App() {
                     frameBorder="0"
                     style={{
                         width: "100%",
-                        height: "100%"
+                        height: "100%",
                     }}
                 />
             } />
