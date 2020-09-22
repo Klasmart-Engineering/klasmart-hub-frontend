@@ -62,12 +62,10 @@ function MenuButtons(props: MenuButtonProps) {
     const setActiveComponent = (value: string) => {
         store.dispatch({ type: ActionTypes.ACTIVE_COMPONENT_HOME, payload: value });
     };
-    // const [activeComponent, setActiveComponent] = useState("live");
 
     return (
         labels.map((value: { name: string; path: string; }) => (
             <NavButton
-                disabled={value.name === "assessments" || value.name === "report"}
                 key={`menuLabel-${value.name}`}
                 onClick={() => {
                     setActiveComponent(value.name);

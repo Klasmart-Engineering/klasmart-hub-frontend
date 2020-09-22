@@ -55,30 +55,37 @@ export function App() {
         store.dispatch({ type: ActionTypes.USER_AGENT, payload: userInformation });
     }, []);
 
-    return (
+    return (<>
+        <NavBar menuLabels={mainNavBar} />
         <Switch>
             <Route path="/live" component={LiveLayout} />
-            {/* <Route path="/library" component={CMS} /> */}
-            {/* <Route path="/schedule" component={CMS} /> */}
-            <Route path="/library" render={() => {
-                return (<>
-                    <NavBar menuLabels={mainNavBar} />
-                    <iframe src={"https://kl2-test.kidsloop.net/#/library"} style={{
+            <Route path="/library" render={() =>
+                <iframe src={"https://kl2-test.kidsloop.net/#/library"}
+                    frameBorder="0"
+                    style={{
                         width: "100%",
                         height: "100%"
-                    }} />
-                </>);
-            }} />
-            <Route path="/schedule" render={() => {
-                return (<>
-                    <NavBar menuLabels={mainNavBar} />
-                    <iframe src={"https://kl2-test.kidsloop.net/#/schedule/calendar/rightside/scheduleTable/model/preview"} style={{
+                    }}
+                />
+            } />
+            <Route path="/schedule" render={() =>
+                <iframe src={"https://kl2-test.kidsloop.net/#/schedule"}
+                    frameBorder="0"
+                    style={{
                         width: "100%",
                         height: "100%"
-                    }} />
-                </>);
-            }} />
-            <Route path="/assessments" component={CMS} />
+                    }}
+                />
+            } />
+            <Route path="/assessments" render={() =>
+                <iframe src={"https://kl2-test.kidsloop.net/#/assessments/assessment-list"}
+                    frameBorder="0"
+                    style={{
+                        width: "100%",
+                        height: "100%"
+                    }}
+                />
+            } />
             <Route path="/report" component={ReportLayout} />
             <Route path="/classroom" component={Layout} />
             <Route path="/password-change" component={PasswordChange} />
@@ -89,7 +96,7 @@ export function App() {
             <Route path="/login" component={Login} />
             <Route component={LiveLayout} />
         </Switch>
-    );
+    </>);
 }
 
 export default App;

@@ -16,6 +16,7 @@ import NavBar from "../../../components/styled/navbar/navbar";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import { mainNavBar } from "../../../app";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -34,40 +35,17 @@ export default function ReportLayout() {
 
     const [inFlight, setInFlight] = useState(false);
 
-    return (<>
-        <NavBar menuLabels={mainNavBar} />
+    return (
         <Container
             disableGutters
             maxWidth={"lg"}
         >
             <Box>
-                <Grid
-                    container
-                    direction="row"
-                    justify="space-between"
-                    className={classes.root}
-                    spacing={4}
-                >
-                    <Grid item xs={12} style={{ display: inFlight ? "unset" : "none", textAlign: "center" }}>
-                        <Grid
-                            container item
-                            direction="row"
-                            alignItems="center"
-                            spacing={2}
-                        >
-                            <Grid item xs={12}>
-                                <CircularProgress />
-                            </Grid>
-                            <Grid item xs={12}>
-                                Give us a sec while we get things ready!
-                    </Grid>
-                        </Grid>
-                    </Grid>
-                    {renderChart()}
-                </Grid >
+                <Typography variant="h6">Coming Soon</Typography>
+                {/* {renderChart()} */}
             </Box>
         </Container>
-    </>);
+    );
 }
 
 function renderChart() {

@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: theme.spacing(0.25, 0.75),
         },
         paperContainer: {
+            margin: theme.spacing(4, 0),
             borderRadius: 12,
             boxShadow: theme.palette.type === "dark" ? "0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)" : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
         },
@@ -40,27 +41,16 @@ export default function LiveLayout() {
     const [hasTransitioned, setHasTransitioned] = useState(false);
     const [inFlight, setInFlight] = useState(false);
 
-    return (<>
-        <NavBar menuLabels={mainNavBar} />
+    return (
         <Container
             disableGutters
             maxWidth={"lg"}
         >
             <Box>
-                <Grid
-                    container
-                    direction="row"
-                    justify="space-between"
-                    className={classes.root}
-                    spacing={4}
-                >
-                    <Grid item xs={12}>
-                        <Paper elevation={4} className={classes.paperContainer}>
-                            <LiveCard />
-                        </Paper>
-                    </Grid>
-                </Grid>
+                <Paper elevation={4} className={classes.paperContainer}>
+                    <LiveCard />
+                </Paper>
             </Box>
         </Container>
-    </>);
+    );
 }
