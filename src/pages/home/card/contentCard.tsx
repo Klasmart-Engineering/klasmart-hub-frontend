@@ -1,30 +1,20 @@
 import { v4 as uuid } from "uuid";
 const classId = uuid().substr(0, 5);
 
-import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
-import Menu, { MenuProps } from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import InfoIcon from "@material-ui/icons/InfoOutlined";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 import StyledFAB from "../../../components/styled/fabButton";
-import StyledTextField from "../../../components/styled/textfield";
 
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
 import ZooLogo from "../../../assets/img/logo_badanamu_zoo.png";
 import ZooBannerMobile from "../../../assets/img/zoo_banner_mobile.png";
 import ZooBannerWeb from "../../../assets/img/zoo_banner_web.png";
+import StyledButtonGroup from "../../../components/styled/buttonGroup";
 
 const DEMO_LESSON_PLANS = [
     {
@@ -225,16 +215,7 @@ export default function ContentCard() {
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <CenterAlignChildren>
-                            <StyledFAB
-                                disabled={liveToken === ""}
-                                extendedOnly
-                                flat
-                                className={classes.liveButton}
-                                onClick={() => goLive()}>
-                                <FormattedMessage id="live_liveButton" />
-                            </StyledFAB>
-                        </CenterAlignChildren>
+                        <StyledButtonGroup ariaLabel="content mode buttons" options={["Go Live", "Classroom Mode"]} />
                     </Grid>
                 </Grid>
             </Grid>
