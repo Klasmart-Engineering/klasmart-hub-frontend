@@ -1,13 +1,13 @@
 import { CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import Void1BackgroundImage from "../../../assets/img/void1_bg.svg";
-import LibraryContentItems from "./libraryContentItems";
-import { ContentItem, LibraryContentType } from "../../../types/objectTypes";
 import { useRestAPI } from "../../../api/restapi";
+import Void1BackgroundImage from "../../../assets/img/void1_bg.svg";
 import ZooBackgroundImage from "../../../assets/img/zoo_banner_web.png";
+import { ContentItem, LibraryContentType } from "../../../types/objectTypes";
+import LibraryContentItems from "./libraryContentItems";
 
 const MARKETPLACE_CONTENT: ContentItem[] = [
     {
@@ -30,13 +30,13 @@ export default function LibraryContentView() {
     async function fetchLessonMaterials() {
         const payload = await api.getLessonMaterials();
         return payload.lessonMaterials
-            .filter(m => m.published)
+            .filter((m) => m.published)
             .sort((a, b) => b.createdDate - a.createdDate);
     }
     async function fetchLessonPlans() {
         const payload = await api.getLessonPlans();
         return payload.lessonPlans
-            .filter(p => p.published)
+            .filter((p) => p.published)
             .sort((a, b) => b.createdDate - a.createdDate);
     }
 
@@ -58,7 +58,7 @@ export default function LibraryContentView() {
                         title: plan.name,
                         description: plan.description,
                         image: ZooBackgroundImage,
-                        link: "https://zoo.kidsloop.net"
+                        link: "https://zoo.kidsloop.net",
                     });
                 }
                 for (const material of materials) {
@@ -71,7 +71,7 @@ export default function LibraryContentView() {
                         image: ZooBackgroundImage,
                         link: material.externalId
                             ? `https://zoo.kidsloop.net/h5p/play/${material.externalId}`
-                            : ""
+                            : "",
                     });
                 }
                 setContents(contents);

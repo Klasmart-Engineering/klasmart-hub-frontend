@@ -12,7 +12,6 @@ import { PasswordChanged } from "./pages/account/password/password-changed";
 import { PasswordForgot } from "./pages/account/password/password-forgot";
 import { PasswordRestore } from "./pages/account/password/password-restore";
 import { Signup } from "./pages/account/signup";
-import { App as CMS } from "./pages/cms/cms-frontend-web/src/App";
 import Home from "./pages/home/home";
 import LiveLayout from "./pages/home/live/live";
 import ReportLayout from "./pages/home/report/report";
@@ -58,7 +57,7 @@ export function App() {
     return (<>
         <NavBar menuLabels={mainNavBar} />
         <Switch>
-            <Route path="/live" component={LiveLayout} />
+            <Route path="/live" component={Home} />
             <Route path="/library" render={() =>
                 <iframe src={"https://kl2-test.kidsloop.net/#/library"}
                     frameBorder="0"
