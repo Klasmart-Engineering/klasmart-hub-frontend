@@ -1,27 +1,29 @@
-import Grid from "@material-ui/core/Grid";
+import { Typography } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useStore, useSelector } from "react-redux";
-import { State } from "../../../store/store";
-import { ActionTypes } from "../../../store/actions";
-import { useRestAPI, ReportLearningOutcomeRequest } from "./api/restapi";
 import { FormattedMessage } from "react-intl";
-import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, ResponsiveContainer } from "recharts";
-import { getDefaultProgId } from "../../../config";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import NavBar from "../../../components/styled/navbar/navbar";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
+import { useSelector, useStore } from "react-redux";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { mainNavBar } from "../../../app";
-import { Typography } from "@material-ui/core";
+import NavBar from "../../../components/styled/navbar/navbar";
+import { getDefaultProgId } from "../../../config";
+import { ActionTypes } from "../../../store/actions";
+import { State } from "../../../store/store";
+import { ReportLearningOutcomeRequest, useRestAPI } from "./api/restapi";
+
+import ReportInfo from "../../../assets/img/report_infograph.png";
 
 const useStyles = makeStyles(() =>
     createStyles({
         menuBtn: {
-            margin: "0 8px"
+            margin: "0 8px",
         },
         root: {
             height: "100%",
@@ -41,7 +43,11 @@ export default function ReportLayout() {
             maxWidth={"lg"}
         >
             <Box>
-                <Typography variant="h6">Coming Soon</Typography>
+                <Grid container>
+                    <Grid item style={{ textAlign: "center" }}>
+                        <img src={ReportInfo} width="90%" />
+                    </Grid>
+                </Grid>
                 {/* {renderChart()} */}
             </Box>
         </Container>
@@ -104,7 +110,7 @@ function renderChart() {
             const reportInfo: ReportLearningOutcomeRequest = {
                 profileId: student.profileId,
                 programId: getDefaultProgId(),
-                classId: ""
+                classId: "",
             };
             let responseReport: any = {};
             responseReport = await restApi.getReportLearningOutcomeList(reportInfo);
@@ -176,7 +182,7 @@ function renderChart() {
                 {students ? students.map((student, index) =>
                     <ListItem key={student.profileId} button onClick={() => getReport(student)}>
                         <ListItemText primary={student.profileName} />
-                    </ListItem>
+                    </ListItem>,
                 ) : null}
             </Grid>
             <Grid item xs={12}>

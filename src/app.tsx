@@ -93,7 +93,7 @@ export function App() {
             <Route path="/password-restore" component={PasswordRestore} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
-            <Route component={LiveLayout} />
+            <Route component={Home} />
         </Switch>
     </>);
 }

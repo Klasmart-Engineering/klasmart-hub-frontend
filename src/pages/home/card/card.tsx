@@ -5,11 +5,87 @@ import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/sty
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useSelector, useStore } from "react-redux";
+import SwipeableViews from "react-swipeable-views";
+import { autoPlay } from "react-swipeable-views-utils";
 import { mainNavBar } from "../../../app";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 import NavBar from "../../../components/styled/navbar/navbar";
 import { State } from "../../../store/store";
 import ContentCard from "./contentCard";
+
+import GeniusBannerMobile from "../../../assets/img/bgf/bgf_banner_mobile.jpg";
+import GeniusBannerWeb from "../../../assets/img/bgf/bgf_banner_web.jpg";
+import GeniusLogo from "../../../assets/img/bgf/logo_badanamu_genius.png";
+import ZooLogo from "../../../assets/img/zoo/logo_badanamu_zoo.png";
+import ZooBannerMobile from "../../../assets/img/zoo/zoo_banner_mobile.png";
+import ZooBannerWeb from "../../../assets/img/zoo/zoo_banner_web.png";
+
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+
+const DEMO_LESSON_MATERIALS = [
+    { name: "Introduction", url: "/h5p/play/5ed99fe36aad833ac89a4803" },
+    { name: "Sticker Activity", url: "/h5p/play/5ed0b64a611e18398f7380fb" },
+    { name: "Hotspot Cat Family 1", url: "/h5p/play/5ecf6f43611e18398f7380f0" },
+    { name: "Hotspot Cat Family 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
+    { name: "Snow Leopard Camouflage 1", url: "/h5p/play/5ecf71d2611e18398f7380f2" },
+    { name: "Snow Leopard Camouflage 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
+    { name: "Snow Leopard Camouflage 3", url: "/h5p/play/5ed0a7d6611e18398f7380f8" },
+    { name: "Snow Leopard Camouflage 4", url: "/h5p/play/5ed0a7f8611e18398f7380f9" },
+    { name: "Snow Leopard Camouflage 5", url: "/h5p/play/5ed0a823611e18398f7380fa" },
+    { name: "Matching", url: "/h5p/play/5ecf4e4b611e18398f7380ef" },
+    { name: "Quiz", url: "/h5p/play/5ed07656611e18398f7380f6" },
+];
+export interface FeaturedContentData {
+    activities: Array<{ name: string; url: string; }>;
+    buttonGroupOptions: [boolean, boolean];
+    images: {
+        bannerMobile: string;
+        bannerWeb: string;
+        logo: string;
+    };
+    link: string;
+    metadata: {
+        age: string;
+        description: string;
+        title: string;
+        year: number;
+    };
+}
+
+const FEATURED_CONTENT: FeaturedContentData[] = [
+    {
+        activities: DEMO_LESSON_MATERIALS,
+        buttonGroupOptions: [false, false],
+        images: {
+            bannerMobile: ZooBannerMobile,
+            bannerWeb: ZooBannerWeb,
+            logo: ZooLogo,
+        },
+        link: "https://zoo.kidsloop.net",
+        metadata: {
+            age: "4-7+",
+            description: "In collaboration with The Zoological Society of East Anglia, join an interactive virtual world of animal fun and learning through live and self-paced classes.",
+            title: "Snow Leopard",
+            year: 2020,
+        },
+    },
+    {
+        activities: DEMO_LESSON_MATERIALS,
+        buttonGroupOptions: [false, false],
+        images: {
+            bannerMobile: GeniusBannerMobile,
+            bannerWeb: GeniusBannerWeb,
+            logo: GeniusLogo,
+        },
+        link: "",
+        metadata: {
+            age: "4-7+",
+            description: "",
+            title: "Foundation 1",
+            year: 2020,
+        },
+    },
+];
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,8 +122,8 @@ export default function CardLayout() {
         >
             <Box>
                 <Grid item xs={12} style={{ margin: theme.spacing(0, 2) }}>
-                    <CenterAlignChildren>
-                        <Typography variant="h4">
+                    <CenterAlignChildren center>
+                        <Typography variant="h4" align="center">
                             Featured Content
                         </Typography>
                         <Typography variant="caption" style={{ marginLeft: theme.spacing(1)}}>
@@ -56,7 +132,10 @@ export default function CardLayout() {
                     </CenterAlignChildren>
                 </Grid>
                 <Paper elevation={4} className={classes.paperContainer}>
-                    <ContentCard />
+                    <ContentCard featuredContent={FEATURED_CONTENT[0]}/>
+                </Paper>
+                <Paper elevation={4} className={classes.paperContainer}>
+                    <ContentCard featuredContent={FEATURED_CONTENT[1]}/>
                 </Paper>
             </Box>
         </Container>

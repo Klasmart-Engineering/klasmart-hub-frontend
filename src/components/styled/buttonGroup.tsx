@@ -19,7 +19,7 @@ interface Props extends ButtonProps {
     children?: React.ReactNode;
     className?: string;
     extendedOnly?: boolean;
-    options: string[];
+    options: Array<{ action?: () => void; disabled: boolean; label: string; }>;
 }
 
 const StyledBtnGroup = withStyles({
@@ -65,7 +65,7 @@ export default function StyledButtonGroup(props: Props) {
         <Grid container direction="column" alignItems="center">
             <Grid item xs={12}>
                 <StyledBtnGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
-                    <StyledButton extendedOnly>{options[selectedIndex]}</StyledButton>
+                    <StyledButton extendedOnly onClick={options[selectedIndex].action}>{options[selectedIndex].label}</StyledButton>
                     <StyledButton
                         color="primary"
                         size="small"
@@ -92,11 +92,12 @@ export default function StyledButtonGroup(props: Props) {
                                     <MenuList id="split-button-menu">
                                         {options.map((option, index) => (
                                             <MenuItem
-                                                key={option}
+                                                key={option.label}
+                                                disabled={option.disabled === true}
                                                 selected={index === selectedIndex}
                                                 onClick={(event) => handleMenuItemClick(event, index)}
                                             >
-                                                {option}
+                                                {option.label}
                                             </MenuItem>
                                         ))}
                                     </MenuList>

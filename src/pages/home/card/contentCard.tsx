@@ -7,34 +7,11 @@ import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
-import StyledFAB from "../../../components/styled/fabButton";
 
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import ZooLogo from "../../../assets/img/logo_badanamu_zoo.png";
-import ZooBannerMobile from "../../../assets/img/zoo_banner_mobile.png";
-import ZooBannerWeb from "../../../assets/img/zoo_banner_web.png";
 import StyledButtonGroup from "../../../components/styled/buttonGroup";
-
-const DEMO_LESSON_PLANS = [
-    {
-        id: "demo-lesson-plan01", title: "Badanamu Zoo: Snow Leopard",
-    },
-];
-
-const DEMO_LESSON_MATERIALS = [
-    { name: "Introduction", url: "/h5p/play/5ed99fe36aad833ac89a4803" },
-    { name: "Sticker Activity", url: "/h5p/play/5ed0b64a611e18398f7380fb" },
-    { name: "Hotspot Cat Family 1", url: "/h5p/play/5ecf6f43611e18398f7380f0" },
-    { name: "Hotspot Cat Family 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
-    { name: "Snow Leopard Camouflage 1", url: "/h5p/play/5ecf71d2611e18398f7380f2" },
-    { name: "Snow Leopard Camouflage 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
-    { name: "Snow Leopard Camouflage 3", url: "/h5p/play/5ed0a7d6611e18398f7380f8" },
-    { name: "Snow Leopard Camouflage 4", url: "/h5p/play/5ed0a7f8611e18398f7380f9" },
-    { name: "Snow Leopard Camouflage 5", url: "/h5p/play/5ed0a823611e18398f7380fa" },
-    { name: "Matching", url: "/h5p/play/5ecf4e4b611e18398f7380ef" },
-    { name: "Quiz", url: "/h5p/play/5ed07656611e18398f7380f6" },
-];
+import { FeaturedContentData } from "./card";
 
 interface LessonPlanData {
     id: string;
@@ -44,6 +21,13 @@ interface LessonPlanData {
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        ageBox: {
+            border: "1px solid white",
+            margin: theme.spacing(0, 1),
+            overflow: "hidden",
+            padding: theme.spacing(0, 1),
+            textOverflow: "ellipsis",
+        },
         contentInfo: {
             borderRadius: 12,
             color: "white",
@@ -63,20 +47,17 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
         headerView: {
-            background: "#030D1C",
+            backgroundPosition: "center 60%",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
             borderRadius: 12,
             height: 350,
             [theme.breakpoints.down("md")]: {
-                background: `linear-gradient( rgba(3, 13, 28, 0.4), rgba(3, 13, 28, 0.4) ), url(${ZooBannerMobile})`,
-                backgroundPosition: "center 60%",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
                 height: "100%",
                 minHeight: 600,
             },
         },
         headerWebBackground: {
-            backgroundImage: `url(${ZooBannerWeb})`,
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
@@ -101,126 +82,95 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function ContentCard() {
+interface Props {
+    featuredContent: FeaturedContentData;
+}
+
+export default function ContentCard(props: Props) {
+    const { featuredContent } = props;
     const classes = useStyles();
     const theme = useTheme();
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
 
-    const [userType, setUserType] = useState("teacher");
-    const [className, setClassName] = useState(classId);
-    const [userName, setUserName] = useState("");
-    const [lessonPlan, setLessonPlan] = useState<LessonPlanData>({ id: "", title: "" });
-    const [lessonPlans, setLessonPlans] = useState<LessonPlanData[]>([]);
-    const [liveToken, setLiveToken] = useState("");
+    // function goLive() {
+    //     const liveLink = `https://live.kidsloop.net/class-live/?token=${liveToken}`;
 
-    async function fetchPublishedLessonPlans() {
-        const headers = new Headers();
-        headers.append("Accept", "application/json");
-        headers.append("Content-Type", "application/json");
-        const response = await fetch("/v1/contents?publish_status=published", {
-            headers,
-            method: "GET",
-        });
-        if (response.status === 200) { return response.json(); }
-    }
+    //     window.open(liveLink, "_blank");
+    // }
 
-    async function getLiveToken(lessonPlanId: string) {
-        const headers = new Headers();
-        headers.append("Accept", "application/json");
-        headers.append("Content-Type", "application/json");
-        const response = await fetch(`v1/contents/${lessonPlanId}/live/token`, {
-            headers,
-            method: "GET",
-        });
-        if (response.status === 200) { return response.json(); }
-    }
+    function destinationLink(live: boolean, link?: string) {
+        const liveLink = `https://live.kidsloop.net/live/?teacher&roomId=${classId}&materials=${JSON.stringify(featuredContent.activities)}`;
 
-    useEffect(() => {
-        let prepared = true;
-        (async () => {
-            const json = await fetchPublishedLessonPlans();
-            if (prepared) {
-                if (json && json.list) {
-                    const publishedLP = json.list.filter((lp: any) => lp.publish_status == "published" && lp.content_type_name == "Plan");
-                    const lpList = publishedLP.map((lp: any) => {
-                        return { id: lp.id, title: lp.name, data: lp.data };
-                    });
-                    console.log("publishedLP: ", publishedLP);
-                    setLessonPlans(lpList);
-                } else {
-                    setLessonPlans([{ id: "", title: "Lesson plan does not exist yet" }]);
-                }
-            }
-        })();
-        return () => { prepared = false; };
-    }, []);
-
-    useEffect(() => {
-        if (lessonPlan.id === "") { return; }
-        let prepared = true;
-        (async () => {
-            const json = await getLiveToken(lessonPlan.id);
-            // console.log("liveToken: ", json);
-            if (prepared) {
-                if (json && json.token) {
-                    setLiveToken(json.token);
-                } else {
-                    setLiveToken("");
-                }
-            }
-        })();
-        return () => { prepared = false; };
-    }, [lessonPlan]);
-
-    useEffect(() => {
-        if (userType === "student") { setClassName(""); }
-        if (userType === "teacher") { setClassName(classId); }
-    }, [userType]);
-
-    function goLive() {
-        const liveLink = `https://live.kidsloop.net/class-live/?token=${liveToken}`;
-
-        window.open(liveLink);
+        window.open(live ? liveLink : link, "_blank");
     }
 
     return (
         <Grid
+            alignItems={ isMdDown ? "flex-start" : "center" }
             container
             className={classes.headerView}
             direction="row"
             justify="space-between"
-            alignItems={ isMdDown ? "flex-start" : "center" }
+            style={{
+                backgroundColor: isMdDown ? "linear-gradient( rgba(3, 13, 28, 0.4), rgba(3, 13, 28, 0.4) )" : "#030D1C",
+                backgroundImage: isMdDown ? `url(${featuredContent.images.bannerMobile})` : "",
+            }}
         >
             <Grid item xs={12} lg={4} className={classes.contentInfo}>
                 <Grid
                     container
                     direction="column"
-                    justify="flex-start"
+                    justify={ isMdDown ? "flex-start" : "space-between" }
                     alignItems="flex-start"
                     wrap="nowrap"
                     style={{ minHeight: "100%" }}
-                    spacing={2}
+                    spacing={ isMdDown ? 4 : 2 }
                 >
                     <Grid item>
                         <CenterAlignChildren>
-                            <img src={ZooLogo} style={{ marginRight: theme.spacing(1), maxHeight: "5vw" }}/>
+                            <img src={featuredContent.images.logo} style={{ marginRight: theme.spacing(1), maxHeight: "5vw" }}/>
                             <Typography variant="h5">
-                                    Snow Leopard
+                                {featuredContent.metadata.title}
                             </Typography>
                         </CenterAlignChildren>
                     </Grid>
                     <Grid item>
                         <Typography variant="body1">
-                                In collaboration with The Zoological Society of East Anglia, join an interactive virtual world of animal fun and learning through live and self-paced classes.
+                            <b>
+                                {featuredContent.metadata.year}
+                                <span className={classes.ageBox}>Ages {featuredContent.metadata.age}</span>
+                                Interactive
+                            </b>
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <StyledButtonGroup ariaLabel="content mode buttons" options={["Go Live", "Classroom Mode"]} />
+                        <Typography variant="body1">
+                            {featuredContent.metadata.description}
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <StyledButtonGroup
+                            ariaLabel="content mode buttons"
+                            options={[{
+                                action: () => destinationLink(false, featuredContent.link),
+                                disabled: featuredContent.buttonGroupOptions[0],
+                                label: "Classroom Mode",
+                            }, {
+                                action: () => destinationLink(true),
+                                disabled: featuredContent.buttonGroupOptions[1],
+                                label: "Go Live",
+                            }]}
+                        />
                     </Grid>
                 </Grid>
             </Grid>
             <Hidden mdDown>
-                <Grid item xs={12} lg={8} className={classes.headerWebBackground}>
+                <Grid
+                    item
+                    xs={12} lg={8}
+                    className={classes.headerWebBackground}
+                    style={{ backgroundImage: `url(${featuredContent.images.bannerWeb})` }}
+                >
                     <div style={{ height: 350, width: "100%" }} />
                 </Grid>
             </Hidden>
