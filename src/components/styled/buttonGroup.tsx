@@ -65,7 +65,13 @@ export default function StyledButtonGroup(props: Props) {
         <Grid container direction="column" alignItems="center">
             <Grid item xs={12}>
                 <StyledBtnGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
-                    <StyledButton extendedOnly onClick={options[selectedIndex].action}>{options[selectedIndex].label}</StyledButton>
+                    <StyledButton
+                        disabled={options[selectedIndex].disabled}
+                        extendedOnly
+                        onClick={options[selectedIndex].action}
+                    >
+                        {options[selectedIndex].label}&nbsp;{options[selectedIndex].disabled ? <sub>(Coming Soon)</sub> : ""}
+                    </StyledButton>
                     <StyledButton
                         color="primary"
                         size="small"

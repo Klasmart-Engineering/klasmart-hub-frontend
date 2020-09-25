@@ -46,7 +46,7 @@ export default function Home() {
             <LiveLayout />
 
             <Grid container>
-                <Grid item xs={12} md={6} lg={12}>
+                <Grid item xs={12}>
                     <CardLayout />
                 </Grid>
             </Grid>

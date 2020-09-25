@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Paper, Typography } from "@material-ui/core";
+import { Box, CircularProgress, Container, Hidden, Paper, Typography, useMediaQuery } from "@material-ui/core";
 import Fade from "@material-ui/core/Fade";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
@@ -71,7 +71,7 @@ const FEATURED_CONTENT: FeaturedContentData[] = [
     },
     {
         activities: DEMO_LESSON_MATERIALS,
-        buttonGroupOptions: [false, false],
+        buttonGroupOptions: [true, true],
         images: {
             bannerMobile: GeniusBannerMobile,
             bannerWeb: GeniusBannerWeb,
@@ -79,8 +79,8 @@ const FEATURED_CONTENT: FeaturedContentData[] = [
         },
         link: "",
         metadata: {
-            age: "4-7+",
-            description: "",
+            age: "3-5+",
+            description: "Build integral foundational skills and learn English with this core educational program from Badanamu. Learn colors, shapes, numbers, and phonics along with associated vocabulary.",
             title: "Foundation 1",
             year: 2020,
         },
@@ -114,6 +114,21 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CardLayout() {
     const classes = useStyles();
     const theme = useTheme();
+    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
+
+    const [activeStep, setActiveStep] = useState(0);
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1 );
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleStepChange = (step: number) => {
+        setActiveStep(step);
+    };
 
     return (
         <Container
@@ -126,17 +141,23 @@ export default function CardLayout() {
                         <Typography variant="h4" align="center">
                             Featured Content
                         </Typography>
-                        <Typography variant="caption" style={{ marginLeft: theme.spacing(1)}}>
-                            ( 1 of 2 )
-                        </Typography>
                     </CenterAlignChildren>
                 </Grid>
-                <Paper elevation={4} className={classes.paperContainer}>
-                    <ContentCard featuredContent={FEATURED_CONTENT[0]}/>
-                </Paper>
-                <Paper elevation={4} className={classes.paperContainer}>
-                    <ContentCard featuredContent={FEATURED_CONTENT[1]}/>
-                </Paper>
+                <Grid item xs={12}>
+                    <AutoPlaySwipeableViews
+                        axis={"x"}
+                        index={activeStep}
+                        onChangeIndex={handleStepChange}
+                        enableMouseEvents
+                        containerStyle={{ width: isMdDown ? "50%" : "100%" }}
+                    >
+                        { FEATURED_CONTENT.map((content) => (
+                            <Paper elevation={4} className={classes.paperContainer} key={content.metadata.title}>
+                                <ContentCard featuredContent={content}/>
+                            </Paper>
+                        ))}
+                    </AutoPlaySwipeableViews>
+                </Grid>
             </Box>
         </Container>
     );
