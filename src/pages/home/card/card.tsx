@@ -115,6 +115,7 @@ export default function CardLayout() {
     const classes = useStyles();
     const theme = useTheme();
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
+    const isSmDown = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [activeStep, setActiveStep] = useState(0);
 
@@ -149,7 +150,7 @@ export default function CardLayout() {
                         index={activeStep}
                         onChangeIndex={handleStepChange}
                         enableMouseEvents
-                        containerStyle={{ width: isMdDown ? "50%" : "100%" }}
+                        containerStyle={{ width: isSmDown ? "100%" : (isMdDown ? "50%" : "100%") }}
                     >
                         { FEATURED_CONTENT.map((content) => (
                             <Paper elevation={4} className={classes.paperContainer} key={content.metadata.title}>
