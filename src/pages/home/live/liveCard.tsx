@@ -1,45 +1,19 @@
-import { v4 as uuid } from "uuid";
-const classId = uuid().substr(0, 5);
+import React, { useEffect, useState } from "react";
+import { FormattedMessage } from "react-intl";
 
 import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import InfoIcon from "@material-ui/icons/InfoOutlined";
-import React, { useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
-import CenterAlignChildren from "../../../components/centerAlignChildren";
+
 import StyledFAB from "../../../components/styled/fabButton";
-import StyledTextField from "../../../components/styled/textfield";
+import CenterAlignChildren from "../../../components/centerAlignChildren";
 
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
-
-const DEMO_LESSON_PLANS = [
-    {
-        id: "demo-lesson-plan01", title: "Badanamu Zoo: Snow Leopard",
-    },
-];
-
-const DEMO_LESSON_MATERIALS = [
-    { name: "Introduction", url: "/h5p/play/5ed99fe36aad833ac89a4803" },
-    { name: "Sticker Activity", url: "/h5p/play/5ed0b64a611e18398f7380fb" },
-    { name: "Hotspot Cat Family 1", url: "/h5p/play/5ecf6f43611e18398f7380f0" },
-    { name: "Hotspot Cat Family 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
-    { name: "Snow Leopard Camouflage 1", url: "/h5p/play/5ecf71d2611e18398f7380f2" },
-    { name: "Snow Leopard Camouflage 2", url: "/h5p/play/5ed0a79d611e18398f7380f7" },
-    { name: "Snow Leopard Camouflage 3", url: "/h5p/play/5ed0a7d6611e18398f7380f8" },
-    { name: "Snow Leopard Camouflage 4", url: "/h5p/play/5ed0a7f8611e18398f7380f9" },
-    { name: "Snow Leopard Camouflage 5", url: "/h5p/play/5ed0a823611e18398f7380fa" },
-    { name: "Matching", url: "/h5p/play/5ecf4e4b611e18398f7380ef" },
-    { name: "Quiz", url: "/h5p/play/5ed07656611e18398f7380f6" },
-];
 
 interface LessonPlanData {
     id: string;
@@ -74,13 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
             color: "white",
             marginRight: theme.spacing(2),
         },
-        liveTextWrapper: {
-            backgroundColor: "#ff6961",
-            borderRadius: 20,
-            color: "white",
-            fontSize: "0.6em",
-            padding: theme.spacing(0.25, 0.75),
-        },
         select: {
             display: "block",
         },
@@ -91,9 +58,6 @@ export default function LiveCard() {
     const classes = useStyles();
     const theme = useTheme();
 
-    const [userType, setUserType] = useState("teacher");
-    const [className, setClassName] = useState(classId);
-    const [userName, setUserName] = useState("");
     const [lessonPlan, setLessonPlan] = useState<LessonPlanData>({ id: "", title: "" });
     const [lessonPlans, setLessonPlans] = useState<LessonPlanData[]>([]);
     const [liveToken, setLiveToken] = useState("");
@@ -130,7 +94,6 @@ export default function LiveCard() {
                     const lpList = publishedLP.map((lp: any) => {
                         return { id: lp.id, title: lp.name, data: lp.data };
                     });
-                    console.log("publishedLP: ", publishedLP);
                     setLessonPlans(lpList);
                 } else {
                     setLessonPlans([{ id: "", title: "Lesson plan does not exist yet" }]);
@@ -145,7 +108,6 @@ export default function LiveCard() {
         let prepared = true;
         (async () => {
             const json = await getLiveToken(lessonPlan.id);
-            // console.log("liveToken: ", json);
             if (prepared) {
                 if (json && json.token) {
                     setLiveToken(json.token);
@@ -157,18 +119,8 @@ export default function LiveCard() {
         return () => { prepared = false; };
     }, [lessonPlan]);
 
-    useEffect(() => {
-        if (userType === "student") { setClassName(""); }
-        if (userType === "teacher") { setClassName(classId); }
-    }, [userType]);
-
     function goLive() {
-        // let params = `name=${userName}&roomId=${className}`;
-        // if (userType === "teacher") {
-        //     params += `&teacher&materials=${JSON.stringify(DEMO_LESSON_MATERIALS)}`;
-        // }
         const liveLink = `https://live.kidsloop.net/class-live/?token=${liveToken}`;
-
         window.open(liveLink);
     }
 
@@ -184,7 +136,9 @@ export default function LiveCard() {
             <Grid item>
                 <Grid container item spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h4">Welcome to KidsLoop</Typography>
+                        <Typography variant="h4">
+                            <FormattedMessage id={"live_welcome"} />
+                        </Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <CenterAlignChildren>
@@ -217,13 +171,6 @@ interface ClassInfo {
     className: string;
 }
 
-const CLASS_LIST: ClassInfo[] = [
-    {
-        classId: "CalmIsland",
-        className: "Pre-production",
-    },
-];
-
 const StyledMenu = withStyles({})((props: MenuProps) => (
     <Menu
         elevation={4}
@@ -247,7 +194,6 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
 }) {
     const classes = useStyles();
 
-    // const [lessonPlanOptions, _] = useState<Array<{ id: string, title: string }>>(DEMO_LESSON_PLANS);
     const [lessonPlanMenuElement, setLessonPlanMenuElement] = useState<null | HTMLElement>(null);
 
     return (

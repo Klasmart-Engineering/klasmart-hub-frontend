@@ -84,8 +84,8 @@ module.exports = {
             "STAGE": "dev",
             "CALM_ORG_ID": "CALM-ISLAND-QA",
             "PAYMENT_ENDPOINT": "http://localhost:8092/",
-            "AUTH_ENDPOINT": "http://localhost:8080/",
-            "ACCOUNT_ENDPOINT": "http://localhost:8089/",
+            "AUTH_ENDPOINT": "/auth/",
+            "ACCOUNT_ENDPOINT": "/account/",
             "PRODUCT_ENDPOINT": "http://localhost:8044/",
             "REGION_ENDPOINT": "http://localhost:8094/",
             "ORGANIZATION_ENDPOINT": "http://localhost:8084/",
@@ -98,11 +98,16 @@ module.exports = {
         host: "0.0.0.0",
         historyApiFallback: true,
         proxy: {
-            // "/v1": {
-            //     target: "https://seoul-beta.assessment-api.badanamu.net",
-            //     secure: false,
-            //     changeOrigin: true,
-            // },
+            "/auth": {
+                target: "https://prod.auth.badanamu.net/",
+                changeOrigin: true,
+                pathRewrite: { '^/auth': '' },
+            },
+            "/account": {
+                target: "https://prod.account.badanamu.net/",
+                changeOrigin: true,
+                pathRewrite: { '^/account': '' },
+            },
             "/v1": {
                 target: "https://kl2-test.kidsloop.net/",
                 secure: true,

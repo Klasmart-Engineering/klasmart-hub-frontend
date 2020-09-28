@@ -6,7 +6,9 @@ import { State } from "../store/store";
 export function isLoggedIn() {
     const accessToken = useSelector((state: State) => state.account.accessToken);
     const refreshToken = useSelector((state: State) => state.account.refreshToken);
-    return (accessToken === null && refreshToken === null);
+    // console.log("accessToken: ", accessToken);
+    // console.log("refreshToken: ", refreshToken);
+    return (accessToken !== null && refreshToken !== null);
 }
 
 export function redirectIfUnauthorized(returnRoute = "/") {

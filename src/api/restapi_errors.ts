@@ -2,20 +2,20 @@ export class RestAPIError extends Error {
   private type: RestAPIErrorType;
   private body: { [key: string]: any };
   constructor(type: RestAPIErrorType, body: { [key: string]: any }) {
-    super();
-    if (typeof RestAPIErrorType[type] === "undefined") {
-      this.type = RestAPIErrorType.UNKNOWN;
-    } else {
-      this.type = type;
-    }
-    this.body = body;
+      super();
+      if (typeof RestAPIErrorType[type] === "undefined") {
+          this.type = RestAPIErrorType.UNKNOWN;
+      } else {
+          this.type = type;
+      }
+      this.body = body;
   }
   public getBody() { return this.body; }
   public getErrorMessageType() {
-    return this.type;
+      return this.type;
   }
   public getErrorMessageID() {
-    return errorCodeToMessageID[this.type];
+      return errorCodeToMessageID[this.type];
   }
 }
 export enum RestAPIErrorType {
@@ -65,49 +65,49 @@ export enum RestAPIErrorType {
 }
 
 const errorCodeToMessageID = {
-  [RestAPIErrorType.MOCK]: "ERROR_MOCK",
-  [RestAPIErrorType.UNKNOWN]: "ERROR_UNKOWN",
-  // General
-  [RestAPIErrorType.INTERNAL_SERVER_ERROR]: "ERROR_INTERNAL_SERVER_ERROR",
-  [RestAPIErrorType.FUNCTION_NOT_FOUND]: "ERROR_FUNCTION_NOT_FOUND",
-  [RestAPIErrorType.BAD_REQUEST_METHOD]: "ERROR_BAD_REQUEST_METHOD",
-  [RestAPIErrorType.BAD_REQUEST_BODY]: "ERROR_BAD_REQUEST_BODY",
-  [RestAPIErrorType.INVALID_PARAMETERS]: "ERROR_INVALID_PARAMETERS",
-  [RestAPIErrorType.EXPIRED_ACCESS_TOKEN]: "ERROR_EXPIRED_ACCESS_TOKEN",
-  [RestAPIErrorType.FUNCTION_TIMEOUT]: "ERROR_FUNCTION_TIMEOUT",
-  [RestAPIErrorType.TOO_MANY_REQUESTS]: "ERROR_TOO_MANY_REQUESTS",
-  [RestAPIErrorType.ITEM_NOT_FOUND]: "ERROR_ITEM_NOT_FOUND",
-  [RestAPIErrorType.REACHED_MAX_LIMIT]: "ERROR_REACHED_MAX_LIMIT",
-  [RestAPIErrorType.UNAUTHORIZED]: "ERROR_UNAUTHORIZED",
-  [RestAPIErrorType.ITEM_ALREADY_EXISTS]: "ERROR_ITEM_ALREADY_EXISTS",
-  [RestAPIErrorType.ITEM_NOT_READY]: "ERROR_ITEM_NOT_READY",
+    [RestAPIErrorType.MOCK]: "ERROR_MOCK",
+    [RestAPIErrorType.UNKNOWN]: "ERROR_UNKOWN",
+    // General
+    [RestAPIErrorType.INTERNAL_SERVER_ERROR]: "ERROR_INTERNAL_SERVER_ERROR",
+    [RestAPIErrorType.FUNCTION_NOT_FOUND]: "ERROR_FUNCTION_NOT_FOUND",
+    [RestAPIErrorType.BAD_REQUEST_METHOD]: "ERROR_BAD_REQUEST_METHOD",
+    [RestAPIErrorType.BAD_REQUEST_BODY]: "ERROR_BAD_REQUEST_BODY",
+    [RestAPIErrorType.INVALID_PARAMETERS]: "ERROR_INVALID_PARAMETERS",
+    [RestAPIErrorType.EXPIRED_ACCESS_TOKEN]: "ERROR_EXPIRED_ACCESS_TOKEN",
+    [RestAPIErrorType.FUNCTION_TIMEOUT]: "ERROR_FUNCTION_TIMEOUT",
+    [RestAPIErrorType.TOO_MANY_REQUESTS]: "ERROR_TOO_MANY_REQUESTS",
+    [RestAPIErrorType.ITEM_NOT_FOUND]: "ERROR_ITEM_NOT_FOUND",
+    [RestAPIErrorType.REACHED_MAX_LIMIT]: "ERROR_REACHED_MAX_LIMIT",
+    [RestAPIErrorType.UNAUTHORIZED]: "ERROR_UNAUTHORIZED",
+    [RestAPIErrorType.ITEM_ALREADY_EXISTS]: "ERROR_ITEM_ALREADY_EXISTS",
+    [RestAPIErrorType.ITEM_NOT_READY]: "ERROR_ITEM_NOT_READY",
 
-  // Login
-  [RestAPIErrorType.INVALID_LOGIN]: "ERROR_INVALID_LOGIN",
-  [RestAPIErrorType.INVALID_PASSWORD]: "ERROR_INVALID_PASSWORD",
-  [RestAPIErrorType.EMAIL_NOT_VERIFIED]: "ERROR_EMAIL_NOT_VERIFIED",
-  [RestAPIErrorType.ACCOUNT_BANNED]: "ERROR_ACCOUNT_BANNED",
-  [RestAPIErrorType.DEVICE_NOT_FOUND]: "ERROR_DEVICE_NOT_FOUND",
-  [RestAPIErrorType.EXPIRED_REFRESH_TOKEN]: "ERROR_EXPIRED_REFRESH_TOKEN",
-  [RestAPIErrorType.PHONE_NUMBER_NOT_VERIFIED]: "PHONE_NUMBER_NOT_VERIFIED",
+    // Login
+    [RestAPIErrorType.INVALID_LOGIN]: "ERROR_INVALID_LOGIN",
+    [RestAPIErrorType.INVALID_PASSWORD]: "ERROR_INVALID_PASSWORD",
+    [RestAPIErrorType.EMAIL_NOT_VERIFIED]: "ERROR_EMAIL_NOT_VERIFIED",
+    [RestAPIErrorType.ACCOUNT_BANNED]: "ERROR_ACCOUNT_BANNED",
+    [RestAPIErrorType.DEVICE_NOT_FOUND]: "ERROR_DEVICE_NOT_FOUND",
+    [RestAPIErrorType.EXPIRED_REFRESH_TOKEN]: "ERROR_EXPIRED_REFRESH_TOKEN",
+    [RestAPIErrorType.PHONE_NUMBER_NOT_VERIFIED]: "PHONE_NUMBER_NOT_VERIFIED",
 
-  // Sign Up
-  [RestAPIErrorType.INVALID_EMAIL_FORMAT]: "sign_up_error_INVALID_EMAIL",
-  [RestAPIErrorType.INVALID_EMAIL_HOST]: "sign_up_error_INVALID_EMAIL",
-  [RestAPIErrorType.EMAIL_ALREADY_USED]: "sign_up_error_EMAIL_ALREADY_USED",
-  [RestAPIErrorType.PASSWORD_TOO_SHORT]: "sign_up_error_PASSWORD_TOO_SHORT",
-  [RestAPIErrorType.PASSWORD_TOO_LONG]: "sign_up_error_PASSWORD_TOO_LONG",
-  [RestAPIErrorType.PASSWORD_NUMBER_MISSING]: "sign_up_error_PASSWORD_NUMBER_MISSING",
-  [RestAPIErrorType.PASSWORD_UPPERCASE_MISSING]: "sign_up_error_PASSWORD_UPPERCASE_MISSING",
-  [RestAPIErrorType.PASSWORD_LOWERCASE_MISSING]: "sign_up_error_PASSWORD_LOWERCASE_MISSING",
+    // Sign Up
+    [RestAPIErrorType.INVALID_EMAIL_FORMAT]: "sign_up_error_INVALID_EMAIL",
+    [RestAPIErrorType.INVALID_EMAIL_HOST]: "sign_up_error_INVALID_EMAIL",
+    [RestAPIErrorType.EMAIL_ALREADY_USED]: "sign_up_error_EMAIL_ALREADY_USED",
+    [RestAPIErrorType.PASSWORD_TOO_SHORT]: "sign_up_error_PASSWORD_TOO_SHORT",
+    [RestAPIErrorType.PASSWORD_TOO_LONG]: "sign_up_error_PASSWORD_TOO_LONG",
+    [RestAPIErrorType.PASSWORD_NUMBER_MISSING]: "sign_up_error_PASSWORD_NUMBER_MISSING",
+    [RestAPIErrorType.PASSWORD_UPPERCASE_MISSING]: "sign_up_error_PASSWORD_UPPERCASE_MISSING",
+    [RestAPIErrorType.PASSWORD_LOWERCASE_MISSING]: "sign_up_error_PASSWORD_LOWERCASE_MISSING",
 
-  // Verification
-  [RestAPIErrorType.INVALID_VERIFICATION_CODE]: "ERROR_INVALID_VERIFICATION_CODE",
-  [RestAPIErrorType.VERIFICATION_NOT_FOUND]: "ERROR_VERIFICATION_NOT_FOUND",
-  [RestAPIErrorType.ALREADY_VERIFIED]: "ERROR_ALREADY_VERIFIED",
+    // Verification
+    [RestAPIErrorType.INVALID_VERIFICATION_CODE]: "ERROR_INVALID_VERIFICATION_CODE",
+    [RestAPIErrorType.VERIFICATION_NOT_FOUND]: "ERROR_VERIFICATION_NOT_FOUND",
+    [RestAPIErrorType.ALREADY_VERIFIED]: "ERROR_ALREADY_VERIFIED",
 
-  // Input
-  [RestAPIErrorType.INPUT_TOO_SHORT]: "ERROR_INPUT_TOO_SHORT",
-  [RestAPIErrorType.INPUT_TOO_LONG]: "ERROR_INPUT_TOO_LONG",
-  [RestAPIErrorType.INPUT_INVALID_FORMAT]: "ERROR_INPUT_INVALID_FORMAT",
+    // Input
+    [RestAPIErrorType.INPUT_TOO_SHORT]: "ERROR_INPUT_TOO_SHORT",
+    [RestAPIErrorType.INPUT_TOO_LONG]: "ERROR_INPUT_TOO_LONG",
+    [RestAPIErrorType.INPUT_INVALID_FORMAT]: "ERROR_INPUT_INVALID_FORMAT",
 };

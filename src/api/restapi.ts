@@ -1,11 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useStore } from "react-redux";
-import { getAccountEndpoint, getAuthEndpoint, getOrganizationEndpoint, getPaymentEndpoint, getProductEndpoint, getRegionEndpoint } from "../config";
+import { RestAPIError, RestAPIErrorType } from "./restapi_errors";
 import { ActionTypes } from "../store/actions";
 import { Store } from "../store/store";
 import { IdentityType } from "../utils/accountType";
-import { RestAPIError, RestAPIErrorType } from "./restapi_errors";
-import { getAssessmentEndpoint, isDevStage } from "../config";
+import {
+    getPaymentEndpoint,
+    getAuthEndpoint,
+    getAccountEndpoint,
+    getProductEndpoint,
+    getOrganizationEndpoint,
+    getRegionEndpoint
+} from "../config";
 
 function phoneOrEmail(str: string): { phoneNr?: string, email?: string } {
     if (str.indexOf("@") === -1) {
@@ -42,12 +47,12 @@ export class RestAPI {
         const accountId = state.account.accountId;
         if (accountId === null) { throw new Error("Unknown AccountID"); }
         switch (type) {
-        case IdentityType.Phone:
-            return this.accountCall("POST", "v1/verify/phonenumber", JSON.stringify({ accountId, verificationCode }));
-        case IdentityType.Email:
-            return this.accountCall("POST", "v1/verify/email", JSON.stringify({ accountId, verificationCode }));
-        default:
-            throw new Error("Unknown Account Type");
+            case IdentityType.Phone:
+                return this.accountCall("POST", "v1/verify/phonenumber", JSON.stringify({ accountId, verificationCode }));
+            case IdentityType.Email:
+                return this.accountCall("POST", "v1/verify/email", JSON.stringify({ accountId, verificationCode }));
+            default:
+                throw new Error("Unknown Account Type");
         }
     }
 
@@ -58,14 +63,14 @@ export class RestAPI {
         const params = new URLSearchParams({ accountId }).toString();
         let url: string;
         switch (type) {
-        case IdentityType.Phone:
-            url = "v1/verify/phonenumber";
-            break;
-        case IdentityType.Email:
-            url = "v1/verify/email";
-            break;
-        default:
-            throw new Error("Unknown Account Type");
+            case IdentityType.Phone:
+                url = "v1/verify/phonenumber";
+                break;
+            case IdentityType.Email:
+                url = "v1/verify/email";
+                break;
+            default:
+                throw new Error("Unknown Account Type");
         }
         const response = await this.accountCall("GET", `${url}?${params}`);
         const body = await response.json();
@@ -143,8 +148,8 @@ export class RestAPI {
             if (e instanceof RestAPIError) {
                 const body = e.getBody();
                 switch (e.getErrorMessageType()) {
-                case RestAPIErrorType.EMAIL_NOT_VERIFIED:
-                    this.store.dispatch({ type: ActionTypes.ACCOUNT_ID, payload: body });
+                    case RestAPIErrorType.EMAIL_NOT_VERIFIED:
+                        this.store.dispatch({ type: ActionTypes.ACCOUNT_ID, payload: body });
                 }
             }
             throw e;
@@ -186,15 +191,15 @@ export class RestAPI {
         const state = this.store.getState();
         const deviceId = state.account.deviceId;
         try {
-            await this.authCall("v1/signout", JSON.stringify({ deviceId }));
+            const response = await this.authCall("v1/signout", JSON.stringify({ deviceId }));
         } catch (e) {
             if (!(e instanceof RestAPIError)) { throw e; }
             switch (e.getErrorMessageType()) {
-            case RestAPIErrorType.ITEM_NOT_FOUND:
-            case RestAPIErrorType.DEVICE_NOT_FOUND:
-                break;
-            default:
-                throw e;
+                case RestAPIErrorType.ITEM_NOT_FOUND:
+                case RestAPIErrorType.DEVICE_NOT_FOUND:
+                    break;
+                default:
+                    throw e;
             }
         } finally {
             // Destroy local session data even if server wouldn't
@@ -202,6 +207,119 @@ export class RestAPI {
         }
         return;
     }
+    public async expirePassAccesses() {
+        const response = await this.paymentCall("DELETE", "dev/passesAccesses");
+        if (response.status === 200) { return true; }
+        const body = await response.json();
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+    public async expireProductAccesses() {
+        const response = await this.paymentCall("DELETE", "dev/productsAccesses");
+        if (response.status === 200) { return true; }
+        const body = await response.json();
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+    public async getTransactionHistory() {
+        const response = await this.paymentCall("GET", "v1/history");
+        const body = await response.json();
+        if (typeof body === "object") {
+            const { transactions } = body;
+            if (typeof transactions === "object" && transactions instanceof Array) {
+                return transactions;
+            }
+        }
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+    public async getPaymentToken() {
+        const response = await this.paymentCall("GET", "v1/braintree/token");
+        const body = await response.json();
+        if (typeof body === "object") {
+            const { clientToken } = body;
+            if (typeof clientToken === "string") {
+                return clientToken;
+            }
+        }
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+    public async reportPaymentNonce(productCode: string, nonce: string) {
+        const response = await this.paymentCall("POST", "v1/braintree/payment", JSON.stringify({ nonce, productCode }));
+        const body = await response.json();
+        if (typeof body === "object") {
+            const { transactionId } = body;
+            if (typeof transactionId === "string") {
+                return transactionId;
+            }
+        }
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+    public async reportPaypalOrder(orderId: string, productCode: string) {
+        const response = await this.paymentCall("POST", "v1/paypal/payment", JSON.stringify({ orderId, productCode }));
+        const body = await response.json();
+        if (typeof body === "object") {
+            const { success, value } = body;
+            if (success === true) { return true; }
+        }
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+
+    public async getProductInfoByIds(ids: string[]) {
+        let queryParams = "?id=" + ids[0];
+        for (let i = 1; i < ids.length; ++i) {
+            queryParams += "&id=" + ids[i];
+        }
+        const response = await this.productCall("GET", "v1/product" + queryParams);
+        const body = await response.json();
+        return body;
+    }
+
+    public async getProductAccesses() {
+        const response = await this.productCall("GET", "v1/product/accesses");
+        const body = await response.json();
+        return body;
+    }
+
+    public async getPassList() {
+        const response = await this.productCall("GET", "v1/pass/list");
+        const body = await response.json();
+        return body;
+    }
+
+    public async getPassAccesses() {
+        const response = await this.productCall("GET", "v1/pass/accesses");
+        const body = await response.json();
+        return body;
+    }
+
+    public async getPassAccess(passId: string) {
+        const response = await this.productCall("GET", "v1/pass/" + passId + "/access");
+        const body = await response.json();
+        return body;
+    }
+
+    public async getTicketRegion(ticketId: string) {
+        const response = await this.regionCall("GET", "v1/ticket/" + ticketId);
+        const body = await response.json();
+        return body;
+    }
+
+    public async getEventTicketRegion(ticketId: string) {
+        const response = await this.regionCall("GET", "v1/eventTicket/" + ticketId);
+        const body = await response.json();
+        return body;
+    }
+
+    public async redeemTicket(ticketId: string, region: string) {
+        const response = await this.organizationCall("POST", "v1/ticket/" + ticketId + "/activate", region);
+        const body = await response.json();
+        return body;
+    }
+
+    public async redeemEventTicket(ticketId: string, region: string) {
+        const response = await this.organizationCall("POST", "v1/eventTicket/" + ticketId + "/activate", region);
+        const body = await response.json();
+        return body;
+    }
+
     private async autoRefreshSesion() {
         try {
             await this.refreshSession();
@@ -237,16 +355,16 @@ export class RestAPI {
         } catch (e) {
             if (e instanceof RestAPIError) {
                 switch (e.getErrorMessageType()) {
-                case RestAPIErrorType.EXPIRED_ACCESS_TOKEN:
-                    this.store.dispatch({ type: ActionTypes.EXPIRED_ACCESS_TOKEN });
-                    if (refresh) {
-                        await this.refreshSession();
-                        return this.fetchRoute(method, prefix, route, body);
-                    }
-                    break;
-                case RestAPIErrorType.EXPIRED_REFRESH_TOKEN:
-                    this.store.dispatch({ type: ActionTypes.EXPIRED_REFRESH_TOKEN });
-                    break;
+                    case RestAPIErrorType.EXPIRED_ACCESS_TOKEN:
+                        this.store.dispatch({ type: ActionTypes.EXPIRED_ACCESS_TOKEN });
+                        if (refresh) {
+                            await this.refreshSession();
+                            return this.fetchRoute(method, prefix, route, body);
+                        }
+                        break;
+                    case RestAPIErrorType.EXPIRED_REFRESH_TOKEN:
+                        this.store.dispatch({ type: ActionTypes.EXPIRED_REFRESH_TOKEN });
+                        break;
                 }
             }
             throw e;
@@ -254,20 +372,33 @@ export class RestAPI {
     }
 
     private async fetchRoute(method: string, prefix: string, route: string, body?: string) {
+        if (this.store.getState().account.unstableConnection) {
+            const minDelay = 1000;
+            const maxDelay = 10000;
+            const delaySkew = 2;
+            const failureRate = 0.2;
+            const delay = minDelay + Math.pow(Math.random(), delaySkew) * (maxDelay - minDelay);
+            console.log(`Delaying request to '${route}' by ${Math.round(delay).toLocaleString()}ms`);
+            await new Promise((resolve, reject) => {
+                if (Math.random() <= failureRate) {
+                    console.log(`Blocking rest request to '${route}' to simulate error`);
+                    setTimeout(() => reject(new RestAPIError(RestAPIErrorType.MOCK, {})), delay);
+                } else {
+                    setTimeout(resolve, delay);
+                }
+            });
+        }
         const headers = new Headers();
         headers.append("Accept", "application/json");
         headers.append("Content-Type", "application/json");
         const state = this.store.getState();
-        if (typeof state.account.assessmentToken === "string") {
-            headers.append("authorization", state.account.assessmentToken);
-        } else if (typeof state.account.accessToken === "string") {
+        if (typeof state.account.accessToken === "string") {
             headers.append("Authorization", `Bearer ${state.account.accessToken}`);
             if (typeof state.account.accessTokenExpire === "number" && state.account.accessTokenExpire < Date.now()) {
                 console.log("It seems like the access token has expired, attempting request regardless");
             }
         }
-        // const url = prefix + route;
-        const url = (isDevStage() ? "" : prefix) + route;
+        const url = prefix + route;
         const response = await fetch(url, {
             body,
             // credentials: "include",
@@ -295,7 +426,6 @@ export class RestAPI {
         if (state.account.deviceId !== null) {
             return state.account.deviceId;
         }
-        // eslint-disable-next-line no-async-promise-executor
         return new Promise<string>(async (resolve) => {
             let deviceId = "";
             const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -306,574 +436,6 @@ export class RestAPI {
             resolve(deviceId);
         });
     }
-
-    // Assessments
-    private assessmentCall(method: "GET" | "POST" | "PUT" | "DELETE", route: string, body?: string, refresh = true) {
-        return this.call(method, getAssessmentEndpoint(), route, body, refresh);
-    }
-
-    // Lesson Material
-
-    public async getLessonMaterials(): Promise<LessonMaterialListResponse> {
-        const result = await this.assessmentCall("GET", "v1/lessonMaterial");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getLessonMaterial(lessonMaterialId: string): Promise<LessonMaterialResponse> {
-        const result = await this.assessmentCall("GET", "v1/lessonMaterial/" + lessonMaterialId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createLessonMaterial(lessonMaterialInfo: CreateLessonMaterialRequest): Promise<CreateLessonMaterialResponse> {
-        const result = await this.assessmentCall("POST", "v1/lessonMaterial", JSON.stringify(lessonMaterialInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateLessonMaterial(lessonMaterialId: string, lessonMaterialInfo: UpdateLessonMaterialRequest) {
-        const result = await this.assessmentCall("PUT", "v1/lessonMaterial/" + lessonMaterialId, JSON.stringify(lessonMaterialInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteLessonMaterial(lessonMaterialId: string) {
-        const result = await this.assessmentCall("DELETE", "v1/lessonMaterial/" + lessonMaterialId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async getLessonMaterialIcon(lessonMaterialId: string) {
-        const result = await this.assessmentCall("GET", "v1/lessonMaterial/" + lessonMaterialId + "/icon");
-        // TODO
-    }
-
-    public async createLessonMaterialIcon(lessonMaterialId: string, lessonMaterialInfo: CreateLessonMaterialIconRequest): Promise<CreateLessonMaterialIconResponse> {
-        const result = await this.assessmentCall("POST", "v1/lessonMaterial/" + lessonMaterialId + "/icon", JSON.stringify(lessonMaterialInfo));
-        const body = await result.json();
-        return body;
-    }
-
-
-    // Lesson Plan
-
-    public async getLessonPlans(): Promise<LessonPlanListResponse> {
-        const result = await this.assessmentCall("GET", "v1/lessonPlan");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getLessonPlan(lessonPlanId: string): Promise<LessonPlanResponse> {
-        const result = await this.assessmentCall("GET", "v1/lessonPlan/" + lessonPlanId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createLessonPlan(lessonPlanInfo: CreateLessonPlanRequest): Promise<CreateLessonPlanResponse> {
-        const result = await this.assessmentCall("POST", "v1/lessonPlan", JSON.stringify(lessonPlanInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateLessonPlan(lessonPlanId: string, lessonPlanInfo: UpdateLessonPlanRequest) {
-        const result = await this.assessmentCall("PUT", "v1/lessonPlan/" + lessonPlanId, JSON.stringify(lessonPlanInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteLessonPlan(lessonPlanId: string) {
-        const result = await this.assessmentCall("DELETE", "v1/lessonPlan/" + lessonPlanId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async getLessonPlanIcon(lessonPlanId: string) {
-        const result = await this.assessmentCall("GET", "v1/lessonPlan/" + lessonPlanId + "/icon");
-        // TODO
-    }
-
-    public async createLessonPlanIcon(lessonPlanId: string, lessonPlanInfo: CreateLessonPlanIconRequest): Promise<CreateLessonPlanIconResponse> {
-        const result = await this.assessmentCall("POST", "v1/lessonPlan/" + lessonPlanId + "/icon", JSON.stringify(lessonPlanInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    // Learning Outcome
-
-    public async getLearningOutcomes(): Promise<LearningOutcomeListResponse> {
-        const result = await this.assessmentCall("GET", "v1/learningOutcome");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getLearningOutcome(loId: number): Promise<LearningOutcomeResponse> {
-        const result = await this.assessmentCall("GET", "v1/learningOutcome/" + loId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createLearningOutcome(learningOutcomeInfo: CreateLearningOutcomeRequest): Promise<CreateLearningOutcomeResponse> {
-        const result = await this.assessmentCall("POST", "v1/learningOutcome", JSON.stringify(learningOutcomeInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateLearningOutcome(loId: number, learningOutcomeInfo: UpdateLearningOutcomeRequest) {
-        const result = await this.assessmentCall("PUT", "v1/learningOutcome/" + loId, JSON.stringify(learningOutcomeInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteLearningOutcome(loId: number) {
-        const result = await this.assessmentCall("DELETE", "v1/learningOutcome/" + loId);
-        const body = await result.json();
-        return body;
-    }
-
-    // Dev Skill
-
-    public async getDevSkills(): Promise<DevSkillListResponse> {
-        const result = await this.assessmentCall("GET", "v1/devSkill");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getDevSkill(devSkillId: string): Promise<DevSkillResponse> {
-        const result = await this.assessmentCall("GET", "v1/devSkill/" + devSkillId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createDevSkill(devSkillInfo: CreateDevSkillRequest): Promise<CreateDevSkillResponse> {
-        const result = await this.assessmentCall("POST", "v1/devSkill", JSON.stringify(devSkillInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateDevSkill(devSkillId: string, devSkillInfo: UpdateDevSkillRequest) {
-        const result = await this.assessmentCall("PUT", "v1/devSkill/" + devSkillId, JSON.stringify(devSkillInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteDevSkill(devSkillId: string) {
-        const result = await this.assessmentCall("DELETE", "v1/devSkill/" + devSkillId);
-        const body = await result.json();
-        return body;
-    }
-
-    // Skill Cat
-
-    public async getSkillCats(): Promise<SkillCatListResponse> {
-        const result = await this.assessmentCall("GET", "v1/skillCat");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getSkillCat(skillCatId: string): Promise<SkillCatResponse> {
-        const result = await this.assessmentCall("GET", "v1/skillCat/" + skillCatId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createSkillCat(skillCatInfo: CreateSkillCatRequest): Promise<CreateSkillCatResponse> {
-        const result = await this.assessmentCall("POST", "v1/skillCat", JSON.stringify(skillCatInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateSkillCat(skillCatId: string, skillCatInfo: UpdateSkillCatRequest) {
-        const result = await this.assessmentCall("PUT", "v1/skillCat/" + skillCatId, JSON.stringify(skillCatInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteSkillCat(skillCatId: string) {
-        const result = await this.assessmentCall("DELETE", "v1/skillCat/" + skillCatId);
-        const body = await result.json();
-        return body;
-    }
-
-    // Assessment
-
-    public async getAssessments(): Promise<AssessmentListResponse> {
-        const result = await this.assessmentCall("GET", "v1/assessment");
-        const body = await result.json();
-        return body;
-    }
-
-    public async getAssessment(assId: string): Promise<AssessmentResponse> {
-        const result = await this.assessmentCall("GET", "v1/assessment/" + assId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async createAssessment(assInfo: CreateAssessmentRequest): Promise<CreateAssessmentResponse> {
-        const result = await this.assessmentCall("POST", "v1/assessment", JSON.stringify(assInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async updateAssessment(assId: string, assInfo: UpdateAssessmentRequest) {
-        const result = await this.assessmentCall("PUT", "v1/assessment/" + assId, JSON.stringify(assInfo));
-        const body = await result.json();
-        return body;
-    }
-
-    public async deleteAssessment(assId: string) {
-        const result = await this.assessmentCall("DELETE", "v1/assessment/" + assId);
-        const body = await result.json();
-        return body;
-    }
-
-    public async completeAssessment(assId: string, assInfo: CompleteAssessmentRequest): Promise<CompleteAssessmentResponse> {
-        console.log("assInfo", assInfo);
-        console.log("JSON.stringify(assInfo)", JSON.stringify(assInfo));
-        const result = await this.assessmentCall("POST", "v1/assessment/" + assId, JSON.stringify({
-            "students": mapToObj(assInfo.students)
-        }));
-        const body = await result.json();
-        return body;
-    }
-
-}
-
-const mapToObj = (m: any) => {
-    return Array.from(m).reduce((obj: any, [key, value]) => {
-        obj[key] = value;
-        return obj;
-    }, {});
-};
-
-// ---------------- Models ----------------
-class BaseCreate {
-    publish: boolean;
-}
-
-class BaseUpdate {
-    publish?: boolean;
-}
-
-class BaseInfo {
-    issuerId: string;
-    orgId: string;
-    published: boolean;
-    createdDate: number;
-    updatedDate: number;
-}
-
-// Lesson Material
-
-export class LessonMaterialListResponse {
-    lessonMaterials: Array<LessonMaterialResponse>;
-}
-
-export class LessonMaterialResponse extends BaseInfo {
-    lessonMaterialId: string;
-    type: number;
-    name: string;
-    externalId?: string;
-    externalType?: number;
-    devSkillId: string;
-    skillCatId: string;
-    publicRange: number;
-    suitableAge: number;
-    description: string;
-    learningOutcomes?: Array<number>;
-}
-
-export class CreateLessonMaterialRequest extends BaseCreate {
-    type: number;
-    externalId?: string;
-    externalType?: number;
-    name: string;
-    devSkillId: string;
-    skillCatId: string;
-    publicRange: number;
-    suitableAge: number;
-    description: string;
-    learningOutcomes: Array<number>;
-}
-
-export class CreateLessonMaterialResponse {
-    lessonMaterialId: string
-}
-
-export class UpdateLessonMaterialRequest extends BaseUpdate {
-    type?: number;
-    externalId?: string;
-    externalType?: number;
-    name?: string;
-    devSkillId?: string;
-    skillCatId?: string;
-    publicRange?: number;
-    suitableAge?: number;
-    description?: string;
-    learningOutcomes?: Array<number>;
-}
-
-export class CreateLessonMaterialIconRequest {
-    length: number
-}
-
-export class CreateLessonMaterialIconResponse {
-    url: string
-}
-
-// Lesson Plan
-
-export class LessonPlanListResponse {
-    lessonPlans: Array<LessonPlanResponse>;
-}
-
-export class LessonPlanResponse extends BaseInfo {
-    lessonPlanId: string;
-    name: string;
-    externalId?: string;
-    externalType?: number;
-    devSkillId: string;
-    skillCatId: string;
-    publicRange: number;
-    suitableAge: number;
-    description: string;
-    lessonMaterials?: Array<LessonMaterialLessonPlanResponse>;
-    learningOutcomes?: Array<number>;
-}
-
-export class LessonMaterialLessonPlanResponse {
-    title: string;
-    description: string;
-    lessonMaterialId: string;
-    duration: number;
-}
-
-export class CreateLessonPlanRequest extends BaseCreate {
-    name: string;
-    externalId?: string;
-    externalType?: number;
-    devSkillId: string;
-    skillCatId: string;
-    publicRange: number;
-    suitableAge: number;
-    description: string;
-    details: Array<CreateLessonMaterialLessonPlanRequest>;
-    learningOutcomes: Array<number>;
-}
-
-export class CreateLessonMaterialLessonPlanRequest {
-    title: string;
-    description: string;
-    lessonMaterialId: string;
-    duration: number;
-}
-
-export class CreateLessonPlanResponse {
-    lessonPlanId: string
-}
-
-export class UpdateLessonPlanRequest extends BaseUpdate {
-    externalId?: string;
-    externalType?: number;
-    name?: string;
-    devSkillId?: string;
-    skillCatId?: string;
-    publicRange?: number;
-    suitableAge?: number;
-    description?: string;
-    details?: Array<UpdateLessonMaterialLessonPlanRequest>;
-    learningOutcomes?: Array<number>;
-}
-
-export class UpdateLessonMaterialLessonPlanRequest {
-    title: string;
-    description: string;
-    lessonMaterialId: string;
-    duration: number;
-}
-
-export class CreateLessonPlanIconRequest {
-    length: number
-}
-
-export class CreateLessonPlanIconResponse {
-    url: string
-}
-
-// Learning Outcome
-
-export class LearningOutcomeListResponse {
-    learningOutcomes: Array<LearningOutcomeResponse>;
-}
-
-export class LearningOutcomeResponse extends BaseInfo {
-    loId: number;
-    accountId: string;
-    title: string;
-    progId: string;
-    devSkillId: string;
-    skillCatId: string;
-    assumed: boolean;
-    description: string;
-    estimatedDuration?: number;
-    tags: Array<string>;
-}
-
-export class CreateLearningOutcomeRequest extends BaseCreate {
-    title: string;
-    progId: string;
-    devSkillId: string;
-    skillCatId: string;
-    assumed: boolean;
-    description: string;
-    estimatedDuration?: number;
-    tags: Array<string>;
-}
-
-export class CreateLearningOutcomeResponse {
-    loId: number
-}
-
-export class UpdateLearningOutcomeRequest extends BaseUpdate {
-    title?: string;
-    progId?: string;
-    devSkillId?: string;
-    skillCatId?: string;
-    assumed?: boolean;
-    description?: string;
-    estimatedDuration?: number;
-    tags?: Array<string>;
-}
-
-// Dev Skill
-
-export class DevSkillListResponse {
-    devSkills: Array<DevSkillResponse>;
-}
-
-export class DevSkillResponse extends BaseInfo {
-    devSkillId: string;
-    name: string;
-}
-
-export class CreateDevSkillRequest extends BaseCreate {
-    name: string;
-}
-
-export class CreateDevSkillResponse {
-    devSkillId: string;
-}
-
-export class UpdateDevSkillRequest extends BaseUpdate {
-    name?: string;
-}
-
-// Skill Cat
-
-export class SkillCatListResponse {
-    skillCats: Array<SkillCatResponse>;
-}
-
-export class SkillCatResponse extends BaseInfo {
-    skillCatId: string;
-    devSkillId: string;
-    name: string;
-}
-
-export class CreateSkillCatRequest extends BaseCreate {
-    name: string;
-}
-
-export class CreateSkillCatResponse {
-    skillCatId: string;
-}
-
-export class UpdateSkillCatRequest extends BaseUpdate {
-    devSkillId?: string;
-    name?: string;
-}
-
-// Assessment
-
-export class AssessmentListResponse {
-    assessments: Array<AssessmentResponse>;
-}
-
-export class AssessmentResponse extends BaseInfo {
-    assId: string;
-    progId: string;
-    classId: string;
-    lessonPlanId: string;
-    sessionId: string;
-    name: string;
-    duration: number;
-    assessedDate: number;
-    subject: string;
-    students: Array<AssessmentStudentResponse>;
-    published: boolean;
-    lessonMaterials?: Array<LessonMaterialResponse>;
-    learningOutcomes?: Array<AssessmentLearningOutcomeResponse>;
-    state: number;
-}
-
-export class AssessmentStudentResponse {
-    profileId: string;
-    profileName: string;
-    iconLink: string;
-}
-
-export class AssessmentLearningOutcomeResponse {
-    loId: number;
-    assessedStudents: Array<string>;
-    assumed: boolean;
-}
-
-export class CreateAssessmentRequest extends BaseCreate {
-    progId: string;
-    classId: string;
-    className: string;
-    lessonPlanId: string;
-    sessionId: string;
-    startDate: number;
-    subject: string;
-}
-
-export class CreateAssessmentResponse {
-    assId: string;
-}
-
-export class UpdateAssessmentRequest extends BaseUpdate {
-    sessionId?: string;
-    awardedStudents?: Array<UpdateAssessmentAwardedStudentRequest>;
-    students?: Array<UpdateAssessmentStudentRequest>;
-    publish?: boolean;
-    state?: number;
-}
-
-export class UpdateAssessmentAwardedStudentRequest {
-    profileId: string;
-    loId: number;
-}
-
-export class UpdateAssessmentStudentRequest {
-    profileId: string;
-    profileName: string;
-    iconLink: string;
-}
-
-export class CompleteAssessmentRequest {
-    sessionId: string;
-    students: Map<string, CompleteAssessmentStudentsResquest>;
-    date: number;
-}
-
-export class CompleteAssessmentStudentsResquest {
-    successOutcomes: Array<number>;
-    failureOutcomes: Array<number>;
-}
-
-export class CompleteAssessmentResponse {
-    sessionId: string;
 }
 
 export function useRestAPI() {

@@ -1,16 +1,17 @@
-import Avatar from "@material-ui/core/Avatar";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { FormattedMessage } from "react-intl";
+import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import React from "react";
-import { useSelector } from "react-redux";
-import { State } from "../../../../store/store";
+import Divider from "@material-ui/core/Divider";
 
-import CalmIslandLogo from "../../../../assets/img/calmisland_logo.png";
+import { useRestAPI } from "../../../../api/restapi";
+
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
 
@@ -49,8 +50,11 @@ const useStyles = makeStyles((theme) => createStyles({
 
 export default function UserSettings() {
     const classes = useStyles();
+    const history = useHistory();
+    const api = useRestAPI();
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [logoutInFlight, setLogoutInFlight] = useState(false);
     const open = Boolean(anchorEl);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -61,46 +65,67 @@ export default function UserSettings() {
         setAnchorEl(null);
     };
 
-    return (
-        <>
-            <Grid item>
-                <Tooltip title="Account Settings Coming Soon" placement="bottom">
-                    <Button
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        className={classes.profileButton}
-                        fullWidth
+    async function logout() {
+        if (logoutInFlight) { return; }
+        try {
+            setLogoutInFlight(true);
+            await api.endSession();
+            history.push("/login");
+        } catch (e) {
+            alert(e);
+        } finally {
+            // setLogoutInFlight(false);
+        }
+    }
 
-                        onClick={handleMenu}
-                    >
-                        <Grid
-                            container
-                            direction="row"
-                            justify="flex-end"
-                            alignItems="center"
-                            style={{ flexWrap: "nowrap" }}
-                        >
-                            <Hidden xsDown>
-                                <img className={classes.avatar} src={KidsloopLogo} height={32} />
-                            </Hidden>
-                            <Hidden smUp>
-                                <img className={classes.avatar} src={KidsloopLogoAlt} height={32} />
-                            </Hidden>
-                        </Grid>
-                    </Button>
-                </Tooltip>
-            </Grid>
-            {/* <StyledMenu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
+    return (<>
+        <Grid item>
+            <Button
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                className={classes.profileButton}
+                fullWidth
+
+                onClick={handleMenu}
             >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-            </StyledMenu> */}
-        </>
-    );
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
+                    style={{ flexWrap: "nowrap" }}
+                >
+                    <Hidden xsDown>
+                        <img className={classes.avatar} src={KidsloopLogo} height={32} />
+                    </Hidden>
+                    <Hidden smUp>
+                        <img className={classes.avatar} src={KidsloopLogoAlt} height={32} />
+                    </Hidden>
+                </Grid>
+            </Button>
+        </Grid>
+        <StyledMenu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            keepMounted
+            open={open}
+            onClose={handleClose}
+        >
+            <Tooltip title="Profile Coming Soon" placement="bottom">
+                <MenuItem onClick={handleClose}>
+                    <FormattedMessage id="userSettings_profile" />
+                </MenuItem>
+            </Tooltip>
+            <Tooltip title="My account Coming Soon" placement="bottom">
+                <MenuItem onClick={handleClose}>
+                    <FormattedMessage id="userSettings_myAccount" />
+                </MenuItem>
+            </Tooltip>
+            <Divider />
+            <MenuItem onClick={logout}>
+                <FormattedMessage id="userSettings_signout" />
+            </MenuItem>
+        </StyledMenu>
+    </>);
 }

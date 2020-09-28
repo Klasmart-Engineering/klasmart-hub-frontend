@@ -6,7 +6,7 @@ import * as React from "react";
 
 const styles = (theme: Theme) => createStyles({
     responsiveTypography: {
-        color: "white",
+        color: "#000",
         display: "inline",
         paddingBottom: theme.spacing(2),
         textAlign: "center",
@@ -33,7 +33,7 @@ class Copyright extends React.PureComponent<Props, any> {
                     <Link color="inherit" target="_blank" href="https://badanamu.com/">
                         Calm Island Limited. All rights reserved.
                     </Link>{" "}
-                    Badanamu Zoo and the KidsLoop logo are registered trademarks of Calm Island Limited.
+                    The KidsLoop logo is a registered trademarks of Calm Island Limited.
                     {" "}
                 </Typography>
                 {/* <Typography variant="caption" color="textSecondary" className={this.props.classes.responsiveTypography}>

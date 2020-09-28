@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 interface Props extends StandardTextFieldProps {
     children?: React.ReactNode;
     className?: string;
+    showForgotPassword?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -45,33 +46,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export default function StyledTextField(props: Props) {
     const classes = useStyles();
     const history = useHistory();
-    const {children, className, type, ...other} = props;
+    const { children, className, showForgotPassword, type, ...other } = props;
 
     return (
         <>
             <TextField {...other}
                 className={classes.txtfield}
-                inputProps={type === "number" ? { min: 0, max: 9999} : { maxLength: 200 }}
-                onInput={type === "number" ? (e)=>{ 
-                    (e.target as HTMLTextAreaElement).value = Math.max(0, parseInt((e.target as HTMLTextAreaElement).value) ).toString().slice(0,4);
-                }: () => {}}
+                inputProps={type === "number" ? { min: 0, max: 9999 } : { maxLength: 200 }}
+                onInput={type === "number" ? (e) => {
+                    (e.target as HTMLTextAreaElement).value = Math.max(0, parseInt((e.target as HTMLTextAreaElement).value)).toString().slice(0, 4);
+                } : () => { }}
                 InputLabelProps={{
                     classes: {
                         focused: classes.cssFocused,
                         root: classes.cssLabel,
                     },
                 }}
-                InputProps={{
-                    classes: {
-                        focused: classes.cssFocused,
-                        notchedOutline: classes.notchedOutline,
-                        root: classes.cssOutlinedInput,
-                    },
-                }}
                 type={type}
                 variant="outlined"
             />
-            { type === "password" ?
+            { showForgotPassword ?
                 <Link
                     href="#"
                     variant="subtitle2"

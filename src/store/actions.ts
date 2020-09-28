@@ -30,6 +30,17 @@ export type LoginAction = Action<ActionTypes.LOGIN, {
 
 export interface LogoutAction { type: ActionTypes.LOGOUT; }
 
+export interface AccessTokenExpiredAction { type: ActionTypes.EXPIRED_ACCESS_TOKEN; }
+export interface RefreshTokenExpiredAction { type: ActionTypes.EXPIRED_REFRESH_TOKEN; }
+
+export type ProductIdAction = Action<ActionTypes.PRODUCT_ID, string>;
+export type PassAction = Action<ActionTypes.PASS, any>;
+export type PassesAction = Action<ActionTypes.PASSES, Array<{ access: boolean, passId: string, expirationDate: number }>>;
+export type SetEMailAction = Action<ActionTypes.EMAIL, string>;
+
+export type SimulateUnstableConnection = Action<ActionTypes.SIMULATE_UNSTABLE_CONNECTION, boolean>;
+export type SetFakeNonce = Action<ActionTypes.FAKE_NONCE, undefined | null | string>;
+
 export type SignUpAction = Action<ActionTypes.SIGNUP, {
     accountId?: string | any,
 } | any | undefined>;
@@ -76,20 +87,23 @@ export type FinishLiveData = Action<ActionTypes.FINISH_LIVE_DATA, LiveSessionDat
 export type SelectedLessonPlan = Action<ActionTypes.SELECTED_LESSON_PLAN, string>;
 
 export enum ActionTypes {
-    LOCALE,
     LOGIN,
-    SIGNUP,
     LOGOUT,
-    LIVE_CLASS_TOGGLE,
+    SIGNUP,
     REFRESH_SESSION,
-    POST_AUTHORIZATION_ROUTE,
-    DARK_MODE,
-    ACCOUNT_ID,
-    EXPIRED_REFRESH_TOKEN,
-    EMAIL,
-    USER_AGENT,
-    DEVICE_ID,
     EXPIRED_ACCESS_TOKEN,
+    EXPIRED_REFRESH_TOKEN,
+    ACCOUNT_ID,
+    DEVICE_ID,
+    POST_AUTHORIZATION_ROUTE,
+    PASS,
+    PRODUCT_ID,
+    PASSES,
+    EMAIL,
+    LOCALE,
+    DARK_MODE,
+    LIVE_CLASS_TOGGLE,
+    USER_AGENT,
     CLASS_SETTINGS_TOGGLE,
     ACTIVE_COMPONENT_HOME,
     ASSESSMENT_TOKEN,
@@ -102,23 +116,30 @@ export enum ActionTypes {
     ACTIVITIES,
     FINISH_LIVE_DATA,
     SELECTED_LESSON_PLAN,
+    // Testing
+    FAKE_NONCE,
+    SIMULATE_UNSTABLE_CONNECTION,
 }
 
 export type Actions =
-    | SetLocale
-    | SetDarkMode
-    | SetUserAgent
     | LoginAction
     | LogoutAction
     | SignUpAction
-    | SetEmailAction
-    | ToggleClassSettings
-    | PostAuthorizationRouteAction
-    | RefreshTokenExpiredAction
-    | AccountIdAction
     | RefreshSessionAction
     | AccessTokenExpiredAction
+    | RefreshTokenExpiredAction
     | DeviceIdAction
+    | AccountIdAction
+    | PostAuthorizationRouteAction
+    | PassAction
+    | ProductIdAction
+    | PassesAction
+    | SetEMailAction
+    | SetLocale
+    | SetDarkMode
+    | SetUserAgent
+    | SetEmailAction
+    | ToggleClassSettings
     | ToggleLiveClass
     | SetActiveComponentHome
     | AssessmentToken
@@ -130,4 +151,7 @@ export type Actions =
     | Activities
     | FinishLiveData
     | SelectedLessonPlan
+    // Testing
+    | SetFakeNonce
+    | SimulateUnstableConnection
     | never;

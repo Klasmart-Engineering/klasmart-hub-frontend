@@ -3,49 +3,6 @@ import { getDefaultLanguageCode } from "../utils/locale";
 import { Actions, ActionTypes } from "./actions";
 import { AssessmentsMenu } from "../types/objectTypes";
 
-export function locale(state = getDefaultLanguageCode(), action: Actions) {
-    switch (action.type) {
-    case ActionTypes.LOCALE:
-        return action.payload;
-    default:
-        return state;
-    }
-}
-
-export function userAgent(state = {
-    isEdge: false,
-    isIE: false,
-    isIOS: false,
-    isLandscape: false,
-    isMobile: false,
-    isMobileSafari: false,
-}, action: Actions) {
-    switch (action.type) {
-    case ActionTypes.USER_AGENT:
-        return action.payload;
-    default:
-        return state;
-    }
-}
-
-export function darkMode(state = "light", action: Actions) {
-    switch (action.type) {
-    case ActionTypes.DARK_MODE:
-        return action.payload;
-    default:
-        return state;
-    }
-}
-
-export function deviceId(state = null, action: Actions) {
-    switch (action.type) {
-    case ActionTypes.DEVICE_ID:
-        return action.payload;
-    default:
-        return state;
-    }
-}
-
 export function postAuthorizationRoute(state = null, action: Actions) {
     switch (action.type) {
     case ActionTypes.POST_AUTHORIZATION_ROUTE:
@@ -163,6 +120,94 @@ export function accessTokenExpire(state = null, action: Actions) {
     case ActionTypes.LOGOUT:
     case ActionTypes.EXPIRED_ACCESS_TOKEN:
         return null;
+    default:
+        return state;
+    }
+}
+
+export function deviceId(state = null, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.DEVICE_ID:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function productId(state = null, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.PRODUCT_ID:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function pass(state = null, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.PASS:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+export function passes(state = null, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.PASSES:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function locale(state = getDefaultLanguageCode(), action: Actions) {
+    switch (action.type) {
+    case ActionTypes.LOCALE:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function darkMode(state = "light", action: Actions) {
+    switch (action.type) {
+    case ActionTypes.DARK_MODE:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+// Testing
+export function fakeNonce(state = "", action: Actions) {
+    switch (action.type) {
+    case ActionTypes.FAKE_NONCE:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function unstableConnection(state = false, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.SIMULATE_UNSTABLE_CONNECTION:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function userAgent(state = {
+    isEdge: false,
+    isIE: false,
+    isIOS: false,
+    isLandscape: false,
+    isMobile: false,
+    isMobileSafari: false,
+}, action: Actions) {
+    switch (action.type) {
+    case ActionTypes.USER_AGENT:
+        return action.payload;
     default:
         return state;
     }
@@ -359,6 +404,13 @@ export const account = combineReducers({
     suitableAges,
     activities,
     selectedLessonPlan,
+    pass,
+    passes,
+    productId,
+    // Testing
+    // tslint:disable:object-literal-sort-keys
+    unstableConnection,
+    // tslint:enable:object-literal-sort-keys
 });
 
 export const ui = combineReducers({

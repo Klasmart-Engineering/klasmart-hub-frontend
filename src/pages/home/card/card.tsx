@@ -1,17 +1,17 @@
-import { Box, CircularProgress, Container, Hidden, Paper, Typography, useMediaQuery } from "@material-ui/core";
-import Fade from "@material-ui/core/Fade";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useSelector, useStore } from "react-redux";
+import React, { useState } from "react";
+import { FormattedMessage } from "react-intl";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { mainNavBar } from "../../../app";
-import CenterAlignChildren from "../../../components/centerAlignChildren";
-import NavBar from "../../../components/styled/navbar/navbar";
-import { State } from "../../../store/store";
+import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
+import { useMediaQuery } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+
 import ContentCard from "./contentCard";
+import CenterAlignChildren from "../../../components/centerAlignChildren";
 
 import GeniusBannerMobile from "../../../assets/img/bgf/bgf_banner_mobile.jpg";
 import GeniusBannerWeb from "../../../assets/img/bgf/bgf_banner_web.jpg";
@@ -120,7 +120,7 @@ export default function CardLayout() {
     const [activeStep, setActiveStep] = useState(0);
 
     const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1 );
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
     const handleBack = () => {
@@ -140,7 +140,7 @@ export default function CardLayout() {
                 <Grid item xs={12} style={{ margin: theme.spacing(0, 2) }}>
                     <CenterAlignChildren center>
                         <Typography variant="h4" align="center">
-                            Featured Content
+                            <FormattedMessage id="live_featuredContent" />
                         </Typography>
                     </CenterAlignChildren>
                 </Grid>
@@ -152,9 +152,9 @@ export default function CardLayout() {
                         enableMouseEvents
                         containerStyle={{ width: isSmDown ? "100%" : (isMdDown ? "50%" : "100%") }}
                     >
-                        { FEATURED_CONTENT.map((content) => (
+                        {FEATURED_CONTENT.map((content) => (
                             <Paper elevation={4} className={classes.paperContainer} key={content.metadata.title}>
-                                <ContentCard featuredContent={content}/>
+                                <ContentCard featuredContent={content} />
                             </Paper>
                         ))}
                     </AutoPlaySwipeableViews>

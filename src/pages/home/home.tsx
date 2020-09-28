@@ -5,6 +5,8 @@ import * as React from "react";
 import CardLayout from "./card/card";
 
 import LiveLayout from "./live/live";
+import NavBar from "../../components/styled/navbar/navbar";
+import { mainNavBar } from "../../app";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -38,7 +40,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Home() {
-    return (
+    return (<>
+        <NavBar menuLabels={mainNavBar} />
         <Container
             disableGutters
             maxWidth={"lg"}
@@ -51,5 +54,5 @@ export default function Home() {
                 </Grid>
             </Grid>
         </Container>
-    );
+    </>);
 }
