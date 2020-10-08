@@ -1,17 +1,17 @@
+import { useMediaQuery } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
-import { useMediaQuery } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
 
-import ContentCard from "./contentCard";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
+import ContentCard from "./contentCard";
 
 import GeniusBannerMobile from "../../../assets/img/bgf/bgf_banner_mobile.jpg";
 import GeniusBannerWeb from "../../../assets/img/bgf/bgf_banner_web.jpg";
@@ -101,8 +101,8 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: theme.spacing(0.25, 0.75),
         },
         paperContainer: {
-            margin: theme.spacing(4, 2),
             borderRadius: 12,
+            margin: theme.spacing(4, 2),
             boxShadow: theme.palette.type === "dark" ? "0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)" : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
         },
         root: {
@@ -118,14 +118,7 @@ export default function CardLayout() {
     const isSmDown = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [activeStep, setActiveStep] = useState(0);
-
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
+    const [autoplay, setAutoplay] = useState(true);
 
     const handleStepChange = (step: number) => {
         setActiveStep(step);
@@ -144,11 +137,16 @@ export default function CardLayout() {
                         </Typography>
                     </CenterAlignChildren>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                    item
+                    xs={12}
+                    onMouseEnter={() => setAutoplay(false)}
+                    onMouseLeave={() => setAutoplay(true)}
+                >
                     <AutoPlaySwipeableViews
                         axis={"x"}
                         index={activeStep}
-                        onChangeIndex={handleStepChange}
+                        onChangeIndex={(activeStep) => autoplay && handleStepChange(activeStep)}
                         enableMouseEvents
                         containerStyle={{ width: isSmDown ? "100%" : (isMdDown ? "50%" : "100%") }}
                     >

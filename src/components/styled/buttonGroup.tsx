@@ -8,10 +8,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
-import { withStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import SendIcon from "@material-ui/icons/Send";
 import React, { useRef, useState } from "react";
+import { isMobileSafari } from "react-device-detect";
 import StyledButton from "./button";
 
 interface Props extends ButtonProps {
@@ -21,6 +22,16 @@ interface Props extends ButtonProps {
     extendedOnly?: boolean;
     options: Array<{ action?: () => void; disabled: boolean; label: string; }>;
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        popover: {
+            "& *": {
+                touchAction: "auto !important",
+            },
+        },
+    }),
+);
 
 const StyledBtnGroup = withStyles({
     root: {
@@ -39,6 +50,7 @@ const StyledBtnGroup = withStyles({
 
 export default function StyledButtonGroup(props: Props) {
     const {ariaLabel, children, extendedOnly, options, ...other } = props;
+    const classes = useStyles();
 
     const [open, setOpen] = useState(false);
     const anchorRef = useRef<HTMLDivElement>(null);
@@ -53,7 +65,7 @@ export default function StyledButtonGroup(props: Props) {
     };
 
     const handleToggle = () => {
-        setOpen((prevOpen) => !prevOpen);
+        setOpen(!open);
     };
 
     const handleClose = (event: React.MouseEvent<Document, MouseEvent>) => {
@@ -64,54 +76,78 @@ export default function StyledButtonGroup(props: Props) {
     return (
         <Grid container direction="column" alignItems="center">
             <Grid item xs={12}>
-                <StyledBtnGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
-                    <StyledButton
-                        disabled={options[selectedIndex].disabled}
-                        extendedOnly
-                        onClick={options[selectedIndex].action}
-                    >
-                        {options[selectedIndex].label}&nbsp;{options[selectedIndex].disabled ? <sub>(Coming Soon)</sub> : ""}
-                    </StyledButton>
-                    <StyledButton
-                        color="primary"
-                        size="small"
-                        aria-controls={open ? "split-button-menu" : undefined}
-                        aria-expanded={open ? "true" : undefined}
-                        aria-label={ariaLabel}
-                        aria-haspopup="menu"
-                        onClick={handleToggle}
-                        style={{ minWidth: 0 }}
-                    >
-                        <ArrowDropDownIcon />
-                    </StyledButton>
-                </StyledBtnGroup>
-                <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-                    {({ TransitionProps, placement }) => (
-                        <Grow
-                            {...TransitionProps}
-                            style={{
-                                transformOrigin: placement === "bottom" ? "center top" : "center bottom",
-                            }}
-                        >
-                            <Paper>
-                                <ClickAwayListener onClickAway={handleClose}>
-                                    <MenuList id="split-button-menu">
-                                        {options.map((option, index) => (
-                                            <MenuItem
-                                                key={option.label}
-                                                disabled={option.disabled === true}
-                                                selected={index === selectedIndex}
-                                                onClick={(event) => handleMenuItemClick(event, index)}
-                                            >
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </MenuList>
-                                </ClickAwayListener>
-                            </Paper>
-                        </Grow>
-                    )}
-                </Popper>
+                { !isMobileSafari ?
+                    <>
+                        <StyledBtnGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
+                            <StyledButton
+                                disabled={options[selectedIndex].disabled}
+                                extendedOnly
+                                onClick={options[selectedIndex].action}
+                            >
+                                {options[selectedIndex].label}&nbsp;{options[selectedIndex].disabled ? <sub>(Coming Soon)</sub> : ""}
+                            </StyledButton>
+                            <StyledButton
+                                color="primary"
+                                size="small"
+                                aria-controls={open ? "split-button-menu" : undefined}
+                                aria-expanded={open ? "true" : undefined}
+                                aria-label={ariaLabel}
+                                aria-haspopup="menu"
+                                onClick={handleToggle}
+                                style={{ minWidth: 0 }}
+                            >
+                                <ArrowDropDownIcon />
+                            </StyledButton>
+                        </StyledBtnGroup>
+                        <Popper open={open} anchorEl={anchorRef.current} className={classes.popover} role={undefined} transition disablePortal>
+                            {({ TransitionProps, placement }) => (
+                                <Grow
+                                    {...TransitionProps}
+                                    style={{
+                                        transformOrigin: placement === "bottom" ? "center top" : "center bottom",
+                                    }}
+                                >
+                                    <Paper>
+                                        <ClickAwayListener onClickAway={handleClose}>
+                                            <MenuList id="split-button-menu">
+                                                {options.map((option, index) => (
+                                                    <MenuItem
+                                                        key={option.label}
+                                                        disabled={option.disabled === true}
+                                                        selected={index === selectedIndex}
+                                                        onClick={(event) => handleMenuItemClick(event, index)}
+                                                    >
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </MenuList>
+                                        </ClickAwayListener>
+                                    </Paper>
+                                </Grow>
+                            )}
+                        </Popper>
+                    </> :
+                    <Grid container spacing={1}>
+                        <Grid item>
+                            <StyledButton
+                                disabled={options[0].disabled}
+                                extendedOnly
+                                onClick={options[0].action}
+                            >
+                                {options[0].label}&nbsp;{options[0].disabled ? <sub>(Coming Soon)</sub> : ""}
+                            </StyledButton>
+                        </Grid>
+                        <Grid item>
+                            <StyledButton
+                                disabled={options[1].disabled}
+                                extendedOnly
+                                onClick={options[1].action}
+                            >
+                                {options[1].label}&nbsp;{options[1].disabled ? <sub>(Coming Soon)</sub> : ""}
+                            </StyledButton>
+                        </Grid>
+                    </Grid>
+                }
             </Grid>
         </Grid>
     );

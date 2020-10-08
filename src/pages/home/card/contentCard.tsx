@@ -128,7 +128,7 @@ export default function ContentCard(props: Props) {
                 >
                     <Grid item>
                         <CenterAlignChildren>
-                            <img src={featuredContent.images.logo} style={{ marginRight: theme.spacing(1), maxHeight: "5vw" }}/>
+                            <img src={featuredContent.images.logo} style={{ marginRight: theme.spacing(1), maxHeight: isMdDown ? 64 : "5vw" }}/>
                             <Typography variant="h5">
                                 {featuredContent.metadata.title}
                             </Typography>
