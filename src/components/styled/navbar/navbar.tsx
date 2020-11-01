@@ -1,3 +1,4 @@
+import { Link, Paper } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
@@ -109,7 +110,9 @@ export default function NavBar(props: Props) {
     const classes = useStyles();
     const store = useStore();
     const theme = useTheme();
+    const history = useHistory();
     const { menuLabels } = props;
+    const url = new URL(window.location.href);
 
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
 
@@ -179,6 +182,47 @@ export default function NavBar(props: Props) {
                     </Grid>
                 </Toolbar>
             </AppBar>
+            {
+                url.hash.includes("#/library") || url.hash.includes("#/badanamu-content") ?
+                    <Grid
+                        container
+                        direction="row"
+                    >
+                        <Paper square style={{ flex: 1, height: "100%" }}>
+                            <Toolbar variant="dense">
+                                <Grid container direction="row" spacing={2}>
+                                    <Grid item>
+                                        <Link
+                                            href="#"
+                                            variant="body2"
+                                            onClick={(e: React.MouseEvent) => { history.push("/library"); e.preventDefault(); }}
+                                            style={{
+                                                color: url.hash.includes("#/library") ? "#0E78D5" : "black",
+                                                textDecoration: url.hash.includes("#/library") ? "underline" : "none",
+                                            }}
+                                        >
+                                            Organization Content
+                                        </Link>
+                                    </Grid>
+                                    <Grid item>
+                                        <Link
+                                            href="#"
+                                            variant="body2"
+                                            onClick={(e: React.MouseEvent) => { history.push("/badanamu-content"); e.preventDefault(); }}
+                                            style={{
+                                                color: url.hash.includes("#/badanamu-content") ? "#0E78D5" : "black",
+                                                textDecoration: url.hash.includes("#/badanamu-content") ? "underline" : "none",
+                                            }}
+                                        >
+                                            Badanamu Content
+                                        </Link>
+                                    </Grid>
+                                </Grid>
+                            </Toolbar>
+                        </Paper>
+                    </Grid>
+                    : null
+            }
             <ClassSettings />
         </div>
     );

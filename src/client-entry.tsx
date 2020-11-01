@@ -17,6 +17,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Layout } from "./layout";
 import { createDefaultStore, State } from "./store/store";
 import { themeProvider } from "./themeProvider";
+import { redirectIfUnauthorized } from "./utils/accountUtils";
 import { getLanguage } from "./utils/locale";
 
 function ClientSide() {
@@ -47,6 +48,8 @@ async function main() {
         const axe = require("react-axe");
         // axe(React, ReactDOM, 1000);
     }
+
+    redirectIfUnauthorized();
 
     const div = document.getElementById("app");
     ReactDOM.render(

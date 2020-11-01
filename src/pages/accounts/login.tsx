@@ -8,17 +8,16 @@ import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector, useStore } from "react-redux";
 import { useHistory } from "react-router";
-import { redirectIfAuthorized } from "../../components/authorized";
 import { useRestAPI } from "../../api/restapi";
 import { RestAPIError, RestAPIErrorType } from "../../api/restapi_errors";
+import KidsloopLogo from "../../assets/img/kidsloop.svg";
+import { redirectIfAuthorized } from "../../components/authorized";
+import { isLoggedIn } from "../../components/authorized";
+import StyledButton from "../../components/styled/button";
+import StyledTextField from "../../components/styled/textfield";
 import { ActionTypes } from "../../store/actions";
 import { State } from "../../store/store";
-import KidsloopLogo from "../../assets/img/kidsloop.svg";
-import StyledTextField from "../../components/styled/textfield";
-import StyledButton from "../../components/styled/button";
 import { AccountsLayout } from "./accounts";
-import { isLoggedIn } from "../../components/authorized";
-
 
 // tslint:disable:object-literal-sort-keys
 const useStyles = makeStyles((theme) => createStyles(
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme) => createStyles(
                 textAlign: "left",
             },
         },
-    }
+    },
 ));
 // tslint:enable:object-literal-sort-keys
 
@@ -78,22 +77,22 @@ export function Login() {
         const id = e.getErrorMessageID();
         const errorMessage = <FormattedMessage id={id} />;
         switch (e.getErrorMessageType()) {
-            case RestAPIErrorType.INVALID_LOGIN:
-                setEmailError(errorMessage);
-                break;
-            case RestAPIErrorType.INVALID_PASSWORD:
-                setPasswordError(errorMessage);
-                break;
-            case RestAPIErrorType.EMAIL_NOT_VERIFIED:
-                history.push("/verify-email");
-                break;
-            case RestAPIErrorType.PHONE_NUMBER_NOT_VERIFIED:
-                history.push("/verify-phone");
-                break;
-            case RestAPIErrorType.ACCOUNT_BANNED:
-            default:
-                setGeneralError(errorMessage);
-                break;
+        case RestAPIErrorType.INVALID_LOGIN:
+            setEmailError(errorMessage);
+            break;
+        case RestAPIErrorType.INVALID_PASSWORD:
+            setPasswordError(errorMessage);
+            break;
+        case RestAPIErrorType.EMAIL_NOT_VERIFIED:
+            history.push("/verify-email");
+            break;
+        case RestAPIErrorType.PHONE_NUMBER_NOT_VERIFIED:
+            history.push("/verify-phone");
+            break;
+        case RestAPIErrorType.ACCOUNT_BANNED:
+        default:
+            setGeneralError(errorMessage);
+            break;
         }
     }
 

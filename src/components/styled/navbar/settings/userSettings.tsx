@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { FormattedMessage } from "react-intl";
-import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import Divider from "@material-ui/core/Divider";
+import Cookies from "js-cookie";
+import React, { useState } from "react";
+import { FormattedMessage } from "react-intl";
+import { useHistory } from "react-router-dom";
 
 import { useRestAPI } from "../../../../api/restapi";
 
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
+import { redirectIfUnauthorized } from "../../../../utils/accountUtils";
 
 const StyledMenu = withStyles({
     paper: {
@@ -68,13 +70,11 @@ export default function UserSettings() {
     async function logout() {
         if (logoutInFlight) { return; }
         try {
-            setLogoutInFlight(true);
-            await api.endSession();
-            history.push("/login");
+            Cookies.remove("access", { path: "/", domain: ".kidsloop.net" });
         } catch (e) {
             alert(e);
         } finally {
-            // setLogoutInFlight(false);
+            redirectIfUnauthorized();
         }
     }
 
