@@ -49,7 +49,9 @@ async function main() {
         // axe(React, ReactDOM, 1000);
     }
 
-    redirectIfUnauthorized();
+    if (window.location.host.split(":")[0] !== "localhost") {
+        redirectIfUnauthorized();
+    }
 
     const div = document.getElementById("app");
     ReactDOM.render(

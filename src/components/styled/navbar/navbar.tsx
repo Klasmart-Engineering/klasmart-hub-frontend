@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         title: {
             flex: 1,
-            // marginLeft: theme.spacing(2),
+            marginLeft: theme.spacing(2),
         },
     }),
 );
@@ -140,9 +140,8 @@ export default function NavBar(props: Props) {
                             wrap="nowrap"
                             style={{ minHeight }}
                         >
-                            <Grid container item xs={8} direction="row"
-                                wrap="nowrap">
-                                {/* <NavMenu /> */}
+                            <Grid container item xs={8} direction="row" wrap="nowrap">
+                                <NavMenu />
                                 <ClassroomLabel classes={classes.title} />
                             </Grid>
                             <Hidden mdUp>
