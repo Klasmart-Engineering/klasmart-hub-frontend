@@ -22,8 +22,8 @@ import SecurityTwoToneIcon from "@material-ui/icons/SecurityTwoTone";
 import TableChartTwoToneIcon from "@material-ui/icons/TableChartTwoTone";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
 import { State } from "../../../store/store";
 import { MenuItem } from "../../../types/objectTypes";
@@ -125,8 +125,8 @@ export default function NavMenu() {
 
     const MENU_ITEMS: MenuItem[] = [
         {
-            description: "Monitor usage across your organization",
-            link: "#",
+            description: "View learning outcomes and student statistics",
+            link: "/admin/report",
             logo: <TableChartTwoToneIcon style={{ color: "#f7a219", fontSize: 48 }} />,
             title: "Analytics and Reports",
         },
@@ -156,13 +156,13 @@ export default function NavMenu() {
         },
         {
             description: "Add or manage groups",
-            link: "#",
+            link: "/admin/group",
             logo: <GroupTwoToneIcon style={{ color: "#27bed6", fontSize: 48 }} />,
             title: "Groups",
         },
         {
             description: "Update personalization and manage your organization",
-            link: "#",
+            link: "/admin/allOrganization",
             logo: <BusinessTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: "Organization Profile",
         },
@@ -174,7 +174,7 @@ export default function NavMenu() {
         },
         {
             description: "Manage schools and resources",
-            link: "#",
+            link: "/admin/school",
             logo: <SchoolTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: "Schools and Resources",
         },
@@ -186,7 +186,7 @@ export default function NavMenu() {
         },
         {
             description: "Manage users and their permissions",
-            link: "#",
+            link: "/admin/user",
             logo: <PersonOutlineTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: "Users",
         },

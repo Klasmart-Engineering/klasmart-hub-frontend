@@ -4,9 +4,9 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import * as React from "react";
 import CardLayout from "./card/card";
 
-import LiveLayout from "./live/live";
-import NavBar from "../../components/styled/navbar/navbar";
 import { mainNavBar } from "../../app";
+import NavBar from "../../components/styled/navbar/navbar";
+import LiveLayout from "./live/live";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Home() {
     return (<>
-        <NavBar menuLabels={mainNavBar} />
         <Container
             disableGutters
             maxWidth={"lg"}

@@ -1,23 +1,9 @@
-import { Box, Typography } from "@material-ui/core";
-import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import Grow from "@material-ui/core/Grow";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import clsx from "clsx";
-import * as QueryString from "query-string";
 import * as React from "react";
 import { withOrientationChange } from "react-device-detect";
-import { useSelector, useStore } from "react-redux";
-import NavBar from "./components/styled/navbar/navbar";
-import AssessmentsLayout from "./pages/home/assessments/assessments";
-import LibraryLayout from "./pages/home/library/library";
-import LiveLayout from "./pages/home/live/live";
-import ReportLayout from "./pages/home/report/report";
-import { ActionTypes } from "./store/actions";
-import { State } from "./store/store";
 
 import { App } from "./app";
-import MyContentList from "./pages/cms/cms-frontend-web/src/pages/MyContentList";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
