@@ -12,12 +12,13 @@ import React, { useMemo } from "react";
 import * as ReactDOM from "react-dom";
 import { RawIntlProvider } from "react-intl";
 import { Provider, useSelector } from "react-redux";
-import { HashRouter } from "react-router-dom";
+import { HashRouter, Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { Layout } from "./layout";
 import { createDefaultStore, State } from "./store/store";
 import { themeProvider } from "./themeProvider";
 import { redirectIfUnauthorized } from "./utils/accountUtils";
+import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
 
 function ClientSide() {
@@ -55,13 +56,13 @@ async function main() {
 
     const div = document.getElementById("app");
     ReactDOM.render(
-        <HashRouter>
+        <Router history={history}>
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
                     <ClientSide />
                 </PersistGate>
             </Provider>
-        </HashRouter>,
+        </Router>,
         div);
 }
 

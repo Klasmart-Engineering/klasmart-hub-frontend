@@ -7,9 +7,10 @@ import { createUploadLink } from "apollo-upload-client";
 import React, { useEffect } from "react";
 import { isEdge, isIE, isIOS, isMobile, isMobileSafari } from "react-device-detect";
 import { useStore } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 import Header from "./components/styled/navbar/header";
 import NavBar from "./components/styled/navbar/navbar";
+import { default as Admin } from "./pages/admin/kidsloop-orgadmin-fe/src/App";
 import { cache } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
 import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/Grades";
@@ -17,6 +18,8 @@ import GroupTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Group/
 import AllOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/AllOrganitation";
 import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
 import EditOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
+import JoinedOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/JoinedOrganizationTable";
+import MyOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/MyOrganizationTable";
 import ClasessTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ClassesTable";
 import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramTable";
 import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
@@ -125,9 +128,17 @@ export function App() {
                     <Header/>
                     <EditOrganization />
                 </Route>
-                <Route path="/admin/create-organization">
+                <Route path="/admin/create-organization" component={Organization} />
+                {/* <Header/>
+                    <Organization /> */}
+                {/* </Route> */}
+                <Route path="/admin/my-organization">
                     <Header/>
-                    <Organization />
+                    <MyOrganizationTable />
+                </Route>
+                <Route path="/admin/joined-organization">
+                    <Header/>
+                    <JoinedOrganizationTable />
                 </Route>
                 <Route path="/admin/allOrganization">
                     <Header/>
@@ -169,6 +180,9 @@ export function App() {
                     <Header/>
                     <User />
                 </Route>
+                {/* <Route path="/admin">
+                    <Admin />
+                </Route> */}
                 <Route render={() => <Home /> }/>
             </Switch>
         </ApolloProvider>
