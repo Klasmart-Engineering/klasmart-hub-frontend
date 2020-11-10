@@ -36,17 +36,17 @@ export type LibraryMenu = "published" | "pending" | "archived";
 export type AssessmentsMenu = "library" | "pending" | "completed";
 
 type ColumnAttr = string | { [styleAttr: string]: string } | undefined;
-export type TableColumns = {
-  [attr: string]: ColumnAttr
-}[]
+export type TableColumns = Array<{
+  [attr: string]: ColumnAttr,
+}>;
 
-export type SkillCatOption = {
+export interface SkillCatOption {
   devSkillId: string;
-  skillCatId: string,
+  skillCatId: string;
   name: string;
 }
 
-export type DevSkillOption = {
+export interface DevSkillOption {
   devSkillId: string;
   name: string;
 }
@@ -63,3 +63,20 @@ export interface LiveSessionData {
   startDate: number;
   students: Student[];
 }
+
+export interface IframeMessageChangeLocale {
+  type: "changeLocale";
+  payload: "en-US" | "ko" | "zh-CN" | "vi" | "id";
+}
+export interface IframeMessageChangeOrganization {
+  type: "changeOrganization";
+  // payload is the organization id
+  payload: string;
+}
+// This message is for the situation when the child iframe want the parent window to redirect to login page
+export interface IframeMessageUnauthorized {
+  type: "unauthorized";
+  payload: null;
+}
+
+export type IframeMessage = IframeMessageChangeLocale | IframeMessageChangeOrganization | IframeMessageUnauthorized;

@@ -9,8 +9,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import HomeIcon from "@material-ui/icons/Home";
 import React from "react";
 import { FormattedMessage } from "react-intl";
-import { useHistory } from "react-router-dom";
 import KidsloopLogo from "../../assets/img/kidsloop_icon.svg";
+import { history } from "../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,7 +32,6 @@ interface Props {
 export default function DialogAppBar(props: Props) {
     const classes = useStyles();
     const theme = useTheme();
-    const history = useHistory();
     const { handleClose, subtitleID, toolbarBtn } = props;
 
     return (

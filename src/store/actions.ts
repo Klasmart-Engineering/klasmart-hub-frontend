@@ -1,8 +1,8 @@
 import {
-    UserAgent,
-    LiveSessionData,
-    LibraryMenu,
     AssessmentsMenu,
+    LibraryMenu,
+    LiveSessionData,
+    UserAgent,
 } from "../types/objectTypes";
 
 export interface Action<T extends ActionTypes, P> {
@@ -80,11 +80,13 @@ export type PublicRange = Action<ActionTypes.PUBLIC_RANGES, string[]>;
 
 export type SuitableAges = Action<ActionTypes.SUITABLE_AGES, string[]>;
 
-export type Activities = Action<ActionTypes.ACTIVITIES, { id: string, title: string }[]>;
+export type Activities = Action<ActionTypes.ACTIVITIES, Array<{ id: string, title: string }>>;
 
 export type FinishLiveData = Action<ActionTypes.FINISH_LIVE_DATA, LiveSessionData>;
 
 export type SelectedLessonPlan = Action<ActionTypes.SELECTED_LESSON_PLAN, string>;
+
+export type SelectedOrganization = Action<ActionTypes.SELECTED_ORG_ID, string>;
 
 export enum ActionTypes {
     LOGIN,
@@ -116,6 +118,7 @@ export enum ActionTypes {
     ACTIVITIES,
     FINISH_LIVE_DATA,
     SELECTED_LESSON_PLAN,
+    SELECTED_ORG_ID,
     // Testing
     FAKE_NONCE,
     SIMULATE_UNSTABLE_CONNECTION,
@@ -151,6 +154,7 @@ export type Actions =
     | Activities
     | FinishLiveData
     | SelectedLessonPlan
+    | SelectedOrganization
     // Testing
     | SetFakeNonce
     | SimulateUnstableConnection

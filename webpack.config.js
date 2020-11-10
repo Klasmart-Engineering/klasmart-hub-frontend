@@ -95,18 +95,20 @@ module.exports = {
         })
     ],
     devServer: {
-        host: "0.0.0.0",
+        host: "shawn.kidsloop.net",
+        port: 8080,
+        https: true,
         historyApiFallback: true,
         proxy: {
             "/auth": {
                 target: "https://prod.auth.badanamu.net/",
                 changeOrigin: true,
-                pathRewrite: { '^/auth': '' },
+                pathRewrite: { "^/auth": "" },
             },
             "/account": {
                 target: "https://prod.account.badanamu.net/",
                 changeOrigin: true,
-                pathRewrite: { '^/account': '' },
+                pathRewrite: { "^/account": "" },
             },
             "/v1": {
                 target: "https://kl2-test.kidsloop.net/",

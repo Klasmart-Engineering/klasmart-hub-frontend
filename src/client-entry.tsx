@@ -6,6 +6,13 @@ import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "./assets/css/index.min.css";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { createUploadLink } from "apollo-upload-client";
+import { cache } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
+
+import { ApolloClient, ApolloLink } from "@apollo/client/core";
+import { ApolloProvider } from "@apollo/client/react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import React, { useMemo } from "react";
@@ -21,6 +28,15 @@ import { redirectIfUnauthorized } from "./utils/accountUtils";
 import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
 
+const link = createUploadLink({
+    uri: "https://api.kidsloop.net/user/",
+});
+
+export const client = new ApolloClient({
+    link: ApolloLink.from([link]),
+    cache,
+});
+
 function ClientSide() {
     const memos = useMemo(() => {
         const url = new URL(window.location.href);
@@ -33,12 +49,14 @@ function ClientSide() {
     const locale = getLanguage(languageCode);
 
     return (
-        <RawIntlProvider value={locale}>
-            <ThemeProvider theme={themeProvider()}>
-                <CssBaseline />
-                <Layout />
-            </ThemeProvider>
-        </RawIntlProvider>
+        <ApolloProvider client={client}>
+            <RawIntlProvider value={locale}>
+                <ThemeProvider theme={themeProvider()}>
+                    <CssBaseline />
+                    <Layout />
+                </ThemeProvider>
+            </RawIntlProvider>
+        </ApolloProvider>
     );
 }
 

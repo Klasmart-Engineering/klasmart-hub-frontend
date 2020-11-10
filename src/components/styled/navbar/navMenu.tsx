@@ -14,6 +14,7 @@ import BusinessTwoToneIcon from "@material-ui/icons/BusinessTwoTone";
 import ContactSupportTwoToneIcon from "@material-ui/icons/ContactSupportTwoTone";
 import CreditCardTwoToneIcon from "@material-ui/icons/CreditCardTwoTone";
 import GroupTwoToneIcon from "@material-ui/icons/GroupTwoTone";
+import HomeIcon from "@material-ui/icons/Home";
 import LockTwoToneIcon from "@material-ui/icons/LockTwoTone";
 import PersonOutlineTwoToneIcon from "@material-ui/icons/PersonOutlineTwoTone";
 import PhonelinkTwoToneIcon from "@material-ui/icons/PhonelinkTwoTone";
@@ -27,6 +28,7 @@ import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
 import { State } from "../../../store/store";
 import { MenuItem } from "../../../types/objectTypes";
+import { history } from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -211,6 +213,17 @@ export default function NavMenu() {
             >
                 <AppsIcon />
             </IconButton>
+            { window.location.hash !== "#/" ?
+                <IconButton
+                    aria-label="home"
+                    color="inherit"
+                    edge="end"
+                    onClick={() => { history.push("/"); }}
+                    style={{ marginRight: theme.spacing(2) }}
+                >
+                    <HomeIcon />
+                </IconButton> : null
+            }
             <Dialog
                 aria-labelledby="nav-menu-title"
                 aria-describedby="nav-menu-description"

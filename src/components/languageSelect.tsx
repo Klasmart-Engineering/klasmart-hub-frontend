@@ -14,7 +14,7 @@ import { State } from "../store/store";
 
 const LANGUAGES_LABEL: Language[] = [
     {
-        code: "en",
+        code: "en-US",
         text: "English",
     },
     {

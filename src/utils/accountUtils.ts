@@ -29,9 +29,9 @@ export async function redirectIfUnauthorized(continueParam?: string) {
         .then((r) => r.json())
         .then((data) => {
             const response = data;
-            console.log(response);
+            // console.log(response);
             const me: User = response.data.me;
-            console.log(me);
+            // console.log(me);
             if (me === null) {
                 if (window.location.origin === "https://auth.kidsloop.net") { return; }
                 const stringifiedQuery = queryString.stringify({ continue: continueParam ? continueParam : window.location.href });

@@ -1,33 +1,34 @@
-import { ApolloClient, ApolloLink } from "@apollo/client/core";
-import { ApolloProvider } from "@apollo/client/react";
-import { ThemeProvider } from "@material-ui/core";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { createUploadLink } from "apollo-upload-client";
-import React, { useEffect } from "react";
+import { useQuery, useReactiveVar } from "@apollo/client/react";
+import _get from "lodash/get";
+import React, { useEffect, useState } from "react";
 import { isEdge, isIE, isIOS, isMobile, isMobileSafari } from "react-device-detect";
-import { useStore } from "react-redux";
-import { Route, Switch, useHistory } from "react-router-dom";
-import Header from "./components/styled/navbar/header";
+import { useSelector, useStore } from "react-redux";
+import { Route, Switch, useLocation } from "react-router-dom";
+import Header from "./components/styled/navbar/adminHeader";
 import NavBar from "./components/styled/navbar/navbar";
-import { default as Admin } from "./pages/admin/kidsloop-orgadmin-fe/src/App";
-import { cache } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
+import { currentMembershipVar, organizationIdVar, userIdVar, userProfileVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
 import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/Grades";
 import GroupTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Group/GroupTable";
+import Layout from "./pages/admin/kidsloop-orgadmin-fe/src/components/Layout";
 import AllOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/AllOrganitation";
-import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
 import EditOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
 import JoinedOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/JoinedOrganizationTable";
 import MyOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/MyOrganizationTable";
+import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/Organization";
 import ClasessTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ClassesTable";
 import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramTable";
 import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
 import User from "./pages/admin/kidsloop-orgadmin-fe/src/components/User";
+import { GET_MY_ORGANIZATION } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getMyOrganization";
+import { GET_USER } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
+import { ME } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/me";
+import { redirectIfUnauthorized } from "./pages/admin/kidsloop-orgadmin-fe/src/util/redirectIfUnauthorized";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import { ActionTypes } from "./store/actions";
-import { redirectIfUnauthorized } from "./utils/accountUtils";
+import { State } from "./store/store";
+// import { redirectIfUnauthorized } from "./utils/accountUtils";
 
 export const mainNavBar = [{
     name: "live",
@@ -46,21 +47,17 @@ export const mainNavBar = [{
     path: "/report",
 }];
 
-const link = createUploadLink({
-    uri: "https://api.kidsloop.net/user/",
-});
-
-export const client = new ApolloClient({
-    link: ApolloLink.from([link]),
-    cache,
-});
-
 export function App() {
     const store = useStore();
+    const location = useLocation().pathname;
 
-    if (window.location.host.split(":")[0] !== "localhost") {
-        redirectIfUnauthorized();
-    }
+    const [ organizationData, setOrganizationData ]  = useState<any[]>([]);
+    const currentOrganization = useReactiveVar(currentMembershipVar);
+
+    useEffect(() => {
+        console.log(location);
+        const authorized = window.location.host.split(":")[0] !== "localhost" ? redirectIfUnauthorized().then() : true;
+    }, [location]);
 
     useEffect(() => {
         const userInformation = {
@@ -74,13 +71,44 @@ export function App() {
         store.dispatch({ type: ActionTypes.USER_AGENT, payload: userInformation });
     }, []);
 
+    const user_id = useReactiveVar(userIdVar);
+    const { data: userData, loading: userDataLoading, error } = useQuery(GET_USER, {
+        fetchPolicy: "network-only",
+        variables: {
+            user_id,
+        },
+    });
+
+    useEffect(() => {
+        if (userData) {
+            let joinedOrgArray = [];
+            const arr: any = [];
+            const joined_organization = _get(userData, "user.memberships", false);
+            if (joined_organization) {
+                arr.push(joined_organization);
+                joinedOrgArray = arr.map((o: any) => ({ ...o }));
+                setOrganizationData(joinedOrgArray[0]);
+            }
+        }
+    }, [userData]);
+
+    useEffect(() => {
+        if (organizationData.length !== 0) {
+            currentMembershipVar({
+                organization_name: organizationData[0].organization.organization_name,
+                organization_id: organizationData[0].organization.organization_id,
+                organization_email: organizationData[0].organization.email,
+            });
+        }
+    }, [organizationData,  user_id]);
+
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
-        <ApolloProvider client={client}>
+        <>
             <NavBar menuLabels={mainNavBar} />
             <Switch>
                 <Route path="/live" render={() => <Home />} />
                 <Route path="/library" render={() => <>
-                    <iframe src={"https://kl2-test.kidsloop.net/#/library"}
+                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/library`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -89,7 +117,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/badanamu-content" render={() => <>
-                    <iframe src={"https://kl2-test.kidsloop.net/#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all"}
+                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -98,7 +126,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/schedule" render={() => <>
-                    <iframe src={"https://kl2-test.kidsloop.net/#/schedule/calendar"}
+                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -107,7 +135,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/assessments" render={() => <>
-                    <iframe src={"https://kl2-test.kidsloop.net/#/assessments/assessment-list"}
+                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -116,7 +144,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/report" render={() => <>
-                    <iframe src={"https://kl2-test.kidsloop.net/#/report/achievement-list"}
+                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -124,68 +152,78 @@ export function App() {
                         }}
                     />
                 </>} />
-                <Route path="/admin/edit-organization/:organizationId">
-                    <Header/>
-                    <EditOrganization />
+                <Route exact path="/admin/edit-organization/:organizationId">
+                    <Layout>
+                        <EditOrganization />
+                    </Layout>
                 </Route>
-                <Route path="/admin/create-organization" component={Organization} />
-                {/* <Header/>
-                    <Organization /> */}
-                {/* </Route> */}
+                <Route path="/admin/create-organization">
+                    <Layout>
+                        <Organization />
+                    </Layout>
+                </Route>
                 <Route path="/admin/my-organization">
-                    <Header/>
-                    <MyOrganizationTable />
+                    <Layout>
+                        <MyOrganizationTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/joined-organization">
-                    <Header/>
-                    <JoinedOrganizationTable />
+                    <Layout>
+                        <JoinedOrganizationTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/allOrganization">
-                    <Header/>
-                    <AllOrganization />
+                    <Layout>
+                        <AllOrganization />
+                    </Layout>
                 </Route>
                 <Route path="/admin/user">
-                    <Header/>
-                    <User />
+                    <Layout>
+                        <User />
+                    </Layout>
                 </Route>
                 <Route path="/admin/group">
-                    <Header/>
-                    <GroupTable />
+                    <Layout>
+                        <GroupTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/school">
-                    <Header/>
-                    <SchoolTable />
+                    <Layout>
+                        <SchoolTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/classes">
                     <Header/>
                     <ClasessTable />
                 </Route>
                 <Route path="/admin/program">
-                    <Header/>
-                    <ProgramTable />
+                    <Layout>
+                        <ProgramTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/grade">
-                    <Header/>
-                    <GradeTable />
+                    <Layout>
+                        <GradeTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/classRoster">
-                    <Header/>
-                    <ClassRosterTable />
+                    <Layout>
+                        <ClassRosterTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/classRoster/:classId">
-                    <Header/>
-                    <ClassRosterTable />
+                    <Layout>
+                        <ClassRosterTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin">
-                    <Header/>
-                    <User />
+                    <Layout>
+                        <User />
+                    </Layout>
                 </Route>
-                {/* <Route path="/admin">
-                    <Admin />
-                </Route> */}
                 <Route render={() => <Home /> }/>
             </Switch>
-        </ApolloProvider>
+        </>
     );
 }
 

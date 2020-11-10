@@ -1,3 +1,4 @@
+import { useQuery, useReactiveVar } from "@apollo/client/react";
 import { Link, Paper } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
@@ -13,6 +14,8 @@ import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector, useStore } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { currentMembershipVar, organizationIdVar, userIdVar } from "../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
+import { GET_USER } from "../../../pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
 import { ActionTypes } from "../../../store/actions";
 import { State } from "../../../store/store";
 import NavButton from "./navButton";
@@ -83,14 +86,19 @@ function MenuButtons(props: MenuButtonProps) {
 
 interface LabelProps {
     classes: string;
+    orgName?: string;
+    schoolName?: string;
 }
 
 function ClassroomLabel(props: LabelProps) {
+    const currentOrganization = useReactiveVar(currentMembershipVar);
+    // console.log(currentOrganization);
+
     return (
         <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
             <Grid item xs={12}>
                 <Typography variant="body1" className={props.classes} noWrap>
-                    KidsLoop Co., Ltd.
+                    { currentOrganization.organization_name }
                 </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -115,6 +123,14 @@ export default function NavBar(props: Props) {
     const url = new URL(window.location.href);
 
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
+
+    const user_id = useReactiveVar(userIdVar);
+    const { data, loading, error } = useQuery(GET_USER, {
+        fetchPolicy: "network-only",
+        variables: {
+        user_id,
+        },
+    });
 
     const handleClickOpen = () => {
         store.dispatch({ type: ActionTypes.CLASS_SETTINGS_TOGGLE, payload: true });
@@ -153,19 +169,25 @@ export default function NavBar(props: Props) {
                                     alignItems="center"
                                     wrap="nowrap"
                                 >
-                                    <UserSettings />
+                                    <UserSettings
+                                        memberships={data?.user?.memberships}
+                                        loading={loading}
+                                        error={error}
+                                    />
                                 </Grid>
                             </Hidden>
                         </Grid>
-                        <Grid
-                            container item
-                            xs={12} md={4} lg={6}
-                            direction="row"
-                            justify="center"
-                            wrap="nowrap"
-                        >
-                            {menuLabels ? <MenuButtons labels={menuLabels} /> : null}
-                        </Grid>
+                        { url.hash.includes("#/admin") ? null :
+                            <Grid
+                                container item
+                                xs={12} md={4} lg={6}
+                                direction="row"
+                                justify="center"
+                                wrap="nowrap"
+                            >
+                                {menuLabels ? <MenuButtons labels={menuLabels} /> : null}
+                            </Grid>
+                        }
                         <Hidden smDown>
                             <Grid
                                 container item
@@ -175,7 +197,11 @@ export default function NavBar(props: Props) {
                                 alignItems="center"
                                 wrap="nowrap"
                             >
-                                <UserSettings />
+                                <UserSettings
+                                    memberships={data?.user?.memberships}
+                                    loading={loading}
+                                    error={error}
+                                />
                             </Grid>
                         </Hidden>
                     </Grid>

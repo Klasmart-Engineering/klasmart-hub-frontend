@@ -3,7 +3,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Toolbar from "@material-ui/core/Toolbar";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { history } from "../../../utils/history";
 
 const adminNavBar = [
     { name: "View Organization", path: "allOrganization" },
@@ -16,7 +16,6 @@ const adminNavBar = [
 ];
 
 export default function Header() {
-    const history = useHistory();
     const location = new URL(window.location.href);
 
     return (
