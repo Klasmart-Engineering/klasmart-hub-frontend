@@ -2,11 +2,12 @@ import { createHashHistory } from "history";
 import { useParams } from "react-router";
 
 interface ParamTypes {
-    organizationId: string;
+    organizationId?: string;
+    classId?: string;
 }
 
 export const history = createHashHistory();
 
-export default function ParameterHOC() {
+export function ParameterHOC() {
     return useParams<ParamTypes>();
 }

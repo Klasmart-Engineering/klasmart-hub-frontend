@@ -1,33 +1,31 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
 import _get from "lodash/get";
+import _isEmpty from "lodash/isEmpty";
 import React, { useEffect, useState } from "react";
 import { isEdge, isIE, isIOS, isMobile, isMobileSafari } from "react-device-detect";
-import { useSelector, useStore } from "react-redux";
+import { useStore } from "react-redux";
 import { Route, Switch, useLocation } from "react-router-dom";
 import Header from "./components/styled/navbar/adminHeader";
 import NavBar from "./components/styled/navbar/navbar";
-import { currentMembershipVar, organizationIdVar, userIdVar, userProfileVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
+import { currentMembershipVar, userIdVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
 import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/Grades";
-import GroupTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Group/GroupTable";
 import Layout from "./pages/admin/kidsloop-orgadmin-fe/src/components/Layout";
 import AllOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/AllOrganitation";
 import EditOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
 import JoinedOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/JoinedOrganizationTable";
 import MyOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/MyOrganizationTable";
 import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/Organization";
+import RolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Rol/RolTable";
 import ClasessTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ClassesTable";
 import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramTable";
 import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
 import User from "./pages/admin/kidsloop-orgadmin-fe/src/components/User";
-import { GET_MY_ORGANIZATION } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getMyOrganization";
 import { GET_USER } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
-import { ME } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/me";
 import { redirectIfUnauthorized } from "./pages/admin/kidsloop-orgadmin-fe/src/util/redirectIfUnauthorized";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import { ActionTypes } from "./store/actions";
-import { State } from "./store/store";
 // import { redirectIfUnauthorized } from "./utils/accountUtils";
 
 export const mainNavBar = [{
@@ -51,7 +49,7 @@ export function App() {
     const store = useStore();
     const location = useLocation().pathname;
 
-    const [ organizationData, setOrganizationData ]  = useState<any[]>([]);
+    const [ organizationData, setOrganizationData ]  = useState([]);
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
     useEffect(() => {
@@ -93,7 +91,8 @@ export function App() {
     }, [userData]);
 
     useEffect(() => {
-        if (organizationData.length !== 0) {
+        if (_isEmpty(organizationData)) { return; }
+        if (organizationData[0].organization !== undefined) {
             currentMembershipVar({
                 organization_name: organizationData[0].organization.organization_name,
                 organization_id: organizationData[0].organization.organization_id,
@@ -182,9 +181,9 @@ export function App() {
                         <User />
                     </Layout>
                 </Route>
-                <Route path="/admin/group">
+                <Route path="/admin/roles">
                     <Layout>
-                        <GroupTable />
+                        <RolTable />
                     </Layout>
                 </Route>
                 <Route path="/admin/school">

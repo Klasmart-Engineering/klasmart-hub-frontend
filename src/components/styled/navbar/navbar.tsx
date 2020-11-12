@@ -13,11 +13,11 @@ import * as QueryString from "query-string";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector, useStore } from "react-redux";
-import { useHistory } from "react-router-dom";
 import { currentMembershipVar, organizationIdVar, userIdVar } from "../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
 import { GET_USER } from "../../../pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
 import { ActionTypes } from "../../../store/actions";
 import { State } from "../../../store/store";
+import { history } from "../../../utils/history";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";
@@ -56,7 +56,6 @@ interface MenuButtonProps {
 }
 
 function MenuButtons(props: MenuButtonProps) {
-    const history = useHistory();
     const theme = useTheme();
     const { labels } = props;
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
@@ -71,9 +70,10 @@ function MenuButtons(props: MenuButtonProps) {
         labels.map((value: { name: string; path: string; }) => (
             <NavButton
                 key={`menuLabel-${value.name}`}
-                onClick={() => {
+                onClick={(e) => {
                     setActiveComponent(value.name);
                     history.push(value.path);
+                    e.preventDefault();
                 }}
                 isActive={activeComponent === value.path.split("/").filter((x) => x)[0]}
                 style={{ minHeight }}
@@ -118,7 +118,6 @@ export default function NavBar(props: Props) {
     const classes = useStyles();
     const store = useStore();
     const theme = useTheme();
-    const history = useHistory();
     const { menuLabels } = props;
     const url = new URL(window.location.href);
 

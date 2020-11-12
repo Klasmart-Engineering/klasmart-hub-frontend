@@ -8,7 +8,7 @@ import { history } from "../../../utils/history";
 const adminNavBar = [
     { name: "View Organization", path: "allOrganization" },
     { name: "View Users", path: "user" },
-    { name: "View Groups", path: "group" },
+    { name: "View Roles", path: "roles" },
     { name: "View Schools", path: "school" },
     { name: "Classes", path: "classes" },
     { name: "Programs", path: "program" },
@@ -32,7 +32,7 @@ export default function Header() {
                                     <Link
                                         href="#"
                                         variant="body2"
-                                        onClick={(e: React.MouseEvent) => { history.push(`${item.path}`); e.preventDefault(); }}
+                                        onClick={(e: React.MouseEvent) => { history.push(`/admin/${item.path}`); e.preventDefault(); }}
                                         style={{
                                             color: location.hash.includes(item.path) ? "#0E78D5" : "black",
                                             textDecoration: location.hash.includes(item.path) ? "underline" : "none",

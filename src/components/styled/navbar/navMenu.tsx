@@ -157,8 +157,8 @@ export default function NavMenu() {
             title: "Devices, Apps and Licenses",
         },
         {
-            description: "Add or manage groups",
-            link: "/admin/group",
+            description: "Add or manage roles",
+            link: "/admin/roles",
             logo: <GroupTwoToneIcon style={{ color: "#27bed6", fontSize: 48 }} />,
             title: "Groups",
         },

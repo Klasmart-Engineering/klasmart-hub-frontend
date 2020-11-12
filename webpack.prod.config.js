@@ -5,7 +5,7 @@ const Visualizer = require("webpack-visualizer-plugin");
 const output_file_name = "bundle.[chunkhash].js";
 
 module.exports = {
-    mode: "production",
+    mode: "development",
     entry: {
         hubui: "./src/client-entry.tsx",
     },
