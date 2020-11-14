@@ -29,7 +29,7 @@ import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
 
 const link = createUploadLink({
-    crendentials: "include",
+    credentials: "include", 
     uri: "https://api.kidsloop.net/user/",
 });
 
