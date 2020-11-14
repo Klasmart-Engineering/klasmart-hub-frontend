@@ -17,7 +17,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import React, { useMemo } from "react";
 import * as ReactDOM from "react-dom";
-import { RawIntlProvider } from "react-intl";
+import { createIntl, RawIntlProvider } from "react-intl";
 import { Provider, useSelector } from "react-redux";
 import { HashRouter, Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
@@ -29,13 +29,16 @@ import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
 
 const link = createUploadLink({
+    crendentials: "include",
     uri: "https://api.kidsloop.net/user/",
 });
 
 export const client = new ApolloClient({
+    credentials: "include",
     link: ApolloLink.from([link]),
     cache,
 });
+
 
 function ClientSide() {
     const memos = useMemo(() => {

@@ -160,7 +160,7 @@ export default function NavMenu() {
             description: "Add or manage roles",
             link: "/admin/roles",
             logo: <GroupTwoToneIcon style={{ color: "#27bed6", fontSize: 48 }} />,
-            title: "Groups",
+            title: "Roles",
         },
         {
             description: "Update personalization and manage your organization",

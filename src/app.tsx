@@ -9,7 +9,7 @@ import Header from "./components/styled/navbar/adminHeader";
 import NavBar from "./components/styled/navbar/navbar";
 import { currentMembershipVar, userIdVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
-import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/Grades";
+import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/GradesTable";
 import Layout from "./pages/admin/kidsloop-orgadmin-fe/src/components/Layout";
 import AllOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/AllOrganitation";
 import EditOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
@@ -18,7 +18,7 @@ import MyOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/componen
 import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/Organization";
 import RolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Rol/RolTable";
 import ClasessTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ClassesTable";
-import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramTable";
+import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramsTable";
 import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
 import User from "./pages/admin/kidsloop-orgadmin-fe/src/components/User";
 import { GET_USER } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
@@ -192,8 +192,9 @@ export function App() {
                     </Layout>
                 </Route>
                 <Route path="/admin/classes">
-                    <Header/>
-                    <ClasessTable />
+                    <Layout>
+                        <ClasessTable />
+                    </Layout>
                 </Route>
                 <Route path="/admin/program">
                     <Layout>
