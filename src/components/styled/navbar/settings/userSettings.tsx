@@ -8,6 +8,7 @@ import Menu, { MenuProps } from "@material-ui/core/Menu";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
 import queryString from "querystring";
 import React, { useState } from "react";
+import { AccountCircle } from "@material-ui/icons";
 import { currentMembershipVar } from "../../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
 
 const useStyles = makeStyles((theme) =>
@@ -31,11 +32,14 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
+import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
+import IconButton from "@material-ui/core/IconButton";
+import Avatar from "@material-ui/core/Avatar";
 
 const StyledMenu = withStyles({
     paper: {
-        border: "1px solid #d3d4d5",
+        border: "1px solid #dadce0",
     },
 })((props: MenuProps) => (
     <Menu
@@ -122,17 +126,14 @@ export default function UserSettings({
                     >
                         <Hidden xsDown>
                             <img
-                                alt="Avatar"
-                                className={classes.avatar}
-                                src="https://robohash.org/4f06737c469a78aa3e425072a049fe8e?set=set4&bgset=&size=400x400"
-                                height={32}
-                            />
-                            <img
                                 alt="KidsLoop"
                                 className={classes.avatar}
-                                src={KidsloopLogoAlt}
+                                src={KidsloopLogo}
                                 height={32}
                             />
+                            <Avatar>
+                                <AccountCircle />
+                            </Avatar>
                         </Hidden>
                     </Grid>
                 </Button>
@@ -150,12 +151,9 @@ export default function UserSettings({
                             onClick={() => handleOrganization(e)}
                             style={{ padding: "0px 16px" }}
                         >
-                            <img
-                                alt="KidsLoop"
-                                className={classes.avatar}
-                                src="https://robohash.org/4f06737c469a78aa3e425072a049fe8e?set=set4&bgset=&size=400x400"
-                                height={32}
-                            />
+                            <IconButton>
+                                <AccountCircle />
+                            </IconButton>
                             <ListItemText
                                 primary={e.organization.organization_name}
                                 secondary={e.organization.phone}
@@ -163,15 +161,32 @@ export default function UserSettings({
                         </ListItem>
                     ))}
                     <Divider />
-                    <ListItem
-                        button
-                        onClick={() => handleSignOut()}
-                        style={{ padding: 8}}
-                    >
-                        <ListItemText
-                            primary="Sign Out"
-                            style={{ textAlign: "center" }}
-                        />
+                    <ListItem style={{ padding: 8}}>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="center"
+                            alignItems="center"
+                        >
+                            {/* <Grid item xs={6} style={{ textAlign: "center" }}>
+                                <LanguageSelect noIcon />
+                            </Grid> */}
+                            <Grid item xs={12} style={{ textAlign: "center" }}>
+                                <StyledButton
+                                    extendedOnly
+                                    onClick={() => handleSignOut()}
+                                    // size="small"
+                                    style={{
+                                        backgroundColor: "#fff",
+                                        border: "1px solid #dadce0",
+                                        color: "#000",
+                                        padding: "8px 16px",
+                                    }}
+                                >
+                                    Sign Out
+                                </StyledButton>
+                            </Grid>
+                        </Grid>
                     </ListItem>
                 </StyledMenu>
             </Grid>

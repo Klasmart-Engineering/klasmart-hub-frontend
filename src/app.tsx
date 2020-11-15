@@ -22,11 +22,13 @@ import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Scho
 import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
 import User from "./pages/admin/kidsloop-orgadmin-fe/src/components/User";
 import { GET_USER } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
-import { redirectIfUnauthorized } from "./pages/admin/kidsloop-orgadmin-fe/src/util/redirectIfUnauthorized";
+import { redirectIfUnauthorized, refreshToken } from "./pages/admin/kidsloop-orgadmin-fe/src/util/redirectIfUnauthorized";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import { ActionTypes } from "./store/actions";
 // import { redirectIfUnauthorized } from "./utils/accountUtils";
+
+const TIMEOUT = 360000; // 1 minute
 
 export const mainNavBar = [{
     name: "live",
@@ -50,12 +52,20 @@ export function App() {
     const location = useLocation().pathname;
 
     const [ organizationData, setOrganizationData ]  = useState([]);
+    const [ expiration, setExpiration ] = useState(TIMEOUT);
+    const [ key, setKey ] = useState(Math.random().toString(36));
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
     useEffect(() => {
         console.log(location);
         const authorized = window.location.host.split(":")[0] !== "localhost" ? redirectIfUnauthorized().then() : true;
     }, [location]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            refreshToken(setKey, setExpiration);
+        }, expiration);
+    }, [key]);
 
     useEffect(() => {
         const userInformation = {

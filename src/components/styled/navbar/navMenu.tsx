@@ -133,28 +133,10 @@ export default function NavMenu() {
             title: "Analytics and Reports",
         },
         {
-            description: "Manage billing and subscriptions",
-            link: "#",
-            logo: <CreditCardTwoToneIcon style={{ color: "#b0bec5", fontSize: 48 }} />,
-            title: "Billing",
-        },
-        {
             description: "Approve, manage, and view your content library",
             link: "/library",
             logo: <AllInboxTwoToneIcon style={{ color: "#1f94e8", fontSize: 48 }} />,
             title: "Content Library",
-        },
-        {
-            description: "Manage data usage and set data usage settings",
-            link: "#",
-            logo: <LockTwoToneIcon style={{ color: "#816961", fontSize: 48 }} />,
-            title: "Data Security and Migration",
-        },
-        {
-            description: "Organization-owned devices and app licenses",
-            link: "#",
-            logo: <PhonelinkTwoToneIcon style={{ color: theme.palette.type === "dark" ? "#fefefe" : "#263238", fontSize: 48 }} />,
-            title: "Devices, Apps and Licenses",
         },
         {
             description: "Add or manage roles",
@@ -169,28 +151,46 @@ export default function NavMenu() {
             title: "Organization Profile",
         },
         {
-            description: "Configure security settings",
-            link: "#",
-            logo: <SecurityTwoToneIcon style={{ color: "#8396a0", fontSize: 48 }} />,
-            title: "Security",
-        },
-        {
             description: "Manage schools and resources",
             link: "/admin/school",
             logo: <SchoolTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: "Schools and Resources",
         },
         {
-            description: "Get onboarding, training, and troubleshooting support",
-            link: "#",
-            logo: <ContactSupportTwoToneIcon style={{ color: "#3baf77", fontSize: 48 }} />,
-            title: "Support",
-        },
-        {
             description: "Manage users and their permissions",
             link: "/admin/user",
             logo: <PersonOutlineTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: "Users",
+        },
+        {
+            description: "Manage billing and subscriptions",
+            link: "#",
+            logo: <CreditCardTwoToneIcon style={{ color: "gray" /* "#b0bec5" */, fontSize: 48 }} />,
+            title: "Billing",
+        },
+        {
+            description: "Manage data usage and set data usage settings",
+            link: "#",
+            logo: <LockTwoToneIcon style={{ color: "gray" /* "#816961" */, fontSize: 48 }} />,
+            title: "Data Security and Migration",
+        },
+        {
+            description: "Organization-owned devices and app licenses",
+            link: "#",
+            logo: <PhonelinkTwoToneIcon style={{ color: "gray" /* theme.palette.type === "dark" ? "#fefefe" : "#263238" */, fontSize: 48 }} />,
+            title: "Devices, Apps and Licenses",
+        },
+        {
+            description: "Configure security settings",
+            link: "#",
+            logo: <SecurityTwoToneIcon style={{ color: "gray" /* "#8396a0" */, fontSize: 48 }} />,
+            title: "Security",
+        },
+        {
+            description: "Get onboarding, training, and troubleshooting support",
+            link: "#",
+            logo: <ContactSupportTwoToneIcon style={{ color: "gray" /* "#3baf77" */, fontSize: 48 }} />,
+            title: "Support",
         },
     ];
 
