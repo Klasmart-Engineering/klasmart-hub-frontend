@@ -206,11 +206,6 @@ export function App() {
                         <GradeTable />
                     </Layout>
                 </Route>
-                <Route path="/admin/classRoster">
-                    <Layout>
-                        <ClassRosterTable />
-                    </Layout>
-                </Route>
                 <Route path="/admin/classRoster/:classId">
                     <Layout>
                         <ClassRosterTable />

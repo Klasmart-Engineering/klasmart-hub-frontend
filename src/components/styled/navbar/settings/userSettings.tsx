@@ -6,6 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
+import queryString from "querystring";
 import React, { useState } from "react";
 import { currentMembershipVar } from "../../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
 
@@ -26,8 +27,11 @@ const useStyles = makeStyles((theme) =>
     }),
 );
 
+import Divider from "@material-ui/core/Divider";
+import Typography from "@material-ui/core/Typography";
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
+import StyledButton from "../../button";
 
 const StyledMenu = withStyles({
     paper: {
@@ -78,6 +82,25 @@ export default function UserSettings({
             organization_email: organization.organization.email,
         });
     };
+
+    async function handleSignOut() {
+        try {
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Content-Type", "application/json");
+            await fetch("https://auth.kidsloop.net/signout", {
+                credentials: "include",
+                headers,
+                method: "GET",
+            })
+                .then(() => {
+                    const stringifiedQuery = queryString.stringify({ continue: window.location.href });
+                    window.location.href = `https://auth.kidsloop.net/?${stringifiedQuery}#/`;
+                });
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     return (
         <>
@@ -139,6 +162,17 @@ export default function UserSettings({
                             />
                         </ListItem>
                     ))}
+                    <Divider />
+                    <ListItem
+                        button
+                        onClick={() => handleSignOut()}
+                        style={{ padding: 8}}
+                    >
+                        <ListItemText
+                            primary="Sign Out"
+                            style={{ textAlign: "center" }}
+                        />
+                    </ListItem>
                 </StyledMenu>
             </Grid>
         </>
