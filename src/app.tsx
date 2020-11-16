@@ -56,16 +56,7 @@ export function App() {
     const [ key, setKey ] = useState(Math.random().toString(36));
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
-    useEffect(() => {
-        console.log(location);
-        const authorized = window.location.host.split(":")[0] !== "localhost" ? redirectIfUnauthorized().then() : true;
-    }, [location]);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            refreshToken(setKey, setExpiration);
-        }, expiration);
-    }, [key]);
+    useEffect(() => { redirectIfUnauthorized(); }, []);
 
     useEffect(() => {
         const userInformation = {
