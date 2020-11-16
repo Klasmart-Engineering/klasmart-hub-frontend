@@ -29,7 +29,7 @@ const messages: Record<string, string> = {
     password_restorePrompt: "Reset Password",
     password_confirmRestore: "Set new password",
     password_changePrompt: "Change Password",
-    password_confirmChange: "Change password",
+    password_confirmChange: "Confirm password",
     password_changedPrompt: "You've successfully changed your password",
     password_changedConfirm: "Go to dashboard",
 
@@ -135,29 +135,22 @@ const messages: Record<string, string> = {
     users_exportPDFName: "Export as PDF",
     users_firstNameRequiredValidation: "First name is required",
     users_firstNameInvalidValidation: "First name is invalid",
-    users_firstNameMaxValidation:
-        "The first name must have a maximum of 10 characters",
-    users_firstNameMinValidation:
-        "The first name must have a minimum of 3 characters",
+    users_firstNameMaxValidation: "The first name must have a maximum of 10 characters",
+    users_firstNameMinValidation: "The first name must have a minimum of 3 characters",
     users_middleNameInvalidValidation: "Middle name is invalid",
-    users_middleNameMaxValidation:
-        "The middle name must have a maximum of 10 characters",
-    users_middleNameMinValidation:
-        "The middle name must have a minimum of 3 characters",
+    users_middleNameMaxValidation: "The middle name must have a maximum of 10 characters",
+    users_middleNameMinValidation: "The middle name must have a minimum of 3 characters",
     users_lastNameRequiredValidation: "Last name is required",
     users_lastNameInvalidValidation: "Last name is invalid",
-    users_lastNameMaxValidation:
-        "The last name must have a maximum of 10 characters",
-    users_lastNameMinValidation:
-        "The last name must have a minimum of 3 characters",
+    users_lastNameMaxValidation: "The last name must have a maximum of 10 characters",
+    users_lastNameMinValidation: "The last name must have a minimum of 3 characters",
     users_groupRequiredValidation: "Role is required",
     users_initialSchoolValue: "No Schools",
     users_allSchoolsValue: "All Schools",
     users_emailMaxValidation: "The email must have a maximum of 30 characters",
     users_emailInvalidValidation: "Invalid email",
     users_resendInviteButton: "Resend Invite",
-    users_studentGroupOver18: `With this action, you are certifying that this email belongs to a
-      student group over the age of 18.`,
+    users_studentGroupOver18: "With this action, you are certifying that this email belongs to a student group over the age of 18.",
     users_okButton: "Ok",
     users_cancelButton: "Cancel",
     users_invitationSent: "Invitation sent to user.",
@@ -174,8 +167,7 @@ const messages: Record<string, string> = {
     allOrganization_deleteRowTooltip: "Delete",
     allOrganization_changePasswordButton: "Change Password",
     allOrganization_changeOwner: "Change Owner",
-    allOrganization_changeOwnerText:
-        "Please choose one user as the organization´s owner",
+    allOrganization_changeOwnerText: "Please choose one user as the organization´s owner",
     allOrganization_searchPlaceholder: "Search",
     allOrganization_searchTooltip: "Search",
     allOrganization_joinedOrganizations: "Joined Organizations",
@@ -191,14 +183,11 @@ const messages: Record<string, string> = {
     allOrganization_groupRequiredValidation: "Role is required",
     allOrganization_emailInvalidValidation: "Invalid email",
     allOrganization_leaveOrganizationButton: "Leave Organization",
-    allOrganization_leaveOrganizationConfirm: `Once you confirm the action, you will be unlinked from the
-      organization. Do you want to continue?`,
+    allOrganization_leaveOrganizationConfirm: "Once you confirm the action, you will be unlinked from the organization. Do you want to continue?",
     allOrganization_okButton: "Ok",
     allOrganization_cancelButton: "Cancel",
     allOrganization_userLabel: "User",
     allOrganization_leftOrganizationMessage: "You have left the organization",
-    joinedOrganization_email: "Organization Owner's Email",
-    joinedOrganization_role: "Your Role",
     addOrganization_errorDisplay: "Error displaying the organization",
     addOrganization_nameOfOrganizationLabel: "Name of Organization",
     addOrganization_addressLabel: "Address",
@@ -210,50 +199,35 @@ const messages: Record<string, string> = {
     addOrganization_organizationColorLabel: "Organization color",
     addOrganization_saveButtonLabel: "Save",
     addOrganization_cancelButtonLabel: "Cancel",
-    addOrganization_nameOfOrganizationPlaceholder:
-        "OFFICIAL NAME OF YOUR ORGANIZATION",
+    addOrganization_nameOfOrganizationPlaceholder: "OFFICIAL NAME OF YOUR ORGANIZATION",
     addOrganization_addressPlaceholder: "ORGANIZATION ADDRESS",
     addOrganization_emailAddressPlaceholder: "ORGANIZATION EMAIL",
     addOrganization_organizationShortCodePlaceholder: "Organization Short Code",
-    addOrganization_organizationNameRequiredValidation:
-        "Name of organization is required",
-    addOrganization_organizationNameInvalidValidation:
-        "Name of organization invalid",
-    addOrganization_organizationNameMaxValidation:
-        "The name of organization must have a maximum of 30 characters",
-    addOrganization_organizationNameMinValidation:
-        "The name of organization must have a minimum of 5 characters",
+    addOrganization_organizationNameRequiredValidation: "Name of organization is required",
+    addOrganization_organizationNameInvalidValidation: "Name of organization invalid",
+    addOrganization_organizationNameMaxValidation: "The name of organization must have a maximum of 30 characters",
+    addOrganization_organizationNameMinValidation: "The name of organization must have a minimum of 5 characters",
     addOrganization_addressRequiredValidation: "Address is required",
     addOrganization_addressInvalidValidation: "Address is invalid",
-    addOrganization_addressMaxValidation:
-        "The address must have a maximum of 30 characters",
-    addOrganization_addressMinValidation:
-        "The address must have a minimum of 10 characters",
+    addOrganization_addressMaxValidation: "The address must have a maximum of 30 characters",
+    addOrganization_addressMinValidation: "The address must have a minimum of 10 characters",
     addOrganization_address2InvalidValidation: "Second address is invalid",
-    addOrganization_address2MaxValidation:
-        "The second address must have a maximum of 30 characters",
-    addOrganization_address2MinValidation:
-        "The second address must have a minimum of 10 characters",
+    addOrganization_address2MaxValidation: "The second address must have a maximum of 30 characters",
+    addOrganization_address2MinValidation: "The second address must have a minimum of 10 characters",
     addOrganization_phoneNumberRequiredValidation: "Phone number is required",
-    addOrganization_phoneNumberMaxValidation:
-        "The phone number must have a maximum of 15 characters",
-    addOrganization_phoneNumberMinValidation:
-        "The phone number must have a minimum of 10 characters",
+    addOrganization_phoneNumberMaxValidation: "The phone number must have a maximum of 15 characters",
+    addOrganization_phoneNumberMinValidation: "The phone number must have a minimum of 10 characters",
     addOrganization_emailAddressRequiredValidation: "Email address is required",
-    addOrganization_emailAddressMaxValidation:
-        "The email adress must have a maximum of 30 characters",
+    addOrganization_emailAddressMaxValidation: "The email adress must have a maximum of 30 characters",
     addOrganization_emailAddressInvalidValidation: "Email address is invalid",
-    addOrganization_primaryContactRequiredValidation:
-        "Primary contact is required",
-    addOrganization_organizationShortCodeRequiredValidation:
-        "The organization short code is generated when the name of the organization is valid",
+    addOrganization_primaryContactRequiredValidation: "Primary contact is required",
+    addOrganization_organizationShortCodeRequiredValidation: "The organization short code is generated when the name of the organization is valid",
     addOrganization_organizationShortCodeInvalidValidation: "Short code invalid",
-    addOrganization_organizationLogoRequiredValidation:
-        "Organization logo is required",
+    addOrganization_organizationLogoRequiredValidation: "Organization logo is required",
     addOrganization_saveErrorMesssage: "Save failed!",
     groups_groupNameTitle: "Role Name",
     groups_groupNameRequiredValidation: "Role name is required",
-    groups_groupNameInvalidValidation: "Invalid Role name",
+    groups_groupNameInvalidValidation: "Invalid role name",
     groups_roleTitle: "Role",
     groups_roleRequiredValidation: "Role is required",
     groups_colorTitle: "Color",
@@ -273,8 +247,7 @@ const messages: Record<string, string> = {
     groups_previousTooltip: "Previous Page",
     groups_firstTooltip: "First Page",
     groups_lastTooltip: "Last Page",
-    groups_errorDisplay:
-        "Error displaying Role list, please check if the organization is selected",
+    groups_errorDisplay: "Error displaying role list, please check if the organization is selected",
     schools_schoolNameTitle: "School Name",
     schools_addressTitle: "Address",
     schools_phoneTitle: "Phone",
@@ -317,10 +290,8 @@ const messages: Record<string, string> = {
     schools_previousTooltip: "Previous Page",
     schools_firstTooltip: "First Page",
     schools_lastTooltip: "Last Page",
-    schools_errorDisplay:
-        "Error displaying schools list, please check if the organization is selected",
-    schools_savedUsersError:
-        "Failed to show saved users, check if the organization is selected",
+    schools_errorDisplay: "Error displaying schools list, please check if the organization is selected",
+    schools_savedUsersError: "Failed to show saved users, check if the organization is selected",
     school_saveSuccessfulMessage: "School has been created successfully",
     school_saveFailMessage: "Sorry, something went wrong, please try again",
     classes_classTitle: "Class",
@@ -364,10 +335,8 @@ const messages: Record<string, string> = {
     classes_previousTooltip: "Previous Page",
     classes_firstTooltip: "First Page",
     classes_lastTooltip: "Last Page",
-    classes_errorDisplay:
-        "Error displaying classes list, please check if the organization is selected",
-    classes_savedSchoolsError:
-        "Failed to show saved schools, check if the organization is selected",
+    classes_errorDisplay: "Error displaying classes list, please check if the organization is selected",
+    classes_savedSchoolsError: "Failed to show saved schools, check if the organization is selected",
     classes_classSavedMessage: "Class has been created successfully",
     classes_classSaveError: "Sorry, something went wrong, please try again",
     programs_programTitle: "Program",
@@ -425,30 +394,25 @@ const messages: Record<string, string> = {
     grades_deleteRowText: "Are you sure you want to delete this row?",
     grades_actionsDeleteTooltip: "Remove selected grades",
     navMenu_analyticsAndReportsTitle: "Analytics and Reports",
-    navMenu_analyticsAndReportsDescription:
-        "Monitor usage across your organization",
+    navMenu_analyticsAndReportsDescription: "Monitor usage across your organization",
     navMenu_billingTitle: "Billing",
     navMenu_billingDescription: "Manage billing and subscriptions",
     navMenu_contentLibraryTitle: "Content Library",
-    navMenu_contentLibraryDescription:
-        "Approve, manage, and view your content library",
+    navMenu_contentLibraryDescription: "Approve, manage, and view your content library",
     navMenu_dataSecurityTitle: "Data Security and Migration",
-    navMenu_dataSecurityDescription:
-        "Manage data usage and set data usage settings",
+    navMenu_dataSecurityDescription: "Manage data usage and set data usage settings",
     navMenu_devicesTitle: "Devices, Apps and Licenses",
     navMenu_devicesDescription: "Organization-owned devices and app licenses",
     navMenu_groupsTitle: "Roles",
     navMenu_groupsDescription: "Add or manage roles",
     navMenu_organizationTitle: "Organization Profile",
-    navMenu_organizationDescription:
-        "Update personalization and manage your organization",
+    navMenu_organizationDescription: "Update personalization and manage your organization",
     navMenu_securityTitle: "Security",
     navMenu_securityDescription: "Configure security settings",
     navMenu_schoolsTitle: "Schools and Resources",
     navMenu_schoolsDescription: "Manage schools and resources",
     navMenu_supportTitle: "Support",
-    navMenu_supportDescription:
-        "Get onboarding, training, and troubleshooting support",
+    navMenu_supportDescription: "Get onboarding, training, and troubleshooting support",
     navMenu_usersTitle: "Users",
     navMenu_usersDescription: "Manage users and their permissions",
     navMenu_futureRelease: "This is currently planned for a future release!",
@@ -478,5 +442,6 @@ const messages: Record<string, string> = {
     classRoster_previousTooltip: "Previous Page",
     classRoster_firstTooltip: "First Page",
     classRoster_lastTooltip: "Last Page",
+
 };
 export default messages;
