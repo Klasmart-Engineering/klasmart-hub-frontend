@@ -422,6 +422,8 @@ const messages: Record<string, string> = {
     classRoster_actionsUploadTooltip: "Upload",
     classRoster_userAddedMessage: "User added to class",
     classRoster_userAddedError: "Sorry, something went wrong, please try again",
+    classRoster_userRemovedMessage: "User removed from class",
+    classRoster_userRemovedError: "Sorry, something went wrong, please try again",
     classRoster_noRecords: "No records to display",
     classRoster_actionsEditTooltip: "Edit",
     classRoster_deleteRowTooltip: "Delete",
