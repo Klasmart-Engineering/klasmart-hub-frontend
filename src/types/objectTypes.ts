@@ -7,10 +7,11 @@ export interface UserAgent {
 }
 
 export interface MenuItem {
-  description: string;
+  id: string;
+  description: JSX.Element;
   link: string;
   logo: JSX.Element;
-  title: string;
+  title: JSX.Element;
 }
 
 export interface ContentItem {

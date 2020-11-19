@@ -18,6 +18,7 @@ import { GET_USER } from "../../../pages/admin/kidsloop-orgadmin-fe/src/operatio
 import { ActionTypes } from "../../../store/actions";
 import { State } from "../../../store/store";
 import { history } from "../../../utils/history";
+import LanguageSelect from "../../languageSelect";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";

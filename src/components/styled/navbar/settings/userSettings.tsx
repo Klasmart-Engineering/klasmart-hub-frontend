@@ -6,9 +6,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
+import { AccountCircle } from "@material-ui/icons";
 import queryString from "querystring";
 import React, { useState } from "react";
-import { AccountCircle } from "@material-ui/icons";
 import { currentMembershipVar } from "../../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
 
 const useStyles = makeStyles((theme) =>
@@ -28,14 +28,14 @@ const useStyles = makeStyles((theme) =>
     }),
 );
 
+import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
-import IconButton from "@material-ui/core/IconButton";
-import Avatar from "@material-ui/core/Avatar";
 
 const StyledMenu = withStyles({
     paper: {
@@ -167,10 +167,11 @@ export default function UserSettings({
                             direction="row"
                             justify="center"
                             alignItems="center"
+                            spacing={1}
                         >
-                            {/* <Grid item xs={6} style={{ textAlign: "center" }}>
+                            <Grid item xs={12} style={{ textAlign: "center" }}>
                                 <LanguageSelect noIcon />
-                            </Grid> */}
+                            </Grid>
                             <Grid item xs={12} style={{ textAlign: "center" }}>
                                 <StyledButton
                                     extendedOnly

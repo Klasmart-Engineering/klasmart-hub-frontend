@@ -23,6 +23,7 @@ import SecurityTwoToneIcon from "@material-ui/icons/SecurityTwoTone";
 import TableChartTwoToneIcon from "@material-ui/icons/TableChartTwoTone";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
@@ -127,70 +128,81 @@ export default function NavMenu() {
 
     const MENU_ITEMS: MenuItem[] = [
         {
-            description: "View learning outcomes and student statistics",
+            id: "navMenu_analyticsAndReports",
+            description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
             link: "/admin/report",
             logo: <TableChartTwoToneIcon style={{ color: "#f7a219", fontSize: 48 }} />,
-            title: "Analytics and Reports",
+            title: <FormattedMessage id="navMenu_analyticsAndReportsTitle" />,
         },
         {
-            description: "Approve, manage, and view your content library",
+            id: "navMenu_contentLibrary",
+            description: <FormattedMessage id="navMenu_contentLibraryDescription" />,
             link: "/library",
             logo: <AllInboxTwoToneIcon style={{ color: "#1f94e8", fontSize: 48 }} />,
-            title: "Content Library",
+            title: <FormattedMessage id="navMenu_contentLibraryTitle" />,
         },
         {
-            description: "Add or manage roles",
+            id: "navMenu_groups",
+            description: <FormattedMessage id="navMenu_groupsDescription" />,
             link: "/admin/roles",
             logo: <GroupTwoToneIcon style={{ color: "#27bed6", fontSize: 48 }} />,
-            title: "Roles",
+            title: <FormattedMessage id="navMenu_groupsTitle" />,
         },
         {
-            description: "Update personalization and manage your organization",
+            id: "navMenu_organization",
+            description: <FormattedMessage id="navMenu_organizationDescription" />,
             link: "/admin/allOrganization",
             logo: <BusinessTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
-            title: "Organization Profile",
+            title: <FormattedMessage id="navMenu_organizationTitle" />,
         },
         {
-            description: "Manage schools and resources",
+            id: "navMenu_schools",
+            description: <FormattedMessage id="navMenu_schoolsDescription" />,
             link: "/admin/school",
             logo: <SchoolTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
-            title: "Schools and Resources",
+            title: <FormattedMessage id="navMenu_schoolsTitle" />,
         },
         {
-            description: "Manage users and their permissions",
+            id: "navMenu_users",
+            description: <FormattedMessage id="navMenu_usersDescription" />,
             link: "/admin/user",
             logo: <PersonOutlineTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
-            title: "Users",
+            title: <FormattedMessage id="navMenu_usersTitle" />,
         },
         {
-            description: "Manage billing and subscriptions",
+            id: "navMenu_billing",
+            description: <FormattedMessage id="navMenu_billingDescription" />,
             link: "#",
             logo: <CreditCardTwoToneIcon style={{ color: "gray" /* "#b0bec5" */, fontSize: 48 }} />,
-            title: "Billing",
+            title: <FormattedMessage id="navMenu_billingTitle" />,
         },
         {
-            description: "Manage data usage and set data usage settings",
+            id: "navMenu_dataSecurity",
+            description: <FormattedMessage id="navMenu_dataSecurityDescription" />,
             link: "#",
             logo: <LockTwoToneIcon style={{ color: "gray" /* "#816961" */, fontSize: 48 }} />,
-            title: "Data Security and Migration",
+            title: <FormattedMessage id="navMenu_dataSecurityTitle" />,
         },
         {
-            description: "Organization-owned devices and app licenses",
+            id: "navMenu_devices",
+            description: <FormattedMessage id="navMenu_devicesDescription" />,
             link: "#",
             logo: <PhonelinkTwoToneIcon style={{ color: "gray" /* theme.palette.type === "dark" ? "#fefefe" : "#263238" */, fontSize: 48 }} />,
-            title: "Devices, Apps and Licenses",
+            title: <FormattedMessage id="navMenu_devicesTitle" />,
         },
         {
-            description: "Configure security settings",
+            id: "navMenu_security",
+            description: <FormattedMessage id="navMenu_securityDescription" />,
             link: "#",
             logo: <SecurityTwoToneIcon style={{ color: "gray" /* "#8396a0" */, fontSize: 48 }} />,
-            title: "Security",
+            title: <FormattedMessage id="navMenu_securityTitle" />,
         },
         {
-            description: "Get onboarding, training, and troubleshooting support",
+            id: "navMenu_support",
+            description: <FormattedMessage id="navMenu_supportDescription" />,
             link: "#",
             logo: <ContactSupportTwoToneIcon style={{ color: "gray" /* "#3baf77" */, fontSize: 48 }} />,
-            title: "Support",
+            title: <FormattedMessage id="navMenu_supportTitle" />,
         },
     ];
 
@@ -247,7 +259,7 @@ export default function NavMenu() {
                         MENU_ITEMS.map((menuItem) => {
                             return (
                                 <Grid
-                                    key={`menuItem-${menuItem.title}`}
+                                    key={`menuItem-${menuItem.id}`}
                                     item
                                     xs={6} sm={4} md={3} lg={2}
                                     style={{ textAlign: "center" }}

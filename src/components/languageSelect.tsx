@@ -1,10 +1,11 @@
 import Button from "@material-ui/core/Button";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import LanguageIcon from "@material-ui/icons/Translate";
+import Cookies from "js-cookie";
 import { useState } from "react";
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
@@ -24,6 +25,14 @@ const LANGUAGES_LABEL: Language[] = [
     {
         code: "zh-CN",
         text: "汉语 (简体)",
+    },
+    {
+        code: "vi",
+        text: "Tiếng Việt",
+    },
+    {
+        code: "id",
+        text: "bahasa Indonesia",
     },
 ];
 
@@ -64,15 +73,18 @@ const StyledMenu = withStyles({})((props: MenuProps) => (
 
 export default function LanguageSelect(props: Props) {
     const classes = useStyles();
+    const theme = useTheme();
     const store = useStore();
 
-    const locale = useSelector((state: State) => state.ui.locale || "");
+    const cookieLocale = Cookies.get("locale");
+    const locale = cookieLocale || useSelector((state: State) => state.ui.locale || "");
     const langText = LANGUAGES_LABEL.find((element) => element.code === locale);
     const [languageText, setLanguageText] = useState<string>(langText ? langText.text : "");
     const [languageMenuElement, setLanguageMenuElement] = useState<null | HTMLElement>(null);
 
     function languageSelect(language: { code: string, text: string }) {
         store.dispatch({ type: ActionTypes.LOCALE, payload: language.code });
+        Cookies.set("locale", language.code, { domain: "kidsloop.net" });
         setLanguageText(language.text);
         setLanguageMenuElement(null);
     }
@@ -112,6 +124,7 @@ export default function LanguageSelect(props: Props) {
                             key={language.code}
                             selected={locale === language.code}
                             onClick={() => languageSelect(language)}
+                            style={{ display: "flex", padding: theme.spacing(1, 2) }}
                         >
                             {language.text}
                         </MenuItem>

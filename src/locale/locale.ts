@@ -5,14 +5,14 @@ import chinese from "./zh_cn";
 import vietnamese from "./vi";
 import indonesian from "./id";
 
-export const localeCodes = ["en", "ko", "zh-CN", "vi", "id"];
+export const localeCodes = ["en-US", "ko", "zh-CN", "vi", "id"];
 
 const intlCache = createIntlCache();
 export const fallbackLocale = createIntl({ locale: "en", messages: english }, intlCache);
 export function getIntl(locale: string) {
     switch (locale) {
         case "en":
-            return createIntl({ locale: "en", messages: english }, intlCache);
+            return createIntl({ locale: "en-US", messages: english }, intlCache);
         case "ko":
             return createIntl({ locale: "ko", messages: korean }, intlCache);
         case "zh-CN":

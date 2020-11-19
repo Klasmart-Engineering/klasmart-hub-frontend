@@ -1,8 +1,12 @@
+import Cookies from "js-cookie";
 import { fallbackLocale, getIntl, localeCodes } from "../locale/locale";
 
 const localeCache = new Map<string, ReturnType<typeof getIntl>>();
 
 export function getDefaultLanguageCode() {
+    const cookieLocale = Cookies.get("locale");
+    if (cookieLocale) { return cookieLocale; }
+
     const languages = navigator.languages || [
         (navigator as any).language,
         (navigator as any).browerLanguage,

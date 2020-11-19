@@ -424,6 +424,8 @@ const messages: Record<string, string> = {
     classRoster_actionsUploadTooltip: "업로드",
     classRoster_userAddedMessage: "수업에 추가된 사용자",
     classRoster_userAddedError: "죄송합니다. 다시 시도해 주십시오.",
+    classRoster_userRemovedMessage: "User removed from class",
+    classRoster_userRemovedError: "Sorry, something went wrong, please try again",
     classRoster_noRecords: "기록이 존재하지 않습니다",
     classRoster_actionsEditTooltip: "편집",
     classRoster_deleteRowTooltip: "삭제",

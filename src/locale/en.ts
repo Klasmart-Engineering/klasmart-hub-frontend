@@ -188,6 +188,8 @@ const messages: Record<string, string> = {
     allOrganization_cancelButton: "Cancel",
     allOrganization_userLabel: "User",
     allOrganization_leftOrganizationMessage: "You have left the organization",
+    joinedOrganization_email: "Organization Owner's Email",
+    joinedOrganization_role: "Your Role",
     addOrganization_errorDisplay: "Error displaying the organization",
     addOrganization_nameOfOrganizationLabel: "Name of Organization",
     addOrganization_addressLabel: "Address",
