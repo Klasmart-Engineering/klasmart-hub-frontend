@@ -97,7 +97,8 @@ module.exports = {
             "REGION_ENDPOINT": "https://beta.region.badanamu.net/",
             "ORGANIZATION_SEOUL_ENDPOINT": "https://seoul-beta.organization-api.badanamu.net/",
             "ASSESSMENT_ENDPOINT": "https://seoul-beta.assessment-api.badanamu.net/",
-            "DEFAULT_PROG_ID": "KIDSLOOP-2.0"
+            "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
+            "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
         })
     ],
     devServer: {

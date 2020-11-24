@@ -92,6 +92,7 @@ module.exports = {
             "ASSESSMENT_ENDPOINT": "http://localhost:8065/",
             "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
             "REACT_APP_BASE_API": "/v1",
+            "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
         })
     ],
     devServer: {

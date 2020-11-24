@@ -7,6 +7,7 @@ import { useStore } from "react-redux";
 import { Route, Switch, useLocation } from "react-router-dom";
 import Header from "./components/styled/navbar/adminHeader";
 import NavBar from "./components/styled/navbar/navbar";
+import { getCNEndpoint } from "./config";
 import { currentMembershipVar, userIdVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
 import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/GradesTable";
@@ -29,6 +30,7 @@ import { ActionTypes } from "./store/actions";
 // import { redirectIfUnauthorized } from "./utils/accountUtils";
 
 const TIMEOUT = 360000; // 1 minute
+const ENDPOINT = getCNEndpoint();
 
 export const mainNavBar = [{
     name: "live",
@@ -108,7 +110,7 @@ export function App() {
             <Switch>
                 <Route path="/live" render={() => <Home />} />
                 <Route path="/library" render={() => <>
-                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/library`}
+                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -117,7 +119,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/badanamu-content" render={() => <>
-                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
+                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -126,7 +128,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/schedule" render={() => <>
-                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
+                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -135,7 +137,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/assessments" render={() => <>
-                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
+                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
                         frameBorder="0"
                         style={{
                             width: "100%",
@@ -144,7 +146,7 @@ export function App() {
                     />
                 </>} />
                 <Route path="/report" render={() => <>
-                    <iframe src={`https://kl2-test.kidsloop.net/?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
+                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
                         frameBorder="0"
                         style={{
                             width: "100%",

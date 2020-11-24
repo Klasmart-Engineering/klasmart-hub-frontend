@@ -100,6 +100,7 @@ module.exports = {
             "ASSESSMENT_ENDPOINT": "https://seoul.assessment-api.badanamu.net/",
             "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
             "REACT_APP_BASE_API": "/v1",
+            "CN_CMS_ENDPOINT": "https://kl2.kidsloop.net/",
         })
     ],
 };

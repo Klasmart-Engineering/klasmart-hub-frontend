@@ -28,12 +28,12 @@ export function getRegionEndpoint() {
 
 export function getOrganizationEndpoint(regionId: string) {
     switch (regionId.toLowerCase()) {
-    case "seoul": {
-        return "" + process.env.ORGANIZATION_SEOUL_ENDPOINT;
-    }
-    default: {
-        return "" + process.env.ORGANIZATION_ENDPOINT;
-    }
+        case "seoul": {
+            return "" + process.env.ORGANIZATION_SEOUL_ENDPOINT;
+        }
+        default: {
+            return "" + process.env.ORGANIZATION_ENDPOINT;
+        }
     }
 }
 
@@ -47,4 +47,8 @@ export function getAssessmentEndpoint() {
 
 export function getDefaultProgId() {
     return "" + process.env.DEFAULT_PROG_ID;
+}
+
+export function getCNEndpoint() {
+    return "" + process.env.CN_CMS_ENDPOINT;
 }
