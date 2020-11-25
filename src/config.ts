@@ -52,3 +52,11 @@ export function getDefaultProgId() {
 export function getCNEndpoint() {
     return "" + process.env.CN_CMS_ENDPOINT;
 }
+
+export function getKLAuthEndpoint() {
+    return "" + process.env.KL_AUTH_ENDPOINT;
+}
+
+export function getKLAPIEndpoint() {
+    return "" + process.env.KL_API_ENDPOINT;
+}

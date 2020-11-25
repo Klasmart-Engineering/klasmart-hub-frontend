@@ -98,6 +98,8 @@ module.exports = {
             "ASSESSMENT_ENDPOINT": "https://assessment-api.internal.badanamu.net/",
             "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
             "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
+            "KL_API_ENDPOINT": "https://api.kidsloop.net/",
+            "KL_AUTH_ENDPOINT": "https://auth.kidsloop.net/",
         })
     ],
     devServer: {

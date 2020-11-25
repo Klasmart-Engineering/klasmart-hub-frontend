@@ -93,6 +93,8 @@ module.exports = {
             "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
             "REACT_APP_BASE_API": "/v1",
             "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
+            "KL_API_ENDPOINT": "https://api.kidsloop.net/",
+            "KL_AUTH_ENDPOINT": "https://auth.kidsloop.net/",
         })
     ],
     devServer: {

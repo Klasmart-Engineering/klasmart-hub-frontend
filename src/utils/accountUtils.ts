@@ -1,4 +1,5 @@
 import queryString from "query-string";
+import { getKLAPIEndpoint, getKLAuthEndpoint } from "../config";
 
 interface User {
     avatar: string;
@@ -20,7 +21,7 @@ export async function redirectIfUnauthorized(continueParam?: string) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     headers.append("Content-Type", "application/json");
-    const response = await fetch("https://api.kidsloop.net/user/", {
+    const response = await fetch(`${getKLAPIEndpoint()}user/`, {
         body: JSON.stringify({ query: GET_SELF }),
         credentials: "include",
         headers,
@@ -33,9 +34,9 @@ export async function redirectIfUnauthorized(continueParam?: string) {
             const me: User = response.data.me;
             // console.log(me);
             if (me === null) {
-                if (window.location.origin === "https://auth.kidsloop.net") { return; }
+                if (window.location.origin === getKLAuthEndpoint()) { return; }
                 const stringifiedQuery = queryString.stringify({ continue: continueParam ? continueParam : window.location.href });
-                window.location.href = `https://auth.kidsloop.net/?${stringifiedQuery}#/`;
+                window.location.href = `${getKLAuthEndpoint()}?${stringifiedQuery}#/`;
             }
             return;
         });

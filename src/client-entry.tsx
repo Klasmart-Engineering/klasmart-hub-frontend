@@ -21,6 +21,7 @@ import { createIntl, RawIntlProvider } from "react-intl";
 import { Provider, useSelector } from "react-redux";
 import { HashRouter, Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
+import { getKLAPIEndpoint } from "./config";
 import { Layout } from "./layout";
 import { createDefaultStore, State } from "./store/store";
 import { themeProvider } from "./themeProvider";
@@ -29,8 +30,8 @@ import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
 
 const link = createUploadLink({
-    credentials: "include", 
-    uri: "https://api.kidsloop.net/user/",
+    credentials: "include",
+    uri: `${getKLAPIEndpoint()}user/`,
 });
 
 export const client = new ApolloClient({
@@ -38,7 +39,6 @@ export const client = new ApolloClient({
     link: ApolloLink.from([link]),
     cache,
 });
-
 
 function ClientSide() {
     const memos = useMemo(() => {
