@@ -341,6 +341,8 @@ const messages: Record<string, string> = {
     classes_savedSchoolsError: "저장된 학교 정보를 가져올 수 없습니다. 기관을 다시 확인해주세요.",
     classes_classSavedMessage: "학급이 생성되었습니다",
     classes_classSaveError: "문제가 발생되었습니다. 다시 시도해주세요",
+    classes_classDeletedMessage: "Class has been deleted successfully",
+    classes_classDeletedError: "Sorry, something went wrong, please try again",
     programs_programTitle: "프로그램",
     programs_subjectTitle: "과목",
     programs_gradeTitle: "학년",

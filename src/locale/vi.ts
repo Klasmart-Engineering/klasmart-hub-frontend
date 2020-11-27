@@ -341,6 +341,8 @@ const messages: Record<string, string> = {
     classes_savedSchoolsError: "Không hiển thị được các trường đã lưu, hãy kiểm tra xem tổ chức đã được chọn chưa",
     classes_classSavedMessage: "Lớp học đã được tạo thành công",
     classes_classSaveError: "Xin lỗi có lỗi xảy ra, xin hãy thử lại",
+    classes_classDeletedMessage: "Class has been deleted successfully",
+    classes_classDeletedError: "Sorry, something went wrong, please try again",
     programs_programTitle: "Chương Trình",
     programs_subjectTitle: "Chủ Đề",
     programs_gradeTitle: "Lớp",

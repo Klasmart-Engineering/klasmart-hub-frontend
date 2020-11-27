@@ -341,6 +341,8 @@ const messages: Record<string, string> = {
     classes_savedSchoolsError: "显示学校错误，请先选择组织",
     classes_classSavedMessage: "成功创建班级",
     classes_classSaveError: "发生错误，请再试一次",
+    classes_classDeletedMessage: "Class has been deleted successfully",
+    classes_classDeletedError: "Sorry, something went wrong, please try again",
     programs_programTitle: "课程",
     programs_subjectTitle: "学科",
     programs_gradeTitle: "年级",

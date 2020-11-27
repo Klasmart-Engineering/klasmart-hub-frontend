@@ -341,6 +341,8 @@ const messages: Record<string, string> = {
     classes_savedSchoolsError: "Gagal menampilkan sekolah yang menyimpan, periksa apakah organisasi telah dipilih",
     classes_classSavedMessage: "kelas berhasil dibuat",
     classes_classSaveError: "Maaf, ada yang salah. Silakan dicoba lagi.",
+    classes_classDeletedMessage: "Class has been deleted successfully",
+    classes_classDeletedError: "Sorry, something went wrong, please try again",
     programs_programTitle: "program",
     programs_subjectTitle: "subyek",
     programs_gradeTitle: "tingkatan",

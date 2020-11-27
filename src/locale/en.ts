@@ -341,6 +341,8 @@ const messages: Record<string, string> = {
     classes_savedSchoolsError: "Failed to show saved schools, check if the organization is selected",
     classes_classSavedMessage: "Class has been created successfully",
     classes_classSaveError: "Sorry, something went wrong, please try again",
+    classes_classDeletedMessage: "Class has been deleted successfully",
+    classes_classDeletedError: "Sorry, something went wrong, please try again",
     programs_programTitle: "Program",
     programs_subjectTitle: "Subject",
     programs_gradeTitle: "Grade",
