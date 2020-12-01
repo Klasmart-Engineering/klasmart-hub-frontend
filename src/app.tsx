@@ -58,7 +58,7 @@ export function App() {
     const [ key, setKey ] = useState(Math.random().toString(36));
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
-    useEffect(() => { redirectIfUnauthorized(); }, []);
+    useEffect(() => { redirectIfUnauthorized(); }, [location]);
 
     useEffect(() => {
         const userInformation = {
