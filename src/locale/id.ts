@@ -82,6 +82,7 @@ const messages: Record<string, string> = {
     navMenu_scheduleLabel: "jadwal",
     navMenu_libraryLabel: "Perpustakaan",
     navMenu_liveLabel: "langsung",
+    navMenu_homeLabel: "Home", // TODO(Henrik): translate
     navMenu_peopleLabel: "Orang-orang",
     navMenu_reportLabel: "Melaporkan",
     navMenu_adminLabel: "Admin",

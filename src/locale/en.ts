@@ -82,6 +82,7 @@ const messages: Record<string, string> = {
     navMenu_scheduleLabel: "Schedule",
     navMenu_libraryLabel: "Library",
     navMenu_liveLabel: "Live",
+    navMenu_homeLabel: "Home",
     navMenu_peopleLabel: "People",
     navMenu_reportLabel: "Report",
     navMenu_adminLabel: "Admin",

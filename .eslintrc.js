@@ -45,5 +45,6 @@ module.exports = {
             "error",
             "always",
         ],
+        "no-warning-comments": 1
     },
 };

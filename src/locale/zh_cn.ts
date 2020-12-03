@@ -82,6 +82,7 @@ const messages: Record<string, string> = {
     navMenu_scheduleLabel: "课表",
     navMenu_libraryLabel: "内容",
     navMenu_liveLabel: "直播",
+    navMenu_homeLabel: "Home", // TODO(Henrik): translate
     navMenu_peopleLabel: "人员",
     navMenu_reportLabel: "报表",
     navMenu_adminLabel: "Admin",
