@@ -36,6 +36,7 @@ import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
 import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
+import { Membership } from "../../../../types/graphQL";
 
 const StyledMenu = withStyles({
     paper: {
@@ -57,18 +58,21 @@ const StyledMenu = withStyles({
     />
 ));
 
+interface Props {
+    memberships?: Membership[] | null
+    loading: boolean
+    error?: ApolloError
+}
+
 /**
  * Returns function to show setting for user
  */
-export default function UserSettings({
-    memberships,
-    loading,
-    error,
-}: {
-    memberships: [];
-    loading: boolean;
-    error: ApolloError | undefined;
-}) {
+export default function UserSettings(props: Props) {
+    const {
+        memberships,
+        loading,
+        error,
+    } = props;
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -144,24 +148,24 @@ export default function UserSettings({
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    {!loading && !error && memberships.map((e: any) => (
+                    {!loading && !error && memberships?.map((membership) => (
                         <ListItem
-                            key={e.organization_id}
+                            key={membership.organization_id}
                             button
-                            onClick={() => handleOrganization(e)}
+                            onClick={() => handleOrganization(membership)}
                             style={{ padding: "0px 16px" }}
                         >
                             <IconButton>
                                 <AccountCircle />
                             </IconButton>
                             <ListItemText
-                                primary={e.organization.organization_name}
-                                secondary={e.organization.phone}
+                                primary={membership?.organization?.organization_name}
+                                secondary={membership?.organization?.owner?.email}
                             />
                         </ListItem>
                     ))}
                     <Divider />
-                    <ListItem style={{ padding: 8}}>
+                    <ListItem style={{ padding: 8 }}>
                         <Grid
                             container
                             direction="row"
