@@ -66,8 +66,6 @@ export type ToggleClassSettings = Action<ActionTypes.CLASS_SETTINGS_TOGGLE, bool
 
 export type ToggleLiveClass = Action<ActionTypes.LIVE_CLASS_TOGGLE, boolean>;
 
-export type SetActiveComponentHome = Action<ActionTypes.ACTIVE_COMPONENT_HOME, string>;
-
 export type AssessmentToken = Action<ActionTypes.ASSESSMENT_TOKEN, string>;
 
 export type ActiveLibraryMenu = Action<ActionTypes.ACTIVE_LIBRARY_MENU, LibraryMenu>;
@@ -144,7 +142,6 @@ export type Actions =
     | SetEmailAction
     | ToggleClassSettings
     | ToggleLiveClass
-    | SetActiveComponentHome
     | AssessmentToken
     | ActiveLibraryMenu
     | ActiveAssessmentsMenu

@@ -231,15 +231,6 @@ export function liveClass(state = false, action: Actions) {
     }
 }
 
-export function activeComponentHome(state = "live", action: Actions) {
-    switch (action.type) {
-        case ActionTypes.ACTIVE_COMPONENT_HOME:
-            return action.payload;
-        default:
-            return state;
-    }
-}
-
 // NOTE: Only requests with formatted JWT token can access current API server for assessment
 // You can parse in https://jwt.io/
 export const JWT_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiYWRhbmFtdSBhcHAiLCJpYXQiOjE1OTE2ODU4MzgsInN1YiI6ImF1dGhvcml6YXRpb24iLCJpc3MiOiJLaWRzTG9vcENoaW5hVXNlciIsImV4cCI6MTkwODMyNTI0OSwiaWQiOiI0NSIsIm9yZ19pZCI6IjkifQ=.RawtL06bFxeJ2zMQnp0oe+LnBWNIX4lMo/F7hFW85SU";
@@ -424,7 +415,6 @@ export const account = combineReducers({
 });
 
 export const ui = combineReducers({
-    activeComponentHome,
     classSettings,
     darkMode,
     liveClass,

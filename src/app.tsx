@@ -108,7 +108,7 @@ export function App() {
         <>
             <NavBar menuLabels={mainNavBar} />
             <Switch>
-                <Route path="/" render={() => <Home />} />
+                <Route path="/" exact render={() => <Home />} />
                 <Route path="/library" render={() => <>
                     <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
                         frameBorder="0"

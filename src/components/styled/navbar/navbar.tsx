@@ -61,19 +61,13 @@ function MenuButtons(props: MenuButtonProps) {
     const theme = useTheme();
     const { labels } = props;
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
-
-    const store = useStore();
     const location = useLocation();
-    const setActiveComponent = (value: string) => {
-        store.dispatch({ type: ActionTypes.ACTIVE_COMPONENT_HOME, payload: value });
-    };
     return (
         <>
             {labels.map((label) => (
                 <NavButton
                     key={`menuLabel-${label.name}`}
                     onClick={(e) => {
-                        setActiveComponent(label.name);
                         history.push(label.path);
                         e.preventDefault();
                     }}
