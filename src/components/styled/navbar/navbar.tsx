@@ -68,20 +68,22 @@ function MenuButtons(props: MenuButtonProps) {
     };
 
     return (
-        labels.map((value: { name: string; path: string; }) => (
-            <NavButton
-                key={`menuLabel-${value.name}`}
-                onClick={(e) => {
-                    setActiveComponent(value.name);
-                    history.push(value.path);
-                    e.preventDefault();
-                }}
-                isActive={activeComponent === value.path.split("/").filter((x) => x)[0]}
-                style={{ minHeight }}
-            >
-                <FormattedMessage id={`navMenu_${value.name}Label`} />
-            </NavButton>
-        ))
+        <>
+            {labels.map((value: { name: string; path: string; }) => (
+                <NavButton
+                    key={`menuLabel-${value.name}`}
+                    onClick={(e) => {
+                        setActiveComponent(value.name);
+                        history.push(value.path);
+                        e.preventDefault();
+                    }}
+                    isActive={activeComponent === value.path.split("/").filter((x) => x)[0]}
+                    style={{ minHeight }}
+                >
+                    <FormattedMessage id={`navMenu_${value.name}Label`} />
+                </NavButton>
+            ))}
+        </>
     );
 }
 
@@ -99,13 +101,8 @@ function ClassroomLabel(props: LabelProps) {
         <Tooltip title="Your currently selected organization" aria-label="selected-org" placement="bottom-start">
             <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
                 <Grid item xs={12}>
-                        <Typography variant="caption" className={props.classes} noWrap>
-                            Organization
-                        </Typography>
-                </Grid>
-                <Grid item xs={12}>
                     <Typography variant="body1" className={props.classes} noWrap>
-                        { currentOrganization.organization_name }
+                        {currentOrganization.organization_name}
                     </Typography>
                 </Grid>
             </Grid>
@@ -130,7 +127,7 @@ export default function NavBar(props: Props) {
     const { data, loading, error } = useQuery(GET_USER, {
         fetchPolicy: "network-only",
         variables: {
-        user_id,
+            user_id,
         },
     });
 
@@ -179,7 +176,7 @@ export default function NavBar(props: Props) {
                                 </Grid>
                             </Hidden>
                         </Grid>
-                        { url.hash.includes("#/admin") ? null :
+                        {url.hash.includes("#/admin") ? null :
                             <Grid
                                 container item
                                 xs={12} md={4} lg={6}
