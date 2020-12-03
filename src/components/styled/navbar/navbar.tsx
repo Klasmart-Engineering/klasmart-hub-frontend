@@ -13,6 +13,7 @@ import * as QueryString from "query-string";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector, useStore } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { currentMembershipVar, organizationIdVar, userIdVar } from "../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
 import { GET_USER } from "../../../pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
 import { ActionTypes } from "../../../store/actions";
@@ -62,25 +63,24 @@ function MenuButtons(props: MenuButtonProps) {
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
 
     const store = useStore();
-    const activeComponent = useSelector((state: State) => state.ui.activeComponentHome);
+    const location = useLocation();
     const setActiveComponent = (value: string) => {
         store.dispatch({ type: ActionTypes.ACTIVE_COMPONENT_HOME, payload: value });
     };
-
     return (
         <>
-            {labels.map((value: { name: string; path: string; }) => (
+            {labels.map((label) => (
                 <NavButton
-                    key={`menuLabel-${value.name}`}
+                    key={`menuLabel-${label.name}`}
                     onClick={(e) => {
-                        setActiveComponent(value.name);
-                        history.push(value.path);
+                        setActiveComponent(label.name);
+                        history.push(label.path);
                         e.preventDefault();
                     }}
-                    isActive={activeComponent === value.path.split("/").filter((x) => x)[0]}
+                    isActive={label.path === location.pathname}
                     style={{ minHeight }}
                 >
-                    <FormattedMessage id={`navMenu_${value.name}Label`} />
+                    <FormattedMessage id={`navMenu_${label.name}Label`} />
                 </NavButton>
             ))}
         </>

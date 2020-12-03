@@ -33,8 +33,8 @@ const TIMEOUT = 360000; // 1 minute
 const ENDPOINT = getCNEndpoint();
 
 export const mainNavBar = [{
-    name: "live",
-    path: "/live",
+    name: "home",
+    path: "/",
 }, {
     name: "library",
     path: "/library/my-content-list",
@@ -53,9 +53,9 @@ export function App() {
     const store = useStore();
     const location = useLocation().pathname;
 
-    const [ organizationData, setOrganizationData ]  = useState([]);
-    const [ expiration, setExpiration ] = useState(TIMEOUT);
-    const [ key, setKey ] = useState(Math.random().toString(36));
+    const [organizationData, setOrganizationData] = useState([]);
+    const [expiration, setExpiration] = useState(TIMEOUT);
+    const [key, setKey] = useState(Math.random().toString(36));
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
     useEffect(() => { redirectIfUnauthorized(); }, [location]);
@@ -102,13 +102,13 @@ export function App() {
                 organization_email: organizationData[0].organization.email,
             });
         }
-    }, [organizationData,  user_id]);
+    }, [organizationData, user_id]);
 
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
         <>
             <NavBar menuLabels={mainNavBar} />
             <Switch>
-                <Route path="/live" render={() => <Home />} />
+                <Route path="/" render={() => <Home />} />
                 <Route path="/library" render={() => <>
                     <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
                         frameBorder="0"
@@ -219,7 +219,7 @@ export function App() {
                         <User />
                     </Layout>
                 </Route>
-                <Route render={() => <Home /> }/>
+                <Route render={() => <Home />} />
             </Switch>
         </>
     );
