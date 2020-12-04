@@ -9,7 +9,6 @@ import "./assets/css/index.min.css";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { createUploadLink } from "apollo-upload-client";
-import { cache } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
 
 import { ApolloClient, ApolloLink } from "@apollo/client/core";
 import { ApolloProvider } from "@apollo/client/react";
@@ -21,6 +20,7 @@ import { createIntl, RawIntlProvider } from "react-intl";
 import { Provider, useSelector } from "react-redux";
 import { HashRouter, Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
+import { cache } from "./cache";
 import { getKLAPIEndpoint } from "./config";
 import { Layout } from "./layout";
 import { createDefaultStore, State } from "./store/store";

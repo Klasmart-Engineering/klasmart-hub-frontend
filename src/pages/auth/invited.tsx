@@ -1,18 +1,18 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
-import Lightswitch from "../../components/lightswitch";
-import LanguageSelect from "../../components/languageSelect";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import KidsloopLogo from "../../assets/img/kidsloop.svg";
-import Typography from "@material-ui/core/Typography";
-import { FormattedMessage } from "react-intl";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import CancelIcon from "@material-ui/icons/Cancel";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { FormattedMessage } from "react-intl";
+import KidsloopLogo from "../../assets/img/kidsloop.svg";
+import LanguageSelect from "../../components/languageSelect";
+import Lightswitch from "../../components/lightswitch";
 import StyledFAB from "../../components/styled/fabButton";
 
 const useStyles = makeStyles((theme) => createStyles(
@@ -26,14 +26,14 @@ const useStyles = makeStyles((theme) => createStyles(
             display: "flex",
             flexGrow: 1,
         },
-    }
+    },
 ));
 
 export function Invited() {
     const classes = useStyles();
     const [success, setSuccess] = useState(false);
     const [inFlight, setInFlight] = useState(false);
-    const organization = "Calm Island"; //TODO: remove placeholder
+    const organization = "Calm Island"; // TODO: remove placeholder
 
     return (
         <Grid
@@ -52,7 +52,7 @@ export function Invited() {
                             </Grid>
                             <Grid item xs={12} style={{ textAlign: "center" }}>
                                 <Typography variant="h3">
-                                    { success ? 
+                                    { success ?
                                         <CheckCircleIcon fontSize="inherit" color="primary" /> :
                                         <CancelIcon fontSize="inherit" color="secondary" />
                                     }
@@ -69,7 +69,7 @@ export function Invited() {
                             </Grid>
                             <Grid item xs={12} style={{ textAlign: "center" }}>
                                 <Typography variant="body2" gutterBottom>
-                                    { success ? 
+                                    { success ?
                                         "Redirecting you back to login!" :
                                         "Please contact the organization that invited you to receive a new invitation."
                                     }
@@ -95,5 +95,5 @@ export function Invited() {
                 </Card>
             </Container>
         </Grid>
-    )
+    );
 }

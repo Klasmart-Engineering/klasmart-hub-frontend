@@ -5,29 +5,27 @@ import React, { useEffect, useState } from "react";
 import { isEdge, isIE, isIOS, isMobile, isMobileSafari } from "react-device-detect";
 import { useStore } from "react-redux";
 import { Route, Switch, useLocation } from "react-router-dom";
-import Header from "./components/styled/navbar/adminHeader";
+import { currentMembershipVar, userIdVar } from "./cache";
 import NavBar from "./components/styled/navbar/navbar";
 import { getCNEndpoint } from "./config";
-import { currentMembershipVar, userIdVar } from "./pages/admin/kidsloop-orgadmin-fe/src/cache";
-import ClassRosterTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/ClassRoster/ClassRosterTable";
-import GradeTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Grade/GradesTable";
-import Layout from "./pages/admin/kidsloop-orgadmin-fe/src/components/Layout";
-import AllOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/AllOrganitation";
-import EditOrganization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/EditOrganization";
-import JoinedOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/JoinedOrganizationTable";
-import MyOrganizationTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/MyOrganizationTable";
-import Organization from "./pages/admin/kidsloop-orgadmin-fe/src/components/Organization/Organization";
-import RolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/Rol/RolTable";
-import ClasessTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ClassesTable";
-import ProgramTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/ProgramsTable";
-import SchoolTable from "./pages/admin/kidsloop-orgadmin-fe/src/components/School/SchoolTable";
-import User from "./pages/admin/kidsloop-orgadmin-fe/src/components/User";
-import { GET_USER } from "./pages/admin/kidsloop-orgadmin-fe/src/operations/queries/getUser";
-import { redirectIfUnauthorized, refreshToken } from "./pages/admin/kidsloop-orgadmin-fe/src/util/redirectIfUnauthorized";
+import { GET_USER } from "./operations/queries/getUser";
+import ClassRosterTable from "./pages/admin/ClassRoster/ClassRosterTable";
+import GradeTable from "./pages/admin/Grade/GradesTable";
+import Layout from "./pages/admin/Layout";
+import AllOrganization from "./pages/admin/Organization/AllOrganitation";
+import EditOrganization from "./pages/admin/Organization/EditOrganization";
+import JoinedOrganizationTable from "./pages/admin/Organization/JoinedOrganizationTable";
+import MyOrganizationTable from "./pages/admin/Organization/MyOrganizationTable";
+import Organization from "./pages/admin/Organization/Organization";
+import RoleTable from "./pages/admin/Role/RoleTable";
+import ClasessTable from "./pages/admin/School/ClassesTable";
+import ProgramTable from "./pages/admin/School/ProgramsTable";
+import SchoolTable from "./pages/admin/School/SchoolTable";
+import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import { ActionTypes } from "./store/actions";
-// import { redirectIfUnauthorized } from "./utils/accountUtils";
+import { redirectIfUnauthorized, refreshToken } from "./utils/redirectIfUnauthorized";
 
 const TIMEOUT = 360000; // 1 minute
 const ENDPOINT = getCNEndpoint();
@@ -52,6 +50,7 @@ export const mainNavBar = [{
 export function App() {
     const store = useStore();
     const location = useLocation().pathname;
+    const url = new URL(window.location.href);
 
     const [organizationData, setOrganizationData] = useState([]);
     const [expiration, setExpiration] = useState(TIMEOUT);
@@ -186,7 +185,7 @@ export function App() {
                 </Route>
                 <Route path="/admin/roles">
                     <Layout>
-                        <RolTable />
+                        <RoleTable />
                     </Layout>
                 </Route>
                 <Route path="/admin/school">

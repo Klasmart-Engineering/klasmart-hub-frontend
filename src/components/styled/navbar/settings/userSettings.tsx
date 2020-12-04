@@ -1,15 +1,24 @@
 import { ApolloError } from "@apollo/client";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import { AccountCircle } from "@material-ui/icons";
 import queryString from "querystring";
 import React, { useState } from "react";
-import { currentMembershipVar } from "../../../../pages/admin/kidsloop-orgadmin-fe/src/cache";
+import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
+import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
+import { currentMembershipVar } from "../../../../cache";
+import { Membership } from "../../../../types/graphQL";
+import LanguageSelect from "../../../languageSelect";
+import StyledButton from "../../button";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -27,16 +36,6 @@ const useStyles = makeStyles((theme) =>
         },
     }),
 );
-
-import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
-import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
-import LanguageSelect from "../../../languageSelect";
-import StyledButton from "../../button";
-import { Membership } from "../../../../types/graphQL";
 
 const StyledMenu = withStyles({
     paper: {
@@ -59,9 +58,9 @@ const StyledMenu = withStyles({
 ));
 
 interface Props {
-    memberships?: Membership[] | null
-    loading: boolean
-    error?: ApolloError
+    memberships?: Membership[] | null;
+    loading: boolean;
+    error?: ApolloError;
 }
 
 /**

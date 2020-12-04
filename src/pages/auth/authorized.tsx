@@ -11,8 +11,8 @@ import KidsloopLogo from "../../assets/img/kidsloop.svg";
 import Typography from "@material-ui/core/Typography";
 import { FormattedMessage } from "react-intl";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import CancelIcon from "@material-ui/icons/Cancel";
 import StyledFAB from "../../components/styled/fabButton";
 
 const useStyles = makeStyles((theme) => createStyles(
@@ -94,5 +94,5 @@ export function Authorized() {
                 </Card>
             </Container>
         </Grid>
-    )
+    );
 }

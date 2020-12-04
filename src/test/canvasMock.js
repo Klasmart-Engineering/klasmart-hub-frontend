@@ -1,0 +1,1 @@
+window.HTMLCanvasElement.prototype.getContext = () => {};

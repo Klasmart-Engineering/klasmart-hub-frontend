@@ -16,7 +16,7 @@ const adminNavBar = [
 ];
 
 export default function Header() {
-    const location = new URL(window.location.href);
+    const url = new URL(window.location.href);
 
     return (
         <Grid
@@ -34,8 +34,8 @@ export default function Header() {
                                         variant="body2"
                                         onClick={(e: React.MouseEvent) => { history.push(`/admin/${item.path}`); e.preventDefault(); }}
                                         style={{
-                                            color: location.hash.includes(item.path) ? "#0E78D5" : "black",
-                                            textDecoration: location.hash.includes(item.path) ? "underline" : "none",
+                                            color: url.hash.includes(item.path) ? "#0E78D5" : "black",
+                                            textDecoration: url.hash.includes(item.path) ? "underline" : "none",
                                         }}
                                     >
                                         {item.name}
