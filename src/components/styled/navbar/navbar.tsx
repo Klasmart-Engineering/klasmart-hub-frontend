@@ -95,6 +95,11 @@ function ClassroomLabel(props: LabelProps) {
         <Tooltip title="Your currently selected organization" aria-label="selected-org" placement="bottom-start">
             <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
                 <Grid item xs={12}>
+                    <Typography variant="caption" className={props.classes} noWrap>
+                        Organization
+                    </Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <Typography variant="body1" className={props.classes} noWrap>
                         {currentOrganization.organization_name}
                     </Typography>
