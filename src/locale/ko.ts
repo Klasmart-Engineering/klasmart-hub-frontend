@@ -96,8 +96,8 @@ const messages: Record<string, string> = {
     privacy_termsLink: "이용 약관",
 
     live_welcome: "KidsLoop에 오신 걸 환영합니다!",
-    live_lessonPlanLabel: "레슨 플랜",
-    live_lessonPlanSelect: "레슨 플랜 선택",
+    live_lessonPlanLabel: "수업 계획",
+    live_lessonPlanSelect: "수업 계획 선택",
     live_liveButton: "라이브 실행",
     live_featuredContent: "추천 컨텐츠",
 
