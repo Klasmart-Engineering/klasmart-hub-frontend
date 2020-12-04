@@ -8,6 +8,7 @@ import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/sty
 import Tooltip from "@material-ui/core/Tooltip";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
+import { Home as HomeIcon } from "@material-ui/icons";
 import AllInboxTwoToneIcon from "@material-ui/icons/AllInboxTwoTone";
 import AppsIcon from "@material-ui/icons/Apps";
 import BusinessTwoToneIcon from "@material-ui/icons/BusinessTwoTone";
@@ -224,6 +225,17 @@ export default function NavMenu() {
             >
                 <AppsIcon />
             </IconButton>
+            { window.location.hash !== "#/" &&
+                <IconButton
+                    aria-label="home"
+                    color="inherit"
+                    edge="end"
+                    onClick={() => { history.push("/"); }}
+                    style={{ marginRight: theme.spacing(2) }}
+                >
+                    <HomeIcon />
+                </IconButton>
+            }
             <Dialog
                 aria-labelledby="nav-menu-title"
                 aria-describedby="nav-menu-description"
