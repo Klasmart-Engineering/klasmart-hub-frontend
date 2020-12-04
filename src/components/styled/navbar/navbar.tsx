@@ -1,5 +1,5 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
-import { Link, Paper } from "@material-ui/core";
+import { Link, Paper, Tooltip } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
@@ -96,18 +96,20 @@ function ClassroomLabel(props: LabelProps) {
     // console.log(currentOrganization);
 
     return (
-        <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
-            <Grid item xs={12}>
-                <Typography variant="body1" className={props.classes} noWrap>
-                    { currentOrganization.organization_name }
-                </Typography>
+        <Tooltip title="Your currently selected organization" aria-label="selected-org" placement="bottom-start">
+            <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
+                <Grid item xs={12}>
+                        <Typography variant="caption" className={props.classes} noWrap>
+                            Organization
+                        </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="body1" className={props.classes} noWrap>
+                        { currentOrganization.organization_name }
+                    </Typography>
+                </Grid>
             </Grid>
-            <Grid item xs={12}>
-                <Typography variant="body2" className={props.classes} noWrap>
-                    Alpha Release
-                </Typography>
-            </Grid>
-        </Grid>
+        </Tooltip>
     );
 }
 
