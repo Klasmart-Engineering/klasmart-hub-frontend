@@ -32,7 +32,7 @@ export default function Organization() {
     const classes = useStyles();
     const formRef = useRef<HTMLFormElement | null>(null);
     const { organizationId: orgIdParams } = ParameterHOC();
-    const [organization_name, setOrganizationName] = useState("");
+    const [organizationName, setOrganizationName] = useState("");
     const [address1, setAddress1] = useState("");
     const [address2, setAddress2] = useState("");
     const [email, setEmail] = useState("");
@@ -94,10 +94,10 @@ export default function Organization() {
     };
 
     const handleBlurNameOrganization = () => {
-        if (organization_name.length < 3) {
+        if (organizationName.length < 3) {
             setOrganizationName("");
         } else {
-            // getShortCode({ variables: { name: organization_name } });
+        // getShortCode({ variables: { name: organization_name } });
         }
     };
 
@@ -115,7 +115,7 @@ export default function Organization() {
 
             const variables = {
                 organization_id: orgIdParams,
-                organization_name,
+                organization_name: organizationName,
                 email,
                 address1,
                 address2: address2.length === 0 ? null : address2,
@@ -137,7 +137,7 @@ export default function Organization() {
                 setSuccess(false);
             }
         } catch (e) {
-            // System Error
+        // System Error
             setError(true);
             setServerError(e.message);
             setSuccess(false);
@@ -217,7 +217,7 @@ export default function Organization() {
                                     onChange={(e) => {
                                         setOrganizationName(e.target.value);
                                     }}
-                                    value={organization_name}
+                                    value={organizationName}
                                     name="organization_name"
                                     id="organization_name"
                                     placeholder={"OFFICIAL NAME OF YOU ORGANIZATION"}
@@ -322,7 +322,7 @@ export default function Organization() {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={4}>
+                        <Grid>
                             <FormControl className={classes.formControl} error>
                                 <label htmlFor="txtOrganizationLogo">
                                     <b>Add Organization Logo</b>
@@ -332,32 +332,42 @@ export default function Organization() {
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
-                                        position: "relative",
+                                        justifyContent: "space-around",
                                     }}
                                 >
-                                    <input
-                                        accept="image/gif, image/jpg, image/jpeg, image/png"
-                                        className={classes.fileInput}
-                                        id="logo"
-                                        name="logo"
-                                        onChange={onImageChange}
-                                        type="file"
-                                    />
-                                    <label htmlFor="logo">
-                                        <Button
-                                            variant="contained"
-                                            className={classes.fieldDashed}
-                                            component="span"
-                                        >
-                      Add Organization Logo
-                                            <AddPhotoAlternate />
-                                        </Button>
-                                    </label>
-                                    <Avatar
-                                        alt="Logo"
-                                        src={logoPreview}
-                                        className={classes.largeLogoPreview}
-                                    />
+                                    <div>
+                                        <input
+                                            accept="image/gif, image/jpg, image/jpeg, image/png"
+                                            className={classes.fileInput}
+                                            id="logo"
+                                            name="logo"
+                                            onChange={onImageChange}
+                                            type="file"
+                                        />
+                                        <label htmlFor="logo">
+                                            <Button
+                                                variant="contained"
+                                                className={classes.fieldDashed}
+                                                component="span"
+                                            >
+                                                Add Organization Logo
+                                                <AddPhotoAlternate />
+                                            </Button>
+                                        </label>
+                                    </div>
+                                    <div
+                                        style={{
+                                            padding: "5px",
+                                        }}
+                                    >
+                                        <div>
+                                            <Avatar
+                                                alt="Logo"
+                                                src={logoPreview}
+                                                className={classes.largeLogoPreview}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </FormControl>
                         </Grid>
@@ -393,37 +403,54 @@ export default function Organization() {
                         </Grid>
 
                         <Grid container justify="flex-end">
-                            <Grid item sm={2}>
-                                <FormControl>
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        endIcon={
-                                            isLoading ? <CircularProgress size={17} /> : <Save />
-                                        }
-                                        disabled={isLoading}
-                                    >
-                    Save
-                                    </Button>
-                                </FormControl>
-                            </Grid>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "5px",
+                                    justifyContent: "space-around",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        padding: "2px",
+                                    }}
+                                >
+                                    <FormControl>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            size="large"
+                                            endIcon={
+                                                isLoading ? <CircularProgress size={17} /> : <Save />
+                                            }
+                                            disabled={isLoading}
+                                        >
+                                            Save
+                                        </Button>
+                                    </FormControl>
+                                </div>
 
-                            <Grid item sm={2}>
-                                <FormControl>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        size="large"
-                                        className={classes.btnCancel}
-                                        endIcon={<Block />}
-                                        type="reset"
-                                    >
-                    Cancel
-                                    </Button>
-                                </FormControl>
-                            </Grid>
+                                <div
+                                    style={{
+                                        padding: "2px",
+                                    }}
+                                >
+                                    <FormControl>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            size="large"
+                                            className={classes.btnCancel}
+                                            endIcon={<Block />}
+                                            type="reset"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </FormControl>
+                                </div>
+                            </div>
                         </Grid>
                     </Grid>
                 </form>

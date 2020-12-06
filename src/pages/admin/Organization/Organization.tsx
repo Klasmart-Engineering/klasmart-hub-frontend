@@ -87,33 +87,6 @@ function Organization(props: { intl: IntlFormatters }) {
         });
     };
 
-    const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            formik.setFieldValue("logo", event.target.files[0]);
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                setLogoPreview(e.target.result);
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    };
-
-    const handleBlurNameOrganization = () => {
-        if (formik.values.organization_name.length < 3) {
-            formik.setFieldValue("shortCode", "");
-        } else {
-            // getShortCode({ variables: { name: formik.values.organization_name } });
-        }
-    };
-
-    const reset = () => {
-        return history.push("/admin/allOrganization");
-    };
-
-    const setPhoneFormik = (phone: string) => {
-        formik.setFieldValue("phone", phone);
-    };
-
     const formik = useFormik({
         initialValues: {
             organization_name: "",
@@ -156,7 +129,7 @@ function Organization(props: { intl: IntlFormatters }) {
                     variables: {
                         user_id: userProfile.user_id,
                         organization_id:
-              response.data.user.createOrganization.organization_id,
+                response.data.user.createOrganization.organization_id,
                     },
                 });
 
@@ -177,6 +150,33 @@ function Organization(props: { intl: IntlFormatters }) {
             }
         },
     });
+
+    const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            formik.setFieldValue("logo", event.target.files[0]);
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                setLogoPreview(e.target.result);
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    };
+
+    const handleBlurNameOrganization = () => {
+        if (formik.values.organization_name.length < 3) {
+            formik.setFieldValue("shortCode", "");
+        } else {
+        // getShortCode({ variables: { name: formik.values.organization_name } });
+        }
+    };
+
+    const reset = () => {
+        return history.push("/admin/allOrganization");
+    };
+
+    const setPhoneFormik = (phone: string) => {
+        formik.setFieldValue("phone", phone);
+    };
 
     useEffect(() => {
         if (success) {
@@ -226,8 +226,8 @@ function Organization(props: { intl: IntlFormatters }) {
                                         id: "addOrganization_nameOfOrganizationPlaceholder",
                                     })}
                                 />
-                                {formik.touched.organization_name &&
-                formik.errors.organization_name ? (
+                                {formik.touched.organization_name && formik.errors.organization_name ?
+                                    (
                                         <FormHelperText>
                                             {formik.errors.organization_name}
                                         </FormHelperText>
@@ -341,7 +341,7 @@ function Organization(props: { intl: IntlFormatters }) {
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={4}>
+                        <Grid>
                             <FormControl className={classes.formControl} error>
                                 <label htmlFor="txtOrganizationLogo">
                                     <b>{AddOrganizationLogoLabel()}</b>
@@ -351,32 +351,43 @@ function Organization(props: { intl: IntlFormatters }) {
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
-                                        position: "relative",
+                                        justifyContent: "space-around",
                                     }}
                                 >
-                                    <input
-                                        accept="image/gif, image/jpg, image/jpeg, image/png"
-                                        className={classes.fileInput}
-                                        id="logo"
-                                        name="logo"
-                                        onChange={onImageChange}
-                                        type="file"
-                                    />
-                                    <label htmlFor="logo">
-                                        <Button
-                                            variant="contained"
-                                            className={classes.fieldDashed}
-                                            component="span"
-                                        >
-                                            {AddOrganizationLogoLabel()}
-                                            <AddPhotoAlternate />
-                                        </Button>
-                                    </label>
-                                    <Avatar
-                                        alt="Logo"
-                                        src={logoPreview}
-                                        className={classes.largeLogoPreview}
-                                    />
+                                    <div>
+                                        <input
+                                            accept="image/gif, image/jpg, image/jpeg, image/png"
+                                            className={classes.fileInput}
+                                            id="logo"
+                                            name="logo"
+                                            onChange={onImageChange}
+                                            type="file"
+                                        />
+
+                                        <label htmlFor="logo">
+                                            <Button
+                                                variant="contained"
+                                                className={classes.fieldDashed}
+                                                component="span"
+                                            >
+                                                {AddOrganizationLogoLabel()}
+                                                <AddPhotoAlternate />
+                                            </Button>
+                                        </label>
+                                    </div>
+                                    <div
+                                        style={{
+                                            padding: "5px",
+                                        }}
+                                    >
+                                        <div>
+                                            <Avatar
+                                                alt="Logo"
+                                                src={logoPreview}
+                                                className={classes.largeLogoPreview}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                                 {formik.touched.logo && formik.errors.logo ? (
                                     <FormHelperText>{formik.errors.logo}</FormHelperText>
@@ -415,37 +426,54 @@ function Organization(props: { intl: IntlFormatters }) {
                         </Grid>
 
                         <Grid container justify="flex-end">
-                            <Grid item sm={2}>
-                                <FormControl>
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        endIcon={
-                                            isLoading ? <CircularProgress size={17} /> : <Save />
-                                        }
-                                        disabled={isLoading}
-                                    >
-                                        {SaveButtonLabel()}
-                                    </Button>
-                                </FormControl>
-                            </Grid>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "5px",
+                                    justifyContent: "space-around",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        padding: "2px",
+                                    }}
+                                >
+                                    <FormControl>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            size="large"
+                                            endIcon={
+                                                isLoading ? <CircularProgress size={17} /> : <Save />
+                                            }
+                                            disabled={isLoading}
+                                        >
+                                            {SaveButtonLabel()}
+                                        </Button>
+                                    </FormControl>
+                                </div>
 
-                            <Grid item sm={2}>
-                                <FormControl>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        size="large"
-                                        className={classes.btnCancel}
-                                        endIcon={<Block />}
-                                        type="reset"
-                                    >
-                                        {CancelButtonLabel()}
-                                    </Button>
-                                </FormControl>
-                            </Grid>
+                                <div
+                                    style={{
+                                        padding: "2px",
+                                    }}
+                                >
+                                    <FormControl>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            size="large"
+                                            className={classes.btnCancel}
+                                            endIcon={<Block />}
+                                            type="reset"
+                                        >
+                                            {CancelButtonLabel()}
+                                        </Button>
+                                    </FormControl>
+                                </div>
+                            </div>
                         </Grid>
                     </Grid>
                 </form>

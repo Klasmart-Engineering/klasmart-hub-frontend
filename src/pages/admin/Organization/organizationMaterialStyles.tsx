@@ -143,9 +143,8 @@ export const useStyles = makeStyles((theme) => ({
         left: "0px",
     },
     largeLogoPreview: {
-        position: "absolute",
-        width: theme.spacing(7),
-        height: theme.spacing(7),
+        width: theme.spacing(5),
+        height: theme.spacing(5),
         right: "0px",
     },
     orgColorContainer: {

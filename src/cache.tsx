@@ -52,6 +52,9 @@ export const cache: InMemoryCache = new InMemoryCache({
                 organization: {
                     merge: true,
                 },
+                class: {
+                    merge: true,
+                },
                 userId: {
                     read() {
                         return userIdVar();
