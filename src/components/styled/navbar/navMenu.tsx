@@ -5,7 +5,6 @@ import Grow from "@material-ui/core/Grow";
 import IconButton from "@material-ui/core/IconButton";
 import Snackbar from "@material-ui/core/Snackbar";
 import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
 import { Home as HomeIcon } from "@material-ui/icons";
@@ -24,18 +23,13 @@ import TableChartTwoToneIcon from "@material-ui/icons/TableChartTwoTone";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
-import { State } from "../../../store/store";
 import { MenuItem } from "../../../types/objectTypes";
 import { history } from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        appBar: {
-            position: "relative",
-        },
         menuButton: {
             maxWidth: "90%",
             padding: theme.spacing(2),
@@ -43,20 +37,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 maxWidth: "100%",
             },
         },
-        menuContainer: {
-            padding: theme.spacing(4, 5),
-            [theme.breakpoints.down("sm")]: {
-                padding: theme.spacing(2, 2),
-            },
-        },
-        menuGrid: {
-            padding: theme.spacing(1),
+        menuLink: {
+            textDecoration: "none",
             textAlign: "center",
-        },
-        title: {
-            marginLeft: theme.spacing(2),
-            marginRight: theme.spacing(1),
-        },
+            display: "block",
+        }
     }),
 );
 
@@ -84,7 +69,11 @@ function MenuButton(props: MenuItemProps) {
 
     return (
         <>
-            <Button fullWidth className={classes.menuButton} onClick={handleClick}>
+            <Button
+                fullWidth
+                className={classes.menuButton}
+                onClick={handleClick}
+            >
                 <Grid
                     container
                     direction="column"
@@ -99,14 +88,24 @@ function MenuButton(props: MenuItemProps) {
                         <Typography variant="body1">
                             {props.content.title}
                         </Typography>
-                        <Typography variant="caption" style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                        <Typography
+                            variant="caption"
+                            style={{ color: "rgba(0, 0, 0, 0.6)" }}
+                        >
                             {props.content.description}
                         </Typography>
                     </Grid>
                 </Grid>
             </Button>
-            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="info">
+            <Snackbar
+                open={open}
+                autoHideDuration={3000}
+                onClose={handleClose}
+            >
+                <Alert
+                    onClose={handleClose} 
+                    severity="info"
+                >
                     This is currently planned for a future release!
                 </Alert>
             </Snackbar>
@@ -251,31 +250,28 @@ export default function NavMenu() {
                 <Grid
                     container
                     direction="row"
-                    justify="space-around"
+                    justify="flex-start"
                     alignItems="stretch"
-                    className={classes.menuContainer}
+                    spacing={2}
                 >
-                    {
-                        MENU_ITEMS.map((menuItem) => {
-                            return (
-                                <Grid
-                                    key={`menuItem-${menuItem.id}`}
-                                    item
-                                    xs={6} sm={4} md={3} lg={2}
-                                    style={{ textAlign: "center" }}
-                                    className={classes.menuGrid}
-                                >
-                                    <Link
-                                        to={menuItem.link}
-                                        onClick={menuItem.link !== "#" ? () => setOpen(false) : undefined}
-                                        style={{ textDecoration: "none" }}
-                                    >
-                                        <MenuButton content={menuItem} />
-                                    </Link>
-                                </Grid>
-                            );
-                        })
-                    }
+                    {MENU_ITEMS.map((menuItem) => 
+                        <Grid
+                            key={`menuItem-${menuItem.id}`}
+                            item
+                            xs={6}
+                            sm={4}
+                            md={3}
+                            lg={2}
+                        >
+                            <Link
+                                to={menuItem.link}
+                                onClick={menuItem.link !== "#" ? () => setOpen(false) : undefined}
+                                className={classes.menuLink}
+                            >
+                                <MenuButton content={menuItem} />
+                            </Link>
+                        </Grid>
+                    )}
                 </Grid>
             </Dialog>
         </>
