@@ -1,24 +1,15 @@
 import { ApolloError } from "@apollo/client";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import { AccountCircle } from "@material-ui/icons";
+import { AccountCircle, Person as PersonIcon } from "@material-ui/icons";
 import queryString from "querystring";
 import React, { useState } from "react";
-import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
-import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "../../../../cache";
-import { Membership } from "../../../../types/graphQL";
-import LanguageSelect from "../../../languageSelect";
-import StyledButton from "../../button";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -26,6 +17,14 @@ const useStyles = makeStyles((theme) =>
             [theme.breakpoints.up("sm")]: {
                 margin: theme.spacing(0, 1),
             },
+        },
+        avatarLarge: {
+            width: theme.spacing(10),
+            height: theme.spacing(10),
+            marginBottom: theme.spacing(1),
+        },
+        userEmail: {
+            color: theme.palette.grey[600]
         },
         profileButton: {
             [theme.breakpoints.up("sm")]: {
@@ -36,6 +35,17 @@ const useStyles = makeStyles((theme) =>
         },
     }),
 );
+
+import Avatar from "@material-ui/core/Avatar";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
+import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
+import LanguageSelect from "../../../languageSelect";
+import StyledButton from "../../button";
+import { Membership } from "../../../../types/graphQL";
+import { Box, List, ListItemAvatar, Theme } from "@material-ui/core";
 
 const StyledMenu = withStyles({
     paper: {
@@ -58,9 +68,9 @@ const StyledMenu = withStyles({
 ));
 
 interface Props {
-    memberships?: Membership[] | null;
-    loading: boolean;
-    error?: ApolloError;
+    memberships?: Membership[] | null
+    loading: boolean
+    error?: ApolloError
 }
 
 /**
@@ -147,22 +157,62 @@ export default function UserSettings(props: Props) {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                 >
-                    {!loading && !error && memberships?.map((membership) => (
-                        <ListItem
-                            key={membership.organization_id}
-                            button
-                            onClick={() => handleOrganization(membership)}
-                            style={{ padding: "0px 16px" }}
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        pt={2}
+                        px={2}
+                        pb={1}
+                    >
+                        <Avatar className={classes.avatarLarge}>
+                            <PersonIcon fontSize="large" />
+                        </Avatar>
+                        <Typography
+                            variant="body1"
                         >
-                            <IconButton>
-                                <AccountCircle />
-                            </IconButton>
+                            {"User Name"}
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            className={classes.userEmail}
+                        >
+                            {"user.email@calmid.com"}
+                        </Typography>
+                    </Box>
+                    {memberships?.length && <List dense>
+                        <ListItem>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <PersonIcon />
+                                </Avatar>
+                            </ListItemAvatar>
                             <ListItemText
-                                primary={membership?.organization?.organization_name}
-                                secondary={membership?.organization?.owner?.email}
+                                primary={memberships[0]?.organization?.organization_name}
+                                secondary={memberships[0]?.organization?.owner?.email}
                             />
                         </ListItem>
-                    ))}
+                    </List>}
+                    <Divider />
+                    <List dense>
+                        {!loading && !error && memberships?.map((membership) => (
+                            <ListItem
+                                key={membership.organization_id}
+                                button
+                                onClick={() => handleOrganization(membership)}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <PersonIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={membership?.organization?.organization_name}
+                                    secondary={membership?.organization?.owner?.email}
+                                />
+                            </ListItem>
+                        ))}
+                    </List>
                     <Divider />
                     <ListItem style={{ padding: 8 }}>
                         <Grid
