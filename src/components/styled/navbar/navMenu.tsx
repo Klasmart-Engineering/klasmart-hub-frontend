@@ -30,12 +30,14 @@ import { history } from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        menuButton: {
-            maxWidth: "90%",
-            padding: theme.spacing(2),
+        menuContainer: {
+            padding: theme.spacing(4, 5),
             [theme.breakpoints.down("sm")]: {
-                maxWidth: "100%",
+                padding: theme.spacing(2, 2),
             },
+        },
+        menuButton: {
+            padding: theme.spacing(2),
         },
         menuLink: {
             textDecoration: "none",
@@ -253,6 +255,7 @@ export default function NavMenu() {
                     justify="flex-start"
                     alignItems="stretch"
                     spacing={2}
+                    className={classes.menuContainer}
                 >
                     {MENU_ITEMS.map((menuItem) => 
                         <Grid
