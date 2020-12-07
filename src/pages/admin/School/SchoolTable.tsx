@@ -21,48 +21,48 @@ import SnackBarAlert from "../SnackBarAlert/SnackBarAlert";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
+const menuProps = {
     PaperProps: {
         style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
         },
     },
 };
 
 const useStyles = makeStyles(() => ({
-    date: {
-        color: "#919398",
-        width: "max-content",
-    },
-    containerTable: {
-        "width": "100%",
-        "& table": {
-        overflowY: "auto",
-        },
-    },
-    fileInput: {
-        display: "none",
-        borderStyle: "dashed",
-    },
-    swatch: {
-        height: "27px",
-        width: "27px",
-        border: "1px solid #000",
-    },
     buttonChangeEmail: {
+        borderColor: "#FF3030",
+        color: "#898686",
         fontSize: "15px",
         fontWeight: "bold",
-        color: "#898686",
-        borderColor: "#FF3030",
     },
     colorLink: {
         color: "#898686",
         textDecoration: "none",
     },
+    containerTable: {
+        "& table": {
+            overflowY: "auto",
+        },
+        width: "100%",
+    },
     dashedData: {
         borderBottom: "1px dashed",
         color: "#cacaca",
+    },
+    date: {
+        color: "#919398",
+        width: "max-content",
+    },
+    fileInput: {
+        borderStyle: "dashed",
+        display: "none",
+    },
+    swatch: {
+        border: "1px solid #000",
+        height: "27px",
+        width: "27px",
     },
 }));
 
@@ -78,7 +78,9 @@ function SchoolTable(props: { intl: IntlFormatters }) {
     const [severityBar, setSeverityBar] = useState("");
     const [open, setOpen] = useState(false);
     const membership = useReactiveVar(currentMembershipVar);
-    const [editSchool, { loading: editSchoolLoading }] = useMutation(EDIT_SCHOOL);
+    const [editSchool, { loading: editSchoolLoading }] = useMutation(
+        EDIT_SCHOOL,
+    );
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === "clickaway") {
@@ -91,77 +93,78 @@ function SchoolTable(props: { intl: IntlFormatters }) {
         data: organizationSchools,
         refetch,
         loading: loadingSchools,
-        error,
-        } = useQuery(GET_SCHOOLS_FROM_ORGANIZATION, {
+    } = useQuery(GET_SCHOOLS_FROM_ORGANIZATION, {
+        fetchPolicy: "network-only",
         variables: {
             organization_id: membership.organization_id,
         },
-        fetchPolicy: "network-only",
     });
 
     useEffect(() => {
         if (organizationSchools) {
-            const schools = _get(organizationSchools, "organization.schools", []);
-            const schoolArray = schools.map((userItem: School) => ({ ...userItem }));
+            const schools = _get(
+                organizationSchools,
+                "organization.schools",
+                [],
+            );
+            const schoolArray = schools.map((userItem: School) => ({
+                ...userItem,
+            }));
             setData(schoolArray);
         }
-    }, [organizationSchools]);
-
-    useEffect(() => {
-        if (error) {
-            setMessageSnackBar(intl.formatMessage({ id: "schools_errorDisplay" }));
-            setSeverityBar("error");
-            setOpen(true);
-        }
-    }, [error, intl]);
+    }, [organizationSchools, loadingSchools]);
 
     const addSchool = async (school: School): Promise<void> => {
         try {
             const { school_name } = school;
 
             await createSchool({
-            variables: {
-                organization_id: membership.organization_id,
-                school_name,
-            },
+                variables: {
+                    organization_id: membership.organization_id,
+                    school_name,
+                },
             });
 
             await refetch();
             setMessageSnackBar(
-            intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
+                intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
             );
             setSeverityBar("success");
             setOpen(true);
         } catch (error) {
-            setMessageSnackBar(intl.formatMessage({ id: "schools_saveFailMessage" }));
+            setMessageSnackBar(
+                intl.formatMessage({ id: "schools_saveFailMessage" }),
+            );
             setSeverityBar("error");
             setOpen(true);
         }
-        };
+    };
 
     const edit = async (school: School): Promise<void> => {
         try {
             const { school_id, school_name } = school;
 
             await editSchool({
-            variables: {
-                school_id,
-                school_name,
-            },
+                variables: {
+                    school_id,
+                    school_name,
+                },
             });
 
             await refetch();
             setMessageSnackBar(
-            intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
+                intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
             );
             setSeverityBar("success");
             setOpen(true);
         } catch (error) {
-            setMessageSnackBar(intl.formatMessage({ id: "schools_saveFailMessage" }));
+            setMessageSnackBar(
+                intl.formatMessage({ id: "schools_saveFailMessage" }),
+            );
             setSeverityBar("error");
             setOpen(true);
         }
-        };
+    };
 
     return (
         <div className={classes.containerTable}>
@@ -169,223 +172,295 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                 icons={constantValues.tableIcons}
                 isLoading={loadingSchools || editSchoolLoading}
                 options={{
-                selection: true,
-                headerStyle: {
-                    backgroundColor: "#fff",
-                    color: "#000",
-                    fontWeight: "bold",
-                },
+                    headerStyle: {
+                        backgroundColor: "#fff",
+                        color: "#000",
+                        fontWeight: "bold",
+                    },
+                    selection: true,
                 }}
                 title=""
                 columns={[
-                {
-                    title: intl.formatMessage({ id: "schools_schoolNameTitle" }),
-                    field: "school_name",
-                    type: "string",
-                    cellStyle: {
-                    width: 200,
-                    minWidth: 200,
-                    },
-                    initialEditValue: "",
-                    // TODO: validation causes overload error
-                    // validate: (
-                    //     rowData
-                    // ): boolean | { isValid: boolean; helperText: string } => {
-                    //     return rowData.school_name!.length < 1
-                    //     ? {
-                    //         isValid: false,
-                    //         helperText: "School name can't be empty",
-                    //         }
-                    //     : true;
-                    // },
-                },
-                {
-                    title: intl.formatMessage({ id: "schools_gradesTitle" }),
-                    field: "grades",
-                    initialEditValue: [constantValues.noSpecificGradeValue],
-                    render: (rowData: any) => {
-                    if (rowData.grades?.length) {
-                        return rowData.grades.map((item: string, index: number) => {
-                        return (
-                            <span key={`demo_snap_${index}`}>
-                            {(index ? ", " : "") + item}
-                            </span>
-                        );
-                        });
-                    } else {
-                        return <span>{constantValues.noSpecificGradeValue}</span>;
-                    }
-                    },
-                    editComponent: (props: EditComponentProps<any>) => {
-                    return (
-                        <FormControl variant="outlined">
-                        <Select
-                            multiple
-                            value={props.value || [constantValues.noSpecificGradeValue]}
-                            onChange={(
-                            event: React.ChangeEvent<{ value: unknown }>,
-                            ): void => {
-                            let valueSelected: string[] = event.target
-                                .value as string[];
-
-                            if (
-                                valueSelected.includes(constantValues.allGradesValue)
-                            ) {
-                                if (
-                                valueSelected[valueSelected.length - 1] ===
-                                constantValues.allGradesValue
-                                ) {
-                                valueSelected = valueSelected.filter(
-                                    (item: string) =>
-                                    item === constantValues.allGradesValue,
-                                );
-                                } else {
-                                valueSelected = valueSelected.filter(
-                                    (item: string) =>
-                                    item !== constantValues.allGradesValue,
-                                );
+                    {
+                        cellStyle: {
+                            minWidth: 200,
+                            width: 200,
+                        },
+                        field: "school_name",
+                        initialEditValue: "",
+                        title: intl.formatMessage({
+                            id: "schools_schoolNameTitle",
+                        }),
+                        type: "string",
+                        validate: (
+                            rowData,
+                        ):
+                            | boolean
+                            | { isValid: boolean; helperText: string } => {
+                            return rowData.school_name!.length < 1
+                                ? {
+                                    helperText: "School name can't be empty",
+                                    isValid: false,
                                 }
-                            }
-
-                            if (
-                                valueSelected.includes(
-                                constantValues.noSpecificGradeValue,
-                                )
-                            ) {
-                                if (
-                                valueSelected[valueSelected.length - 1] ===
-                                constantValues.noSpecificGradeValue
-                                ) {
-                                valueSelected = valueSelected.filter(
-                                    (item: string) =>
-                                    item === constantValues.noSpecificGradeValue,
-                                );
-                                } else {
-                                valueSelected = valueSelected.filter(
-                                    (item: string) =>
-                                    item !== constantValues.noSpecificGradeValue,
-                                );
-                                }
-                            }
-                            props.onChange(valueSelected);
-                            }}
-                            input={<OutlinedInput />}
-                            MenuProps={MenuProps}
-                            variant="outlined"
-                        >
-                            <MenuItem
-                            key={constantValues.allGradesValue}
-                            value={constantValues.allGradesValue}
-                            >
-                            All Grades
-                            </MenuItem>
-                            <MenuItem
-                            key={constantValues.noSpecificGradeValue}
-                            value={constantValues.noSpecificGradeValue}
-                            >
-                            Non Specific
-                            </MenuItem>
-                        </Select>
-                        </FormControl>
-                    );
+                                : true;
+                        },
                     },
-                },
+                    {
+                        field: "grades",
+                        initialEditValue: [constantValues.noSpecificGradeValue],
+                        title: intl.formatMessage({
+                            id: "schools_gradesTitle",
+                        }),
+                        render: (rowData) => {
+                            const grades = _get(rowData, "grades", []);
+                            if (grades.length) {
+                                return grades.map(
+                                    (item: string, index: number) => {
+                                        return (
+                                            <span key={`demo_snap_${index}`}>
+                                                {(index ? ", " : "") + item}
+                                            </span>
+                                        );
+                                    },
+                                );
+                            } else {
+                                return (
+                                    <span>
+                                        {constantValues.noSpecificGradeValue}
+                                    </span>
+                                );
+                            }
+                        },
+                        editComponent: (props: EditComponentProps<any>) => {
+                            return (
+                                <FormControl variant="outlined">
+                                    <Select
+                                        multiple
+                                        value={
+                                            props.value || [
+                                                constantValues.noSpecificGradeValue,
+                                            ]
+                                        }
+                                        onChange={(
+                                            event: React.ChangeEvent<{
+                                                value: unknown;
+                                            }>,
+                                        ): void => {
+                                            let valueSelected: string[] = event
+                                                .target.value as string[];
+
+                                            if (
+                                                valueSelected.includes(
+                                                    constantValues.allGradesValue,
+                                                )
+                                            ) {
+                                                if (
+                                                    valueSelected[
+                                                        valueSelected.length - 1
+                                                    ] ===
+                                                    constantValues.allGradesValue
+                                                ) {
+                                                    valueSelected = valueSelected.filter(
+                                                        (item: string) =>
+                                                            item ===
+                                                            constantValues.allGradesValue,
+                                                    );
+                                                } else {
+                                                    valueSelected = valueSelected.filter(
+                                                        (item: string) =>
+                                                            item !==
+                                                            constantValues.allGradesValue,
+                                                    );
+                                                }
+                                            }
+
+                                            if (
+                                                valueSelected.includes(
+                                                    constantValues.noSpecificGradeValue,
+                                                )
+                                            ) {
+                                                if (
+                                                    valueSelected[
+                                                        valueSelected.length - 1
+                                                    ] ===
+                                                    constantValues.noSpecificGradeValue
+                                                ) {
+                                                    valueSelected = valueSelected.filter(
+                                                        (item: string) =>
+                                                            item ===
+                                                            constantValues.noSpecificGradeValue,
+                                                    );
+                                                } else {
+                                                    valueSelected = valueSelected.filter(
+                                                        (item: string) =>
+                                                            item !==
+                                                            constantValues.noSpecificGradeValue,
+                                                    );
+                                                }
+                                            }
+                                            props.onChange(valueSelected);
+                                        }}
+                                        input={<OutlinedInput />}
+                                        MenuProps={menuProps}
+                                        variant="outlined"
+                                    >
+                                        <MenuItem
+                                            key={constantValues.allGradesValue}
+                                            value={
+                                                constantValues.allGradesValue
+                                            }
+                                        >
+                                            All Grades
+                                        </MenuItem>
+                                        <MenuItem
+                                            key={
+                                                constantValues.noSpecificGradeValue
+                                            }
+                                            value={
+                                                constantValues.noSpecificGradeValue
+                                            }
+                                        >
+                                            Non Specific
+                                        </MenuItem>
+                                    </Select>
+                                </FormControl>
+                            );
+                        },
+                    },
                 ]}
                 data={dataTable}
                 editable={{
-                onRowAdd: (newData): Promise<void> =>
-                    new Promise((resolve, reject) => {
-                    if (newData.grades) {
-                        if (newData.grades.includes(constantValues.allGradesValue)) {
-                        newData.grades = constantValues.gradesData.map(
-                            (itemGrade) => itemGrade.id,
-                        );
-                        } else if (
-                        newData.grades.includes(constantValues.noSpecificGradeValue)
-                        ) {
-                        newData.grades = [];
-                        }
-                    }
+                    onRowAdd: (newData): Promise<void> =>
+                        new Promise((resolve, reject) => {
+                            if (newData.grades) {
+                                if (
+                                    newData.grades.includes(
+                                        constantValues.allGradesValue,
+                                    )
+                                ) {
+                                    newData.grades = constantValues.gradesData.map(
+                                        (itemGrade) => itemGrade.id,
+                                    );
+                                } else if (
+                                    newData.grades.includes(
+                                        constantValues.noSpecificGradeValue,
+                                    )
+                                ) {
+                                    newData.grades = [];
+                                }
+                            }
 
-                    addSchool(newData)
-                        .then((e) => {
-                        console.log("School created successfully", e);
-                        resolve();
-                        })
-                        .catch((e) => {
-                        console.log("Error at creating school", e);
-                        reject();
-                        });
-                    }),
-                onRowUpdate: (newData): Promise<void> =>
-                    new Promise((resolve, reject) => {
-                    edit(newData)
-                        .then((e) => {
-                        console.log("School edited successfully", e);
-                        resolve();
-                        })
-                        .catch((e) => {
-                        console.log("Error at editing school", e);
-                        reject();
-                        });
-                    }),
-                onRowDelete: (): Promise<void> =>
-                    new Promise((resolve) => {
-                    resolve();
-                    }),
+                            addSchool(newData)
+                                .then((e) => {
+                                    console.log(
+                                        "School created successfully",
+                                        e,
+                                    );
+                                    resolve();
+                                })
+                                .catch((e) => {
+                                    console.log("Error at creating school", e);
+                                    reject();
+                                });
+                        }),
+                    onRowUpdate: (newData): Promise<void> =>
+                        new Promise((resolve, reject) => {
+                            edit(newData)
+                                .then((e) => {
+                                    console.log(
+                                        "School edited successfully",
+                                        e,
+                                    );
+                                    resolve();
+                                })
+                                .catch((e) => {
+                                    console.log("Error at editing school", e);
+                                    reject();
+                                });
+                        }),
+                    onRowDelete: (): Promise<void> =>
+                        new Promise((resolve) => {
+                            resolve();
+                        }),
                 }}
                 localization={{
-                header: {
-                    actions: "",
-                },
-                body: {
-                    emptyDataSourceMessage: intl.formatMessage({
-                    id: "schools_noRecords",
-                    }),
-                    addTooltip: intl.formatMessage({ id: "schools_addTooltip" }),
-                    deleteTooltip: intl.formatMessage({
-                    id: "schools_deleteRowTooltip",
-                    }),
-                    editTooltip: intl.formatMessage({ id: "schools_editRowTooltip" }),
-                    editRow: {
-                    saveTooltip: intl.formatMessage({ id: "schools_saveRowTooltip" }),
-                    cancelTooltip: intl.formatMessage({
-                        id: "schools_cancelSaveRowTooltip",
-                    }),
-                    deleteText: intl.formatMessage({ id: "schools_deleteRowText" }),
+                    header: {
+                        actions: "",
                     },
-                },
-                toolbar: {
-                    searchPlaceholder: intl.formatMessage({
-                    id: "schools_searchPlaceholder",
-                    }),
-                    searchTooltip: intl.formatMessage({ id: "schools_searchTooltip" }),
-                    exportTitle: intl.formatMessage({ id: "schools_exportTooltip" }),
-                    exportCSVName: intl.formatMessage({ id: "schools_exportCSVName" }),
-                    exportPDFName: intl.formatMessage({ id: "schools_exportPDFName" }),
-                },
-                pagination: {
-                    labelDisplayedRows: `{from}-{to} ${intl.formatMessage({
-                    id: "schools_labelDisplayedRows",
-                    })} {count}`,
-                    labelRowsSelect: intl.formatMessage({
-                    id: "schools_labelRowsSelect",
-                    }),
-                    nextTooltip: intl.formatMessage({ id: "schools_nextTooltip" }),
-                    previousTooltip: intl.formatMessage({
-                    id: "schools_previousTooltip",
-                    }),
-                    firstTooltip: intl.formatMessage({ id: "schools_firstTooltip" }),
-                    lastTooltip: intl.formatMessage({ id: "schools_lastTooltip" }),
-                },
+                    body: {
+                        emptyDataSourceMessage: intl.formatMessage({
+                            id: "schools_noRecords",
+                        }),
+                        addTooltip: intl.formatMessage({
+                            id: "schools_addTooltip",
+                        }),
+                        deleteTooltip: intl.formatMessage({
+                            id: "schools_deleteRowTooltip",
+                        }),
+                        editTooltip: intl.formatMessage({
+                            id: "schools_editRowTooltip",
+                        }),
+                        editRow: {
+                            saveTooltip: intl.formatMessage({
+                                id: "schools_saveRowTooltip",
+                            }),
+                            cancelTooltip: intl.formatMessage({
+                                id: "schools_cancelSaveRowTooltip",
+                            }),
+                            deleteText: intl.formatMessage({
+                                id: "schools_deleteRowText",
+                            }),
+                        },
+                    },
+                    toolbar: {
+                        searchPlaceholder: intl.formatMessage({
+                            id: "schools_searchPlaceholder",
+                        }),
+                        searchTooltip: intl.formatMessage({
+                            id: "schools_searchTooltip",
+                        }),
+                        exportTitle: intl.formatMessage({
+                            id: "schools_exportTooltip",
+                        }),
+                        exportCSVName: intl.formatMessage({
+                            id: "schools_exportCSVName",
+                        }),
+                        exportPDFName: intl.formatMessage({
+                            id: "schools_exportPDFName",
+                        }),
+                    },
+                    pagination: {
+                        labelDisplayedRows: `{from}-{to} ${intl.formatMessage({
+                            id: "schools_labelDisplayedRows",
+                        })} {count}`,
+                        labelRowsSelect: intl.formatMessage({
+                            id: "schools_labelRowsSelect",
+                        }),
+                        nextTooltip: intl.formatMessage({
+                            id: "schools_nextTooltip",
+                        }),
+                        previousTooltip: intl.formatMessage({
+                            id: "schools_previousTooltip",
+                        }),
+                        firstTooltip: intl.formatMessage({
+                            id: "schools_firstTooltip",
+                        }),
+                        lastTooltip: intl.formatMessage({
+                            id: "schools_lastTooltip",
+                        }),
+                    },
                 }}
                 actions={[
-                {
-                    tooltip: intl.formatMessage({ id: "schools_actionsDeleteTooltip" }),
-                    icon: Delete,
-                    onClick: (evt, data: any) =>
-                    alert("You want to delete " + data.length + " rows"),
-                },
+                    {
+                        tooltip: intl.formatMessage({
+                            id: "schools_actionsDeleteTooltip",
+                        }),
+                        icon: Delete,
+                        onClick: (evt, data: any) =>
+                            alert(
+                                "You want to delete " + data.length + " rows",
+                            ),
+                    },
                 ]}
             />
 

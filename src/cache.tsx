@@ -7,16 +7,16 @@ import { IUserProfile } from "./models/UserProfile";
  */
 
 const currentMembershipInitialValue: ICurrentMembership = {
-    organization_name: "",
-    organization_id: "",
     organization_email: "",
+    organization_id: "",
+    organization_name: "",
 };
 const userIdInitialValue = "";
 const userProfileInitialValue: IUserProfile = {
+    avatar: "",
+    email: "",
     user_id: "",
     user_name: "",
-    email: "",
-    avatar: "",
 };
 
 const organizationIdInitialValue = "";
@@ -41,7 +41,7 @@ export const cache: InMemoryCache = new InMemoryCache({
     typePolicies: {
         Query: {
             fields: {
-                user: {
+                class: {
                     merge: true,
                 },
                 currentMembership: {
@@ -49,10 +49,18 @@ export const cache: InMemoryCache = new InMemoryCache({
                         return currentMembershipVar();
                     },
                 },
+                me: {
+                    merge: true,
+                },
                 organization: {
                     merge: true,
                 },
-                class: {
+                organizationId: {
+                    read() {
+                        return organizationIdVar();
+                    },
+                },
+                user: {
                     merge: true,
                 },
                 userId: {
@@ -63,11 +71,6 @@ export const cache: InMemoryCache = new InMemoryCache({
                 userProfile: {
                     read() {
                         return userProfileVar();
-                    },
-                },
-                organizationId: {
-                    read() {
-                        return organizationIdVar();
                     },
                 },
             },

@@ -98,7 +98,7 @@ module.exports = {
         })
     ],
     devServer: {
-        host: "shawn.kidsloop.net",
+        host: "fe.kidsloop.net",
         port: 8080,
         https: true,
         historyApiFallback: true,
