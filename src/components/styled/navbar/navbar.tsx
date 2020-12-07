@@ -181,7 +181,7 @@ export default function NavBar(props: Props) {
                                     wrap="nowrap"
                                 >
                                     <UserSettings
-                                        memberships={user?.memberships}
+                                        user={user}
                                         loading={loading}
                                         error={error}
                                     />
@@ -209,7 +209,7 @@ export default function NavBar(props: Props) {
                                 wrap="nowrap"
                             >
                                 <UserSettings
-                                    memberships={user?.memberships}
+                                    user={user}
                                     loading={loading}
                                     error={error}
                                 />

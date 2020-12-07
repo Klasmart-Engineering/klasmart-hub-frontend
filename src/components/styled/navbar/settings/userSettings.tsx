@@ -1,15 +1,27 @@
-import { ApolloError } from "@apollo/client";
+import { ApolloError, useReactiveVar } from "@apollo/client";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Menu, { MenuProps } from "@material-ui/core/Menu";
+import { PopoverProps } from "@material-ui/core/Popover";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
-import { AccountCircle, Person as PersonIcon } from "@material-ui/icons";
+import {
+    Business as BusinessIcon,
+    Person as PersonIcon
+} from "@material-ui/icons";
 import queryString from "querystring";
 import React, { useState } from "react";
 import { currentMembershipVar } from "../../../../cache";
+import Avatar from "@material-ui/core/Avatar";
+import Divider from "@material-ui/core/Divider";
+import Typography from "@material-ui/core/Typography";
+import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
+import LanguageSelect from "../../../languageSelect";
+import StyledButton from "../../button";
+import { User } from "../../../../types/graphQL";
+import { Box, List, ListItemAvatar, Popover } from "@material-ui/core";
+import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -36,39 +48,28 @@ const useStyles = makeStyles((theme) =>
     }),
 );
 
-import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
-import KidsloopLogoAlt from "../../../../assets/img/kidsloop_icon.svg";
-import LanguageSelect from "../../../languageSelect";
-import StyledButton from "../../button";
-import { Membership } from "../../../../types/graphQL";
-import { Box, List, ListItemAvatar, Theme } from "@material-ui/core";
-
 const StyledMenu = withStyles({
     paper: {
         border: "1px solid #dadce0",
     },
-})((props: MenuProps) => (
-    <Menu
+})((props: PopoverProps) => (
+    <Popover
         elevation={0}
         getContentAnchorEl={null}
         anchorOrigin={{
             vertical: "bottom",
-            horizontal: "center",
+            horizontal: "right",
         }}
         transformOrigin={{
             vertical: "top",
-            horizontal: "center",
+            horizontal: "right",
         }}
         {...props}
     />
 ));
 
 interface Props {
-    memberships?: Membership[] | null
+    user?: User | null
     loading: boolean
     error?: ApolloError
 }
@@ -78,11 +79,14 @@ interface Props {
  */
 export default function UserSettings(props: Props) {
     const {
-        memberships,
+        user,
         loading,
         error,
     } = props;
     const classes = useStyles();
+    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
+    const selectedOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id)?.organization;
+    const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedOrganization?.organization_id);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -120,90 +124,94 @@ export default function UserSettings(props: Props) {
     }
 
     return (
-        <>
-            <Grid item>
-                <Button
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    className={classes.profileButton}
-                    fullWidth
-                    onClick={handleMenu}
+        <Grid item>
+            <Button
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                className={classes.profileButton}
+                fullWidth
+                onClick={handleMenu}
+            >
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
+                    style={{ flexWrap: "nowrap" }}
                 >
-                    <Grid
-                        container
-                        direction="row"
-                        justify="flex-end"
-                        alignItems="center"
-                        style={{ flexWrap: "nowrap" }}
-                    >
-                        <Hidden xsDown>
-                            <img
-                                alt="KidsLoop"
-                                className={classes.avatar}
-                                src={KidsloopLogo}
-                                height={32}
-                            />
-                            <Avatar>
-                                <AccountCircle />
-                            </Avatar>
-                        </Hidden>
-                    </Grid>
-                </Button>
-                <StyledMenu
-                    id="customized-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
-                        pt={2}
-                        px={2}
-                        pb={1}
-                    >
-                        <Avatar className={classes.avatarLarge}>
-                            <PersonIcon fontSize="large" />
+                    <Hidden xsDown>
+                        <img
+                            alt="KidsLoop"
+                            className={classes.avatar}
+                            src={KidsloopLogo}
+                            height={32}
+                        />
+                        <Avatar src={user?.avatar ?? ""}>
+                            <PersonIcon />
                         </Avatar>
-                        <Typography
-                            variant="body1"
-                        >
-                            {"User Name"}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            className={classes.userEmail}
-                        >
-                            {"user.email@calmid.com"}
-                        </Typography>
-                    </Box>
-                    {memberships?.length && <List dense>
-                        <ListItem>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <PersonIcon />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={memberships[0]?.organization?.organization_name}
-                                secondary={memberships[0]?.organization?.owner?.email}
-                            />
-                        </ListItem>
-                    </List>}
+                    </Hidden>
+                </Grid>
+            </Button>
+            <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    pt={2}
+                    px={2}
+                    pb={1}
+                    tabIndex={undefined}
+                >
+                    <Avatar
+                        src={user?.avatar ?? ""}
+                        className={classes.avatarLarge}
+                    >
+                        <PersonIcon fontSize="large" />
+                    </Avatar>
+                    <Typography
+                        variant="body1"
+                    >
+                        {user?.user_name}
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        className={classes.userEmail}
+                    >
+                        {user?.email}
+                    </Typography>
+                </Box>
+                {!loading && !error && selectedOrganization && <List dense>
+                    <ListItem>
+                        <ListItemAvatar>
+                            <Avatar variant="rounded">
+                                <BusinessIcon />
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={selectedOrganization?.organization_name}
+                            secondary={selectedOrganization?.owner?.email}
+                        />
+                    </ListItem>
+                </List>}
+                {!loading && !error && (otherAvailableOrganizations?.length ?? 0) > 0 && <>
                     <Divider />
                     <List dense>
-                        {!loading && !error && memberships?.map((membership) => (
+                        {otherAvailableOrganizations?.map((membership) =>
                             <ListItem
                                 key={membership.organization_id}
                                 button
                                 onClick={() => handleOrganization(membership)}
                             >
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <PersonIcon />
+                                    <Avatar variant="rounded">
+                                        <BusinessIcon />
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
@@ -211,10 +219,12 @@ export default function UserSettings(props: Props) {
                                     secondary={membership?.organization?.owner?.email}
                                 />
                             </ListItem>
-                        ))}
+                            )}
                     </List>
-                    <Divider />
-                    <ListItem style={{ padding: 8 }}>
+                </>}
+                <Divider />
+                <List>
+                    <ListItem>
                         <Grid
                             container
                             direction="row"
@@ -222,14 +232,21 @@ export default function UserSettings(props: Props) {
                             alignItems="center"
                             spacing={1}
                         >
-                            <Grid item xs={12} style={{ textAlign: "center" }}>
-                                <LanguageSelect noIcon />
+                            <Grid
+                                item
+                                xs={12}
+                                style={{ textAlign: "center" }}
+                            >
+                                <LanguageSelect />
                             </Grid>
-                            <Grid item xs={12} style={{ textAlign: "center" }}>
+                            <Grid
+                                item
+                                xs={12}
+                                style={{ textAlign: "center" }}
+                            >
                                 <StyledButton
                                     extendedOnly
                                     onClick={() => handleSignOut()}
-                                    // size="small"
                                     style={{
                                         backgroundColor: "#fff",
                                         border: "1px solid #dadce0",
@@ -237,13 +254,13 @@ export default function UserSettings(props: Props) {
                                         padding: "8px 16px",
                                     }}
                                 >
-                                    Sign Out
+                                    <FormattedMessage id="userSettings_signout" />
                                 </StyledButton>
                             </Grid>
                         </Grid>
                     </ListItem>
-                </StyledMenu>
-            </Grid>
-        </>
+                </List>
+            </StyledMenu>
+        </Grid>
     );
 }
