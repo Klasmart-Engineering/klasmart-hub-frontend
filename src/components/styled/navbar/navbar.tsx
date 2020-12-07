@@ -130,15 +130,15 @@ export default function NavBar(props: Props) {
     const selectedOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
 
     const getHighestRole = (roles?: Role[] | null) => {
-        if (!roles?.length) return null;
-        const rolePriority: RoleName[] = ["Organization Admin", "School Admin", "Parent", "Teacher", "Student"];
+        if (!roles?.length) { return null; }
+        const rolePriority: RoleName[] = ["Organization Admin", "School Admin", "Teacher", "Parent", "Student"];
         const foundPriorityIndexes = roles
-            .map(function (role) {
+            .map(function(role) {
                 const roleName = role.role_name as RoleName;
                 return rolePriority.indexOf(roleName);
             })
             .filter((priority) => priority !== -1);
-        if (!foundPriorityIndexes.length) return null;
+        if (!foundPriorityIndexes.length) { return null; }
         const highestPriorityIndex = Math.min(...foundPriorityIndexes);
         return rolePriority[highestPriorityIndex];
     };
@@ -164,7 +164,7 @@ export default function NavBar(props: Props) {
                             style={{ minHeight }}
                         >
                             <Grid container item xs={8} direction="row" wrap="nowrap">
-                                <NavMenu />
+                                { ["Parent", "Student"].indexOf(getHighestRole(selectedOrganization?.roles) || "Student") === -1 && <NavMenu /> }
                                 <ClassroomLabel
                                     classes={classes.title}
                                     organizationName={selectedOrganization?.organization?.organization_name}
