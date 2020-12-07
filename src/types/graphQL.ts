@@ -1,6 +1,14 @@
+const roleNames = ["Organization Admin", "School Admin", "Parent", "Teacher", "Student"] as const;
+
+export type RoleName = typeof roleNames[number];
+
 export interface User {
     user_id: string
+    user_name?: string | null
     email?: string | null
+    avatar?: string | null
+    memberships?: Membership[] | null,
+    my_organization?: Organization | null,
 }
 
 export interface Membership {
@@ -8,6 +16,7 @@ export interface Membership {
     organization_id: string
     join_timestamp?: string | null
     organization?: Organization | null
+    roles?: Role[] | null
 }
 
 export interface Organization {
@@ -23,7 +32,7 @@ export interface Organization {
 
 export interface Role {
     role_id: string
-    role_name?: string | null
+    role_name?: RoleName | null
 }
 
 export interface Student {

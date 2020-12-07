@@ -3,23 +3,17 @@ import { Link, Paper, Tooltip } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
 import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import SettingsIcon from "@material-ui/icons/Settings";
-import * as QueryString from "query-string";
-import React, { useState } from "react";
+import React from "react";
 import { FormattedMessage } from "react-intl";
-import { useSelector, useStore } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { currentMembershipVar, userIdVar } from "../../../cache";
 import { GET_USER } from "../../../operations/queries/getUser";
-import { ActionTypes } from "../../../store/actions";
-import { State } from "../../../store/store";
+import { Role, RoleName, User } from "../../../types/graphQL";
 import { history } from "../../../utils/history";
-import LanguageSelect from "../../languageSelect";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";
@@ -83,25 +77,28 @@ function MenuButtons(props: MenuButtonProps) {
 
 interface LabelProps {
     classes: string;
-    orgName?: string;
-    schoolName?: string;
+    organizationName?: string | null;
+    roleName: string | null;
 }
 
 function ClassroomLabel(props: LabelProps) {
-    const currentOrganization = useReactiveVar(currentMembershipVar);
-    // console.log(currentOrganization);
+    const {
+        classes,
+        organizationName,
+        roleName,
+    } = props;
 
     return (
         <Tooltip title="Your currently selected organization" aria-label="selected-org" placement="bottom-start">
             <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
                 <Grid item xs={12}>
-                    <Typography variant="caption" className={props.classes} noWrap>
-                        Organization
+                    <Typography variant="body1" className={classes} noWrap>
+                        {organizationName ?? "Unknown organization"}
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="body1" className={props.classes} noWrap>
-                        {currentOrganization.organization_name}
+                    <Typography variant="caption" className={classes} noWrap>
+                        {roleName ?? "Unknown role"}
                     </Typography>
                 </Grid>
             </Grid>
@@ -115,7 +112,6 @@ interface Props {
 
 export default function NavBar(props: Props) {
     const classes = useStyles();
-    const store = useStore();
     const theme = useTheme();
     const { menuLabels } = props;
     const url = new URL(window.location.href);
@@ -123,15 +119,28 @@ export default function NavBar(props: Props) {
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
 
     const user_id = useReactiveVar(userIdVar);
+    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const { data, loading, error } = useQuery(GET_USER, {
         fetchPolicy: "network-only",
         variables: {
             user_id,
         },
     });
+    const user: User = data?.user;
+    const selectedOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
 
-    const handleClickOpen = () => {
-        store.dispatch({ type: ActionTypes.CLASS_SETTINGS_TOGGLE, payload: true });
+    const getHighestRole = (roles?: Role[] | null) => {
+        if (!roles?.length) return null;
+        const rolePriority: RoleName[] = ["Organization Admin", "School Admin", "Parent", "Teacher", "Student"];
+        const foundPriorityIndexes = roles
+            .map(function (role) {
+                const roleName = role.role_name as RoleName;
+                return rolePriority.indexOf(roleName);
+            })
+            .filter((priority) => priority !== -1);
+        if (!foundPriorityIndexes.length) return null;
+        const highestPriorityIndex = Math.min(...foundPriorityIndexes);
+        return rolePriority[highestPriorityIndex];
     };
 
     return (
@@ -156,7 +165,11 @@ export default function NavBar(props: Props) {
                         >
                             <Grid container item xs={8} direction="row" wrap="nowrap">
                                 <NavMenu />
-                                <ClassroomLabel classes={classes.title} />
+                                <ClassroomLabel
+                                    classes={classes.title}
+                                    organizationName={selectedOrganization?.organization?.organization_name}
+                                    roleName={getHighestRole(selectedOrganization?.roles)}
+                                />
                             </Grid>
                             <Hidden mdUp>
                                 <Grid
@@ -168,7 +181,7 @@ export default function NavBar(props: Props) {
                                     wrap="nowrap"
                                 >
                                     <UserSettings
-                                        memberships={data?.user?.memberships}
+                                        memberships={user?.memberships}
                                         loading={loading}
                                         error={error}
                                     />
@@ -196,7 +209,7 @@ export default function NavBar(props: Props) {
                                 wrap="nowrap"
                             >
                                 <UserSettings
-                                    memberships={data?.user?.memberships}
+                                    memberships={user?.memberships}
                                     loading={loading}
                                     error={error}
                                 />
