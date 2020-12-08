@@ -1,13 +1,13 @@
+import { Box } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Grid from "@material-ui/core/Grid";
 import Grow from "@material-ui/core/Grow";
 import IconButton from "@material-ui/core/IconButton";
 import Snackbar from "@material-ui/core/Snackbar";
-import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
-import { Home as HomeIcon } from "@material-ui/icons";
 import AllInboxTwoToneIcon from "@material-ui/icons/AllInboxTwoTone";
 import AppsIcon from "@material-ui/icons/Apps";
 import BusinessTwoToneIcon from "@material-ui/icons/BusinessTwoTone";
@@ -26,7 +26,6 @@ import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
 import { MenuItem } from "../../../types/objectTypes";
-import { history } from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
             textDecoration: "none",
             textAlign: "center",
             display: "block",
-        }
+        },
     }),
 );
 
@@ -105,7 +104,7 @@ function MenuButton(props: MenuItemProps) {
                 onClose={handleClose}
             >
                 <Alert
-                    onClose={handleClose} 
+                    onClose={handleClose}
                     severity="info"
                 >
                     This is currently planned for a future release!
@@ -122,9 +121,15 @@ const Motion = React.forwardRef(function Transition(
     return <Grow style={{ transformOrigin: "0 0 0" }} ref={ref} {...props} />;
 });
 
-export default function NavMenu() {
+interface Props {
+    className: string;
+}
+
+export default function NavMenu(props: Props) {
+    const {
+        className,
+    } = props;
     const classes = useStyles();
-    const theme = useTheme();
     const [open, setOpen] = useState(false);
 
     const MENU_ITEMS: MenuItem[] = [
@@ -217,26 +222,22 @@ export default function NavMenu() {
 
     return (
         <>
-            <IconButton
-                edge="start"
-                onClick={handleClickOpen}
-                color="inherit"
-                aria-label="menu"
-
+            <Box
+                display="flex"
+                flex="0"
+                alignItems="center"
+                alignContent="center"
             >
-                <AppsIcon />
-            </IconButton>
-            { window.location.hash !== "#/" &&
                 <IconButton
-                    aria-label="home"
+                    edge="start"
+                    onClick={handleClickOpen}
                     color="inherit"
-                    edge="end"
-                    onClick={() => { history.push("/"); }}
-                    style={{ marginRight: theme.spacing(2) }}
+                    aria-label="menu"
+                    className={className}
                 >
-                    <HomeIcon />
+                    <AppsIcon />
                 </IconButton>
-            }
+            </Box>
             <Dialog
                 aria-labelledby="nav-menu-title"
                 aria-describedby="nav-menu-description"
@@ -257,7 +258,7 @@ export default function NavMenu() {
                     spacing={2}
                     className={classes.menuContainer}
                 >
-                    {MENU_ITEMS.map((menuItem) => 
+                    {MENU_ITEMS.map((menuItem) =>
                         <Grid
                             key={`menuItem-${menuItem.id}`}
                             item
@@ -273,7 +274,7 @@ export default function NavMenu() {
                             >
                                 <MenuButton content={menuItem} />
                             </Link>
-                        </Grid>
+                        </Grid>,
                     )}
                 </Grid>
             </Dialog>

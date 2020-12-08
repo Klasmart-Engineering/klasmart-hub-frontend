@@ -1,23 +1,24 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
-import { Link, Paper, Tooltip } from "@material-ui/core";
+import { Box, Button, Link, Paper } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
-import Hidden from "@material-ui/core/Hidden";
 import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { useLocation } from "react-router-dom";
-import { currentMembershipVar, userIdVar } from "../../../cache";
+import KidsloopLogo from "../../../assets/img/kidsloop.svg";
+import { userIdVar } from "../../../cache";
 import { GET_USER } from "../../../operations/queries/getUser";
-import { Role, RoleName, User } from "../../../types/graphQL";
+import { User } from "../../../types/graphQL";
 import { history } from "../../../utils/history";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";
 import UserSettings from "./settings/userSettings";
+
+const breakpoint = 827; // current max width before the toolbar items start to wrap
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,11 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         menuButton: {
             marginRight: theme.spacing(2),
-        },
-        profileButton: {
-            backgroundColor: "white",
-            border: "1px solid #efefef",
-            borderRadius: 12,
         },
         root: {
             flexGrow: 1,
@@ -43,6 +39,18 @@ const useStyles = makeStyles((theme: Theme) =>
         title: {
             flex: 1,
             marginLeft: theme.spacing(2),
+        },
+        userSettingsContainer: {
+            [theme.breakpoints.down(breakpoint)]: {
+                order: 2,
+            },
+            order: 3,
+        },
+        menuButtonsContainer: {
+            [theme.breakpoints.down(breakpoint)]: {
+                order: 3,
+            },
+            order: 2,
         },
     }),
 );
@@ -75,37 +83,6 @@ function MenuButtons(props: MenuButtonProps) {
     );
 }
 
-interface LabelProps {
-    classes: string;
-    organizationName?: string | null;
-    roleName: string | null;
-}
-
-function ClassroomLabel(props: LabelProps) {
-    const {
-        classes,
-        organizationName,
-        roleName,
-    } = props;
-
-    return (
-        <Tooltip title="Your currently selected organization" aria-label="selected-org" placement="bottom-start">
-            <Grid container item xs={10} direction="row" justify="flex-start" alignItems="flex-start">
-                <Grid item xs={12}>
-                    <Typography variant="body1" className={classes} noWrap>
-                        {organizationName ?? "Unknown organization"}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="caption" className={classes} noWrap>
-                        {roleName ?? "Unknown role"}
-                    </Typography>
-                </Grid>
-            </Grid>
-        </Tooltip>
-    );
-}
-
 interface Props {
     menuLabels?: Array<{ name: string; path: string; }>;
 }
@@ -119,7 +96,6 @@ export default function NavBar(props: Props) {
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
 
     const user_id = useReactiveVar(userIdVar);
-    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const { data, loading, error } = useQuery(GET_USER, {
         fetchPolicy: "network-only",
         variables: {
@@ -127,21 +103,6 @@ export default function NavBar(props: Props) {
         },
     });
     const user: User = data?.user;
-    const selectedOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
-
-    const getHighestRole = (roles?: Role[] | null) => {
-        if (!roles?.length) { return null; }
-        const rolePriority: RoleName[] = ["Organization Admin", "School Admin", "Teacher", "Parent", "Student"];
-        const foundPriorityIndexes = roles
-            .map(function(role) {
-                const roleName = role.role_name as RoleName;
-                return rolePriority.indexOf(roleName);
-            })
-            .filter((priority) => priority !== -1);
-        if (!foundPriorityIndexes.length) { return null; }
-        const highestPriorityIndex = Math.min(...foundPriorityIndexes);
-        return rolePriority[highestPriorityIndex];
-    };
 
     return (
         <div className={classes.root}>
@@ -154,67 +115,38 @@ export default function NavBar(props: Props) {
                         alignItems="center"
                         style={{ minHeight }}
                     >
-                        <Grid
-                            container item
-                            xs={12} md={4} lg={3}
-                            direction="row"
-                            justify="space-between"
-                            alignItems="center"
-                            wrap="nowrap"
-                            style={{ minHeight }}
+                        <Box
+                            display="flex"
+                            flexDirection="row"
+                            flexWrap="nowrap"
+                            order={1}
                         >
-                            <Grid container item xs={8} direction="row" wrap="nowrap">
-                                { ["Parent", "Student"].indexOf(getHighestRole(selectedOrganization?.roles) || "Student") === -1 && <NavMenu /> }
-                                <ClassroomLabel
-                                    classes={classes.title}
-                                    organizationName={selectedOrganization?.organization?.organization_name}
-                                    roleName={getHighestRole(selectedOrganization?.roles)}
-                                />
-                            </Grid>
-                            <Hidden mdUp>
-                                <Grid
-                                    container item
-                                    xs={4}
-                                    justify="flex-end"
-                                    direction="row"
-                                    alignItems="center"
-                                    wrap="nowrap"
-                                >
-                                    <UserSettings
-                                        user={user}
-                                        loading={loading}
-                                        error={error}
-                                    />
-                                </Grid>
-                            </Hidden>
-                        </Grid>
-                        {url.hash.includes("#/admin") ? null :
-                            <Grid
-                                container item
-                                xs={12} md={4} lg={6}
-                                direction="row"
-                                justify="center"
-                                wrap="nowrap"
+                            <NavMenu className={classes.menuButton}/>
+                            <Button
+                                onClick={() => { history.push("/"); }}
+                            >
+                                <img src={KidsloopLogo} height="40"/>
+                            </Button>
+                        </Box>
+                        {!url.hash.includes("#/admin") &&
+                            <Box
+                                display="flex"
+                                flexWrap="nowrap"
+                                className={classes.menuButtonsContainer}
                             >
                                 {menuLabels ? <MenuButtons labels={menuLabels} /> : null}
-                            </Grid>
+                            </Box>
                         }
-                        <Hidden smDown>
-                            <Grid
-                                container item
-                                md={4} lg={3}
-                                direction="row"
-                                justify="flex-end"
-                                alignItems="center"
-                                wrap="nowrap"
-                            >
-                                <UserSettings
-                                    user={user}
-                                    loading={loading}
-                                    error={error}
-                                />
-                            </Grid>
-                        </Hidden>
+                        <Box
+                            display="flex"
+                            className={classes.userSettingsContainer}
+                        >
+                            <UserSettings
+                                user={user}
+                                loading={loading}
+                                error={error}
+                            />
+                        </Box>
                     </Grid>
                 </Toolbar>
             </AppBar>

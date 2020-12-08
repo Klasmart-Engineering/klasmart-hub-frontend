@@ -1,31 +1,31 @@
 import { ApolloError, useReactiveVar } from "@apollo/client";
+import { Box, List, ListItemAvatar, Popover, Tooltip } from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
-import Hidden from "@material-ui/core/Hidden";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { PopoverProps } from "@material-ui/core/Popover";
 import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import {
     Business as BusinessIcon,
-    Person as PersonIcon
+    Person as PersonIcon,
 } from "@material-ui/icons";
+import { Loading, utils } from "kidsloop-px";
 import queryString from "querystring";
 import React, { useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { currentMembershipVar } from "../../../../cache";
-import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import KidsloopLogo from "../../../../assets/img/kidsloop.svg";
+import { User } from "../../../../types/graphQL";
+import { getHighestRole } from "../../../../utils/userRoles";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
-import { User } from "../../../../types/graphQL";
-import { Box, List, ListItemAvatar, Popover } from "@material-ui/core";
-import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        avatar: {
+        logo: {
             [theme.breakpoints.up("sm")]: {
                 margin: theme.spacing(0, 1),
             },
@@ -36,14 +36,13 @@ const useStyles = makeStyles((theme) =>
             marginBottom: theme.spacing(1),
         },
         userEmail: {
-            color: theme.palette.grey[600]
+            color: theme.palette.grey[600],
         },
         profileButton: {
-            [theme.breakpoints.up("sm")]: {
-                backgroundColor: "white",
-                border: "1px solid #efefef",
-                borderRadius: 12,
-            },
+            backgroundColor: "white",
+            border: "1px solid #efefef",
+            borderRadius: 12,
+            padding: theme.spacing(1, 2),
         },
     }),
 );
@@ -69,9 +68,9 @@ const StyledMenu = withStyles({
 ));
 
 interface Props {
-    user?: User | null
-    loading: boolean
-    error?: ApolloError
+    user?: User | null;
+    loading: boolean;
+    error?: ApolloError;
 }
 
 /**
@@ -85,8 +84,12 @@ export default function UserSettings(props: Props) {
     } = props;
     const classes = useStyles();
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
-    const selectedOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id)?.organization;
-    const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedOrganization?.organization_id);
+    const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
+    const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
+    const userNameColor = utils.stringToHslColor(user?.user_name ?? "??");
+    const userNameInitials = utils.nameToInitials(user?.user_name ?? "??", 3);
+    const selectedOrganizationColor = utils.stringToHslColor(selectedMembershipOrganization?.organization?.organization_name ?? "??");
+    const selectedOrganizationInitials = utils.nameToInitials(selectedMembershipOrganization?.organization?.organization_name ?? "??", 4);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -140,17 +143,39 @@ export default function UserSettings(props: Props) {
                     alignItems="center"
                     style={{ flexWrap: "nowrap" }}
                 >
-                    <Hidden xsDown>
-                        <img
-                            alt="KidsLoop"
-                            className={classes.avatar}
-                            src={KidsloopLogo}
-                            height={32}
-                        />
-                        <Avatar src={user?.avatar ?? ""}>
-                            <PersonIcon />
+                    <Tooltip
+                        aria-label="organization name"
+                        title={selectedMembershipOrganization?.organization?.organization_name || "Loading..." }
+                        placement="bottom"
+                    >
+                        <Avatar
+                            variant="rounded"
+                            style={{
+                                color: "white",
+                                backgroundColor: selectedOrganizationColor,
+                            }}>
+                            <Typography variant="caption">
+                                {selectedMembershipOrganization?.organization?.organization_name
+                                    ? selectedOrganizationInitials
+                                    : <BusinessIcon />
+                                }
+                            </Typography>
                         </Avatar>
-                    </Hidden>
+                    </Tooltip>
+                    <Avatar
+                        src={user?.avatar ?? ""}
+                        style={{
+                            color: "white",
+                            backgroundColor: userNameColor,
+                            marginLeft: 16,
+                        }}>
+                        <Typography variant="body1">
+                            {user?.user_name
+                                ? userNameInitials
+                                : <PersonIcon />
+                            }
+                        </Typography>
+                    </Avatar>
                 </Grid>
             </Button>
             <StyledMenu
@@ -172,8 +197,17 @@ export default function UserSettings(props: Props) {
                     <Avatar
                         src={user?.avatar ?? ""}
                         className={classes.avatarLarge}
+                        style={{
+                            color: "white",
+                            backgroundColor: userNameColor,
+                        }}
                     >
-                        <PersonIcon fontSize="large" />
+                        <Typography variant="h5">
+                            {user?.user_name
+                                ? userNameInitials
+                                : <PersonIcon />
+                            }
+                        </Typography>
                     </Avatar>
                     <Typography
                         variant="body1"
@@ -187,16 +221,27 @@ export default function UserSettings(props: Props) {
                         {user?.email}
                     </Typography>
                 </Box>
-                {!loading && !error && selectedOrganization && <List dense>
+                {!loading && !error && selectedMembershipOrganization && <List dense>
                     <ListItem>
                         <ListItemAvatar>
-                            <Avatar variant="rounded">
-                                <BusinessIcon />
+                            <Avatar
+                                variant="rounded"
+                                style={{
+                                    color: "white",
+                                    backgroundColor: selectedOrganizationColor,
+                                }}
+                            >
+                                <Typography variant="caption">
+                                    {selectedMembershipOrganization?.organization?.organization_name
+                                        ? selectedOrganizationInitials
+                                        : <BusinessIcon />
+                                    }
+                                </Typography>
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={selectedOrganization?.organization_name}
-                            secondary={selectedOrganization?.owner?.email}
+                            primary={selectedMembershipOrganization?.organization?.organization_name}
+                            secondary={getHighestRole(selectedMembershipOrganization?.roles) ?? "Unknown"}
                         />
                     </ListItem>
                 </List>}
@@ -210,15 +255,26 @@ export default function UserSettings(props: Props) {
                                 onClick={() => handleOrganization(membership)}
                             >
                                 <ListItemAvatar>
-                                    <Avatar variant="rounded">
-                                        <BusinessIcon />
+                                    <Avatar
+                                        variant="rounded"
+                                        style={{
+                                            color: "white",
+                                            backgroundColor: utils.stringToHslColor(membership?.organization?.organization_name ?? "??"),
+                                        }}
+                                    >
+                                        <Typography variant="caption">
+                                            {membership?.organization?.organization_name
+                                                ? utils.nameToInitials(membership?.organization?.organization_name ?? "??", 4)
+                                                : <BusinessIcon />
+                                            }
+                                        </Typography>
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={membership?.organization?.organization_name}
-                                    secondary={membership?.organization?.owner?.email}
+                                    secondary={getHighestRole(membership?.roles) ?? "Unknown"}
                                 />
-                            </ListItem>
+                            </ListItem>,
                             )}
                     </List>
                 </>}
