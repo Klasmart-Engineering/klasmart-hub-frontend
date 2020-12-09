@@ -7,6 +7,7 @@ import CardLayout from "./card/card";
 import { mainNavBar } from "../../app";
 import NavBar from "../../components/styled/navbar/navbar";
 import LiveLayout from "./live/live";
+import SummaryCard from "./summary/summaryCard";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,11 +44,15 @@ export default function Home() {
     return (<>
         <Container
             disableGutters
-            maxWidth={"lg"}
+            maxWidth={"xl"}
         >
-            <LiveLayout />
-
             <Grid container>
+                <Grid item xs={12} md={4}>
+                    <LiveLayout />
+                </Grid>
+                <Grid item xs={12} md={8}>
+                    <SummaryCard />
+                </Grid>
                 <Grid item xs={12}>
                     <CardLayout />
                 </Grid>

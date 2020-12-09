@@ -10,8 +10,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import StyledFAB from "../../../components/styled/fabButton";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
+import StyledFAB from "../../../components/styled/fabButton";
 
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
 

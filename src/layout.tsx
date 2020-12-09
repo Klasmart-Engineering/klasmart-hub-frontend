@@ -1,5 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { Copyright } from "kidsloop-px";
 import * as React from "react";
 import { withOrientationChange } from "react-device-detect";
 
@@ -50,6 +51,7 @@ let Layout = (props: any) => {
             <Grid item xs={12}>
                 <App />
             </Grid>
+            <Copyright />
         </Grid>
     );
 };

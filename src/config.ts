@@ -6,10 +6,6 @@ export function getStage() {
     return "" + process.env.STAGE;
 }
 
-export function getPaymentEndpoint() {
-    return "" + process.env.PAYMENT_ENDPOINT;
-}
-
 export function getAuthEndpoint() {
     return "" + process.env.AUTH_ENDPOINT;
 }
@@ -28,12 +24,12 @@ export function getRegionEndpoint() {
 
 export function getOrganizationEndpoint(regionId: string) {
     switch (regionId.toLowerCase()) {
-        case "seoul": {
-            return "" + process.env.ORGANIZATION_SEOUL_ENDPOINT;
-        }
-        default: {
-            return "" + process.env.ORGANIZATION_ENDPOINT;
-        }
+    case "seoul": {
+        return "" + process.env.ORGANIZATION_SEOUL_ENDPOINT;
+    }
+    default: {
+        return "" + process.env.ORGANIZATION_ENDPOINT;
+    }
     }
 }
 

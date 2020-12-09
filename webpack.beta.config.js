@@ -103,15 +103,4 @@ module.exports = {
             "KL_AUTH_ENDPOINT": "https://auth.kidsloop.net/",
         })
     ],
-    devServer: {
-        host: "0.0.0.0",
-        historyApiFallback: true,
-        proxy: {
-            "/h5p": {
-                target: "https://zoo.kidsloop.net/",
-                secure: false,
-                changeOrigin: true,
-            }
-        }
-    },
 };

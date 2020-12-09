@@ -5,6 +5,8 @@ export const GET_USER = gql`
         user(user_id: $user_id) {
         user_id
         user_name
+        given_name
+        family_name
         email
         avatar
         memberships {

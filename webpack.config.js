@@ -103,19 +103,8 @@ module.exports = {
         https: true,
         historyApiFallback: true,
         proxy: {
-            "/auth": {
-                target: "https://prod.auth.badanamu.net/",
-                changeOrigin: true,
-                pathRewrite: { "^/auth": "" },
-            },
-            "/account": {
-                target: "https://prod.account.badanamu.net/",
-                changeOrigin: true,
-                pathRewrite: { "^/account": "" },
-            },
             "/v1": {
                 target: "https://kl2-test.kidsloop.net/",
-                secure: true,
                 changeOrigin: true,
             },
             "/h5p": {

@@ -127,16 +127,9 @@ export default function CardLayout() {
     return (
         <Container
             disableGutters
-            maxWidth={"lg"}
+            maxWidth={"xl"}
         >
             <Box>
-                <Grid item xs={12} style={{ margin: theme.spacing(0, 2) }}>
-                    <CenterAlignChildren center>
-                        <Typography variant="h4" align="center">
-                            <FormattedMessage id="live_featuredContent" />
-                        </Typography>
-                    </CenterAlignChildren>
-                </Grid>
                 <Grid
                     item
                     xs={12}
