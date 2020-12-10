@@ -9,24 +9,28 @@ import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { useRestAPI } from "../../../api/restapi";
 
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 import StyledFAB from "../../../components/styled/fabButton";
 
+import { useReactiveVar } from "@apollo/client/react";
+import TextField from "@material-ui/core/TextField";
+import { Autocomplete } from "@material-ui/lab";
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
+import { currentMembershipVar } from "../../../cache";
+import StyledTextField from "../../../components/styled/textfield";
+import { PublishedContentItem } from "../../../types/objectTypes";
+import { publishedContentPayload } from "../summary/payload";
 
-interface LessonPlanData {
-    id: string;
-    title: string;
-    data?: any;
-}
+const payload = publishedContentPayload.list;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         classInfoContainer: {
             background: `url(${KidsloopLogoAlt}) no-repeat`,
-            backgroundColor: "#e0edf7",
-            backgroundPosition: "center right",
+            // backgroundColor: "#e0edf7",
+            backgroundPosition: "bottom right",
             backgroundPositionX: "120%",
             backgroundSize: "75%",
             borderRadius: 12,
@@ -35,7 +39,6 @@ const useStyles = makeStyles((theme: Theme) =>
             minHeight: 440,
             padding: theme.spacing(4, 5),
             [theme.breakpoints.down("sm")]: {
-                backgroundPosition: "bottom right",
                 height: `min(${window.innerHeight - 20}px,56vw)`,
                 padding: theme.spacing(2, 2),
             },
@@ -57,20 +60,22 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function LiveCard() {
     const classes = useStyles();
     const theme = useTheme();
+    const restApi = useRestAPI();
 
-    const [lessonPlan, setLessonPlan] = useState<LessonPlanData>({ id: "", title: "" });
-    const [lessonPlans, setLessonPlans] = useState<LessonPlanData[]>([]);
+    const [lessonPlan, setLessonPlan] = useState<PublishedContentItem | undefined>(undefined);
+    const [lessonPlans, setLessonPlans] = useState<PublishedContentItem[] | undefined>(payload);
     const [liveToken, setLiveToken] = useState("");
 
-    async function fetchPublishedLessonPlans() {
-        const headers = new Headers();
-        headers.append("Accept", "application/json");
-        headers.append("Content-Type", "application/json");
-        const response = await fetch("/v1/contents?publish_status=published", {
-            headers,
-            method: "GET",
-        });
-        if (response.status === 200) { return response.json(); }
+    const currentOrganization = useReactiveVar(currentMembershipVar);
+
+    async function getPublishedLessonPlans() {
+        try {
+            const response = await restApi.publishedContent(currentOrganization.organization_id);
+            console.log(response);
+            setLessonPlans(response);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     async function getLiveToken(lessonPlanId: string) {
@@ -85,25 +90,13 @@ export default function LiveCard() {
     }
 
     useEffect(() => {
-        let prepared = true;
-        (async () => {
-            const json = await fetchPublishedLessonPlans();
-            if (prepared) {
-                if (json && json.list) {
-                    const publishedLP = json.list.filter((lp: any) => lp.publish_status == "published" && lp.content_type_name == "Plan");
-                    const lpList = publishedLP.map((lp: any) => {
-                        return { id: lp.id, title: lp.name, data: lp.data };
-                    });
-                    setLessonPlans(lpList);
-                } else {
-                    setLessonPlans([{ id: "", title: "Lesson plan does not exist yet" }]);
-                }
-            }
-        })();
-        return () => { prepared = false; };
-    }, []);
+        if (currentOrganization.organization_id !== "") {
+            getPublishedLessonPlans();
+        }
+    }, [currentOrganization]);
 
     useEffect(() => {
+        if (!lessonPlan) { return; }
         if (lessonPlan.id === "") { return; }
         let prepared = true;
         (async () => {
@@ -140,13 +133,13 @@ export default function LiveCard() {
                             <FormattedMessage id={"live_welcome"} />
                         </Typography>
                     </Grid>
+                    {/* <Grid item xs={12}>
+                        <Typography variant="h6" style={{ paddingRight: theme.spacing(2) }}>
+                            <FormattedMessage id={"live_lessonPlanLabel"} />:
+                        </Typography>
+                    </Grid> */}
                     <Grid item xs={12}>
-                        <CenterAlignChildren>
-                            <Typography variant="h6" style={{ paddingRight: theme.spacing(2) }}>
-                                <FormattedMessage id={"live_lessonPlanLabel"} />:
-                            </Typography>
-                            <LessonPlanSelect lessonPlans={lessonPlans} lessonPlan={lessonPlan} setLessonPlan={setLessonPlan} />
-                        </CenterAlignChildren>
+                        <LessonPlanSelect lessonPlans={lessonPlans} lessonPlan={lessonPlan} setLessonPlan={setLessonPlan} />
                     </Grid>
                 </Grid>
             </Grid>
@@ -188,29 +181,53 @@ const StyledMenu = withStyles({})((props: MenuProps) => (
 ));
 
 function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
-    lessonPlans: LessonPlanData[],
-    lessonPlan: LessonPlanData,
-    setLessonPlan: React.Dispatch<React.SetStateAction<LessonPlanData>>,
+    lessonPlans?: PublishedContentItem[],
+    lessonPlan?: PublishedContentItem,
+    setLessonPlan: React.Dispatch<React.SetStateAction<PublishedContentItem>>,
 }) {
     const classes = useStyles();
 
-    const [lessonPlanMenuElement, setLessonPlanMenuElement] = useState<null | HTMLElement>(null);
-
     return (
         <>
-            <Tooltip title={<FormattedMessage id="live_lessonPlanSelect" />} enterDelay={300}>
+            <Autocomplete
+                id="country-select-demo"
+                style={{ width: "100%" }}
+                options={lessonPlans as PublishedContentItem[]}
+                classes={{
+                    // option: classes.option,
+                }}
+                autoHighlight
+                getOptionLabel={(option) => option.name}
+                renderOption={(option) => (
+                    <React.Fragment>
+                        {option.name}
+                    </React.Fragment>
+                )}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Select a Lesson Plan"
+                        inputProps={{
+                            ...params.inputProps,
+                            autoComplete: "new-password", // disable autocomplete and autofill
+                        }}
+                    />
+                )}
+            />
+            {/* <Tooltip title={<FormattedMessage id="live_lessonPlanSelect" />} enterDelay={300}>
                 <Button
                     color="inherit"
                     aria-owns={lessonPlanMenuElement ? "lesson-plan-select-menu" : undefined}
                     aria-haspopup="true"
                     data-ga-event-category="AppBar"
                     data-ga-event-action="lesson-plan-select"
+                    fullWidth
                     onClick={(e) => setLessonPlanMenuElement(e.currentTarget)}
                 >
                     <span className={classes.select}>
-                        {lessonPlan.title === ""
+                        {!lessonPlan || lessonPlan?.name === ""
                             ? <FormattedMessage id="live_lessonPlanSelect" />
-                            : lessonPlan.title
+                            : lessonPlan?.name
                         }
                     </span>
                     <ExpandMoreIcon fontSize="small" />
@@ -224,17 +241,17 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
                 onClose={() => setLessonPlanMenuElement(null)}
             >
                 {
-                    lessonPlans.map((lp) => (
+                    lessonPlans?.map((lp) => (
                         <MenuItem
                             key={lp.id}
-                            selected={lessonPlan.id === lp.id}
+                            selected={lessonPlan?.id === lp.id}
                             onClick={() => setLessonPlan(lp)}
                         >
-                            {lp.title}
+                            {lp.name}
                         </MenuItem>
                     ))
                 }
-            </StyledMenu>
+            </StyledMenu> */}
         </>
     );
 }

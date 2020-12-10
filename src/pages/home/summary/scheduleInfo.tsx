@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
             boxShadow: "inset 0 0 10px rgba(0,0,0,0.2)",
             marginRight: theme.spacing(4),
             marginBottom: theme.spacing(2),
-            padding: theme.spacing(4),
+            padding: theme.spacing(3),
             [theme.breakpoints.down("sm")]: {
                 marginRight: theme.spacing(1),
                 padding: theme.spacing(2),
@@ -54,7 +54,6 @@ export default function ScheduleInfo() {
     async function getScheduleList() {
         try {
             const response = await restApi.schedule(currentOrganization.organization_id, "month", todayTimeStamp, timeZoneOffset);
-            console.log(response);
             setSchedule(response);
         } catch (e) {
             console.error(e);

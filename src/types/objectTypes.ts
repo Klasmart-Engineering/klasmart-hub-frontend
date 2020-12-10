@@ -1,3 +1,33 @@
+export interface PublishedContentPayload {
+    total: number;
+    list: PublishedContentItem[];
+}
+
+export interface PublishedContentItem {
+    id: string;
+    name: string;
+    content_type: number;
+    description: string;
+    keywords: string;
+    author: string;
+    items_count: number;
+    publish_status: string;
+    thumbnail: string;
+    data: string;
+    author_name: string;
+    dir_path: string;
+    content_type_name: string;
+    create_at: number;
+    update_at: number;
+
+}
+
+// export interface ContentData {
+//     input_source: number;
+//     file_type: number;
+//     source: string;
+// }
+
 export interface SchedulePayload {
     class_id: string;
     class_type: string;
@@ -47,15 +77,6 @@ export interface MenuItem {
     link: string;
     logo: JSX.Element;
     title: JSX.Element;
-}
-sexport; interface ContentItem {
-    published: boolean;
-    contentId: string;
-    description: string;
-    link: string;
-    image: string;
-    title: string;
-    type?: "lesson-plan" | "lesson-material" | undefined;
 }
 
 export type LibraryContentType = "OwnedContent" | "Marketplace";

@@ -4,7 +4,7 @@ import {
     getCNEndpoint,
 } from "../config";
 import { Store } from "../store/store";
-import { AssessmentPayload, SchedulePayload, TimeView } from "../types/objectTypes";
+import { AssessmentPayload, PublishedContentPayload, SchedulePayload, TimeView } from "../types/objectTypes";
 import { RestAPIError, RestAPIErrorType } from "./restapi_errors";
 
 export class RestAPI {
@@ -13,6 +13,20 @@ export class RestAPI {
 
     constructor(store: ReturnType<typeof useStore>) {
         this.store = store as any; // TODO: Fix types
+    }
+
+    public async publishedContent(orgId: string, page = 1, pageSize = 100, contentType = "-t", orderBy = "-create_at", path = "") {
+        const str = queryString.stringify({ org_id: orgId, publish_status: "published", page, page_size: pageSize, content_type: contentType, order_by: orderBy, path });
+
+        const response = await this.contentCall("GET", "v1/contents_folders?" + str);
+        const body: PublishedContentPayload = await response?.json();
+        if (typeof body === "object") {
+            const { list } = body;
+            if (typeof list === "object" && list instanceof Array) {
+                return list;
+            }
+        }
+        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
     }
 
     public async schedule(orgId: string, viewType: TimeView, timeAt: number, timeZoneOffset: number) {
@@ -39,6 +53,10 @@ export class RestAPI {
             }
         }
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+    }
+
+    private contentCall(method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
+        return this.call(method, getCNEndpoint(), route, body);
     }
 
     private scheduleCall(method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
