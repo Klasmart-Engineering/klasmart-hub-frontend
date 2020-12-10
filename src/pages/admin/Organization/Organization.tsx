@@ -49,7 +49,6 @@ function Organization(props: { intl: IntlFormatters }) {
     const formRef = useRef<HTMLFormElement | null>(null);
     const [shortCode, setShortCode] = useState("");
     const [success, setSuccess] = useState(false);
-    // const history = useHistory();
     const [logoPreview, setLogoPreview] = useState("");
     const [error, setError] = useState(false);
     const [apolloErrors, setErrors] = useState([]);
@@ -60,8 +59,6 @@ function Organization(props: { intl: IntlFormatters }) {
         color: constantValues.colorDefaultPicker,
     });
     const color = colorPicker.color;
-
-    // Apollo
     const [saveOrganization] = useMutation(NEW_ORGANIZATION);
     const [addUserToOrg] = useMutation(ADD_USER_TO_ORGANIZATION);
     const userProfile = useReactiveVar(userProfileVar);
@@ -129,7 +126,8 @@ function Organization(props: { intl: IntlFormatters }) {
                     variables: {
                         user_id: userProfile.user_id,
                         organization_id:
-                response.data.user.createOrganization.organization_id,
+                            response.data.user.createOrganization
+                                .organization_id,
                     },
                 });
 
@@ -165,8 +163,6 @@ function Organization(props: { intl: IntlFormatters }) {
     const handleBlurNameOrganization = () => {
         if (formik.values.organization_name.length < 3) {
             formik.setFieldValue("shortCode", "");
-        } else {
-        // getShortCode({ variables: { name: formik.values.organization_name } });
         }
     };
 
@@ -190,7 +186,9 @@ function Organization(props: { intl: IntlFormatters }) {
                 {error && (
                     <div className={classes.root}>
                         <Alert severity="error">
-                            <AlertTitle>Error at creating organization</AlertTitle>
+                            <AlertTitle>
+                                Error at creating organization
+                            </AlertTitle>
                             <ul>
                                 {apolloErrors.map((e: any) => (
                                     <li key={e.property}>
@@ -223,11 +221,12 @@ function Organization(props: { intl: IntlFormatters }) {
                                     name="organization_name"
                                     id="organization_name"
                                     placeholder={intl.formatMessage({
-                                        id: "addOrganization_nameOfOrganizationPlaceholder",
+                                        id:
+                                            "addOrganization_nameOfOrganizationPlaceholder",
                                     })}
                                 />
-                                {formik.touched.organization_name && formik.errors.organization_name ?
-                                    (
+                                {formik.touched.organization_name &&
+                                formik.errors.organization_name ? (
                                         <FormHelperText>
                                             {formik.errors.organization_name}
                                         </FormHelperText>
@@ -248,12 +247,16 @@ function Organization(props: { intl: IntlFormatters }) {
                                     onChange={formik.handleChange}
                                     value={formik.values.address1}
                                     placeholder={intl.formatMessage({
-                                        id: "addOrganization_addressPlaceholder",
+                                        id:
+                                            "addOrganization_addressPlaceholder",
                                     })}
                                 />
-                                {formik.touched.address1 && formik.errors.address1 ? (
-                                    <FormHelperText>{formik.errors.address1}</FormHelperText>
-                                ) : null}
+                                {formik.touched.address1 &&
+                                formik.errors.address1 ? (
+                                        <FormHelperText>
+                                            {formik.errors.address1}
+                                        </FormHelperText>
+                                    ) : null}
                             </FormControl>
 
                             <FormControl className={classes.formControl} error>
@@ -265,9 +268,12 @@ function Organization(props: { intl: IntlFormatters }) {
                                     onChange={formik.handleChange}
                                     value={formik.values.address2}
                                 />
-                                {formik.touched.address2 && formik.errors.address2 ? (
-                                    <FormHelperText>{formik.errors.address2}</FormHelperText>
-                                ) : null}
+                                {formik.touched.address2 &&
+                                formik.errors.address2 ? (
+                                        <FormHelperText>
+                                            {formik.errors.address2}
+                                        </FormHelperText>
+                                    ) : null}
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={4}>
@@ -275,7 +281,6 @@ function Organization(props: { intl: IntlFormatters }) {
                                 <label htmlFor="phone">
                                     <b>{PhoneNumberLabel()}</b>
                                 </label>
-                                <br />
                                 <PhoneInput
                                     onChange={(value) => setPhoneFormik(value)}
                                     onBlur={formik.handleBlur}
@@ -286,7 +291,9 @@ function Organization(props: { intl: IntlFormatters }) {
                                     }}
                                     enableAreaCodes={true}
                                     onlyCountries={["kr", "us"]}
-                                    buttonStyle={{ border: "1px solid #030303" }}
+                                    buttonStyle={{
+                                        border: "1px solid #030303",
+                                    }}
                                     inputStyle={{
                                         border: "1px solid #030303",
                                         height: "42px",
@@ -295,7 +302,9 @@ function Organization(props: { intl: IntlFormatters }) {
                                     inputClass={classes.containerPhoneInput}
                                 />
                                 {formik.touched.phone && formik.errors.phone ? (
-                                    <FormHelperText>{formik.errors.phone}</FormHelperText>
+                                    <FormHelperText>
+                                        {formik.errors.phone}
+                                    </FormHelperText>
                                 ) : null}
                             </FormControl>
                         </Grid>
@@ -310,14 +319,17 @@ function Organization(props: { intl: IntlFormatters }) {
                                     id="email"
                                     name="email"
                                     placeholder={intl.formatMessage({
-                                        id: "addOrganization_emailAddressPlaceholder",
+                                        id:
+                                            "addOrganization_emailAddressPlaceholder",
                                     })}
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     value={formik.values.email}
                                 />
                                 {formik.touched.email && formik.errors.email ? (
-                                    <FormHelperText>{formik.errors.email}</FormHelperText>
+                                    <FormHelperText>
+                                        {formik.errors.email}
+                                    </FormHelperText>
                                 ) : null}
                             </FormControl>
                         </Grid>
@@ -332,7 +344,8 @@ function Organization(props: { intl: IntlFormatters }) {
                                     id="shortCode"
                                     name="shortCode"
                                     placeholder={intl.formatMessage({
-                                        id: "addOrganization_organizationShortCodePlaceholder",
+                                        id:
+                                            "addOrganization_organizationShortCodePlaceholder",
                                     })}
                                     onChange={(e) => {
                                         setShortCode(e.target.value);
@@ -384,13 +397,17 @@ function Organization(props: { intl: IntlFormatters }) {
                                             <Avatar
                                                 alt="Logo"
                                                 src={logoPreview}
-                                                className={classes.largeLogoPreview}
+                                                className={
+                                                    classes.largeLogoPreview
+                                                }
                                             />
                                         </div>
                                     </div>
                                 </div>
                                 {formik.touched.logo && formik.errors.logo ? (
-                                    <FormHelperText>{formik.errors.logo}</FormHelperText>
+                                    <FormHelperText>
+                                        {formik.errors.logo}
+                                    </FormHelperText>
                                 ) : null}
                             </FormControl>
                         </Grid>
@@ -401,7 +418,10 @@ function Organization(props: { intl: IntlFormatters }) {
                                 </label>
                                 <br />
                                 <div className={classes.orgColorContainer}>
-                                    <div className={classes.swatch} onClick={handleClick}>
+                                    <div
+                                        className={classes.swatch}
+                                        onClick={handleClick}
+                                    >
                                         <div
                                             style={{
                                                 width: "30px",
@@ -418,7 +438,10 @@ function Organization(props: { intl: IntlFormatters }) {
                                                 className={classes.cover}
                                                 onClick={handleClosePicker}
                                             />
-                                            <SketchPicker color={color} onChange={handleChange} />
+                                            <SketchPicker
+                                                color={color}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                     ) : null}
                                 </div>
@@ -446,7 +469,13 @@ function Organization(props: { intl: IntlFormatters }) {
                                             color="primary"
                                             size="large"
                                             endIcon={
-                                                isLoading ? <CircularProgress size={17} /> : <Save />
+                                                isLoading ? (
+                                                    <CircularProgress
+                                                        size={17}
+                                                    />
+                                                ) : (
+                                                    <Save />
+                                                )
                                             }
                                             disabled={isLoading}
                                         >

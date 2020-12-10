@@ -40,8 +40,6 @@ export default function Organization() {
     const [logo, setLogo] = useState<File | string>();
     const [phone, setPhone] = useState("");
     const [success, setSuccess] = useState(false);
-
-    // Apollo
     const [saveOrganization] = useMutation(ORGANIZATION);
     const { data: organization, loading } = useQuery(GET_ORGANIZATION, {
         fetchPolicy: "network-only",
@@ -96,8 +94,6 @@ export default function Organization() {
     const handleBlurNameOrganization = () => {
         if (organizationName.length < 3) {
             setOrganizationName("");
-        } else {
-        // getShortCode({ variables: { name: organization_name } });
         }
     };
 
@@ -137,7 +133,7 @@ export default function Organization() {
                 setSuccess(false);
             }
         } catch (e) {
-        // System Error
+            // System Error
             setError(true);
             setServerError(e.message);
             setSuccess(false);
@@ -185,7 +181,9 @@ export default function Organization() {
                 {error && (
                     <div className={classes.root}>
                         <Alert severity="error">
-                            <AlertTitle>Error at editing organization</AlertTitle>
+                            <AlertTitle>
+                                Error at editing organization
+                            </AlertTitle>
                             <ul>
                                 {apolloErrors.map((e: any) => (
                                     <li key={e.property}>
@@ -220,7 +218,9 @@ export default function Organization() {
                                     value={organizationName}
                                     name="organization_name"
                                     id="organization_name"
-                                    placeholder={"OFFICIAL NAME OF YOU ORGANIZATION"}
+                                    placeholder={
+                                        "OFFICIAL NAME OF YOU ORGANIZATION"
+                                    }
                                 />
                             </FormControl>
                         </Grid>
@@ -261,7 +261,6 @@ export default function Organization() {
                                 <label htmlFor="phone">
                                     <b>Phone Number</b>
                                 </label>
-                                <br />
                                 <PhoneInput
                                     onChange={(e) => {
                                         setPhone(e);
@@ -273,7 +272,9 @@ export default function Organization() {
                                     }}
                                     enableAreaCodes={true}
                                     onlyCountries={["kr", "us"]}
-                                    buttonStyle={{ border: "1px solid #030303" }}
+                                    buttonStyle={{
+                                        border: "1px solid #030303",
+                                    }}
                                     inputStyle={{
                                         border: "1px solid #030303",
                                         height: "42px",
@@ -364,7 +365,9 @@ export default function Organization() {
                                             <Avatar
                                                 alt="Logo"
                                                 src={logoPreview}
-                                                className={classes.largeLogoPreview}
+                                                className={
+                                                    classes.largeLogoPreview
+                                                }
                                             />
                                         </div>
                                     </div>
@@ -379,7 +382,10 @@ export default function Organization() {
                                 </label>
                                 <br />
                                 <div className={classes.orgColorContainer}>
-                                    <div className={classes.swatch} onClick={handleClick}>
+                                    <div
+                                        className={classes.swatch}
+                                        onClick={handleClick}
+                                    >
                                         <div
                                             style={{
                                                 width: "30px",
@@ -395,7 +401,10 @@ export default function Organization() {
                                                 className={classes.cover}
                                                 onClick={handleClosePicker}
                                             />
-                                            <SketchPicker color={color} onChange={handleChange} />
+                                            <SketchPicker
+                                                color={color}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                     ) : null}
                                 </div>
@@ -423,7 +432,13 @@ export default function Organization() {
                                             color="primary"
                                             size="large"
                                             endIcon={
-                                                isLoading ? <CircularProgress size={17} /> : <Save />
+                                                isLoading ? (
+                                                    <CircularProgress
+                                                        size={17}
+                                                    />
+                                                ) : (
+                                                    <Save />
+                                                )
                                             }
                                             disabled={isLoading}
                                         >
