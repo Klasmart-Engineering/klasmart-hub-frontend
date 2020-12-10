@@ -20,6 +20,7 @@ import { Autocomplete } from "@material-ui/lab";
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "../../../cache";
 import StyledTextField from "../../../components/styled/textfield";
+import { getCNEndpoint } from "../../../config";
 import { PublishedContentItem } from "../../../types/objectTypes";
 import { publishedContentPayload } from "../summary/payload";
 
@@ -62,7 +63,7 @@ export default function LiveCard() {
     const theme = useTheme();
     const restApi = useRestAPI();
 
-    const [lessonPlan, setLessonPlan] = useState<PublishedContentItem | undefined>(undefined);
+    const [lessonPlan, setLessonPlan] = useState<PublishedContentItem | null>(null);
     const [lessonPlans, setLessonPlans] = useState<PublishedContentItem[] | undefined>(payload);
     const [liveToken, setLiveToken] = useState("");
 
@@ -82,8 +83,9 @@ export default function LiveCard() {
         const headers = new Headers();
         headers.append("Accept", "application/json");
         headers.append("Content-Type", "application/json");
-        const response = await fetch(`v1/contents/${lessonPlanId}/live/token`, {
+        const response = await fetch(`${getCNEndpoint()}v1/crypto/h5p/jwt?sub=view&content_id=${lessonPlanId}&org_id=${currentOrganization.organization_id}`, {
             headers,
+            credentials: "include",
             method: "GET",
         });
         if (response.status === 200) { return response.json(); }
@@ -182,10 +184,17 @@ const StyledMenu = withStyles({})((props: MenuProps) => (
 
 function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
     lessonPlans?: PublishedContentItem[],
-    lessonPlan?: PublishedContentItem,
-    setLessonPlan: React.Dispatch<React.SetStateAction<PublishedContentItem>>,
+    lessonPlan?: PublishedContentItem | null,
+    setLessonPlan: React.Dispatch<React.SetStateAction<PublishedContentItem | null>>,
 }) {
     const classes = useStyles();
+
+    const [inputValue, setInputValue] = useState("");
+
+    useEffect(() => {
+        console.log("value: ", lessonPlan);
+        console.log("inputValue: ", inputValue);
+    }, [lessonPlan, inputValue]);
 
     return (
         <>
@@ -203,6 +212,14 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
                         {option.name}
                     </React.Fragment>
                 )}
+                value={lessonPlan}
+                onChange={(event: any, newValue: PublishedContentItem | null) => {
+                    setLessonPlan(newValue);
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
                 renderInput={(params) => (
                     <TextField
                         {...params}
