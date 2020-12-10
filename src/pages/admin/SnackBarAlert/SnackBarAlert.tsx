@@ -9,7 +9,7 @@ import { SnackBarAlertMessage } from "../../../models/SnackBarAlert";
 export default function SnackBarAlert(props: SnackBarAlertMessage) {
     const { onClose, open, message, severity } = props;
     return (
-        <Snackbar open={open} autoHideDuration={3000} onClose={onClose}>
+        <Snackbar open={open} autoHideDuration={1000} onClose={onClose}>
             <Alert onClose={onClose} severity={severity}>
                 {message}
             </Alert>
