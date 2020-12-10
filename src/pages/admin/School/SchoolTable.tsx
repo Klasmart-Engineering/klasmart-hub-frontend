@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { injectIntl, IntlFormatters } from "react-intl";
 import { currentMembershipVar } from "../../../cache";
 import { School } from "../../../models/School";
+import { DELETE_SCHOOL } from "../../../operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "../../../operations/mutations/editSchool";
 import { CREATE_SCHOOL } from "../../../operations/mutations/newSchool";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "../../../operations/queries/getSchoolsFromOrganization";
@@ -64,6 +65,8 @@ const useStyles = makeStyles(() => ({
         height: "27px",
         width: "27px",
     },
+    activeColor: { color: "#2BA600", fontWeight: "bold" },
+    inactiveColor: { color: "#FF0000", fontWeight: "bold" },
 }));
 
 /**
@@ -81,6 +84,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
     const [editSchool, { loading: editSchoolLoading }] = useMutation(
         EDIT_SCHOOL,
     );
+    const [deleteSchoolMutation] = useMutation(DELETE_SCHOOL);
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === "clickaway") {
@@ -107,6 +111,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                 "organization.schools",
                 [],
             );
+
             const schoolArray = schools.map((userItem: School) => ({
                 ...userItem,
             }));
@@ -114,7 +119,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
         }
     }, [organizationSchools, loadingSchools]);
 
-    const addSchool = async (school: School): Promise<void> => {
+    const create = async (school: School): Promise<void> => {
         try {
             const { school_name } = school;
 
@@ -126,21 +131,17 @@ function SchoolTable(props: { intl: IntlFormatters }) {
             });
 
             await refetch();
-            setMessageSnackBar(
-                intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
-            );
+            setMessageSnackBar("School has been created successfully");
             setSeverityBar("success");
             setOpen(true);
         } catch (error) {
-            setMessageSnackBar(
-                intl.formatMessage({ id: "schools_saveFailMessage" }),
-            );
+            setMessageSnackBar("An error occurred while creating the School");
             setSeverityBar("error");
             setOpen(true);
         }
     };
 
-    const edit = async (school: School): Promise<void> => {
+    const update = async (school: School): Promise<void> => {
         try {
             const { school_id, school_name } = school;
 
@@ -152,15 +153,32 @@ function SchoolTable(props: { intl: IntlFormatters }) {
             });
 
             await refetch();
-            setMessageSnackBar(
-                intl.formatMessage({ id: "schools_saveSuccessfulMessage" }),
-            );
+            setMessageSnackBar("School has been updated successfully");
             setSeverityBar("success");
             setOpen(true);
         } catch (error) {
-            setMessageSnackBar(
-                intl.formatMessage({ id: "schools_saveFailMessage" }),
-            );
+            setMessageSnackBar("An error occurred while updating the School");
+            setSeverityBar("error");
+            setOpen(true);
+        }
+    };
+
+    const remove = async (school: School): Promise<void> => {
+        try {
+            const { school_id } = school;
+
+            await deleteSchoolMutation({
+                variables: {
+                    school_id,
+                },
+            });
+
+            await refetch();
+            setMessageSnackBar("School has been removed successfully");
+            setSeverityBar("success");
+            setOpen(true);
+        } catch (error) {
+            setMessageSnackBar("An error occurred while removing the School");
             setSeverityBar("error");
             setOpen(true);
         }
@@ -327,9 +345,38 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                             );
                         },
                     },
+                    {
+                        title: intl.formatMessage({
+                            id: "classes_statusTitle",
+                        }),
+                        field: "status",
+                        cellStyle: {
+                            width: 140,
+                            minWidth: 140,
+                        },
+                        render: (rowData) => {
+                            const status = _get(
+                                rowData,
+                                "status",
+                                "",
+                            ).replace(/\w/, (c: string) => c.toUpperCase());
+                            const activeColor =
+                                status === "Active"
+                                    ? classes.activeColor
+                                    : classes.inactiveColor;
+
+                            return (
+                                <span className={`${activeColor}`}>
+                                    {status}
+                                </span>
+                            );
+                        },
+                    },
                 ]}
                 data={dataTable}
                 editable={{
+                    isDeletable: (rowData) => rowData.status === "active",
+                    isEditable: (rowData) => rowData.status === "active",
                     onRowAdd: (newData): Promise<void> =>
                         new Promise((resolve, reject) => {
                             if (newData.grades) {
@@ -350,7 +397,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                                 }
                             }
 
-                            addSchool(newData)
+                            create(newData)
                                 .then((e) => {
                                     console.log(
                                         "School created successfully",
@@ -365,7 +412,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                         }),
                     onRowUpdate: (newData): Promise<void> =>
                         new Promise((resolve, reject) => {
-                            edit(newData)
+                            update(newData)
                                 .then((e) => {
                                     console.log(
                                         "School edited successfully",
@@ -378,9 +425,20 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                                     reject();
                                 });
                         }),
-                    onRowDelete: (): Promise<void> =>
-                        new Promise((resolve) => {
-                            resolve();
+                    onRowDelete: (newData): Promise<void> =>
+                        new Promise((resolve, reject) => {
+                            remove(newData)
+                                .then((e) => {
+                                    console.log(
+                                        "School removed successfully",
+                                        e,
+                                    );
+                                    resolve();
+                                })
+                                .catch((e) => {
+                                    console.log("Error at editing school", e);
+                                    reject();
+                                });
                         }),
                 }}
                 localization={{
