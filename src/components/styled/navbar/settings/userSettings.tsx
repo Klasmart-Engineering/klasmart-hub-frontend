@@ -20,6 +20,7 @@ import { FormattedMessage } from "react-intl";
 import { currentMembershipVar } from "../../../../cache";
 import { User } from "../../../../types/graphQL";
 import { getHighestRole } from "../../../../utils/userRoles";
+import { getKLAuthEndpoint } from "../../../../config";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
 
@@ -112,14 +113,14 @@ export default function UserSettings(props: Props) {
             const headers = new Headers();
             headers.append("Accept", "application/json");
             headers.append("Content-Type", "application/json");
-            await fetch("https://auth.kidsloop.net/signout", {
+            await fetch(`${getKLAuthEndpoint()}signout`, {
                 credentials: "include",
                 headers,
                 method: "GET",
             })
                 .then(() => {
                     const stringifiedQuery = queryString.stringify({ continue: window.location.href });
-                    window.location.href = `https://auth.kidsloop.net/?${stringifiedQuery}#/`;
+                    window.location.href = `${getKLAuthEndpoint()}?${stringifiedQuery}#/`;
                 });
         } catch (e) {
             console.error(e);
