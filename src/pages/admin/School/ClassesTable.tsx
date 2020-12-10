@@ -104,7 +104,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
         },
     });
 
-    const addClass = async (classItem: Class): Promise<void> => {
+    const create = async (classItem: Class): Promise<void> => {
         try {
             const { class_name, schools: school_ids } = classItem;
 
@@ -118,15 +118,11 @@ function ClasessTable(props: { intl: IntlFormatters }) {
 
             await refetch();
 
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classes_classSavedMessage" }),
-            );
+            setMessageSnackBar("Class has been updated successfully");
             setSeverityBar("success");
             setShowSnackBar(true);
         } catch (error) {
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classes_classSaveError" }),
-            );
+            setMessageSnackBar("An error occurred while updating the class");
             setSeverityBar("error");
             setShowSnackBar(true);
         }
@@ -179,7 +175,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
         }
     };
 
-    const removeClass = async (classItem: Class): Promise<void> => {
+    const remove = async (classItem: Class): Promise<void> => {
         try {
             const { class_id } = classItem;
 
@@ -431,11 +427,19 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                             width: 140,
                             minWidth: 140,
                         },
-                        render: () => {
-                            const status = "Active";
+                        render: (rowData) => {
+                            const status = _get(
+                                rowData,
+                                "status",
+                                "",
+                            ).replace(/\w/, (c: string) => c.toUpperCase());
+                            const activeColor =
+                                status === "Active"
+                                    ? classes.activeColor
+                                    : classes.inactiveColor;
 
                             return (
-                                <span className={`${classes.activeColor}`}>
+                                <span className={`${activeColor}`}>
                                     {status}
                                 </span>
                             );
@@ -455,7 +459,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                                     (item) => item.school_id,
                                 ) as string[];
                             }
-                            addClass(newData)
+                            create(newData)
                                 .then((e) => {
                                     console.log(
                                         "class created successfully",
@@ -482,7 +486,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                         }),
                     onRowDelete: (data): Promise<void> =>
                         new Promise((resolve, reject) => {
-                            removeClass(data)
+                            remove(data)
                                 .then((e) => {
                                     console.log(
                                         "class deleted successfully",
