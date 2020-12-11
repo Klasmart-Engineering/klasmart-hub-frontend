@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function SummaryCard() {
+export default function ScheduleCard() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
@@ -66,12 +66,7 @@ export default function SummaryCard() {
                         className={classes.infoContainer}
                     >
                         <Grid item>
-                            <Typography variant="h4">
-                                👋 Hello, { user?.given_name }
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <AssessmentInfo />
+                            <ScheduleInfo />
                         </Grid>
                     </Grid>
                 </Paper>

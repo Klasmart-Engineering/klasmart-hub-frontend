@@ -47,7 +47,7 @@ export default function ScheduleInfo() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
-    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(payload);
+    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
@@ -85,7 +85,7 @@ export default function ScheduleInfo() {
                     item
                     className={classes.infoContainer}
                 >
-                    <Typography variant="h2">
+                    <Typography variant="h4">
                         { onlineClass?.length }
                     </Typography>
                     <Typography variant="caption">
@@ -102,7 +102,7 @@ export default function ScheduleInfo() {
                     item
                     className={classes.infoContainer}
                 >
-                    <Typography variant="h2">
+                    <Typography variant="h4">
                         { offlineClass?.length }
                     </Typography>
                     <Typography variant="caption">
@@ -119,7 +119,7 @@ export default function ScheduleInfo() {
                     item
                     className={classes.infoContainer}
                 >
-                    <Typography variant="h2">
+                    <Typography variant="h4">
                         { study?.length }
                     </Typography>
                     <Typography variant="caption">

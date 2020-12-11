@@ -7,6 +7,7 @@ import CardLayout from "./card/card";
 import { mainNavBar } from "../../app";
 import NavBar from "../../components/styled/navbar/navbar";
 import LiveLayout from "./live/live";
+import ScheduleCard from "./summary/scheduleCard";
 import SummaryCard from "./summary/summaryCard";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,6 +52,12 @@ export default function Home() {
                     <LiveLayout />
                 </Grid>
                 <Grid item xs={12} md={8}>
+                    <SummaryCard />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={4}>
+                    <ScheduleCard />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={8}>
                     <SummaryCard />
                 </Grid>
                 <Grid item xs={12}>

@@ -3,6 +3,7 @@ import { FormattedMessage } from "react-intl";
 
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { createStyles, makeStyles, Theme, useTheme, withStyles } from "@material-ui/core/styles";
@@ -15,13 +16,17 @@ import CenterAlignChildren from "../../../components/centerAlignChildren";
 import StyledFAB from "../../../components/styled/fabButton";
 
 import { useReactiveVar } from "@apollo/client/react";
+import Collapse from "@material-ui/core/Collapse";
 import TextField from "@material-ui/core/TextField";
-import { Autocomplete } from "@material-ui/lab";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Share as ShareIcon } from "@styled-icons/material/Share";
+import jwtDecode from "jwt-decode";
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "../../../cache";
+import InviteButton from "../../../components/invite";
 import StyledTextField from "../../../components/styled/textfield";
 import { getCNEndpoint } from "../../../config";
-import { PublishedContentItem } from "../../../types/objectTypes";
+import { LivePreviewJWT, PublishedContentItem } from "../../../types/objectTypes";
 import { publishedContentPayload } from "../summary/payload";
 
 const payload = publishedContentPayload.list;
@@ -64,8 +69,10 @@ export default function LiveCard() {
     const restApi = useRestAPI();
 
     const [lessonPlan, setLessonPlan] = useState<PublishedContentItem | null>(null);
-    const [lessonPlans, setLessonPlans] = useState<PublishedContentItem[] | undefined>(payload);
+    const [lessonPlans, setLessonPlans] = useState<PublishedContentItem[] | undefined>(undefined);
     const [liveToken, setLiveToken] = useState("");
+    const [shareLink, setShareLink] = useState("");
+    const [openShareLink, setOpenShareLink] = useState(false);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
@@ -83,7 +90,7 @@ export default function LiveCard() {
         const headers = new Headers();
         headers.append("Accept", "application/json");
         headers.append("Content-Type", "application/json");
-        const response = await fetch(`${getCNEndpoint()}v1/crypto/h5p/jwt?sub=view&content_id=${lessonPlanId}&org_id=${currentOrganization.organization_id}`, {
+        const response = await fetch(`${getCNEndpoint()}v1/contents/${lessonPlanId}/live/token?org_id=${currentOrganization.organization_id}`, {
             headers,
             credentials: "include",
             method: "GET",
@@ -98,7 +105,11 @@ export default function LiveCard() {
     }, [currentOrganization]);
 
     useEffect(() => {
-        if (!lessonPlan) { return; }
+        if (!lessonPlan) {
+            setLiveToken("");
+            setShareLink("");
+            return;
+        }
         if (lessonPlan.id === "") { return; }
         let prepared = true;
         (async () => {
@@ -106,6 +117,10 @@ export default function LiveCard() {
             if (prepared) {
                 if (json && json.token) {
                     setLiveToken(json.token);
+
+                    const token: LivePreviewJWT = jwtDecode(json.token);
+                    console.log(token);
+                    setShareLink(token?.roomid);
                 } else {
                     setLiveToken("");
                 }
@@ -124,7 +139,7 @@ export default function LiveCard() {
             container
             direction="column"
             justify="space-between"
-            alignItems="flex-start"
+            alignItems="stretch"
             wrap="nowrap"
             className={classes.classInfoContainer}
         >
@@ -155,7 +170,19 @@ export default function LiveCard() {
                         onClick={() => goLive()}>
                         <FormattedMessage id="live_liveButton" />
                     </StyledFAB>
+                    { shareLink !== "" &&
+                        <StyledFAB
+                            style={{ minWidth: 0 }}
+                            size="small"
+                            onClick={() => setOpenShareLink(!openShareLink)}
+                        >
+                            <ShareIcon size="1rem" />
+                        </StyledFAB>
+                    }
                 </CenterAlignChildren>
+                <Collapse in={openShareLink}>
+                    <InviteButton url={`https://live.kidsloop.net/class-live/?roomId=${shareLink}`} />
+                </Collapse>
             </Grid>
         </Grid>
     );

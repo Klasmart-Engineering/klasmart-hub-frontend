@@ -34,7 +34,7 @@ export default function AssessmentInfo() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
-    const [assessments, setAssessments] = useState<AssessmentItem[] | undefined>(payload);
+    const [assessments, setAssessments] = useState<AssessmentItem[] | undefined>(undefined);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 

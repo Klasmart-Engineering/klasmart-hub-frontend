@@ -22,12 +22,6 @@ export interface PublishedContentItem {
 
 }
 
-// export interface ContentData {
-//     input_source: number;
-//     file_type: number;
-//     source: string;
-// }
-
 export interface SchedulePayload {
     class_id: string;
     class_type: string;
@@ -56,6 +50,28 @@ export interface AssessmentItem {
     class_end_time: number;
     complete_time: number;
     status: string;
+}
+
+export interface LivePreviewJWT {
+    aud: string;
+    exp: number;
+    iat: number;
+    iss: string;
+    sub: string;
+    name: string;
+    user_id: string;
+    type: string;
+    teacher: boolean;
+    roomid: string;
+    materials: Material[];
+    classtype: string;
+    org_id: string;
+}
+
+export interface Material {
+    name: string;
+    url: string;
+    __typename: string;
 }
 
 export interface Identity {
