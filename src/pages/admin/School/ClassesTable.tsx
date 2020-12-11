@@ -207,7 +207,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                 schoolsResponseList,
                 "me.membership.organization.schools",
                 [],
-            );
+            ).filter((e: School) => e.status === "active");
 
             setSchools(organizationSchools);
         }
@@ -278,7 +278,10 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                         render: (rowData) => {
                             const url = `/admin/classRoster/${rowData.class_id}`;
                             return (
-                                <Button size="small">
+                                <Button
+                                    size="small"
+                                    disabled={rowData.status === "inactive"}
+                                >
                                     <Link
                                         href="#"
                                         onClick={(e: {
@@ -291,7 +294,13 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                                     >
                                         <Typography
                                             variant="caption"
-                                            style={{ color: "#000" }}
+                                            style={{
+                                                color:
+                                                    rowData.status ===
+                                                    "inactive"
+                                                        ? "#c5c5c5"
+                                                        : "#000",
+                                            }}
                                         >
                                             {/* eslint-disable-next-line react/prop-types */}
                                             {intl.formatMessage({
@@ -372,6 +381,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                                         school.school_id || school,
                                 )
                                 : [""];
+
                             return (
                                 <FormControl variant="outlined" fullWidth>
                                     <Select
@@ -448,6 +458,8 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                 ]}
                 data={classesData}
                 editable={{
+                    isDeletable: (rowData) => rowData.status === "active",
+                    isEditable: (rowData) => rowData.status === "active",
                     onRowAdd: (newData): Promise<void> =>
                         new Promise((resolve, reject) => {
                             if (

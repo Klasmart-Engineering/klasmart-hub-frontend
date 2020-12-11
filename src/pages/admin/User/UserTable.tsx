@@ -145,8 +145,13 @@ function UserTable(props: { intl: IntlFormatters }) {
             );
             setSchoolRoles(rolSchool);
 
-            const schools = _get(users, "organization.schools", []);
-            setSchools([...schools]);
+            const organizationSchools = _get(
+                users,
+                "organization.schools",
+                [],
+            ).filter((e: School) => e.status === "active");
+
+            setSchools([...organizationSchools]);
         }
     }, [setRoles, setSchoolRoles, setSchools, userId, users]);
 

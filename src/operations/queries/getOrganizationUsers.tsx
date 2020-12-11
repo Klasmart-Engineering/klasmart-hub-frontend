@@ -7,6 +7,7 @@ export const GET_ORGANIZATION_USERS = gql`
             schools {
                 school_id
                 school_name
+                status
                 memberships {
                     school_id
                     join_timestamp
@@ -34,6 +35,7 @@ export const GET_ORGANIZATION_USERS = gql`
                         school {
                             school_id
                             school_name
+                            status
                         }
                         roles {
                             role_id
