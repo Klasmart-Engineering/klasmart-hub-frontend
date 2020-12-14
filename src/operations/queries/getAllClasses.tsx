@@ -9,6 +9,7 @@ export const GET_ALL_CLASSES = gql`
                         schools {
                             school_id
                             school_name
+                            status
                         }
                         class_id
                         class_name

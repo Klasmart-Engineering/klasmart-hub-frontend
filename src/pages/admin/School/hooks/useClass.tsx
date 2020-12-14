@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Class } from "../../../models/Class";
+import { Class } from "../../../../models/Class";
 
 export const useClasses = () => {
-  const [classesData, setClasses] = useState<Class[]>([]);
+    const [classesData, setClasses] = useState<Class[]>([]);
 
-  return { classesData, setClasses };
+    return { classesData, setClasses };
 };

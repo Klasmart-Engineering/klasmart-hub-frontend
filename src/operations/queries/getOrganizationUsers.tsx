@@ -25,6 +25,7 @@ export const GET_ORGANIZATION_USERS = gql`
             }
             memberships {
                 join_timestamp
+                status
                 user {
                     user_id
                     given_name

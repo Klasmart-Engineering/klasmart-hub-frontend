@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { School } from "../../../models/UserSchool";
+import { School } from "../../../../models/UserSchool";
 
 export const useSchools = () => {
-  const [schools, setSchools] = useState<School[]>([]);
+    const [schools, setSchools] = useState<School[]>([]);
 
-  return { schools, setSchools };
+    return { schools, setSchools };
 };

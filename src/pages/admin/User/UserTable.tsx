@@ -24,6 +24,7 @@ import { UserMembership } from "../../../models/UserMembership";
 import { School, Schools } from "../../../models/UserSchool";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "../../../operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "../../../operations/mutations/inviteUserToOrganization";
+import { LEAVE_MEMBERSHIP } from "../../../operations/mutations/leaveMembership";
 import { GET_ORGANIZATION_USERS } from "../../../operations/queries/getOrganizationUsers";
 import { constantValues } from "../constants";
 import { useSchoolRoles } from "./hooks/useSchoolRoles";
@@ -81,6 +82,7 @@ function UserTable(props: { intl: IntlFormatters }) {
         fetchPolicy: "network-only",
         variables: { organization_id },
     });
+    const [leaveMembership] = useMutation(LEAVE_MEMBERSHIP);
 
     const schoolsSelectedHandler: (
         schoolsSelected: Array<School | string>,
@@ -115,9 +117,9 @@ function UserTable(props: { intl: IntlFormatters }) {
                     "user.school_memberships",
                     [],
                 );
-                const schools = school_memberships.map(
-                    (e: Schools) => e.school,
-                );
+                const schools = school_memberships
+                    .map((e: Schools) => e.school)
+                    .filter((e: School) => e.status === "active");
                 const school_roles = school_memberships.map(
                     (e: UserMembership) => e.roles,
                 );
@@ -131,6 +133,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                     roles: userItems.roles,
                     schools,
                     school_roles,
+                    status: userItems.status,
                 };
             });
 
@@ -155,7 +158,7 @@ function UserTable(props: { intl: IntlFormatters }) {
         }
     }, [setRoles, setSchoolRoles, setSchools, userId, users]);
 
-    const addUser = async (formData: FormData): Promise<void> => {
+    const create = async (formData: FormData): Promise<void> => {
         try {
             const {
                 email,
@@ -193,7 +196,7 @@ function UserTable(props: { intl: IntlFormatters }) {
         }
     };
 
-    const edit = async (formData: FormData): Promise<void> => {
+    const update = async (formData: FormData): Promise<void> => {
         try {
             setSnackbarMessage("");
             setOpenSnackbar(false);
@@ -252,6 +255,34 @@ function UserTable(props: { intl: IntlFormatters }) {
         } catch (error) {
             console.log(error);
             setSnackbarMessage("An error occurred while editing the user");
+            setSnackbarSeverity("error");
+        } finally {
+            setOpenSnackbar(true);
+        }
+    };
+
+    const remove = async (formData: FormData): Promise<void> => {
+        try {
+            setSnackbarMessage("");
+            setOpenSnackbar(false);
+            const { user_id } = formData;
+
+            const variables = {
+                organization_id,
+                user_id,
+            };
+
+            await leaveMembership({
+                variables,
+            });
+
+            await refetch();
+
+            setSnackbarSeverity("success");
+            setSnackbarMessage("The user has been removed successfully");
+        } catch (error) {
+            console.log(error);
+            setSnackbarMessage("An error occurred while removing the user");
             setSnackbarSeverity("error");
         } finally {
             setOpenSnackbar(true);
@@ -551,15 +582,34 @@ function UserTable(props: { intl: IntlFormatters }) {
                         field: "email",
                         editable: "onAdd",
                         type: "string",
-                        cellStyle: {
-                            width: 300,
-                            minWidth: 300,
-                        },
                         render: (rowData) => (
                             <div>
                                 <span>{rowData.email}</span>
                             </div>
                         ),
+                    },
+                    {
+                        title: intl.formatMessage({
+                            id: "classes_statusTitle",
+                        }),
+                        field: "status",
+                        render: (rowData) => {
+                            const status = _get(
+                                rowData,
+                                "status",
+                                "",
+                            ).replace(/\w/, (c: string) => c.toUpperCase());
+                            const activeColor =
+                                status === "Active"
+                                    ? classes.activeColor
+                                    : classes.inactiveColor;
+
+                            return (
+                                <span className={`${activeColor}`}>
+                                    {status}
+                                </span>
+                            );
+                        },
                     },
                     {
                         title: intl.formatMessage({ id: "users_createDate" }),
@@ -649,9 +699,11 @@ function UserTable(props: { intl: IntlFormatters }) {
                     },
                 ]}
                 editable={{
+                    isDeletable: (rowData) => rowData.status === "active",
+                    isEditable: (rowData) => rowData.status === "active",
                     onRowAdd: (newData: FormData): Promise<void> =>
                         new Promise((resolve, reject) => {
-                            addUser(newData)
+                            create(newData)
                                 .then((e) => {
                                     console.log("user created successfully", e);
                                     resolve();
@@ -663,9 +715,21 @@ function UserTable(props: { intl: IntlFormatters }) {
                         }),
                     onRowUpdate: (newData): Promise<void> =>
                         new Promise((resolve, reject) => {
-                            edit(newData)
+                            update(newData)
                                 .then((e) => {
                                     console.log("user updated successfully", e);
+                                    resolve();
+                                })
+                                .catch((e) => {
+                                    console.log("catch e", e);
+                                    reject();
+                                });
+                        }),
+                    onRowDelete: (newData): Promise<void> =>
+                        new Promise((resolve, reject) => {
+                            remove(newData)
+                                .then((e) => {
+                                    console.log("user removed successfully", e);
                                     resolve();
                                 })
                                 .catch((e) => {

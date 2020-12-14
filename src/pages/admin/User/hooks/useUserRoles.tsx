@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Role } from "../../../models/Role";
+import { Role } from "../../../../models/Role";
 
 export const useUserRoles = () => {
-  const [roles, setRoles] = useState<Role[]>([]);
+    const [roles, setRoles] = useState<Role[]>([]);
 
-  return { roles, setRoles };
+    return { roles, setRoles };
 };
