@@ -139,9 +139,13 @@ function Organization(props: { intl: IntlFormatters }) {
                     setSuccess(false);
                 }
             } catch (e) {
-                // System Error
+                const errorMessage =
+                    e.message ===
+                    "Cannot read property 'organization_id' of null"
+                        ? "You have already created an organization"
+                        : e.message;
                 setError(true);
-                setServerError(e.message);
+                setServerError(errorMessage);
                 setSuccess(false);
             } finally {
                 setIsLoading(false);
