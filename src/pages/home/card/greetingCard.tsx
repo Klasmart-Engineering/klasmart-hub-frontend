@@ -7,6 +7,7 @@ import React from "react";
 
 import { useQuery, useReactiveVar } from "@apollo/client/react";
 import { Button, Grid, Typography } from "@material-ui/core";
+import { FormattedMessage } from "react-intl";
 import { useRestAPI } from "../../../api/restapi";
 import { userIdVar } from "../../../cache";
 import { User } from "../../../models/Membership";
@@ -30,15 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(2, 2),
             },
         },
-        paperContainer: {
-            margin: theme.spacing(4, 2),
-            borderRadius: 12,
-            boxShadow: theme.palette.type === "dark" ? "0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)" : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
-        },
     }),
 );
 
-export default function ScheduleCard() {
+export default function GreetingCard() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
@@ -52,25 +48,21 @@ export default function ScheduleCard() {
     const user: User = data?.user;
 
     return (
-        <Container
-            disableGutters
-            maxWidth={"lg"}
+        <Grid
+            container
+            direction="column"
+            justify="flex-start"
+            alignItems="stretch"
+            className={classes.infoContainer}
         >
-            <Box>
-                <Paper elevation={4} className={classes.paperContainer}>
-                    <Grid
-                        container
-                        direction="column"
-                        justify="flex-start"
-                        alignItems="stretch"
-                        className={classes.infoContainer}
-                    >
-                        <Grid item>
-                            <ScheduleInfo />
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-        </Container>
+            <Grid item>
+                <Typography variant="h4">
+                    👋  Welcome to KidsLoop, { user?.given_name }!
+                </Typography>
+            </Grid>
+            <Grid item>
+                <AssessmentInfo />
+            </Grid>
+        </Grid>
     );
 }

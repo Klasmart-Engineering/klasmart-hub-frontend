@@ -2,22 +2,8 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 
-import { useQuery, useReactiveVar } from "@apollo/client/react";
 import { Divider, Grid, Typography } from "@material-ui/core";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useRestAPI } from "../../../api/restapi";
-import { currentMembershipVar, userIdVar } from "../../../cache";
-import { User } from "../../../models/Membership";
-import { GET_USER } from "../../../operations/queries/getUser";
 import { SchedulePayload } from "../../../types/objectTypes";
-import { schedulePayload } from "./payload";
-
-const payload = schedulePayload;
-
-const now = new Date();
-const todayTimeStamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 color: "white",
             },
         },
-        infoContainer: {
+        infoCard: {
             backgroundColor: "#f0f0f0",
             borderRadius: 12,
             boxShadow: "inset 0 0 10px rgba(0,0,0,0.2)",
@@ -40,31 +26,21 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(2),
             },
         },
+        infoContainer: {
+            borderRadius: 12,
+            marginRight: theme.spacing(4),
+            marginTop: theme.spacing(2),
+            padding: theme.spacing(3),
+            [theme.breakpoints.down("sm")]: {
+                marginRight: theme.spacing(1),
+                padding: theme.spacing(2),
+            },
+        },
     }),
 );
 
-export default function ScheduleInfo() {
+export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[] }) {
     const classes = useStyles();
-    const restApi = useRestAPI();
-
-    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
-
-    const currentOrganization = useReactiveVar(currentMembershipVar);
-
-    async function getScheduleList() {
-        try {
-            const response = await restApi.schedule(currentOrganization.organization_id, "month", todayTimeStamp, timeZoneOffset);
-            setSchedule(response);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    useEffect(() => {
-        if (currentOrganization.organization_id !== "") {
-            getScheduleList();
-        }
-    }, [currentOrganization]);
 
     const onlineClass = schedule?.filter((event) => event.class_type === "OnlineClass");
     const onlineClassAttended = onlineClass?.filter((event) => event.status === "Closed");
@@ -79,11 +55,13 @@ export default function ScheduleInfo() {
         <Grid
             container
             direction="row"
+            justify="flex-start"
+            className={classes.infoContainer}
         >
             <Grid item xs={6}>
                 <Grid
                     item
-                    className={classes.infoContainer}
+                    className={classes.infoCard}
                 >
                     <Typography variant="h4">
                         { onlineClass?.length }
@@ -100,7 +78,7 @@ export default function ScheduleInfo() {
             <Grid item xs={6}>
                 <Grid
                     item
-                    className={classes.infoContainer}
+                    className={classes.infoCard}
                 >
                     <Typography variant="h4">
                         { offlineClass?.length }
@@ -117,7 +95,7 @@ export default function ScheduleInfo() {
             <Grid item xs={6}>
                 <Grid
                     item
-                    className={classes.infoContainer}
+                    className={classes.infoCard}
                 >
                     <Typography variant="h4">
                         { study?.length }

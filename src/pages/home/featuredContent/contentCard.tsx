@@ -11,7 +11,7 @@ import CenterAlignChildren from "../../../components/centerAlignChildren";
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import StyledButtonGroup from "../../../components/styled/buttonGroup";
-import { FeaturedContentData } from "./card";
+import { FeaturedContentData } from "./contentLayout";
 
 interface LessonPlanData {
     id: string;

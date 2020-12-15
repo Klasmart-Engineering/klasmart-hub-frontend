@@ -2,7 +2,7 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 
-import { useQuery, useReactiveVar } from "@apollo/client/react";
+import { useReactiveVar } from "@apollo/client/react";
 import { Grid, Typography } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { useEffect } from "react";
@@ -10,8 +10,6 @@ import { useState } from "react";
 import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar, userIdVar } from "../../../cache";
 import StyledButton from "../../../components/styled/button";
-import { User } from "../../../models/Membership";
-import { GET_USER } from "../../../operations/queries/getUser";
 import { AssessmentItem } from "../../../types/objectTypes";
 import { history } from "../../../utils/history";
 import { assessmentPayload } from "./payload";
