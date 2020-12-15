@@ -12,42 +12,28 @@ import SummaryCard from "./summary/summaryCard";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        layout: {
-            flex: 1,
-        },
         root: {
+            backgroundColor: "#eef7fd",
             height: "100%",
-            paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(5),
-            paddingRight: theme.spacing(5),
-            paddingTop: theme.spacing(4),
-            width: "calc(100% - 2*1.5rem)",
-            [theme.breakpoints.down("sm")]: {
-                padding: theme.spacing(2, 1),
-            },
-        },
-        safeArea: {
-            paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(5),
-            paddingRight: theme.spacing(5),
-            paddingTop: theme.spacing(4),
-            [theme.breakpoints.down("sm")]: {
-                paddingBottom: theme.spacing(2),
-                paddingLeft: `max(${theme.spacing(1)}px,env(safe-area-inset-left)`,
-                paddingRight: `max(${theme.spacing(1)}px,env(safe-area-inset-right)`,
-                paddingTop: theme.spacing(2),
-            },
+            paddingBottom: theme.spacing(2),
+            paddingTop: theme.spacing(2),
         },
     }),
 );
 
 export default function Home() {
-    return (<>
+    const classes = useStyles();
+
+    return (
         <Container
-            disableGutters
             maxWidth={"xl"}
+            className={classes.root}
         >
-            <Grid container>
+            <Grid
+                container
+                alignContent="stretch"
+                spacing={2}
+            >
                 <Grid item xs={12} md={4}>
                     <LiveLayout />
                 </Grid>
@@ -65,5 +51,5 @@ export default function Home() {
                 </Grid>
             </Grid>
         </Container>
-    </>);
+    );
 }

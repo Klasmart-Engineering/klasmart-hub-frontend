@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
         paperContainer: {
-            margin: theme.spacing(4, 2),
             borderRadius: 12,
             boxShadow: theme.palette.type === "dark" ? "0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)" : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
         },
@@ -52,30 +51,23 @@ export default function SummaryCard() {
     const user: User = data?.user;
 
     return (
-        <Container
-            disableGutters
-            maxWidth={"lg"}
-        >
-            <Box>
-                <Paper elevation={4} className={classes.paperContainer}>
-                    <Grid
-                        container
-                        direction="column"
-                        justify="flex-start"
-                        alignItems="stretch"
-                        className={classes.infoContainer}
-                    >
-                        <Grid item>
-                            <Typography variant="h4">
-                                👋 Hello, { user?.given_name }
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <AssessmentInfo />
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Box>
-        </Container>
+        <Paper elevation={4} className={classes.paperContainer}>
+            <Grid
+                container
+                direction="column"
+                justify="flex-start"
+                alignItems="stretch"
+                className={classes.infoContainer}
+            >
+                <Grid item>
+                    <Typography variant="h4">
+                        👋 Hello, { user?.given_name }
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <AssessmentInfo />
+                </Grid>
+            </Grid>
+        </Paper>
     );
 }

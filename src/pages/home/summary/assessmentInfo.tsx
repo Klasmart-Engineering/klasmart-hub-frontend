@@ -34,7 +34,7 @@ export default function AssessmentInfo() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
-    const [assessments, setAssessments] = useState<AssessmentItem[] | undefined>(undefined);
+    const [assessments, setAssessments] = useState<AssessmentItem[] | undefined>(payload);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
@@ -58,7 +58,7 @@ export default function AssessmentInfo() {
 
     return (
         <>
-            { inProgress && inProgress.length !== 0 &&
+            { inProgress && inProgress.length !== 0 ?
                 <>
                     <Typography variant="body2" gutterBottom>
                         You have { inProgress.length } assessments that require your attention.
@@ -81,7 +81,10 @@ export default function AssessmentInfo() {
                             See More
                         </StyledButton>
                     </Grid>
-                </>
+                </> :
+                <Typography variant="body2" gutterBottom>
+                    You have no new updates!
+                </Typography>
             }
         </>
     );

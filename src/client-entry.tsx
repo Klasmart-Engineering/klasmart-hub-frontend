@@ -14,6 +14,7 @@ import { ApolloClient, ApolloLink } from "@apollo/client/core";
 import { ApolloProvider } from "@apollo/client/react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
+import { Copyright } from "kidsloop-px";
 import React, { useMemo } from "react";
 import * as ReactDOM from "react-dom";
 import { createIntl, RawIntlProvider } from "react-intl";
@@ -57,6 +58,7 @@ function ClientSide() {
                 <ThemeProvider theme={themeProvider()}>
                     <CssBaseline />
                     <Layout />
+                    <Copyright />
                 </ThemeProvider>
             </RawIntlProvider>
         </ApolloProvider>

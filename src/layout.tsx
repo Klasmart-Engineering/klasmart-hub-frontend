@@ -44,14 +44,11 @@ let Layout = (props: any) => {
         <Grid
             container
             direction="column"
-            justify="space-between"
+            justify="flex-start"
             wrap="nowrap"
             className={classes.layout}
         >
-            <Grid item xs={12}>
-                <App />
-            </Grid>
-            <Copyright />
+            <App />
         </Grid>
     );
 };

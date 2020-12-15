@@ -1,4 +1,5 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
+import Grid from "@material-ui/core/Grid";
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import React, { useEffect, useState } from "react";
@@ -105,121 +106,125 @@ export function App() {
 
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
         <>
-            <NavBar menuLabels={mainNavBar} />
-            <Switch>
-                <Route path="/" exact render={() => <Home />} />
-                <Route path="/library" render={() => <>
-                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
-                        frameBorder="0"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
-                </>} />
-                <Route path="/badanamu-content" render={() => <>
-                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
-                        frameBorder="0"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
-                </>} />
-                <Route path="/schedule" render={() => <>
-                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
-                        frameBorder="0"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
-                </>} />
-                <Route path="/assessments" render={() => <>
-                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
-                        frameBorder="0"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
-                </>} />
-                <Route path="/report" render={() => <>
-                    <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
-                        frameBorder="0"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
-                </>} />
-                <Route exact path="/admin/edit-organization/:organizationId">
-                    <Layout>
-                        <EditOrganization />
-                    </Layout>
-                </Route>
-                <Route path="/admin/create-organization">
-                    <Layout>
-                        <Organization />
-                    </Layout>
-                </Route>
-                <Route path="/admin/my-organization">
-                    <Layout>
-                        <MyOrganizationTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/joined-organization">
-                    <Layout>
-                        <JoinedOrganizationTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/allOrganization">
-                    <Layout>
-                        <AllOrganization />
-                    </Layout>
-                </Route>
-                <Route path="/admin/user">
-                    <Layout>
-                        <User />
-                    </Layout>
-                </Route>
-                <Route path="/admin/roles">
-                    <Layout>
-                        <RoleTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/school">
-                    <Layout>
-                        <SchoolTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/classes">
-                    <Layout>
-                        <ClasessTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/program">
-                    <Layout>
-                        <ProgramTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/grade">
-                    <Layout>
-                        <GradeTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin/classRoster/:classId">
-                    <Layout>
-                        <ClassRosterTable />
-                    </Layout>
-                </Route>
-                <Route path="/admin">
-                    <Layout>
-                        <User />
-                    </Layout>
-                </Route>
-                <Route render={() => <Home />} />
-            </Switch>
+            <Grid item>
+                <NavBar menuLabels={mainNavBar} />
+            </Grid>
+            <Grid item style={{ flex: 1 }}>
+                <Switch>
+                    <Route path="/" exact render={() => <Home />} />
+                    <Route path="/library" render={() => <>
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
+                            frameBorder="0"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    </>} />
+                    <Route path="/badanamu-content" render={() => <>
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
+                            frameBorder="0"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    </>} />
+                    <Route path="/schedule" render={() => <>
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
+                            frameBorder="0"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    </>} />
+                    <Route path="/assessments" render={() => <>
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
+                            frameBorder="0"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    </>} />
+                    <Route path="/report" render={() => <>
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
+                            frameBorder="0"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    </>} />
+                    <Route exact path="/admin/edit-organization/:organizationId">
+                        <Layout>
+                            <EditOrganization />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/create-organization">
+                        <Layout>
+                            <Organization />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/my-organization">
+                        <Layout>
+                            <MyOrganizationTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/joined-organization">
+                        <Layout>
+                            <JoinedOrganizationTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/allOrganization">
+                        <Layout>
+                            <AllOrganization />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/user">
+                        <Layout>
+                            <User />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/roles">
+                        <Layout>
+                            <RoleTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/school">
+                        <Layout>
+                            <SchoolTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/classes">
+                        <Layout>
+                            <ClasessTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/program">
+                        <Layout>
+                            <ProgramTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/grade">
+                        <Layout>
+                            <GradeTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/classRoster/:classId">
+                        <Layout>
+                            <ClassRosterTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin">
+                        <Layout>
+                            <User />
+                        </Layout>
+                    </Route>
+                    <Route render={() => <Home />} />
+                </Switch>
+            </Grid>
         </>
     );
 }

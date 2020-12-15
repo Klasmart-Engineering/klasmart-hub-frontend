@@ -24,25 +24,19 @@ import jwtDecode from "jwt-decode";
 import KidsloopLogoAlt from "../../../assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "../../../cache";
 import InviteButton from "../../../components/invite";
-import StyledTextField from "../../../components/styled/textfield";
 import { getCNEndpoint } from "../../../config";
 import { LivePreviewJWT, PublishedContentItem } from "../../../types/objectTypes";
-import { publishedContentPayload } from "../summary/payload";
-
-const payload = publishedContentPayload.list;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         classInfoContainer: {
-            background: `url(${KidsloopLogoAlt}) no-repeat`,
+            // background: `url(${KidsloopLogoAlt}) no-repeat`,
             // backgroundColor: "#e0edf7",
             backgroundPosition: "bottom right",
             backgroundPositionX: "120%",
             backgroundSize: "75%",
             borderRadius: 12,
             color: "#193d6f",
-            height: "100%",
-            minHeight: 440,
             padding: theme.spacing(4, 5),
             [theme.breakpoints.down("sm")]: {
                 height: `min(${window.innerHeight - 20}px,56vw)`,
@@ -142,6 +136,7 @@ export default function LiveCard() {
             alignItems="stretch"
             wrap="nowrap"
             className={classes.classInfoContainer}
+            spacing={2}
         >
             <Grid item>
                 <Grid container item spacing={2}>
@@ -214,24 +209,15 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
     lessonPlan?: PublishedContentItem | null,
     setLessonPlan: React.Dispatch<React.SetStateAction<PublishedContentItem | null>>,
 }) {
-    const classes = useStyles();
-
     const [inputValue, setInputValue] = useState("");
-
-    useEffect(() => {
-        console.log("value: ", lessonPlan);
-        console.log("inputValue: ", inputValue);
-    }, [lessonPlan, inputValue]);
 
     return (
         <>
             <Autocomplete
-                id="country-select-demo"
+                id="lesson-plan-select"
+                disabled={!lessonPlans}
                 style={{ width: "100%" }}
                 options={lessonPlans as PublishedContentItem[]}
-                classes={{
-                    // option: classes.option,
-                }}
                 autoHighlight
                 getOptionLabel={(option) => option.name}
                 renderOption={(option) => (
@@ -250,7 +236,7 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        label="Select a Lesson Plan"
+                        label={lessonPlans ? "Select a Lesson Plan" : "No lesson plans available"}
                         inputProps={{
                             ...params.inputProps,
                             autoComplete: "new-password", // disable autocomplete and autofill
@@ -258,44 +244,6 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
                     />
                 )}
             />
-            {/* <Tooltip title={<FormattedMessage id="live_lessonPlanSelect" />} enterDelay={300}>
-                <Button
-                    color="inherit"
-                    aria-owns={lessonPlanMenuElement ? "lesson-plan-select-menu" : undefined}
-                    aria-haspopup="true"
-                    data-ga-event-category="AppBar"
-                    data-ga-event-action="lesson-plan-select"
-                    fullWidth
-                    onClick={(e) => setLessonPlanMenuElement(e.currentTarget)}
-                >
-                    <span className={classes.select}>
-                        {!lessonPlan || lessonPlan?.name === ""
-                            ? <FormattedMessage id="live_lessonPlanSelect" />
-                            : lessonPlan?.name
-                        }
-                    </span>
-                    <ExpandMoreIcon fontSize="small" />
-                </Button>
-            </Tooltip>
-            <StyledMenu
-                id="lesson-plan-select-menu"
-                anchorEl={lessonPlanMenuElement}
-                keepMounted
-                open={Boolean(lessonPlanMenuElement)}
-                onClose={() => setLessonPlanMenuElement(null)}
-            >
-                {
-                    lessonPlans?.map((lp) => (
-                        <MenuItem
-                            key={lp.id}
-                            selected={lessonPlan?.id === lp.id}
-                            onClick={() => setLessonPlan(lp)}
-                        >
-                            {lp.name}
-                        </MenuItem>
-                    ))
-                }
-            </StyledMenu> */}
         </>
     );
 }
