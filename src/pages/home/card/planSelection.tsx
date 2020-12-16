@@ -12,6 +12,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Share as ShareIcon } from "@styled-icons/material/Share";
 import jwtDecode from "jwt-decode";
 
+import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import { useRestAPI } from "../../../api/restapi";
 import KidsloopLogo from "../../../assets/img/kidsloop_icon.svg";
@@ -39,19 +40,19 @@ const useStyles = makeStyles((theme: Theme) =>
         classInfoContainer: {
             // background: `url(${KidsloopLogoAlt}) no-repeat`,
             // backgroundColor: "#e0edf7",
-            backgroundPosition: "bottom right",
-            backgroundPositionX: "120%",
-            backgroundSize: "75%",
+            // backgroundPosition: "bottom right",
+            // backgroundPositionX: "120%",
+            // backgroundSize: "75%",
             borderRadius: 12,
             color: "#193d6f",
             height: "100%",
             padding: theme.spacing(4, 5),
             [theme.breakpoints.down("sm")]: {
-                height: `min(${window.innerHeight - 20}px,56vw)`,
+                // height: `min(${window.innerHeight - 20}px,56vw)`,
                 padding: theme.spacing(2, 2),
             },
             [theme.breakpoints.down("xs")]: {
-                height: `min(${window.innerHeight - 20}px,72vw)`,
+                // height: `min(${window.innerHeight - 20}px,72vw)`,
             },
         },
         liveButton: {
@@ -118,6 +119,18 @@ export default function PlanSelection({ schedule }: { schedule?: SchedulePayload
         if (response.status === 200) { return response.json(); }
     }
 
+    async function getScheduleLiveToken(scheduleId: string) {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        const response = await fetch(`${getCNEndpoint()}v1/schedules/${scheduleId}/live/token`, {
+            headers,
+            credentials: "include",
+            method: "GET",
+        });
+        if (response.status === 200) { console.log("response", response); return response.json(); }
+    }
+
     useEffect(() => {
         const interval = setInterval(() => setTime(Date.now()), 1000);
         return () => { clearInterval(interval); };
@@ -182,7 +195,7 @@ export default function PlanSelection({ schedule }: { schedule?: SchedulePayload
                             </Grid>
                             <Grid item>
                                 <CenterAlignChildren>
-                                    <Typography variant="h4">
+                                    <Typography variant="h4" style={{ wordBreak: "keep-all"}}>
                                         <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
                                         <FormattedDate value={time} month="short" day="numeric" weekday="short" />
                                     </Typography>
@@ -200,11 +213,11 @@ export default function PlanSelection({ schedule }: { schedule?: SchedulePayload
                             <Typography variant="body2" gutterBottom>
                                 <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/schedule"); e.preventDefault(); }}>See Your Schedule &gt;</Link>
                             </Typography>
-                            <Grid item style={{ maxHeight: 360, overflowY: "auto" }}>
+                            <Grid item style={{ maxHeight: 400, overflowY: "auto" }}>
                                 { scheduledClass.map((item) =>
                                     <Grid item key={item.id} style={{ paddingBottom: 4 }}>
                                         <Alert color="info" style={{ padding: "0 8px" }}>
-                                            <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
+                                            <FormattedTime value={item.start_at * 1000} hour="2-digit" minute="2-digit" />{" • "}
                                             <FormattedDate value={item.start_at * 1000} month="short" day="numeric" weekday="short" /> - { item.title }
                                         </Alert>
                                     </Grid>,

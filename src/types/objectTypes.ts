@@ -19,7 +19,6 @@ export interface PublishedContentItem {
     content_type_name: string;
     create_at: number;
     update_at: number;
-
 }
 
 export interface SchedulePayload {

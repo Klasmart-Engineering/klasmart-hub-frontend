@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 
 import { useReactiveVar } from "@apollo/client/react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Link, Typography } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -23,6 +23,15 @@ const useStyles = makeStyles((theme: Theme) =>
             "color": "black",
             "&:hover": {
                 color: "white",
+            },
+        },
+        viewScheduleLink: {
+            "maxWidth": 0,
+            "transition": "max-width 1s,opacity 1s,transform 750ms,-webkit-transform 750ms,-moz-transform 750ms,-o-transform 750ms",
+            "whiteSpace": "nowrap",
+            cursor: "pointer",
+            "&:hover": {
+                maxWidth: "auto",
             },
         },
     }),
@@ -58,26 +67,20 @@ export default function AssessmentInfo() {
         <>
             { inProgress && inProgress.length !== 0 ?
                 <>
-                    <Typography variant="body2" gutterBottom>
+                    <Typography variant="body2">
                         You have { inProgress.length } assessments that require your attention.
                     </Typography>
-                    { inProgress.slice(0, 4).map((item) =>
-                        <Grid item key={item.id} style={{ paddingBottom: 4 }}>
-                            <Alert color="warning" style={{ padding: "0 8px" }}>
-                                { item.title }
-                            </Alert>
-                        </Grid>,
-                    ) }
-                    <Grid item style={{ paddingBottom: 4 }}>
-                        <StyledButton
-                            extendedOnly
-                            className={classes.button}
-                            size="small"
-                            fullWidth
-                            onClick={() => history.push("/assessments/assessment-list")}
-                        >
-                            See More
-                        </StyledButton>
+                    <Typography variant="body2" gutterBottom>
+                        <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/assessments/assessment-list"); e.preventDefault(); }}>View Assessments &gt;</Link>
+                    </Typography>
+                    <Grid item style={{ maxHeight: 180, overflowY: "auto" }}>
+                        { inProgress.map((item) =>
+                            <Grid item key={item.id} style={{ paddingBottom: 4 }}>
+                                <Alert color="warning" style={{ padding: "0 8px" }}>
+                                    { item.title }
+                                </Alert>
+                            </Grid>,
+                        ) }
                     </Grid>
                 </> :
                 <Typography variant="body2" gutterBottom>
