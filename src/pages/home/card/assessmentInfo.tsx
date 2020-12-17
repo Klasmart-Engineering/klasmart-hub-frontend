@@ -65,28 +65,36 @@ export default function AssessmentInfo() {
 
     return (
         <>
-            { inProgress && inProgress.length !== 0 ?
-                <>
-                    <Typography variant="body2">
-                        You have { inProgress.length } assessments that require your attention.
-                    </Typography>
+            <Grid item xs={12}>
+                { inProgress && inProgress.length !== 0 ?
+                    <>
+                        <Typography variant="body2">
+                            You have { inProgress.length } assessments that require your attention.
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                            <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/assessments/assessment-list"); e.preventDefault(); }}>View Assessments &gt;</Link>
+                        </Typography>
+                    </> :
                     <Typography variant="body2" gutterBottom>
-                        <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/assessments/assessment-list"); e.preventDefault(); }}>View Assessments &gt;</Link>
+                        You have no new updates!
                     </Typography>
-                    <Grid item style={{ maxHeight: 180, overflowY: "auto" }}>
-                        { inProgress.map((item) =>
-                            <Grid item key={item.id} style={{ paddingBottom: 4 }}>
-                                <Alert color="warning" style={{ padding: "0 8px" }}>
-                                    { item.title }
-                                </Alert>
-                            </Grid>,
-                        ) }
-                    </Grid>
-                </> :
-                <Typography variant="body2" gutterBottom>
-                    You have no new updates!
-                </Typography>
-            }
+                }
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container direction="column" alignContent="stretch">
+                    { inProgress && inProgress.length !== 0 &&
+                        <Grid item style={{ maxHeight: 460, overflowY: "auto" }}>
+                            { inProgress.map((item) =>
+                                <Grid item key={item.id} style={{ paddingBottom: 4 }}>
+                                    <Alert color="warning" style={{ padding: "0 8px" }}>
+                                        { item.title }
+                                    </Alert>
+                                </Grid>,
+                            ) }
+                        </Grid>
+                    }
+                </Grid>
+            </Grid>
         </>
     );
 }

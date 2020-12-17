@@ -1,4 +1,4 @@
-import { useReactiveVar } from "@apollo/client/react";
+import { useQuery, useReactiveVar } from "@apollo/client/react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -6,14 +6,22 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { FormattedDate, FormattedTime } from "react-intl";
 
 import { useRestAPI } from "../../api/restapi";
-import { currentMembershipVar } from "../../cache";
+import { currentMembershipVar, userIdVar } from "../../cache";
+import CenterAlignChildren from "../../components/centerAlignChildren";
+import { User } from "../../models/Membership";
+import { GET_USER } from "../../operations/queries/getUser";
 import { SchedulePayload } from "../../types/objectTypes";
-import GreetingCard from "./card/greetingCard";
+import Assessment from "./card/assessment";
+import { schedulePayload } from "./card/payload";
 import PlanSelection from "./card/planSelection";
 import ScheduleInfo from "./card/scheduleInfo";
+import UsageInfo from "./card/usageInfo";
 import ContentLayout from "./featuredContent/contentLayout";
+
+const payload = schedulePayload;
 
 const now = new Date();
 const todayTimeStamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
@@ -49,9 +57,18 @@ export default function Home() {
     const classes = useStyles();
     const restApi = useRestAPI();
 
-    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
+    const [time, setTime] = useState(Date.now());
+    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(payload);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
+    const user_id = useReactiveVar(userIdVar);
+    const { data, loading, error } = useQuery(GET_USER, {
+        fetchPolicy: "network-only",
+        variables: {
+            user_id,
+        },
+    });
+    const user: User = data?.user;
 
     async function getScheduleList() {
         try {
@@ -61,6 +78,11 @@ export default function Home() {
             console.error(e);
         }
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => setTime(Date.now()), 1000);
+        return () => { clearInterval(interval); };
+    }, []);
 
     useEffect(() => {
         if (currentOrganization.organization_id !== "") {
@@ -76,26 +98,39 @@ export default function Home() {
             <Grid
                 container
                 alignContent="stretch"
-                spacing={2}
+                spacing={4}
             >
                 <Grid item xs={12} md={6} lg={4}>
+                    <Grid
+                        container
+                        direction="row"
+                        justify="space-around"
+                        alignContent="center"
+                        style={{ height: "100%" }}
+                        spacing={2}
+                    >
+                        <Grid item>
+                            <Typography variant="h4" align="center">
+                                <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
+                                <FormattedDate value={time} month="short" day="numeric" weekday="short" />
+                            </Typography>
+                            <Typography variant="h4" align="center">
+                                👋  Welcome, { user?.given_name }!
+                            </Typography>
+                        </Grid>
+                        <UsageInfo schedule={schedule} />
+                        <PlanSelection />
+                    </Grid>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
                     <Card>
-                        <PlanSelection schedule={schedule} />
+                        <ScheduleInfo schedule={schedule} />
                     </Card>
                 </Grid>
-                <Grid item xs={12} md={6} lg={8}>
-                    <Grid container direction="column" justify="space-between">
-                        <Grid item>
-                            <Card>
-                                <GreetingCard />
-                            </Card>
-                        </Grid>
-                        <Grid item>
-                            <Card>
-                                <ScheduleInfo schedule={schedule} />
-                            </Card>
-                        </Grid>
-                    </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                    <Card>
+                        <Assessment />
+                    </Card>
                 </Grid>
                 <Grid item xs={12}>
                     <ContentLayout />
