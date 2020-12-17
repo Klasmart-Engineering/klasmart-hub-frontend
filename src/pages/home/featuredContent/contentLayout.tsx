@@ -124,32 +124,25 @@ export default function ContentLayout() {
     };
 
     return (
-        <Container
-            disableGutters
-            maxWidth={"xl"}
+        <Grid
+            item
+            xs={12}
+            onMouseEnter={() => setAutoplay(false)}
+            onMouseLeave={() => setAutoplay(true)}
         >
-            <Box>
-                <Grid
-                    item
-                    xs={12}
-                    onMouseEnter={() => setAutoplay(false)}
-                    onMouseLeave={() => setAutoplay(true)}
-                >
-                    <AutoPlaySwipeableViews
-                        axis={"x"}
-                        index={activeStep}
-                        onChangeIndex={(activeStep) => autoplay && handleStepChange(activeStep)}
-                        enableMouseEvents
-                        containerStyle={{ width: isSmDown ? "100%" : (isMdDown ? "50%" : "100%") }}
-                    >
-                        {FEATURED_CONTENT.map((content) => (
-                            <Paper elevation={4} className={classes.paperContainer} key={content.metadata.title}>
-                                <ContentCard featuredContent={content} />
-                            </Paper>
-                        ))}
-                    </AutoPlaySwipeableViews>
-                </Grid>
-            </Box>
-        </Container>
+            <AutoPlaySwipeableViews
+                axis={"x"}
+                index={activeStep}
+                onChangeIndex={(activeStep) => autoplay && handleStepChange(activeStep)}
+                enableMouseEvents
+                containerStyle={{ width: isSmDown ? "100%" : (isMdDown ? "50%" : "100%") }}
+            >
+                {FEATURED_CONTENT.map((content) => (
+                    <Paper elevation={4} className={classes.paperContainer} key={content.metadata.title}>
+                        <ContentCard featuredContent={content} />
+                    </Paper>
+                ))}
+            </AutoPlaySwipeableViews>
+        </Grid>
     );
 }

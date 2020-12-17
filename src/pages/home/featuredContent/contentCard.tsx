@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 
+import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import StyledButtonGroup from "../../../components/styled/buttonGroup";
@@ -33,14 +34,13 @@ const useStyles = makeStyles((theme: Theme) =>
             color: "white",
             height: 350,
             paddingBottom: theme.spacing(3),
-            paddingLeft:  theme.spacing(5),
+            // paddingLeft:  theme.spacing(5),
             paddingTop: theme.spacing(3),
             zIndex: 10,
             [theme.breakpoints.down("md")]: {
                 backgroundImage: "linear-gradient(to bottom, #030D1C, rgba(3, 13, 28, 0.8), transparent)",
                 color: "white",
                 height: 600,
-                padding: theme.spacing(5),
             },
             [theme.breakpoints.down("xs")]: {
                 height: 600,
@@ -117,52 +117,54 @@ export default function ContentCard(props: Props) {
             }}
         >
             <Grid item xs={12} lg={4} className={classes.contentInfo}>
-                <Grid
-                    container
-                    direction="column"
-                    justify={ isMdDown ? "flex-start" : "space-between" }
-                    alignItems="flex-start"
-                    wrap="nowrap"
-                    style={{ minHeight: "100%" }}
-                    spacing={ isMdDown ? 4 : 2 }
-                >
-                    <Grid item>
-                        <CenterAlignChildren>
-                            <img src={featuredContent.images.logo} style={{ marginRight: theme.spacing(1), maxHeight: isMdDown ? 64 : "5vw" }}/>
-                            <Typography variant="h5">
-                                {featuredContent.metadata.title}
+                <Container>
+                    <Grid
+                        container
+                        direction="column"
+                        justify={ isMdDown ? "flex-start" : "space-between" }
+                        alignItems="flex-start"
+                        wrap="nowrap"
+                        style={{ minHeight: "100%" }}
+                        spacing={ isMdDown ? 4 : 2 }
+                    >
+                        <Grid item>
+                            <CenterAlignChildren>
+                                <img src={featuredContent.images.logo} style={{ marginRight: theme.spacing(1), maxHeight: isMdDown ? 64 : "5vw" }}/>
+                                <Typography variant="h5">
+                                    {featuredContent.metadata.title}
+                                </Typography>
+                            </CenterAlignChildren>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1">
+                                <b>
+                                    {featuredContent.metadata.year}
+                                    <span className={classes.ageBox}>Ages {featuredContent.metadata.age}</span>
+                                    Interactive
+                                </b>
                             </Typography>
-                        </CenterAlignChildren>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1">
+                                {featuredContent.metadata.description}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <StyledButtonGroup
+                                ariaLabel="content mode buttons"
+                                options={[{
+                                    action: () => destinationLink(false, featuredContent.link),
+                                    disabled: featuredContent.buttonGroupOptions[0],
+                                    label: "Classroom Mode",
+                                }, {
+                                    action: () => destinationLink(true),
+                                    disabled: featuredContent.buttonGroupOptions[1],
+                                    label: "Go Live",
+                                }]}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <Typography variant="body1">
-                            <b>
-                                {featuredContent.metadata.year}
-                                <span className={classes.ageBox}>Ages {featuredContent.metadata.age}</span>
-                                Interactive
-                            </b>
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="body1">
-                            {featuredContent.metadata.description}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <StyledButtonGroup
-                            ariaLabel="content mode buttons"
-                            options={[{
-                                action: () => destinationLink(false, featuredContent.link),
-                                disabled: featuredContent.buttonGroupOptions[0],
-                                label: "Classroom Mode",
-                            }, {
-                                action: () => destinationLink(true),
-                                disabled: featuredContent.buttonGroupOptions[1],
-                                label: "Go Live",
-                            }]}
-                        />
-                    </Grid>
-                </Grid>
+                </Container>
             </Grid>
             <Hidden mdDown>
                 <Grid

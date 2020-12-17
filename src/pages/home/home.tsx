@@ -1,8 +1,9 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
+import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -10,7 +11,6 @@ import { FormattedDate, FormattedTime } from "react-intl";
 
 import { useRestAPI } from "../../api/restapi";
 import { currentMembershipVar, userIdVar } from "../../cache";
-import CenterAlignChildren from "../../components/centerAlignChildren";
 import { User } from "../../models/Membership";
 import { GET_USER } from "../../operations/queries/getUser";
 import { SchedulePayload } from "../../types/objectTypes";
@@ -56,9 +56,10 @@ function Card({children}: {children: React.ReactNode}) {
 export default function Home() {
     const classes = useStyles();
     const restApi = useRestAPI();
+    const theme = useTheme();
 
     const [time, setTime] = useState(Date.now());
-    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(payload);
+    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
     const user_id = useReactiveVar(userIdVar);
@@ -80,6 +81,9 @@ export default function Home() {
     }
 
     useEffect(() => {
+        if (window.location.host === "fe.kidsloop.net") {
+            setSchedule(payload);
+        }
         const interval = setInterval(() => setTime(Date.now()), 1000);
         return () => { clearInterval(interval); };
     }, []);
@@ -98,24 +102,24 @@ export default function Home() {
             <Grid
                 container
                 alignContent="stretch"
-                spacing={4}
+                spacing={2}
             >
-                <Grid item xs={12} md={6} lg={4}>
+                <Grid item xs={12} md={12} lg={4}>
                     <Grid
                         container
                         direction="row"
                         justify="space-around"
                         alignContent="center"
-                        style={{ height: "100%" }}
+                        style={{ minHeight: "40vw", height: "100%" }}
                         spacing={2}
                     >
-                        <Grid item>
+                        <Grid item xs={12} style={{ padding: theme.spacing(2, 0) }}>
                             <Typography variant="h4" align="center">
                                 <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
                                 <FormattedDate value={time} month="short" day="numeric" weekday="short" />
                             </Typography>
                             <Typography variant="h4" align="center">
-                                👋  Welcome, { user?.given_name }!
+                                    👋  Welcome, { user?.given_name }!
                             </Typography>
                         </Grid>
                         <UsageInfo schedule={schedule} />
@@ -132,9 +136,9 @@ export default function Home() {
                         <Assessment />
                     </Card>
                 </Grid>
-                <Grid item xs={12}>
-                    <ContentLayout />
-                </Grid>
+                {/* <Grid item xs={12}> */}
+                <ContentLayout />
+                {/* </Grid> */}
             </Grid>
         </Container>
     );
