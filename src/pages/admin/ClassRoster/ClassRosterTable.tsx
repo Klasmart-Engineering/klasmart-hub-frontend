@@ -468,10 +468,6 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                                     reject(error);
                                 });
                         }),
-                    onRowUpdate: (): Promise<void> =>
-                        new Promise((resolve) => {
-                            resolve();
-                        }),
                     onRowDelete: (newData): Promise<void> =>
                         new Promise((resolve, reject) => {
                             removeUser(newData)
