@@ -8,6 +8,7 @@ import MaterialTable, { EditComponentProps } from "material-table";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { injectIntl, IntlFormatters } from "react-intl";
 import { User } from "../../../models/Membership";
+import { School } from "../../../models/UserSchool";
 import { ADD_STUDENT_TO_CLASS } from "../../../operations/mutations/addStudentToClass";
 import { ADD_TEACHER_TO_CLASS } from "../../../operations/mutations/addTeacherToClass";
 import { REMOVE_STUDENT_FROM_CLASS } from "../../../operations/mutations/removeStudentFromClass";
@@ -44,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 120,
     },
 }));
+
+interface ClassRosterSchool {
+    school_id: string;
+    user: {
+        user_id: string;
+    };
+}
 
 /**
  * Returns function to show Class Roster Table in "View Class Roster section"
@@ -91,40 +99,72 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
     );
 
     useEffect(() => {
-        if (eligibleUsers && eligibleUsers.class) {
+        if (eligibleUsers && eligibleUsers.class && classUsers) {
             const eligibleUserList: EligibleUsers = eligibleUsers;
             const students: User[] = [];
             const teachers: User[] = [];
-            const hasGivenName = (user: EligibleUser): boolean | string =>
-                _get(user, "given_name", false);
-            const hasId = (user: EligibleUser): boolean | string =>
-                _get(user, "user_id", false);
+            const schools = _get(classUsers, "class.schools", []).map(
+                (e: School) => e.school_id,
+            );
 
-            eligibleUserList.class.eligibleStudents.forEach((student) => {
-                if (hasId(student) && hasGivenName(student)) {
-                    students.push({
-                        role: studentRole,
-                        user_id: student.user_id,
-                        given_name:
-                            student.given_name + " " + student.family_name,
-                    });
+            eligibleUserList.class.eligibleStudents.forEach(
+                (eligible_students) => {
+                    if (eligible_students.school_memberships.length) {
+                        const schoolMemberships = eligible_students.school_memberships.reduce(
+                            (
+                                acc: Map<string, { user_id: string }>,
+                                e: ClassRosterSchool,
+                            ) => {
+                                if (schools.includes(e.school_id)) {
+                                    acc.set(e.user.user_id, e.user);
+                                }
 
-                    return;
-                }
-            });
+                                return acc;
+                            },
+                            new Map(),
+                        );
+                        schoolMemberships.forEach((student: EligibleUser) => {
+                            students.push({
+                                role: studentRole,
+                                user_id: student.user_id,
+                                given_name:
+                                    student.given_name +
+                                    " " +
+                                    student.family_name,
+                            });
+                        });
+                    }
+                },
+            );
 
-            eligibleUserList.class.eligibleTeachers.forEach((teacher) => {
-                if (hasId(teacher) && hasGivenName(teacher)) {
-                    teachers.push({
-                        role: teacherRole,
-                        user_id: teacher.user_id,
-                        given_name:
-                            teacher.given_name + " " + teacher.family_name,
-                    });
+            eligibleUserList.class.eligibleTeachers.forEach(
+                (eligibleTeachers) => {
+                    if (eligibleTeachers.school_memberships.length) {
+                        const schoolMemberships = eligibleTeachers.school_memberships.reduce(
+                            (
+                                acc: Map<string, { user_id: string }>,
+                                e: ClassRosterSchool,
+                            ) => {
+                                if (schools.includes(e.school_id)) {
+                                    acc.set(e.user.user_id, e.user);
+                                }
 
-                    return;
-                }
-            });
+                                return acc;
+                            },
+                            new Map(),
+                        );
+
+                        schoolMemberships.forEach((value: EligibleUser) => {
+                            teachers.push({
+                                role: teacherRole,
+                                user_id: value.user_id,
+                                given_name:
+                                    value.given_name + " " + value.family_name,
+                            });
+                        });
+                    }
+                },
+            );
 
             setUsers([...teachers, ...students]);
         }
