@@ -1,4 +1,5 @@
 import { useQuery, useReactiveVar } from "@apollo/client/react";
+import { IconButton, Tooltip, useMediaQuery } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -14,12 +15,15 @@ import { currentMembershipVar, userIdVar } from "../../cache";
 import { User } from "../../models/Membership";
 import { GET_USER } from "../../operations/queries/getUser";
 import { SchedulePayload } from "../../types/objectTypes";
+import { history } from "../../utils/history";
 import Assessment from "./card/assessment";
 import { schedulePayload } from "./card/payload";
 import PlanSelection from "./card/planSelection";
 import ScheduleInfo from "./card/scheduleInfo";
 import UsageInfo from "./card/usageInfo";
 import ContentLayout from "./featuredContent/contentLayout";
+
+import { CalendarToday as CalendarIcon } from "@styled-icons/material/CalendarToday";
 
 const payload = schedulePayload;
 
@@ -57,6 +61,8 @@ export default function Home() {
     const classes = useStyles();
     const restApi = useRestAPI();
     const theme = useTheme();
+
+    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
 
     const [time, setTime] = useState(Date.now());
     const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
@@ -113,10 +119,16 @@ export default function Home() {
                         style={{ minHeight: "40vw", height: "100%" }}
                         spacing={2}
                     >
-                        <Grid item xs={12} style={{ padding: theme.spacing(2, 0) }}>
+                        <Grid item xs={12} style={{ padding: theme.spacing(isMdDown ? 4 : 2, 0) }}>
                             <Typography variant="h4" align="center">
                                 <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
                                 <FormattedDate value={time} month="short" day="numeric" weekday="short" />
+
+                                <Tooltip title="View Your Schedule" placement="right">
+                                    <IconButton aria-label="switch view" onClick={() => history.push("/schedule")}>
+                                        <CalendarIcon size="0.8em" color="#0E78D5" />
+                                    </IconButton>
+                                </Tooltip>
                             </Typography>
                             <Typography variant="h4" align="center">
                                     👋  Welcome, { user?.given_name }!
@@ -136,9 +148,7 @@ export default function Home() {
                         <Assessment />
                     </Card>
                 </Grid>
-                {/* <Grid item xs={12}> */}
                 <ContentLayout />
-                {/* </Grid> */}
             </Grid>
         </Container>
     );

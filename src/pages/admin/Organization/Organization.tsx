@@ -16,7 +16,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import { injectIntl, IntlFormatters } from "react-intl";
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import "react-phone-input-2/lib/material.css";
 import { organizationIdVar, userProfileVar } from "../../../cache";
 import { ADD_USER_TO_ORGANIZATION } from "../../../operations/mutations/addUserToOrganization";
 import { NEW_ORGANIZATION } from "../../../operations/mutations/newOrganization";
@@ -282,7 +282,7 @@ function Organization(props: { intl: IntlFormatters }) {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <FormControl className={classes.formControl} error>
-                                <label htmlFor="phone">
+                                <label htmlFor="phone" style={{ paddingBottom: 20 }}>
                                     <b>{PhoneNumberLabel()}</b>
                                 </label>
                                 <PhoneInput
@@ -293,8 +293,7 @@ function Organization(props: { intl: IntlFormatters }) {
                                         id: "phone",
                                         name: "phone",
                                     }}
-                                    enableAreaCodes={true}
-                                    onlyCountries={["kr", "us"]}
+                                    preferredCountries={["cn", "gb", "id", "kr", "vn", "us"]}
                                     buttonStyle={{
                                         border: "1px solid #030303",
                                     }}
@@ -304,6 +303,8 @@ function Organization(props: { intl: IntlFormatters }) {
                                         width: "100%",
                                     }}
                                     inputClass={classes.containerPhoneInput}
+                                    specialLabel=""
+                                    placeholder="Phone Number"
                                 />
                                 {formik.touched.phone && formik.errors.phone ? (
                                     <FormHelperText>

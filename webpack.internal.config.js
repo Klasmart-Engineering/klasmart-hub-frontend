@@ -20,18 +20,19 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: [
-                    {
-                        loader: "style-loader",
-                    },
-                    "css-modules-typescript-loader",
-                    {
-                        loader: "css-loader",
-                        options: {
-                            modules: true
-                        }
-                    }
-                ],
+                use: ["style-loader", "css-loader"],
+                // use: [
+                //     {
+                //         loader: "style-loader",
+                //     },
+                //     "css-modules-typescript-loader",
+                //     {
+                //         loader: "css-loader",
+                //         options: {
+                //             modules: true
+                //         }
+                //     }
+                // ],
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
@@ -100,6 +101,7 @@ module.exports = {
             "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
             "KL_API_ENDPOINT": "https://api.kidsloop.net/",
             "KL_AUTH_ENDPOINT": "https://auth.kidsloop.net/",
+            "KL_LIVE_ENDPOINT": "https://live.kidsloop.net/",
         })
     ],
     devServer: {

@@ -78,10 +78,10 @@ export async function refreshToken() {
             clearTimeout(expirationTimer);
         }
 
-        console.log("targetDuration: ", targetDuration);
-        console.log("response.exp: ", response.exp);
-        console.log("Date now: ", Date.now());
-        console.log("> 0");
+        // console.log("targetDuration: ", targetDuration);
+        // console.log("response.exp: ", response.exp);
+        // console.log("Date now: ", Date.now());
+        // console.log("> 0");
 
         expirationTimer = setTimeout(
             () => refreshToken(),

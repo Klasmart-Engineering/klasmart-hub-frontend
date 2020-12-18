@@ -12,12 +12,15 @@ import jwtDecode from "jwt-decode";
 
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import Link from "@material-ui/core/Link";
+import Typography from "@material-ui/core/Typography";
 import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar } from "../../../cache";
 import InviteButton from "../../../components/invite";
 import StyledFAB from "../../../components/styled/fabButton";
-import { getCNEndpoint } from "../../../config";
+import { getCNEndpoint, getKLLiveEndpoint } from "../../../config";
 import { LivePreviewJWT, PublishedContentItem } from "../../../types/objectTypes";
+import {history} from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -113,7 +116,7 @@ export default function PlanSelection() {
     }, [lessonPlan]);
 
     function goLive() {
-        const liveLink = `https://live.kidsloop.net/class-live/?token=${liveToken}`;
+        const liveLink = `${getKLLiveEndpoint()}class-live/?token=${liveToken}`;
         window.open(liveLink);
     }
 
@@ -151,6 +154,11 @@ export default function PlanSelection() {
                     <Collapse in={openShareLink}>
                         <InviteButton url={`https://live.kidsloop.net/class-live/?roomId=${shareLink}`} />
                     </Collapse>
+                    <Grid item>
+                        <Typography variant="body2" gutterBottom>
+                            <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/library"); e.preventDefault(); }}>View Your Library &gt;</Link>
+                        </Typography>
+                    </Grid>
                 </CardContent>
             </Card>
         </Grid>

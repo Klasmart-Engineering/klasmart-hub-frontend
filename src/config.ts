@@ -56,3 +56,7 @@ export function getKLAuthEndpoint() {
 export function getKLAPIEndpoint() {
     return "" + process.env.KL_API_ENDPOINT;
 }
+
+export function getKLLiveEndpoint() {
+    return "" + process.env.KL_LIVE_ENDPOINT;
+}

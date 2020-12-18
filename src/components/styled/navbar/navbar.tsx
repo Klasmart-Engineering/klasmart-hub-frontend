@@ -9,10 +9,11 @@ import React from "react";
 import { FormattedMessage } from "react-intl";
 import { useLocation } from "react-router-dom";
 import KidsloopLogo from "../../../assets/img/kidsloop.svg";
-import { userIdVar } from "../../../cache";
+import { currentMembershipVar, userIdVar } from "../../../cache";
 import { GET_USER } from "../../../operations/queries/getUser";
 import { User } from "../../../types/graphQL";
 import { history } from "../../../utils/history";
+import { getHighestRole } from "../../../utils/userRoles";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";
@@ -95,6 +96,7 @@ export default function NavBar(props: Props) {
 
     const minHeight = useMediaQuery(theme.breakpoints.up("sm")) ? 64 : 56;
 
+    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const user_id = useReactiveVar(userIdVar);
     const { data, loading, error } = useQuery(GET_USER, {
         fetchPolicy: "network-only",
@@ -103,6 +105,10 @@ export default function NavBar(props: Props) {
         },
     });
     const user: User = data?.user;
+
+    const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
+    const highestRole = getHighestRole(selectedMembershipOrganization?.roles) || "Unknown";
+    const showNavMenu = ["Organization Admin", "School Admin", "Teacher"].indexOf(highestRole);
 
     return (
         <div className={classes.root}>
@@ -121,14 +127,14 @@ export default function NavBar(props: Props) {
                             flexWrap="nowrap"
                             order={1}
                         >
-                            <NavMenu className={classes.menuButton}/>
+                            { showNavMenu !== -1 && <NavMenu className={classes.menuButton}/> }
                             <Button
                                 onClick={() => { history.push("/"); }}
                             >
                                 <img src={KidsloopLogo} height="40"/>
                             </Button>
                         </Box>
-                        {!url.hash.includes("#/admin") &&
+                        {/* {!url.hash.includes("#/admin") &&
                             <Box
                                 display="flex"
                                 flexWrap="nowrap"
@@ -136,7 +142,7 @@ export default function NavBar(props: Props) {
                             >
                                 {menuLabels ? <MenuButtons labels={menuLabels} /> : null}
                             </Box>
-                        }
+                        } */}
                         <Box
                             display="flex"
                             className={classes.userSettingsContainer}

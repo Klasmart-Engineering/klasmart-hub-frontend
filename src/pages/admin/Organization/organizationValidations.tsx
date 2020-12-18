@@ -27,8 +27,6 @@ export const organizationValidations = (values: FormValues) => {
         errors.address1 = "The first address is invalid.";
     } else if (values.address1.length > 60) {
         errors.address1 = "Max length 60 of characters.";
-    } else if (values.address1.length < 15) {
-        errors.address1 = "Min length 15 of characters.";
     }
 
     if (values.address2) {
@@ -40,8 +38,6 @@ export const organizationValidations = (values: FormValues) => {
             errors.address2 = "The second address is invalid";
         } else if (values.address2.length > 60) {
             errors.address2 = "Max length 60 of characters.";
-        } else if (values.address2.length < 15) {
-            errors.address2 = "Min length 15 of characters.";
         }
     }
 

@@ -14,7 +14,7 @@ import _get from "lodash/get";
 import React, { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import "react-phone-input-2/lib/material.css";
 import { ORGANIZATION } from "../../../operations/mutations/organization";
 import { GET_ORGANIZATION } from "../../../operations/queries/getOrganization";
 import { history, ParameterHOC } from "../../../utils/history";
@@ -239,7 +239,7 @@ export default function Organization() {
                                         setAddress1(e.target.value);
                                     }}
                                     value={address1}
-                                    placeholder={"ORGANIZATION ADDRESS"}
+                                    placeholder={"Organization Address"}
                                 />
                             </FormControl>
 
@@ -258,7 +258,7 @@ export default function Organization() {
 
                         <Grid item xs={12} sm={4}>
                             <FormControl className={classes.formControl} error>
-                                <label htmlFor="phone">
+                                <label htmlFor="phone" style={{ paddingBottom: 20 }}>
                                     <b>Phone Number</b>
                                 </label>
                                 <PhoneInput
@@ -270,8 +270,7 @@ export default function Organization() {
                                         id: "phone",
                                         name: "phone",
                                     }}
-                                    enableAreaCodes={true}
-                                    onlyCountries={["kr", "us"]}
+                                    preferredCountries={["cn", "gb", "id", "kr", "vn", "us"]}
                                     buttonStyle={{
                                         border: "1px solid #030303",
                                     }}
@@ -281,6 +280,8 @@ export default function Organization() {
                                         width: "100%",
                                     }}
                                     inputClass={classes.containerPhoneInput}
+                                    specialLabel=""
+                                    placeholder="Phone Number"
                                 />
                             </FormControl>
                         </Grid>
@@ -295,7 +296,7 @@ export default function Organization() {
                                     fullWidth
                                     id="email"
                                     name="email"
-                                    placeholder={"ORGANIZATION EMAIL"}
+                                    placeholder={"Organization Email"}
                                     onChange={(e) => {
                                         setEmail(e.target.value);
                                     }}

@@ -51,7 +51,7 @@
     "babel-loader": "^8.0.6",
     "babel-polyfill": "^6.26.0",
     "clsx": "^1.0.4",
-    "css-loader": "^3.2.0",
+    "css-loader": "^3.6.0",
     "css-modules-typescript-loader": "^3.0.1",
     "eslint": "^7.2.0",
     "eslint-plugin-react": "^7.20.0",

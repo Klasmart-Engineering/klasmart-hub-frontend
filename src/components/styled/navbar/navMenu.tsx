@@ -8,24 +8,27 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
-import AllInboxTwoToneIcon from "@material-ui/icons/AllInboxTwoTone";
 import AppsIcon from "@material-ui/icons/Apps";
-import BusinessTwoToneIcon from "@material-ui/icons/BusinessTwoTone";
-import ContactSupportTwoToneIcon from "@material-ui/icons/ContactSupportTwoTone";
-import CreditCardTwoToneIcon from "@material-ui/icons/CreditCardTwoTone";
-import GroupTwoToneIcon from "@material-ui/icons/GroupTwoTone";
-import LockTwoToneIcon from "@material-ui/icons/LockTwoTone";
-import PersonOutlineTwoToneIcon from "@material-ui/icons/PersonOutlineTwoTone";
-import PhonelinkTwoToneIcon from "@material-ui/icons/PhonelinkTwoTone";
-import SchoolTwoToneIcon from "@material-ui/icons/SchoolTwoTone";
-import SecurityTwoToneIcon from "@material-ui/icons/SecurityTwoTone";
-import TableChartTwoToneIcon from "@material-ui/icons/TableChartTwoTone";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import DialogAppBar from "../../../components/styled/dialogAppBar";
 import { MenuItem } from "../../../types/objectTypes";
+
+import { AllInbox as InboxIcon } from "@styled-icons/material-twotone/AllInbox";
+import { Business as BusinessIcon } from "@styled-icons/material-twotone/Business";
+import { CalendarToday as CalendarIcon } from "@styled-icons/material-twotone/CalendarToday";
+import { ContactSupport as SupportIcon } from "@styled-icons/material-twotone/ContactSupport";
+import { CreditCard as CardIcon } from "@styled-icons/material-twotone/CreditCard";
+import { Group as GroupIcon } from "@styled-icons/material-twotone/Group";
+import { Lock as LockIcon } from "@styled-icons/material-twotone/Lock";
+import { PersonOutline as PersonIcon } from "@styled-icons/material-twotone/PersonOutline";
+import { Phonelink as PhoneIcon } from "@styled-icons/material-twotone/Phonelink";
+import { School as SchoolIcon } from "@styled-icons/material-twotone/School";
+import { Security as SecurityIcon } from "@styled-icons/material-twotone/Security";
+import { StackedLineChart as AssessmentIcon } from "@styled-icons/material-twotone/StackedLineChart";
+import { TableChart as TableIcon } from "@styled-icons/material-twotone/TableChart";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -36,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
         menuButton: {
+            minHeight: 64,
             padding: theme.spacing(2),
         },
         menuLink: {
@@ -136,78 +140,92 @@ export default function NavMenu(props: Props) {
         {
             id: "navMenu_analyticsAndReports",
             description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
-            link: "/admin/report",
-            logo: <TableChartTwoToneIcon style={{ color: "#f7a219", fontSize: 48 }} />,
+            link: "/report",
+            logo: <TableIcon size="48px" style={{ color: "#f7a219", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_analyticsAndReportsTitle" />,
+        },
+        {
+            id: "navMenu_assessments",
+            description: <FormattedMessage id="navMenu_assessmentsDescription" />,
+            link: "/assessments/assessment-list",
+            logo: <AssessmentIcon size="48px" style={{ color: "#98CE00", fontSize: 48 }} />,
+            title: <FormattedMessage id="navMenu_assessmentsTitle" />,
         },
         {
             id: "navMenu_contentLibrary",
             description: <FormattedMessage id="navMenu_contentLibraryDescription" />,
             link: "/library",
-            logo: <AllInboxTwoToneIcon style={{ color: "#1f94e8", fontSize: 48 }} />,
+            logo: <InboxIcon size="48px" style={{ color: "#1f94e8", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_contentLibraryTitle" />,
         },
         {
             id: "navMenu_groups",
             description: <FormattedMessage id="navMenu_groupsDescription" />,
             link: "/admin/roles",
-            logo: <GroupTwoToneIcon style={{ color: "#27bed6", fontSize: 48 }} />,
+            logo: <GroupIcon size="48px"style={{ color: "#27bed6", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_groupsTitle" />,
         },
         {
             id: "navMenu_organization",
             description: <FormattedMessage id="navMenu_organizationDescription" />,
             link: "/admin/allOrganization",
-            logo: <BusinessTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
+            logo: <BusinessIcon size="48px" style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_organizationTitle" />,
+        },
+        {
+            id: "navMenu_schedule",
+            description: <FormattedMessage id="navMenu_scheduleDescription" />,
+            link: "/schedule",
+            logo: <CalendarIcon size="48px" style={{ color: "#09BC8A", fontSize: 48 }} />,
+            title: <FormattedMessage id="navMenu_scheduleTitle" />,
         },
         {
             id: "navMenu_schools",
             description: <FormattedMessage id="navMenu_schoolsDescription" />,
             link: "/admin/school",
-            logo: <SchoolTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
+            logo: <SchoolIcon size="48px" style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_schoolsTitle" />,
         },
         {
             id: "navMenu_users",
             description: <FormattedMessage id="navMenu_usersDescription" />,
             link: "/admin/user",
-            logo: <PersonOutlineTwoToneIcon style={{ color: "#0E78D5", fontSize: 48 }} />,
+            logo: <PersonIcon size="48px" style={{ color: "#0E78D5", fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_usersTitle" />,
         },
         {
             id: "navMenu_billing",
             description: <FormattedMessage id="navMenu_billingDescription" />,
             link: "#",
-            logo: <CreditCardTwoToneIcon style={{ color: "gray" /* "#b0bec5" */, fontSize: 48 }} />,
+            logo: <CardIcon size="48px" style={{ color: "gray" /* "#b0bec5" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_billingTitle" />,
         },
         {
             id: "navMenu_dataSecurity",
             description: <FormattedMessage id="navMenu_dataSecurityDescription" />,
             link: "#",
-            logo: <LockTwoToneIcon style={{ color: "gray" /* "#816961" */, fontSize: 48 }} />,
+            logo: <LockIcon size="48px" style={{ color: "gray" /* "#816961" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_dataSecurityTitle" />,
         },
         {
             id: "navMenu_devices",
             description: <FormattedMessage id="navMenu_devicesDescription" />,
             link: "#",
-            logo: <PhonelinkTwoToneIcon style={{ color: "gray" /* theme.palette.type === "dark" ? "#fefefe" : "#263238" */, fontSize: 48 }} />,
+            logo: <PhoneIcon size="48px" style={{ color: "gray" /* theme.palette.type === "dark" ? "#fefefe" : "#263248" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_devicesTitle" />,
         },
         {
             id: "navMenu_security",
             description: <FormattedMessage id="navMenu_securityDescription" />,
             link: "#",
-            logo: <SecurityTwoToneIcon style={{ color: "gray" /* "#8396a0" */, fontSize: 48 }} />,
+            logo: <SecurityIcon size="48px" style={{ color: "gray" /* "#8396a0" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_securityTitle" />,
         },
         {
             id: "navMenu_support",
             description: <FormattedMessage id="navMenu_supportDescription" />,
             link: "#",
-            logo: <ContactSupportTwoToneIcon style={{ color: "gray" /* "#3baf77" */, fontSize: 48 }} />,
+            logo: <SupportIcon size="48px" style={{ color: "gray" /* "#3baf77" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_supportTitle" />,
         },
     ];
