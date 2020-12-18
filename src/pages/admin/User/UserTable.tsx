@@ -1,20 +1,13 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useReactiveVar } from "@apollo/client/react";
-import DateFnsUtils from "@date-io/date-fns";
-import { OutlinedInput, Snackbar, TextField } from "@material-ui/core";
+import { OutlinedInput, Snackbar } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { Delete, Publish } from "@material-ui/icons";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import {
-    KeyboardDatePicker,
-    MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import _get from "lodash/get";
 import MaterialTable, { EditComponentProps } from "material-table";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { injectIntl, IntlFormatters } from "react-intl";
 import { currentMembershipVar, userIdVar } from "../../../cache";
@@ -119,7 +112,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                 );
                 const schools = school_memberships
                     .map((e: Schools) => e.school)
-                    .filter((e: School) => e.status === "active");
+                    .filter((e: School) => e?.status === "active");
                 const school_roles = school_memberships.map(
                     (e: UserMembership) => e.roles,
                 );
@@ -152,7 +145,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                 users,
                 "organization.schools",
                 [],
-            ).filter((e: School) => e.status === "active");
+            ).filter((e: School) => e?.status === "active");
 
             setSchools([...organizationSchools]);
         }
@@ -328,64 +321,64 @@ function UserTable(props: { intl: IntlFormatters }) {
                         },
                         render: (rowData) => <span>{rowData.family_name}</span>,
                     },
-                    {
-                        title: intl.formatMessage({ id: "users_birthDate" }),
-                        field: "birth_year_month",
-                        editable: "onAdd",
-                        cellStyle: {
-                            width: 160,
-                            minWidth: 160,
-                        },
-                        render: (rowData) => (
-                            <span>
-                                {moment(rowData.birth_year_month).format(
-                                    "YYYY-MM",
-                                )}
-                            </span>
-                        ),
-                        editComponent: (props: EditComponentProps<any>) => {
-                            const value = !props.value
-                                ? null
-                                : moment(props.value);
-                            const hasError = !props.value;
-
-                            return (
-                                <FormControl fullWidth error={hasError}>
-                                    <MuiPickersUtilsProvider
-                                        utils={DateFnsUtils}
-                                    >
-                                        <KeyboardDatePicker
-                                            disableToolbar
-                                            fullWidth
-                                            openTo="year"
-                                            format="yyyy-MM"
-                                            views={["year", "month"]}
-                                            value={value}
-                                            onChange={(
-                                                e: MaterialUiPickersDate,
-                                            ): void => {
-                                                props.onChange(e);
-                                            }}
-                                            KeyboardButtonProps={{
-                                                "aria-label": "change date",
-                                            }}
-                                            TextFieldComponent={({
-                                                InputProps,
-                                                value,
-                                            }) => (
-                                                <TextField
-                                                    InputProps={InputProps}
-                                                    disabled={true}
-                                                    value={value}
-                                                    placeholder={"YYYY-MM"}
-                                                />
-                                            )}
-                                        />
-                                    </MuiPickersUtilsProvider>
-                                </FormControl>
-                            );
-                        },
-                    },
+                    // {
+                    //     title: intl.formatMessage({ id: "users_birthDate" }),
+                    //     field: "birth_year_month",
+                    //     editable: "onAdd",
+                    //     cellStyle: {
+                    //         width: 160,
+                    //         minWidth: 160,
+                    //     },
+                    //     render: (rowData) => (
+                    //         <span>
+                    //             {moment(rowData.birth_year_month).format(
+                    //                 "YYYY-MM",
+                    //             )}
+                    //         </span>
+                    //     ),
+                    //     editComponent: (props: EditComponentProps<any>) => {
+                    //         const value = !props.value
+                    //             ? null
+                    //             : moment(props.value);
+                    //         const hasError = !props.value;
+                    //
+                    //         return (
+                    //             <FormControl fullWidth error={hasError}>
+                    //                 <MuiPickersUtilsProvider
+                    //                     utils={DateFnsUtils}
+                    //                 >
+                    //                     <KeyboardDatePicker
+                    //                         disableToolbar
+                    //                         fullWidth
+                    //                         openTo="year"
+                    //                         format="yyyy-MM"
+                    //                         views={["year", "month"]}
+                    //                         value={value}
+                    //                         onChange={(
+                    //                             e: MaterialUiPickersDate,
+                    //                         ): void => {
+                    //                             props.onChange(e);
+                    //                         }}
+                    //                         KeyboardButtonProps={{
+                    //                             "aria-label": "change date",
+                    //                         }}
+                    //                         TextFieldComponent={({
+                    //                             InputProps,
+                    //                             value,
+                    //                         }) => (
+                    //                             <TextField
+                    //                                 InputProps={InputProps}
+                    //                                 disabled={true}
+                    //                                 value={value}
+                    //                                 placeholder={"YYYY-MM"}
+                    //                             />
+                    //                         )}
+                    //                     />
+                    //                 </MuiPickersUtilsProvider>
+                    //             </FormControl>
+                    //         );
+                    //     },
+                    // },
                     {
                         title: "Organization Roles",
                         field: "roles",
