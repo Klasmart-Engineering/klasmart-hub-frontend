@@ -23,6 +23,7 @@ import { getHighestRole } from "../../../../utils/userRoles";
 import { getKLAuthEndpoint } from "../../../../config";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
+import CreateOrganizationDialog from "./createOrganization";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -87,6 +88,8 @@ export default function UserSettings(props: Props) {
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
     const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
+    const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
+
     const userNameColor = utils.stringToHslColor(user?.user_name ?? "??");
     const userNameInitials = utils.nameToInitials(user?.user_name ?? "??", 3);
     const selectedOrganizationColor = utils.stringToHslColor(selectedMembershipOrganization?.organization?.organization_name ?? "??");
@@ -222,6 +225,11 @@ export default function UserSettings(props: Props) {
                         {user?.email}
                     </Typography>
                 </Box>
+                {!loading && !error && isEmptyMembership === "" &&
+                    <ListItem>
+                        <CreateOrganizationDialog />
+                    </ListItem>
+                }
                 {!loading && !error && selectedMembershipOrganization && <List dense>
                     <ListItem>
                         <ListItemAvatar>

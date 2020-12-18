@@ -14,7 +14,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";
-import { injectIntl, IntlFormatters } from "react-intl";
+import { injectIntl, IntlFormatters, useIntl } from "react-intl";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import { organizationIdVar, userProfileVar } from "../../../cache";
@@ -43,8 +43,8 @@ import { organizationValidations } from "./organizationValidations";
 /**
  * Returns function to show Organization Form
  */
-function Organization(props: { intl: IntlFormatters }) {
-    const { intl } = props;
+export default function Organization(isDialog: { isDialog?: boolean }) {
+    const intl = useIntl();
     const classes = useStyles();
     const formRef = useRef<HTMLFormElement | null>(null);
     const [shortCode, setShortCode] = useState("");
@@ -494,18 +494,20 @@ function Organization(props: { intl: IntlFormatters }) {
                                         padding: "2px",
                                     }}
                                 >
-                                    <FormControl>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            size="large"
-                                            className={classes.btnCancel}
-                                            endIcon={<Block />}
-                                            type="reset"
-                                        >
-                                            {CancelButtonLabel()}
-                                        </Button>
-                                    </FormControl>
+                                    { !isDialog &&
+                                        <FormControl>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                size="large"
+                                                className={classes.btnCancel}
+                                                endIcon={<Block />}
+                                                type="reset"
+                                            >
+                                                {CancelButtonLabel()}
+                                            </Button>
+                                        </FormControl>
+                                    }
                                 </div>
                             </div>
                         </Grid>
@@ -515,5 +517,3 @@ function Organization(props: { intl: IntlFormatters }) {
         </Container>
     );
 }
-
-export default injectIntl(Organization);

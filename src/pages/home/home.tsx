@@ -131,7 +131,7 @@ export default function Home() {
                                 </Tooltip>
                             </Typography>
                             <Typography variant="h4" align="center">
-                                    👋  Welcome, { user?.given_name }!
+                                    👋  Welcome{ user && user.given_name !== null && ` , ${user.given_name}`}!
                             </Typography>
                         </Grid>
                         <UsageInfo schedule={schedule} />

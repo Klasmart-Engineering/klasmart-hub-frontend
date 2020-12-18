@@ -6,6 +6,7 @@ import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/sty
 import Toolbar from "@material-ui/core/Toolbar";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
+import { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { useLocation } from "react-router-dom";
 import KidsloopLogo from "../../../assets/img/kidsloop.svg";
@@ -14,9 +15,11 @@ import { GET_USER } from "../../../operations/queries/getUser";
 import { User } from "../../../types/graphQL";
 import { history } from "../../../utils/history";
 import { getHighestRole } from "../../../utils/userRoles";
+import StyledButton from "../button";
 import NavButton from "./navButton";
 import NavMenu from "./navMenu";
 import ClassSettings from "./settings/classSettings";
+import CreateOrganizationDialog from "./settings/createOrganization";
 import UserSettings from "./settings/userSettings";
 
 const breakpoint = 827; // current max width before the toolbar items start to wrap
@@ -40,18 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
         title: {
             flex: 1,
             marginLeft: theme.spacing(2),
-        },
-        userSettingsContainer: {
-            [theme.breakpoints.down(breakpoint)]: {
-                order: 2,
-            },
-            order: 3,
-        },
-        menuButtonsContainer: {
-            [theme.breakpoints.down(breakpoint)]: {
-                order: 3,
-            },
-            order: 2,
         },
     }),
 );
@@ -110,6 +101,8 @@ export default function NavBar(props: Props) {
     const highestRole = getHighestRole(selectedMembershipOrganization?.roles) || "Unknown";
     const showNavMenu = ["Organization Admin", "School Admin", "Teacher"].indexOf(highestRole);
 
+    const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
+
     return (
         <div className={classes.root}>
             <AppBar color="inherit" position="sticky" className={classes.safeArea}>
@@ -134,19 +127,10 @@ export default function NavBar(props: Props) {
                                 <img src={KidsloopLogo} height="40"/>
                             </Button>
                         </Box>
-                        {/* {!url.hash.includes("#/admin") &&
-                            <Box
-                                display="flex"
-                                flexWrap="nowrap"
-                                className={classes.menuButtonsContainer}
-                            >
-                                {menuLabels ? <MenuButtons labels={menuLabels} /> : null}
-                            </Box>
-                        } */}
-                        <Box
-                            display="flex"
-                            className={classes.userSettingsContainer}
-                        >
+                        <Box display="flex" order={2}>
+                            {!loading && !error && isEmptyMembership === "" &&
+                                <CreateOrganizationDialog />
+                            }
                             <UserSettings
                                 user={user}
                                 loading={loading}
