@@ -58,7 +58,7 @@ function ClientSide() {
                 <ThemeProvider theme={themeProvider()}>
                     <CssBaseline />
                     <Layout />
-                    <Copyright />
+                    {/* <Copyright /> */}
                 </ThemeProvider>
             </RawIntlProvider>
         </ApolloProvider>

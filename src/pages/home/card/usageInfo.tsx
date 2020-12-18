@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme: Theme) =>
             borderRadius: 12,
             height: "100%",
             padding: theme.spacing(2),
+            [theme.breakpoints.down("sm")]: {
+                padding: theme.spacing(1),
+            },
         },
     }),
 );
@@ -68,11 +71,11 @@ export default function UsageInfo({ schedule }: { schedule?: SchedulePayload[] }
                                 { item.total }
                             </Typography>
                             <Typography variant="caption">
-                                { item.type } scheduled
+                                { item.type }
                             </Typography>
                             <Divider style={{ margin: theme.spacing(1, 0)}}/>
                             <Typography variant="body2">
-                                { item.attended } attended
+                                { item.attended } { item.type === "homework" ? "completed" : "attended" }
                             </Typography>
                         </CardContent>
                     </Card>
