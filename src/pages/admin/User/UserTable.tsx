@@ -107,9 +107,10 @@ function UserTable(props: { intl: IntlFormatters }) {
             const userArray = memberships.map((userItems: UserMembership) => {
                 const school_memberships = _get(
                     userItems,
-                    "user.school_memberships",
+                    "schoolMemberships",
                     [],
                 );
+
                 const schools = school_memberships
                     .map((e: Schools) => e.school)
                     .filter((e: School) => e?.status === "active");

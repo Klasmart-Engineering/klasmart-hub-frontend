@@ -26,24 +26,24 @@ export const GET_ORGANIZATION_USERS = gql`
             memberships {
                 join_timestamp
                 status
+                schoolMemberships {
+                    school {
+                        school_id
+                        school_name
+                        status
+                    }
+                    roles {
+                        role_id
+                        role_name
+                    }
+                    school_id
+                }
                 user {
                     user_id
                     given_name
                     family_name
                     email
                     avatar
-                    school_memberships {
-                        school {
-                            school_id
-                            school_name
-                            status
-                        }
-                        roles {
-                            role_id
-                            role_name
-                        }
-                        school_id
-                    }
                 }
                 roles {
                     role_id
