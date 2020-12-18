@@ -24,6 +24,7 @@ import { useSchoolRoles } from "./hooks/useSchoolRoles";
 import { useSchools } from "./hooks/useSchools";
 import { useUserRoles } from "./hooks/useUserRoles";
 import { useStyles } from "./userMaterialStyles";
+import { checkAllowed } from "../../../utils/checkAllowed";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -71,6 +72,14 @@ function UserTable(props: { intl: IntlFormatters }) {
     const organization_id = organization.organization_id;
     const [inviteUser] = useMutation(INVITE_USER_TO_ORGANIZATION);
     const [editMembership] = useMutation(EDIT_MEMBERSHIP_OF_ORGANIZATION);
+    const [canCreate, setCanCreate] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
+    const [canDelete, setCanDelete] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const createAllowed = checkAllowed(organization_id, "create_users_40220");
+    const editAllowed = checkAllowed(organization_id, "edit_users_40330");
+    const deleteAllowed = checkAllowed(organization_id, "delete_users_40440");
+
     const { data: users, refetch, loading } = useQuery(GET_ORGANIZATION_USERS, {
         fetchPolicy: "network-only",
         variables: { organization_id },
@@ -99,6 +108,99 @@ function UserTable(props: { intl: IntlFormatters }) {
 
             return e.school_id;
         });
+    };
+
+    useEffect(() => {
+        if (
+            createAllowed?.me?.membership &&
+            editAllowed?.me?.membership &&
+            deleteAllowed?.me?.membership
+        ) {
+            setCanCreate(
+                _get(createAllowed, "me.membership.checkAllowed", false),
+            );
+            setCanEdit(_get(editAllowed, "me.membership.checkAllowed", false));
+            setCanDelete(
+                _get(deleteAllowed, "me.membership.checkAllowed", false),
+            );
+
+            setIsLoading(false);
+        }
+    }, [createAllowed, editAllowed, deleteAllowed]);
+
+    // prettier-ignore
+    const editableOptions = () => {
+        return canCreate
+            ? {
+                isDeletable: (rowData: any) => rowData.status === "active" && canDelete,
+                isEditable: (rowData: any) =>
+                    rowData.status === "active" && canEdit, // *** POC
+                onRowAdd: (newData: FormData): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        create(newData)
+                            .then((e) => {
+                                console.log("user created successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("user updated successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(newData)
+                            .then((e) => {
+                                console.log("user removed successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+            }
+            : {
+                isDeletable: (rowData: any) => rowData.status === "active",
+                isEditable: (rowData: any) =>
+                    rowData.status === "active" && canEdit, // *** POC
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("user updated successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(newData)
+                            .then((e) => {
+                                console.log("user removed successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+            };
     };
 
     useEffect(() => {
@@ -287,7 +389,7 @@ function UserTable(props: { intl: IntlFormatters }) {
         <div style={{ width: "100%" }}>
             <MaterialTable
                 icons={constantValues.tableIcons}
-                isLoading={loading}
+                isLoading={loading || isLoading}
                 options={{
                     selection: true,
                     headerStyle: {
@@ -388,6 +490,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                             minWidth: 140,
                         },
                         editComponent: (props: EditComponentProps<any>) => {
+                            // prettier-ignore
                             const value = props.value
                                 ? props.value.map(
                                     (rolItem: Role) =>
@@ -451,6 +554,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                             minWidth: 140,
                         },
                         editComponent: (props: EditComponentProps<any>) => {
+                            // prettier-ignore
                             const value = props.value
                                 ? props.value.map(
                                     (school: School) =>
@@ -692,46 +796,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         }),
                     },
                 ]}
-                editable={{
-                    isDeletable: (rowData) => rowData.status === "active",
-                    isEditable: (rowData) => rowData.status === "active",
-                    onRowAdd: (newData: FormData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            create(newData)
-                                .then((e) => {
-                                    console.log("user created successfully", e);
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                    onRowUpdate: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            update(newData)
-                                .then((e) => {
-                                    console.log("user updated successfully", e);
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                    onRowDelete: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            remove(newData)
-                                .then((e) => {
-                                    console.log("user removed successfully", e);
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                }}
+                editable={editableOptions()}
             />
             <Snackbar
                 open={openSnackbar}

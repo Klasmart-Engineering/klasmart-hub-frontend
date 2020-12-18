@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import { Delete } from "@material-ui/icons";
 import _get from "lodash/get";
 import MaterialTable, { EditComponentProps } from "material-table";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { injectIntl, IntlFormatters } from "react-intl";
 import { currentMembershipVar } from "../../../cache";
 import { filterClassItem } from "../../../domain/filterClassItem";
@@ -19,6 +19,7 @@ import { DELETE_CLASS } from "../../../operations/mutations/deleteClass";
 import { UPDATE_CLASS } from "../../../operations/mutations/updateClass";
 import { GET_ALL_CLASSES } from "../../../operations/queries/getAllClasses";
 import { GET_SCHOOLS } from "../../../operations/queries/getSchools";
+import { checkAllowed } from "../../../utils/checkAllowed";
 import { history } from "../../../utils/history";
 import { alphanumeric } from "../../../utils/validations";
 import { constantValues } from "../constants";
@@ -75,6 +76,25 @@ function ClasessTable(props: { intl: IntlFormatters }) {
     const [createClass] = useMutation(CREATE_CLASS);
     const [deleteClass] = useMutation(DELETE_CLASS);
     const [updateClass] = useMutation(UPDATE_CLASS);
+    const organization = useReactiveVar(currentMembershipVar);
+    const organization_id = organization.organization_id;
+    const [canCreate, setCanCreate] = useState(false);
+    const [canAddTeacher, setCanAddTeacher] = useState(false);
+    const [canAddStudent, setCanAddStudent] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
+    const [canDelete, setCanDelete] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const createAllowed = checkAllowed(organization_id, "create_class_20224");
+    const editAllowed = checkAllowed(organization_id, "edit_class_20334");
+    const deleteAllowed = checkAllowed(organization_id, "delete_class_20444");
+    const addTeacherAllowed = checkAllowed(
+        organization_id,
+        "delete_class_20444",
+    );
+    const addStudentAllowed = checkAllowed(
+        organization_id,
+        "delete_class_20444",
+    );
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === "clickaway") {
@@ -103,6 +123,124 @@ function ClasessTable(props: { intl: IntlFormatters }) {
             organization_id: membership.organization_id,
         },
     });
+
+    useEffect(() => {
+        if (
+            createAllowed?.me?.membership &&
+            editAllowed?.me?.membership &&
+            deleteAllowed?.me?.membership &&
+            addStudentAllowed?.me?.membership &&
+            addTeacherAllowed?.me?.membership
+        ) {
+            setCanCreate(
+                _get(createAllowed, "me.membership.checkAllowed", false),
+            );
+            setCanEdit(_get(editAllowed, "me.membership.checkAllowed", false));
+            setCanDelete(
+                _get(deleteAllowed, "me.membership.checkAllowed", false),
+            );
+            setCanAddStudent(
+                _get(addStudentAllowed, "me.membership.checkAllowed", false),
+            );
+            setCanAddTeacher(
+                _get(addTeacherAllowed, "me.membership.checkAllowed", false),
+            );
+
+            setIsLoading(false);
+        }
+    }, [
+        createAllowed,
+        editAllowed,
+        deleteAllowed,
+        addStudentAllowed,
+        addTeacherAllowed,
+    ]);
+
+    // prettier-ignore
+    const editableOptions = () => {
+        return canCreate
+            ? {
+                isDeletable: (rowData: any) =>
+                    rowData.status === "active" && canDelete,
+                isEditable: (rowData: any) =>
+                    rowData.status === "active" && canEdit,
+                onRowAdd: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        if (
+                            newData.schools.includes(
+                                constantValues.schoolDefaultValue,
+                            )
+                        ) {
+                            newData.schools = schools.map(
+                                (item) => item.school_id,
+                            ) as string[];
+                        }
+                        create(newData)
+                            .then((e) => {
+                                console.log("class created successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("class updated succesfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (data: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(data)
+                            .then((e) => {
+                                console.log("class deleted successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+            }
+            : {
+                isDeletable: (rowData: any) =>
+                    rowData.status === "active" && canDelete,
+                isEditable: (rowData: any) =>
+                    rowData.status === "active" && canEdit,
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("class updated succesfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (data: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(data)
+                            .then((e) => {
+                                console.log("class deleted successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("catch e", e);
+                                reject();
+                            });
+                    }),
+            };
+    };
 
     const create = async (classItem: Class): Promise<void> => {
         try {
@@ -262,7 +400,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
         <div className={classes.containerTable}>
             <MaterialTable
                 icons={constantValues.tableIcons}
-                isLoading={loadingSchool || loadingClasses}
+                isLoading={loadingSchool || loadingClasses || isLoading}
                 options={{
                     selection: true,
                     headerStyle: {
@@ -277,11 +415,13 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                         title: "",
                         render: (rowData) => {
                             const url = `/admin/classRoster/${rowData.class_id}`;
+                            const disabled =
+                                rowData.status === "inactive" ||
+                                !canAddStudent ||
+                                !canAddTeacher;
+
                             return (
-                                <Button
-                                    size="small"
-                                    disabled={rowData.status === "inactive"}
-                                >
+                                <Button size="small" disabled={disabled}>
                                     <Link
                                         href="#"
                                         onClick={(e: {
@@ -295,11 +435,9 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                                         <Typography
                                             variant="caption"
                                             style={{
-                                                color:
-                                                    rowData.status ===
-                                                    "inactive"
-                                                        ? "#c5c5c5"
-                                                        : "#000",
+                                                color: disabled
+                                                    ? "#c5c5c5"
+                                                    : "#000",
                                             }}
                                         >
                                             {/* eslint-disable-next-line react/prop-types */}
@@ -339,6 +477,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                                 return "";
                             };
 
+                            // prettier-ignore
                             return className.length < 1 ||
                                 alphanumeric(className)
                                 ? {
@@ -375,6 +514,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                             );
                         },
                         editComponent: (props: EditComponentProps<any>) => {
+                            // prettier-ignore
                             const value = props.value
                                 ? props.value.map(
                                     (school: School) =>
@@ -457,61 +597,7 @@ function ClasessTable(props: { intl: IntlFormatters }) {
                     },
                 ]}
                 data={classesData}
-                editable={{
-                    isDeletable: (rowData) => rowData.status === "active",
-                    isEditable: (rowData) => rowData.status === "active",
-                    onRowAdd: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            if (
-                                newData.schools.includes(
-                                    constantValues.schoolDefaultValue,
-                                )
-                            ) {
-                                newData.schools = schools.map(
-                                    (item) => item.school_id,
-                                ) as string[];
-                            }
-                            create(newData)
-                                .then((e) => {
-                                    console.log(
-                                        "class created successfully",
-                                        e,
-                                    );
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                    onRowUpdate: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            update(newData)
-                                .then((e) => {
-                                    console.log("class updated succesfully", e);
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                    onRowDelete: (data): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            remove(data)
-                                .then((e) => {
-                                    console.log(
-                                        "class deleted successfully",
-                                        e,
-                                    );
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("catch e", e);
-                                    reject();
-                                });
-                        }),
-                }}
+                editable={editableOptions()}
                 localization={{
                     header: {
                         actions: "",

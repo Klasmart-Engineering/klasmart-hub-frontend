@@ -17,6 +17,7 @@ import { DELETE_SCHOOL } from "../../../operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "../../../operations/mutations/editSchool";
 import { CREATE_SCHOOL } from "../../../operations/mutations/newSchool";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "../../../operations/queries/getSchoolsFromOrganization";
+import { checkAllowed } from "../../../utils/checkAllowed";
 import { constantValues } from "../constants";
 import SnackBarAlert from "../SnackBarAlert/SnackBarAlert";
 
@@ -85,6 +86,15 @@ function SchoolTable(props: { intl: IntlFormatters }) {
         EDIT_SCHOOL,
     );
     const [deleteSchoolMutation] = useMutation(DELETE_SCHOOL);
+    const organization = useReactiveVar(currentMembershipVar);
+    const organization_id = organization.organization_id;
+    const [canCreate, setCanCreate] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
+    const [canDelete, setCanDelete] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const createAllowed = checkAllowed(organization_id, "create_school_20220");
+    const editAllowed = checkAllowed(organization_id, "edit_school_20330");
+    const deleteAllowed = checkAllowed(organization_id, "delete_school_20440");
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === "clickaway") {
@@ -118,6 +128,115 @@ function SchoolTable(props: { intl: IntlFormatters }) {
             setData(schoolArray);
         }
     }, [organizationSchools, loadingSchools]);
+
+    useEffect(() => {
+        if (
+            createAllowed?.me?.membership &&
+            editAllowed?.me?.membership &&
+            deleteAllowed?.me?.membership
+        ) {
+            setCanCreate(
+                _get(createAllowed, "me.membership.checkAllowed", false),
+            );
+            setCanEdit(_get(editAllowed, "me.membership.checkAllowed", false));
+            setCanDelete(
+                _get(deleteAllowed, "me.membership.checkAllowed", false),
+            );
+
+            setIsLoading(false);
+        }
+    }, [createAllowed, editAllowed, deleteAllowed]);
+
+    // prettier-ignore
+    const editableOptions = () => {
+        return canCreate
+            ? {
+                isDeletable: (rowData: any) => rowData.status === "active" && canDelete,
+                isEditable: (rowData: any) => rowData.status === "active" && canEdit,
+                onRowAdd: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        if (newData.grades) {
+                            if (
+                                newData.grades.includes(
+                                    constantValues.allGradesValue,
+                                )
+                            ) {
+                                newData.grades = constantValues.gradesData.map(
+                                    (itemGrade) => itemGrade.id,
+                                );
+                            } else if (
+                                newData.grades.includes(
+                                    constantValues.noSpecificGradeValue,
+                                )
+                            ) {
+                                newData.grades = [];
+                            }
+                        }
+
+                        create(newData)
+                            .then((e) => {
+                                console.log("School created successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("Error at creating school", e);
+                                reject();
+                            });
+                    }),
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("School edited successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("Error at editing school", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(newData)
+                            .then((e) => {
+                                console.log("School removed successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("Error at editing school", e);
+                                reject();
+                            });
+                    }),
+            }
+            : {
+                isDeletable: (rowData: any) => rowData.status === "active" && canDelete,
+                isEditable: (rowData: any) => rowData.status === "active" && canEdit,
+                onRowUpdate: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        update(newData)
+                            .then((e) => {
+                                console.log("School edited successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("Error at editing school", e);
+                                reject();
+                            });
+                    }),
+                onRowDelete: (newData: any): Promise<void> =>
+                    new Promise((resolve, reject) => {
+                        remove(newData)
+                            .then((e) => {
+                                console.log("School removed successfully", e);
+                                resolve();
+                            })
+                            .catch((e) => {
+                                console.log("Error at editing school", e);
+                                reject();
+                            });
+                    }),
+            };
+    };
 
     const create = async (school: School): Promise<void> => {
         try {
@@ -188,7 +307,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
         <div className={classes.containerTable}>
             <MaterialTable
                 icons={constantValues.tableIcons}
-                isLoading={loadingSchools || editSchoolLoading}
+                isLoading={loadingSchools || editSchoolLoading || isLoading}
                 options={{
                     headerStyle: {
                         backgroundColor: "#fff",
@@ -215,6 +334,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                         ):
                             | boolean
                             | { isValid: boolean; helperText: string } => {
+                            // prettier-ignore
                             return rowData.school_name!.length < 1
                                 ? {
                                     helperText: "School name can't be empty",
@@ -374,73 +494,7 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                     },
                 ]}
                 data={dataTable}
-                editable={{
-                    isDeletable: (rowData) => rowData.status === "active",
-                    isEditable: (rowData) => rowData.status === "active",
-                    onRowAdd: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            if (newData.grades) {
-                                if (
-                                    newData.grades.includes(
-                                        constantValues.allGradesValue,
-                                    )
-                                ) {
-                                    newData.grades = constantValues.gradesData.map(
-                                        (itemGrade) => itemGrade.id,
-                                    );
-                                } else if (
-                                    newData.grades.includes(
-                                        constantValues.noSpecificGradeValue,
-                                    )
-                                ) {
-                                    newData.grades = [];
-                                }
-                            }
-
-                            create(newData)
-                                .then((e) => {
-                                    console.log(
-                                        "School created successfully",
-                                        e,
-                                    );
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("Error at creating school", e);
-                                    reject();
-                                });
-                        }),
-                    onRowUpdate: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            update(newData)
-                                .then((e) => {
-                                    console.log(
-                                        "School edited successfully",
-                                        e,
-                                    );
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("Error at editing school", e);
-                                    reject();
-                                });
-                        }),
-                    onRowDelete: (newData): Promise<void> =>
-                        new Promise((resolve, reject) => {
-                            remove(newData)
-                                .then((e) => {
-                                    console.log(
-                                        "School removed successfully",
-                                        e,
-                                    );
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    console.log("Error at editing school", e);
-                                    reject();
-                                });
-                        }),
-                }}
+                editable={editableOptions()}
                 localization={{
                     header: {
                         actions: "",
