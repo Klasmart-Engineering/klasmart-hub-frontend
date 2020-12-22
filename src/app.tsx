@@ -122,7 +122,7 @@ export function App() {
                         />
                     </>} />
                     <Route path="/badanamu-content" render={() => <>
-                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program=program1&content_type=1%2C2&order_by=-update_at&page=1&scope=all`}
+                        <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
                             frameBorder="0"
                             style={{
                                 width: "100%",
