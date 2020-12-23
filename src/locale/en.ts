@@ -157,6 +157,7 @@ const messages: Record<string, string> = {
     users_invitationSent: "Invitation sent to user.",
     users_actionsDeleteTooltip: "Remove all selected users",
     users_errorDisplay: "Error displaying users",
+    users_organizationRoles: "Organization Roles",
     allOrganization_myOrganizations: "My Organizations",
     allOrganization_organizationName: "Organization Name",
     allOrganization_roles: "Role(s)",

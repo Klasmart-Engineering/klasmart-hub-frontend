@@ -411,7 +411,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                 data={dataTable}
                 columns={[
                     {
-                        title: "Given Name",
+                        title: intl.formatMessage({ id: "users_firstName" }),
                         field: "given_name",
                         type: "string",
                         cellStyle: {
@@ -423,7 +423,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         },
                     },
                     {
-                        title: "Family Name",
+                        title: intl.formatMessage({ id: "users_lastName" }),
                         field: "family_name",
                         type: "string",
                         cellStyle: {
@@ -433,7 +433,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         render: (rowData) => <span>{rowData.family_name}</span>,
                     },
                     {
-                        title: "Organization Roles",
+                        title: intl.formatMessage({ id: "users_organizationRoles" }),
                         field: "roles",
                         cellStyle: {
                             width: 140,
