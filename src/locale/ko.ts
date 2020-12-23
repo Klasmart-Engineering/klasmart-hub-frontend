@@ -116,7 +116,7 @@ const messages: Record<string, string> = {
     users_groups: "그룹",
     users_school: "학교",
     users_avatar: "아바타",
-    users_email: "Contact Info",
+    users_contactInfo: "Contact Info",
     users_createDate: "생성시간",
     users_updateDate: "변경시간",
     users_sendInvite: "초대하기",

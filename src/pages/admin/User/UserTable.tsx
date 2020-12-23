@@ -268,8 +268,8 @@ function UserTable(props: { intl: IntlFormatters }) {
             setSnackbarMessage("");
             setOpenSnackbar(false);
 
-            const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined
-            const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined
+            const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined;
+            const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined;
 
             const variables = {
                 organization_id,
@@ -626,7 +626,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         },
                     },
                     {
-                        title: intl.formatMessage({ id: "users_email" }),
+                        title: intl.formatMessage({ id: "users_contactInfo" }),
                         field: "contactInfo",
                         editable: "onAdd",
                         type: "string",
@@ -637,7 +637,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         ),
                         validate: ({contactInfo}) => {
                             if(typeof contactInfo !== "string") { return true; }
-                            return phoneNumberRegex.test(contactInfo) || emailAddressRegex.test(contactInfo)
+                            return phoneNumberRegex.test(contactInfo) || emailAddressRegex.test(contactInfo);
                         }
             
                     },

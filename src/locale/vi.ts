@@ -116,7 +116,7 @@ const messages: Record<string, string> = {
     users_groups: "Các Nhóm",
     users_school: "Trường Học",
     users_avatar: "Hình Đại Diện",
-    users_email: "Contact Info",
+    users_contactInfo: "Contact Info",
     users_createDate: "Ngày Tạo",
     users_updateDate: "Ngày Chỉnh Sửa",
     users_sendInvite: "Gửi Thư Mời",

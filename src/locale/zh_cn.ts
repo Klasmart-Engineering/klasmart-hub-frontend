@@ -116,7 +116,7 @@ const messages: Record<string, string> = {
     users_groups: "用户组",
     users_school: "学校",
     users_avatar: "头像",
-    users_email: "Contact Info",
+    users_contactInfo: "Contact Info",
     users_createDate: "创建日期",
     users_updateDate: "更新日期",
     users_sendInvite: "邀请",

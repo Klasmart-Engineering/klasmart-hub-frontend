@@ -116,7 +116,7 @@ const messages: Record<string, string> = {
     users_groups: "grup",
     users_school: "sekolah",
     users_avatar: "Avatar",
-    users_email: "Contact Info",
+    users_contactInfo: "Contact Info",
     users_createDate: "Tanggal dibuat",
     users_updateDate: "Tanggal diperbarui",
     users_sendInvite: "kirim undangan",
