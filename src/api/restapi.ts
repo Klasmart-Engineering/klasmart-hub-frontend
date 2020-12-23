@@ -15,7 +15,7 @@ export class RestAPI {
         this.store = store as any; // TODO: Fix types
     }
 
-    public async publishedContent(orgId: string, page = 1, pageSize = 100, contentType = "-t", orderBy = "-create_at", path = "") {
+    public async publishedContent(orgId: string, contentType = 2, page = 1, pageSize = 100, orderBy = "-create_at", path = "") {
         const str = queryString.stringify({ org_id: orgId, publish_status: "published", page, page_size: pageSize, content_type: contentType, order_by: orderBy, path });
 
         const response = await this.contentCall("GET", "v1/contents_folders?" + str);

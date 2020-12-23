@@ -223,6 +223,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                 return {
                     avatar: userItems.user.avatar,
                     email: userItems.user.email,
+                    phone: userItems.user.phone,
                     user_id: userItems.user.user_id,
                     given_name: userItems.user.given_name,
                     family_name: userItems.user.family_name,
@@ -424,64 +425,6 @@ function UserTable(props: { intl: IntlFormatters }) {
                         },
                         render: (rowData) => <span>{rowData.family_name}</span>,
                     },
-                    // {
-                    //     title: intl.formatMessage({ id: "users_birthDate" }),
-                    //     field: "birth_year_month",
-                    //     editable: "onAdd",
-                    //     cellStyle: {
-                    //         width: 160,
-                    //         minWidth: 160,
-                    //     },
-                    //     render: (rowData) => (
-                    //         <span>
-                    //             {moment(rowData.birth_year_month).format(
-                    //                 "YYYY-MM",
-                    //             )}
-                    //         </span>
-                    //     ),
-                    //     editComponent: (props: EditComponentProps<any>) => {
-                    //         const value = !props.value
-                    //             ? null
-                    //             : moment(props.value);
-                    //         const hasError = !props.value;
-                    //
-                    //         return (
-                    //             <FormControl fullWidth error={hasError}>
-                    //                 <MuiPickersUtilsProvider
-                    //                     utils={DateFnsUtils}
-                    //                 >
-                    //                     <KeyboardDatePicker
-                    //                         disableToolbar
-                    //                         fullWidth
-                    //                         openTo="year"
-                    //                         format="yyyy-MM"
-                    //                         views={["year", "month"]}
-                    //                         value={value}
-                    //                         onChange={(
-                    //                             e: MaterialUiPickersDate,
-                    //                         ): void => {
-                    //                             props.onChange(e);
-                    //                         }}
-                    //                         KeyboardButtonProps={{
-                    //                             "aria-label": "change date",
-                    //                         }}
-                    //                         TextFieldComponent={({
-                    //                             InputProps,
-                    //                             value,
-                    //                         }) => (
-                    //                             <TextField
-                    //                                 InputProps={InputProps}
-                    //                                 disabled={true}
-                    //                                 value={value}
-                    //                                 placeholder={"YYYY-MM"}
-                    //                             />
-                    //                         )}
-                    //                     />
-                    //                 </MuiPickersUtilsProvider>
-                    //             </FormControl>
-                    //         );
-                    //     },
-                    // },
                     {
                         title: "Organization Roles",
                         field: "roles",
@@ -682,7 +625,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                         type: "string",
                         render: (rowData) => (
                             <div>
-                                <span>{rowData.email}</span>
+                                <span>{rowData.email || rowData.phone }</span>
                             </div>
                         ),
                     },

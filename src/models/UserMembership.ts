@@ -4,6 +4,7 @@ export interface UserMembership {
     user: {
         avatar: string;
         email: string;
+        phone: string;
         user_id: string;
         user_name: string;
         given_name: string;

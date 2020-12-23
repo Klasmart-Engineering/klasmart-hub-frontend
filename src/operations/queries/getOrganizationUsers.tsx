@@ -15,6 +15,7 @@ export const GET_ORGANIZATION_USERS = gql`
                         user_id
                         user_name
                         email
+                        phone
                         avatar
                     }
                     roles {
@@ -43,6 +44,7 @@ export const GET_ORGANIZATION_USERS = gql`
                     given_name
                     family_name
                     email
+                    phone
                     avatar
                 }
                 roles {
