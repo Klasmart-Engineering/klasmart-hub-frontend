@@ -89,11 +89,11 @@ function ClasessTable(props: { intl: IntlFormatters }) {
     const deleteAllowed = checkAllowed(organization_id, "delete_class_20444");
     const addTeacherAllowed = checkAllowed(
         organization_id,
-        "delete_class_20444",
+        "add_teachers_to_class_20226",
     );
     const addStudentAllowed = checkAllowed(
         organization_id,
-        "delete_class_20444",
+        "add_students_to_class_20225",
     );
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
