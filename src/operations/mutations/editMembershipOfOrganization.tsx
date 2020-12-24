@@ -3,7 +3,8 @@ import { gql } from "@apollo/client";
 export const EDIT_MEMBERSHIP_OF_ORGANIZATION = gql`
     mutation invite(
         $organization_id: ID!
-        $email: String!
+        $email: String
+        $phone: String
         $given_name: String
         $family_name: String
         $organization_role_ids: [ID!]!
@@ -13,6 +14,7 @@ export const EDIT_MEMBERSHIP_OF_ORGANIZATION = gql`
         organization(organization_id: $organization_id) {
         editMembership(
             email: $email
+            phone: $phone
             given_name: $given_name
             family_name: $family_name
             organization_role_ids: $organization_role_ids

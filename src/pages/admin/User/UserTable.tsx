@@ -25,6 +25,7 @@ import { useSchools } from "./hooks/useSchools";
 import { useUserRoles } from "./hooks/useUserRoles";
 import { useStyles } from "./userMaterialStyles";
 import { checkAllowed } from "../../../utils/checkAllowed";
+import { emailAddressRegex, phoneNumberRegex } from "../../../utils/validations";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -231,7 +232,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                     schools,
                     school_roles,
                     status: userItems.status,
-                };
+                } as FormData;
             });
 
             setData(userArray);
@@ -258,18 +259,22 @@ function UserTable(props: { intl: IntlFormatters }) {
     const create = async (formData: FormData): Promise<void> => {
         try {
             const {
-                email,
                 given_name,
                 family_name,
+                contactInfo,
                 roles,
                 schools: schoolsSelected,
             } = formData;
             setSnackbarMessage("");
             setOpenSnackbar(false);
 
+            const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined
+            const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined
+
             const variables = {
                 organization_id,
                 email,
+                phone,
                 given_name,
                 family_name,
                 organization_role_ids: roles,
@@ -301,6 +306,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                 given_name,
                 family_name,
                 email,
+                phone,
                 roles: rolesSelected,
                 schools: schoolsSelected,
             } = formData;
@@ -335,6 +341,7 @@ function UserTable(props: { intl: IntlFormatters }) {
             const variables = {
                 organization_id,
                 email,
+                phone,
                 given_name,
                 family_name,
                 organization_role_ids,
@@ -620,7 +627,7 @@ function UserTable(props: { intl: IntlFormatters }) {
                     },
                     {
                         title: intl.formatMessage({ id: "users_email" }),
-                        field: "email",
+                        field: "contactInfo",
                         editable: "onAdd",
                         type: "string",
                         render: (rowData) => (
@@ -628,6 +635,11 @@ function UserTable(props: { intl: IntlFormatters }) {
                                 <span>{rowData.email || rowData.phone }</span>
                             </div>
                         ),
+                        validate: ({contactInfo}) => {
+                            if(typeof contactInfo !== "string") { return true; }
+                            return phoneNumberRegex.test(contactInfo) || emailAddressRegex.test(contactInfo)
+                        }
+            
                     },
                     {
                         title: intl.formatMessage({
