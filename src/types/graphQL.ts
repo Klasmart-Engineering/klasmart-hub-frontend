@@ -6,6 +6,7 @@ export interface User {
     user_id: string
     user_name?: string | null
     email?: string | null
+    phone?: string | null
     avatar?: string | null
     memberships?: Membership[] | null,
     my_organization?: Organization | null,

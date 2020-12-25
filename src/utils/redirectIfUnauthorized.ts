@@ -46,7 +46,10 @@ export async function redirectIfUnauthorized(
         userProfileVar({
             user_id: me.user_id,
             user_name: me.user_name,
+            given_name: me.given_name,
+            family_name: me.family_name,
             email: me.email,
+            phone: me.phone,
             avatar: me.avatar,
         });
         userIdVar(me.user_id);

@@ -222,7 +222,7 @@ export default function UserSettings(props: Props) {
                         variant="body2"
                         className={classes.userEmail}
                     >
-                        {user?.email}
+                        {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
                 {!loading && !error && isEmptyMembership === "" &&
