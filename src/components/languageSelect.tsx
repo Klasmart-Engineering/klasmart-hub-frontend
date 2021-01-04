@@ -46,7 +46,6 @@ export interface Language {
     text: string;
 }
 
-// tslint:disable:object-literal-sort-keys
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         language: {

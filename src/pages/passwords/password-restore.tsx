@@ -22,7 +22,6 @@ import KidsloopLogo from "../../assets/img/kidsloop.svg";
 import { Passwords } from "./passwords";
 import Link from "@material-ui/core/Link";
 
-// tslint:disable:object-literal-sort-keys
 const useStyles = makeStyles((theme: Theme) => createStyles(
     {
         link: {
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
     }
 ));
 
-// tslint:enable:object-literal-sort-keys
 export function PasswordRestore(props: RouteComponentProps) {
     const [inFlight, setInFlight] = useState(false);
     const params = QueryString.parse(props.location.search);

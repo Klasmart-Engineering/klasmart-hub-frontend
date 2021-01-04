@@ -409,9 +409,7 @@ export const account = combineReducers({
     passes,
     productId,
     // Testing
-    // tslint:disable:object-literal-sort-keys
     unstableConnection,
-    // tslint:enable:object-literal-sort-keys
 });
 
 export const ui = combineReducers({

@@ -10,7 +10,6 @@ import FireFoxLogo from "../assets/img/browsers/logo-firefox.png";
 import OperaLogo from "../assets/img/browsers/logo-opera.png";
 import SafariLogo from "../assets/img/browsers/logo-safari.png";
 
-// tslint:disable:object-literal-sort-keys
 const useStyles = makeStyles((theme) => createStyles({
     card: {
         padding: "48px 40px !important",
@@ -28,7 +27,6 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }),
 );
-// tslint:enable:object-literal-sort-keys
 
 function detectIE() {
     const ua = window.navigator.userAgent;
