@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Delete } from "@material-ui/icons";
+import { useSnackbar } from "kidsloop-px";
 import _get from "lodash/get";
 import MaterialTable, { EditComponentProps } from "material-table";
 import React, { useEffect, useState } from "react";
@@ -19,7 +20,6 @@ import { CREATE_SCHOOL } from "../../../operations/mutations/newSchool";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "../../../operations/queries/getSchoolsFromOrganization";
 import { checkAllowed } from "../../../utils/checkAllowed";
 import { constantValues } from "../constants";
-import SnackBarAlert from "../SnackBarAlert/SnackBarAlert";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -76,11 +76,9 @@ const useStyles = makeStyles(() => ({
 function SchoolTable(props: { intl: IntlFormatters }) {
     const { intl } = props;
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
     const [dataTable, setData] = useState<School[]>([]);
     const [createSchool] = useMutation(CREATE_SCHOOL);
-    const [messageSnackBar, setMessageSnackBar] = useState("");
-    const [severityBar, setSeverityBar] = useState("");
-    const [open, setOpen] = useState(false);
     const membership = useReactiveVar(currentMembershipVar);
     const [editSchool, { loading: editSchoolLoading }] = useMutation(
         EDIT_SCHOOL,
@@ -95,13 +93,6 @@ function SchoolTable(props: { intl: IntlFormatters }) {
     const createAllowed = checkAllowed(organization_id, "create_school_20220");
     const editAllowed = checkAllowed(organization_id, "edit_school_20330");
     const deleteAllowed = checkAllowed(organization_id, "delete_school_20440");
-
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setOpen(false);
-    };
 
     const {
         data: organizationSchools,
@@ -248,15 +239,10 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                     school_name,
                 },
             });
-
+            enqueueSnackbar("School has been created successfully", { variant: "success" });
             await refetch();
-            setMessageSnackBar("School has been created successfully");
-            setSeverityBar("success");
-            setOpen(true);
         } catch (error) {
-            setMessageSnackBar("An error occurred while creating the School");
-            setSeverityBar("error");
-            setOpen(true);
+            enqueueSnackbar("An error occurred while creating the School", { variant: "error" });
         }
     };
 
@@ -272,13 +258,9 @@ function SchoolTable(props: { intl: IntlFormatters }) {
             });
 
             await refetch();
-            setMessageSnackBar("School has been updated successfully");
-            setSeverityBar("success");
-            setOpen(true);
+            enqueueSnackbar("School has been updated successfully", { variant: "success" });
         } catch (error) {
-            setMessageSnackBar("An error occurred while updating the School");
-            setSeverityBar("error");
-            setOpen(true);
+            enqueueSnackbar("An error occurred while updating the School", { variant: "error" });
         }
     };
 
@@ -293,13 +275,9 @@ function SchoolTable(props: { intl: IntlFormatters }) {
             });
 
             await refetch();
-            setMessageSnackBar("School has been removed successfully");
-            setSeverityBar("success");
-            setOpen(true);
+            enqueueSnackbar("School has been removed successfully", { variant: "success" });
         } catch (error) {
-            setMessageSnackBar("An error occurred while removing the School");
-            setSeverityBar("error");
-            setOpen(true);
+            enqueueSnackbar("An error occurred while removing the School", { variant: "error" });
         }
     };
 
@@ -574,13 +552,6 @@ function SchoolTable(props: { intl: IntlFormatters }) {
                             ),
                     },
                 ]}
-            />
-
-            <SnackBarAlert
-                open={open}
-                onClose={handleClose}
-                message={messageSnackBar}
-                severity={severityBar}
             />
         </div>
     );

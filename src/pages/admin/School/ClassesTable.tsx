@@ -8,7 +8,7 @@ import Link from "@material-ui/core/Link";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from "@material-ui/icons";
 import clsx from "clsx";
-import { BaseTable } from "kidsloop-px";
+import { BaseTable, useSnackbar } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
@@ -53,6 +53,7 @@ interface Props {
 export default function ClasessTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const canCreate = getPermissionState(organization_id, "create_class_20224");
@@ -99,8 +100,13 @@ export default function ClasessTable (props: Props) {
         const selectedClass = findClass(row);
         if (!selectedClass) return;
         if (!confirm(`Are you sure you want to delete "${selectedClass.class_name}"?`)) return;
-        await deleteClass(selectedClass.class_id);
-        refetch();
+        try {
+            await deleteClass(selectedClass.class_id);
+            refetch();
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedMessage" }), { variant: "success" })
+        } catch (err) {
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedError" }), { variant: "error" })
+        }
     };
 
     const columns: TableColumn<ClassRow>[] = [

@@ -4,7 +4,7 @@ export interface FormValues {
   address2: string | null;
   email: string;
   phone: string;
-  logo: object;
+  logo: Record<string, unknown>;
   shortCode: string;
   color: string;
 }

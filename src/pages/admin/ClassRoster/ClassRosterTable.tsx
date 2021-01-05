@@ -3,6 +3,7 @@ import { TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Delete } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
+import { useSnackbar } from "kidsloop-px";
 import _get from "lodash/get";
 import MaterialTable, { EditComponentProps } from "material-table";
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -21,7 +22,6 @@ import {
 } from "../../../operations/queries/getEligibleUsers";
 import { ParameterHOC } from "../../../utils/history";
 import { constantValues } from "../constants";
-import SnackBarAlert from "../SnackBarAlert/SnackBarAlert";
 
 const useStyles = makeStyles((theme) => ({
     containerTable: {
@@ -59,25 +59,16 @@ interface ClassRosterSchool {
 function ClassRosterTable(props: { intl: IntlFormatters }) {
     const { intl } = props;
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
     const { classId } = ParameterHOC();
     const teacherRole = "Teacher";
     const studentRole = "Student";
     const [dataTable, setData] = useState<User[]>([]);
-    const [messageSnackBar, setMessageSnackBar] = useState("");
-    const [severityBar, setSeverityBar] = useState("");
-    const [open, setOpen] = useState(false);
     const [addTeacherToClass] = useMutation(ADD_TEACHER_TO_CLASS);
     const [addStudentToClass] = useMutation(ADD_STUDENT_TO_CLASS);
     const [removeTeacherFromClass] = useMutation(REMOVE_TEACHER_FROM_CLASS);
     const [removeStudentFromClass] = useMutation(REMOVE_STUDENT_FROM_CLASS);
     const [users, setUsers] = useState<User[]>([]);
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setOpen(false);
-    };
-
     const { data: classUsers, refetch, loading: loadingTableUsers } = useQuery(
         GET_CLASS_USERS,
         {
@@ -256,17 +247,9 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
             }
 
             await refetch();
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classRoster_userAddedMessage" }),
-            );
-            setSeverityBar("success");
-            setOpen(true);
+            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userAddedMessage" }), { variant: "success" });
         } catch (error) {
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classRoster_userAddedError" }),
-            );
-            setSeverityBar("error");
-            setOpen(true);
+            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userAddedError" }), { variant: "error" });
         }
     };
 
@@ -293,18 +276,9 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
             }
 
             await refetch();
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classRoster_userRemovedMessage" }),
-            );
-            setSeverityBar("success");
+            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userRemovedMessage" }), { variant: "success" });
         } catch (e) {
-            console.error(e);
-            setMessageSnackBar(
-                intl.formatMessage({ id: "classRoster_userRemovedError" }),
-            );
-            setSeverityBar("error");
-        } finally {
-            setOpen(true);
+            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userRemovedError" }), { variant: "error" });
         }
     };
 
@@ -556,13 +530,6 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                             ),
                     },
                 ]}
-            />
-
-            <SnackBarAlert
-                open={open}
-                onClose={handleClose}
-                message={messageSnackBar}
-                severity={severityBar}
             />
         </div>
     );

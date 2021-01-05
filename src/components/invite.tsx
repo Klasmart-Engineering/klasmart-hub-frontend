@@ -1,16 +1,15 @@
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
-import Snackbar from "@material-ui/core/Snackbar";
-import { useTheme } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { ContentCopy as CopyIcon } from "@styled-icons/material/ContentCopy";
-import React, { useEffect, useRef, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { useSnackbar } from "kidsloop-px";
+import React, { useEffect, useRef } from "react";
+import { useIntl } from "react-intl";
 import StyledTextField from "../components/styled/textfield";
 
 export default function InviteButton({ url }: { url: string }): JSX.Element {
-    const [openSnackbar, toggleSnackbar] = useState(false);
-
+    const { enqueueSnackbar } = useSnackbar();
+    const intl = useIntl();
     const textField = useRef<HTMLInputElement>(null);
 
     const selectShareLinkText = async (e: MouseEvent) => {
@@ -50,7 +49,7 @@ export default function InviteButton({ url }: { url: string }): JSX.Element {
                                         if (!textField.current) { return; }
                                         textField.current.select();
                                         document.execCommand("copy");
-                                        toggleSnackbar(true);
+                                        enqueueSnackbar(intl.formatMessage({ id: "copy_clipboard" }));
                                     }}
                                 >
                                     <CopyIcon size="1rem" color="#0E78D5" />
@@ -65,16 +64,6 @@ export default function InviteButton({ url }: { url: string }): JSX.Element {
                     }}
                 />
             </Grid>
-            <Snackbar
-                anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                }}
-                open={openSnackbar}
-                autoHideDuration={3000}
-                onClose={() => toggleSnackbar(false)}
-                message={<FormattedMessage id="copy_clipboard" />}
-            />
         </>
     );
 }

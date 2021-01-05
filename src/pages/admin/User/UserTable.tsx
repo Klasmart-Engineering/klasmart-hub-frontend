@@ -1,11 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useReactiveVar } from "@apollo/client/react";
-import { OutlinedInput, Snackbar } from "@material-ui/core";
+import { OutlinedInput } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { Delete, Publish } from "@material-ui/icons";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import _get from "lodash/get";
 import MaterialTable, { EditComponentProps } from "material-table";
 import React, { useEffect, useState } from "react";
@@ -26,6 +25,7 @@ import { useUserRoles } from "./hooks/useUserRoles";
 import { useStyles } from "./userMaterialStyles";
 import { checkAllowed } from "../../../utils/checkAllowed";
 import { emailAddressRegex, phoneNumberRegex } from "../../../utils/validations";
+import { useSnackbar } from "kidsloop-px";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -38,36 +38,17 @@ const menuProps = {
     },
 };
 
-function Alert(props: AlertProps) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 /**
  * Returns function to show Users table for "View Users" section
  */
 function UserTable(props: { intl: IntlFormatters }) {
     const { intl } = props;
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
     const [dataTable, setData] = useState<FormData[]>([]);
     const { roles, setRoles } = useUserRoles();
     const { setSchoolRoles } = useSchoolRoles();
     const { schools, setSchools } = useSchools();
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [snackbarSeverity, setSnackbarSeverity] = useState<
-        "success" | "info" | "warning" | "error" | undefined
-    >("success");
-
-    const handleSnackbarClose = (
-        event?: React.SyntheticEvent,
-        reason?: string,
-    ) => {
-        if (reason === "clickaway") {
-            return;
-        }
-
-        setOpenSnackbar(false);
-    };
     const userId = useReactiveVar(userIdVar);
     const organization = useReactiveVar(currentMembershipVar);
     const organization_id = organization.organization_id;
@@ -265,8 +246,6 @@ function UserTable(props: { intl: IntlFormatters }) {
                 roles,
                 schools: schoolsSelected,
             } = formData;
-            setSnackbarMessage("");
-            setOpenSnackbar(false);
 
             const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined;
             const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined;
@@ -287,21 +266,14 @@ function UserTable(props: { intl: IntlFormatters }) {
 
             await refetch();
 
-            setSnackbarSeverity("success");
-            setSnackbarMessage("The user has been created successfully");
+            enqueueSnackbar("The user has been created successfully", { variant: "success" });
         } catch (error) {
-            console.log(error);
-            setSnackbarMessage("An error occurred while creating the user");
-            setSnackbarSeverity("error");
-        } finally {
-            setOpenSnackbar(true);
+            enqueueSnackbar("An error occurred while creating the user", { variant: "error" });
         }
     };
 
     const update = async (formData: FormData): Promise<void> => {
         try {
-            setSnackbarMessage("");
-            setOpenSnackbar(false);
             const {
                 given_name,
                 family_name,
@@ -354,21 +326,14 @@ function UserTable(props: { intl: IntlFormatters }) {
 
             await refetch();
 
-            setSnackbarSeverity("success");
-            setSnackbarMessage("The user has been edited successfully");
+            enqueueSnackbar("The user has been edited successfully", { variant: "success" });
         } catch (error) {
-            console.log(error);
-            setSnackbarMessage("An error occurred while editing the user");
-            setSnackbarSeverity("error");
-        } finally {
-            setOpenSnackbar(true);
+            enqueueSnackbar("An error occurred while editing the user", { variant: "error" });
         }
     };
 
     const remove = async (formData: FormData): Promise<void> => {
         try {
-            setSnackbarMessage("");
-            setOpenSnackbar(false);
             const { user_id } = formData;
 
             const variables = {
@@ -382,14 +347,9 @@ function UserTable(props: { intl: IntlFormatters }) {
 
             await refetch();
 
-            setSnackbarSeverity("success");
-            setSnackbarMessage("The user has been removed successfully");
+            enqueueSnackbar("The user has been removed successfully", { variant: "success" });
         } catch (error) {
-            console.log(error);
-            setSnackbarMessage("An error occurred while removing the user");
-            setSnackbarSeverity("error");
-        } finally {
-            setOpenSnackbar(true);
+            enqueueSnackbar("An error occurred while removing the user", { variant: "error" });
         }
     };
 
@@ -753,18 +713,6 @@ function UserTable(props: { intl: IntlFormatters }) {
                 ]}
                 editable={editableOptions()}
             />
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={1000}
-                onClose={handleSnackbarClose}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={snackbarSeverity}
-                >
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
         </div>
     );
 }

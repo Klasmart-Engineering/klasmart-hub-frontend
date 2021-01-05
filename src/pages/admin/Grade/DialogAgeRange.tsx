@@ -8,10 +8,9 @@ import {
     FormControlLabel,
     Radio,
     RadioGroup,
-    Snackbar,
     TextField,
 } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import { useSnackbar } from "kidsloop-px";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 
@@ -30,7 +29,7 @@ function SimpleDialog(props: any) {
     const [maxValue, setMaxValue] = useState(0);
     const [fromRadio, setValueFrom] = useState("months");
     const [toRadio, setValueTo] = useState("months");
-    const [open, setOpen] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleChangeRadioFrom = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -82,12 +81,8 @@ function SimpleDialog(props: any) {
                 { type: toRadio, value: maxValue },
             ]);
         } else {
-            setOpen(true);
+            enqueueSnackbar("Invalid age range", { variant: "warning" });
         }
-    };
-
-    const handleCloseAlert = () => {
-        setOpen(false);
     };
 
     return (
@@ -129,7 +124,6 @@ function SimpleDialog(props: any) {
                                         labelPlacement="top"
                                     />
                                 </RadioGroup>
-
                                 <TextField
                                     id="txtFrom"
                                     inputProps={{ min: "0", max: "99", step: "" }}
@@ -187,19 +181,13 @@ function SimpleDialog(props: any) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleAcceptClick} color="primary">
-            Ok
+                        Ok
                     </Button>
                     <Button onClick={handleClose} color="primary" autoFocus>
-            Cancel
+                        Cancel
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar open={open} autoHideDuration={4000} onClose={handleCloseAlert}>
-                <Alert onClose={handleCloseAlert} severity="warning">
-          Invalid age range
-                </Alert>
-            </Snackbar>
         </>
     );
 }
