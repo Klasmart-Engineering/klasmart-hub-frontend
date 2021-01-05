@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const UnusedWebpackPlugin = require("unused-webpack-plugin");
 
 module.exports = {
     mode: "development",
@@ -89,7 +90,15 @@ module.exports = {
             "AUTH_ENDPOINT": "https://auth.kidsloop.net/",
             "LIVE_ENDPOINT": "https://live.kidsloop.net/",
             "COOKIE_DOMAIN": "kidsloop.net",
-        })
+        }),
+        new UnusedWebpackPlugin({
+            // Source directories
+            directories: [path.join(__dirname, "src")],
+            // Exclude patterns
+            exclude: ["/assets/*"],
+            // Root directory (optional)
+            root: __dirname,
+        }),
     ],
     devServer: {
         host: "fe.kidsloop.net",

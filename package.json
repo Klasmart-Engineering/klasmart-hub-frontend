@@ -131,6 +131,7 @@
     "styled-components": "5.2.1",
     "subscriptions-transport-ws": "^0.9.16",
     "typeface-nanum-square-round": "^1.0.2",
+    "unused-webpack-plugin": "2.4.0",
     "uuid": "^8.1.0",
     "uuidv4": "^6.1.0"
   }
