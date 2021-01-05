@@ -22,7 +22,7 @@ import { Provider, useSelector } from "react-redux";
 import { HashRouter, Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { cache } from "./cache";
-import { getKLAPIEndpoint } from "./config";
+import { getAPIEndpoint } from "./config";
 import { Layout } from "./layout";
 import { createDefaultStore, State } from "./store/store";
 import { themeProvider } from "./themeProvider";
@@ -32,7 +32,7 @@ import { getLanguage } from "./utils/locale";
 
 const link = createUploadLink({
     credentials: "include",
-    uri: `${getKLAPIEndpoint()}user/`,
+    uri: `${getAPIEndpoint()}user/`,
 });
 
 export const client = new ApolloClient({

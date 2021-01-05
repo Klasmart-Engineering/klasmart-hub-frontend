@@ -1,5 +1,5 @@
 import queryString from "query-string";
-import { getKLAPIEndpoint, getKLAuthEndpoint } from "../config";
+import { getAPIEndpoint, getAuthEndpoint } from "../config";
 
 interface User {
     avatar: string;
@@ -21,7 +21,7 @@ export async function redirectIfUnauthorized(continueParam?: string) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     headers.append("Content-Type", "application/json");
-    const response = await fetch(`${getKLAPIEndpoint()}user/`, {
+    const response = await fetch(`${getAPIEndpoint()}user/`, {
         body: JSON.stringify({ query: GET_SELF }),
         credentials: "include",
         headers,
@@ -34,9 +34,9 @@ export async function redirectIfUnauthorized(continueParam?: string) {
             const me: User = response.data.me;
             // console.log(me);
             if (me === null) {
-                if (window.location.origin === getKLAuthEndpoint()) { return; }
+                if (window.location.origin === getAuthEndpoint()) { return; }
                 const stringifiedQuery = queryString.stringify({ continue: continueParam ? continueParam : window.location.href });
-                window.location.href = `${getKLAuthEndpoint()}?${stringifiedQuery}#/`;
+                window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
             }
             return;
         });

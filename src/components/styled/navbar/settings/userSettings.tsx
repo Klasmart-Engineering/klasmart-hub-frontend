@@ -20,7 +20,7 @@ import { FormattedMessage } from "react-intl";
 import { currentMembershipVar } from "../../../../cache";
 import { User } from "../../../../types/graphQL";
 import { getHighestRole } from "../../../../utils/userRoles";
-import { getKLAuthEndpoint } from "../../../../config";
+import { getAuthEndpoint } from "../../../../config";
 import LanguageSelect from "../../../languageSelect";
 import StyledButton from "../../button";
 import CreateOrganizationDialog from "./createOrganization";
@@ -116,14 +116,14 @@ export default function UserSettings(props: Props) {
             const headers = new Headers();
             headers.append("Accept", "application/json");
             headers.append("Content-Type", "application/json");
-            await fetch(`${getKLAuthEndpoint()}signout`, {
+            await fetch(`${getAuthEndpoint()}signout`, {
                 credentials: "include",
                 headers,
                 method: "GET",
             })
                 .then(() => {
                     const stringifiedQuery = queryString.stringify({ continue: window.location.href });
-                    window.location.href = `${getKLAuthEndpoint()}?${stringifiedQuery}#/`;
+                    window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
                 });
         } catch (e) {
             console.error(e);

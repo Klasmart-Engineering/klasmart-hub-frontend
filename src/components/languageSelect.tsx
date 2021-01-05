@@ -12,6 +12,7 @@ import { FormattedMessage } from "react-intl";
 import { useSelector, useStore } from "react-redux";
 import { ActionTypes } from "../store/actions";
 import { State } from "../store/store";
+import { getCookieDomain } from "../config";
 
 const LANGUAGES_LABEL: Language[] = [
     {
@@ -84,7 +85,8 @@ export default function LanguageSelect(props: Props) {
 
     function languageSelect(language: { code: string, text: string }) {
         store.dispatch({ type: ActionTypes.LOCALE, payload: language.code });
-        Cookies.set("locale", language.code, { domain: "kidsloop.net" });
+        Cookies.set("locale", language.code, { domain: getCookieDomain() });
+        console.log(getCookieDomain());
         setLanguageText(language.text);
         setLanguageMenuElement(null);
     }

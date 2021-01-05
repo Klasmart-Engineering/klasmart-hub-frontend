@@ -89,19 +89,11 @@ module.exports = {
         }),
         new webpack.EnvironmentPlugin({
             "STAGE": "inhouse",
-            "CALM_ORG_ID": "CALM-ISLAND-QA",
-            "PAYMENT_ENDPOINT": "https://payment.internal.badanamu.net/",
-            "AUTH_ENDPOINT": "https://auth.internal.badanamu.net/",
-            "ACCOUNT_ENDPOINT": "https://account.internal.badanamu.net/",
-            "PRODUCT_ENDPOINT": "https://product.internal.badanamu.net/",
-            "REGION_ENDPOINT": "https://region.internal.badanamu.net/",
-            "ORGANIZATION_ENDPOINT": "https://organization-api.internal.badanamu.net/",
-            "ASSESSMENT_ENDPOINT": "https://assessment-api.internal.badanamu.net/",
-            "DEFAULT_PROG_ID": "KIDSLOOP-2.0",
             "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
-            "KL_API_ENDPOINT": "https://api.kidsloop.net/",
-            "KL_AUTH_ENDPOINT": "https://auth.kidsloop.net/",
-            "KL_LIVE_ENDPOINT": "https://live.kidsloop.net/",
+            "API_ENDPOINT": "https://api.kidsloop.net/",
+            "AUTH_ENDPOINT": "https://auth.kidsloop.net/",
+            "LIVE_ENDPOINT": "https://live.kidsloop.net/",
+            "COOKIE_DOMAIN": "kidsloop.net",
         })
     ],
     devServer: {

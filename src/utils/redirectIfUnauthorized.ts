@@ -1,7 +1,7 @@
 import { print } from "graphql";
 import queryString from "querystring";
 import { userIdVar, userProfileVar } from "../cache";
-import { getKLAPIEndpoint, getKLAuthEndpoint } from "../config";
+import { getAPIEndpoint, getAuthEndpoint } from "../config";
 import { IUserProfile } from "../models/UserProfile";
 import { ME } from "../operations/queries/me";
 
@@ -13,27 +13,26 @@ export async function redirectIfUnauthorized(
         const session = await refreshToken();
 
         if (!session) {
-            if (window.location.origin === getKLAuthEndpoint()) {
+            if (window.location.origin === getAuthEndpoint()) {
                 return;
             }
             const stringifiedQuery = queryString.stringify({
                 continue: continueParam ? continueParam : window.location.href,
             });
-            window.location.href = `${getKLAuthEndpoint()}?${stringifiedQuery}#/`;
+            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
             return;
         }
 
         const headers = new Headers();
         headers.append("Accept", "application/json");
         headers.append("Content-Type", "application/json");
-        const request = await fetch(`${getKLAPIEndpoint()}user/`, {
+        const request = await fetch(`${getAPIEndpoint()}user/`, {
             body: JSON.stringify({ query: print(ME) }),
             credentials: "include",
             headers,
             method: "POST",
         });
         const data = await request.json();
-        console.log(data);
 
         if (!data?.data?.me || !request.ok) {
             if (retry) {
@@ -65,7 +64,7 @@ export async function refreshToken() {
         const headers = new Headers();
         headers.append("Accept", "application/json");
         headers.append("Content-Type", "application/json");
-        const request = await fetch(`${getKLAuthEndpoint()}refresh`, {
+        const request = await fetch(`${getAuthEndpoint()}refresh`, {
             credentials: "include",
             headers,
             method: "GET",
@@ -80,11 +79,6 @@ export async function refreshToken() {
         if (expirationTimer) {
             clearTimeout(expirationTimer);
         }
-
-        // console.log("targetDuration: ", targetDuration);
-        // console.log("response.exp: ", response.exp);
-        // console.log("Date now: ", Date.now());
-        // console.log("> 0");
 
         expirationTimer = setTimeout(
             () => refreshToken(),

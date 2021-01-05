@@ -18,7 +18,7 @@ import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar } from "../../../cache";
 import InviteButton from "../../../components/invite";
 import StyledFAB from "../../../components/styled/fabButton";
-import { getCNEndpoint, getKLLiveEndpoint } from "../../../config";
+import { getCNEndpoint, getLiveEndpoint } from "../../../config";
 import { LivePreviewJWT, PublishedContentItem } from "../../../types/objectTypes";
 import {history} from "../../../utils/history";
 
@@ -116,7 +116,7 @@ export default function PlanSelection() {
     }, [lessonPlan]);
 
     function goLive() {
-        const liveLink = `${getKLLiveEndpoint()}class-live/?token=${liveToken}`;
+        const liveLink = `${getLiveEndpoint()}class-live/?token=${liveToken}`;
         window.open(liveLink);
     }
 

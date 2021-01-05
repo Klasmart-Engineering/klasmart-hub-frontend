@@ -114,6 +114,7 @@ export function App() {
                     <Route path="/" exact render={() => <Home />} />
                     <Route path="/library" render={() => <>
                         <iframe src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
+                            allow="microphone"
                             frameBorder="0"
                             style={{
                                 width: "100%",
