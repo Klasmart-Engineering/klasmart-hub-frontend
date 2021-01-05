@@ -202,7 +202,7 @@ const messages: Record<string, string> = {
     addOrganization_organizationColorLabel: "기관 색상",
     addOrganization_saveButtonLabel: "저장",
     addOrganization_cancelButtonLabel: "취소",
-    addOrganization_nameOfOrganizationPlaceholder: "공색 기관명",
+    addOrganization_nameOfOrganizationPlaceholder: "공식 기관명",
     addOrganization_addressPlaceholder: "기관 주소",
     addOrganization_emailAddressPlaceholder: "기관 이메일",
     addOrganization_organizationShortCodePlaceholder: "기관 코드",
