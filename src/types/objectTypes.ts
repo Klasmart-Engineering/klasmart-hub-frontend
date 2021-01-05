@@ -92,6 +92,7 @@ export interface MenuItem {
     link: string;
     logo: JSX.Element;
     title: JSX.Element;
+    disabled?: boolean;
 }
 
 export type LibraryContentType = "OwnedContent" | "Marketplace";

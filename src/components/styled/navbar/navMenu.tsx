@@ -29,6 +29,7 @@ import { School as SchoolIcon } from "@styled-icons/material-twotone/School";
 import { Security as SecurityIcon } from "@styled-icons/material-twotone/Security";
 import { StackedLineChart as AssessmentIcon } from "@styled-icons/material-twotone/StackedLineChart";
 import { TableChart as TableIcon } from "@styled-icons/material-twotone/TableChart";
+import { useSnackbar } from "kidsloop-px";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -54,68 +55,50 @@ interface MenuItemProps {
     content: MenuItem;
 }
 
-function Alert(props: AlertProps) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 function MenuButton(props: MenuItemProps) {
+    const {
+        content
+    } = props;
     const classes = useStyles();
 
-    const [open, setOpen] = React.useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+
     const handleClick = () => {
-        setOpen(true);
-    };
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === "clickaway") {
-            return;
+        if (content.disabled) {
+            enqueueSnackbar("This is currently planned for a future release!", {
+                variant: "info",
+            });
         }
-        setOpen(false);
     };
 
-    return (
-        <>
-            <Button
-                fullWidth
-                className={classes.menuButton}
-                onClick={handleClick}
-            >
-                <Grid
-                    container
-                    direction="column"
-                    justify="flex-start"
-                    alignItems="center"
-                    spacing={2}
+    return <Button
+        fullWidth
+        className={classes.menuButton}
+        onClick={handleClick}
+    >
+        <Grid
+            container
+            direction="column"
+            justify="flex-start"
+            alignItems="center"
+            spacing={2}
+        >
+            <Grid item>
+                {props.content.logo}
+            </Grid>
+            <Grid item>
+                <Typography variant="body1">
+                    {props.content.title}
+                </Typography>
+                <Typography
+                    variant="caption"
+                    style={{ color: "rgba(0, 0, 0, 0.6)" }}
                 >
-                    <Grid item>
-                        {props.content.logo}
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="body1">
-                            {props.content.title}
-                        </Typography>
-                        <Typography
-                            variant="caption"
-                            style={{ color: "rgba(0, 0, 0, 0.6)" }}
-                        >
-                            {props.content.description}
-                        </Typography>
-                    </Grid>
-                </Grid>
-            </Button>
-            <Snackbar
-                open={open}
-                autoHideDuration={3000}
-                onClose={handleClose}
-            >
-                <Alert
-                    onClose={handleClose}
-                    severity="info"
-                >
-                    This is currently planned for a future release!
-                </Alert>
-            </Snackbar>
-        </>
-    );
+                    {props.content.description}
+                </Typography>
+            </Grid>
+        </Grid>
+    </Button>;
 }
 
 const Motion = React.forwardRef(function Transition(
@@ -199,6 +182,7 @@ export default function NavMenu(props: Props) {
             link: "#",
             logo: <CardIcon size="48px" style={{ color: "gray" /* "#b0bec5" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_billingTitle" />,
+            disabled: true,
         },
         {
             id: "navMenu_dataSecurity",
@@ -206,6 +190,7 @@ export default function NavMenu(props: Props) {
             link: "#",
             logo: <LockIcon size="48px" style={{ color: "gray" /* "#816961" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_dataSecurityTitle" />,
+            disabled: true,
         },
         {
             id: "navMenu_devices",
@@ -213,6 +198,7 @@ export default function NavMenu(props: Props) {
             link: "#",
             logo: <PhoneIcon size="48px" style={{ color: "gray" /* theme.palette.type === "dark" ? "#fefefe" : "#263248" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_devicesTitle" />,
+            disabled: true,
         },
         {
             id: "navMenu_security",
@@ -220,6 +206,7 @@ export default function NavMenu(props: Props) {
             link: "#",
             logo: <SecurityIcon size="48px" style={{ color: "gray" /* "#8396a0" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_securityTitle" />,
+            disabled: true,
         },
         {
             id: "navMenu_support",
@@ -227,6 +214,7 @@ export default function NavMenu(props: Props) {
             link: "#",
             logo: <SupportIcon size="48px" style={{ color: "gray" /* "#3baf77" */, fontSize: 48 }} />,
             title: <FormattedMessage id="navMenu_supportTitle" />,
+            disabled: true,
         },
     ];
 

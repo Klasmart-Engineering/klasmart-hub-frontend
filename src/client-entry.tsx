@@ -1,25 +1,20 @@
 import "@babel/polyfill";
 import LogRocket from "logrocket";
 LogRocket.init("8qowji/badanamu-learning-pass");
-
 import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "./assets/css/index.min.css";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { createUploadLink } from "apollo-upload-client";
-
 import { ApolloClient, ApolloLink } from "@apollo/client/core";
 import { ApolloProvider } from "@apollo/client/react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { Copyright } from "kidsloop-px";
+import { SnackbarProvider } from "kidsloop-px";
 import React, { useMemo } from "react";
 import * as ReactDOM from "react-dom";
-import { createIntl, RawIntlProvider } from "react-intl";
+import { RawIntlProvider } from "react-intl";
 import { Provider, useSelector } from "react-redux";
-import { HashRouter, Router } from "react-router-dom";
+import { Router } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { cache } from "./cache";
 import { getAPIEndpoint } from "./config";
@@ -56,9 +51,10 @@ function ClientSide() {
         <ApolloProvider client={client}>
             <RawIntlProvider value={locale}>
                 <ThemeProvider theme={themeProvider()}>
-                    <CssBaseline />
-                    <Layout />
-                    {/* <Copyright /> */}
+                    <SnackbarProvider closeButtonLabel="Dismiss">
+                        <CssBaseline />
+                        <Layout />
+                    </SnackbarProvider>
                 </ThemeProvider>
             </RawIntlProvider>
         </ApolloProvider>
