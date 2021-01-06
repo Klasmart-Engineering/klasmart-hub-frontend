@@ -14,6 +14,7 @@ import { getTableLocalization } from "@/utils/table";
 import { useGetOrganizationUsers } from "@/api/users";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import {
+    OrganizationMembership,
     Role,
     School,
 } from "@/types/graphQL";
@@ -24,8 +25,15 @@ import {
     makeStyles,
     Typography,
 } from "@material-ui/core";
-import { Person as PersonIcon } from "@material-ui/icons";
+import {
+    Delete as DeleteIcon,
+    Edit as EditIcon,
+    PersonAdd as PersonAddIcon,
+    Person as PersonIcon,
+} from "@material-ui/icons";
 import clsx from "clsx";
+import { getPermissionState } from "@/utils/checkAllowed";
+import CreateUserDialog from "@/components/User/Dialog/Create";
 
 const useStyles = makeStyles((theme) => createStyles({
     avatar: {
@@ -72,24 +80,33 @@ export default function UserTable (props: Props) {
     const organization = useReactiveVar(currentMembershipVar);
     const organization_id = organization.organization_id;
     const [ rows, setRows ] = useState<UserRow[]>([]);
-    const { data, loading } = useGetOrganizationUsers(organization_id);
+    const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
+    const [ editDialogOpen, setEditDialogOpen ] = useState(false);
+    const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
+    const {
+        data,
+        refetch,
+        loading,
+    } = useGetOrganizationUsers(organization_id);
+    const canCreate = getPermissionState(organization_id, `create_users_40220`);
+    const canEdit = getPermissionState(organization_id, `edit_users_40330`);
+    const canDelete = getPermissionState(organization_id, `delete_users_40440`);
+
+    const memberships = data?.organization?.memberships;
 
     useEffect(() => {
-        const memberships = data?.organization?.memberships ?? [];
-        const rows = memberships.map((membership) => {
-            return {
-                id: membership?.user?.user_id ?? ``,
-                name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
-                avatar: membership?.user?.avatar ?? ``,
-                email: membership?.user?.email ?? ``,
-                roles: membership.roles ?? [],
-                schools: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`) as School[] ?? [],
-                status: membership?.status ?? ``,
-                joinDate: new Date(membership.join_timestamp ?? ``),
-            };
-        });
-        setRows(rows);
-    }, [ data ]);
+        const rows = memberships?.map((membership) => ({
+            id: membership?.user?.user_id ?? ``,
+            name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
+            avatar: membership?.user?.avatar ?? ``,
+            email: membership?.user?.email ?? ``,
+            roles: membership.roles ?? [],
+            schools: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`) as School[] ?? [],
+            status: membership?.status ?? ``,
+            joinDate: new Date(membership.join_timestamp ?? ``),
+        }));
+        setRows(rows ?? []);
+    }, [ memberships ]);
 
     const columns: TableColumn<UserRow>[] = [
         {
@@ -159,7 +176,6 @@ export default function UserTable (props: Props) {
         {
             id: `status`,
             label: `Status`,
-            groupable: true,
             searchable: true,
             render: (row) => <span
                 className={clsx(classes.statusText, {
@@ -177,54 +193,74 @@ export default function UserTable (props: Props) {
         },
     ];
 
-    return <BaseTable
-        columns={columns}
-        rows={rows}
-        loading={loading}
-        idField="id"
-        orderBy="name"
-        // primaryAction={{
-        //     label: "Create Class",
-        //     icon: AddIcon,
-        //     disabled: !canCreate,
-        //     onClick: (data) => setCreateDialogOpen(true),
-        // }}
-        // selectActions={[
-        //     {
-        //         label: intl.formatMessage({ id: "classes_actionsDeleteTooltip" }),
-        //         icon: DeleteIcon,
-        //         disabled: !canDelete,
-        //         onClick: (data) => alert(`You want to delete ${data.rows.length} rows`)
-        //     }
-        // ]}
-        // rowActions={(row) => [
-        //     {
-        //         label: "Edit",
-        //         icon: EditIcon,
-        //         disabled: !(row.status === "active" && canEdit),
-        //         onClick: editSelectedRow,
-        //     },
-        //     {
-        //         label: "Delete",
-        //         icon: DeleteIcon,
-        //         disabled: !(row.status === "active" && canDelete),
-        //         onClick: deleteSelectedRow,
-        //     },
-        // ]}
-        localization={getTableLocalization(intl, {
-            toolbar: {
-                title: `Users`,
-            },
-            search: {
-                placeholder: intl.formatMessage({
-                    id: `classes_searchPlaceholder`,
-                }),
-            },
-            body: {
-                noData: intl.formatMessage({
-                    id: `classes_noRecords`,
-                }),
-            },
-        })}
-    />;
+    const findOrganizationMembership = (row: UserRow) => memberships?.find((m) => m.user?.user_id === row.id);
+
+    const editSelectedRow = (row: UserRow) => {
+        const selectedOrganizationMembership = findOrganizationMembership(row);
+        if (!selectedOrganizationMembership) return;
+        setSelectedOrganizationMembership(selectedOrganizationMembership);
+        setEditDialogOpen(true);
+    };
+
+    const deleteSelectedRow = async (row: UserRow) => {
+        const selectedOrganizationMembership = findOrganizationMembership(row);
+        if (!selectedOrganizationMembership) return;
+        const userName = row.name;
+        if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
+        // await deleteClass(selectedOrganizationMembership.class_id);
+        refetch();
+    };
+
+    return <>
+        <BaseTable
+            columns={columns}
+            rows={rows}
+            loading={loading}
+            idField="id"
+            orderBy="name"
+            primaryAction={{
+                label: `Create User`,
+                icon: PersonAddIcon,
+                disabled: !canCreate,
+                onClick: (data) => setCreateDialogOpen(true),
+            }}
+            rowActions={(row) => [
+                {
+                    label: `Edit`,
+                    icon: EditIcon,
+                    disabled: !(row.status === `active` && canEdit),
+                    onClick: editSelectedRow,
+                },
+                {
+                    label: `Delete`,
+                    icon: DeleteIcon,
+                    disabled: !(row.status === `active` && canDelete),
+                    onClick: deleteSelectedRow,
+                },
+            ]}
+            localization={getTableLocalization(intl, {
+                toolbar: {
+                    title: `Users`,
+                },
+                search: {
+                    placeholder: intl.formatMessage({
+                        id: `classes_searchPlaceholder`,
+                    }),
+                },
+                body: {
+                    noData: intl.formatMessage({
+                        id: `classes_noRecords`,
+                    }),
+                },
+            })}
+        />
+        <CreateUserDialog
+            open={createDialogOpen}
+            onClose={(value) => {
+                setCreateDialogOpen(false);
+                if (value) refetch();
+            }}
+        />
+    </>;
+
 }

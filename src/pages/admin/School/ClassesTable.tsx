@@ -73,18 +73,14 @@ export default function ClasessTable (props: Props) {
 
     const schoolClasses = data?.me?.membership?.organization?.classes;
 
-    useEffect(() => {        
-        if (!schoolClasses?.length) {
-            setRows([]);
-            return;
-        }
-        const rows: ClassRow[] = schoolClasses.map((c) => ({
+    useEffect(() => {
+        const rows = schoolClasses?.map((c) => ({
             id: c.class_id,
             name: c.class_name ?? "",
             schoolNames: c.schools?.map((s) => s.school_name ?? "") ?? [],
             status: c.status ?? "",
         }));
-        setRows(rows);
+        setRows(rows ?? []);
     }, [schoolClasses]);
 
     const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
