@@ -8,6 +8,7 @@ export interface User {
     email?: string | null
     phone?: string | null
     avatar?: string | null
+    membership?: Membership | null,
     memberships?: Membership[] | null,
     my_organization?: Organization | null,
 }
@@ -18,6 +19,7 @@ export interface Membership {
     join_timestamp?: string | null
     organization?: Organization | null
     roles?: Role[] | null
+    checkAllowed?: boolean | null
 }
 
 export interface Organization {
@@ -29,6 +31,8 @@ export interface Organization {
     roles?: Role[] | null
     students?: Student[] | null
     owner?: User | null
+    classes?: Class[] | null
+    schools?: School[] | null
 }
 
 export interface Role {
@@ -39,4 +43,17 @@ export interface Role {
 export interface Student {
     user_id: string
     user?: User | null
+}
+
+export interface Class {
+    class_id: string
+    class_name?: string | null
+    schools?: School[] | null
+    status?: string | null
+}
+
+export interface School {
+    school_id: string
+    school_name?: string | null
+    status?: string | null
 }

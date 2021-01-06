@@ -23,6 +23,7 @@ module.exports = {
     ],
     rules: {
         "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-empty-interface": "warn",
         "@typescript-eslint/no-unused-vars": [
             1,
         ],

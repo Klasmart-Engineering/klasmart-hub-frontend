@@ -1,277 +1,199 @@
-import { useQuery } from "@apollo/client/react";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  MenuItem,
-  Select,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    makeStyles,
+    Typography,
 } from "@material-ui/core";
-import FormControl from "@material-ui/core/FormControl";
-import { makeStyles } from "@material-ui/core/styles";
-import _get from "lodash/get";
-import MaterialTable from "material-table";
+import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { injectIntl, IntlFormatters } from "react-intl";
-import "react-phone-input-2/lib/style.css";
-import { GET_ORGANIZATIONS } from "../../../operations/queries/getOrganizations";
-import { constantValues } from "../constants";
-import {
-  JoinedOrganizationsTitle,
-  OrganizationNameTitle,
-  OwnerEmailTitle,
-  OwnerRoleTitle,
-  PhoneTitle,
-  RoleTitle,
-} from "./Labels";
+import { useIntl } from "react-intl";
+import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
+import { BaseTable } from "kidsloop-px";
+import { useGetOrganizations } from "@/api/organizations";
+import { getTableLocalization } from "@/utils/table";
 
-interface OrgRowData {
-  __typename: string;
-  organization: {
-    __typename: string;
-    organization_id: string;
-    organization_name: string;
-    phone: string | number | null;
-    owner: { __typename: string; email: string };
-  };
-  roles: Array<{ __typename: string; role_id: string; role_name: string }>;
+const useStyles = makeStyles((theme) => makeStyles({
+}));
+
+interface JoinedOrganizationRow {
+    id: string
+    name: string
+    phone: string
+    email: string
+    roles: string[]
 }
 
-// @ts-ignore
-const useStyles = makeStyles(() => ({
-  root: {
-    maxWidth: "100%",
-  },
-  buttonLeave: {
-    fontSize: "15px",
-    fontWeight: "bold",
-    width: "max-content",
-    color: "#FF3030",
-    borderColor: "#FF3030",
-  },
-}));
+interface Props {
+}
 
 /**
  * Returns function to show Joined Organizations table
  */
-function JoinedOrganizationTable(props: { intl: IntlFormatters }) {
-  const { intl } = props;
-  const classes = useStyles();
+export default function JoinedOrganizationTable (props: Props) {
+    const classes = useStyles();
+    const intl = useIntl();
+    const {
+        data,
+        loading
+    } = useGetOrganizations();
+    const [rows, setRows] = useState<JoinedOrganizationRow[]>([]);
 
-  const { data, loading } = useQuery(GET_ORGANIZATIONS, {
-    fetchPolicy: "network-only",
-  });
+    useEffect(() => {
+        const memberships = data?.me.memberships ?? [];
+        if (memberships.length === 0) {
+            setRows([]);
+            return;
+        }
+        const myEmail = data?.me.email;
+        const rows = memberships
+            .filter((m) => myEmail !== m?.organization?.owner?.email)
+            .map((m) => ({
+                id: m.organization?.organization_id ?? "",
+                name: m.organization?.organization_name ?? "",
+                phone: m.organization?.phone ?? "",
+                email: m.organization?.owner?.email ?? "",
+                roles: m.roles?.map((r) => r.role_name ?? "") ?? [],
+            }));
+        setRows(rows);
+    }, [data]);
 
-  const [dataTable, setData] = useState<OrgRowData[]>([]);
+    const [
+        confirmLeaveOrganizationDialogOpen,
+        setConfirmLeaveOrganizationDialogOpen,
+    ] = useState(false);
 
-  useEffect(() => {
-    if (data) {
-      const myEmail = data.me.email;
-      const memberships: OrgRowData[] = _get(data, "me.memberships", false);
-      if (memberships) {
-        const joined_organization: any[] = memberships.filter(
-          (m: any) => myEmail !== m.organization.owner.email,
-        );
-        const editable: OrgRowData[] = joined_organization.map(
-          (o: OrgRowData) => ({ ...o }),
-        );
-        setData(editable);
-      }
-    }
-  }, [data]);
+    const showConfirmLeaveOrganization = () => {
+        setConfirmLeaveOrganizationDialogOpen(true);
+    };
 
-  const [
-    dialogMessageConfirmEmailParent,
-    setConfirmLeaveOrganization,
-  ] = useState(false);
+    const closeConfirmLeaveOrganization = () => {
+        setConfirmLeaveOrganizationDialogOpen(false);
+    };
 
-  const showConfirmLeaveOrganization = () => {
-    setConfirmLeaveOrganization(true);
-  };
+    const [dialogMessageConfirmMessage, setConfirmationMessage] = useState(false);
 
-  const closeConfirmLeaveOrganization = () => {
-    setConfirmLeaveOrganization(false);
-  };
+    const showConfimationMessage = () => {
+        setConfirmLeaveOrganizationDialogOpen(false);
+        setConfirmationMessage(true);
+    };
 
-  const [dialogMessageConfirmMessage, setConfirmationMessage] = useState(false);
+    const closeConfimationMessage = () => {
+        setConfirmationMessage(false);
+    };
 
-  const showConfimationMessage = () => {
-    setConfirmLeaveOrganization(false);
-    setConfirmationMessage(true);
-  };
+    const columns: TableColumn<JoinedOrganizationRow>[] = [
+        {
+            id: "id",
+            label: "Id",
+            hidden: true,
+        },
+        {
+            id: "name",
+            label: intl.formatMessage({ id: "allOrganization_organizationName" }),
+            searchable: true,
+        },
+        {
+            id: "phone",
+            label: intl.formatMessage({ id: "allOrganization_phone" }),
+            searchable: true,
+        },
+        {
+            id: "email",
+            label: intl.formatMessage({ id: "joinedOrganization_email" }),
+            searchable: true,
+        },
+        {
+            id: "roles",
+            label: intl.formatMessage({ id: "joinedOrganization_role" }),
+            searchable: true,
+            disableSort: true,
+            render: (row) => row?.roles?.map((role, i) =>
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {role}
+                </Typography>
+            )
+        },
+    ];
 
-  const closeConfimationMessage = () => {
-    setConfirmationMessage(false);
-  };
-
-  return (
-    <div className={classes.root}>
-      <MaterialTable
-        isLoading={loading}
-        /** Material icons that the table uses */
-        icons={constantValues.tableIcons}
-        /** All options of table */
-        options={{
-          headerStyle: {
-            backgroundColor: "#fff",
-            color: "#000",
-            fontWeight: "bold",
-          },
-          actionsColumnIndex: -1,
-        }}
-        /** Table Title (only render if toolbar option is true */
-        title={JoinedOrganizationsTitle()}
-        /** Column definitions */
-        columns={[
-          {
-            title: OrganizationNameTitle(),
-            field: "name",
-            type: "string",
-            render: (rowData: OrgRowData) => (
-              <span>{rowData.organization.organization_name}</span>
-            ),
-          },
-          {
-            title: PhoneTitle(),
-            field: "phone",
-            type: "string",
-            render: (rowData: OrgRowData) => (
-              <span>
-                {rowData.organization.phone ? rowData.organization.phone : "-"}
-              </span>
-            ),
-          },
-          {
-            title: OwnerEmailTitle(),
-            field: "email",
-            type: "string",
-            render: (rowData: OrgRowData) => (
-              <span>{rowData.organization.owner.email}</span>
-            ),
-          },
-          {
-            title: OwnerRoleTitle(),
-            field: "role",
-            type: "string",
-            render: (rowData: OrgRowData) => (
-              <span>
-                {rowData.roles?.map((e: any) => {
-                  return <div key={e.role_id}>{e.role_name}</div>;
+    return (
+        <>
+            <BaseTable
+                columns={columns}
+                rows={rows}
+                loading={loading}
+                idField="id"
+                orderBy="name"
+                selectActions={[
+                    {
+                        label: "Leave selected organizations",
+                        icon: ExitToAppIcon,
+                        onClick: (data) => showConfirmLeaveOrganization(),
+                    },
+                ]}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({ id: "allOrganization_leaveOrganizationButton" }),
+                        icon: ExitToAppIcon,
+                        onClick: (row) => showConfirmLeaveOrganization(),
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    toolbar: {
+                        title: intl.formatMessage({ id: "allOrganization_joinedOrganizations" }),
+                    },
+                    search: {
+                        placeholder: intl.formatMessage({ id: "allOrganization_searchPlaceholder" }),
+                    },
+                    body: {
+                        noData: intl.formatMessage({ id: "allOrganization_noRecords" })
+                    },
                 })}
-              </span>
-            ),
-          },
-        ]}
-        /** Data to be rendered */
-        data={dataTable}
-        /** All text for localization */
-        localization={{
-          header: {
-            actions: "",
-          },
-          body: {
-            deleteTooltip: intl.formatMessage({
-              id: "allOrganization_deleteRowTooltip",
-            }),
-            emptyDataSourceMessage: intl.formatMessage({
-              id: "allOrganization_noRecords",
-            }),
-          },
-          toolbar: {
-            searchPlaceholder: intl.formatMessage({
-              id: "allOrganization_searchPlaceholder",
-            }),
-            searchTooltip: intl.formatMessage({
-              id: "allOrganization_searchTooltip",
-            }),
-          },
-          pagination: {
-            labelDisplayedRows: `{from}-{to} ${intl.formatMessage({
-              id: "allOrganization_labelDisplayedRows",
-            })} {count}`,
-            labelRowsSelect: intl.formatMessage({
-              id: "allOrganization_labelRowsSelect",
-            }),
-            nextTooltip: intl.formatMessage({
-              id: "allOrganization_nextTooltip",
-            }),
-            previousTooltip: intl.formatMessage({
-              id: "allOrganization_previousTooltip",
-            }),
-            firstTooltip: intl.formatMessage({
-              id: "allOrganization_firstTooltip",
-            }),
-            lastTooltip: intl.formatMessage({
-              id: "allOrganization_lastTooltip",
-            }),
-          },
-        }}
-        /** Action list. An icon button will be rendered for each actions */
-        actions={[
-          {
-            icon: "save",
-            tooltip: "Save User",
-            onClick: (event, rowData) => showConfirmLeaveOrganization(),
-          },
-        ]}
-        components={{
-          Action: (props) => (
-            <Button
-              className={classes.buttonLeave}
-              onClick={(event) => props.action.onClick(event, props.data)}
+            />
+
+            <Dialog
+                open={confirmLeaveOrganizationDialogOpen}
+                onClose={closeConfirmLeaveOrganization}
             >
-              {intl.formatMessage({
-                id: "allOrganization_leaveOrganizationButton",
-              })}
-            </Button>
-          ),
-        }}
-      />
+                <DialogTitle></DialogTitle>
+                <DialogContent dividers>
+                    <p>
+                        {intl.formatMessage({ id: "allOrganization_leaveOrganizationConfirm" })}
+                    </p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={showConfimationMessage} color="primary">
+                        {intl.formatMessage({ id: "allOrganization_okButton" })}
+                    </Button>
+                    <Button color="primary" onClick={closeConfirmLeaveOrganization}>
+                        {intl.formatMessage({ id: "allOrganization_cancelButton" })}
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
-      <Dialog
-        open={dialogMessageConfirmEmailParent}
-        onClose={closeConfirmLeaveOrganization}
-      >
-        <DialogTitle></DialogTitle>
-        <DialogContent dividers>
-          <p>
-            {intl.formatMessage({
-              id: "allOrganization_leaveOrganizationConfirm",
-            })}
-          </p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={showConfimationMessage} color="primary">
-            {intl.formatMessage({ id: "allOrganization_okButton" })}
-          </Button>
-          <Button color="primary" onClick={closeConfirmLeaveOrganization}>
-            {intl.formatMessage({ id: "allOrganization_cancelButton" })}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={dialogMessageConfirmMessage}
-        onClose={closeConfirmLeaveOrganization}
-      >
-        <DialogTitle></DialogTitle>
-        <DialogContent dividers>
-          <p>
-            {intl.formatMessage({
-              id: "allOrganization_leftOrganizationMessage",
-            })}
-          </p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeConfimationMessage} color="primary">
-            {intl.formatMessage({ id: "allOrganization_okButton" })}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+            <Dialog
+                open={dialogMessageConfirmMessage}
+                onClose={closeConfirmLeaveOrganization}
+            >
+                <DialogTitle></DialogTitle>
+                <DialogContent dividers>
+                    <p>
+                        {intl.formatMessage({ id: "allOrganization_leftOrganizationMessage" })}
+                    </p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeConfimationMessage} color="primary">
+                        {intl.formatMessage({ id: "allOrganization_okButton" })}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
-
-export default injectIntl(JoinedOrganizationTable);

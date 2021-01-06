@@ -109,6 +109,12 @@ export function themeProvider() {
             light: "#0E78D5",
             main: "#0E78D5",
         },
+        secondary: {
+            contrastText: "#FFF",
+            dark: "#1896ea",
+            light: "#0E78D5",
+            main: "#0E78D5",
+        },
     };
 
     let theme: Theme;
