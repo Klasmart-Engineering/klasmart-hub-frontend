@@ -1,9 +1,9 @@
 const roleNames = [
-    "Organization Admin",
-    "School Admin",
-    "Parent",
-    "Teacher",
-    "Student",
+    `Organization Admin`,
+    `School Admin`,
+    `Parent`,
+    `Teacher`,
+    `Student`,
 ] as const;
 
 export type RoleName = typeof roleNames[number];
@@ -11,32 +11,26 @@ export type RoleName = typeof roleNames[number];
 export interface User {
     user_id: string;
     user_name?: string | null;
+    given_name?: string | null;
+    family_name?: string | null;
     email?: string | null;
     phone?: string | null;
     avatar?: string | null;
-    membership?: Membership | null;
-    memberships?: Membership[] | null;
+    membership?: OrganizationMembership | null;
+    memberships?: OrganizationMembership[] | null;
     my_organization?: Organization | null;
-    organization_ownerships?: OrganizationOwnership[];
 }
 
-export interface OrganizationOwnership {
+export interface OrganizationMembership {
     user_id: string;
     organization_id: string;
-    status?: string | null;
-    organization?: Organization | null;
     user?: User | null;
-}
-
-export interface Membership {
-    user_id: string;
-    organization_id: string;
     join_timestamp?: string | null;
     organization?: Organization | null;
     roles?: Role[] | null;
     checkAllowed?: boolean | null;
-    status: string;
-    leave?: boolean | null;
+    status?: string | null;
+    schoolMemberships?: SchoolMembership[] | null;
 }
 
 export interface Organization {
@@ -50,7 +44,7 @@ export interface Organization {
     owner?: User | null;
     classes?: Class[] | null;
     schools?: School[] | null;
-    delete?: boolean | null;
+    memberships?: OrganizationMembership[] | null;
 }
 
 export interface Role {
@@ -74,4 +68,11 @@ export interface School {
     school_id: string;
     school_name?: string | null;
     status?: string | null;
+}
+
+export interface SchoolMembership {
+    user_id: string;
+    school_id: string;
+    school?: School | null;
+    roles?: Role[] | null;
 }

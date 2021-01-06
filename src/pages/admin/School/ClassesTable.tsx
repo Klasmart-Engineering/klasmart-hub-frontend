@@ -12,8 +12,8 @@ import { BaseTable, useSnackbar } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { currentMembershipVar } from "../../../cache";
-import { getPermissionState } from "../../../utils/checkAllowed";
+import { currentMembershipVar } from "@/cache";
+import { getPermissionState } from "@/utils/checkAllowed";
 
 const useStyles = makeStyles((theme) => createStyles({
     containerTable: {
