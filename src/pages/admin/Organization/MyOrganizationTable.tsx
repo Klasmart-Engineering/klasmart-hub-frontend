@@ -22,6 +22,7 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@material-ui/icons";
+import clsx from "clsx";
 import { BaseTable } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import React, { useEffect, useState } from "react";
@@ -29,8 +30,16 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        activeColor: { color: "#2BA600", fontWeight: "bold" },
-        inactiveColor: { color: "#FF0000", fontWeight: "bold" },
+        activeColor: {
+            color: "#2BA600",
+            fontWeight: "bold",
+            textTransform: "capitalize",
+        },
+        inactiveColor: {
+            color: "#FF0000",
+            fontWeight: "bold",
+            textTransform: "capitalize",
+        },
     }),
 );
 
@@ -51,8 +60,10 @@ interface Props {}
 export default function MyOrganizationTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
-    const [organizationName, setOrganizationName] = useState("");
-    const [organizationId, setOrganizationId] = useState("");
+    const [
+        selectedOrganization,
+        setSelectedOrganization,
+    ] = useState<MyOrganizationRow>();
     const { data, loading, refetch } = useGetOrganizationOwnerships();
     const [
         deleteOrganization,
@@ -66,23 +77,21 @@ export default function MyOrganizationTable(props: Props) {
 
     const showConfirmDeleteOrganization = (row: MyOrganizationRow) => {
         setConfirmLeaveOrganizationDialogOpen(true);
-        setOrganizationName(row.name);
-        setOrganizationId(row.id);
+        setSelectedOrganization(row);
     };
 
     const closeConfirmDeleteOrganization = () => {
         setConfirmLeaveOrganizationDialogOpen(false);
-        setOrganizationName("");
     };
 
     useEffect(() => {
-        const myOrganization = data?.me?.organization_ownerships ?? [];
-        if (!myOrganization.length) {
+        const organizationOwnerships = data?.me?.organization_ownerships ?? [];
+        if (!organizationOwnerships.length) {
             setRows([]);
             return;
         }
 
-        const rows: MyOrganizationRow[] = myOrganization.map(
+        const rows: MyOrganizationRow[] = organizationOwnerships.map(
             (organizationOwnership: OrganizationOwnership) => ({
                 id: organizationOwnership?.organization?.organization_id ?? "",
                 name:
@@ -103,24 +112,25 @@ export default function MyOrganizationTable(props: Props) {
 
     const deleteSelectedOrganization = async (): Promise<void> => {
         try {
-            await deleteOrganization({
-                variables: {
-                    organization_id: organizationId,
-                },
-            });
+            if (selectedOrganization?.id) {
+                await deleteOrganization({
+                    variables: {
+                        organization_id: selectedOrganization.id,
+                    },
+                });
 
-            await refetch();
+                await refetch();
 
-            // snackbar message "The organization has been deleted successfully",
+                setConfirmLeaveOrganizationDialogOpen(false);
+                // snackbar message "The organization has been deleted successfully",
+            }
         } catch (error) {
             console.log(error);
             // snackbar message "An error occurred while deleting the organization",
-        } finally {
-            setConfirmLeaveOrganizationDialogOpen(false);
         }
     };
 
-    const columns: Array<TableColumn<MyOrganizationRow>> = [
+    const columns: TableColumn<MyOrganizationRow>[] = [
         {
             id: "id",
             label: "Id",
@@ -156,14 +166,15 @@ export default function MyOrganizationTable(props: Props) {
             label: "Status",
             render: (row) => {
                 const status = row?.status ?? "";
-                const activeColor =
-                    status === "active"
-                        ? classes.activeColor
-                        : classes.inactiveColor;
 
                 return (
-                    <span className={`${activeColor}`}>
-                        {status.replace(/\w/, (c: string) => c.toUpperCase())}
+                    <span
+                        className={clsx({
+                            [classes.activeColor]: row.status === "active",
+                            [classes.inactiveColor]: row.status === "inactive",
+                        })}
+                    >
+                        {status}
                     </span>
                 );
             },
@@ -217,7 +228,10 @@ export default function MyOrganizationTable(props: Props) {
             >
                 <DialogTitle />
                 <DialogContent dividers>
-                    <p>Are you sure you want to delete {organizationName}?</p>
+                    <p>
+                        Are you sure you want to delete{" "}
+                        {selectedOrganization?.name}?
+                    </p>
                     {deleteLoading && (
                         <Grid container justify="center">
                             <CircularProgress />

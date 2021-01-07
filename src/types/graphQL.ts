@@ -36,6 +36,7 @@ export interface Membership {
     roles?: Role[] | null;
     checkAllowed?: boolean | null;
     status: string;
+    leave?: boolean | null;
 }
 
 export interface Organization {
@@ -49,6 +50,7 @@ export interface Organization {
     owner?: User | null;
     classes?: Class[] | null;
     schools?: School[] | null;
+    delete?: boolean | null;
 }
 
 export interface Role {
