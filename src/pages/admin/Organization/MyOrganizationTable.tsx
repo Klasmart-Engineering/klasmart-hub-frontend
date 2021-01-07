@@ -1,69 +1,126 @@
-import { useReactiveVar } from "@apollo/client/react";
 import {
+    useDeleteOrganizationOwnership,
+    useGetOrganizationOwnerships,
+} from "@/api/organizations";
+import { OrganizationOwnership } from "@/types/graphQL";
+import { history } from "@/utils/history";
+import { getTableLocalization } from "@/utils/table";
+import {
+    Button,
+    CircularProgress,
     createStyles,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
     makeStyles,
     Typography,
 } from "@material-ui/core";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
-    Edit as EditIcon
+    Edit as EditIcon,
 } from "@material-ui/icons";
+import { BaseTable } from "kidsloop-px";
+import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { userIdVar } from "@/cache";
-import { history } from "@/utils/history";
-import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
-import { BaseTable } from "kidsloop-px";
-import { useGetMyOrganization } from "@/api/organizations";
-import { getTableLocalization } from "@/utils/table";
 
-const useStyles = makeStyles((theme) => createStyles({
-}));
+const useStyles = makeStyles((theme) =>
+    createStyles({
+        activeColor: { color: "#2BA600", fontWeight: "bold" },
+        inactiveColor: { color: "#FF0000", fontWeight: "bold" },
+    }),
+);
 
 interface MyOrganizationRow {
-    id: string
-    name: string
-    phone: string
-    email: string
-    roles: string[]
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    roles: string[];
+    status: string;
 }
 
-interface Props {
-}
+interface Props {}
 
 /**
  * Returns function to show My Organizations Table for "All Organizations" section
  */
-export default function MyOrganizationTable (props: Props) {
+export default function MyOrganizationTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
-    const userId = useReactiveVar(userIdVar);
-
-    const {
-        data,
-        loading
-    } = useGetMyOrganization(userId);
-    
+    const [organizationName, setOrganizationName] = useState("");
+    const [organizationId, setOrganizationId] = useState("");
+    const { data, loading, refetch } = useGetOrganizationOwnerships();
+    const [
+        deleteOrganization,
+        { loading: deleteLoading },
+    ] = useDeleteOrganizationOwnership();
     const [rows, setRows] = useState<MyOrganizationRow[]>([]);
+    const [
+        confirmLeaveOrganizationDialogOpen,
+        setConfirmLeaveOrganizationDialogOpen,
+    ] = useState(false);
+
+    const showConfirmDeleteOrganization = (row: MyOrganizationRow) => {
+        setConfirmLeaveOrganizationDialogOpen(true);
+        setOrganizationName(row.name);
+        setOrganizationId(row.id);
+    };
+
+    const closeConfirmDeleteOrganization = () => {
+        setConfirmLeaveOrganizationDialogOpen(false);
+        setOrganizationName("");
+    };
 
     useEffect(() => {
-        const myOrganization = data?.user.my_organization;
-        if (!myOrganization?.organization_id) {
+        const myOrganization = data?.me?.organization_ownerships ?? [];
+        if (!myOrganization.length) {
             setRows([]);
             return;
         }
-        const rows: MyOrganizationRow[] = [ myOrganization ].map((myOrganization) => ({
-            id: myOrganization.organization_id,
-            name: myOrganization.organization_name ?? "",
-            phone: myOrganization.phone ?? "",
-            email: myOrganization.owner?.email ?? "",
-            roles: myOrganization.roles?.map((role) => role.role_name ?? "") ?? []
-        }));
+
+        const rows: MyOrganizationRow[] = myOrganization.map(
+            (organizationOwnership: OrganizationOwnership) => ({
+                id: organizationOwnership?.organization?.organization_id,
+                name:
+                    organizationOwnership?.organization?.organization_name ??
+                    "",
+                phone: organizationOwnership?.organization?.phone ?? "",
+                email: organizationOwnership?.user?.email ?? "",
+                roles:
+                    organizationOwnership?.organization.roles?.map(
+                        (role) => role.role_name ?? "",
+                    ) ?? [],
+                status: organizationOwnership?.status ?? "",
+            }),
+        );
+
         setRows(rows);
     }, [data]);
 
-    const columns: TableColumn<MyOrganizationRow>[] = [
+    const deleteSelectedOrganization = async (): Promise<void> => {
+        try {
+            await deleteOrganization({
+                variables: {
+                    organization_id: organizationId,
+                },
+            });
+
+            await refetch();
+
+            // snackbar message "The organization has been deleted successfully",
+        } catch (error) {
+            console.log(error);
+            // snackbar message "An error occurred while deleting the organization",
+        } finally {
+            setConfirmLeaveOrganizationDialogOpen(false);
+        }
+    };
+
+    const columns: Array<TableColumn<MyOrganizationRow>> = [
         {
             id: "id",
             label: "Id",
@@ -71,7 +128,9 @@ export default function MyOrganizationTable (props: Props) {
         },
         {
             id: "name",
-            label: intl.formatMessage({ id: "allOrganization_organizationName" }),
+            label: intl.formatMessage({
+                id: "allOrganization_organizationName",
+            }),
         },
         {
             id: "phone",
@@ -85,15 +144,29 @@ export default function MyOrganizationTable (props: Props) {
             id: "roles",
             label: intl.formatMessage({ id: "allOrganization_roles" }),
             disableSort: true,
-            render: (row) => row.roles?.map((role, i) =>
-                <Typography
-                    key={`role-${i}`}
-                    noWrap
-                    variant="body2"
-                >
-                    {role}
-                </Typography>
-            )
+            render: (row) =>
+                row.roles?.map((role, i) => (
+                    <Typography key={`role-${i}`} noWrap variant="body2">
+                        {role}
+                    </Typography>
+                )),
+        },
+        {
+            id: "status",
+            label: "Status",
+            render: (row) => {
+                const status = row?.status ?? "";
+                const activeColor =
+                    status === "active"
+                        ? classes.activeColor
+                        : classes.inactiveColor;
+
+                return (
+                    <span className={`${activeColor}`}>
+                        {status.replace(/\w/, (c: string) => c.toUpperCase())}
+                    </span>
+                );
+            },
         },
     ];
 
@@ -107,33 +180,67 @@ export default function MyOrganizationTable (props: Props) {
                 primaryAction={{
                     label: "Create",
                     icon: AddIcon,
-                    onClick: (tableData) => history.push("/admin/create-organization"),
+                    onClick: (tableData) =>
+                        history.push("/admin/create-organization"),
                 }}
                 rowActions={(row) => [
                     {
                         label: "Edit",
                         icon: EditIcon,
-                        onClick: (row) => history.push(`/admin/edit-organization/${row.id}`),
+                        onClick: (row) =>
+                            history.push(`/admin/edit-organization/${row.id}`),
                     },
                     {
                         label: "Delete",
                         icon: DeleteIcon,
-                        onClick: (row) => {
-                            if (!confirm(`Are you sure you want to delete "${row.name}"?`)) return;
-                        },
+                        onClick: (row) => showConfirmDeleteOrganization(row),
                     },
                 ]}
                 rowsPerPage={1}
                 rowsPerPageOptions={[]}
                 localization={getTableLocalization(intl, {
                     toolbar: {
-                        title: intl.formatMessage({ id: "allOrganization_myOrganizations" }),
+                        title: intl.formatMessage({
+                            id: "allOrganization_myOrganizations",
+                        }),
                     },
                     body: {
-                        noData: intl.formatMessage({ id: "allOrganization_noRecords" })
+                        noData: intl.formatMessage({
+                            id: "allOrganization_noRecords",
+                        }),
                     },
                 })}
             />
+            <Dialog
+                open={confirmLeaveOrganizationDialogOpen}
+                onClose={closeConfirmDeleteOrganization}
+            >
+                <DialogTitle />
+                <DialogContent dividers>
+                    <p>Are you sure you want to delete {organizationName}?</p>
+                    {deleteLoading && (
+                        <Grid container justify="center">
+                            <CircularProgress />
+                        </Grid>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={deleteSelectedOrganization}
+                        color="primary"
+                    >
+                        {intl.formatMessage({ id: "allOrganization_okButton" })}
+                    </Button>
+                    <Button
+                        color="primary"
+                        onClick={closeConfirmDeleteOrganization}
+                    >
+                        {intl.formatMessage({
+                            id: "allOrganization_cancelButton",
+                        })}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
