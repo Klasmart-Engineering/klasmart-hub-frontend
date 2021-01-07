@@ -5,13 +5,6 @@ import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
 
-const handleSchoolIds = (ids: Array<string>, allSchools: School[]) => {
-    if (ids.length && ids[0] === "Open/All") {
-        return allSchools.map((s) => s.school_id);
-    }
-    return ids ?? [];
-};
-
 interface UpdateClassRequest {
     class_id: string
     class_name: string
@@ -21,10 +14,10 @@ interface UpdateClassRequest {
 interface UpdateClassResponse {
 }
 
-export const useUpdateClass = (): [ (classItem: Class, allSchools: School[]) => Promise<FetchResult<UpdateClassResponse, Record<string, any>, Record<string, any>>>, MutationResult<UpdateClassResponse> ] => {
+export const useUpdateClass = (): [ (classItem: Class) => Promise<FetchResult<UpdateClassResponse, Record<string, any>, Record<string, any>>>, MutationResult<UpdateClassResponse> ] => {
     const [ promise, mutationResult ] = useMutation<UpdateClassResponse, UpdateClassRequest>(UPDATE_CLASS);
     return [
-        async (classItem: Class, allSchools: School[]) => {
+        async (classItem: Class) => {
             const {
                 class_id,
                 class_name,
@@ -35,7 +28,7 @@ export const useUpdateClass = (): [ (classItem: Class, allSchools: School[]) => 
                 variables: {
                     class_id,
                     class_name: class_name ?? "",
-                    school_ids: handleSchoolIds(schoolIds, allSchools),
+                    school_ids: schoolIds,
                 }
             });
         },
@@ -71,10 +64,10 @@ interface CreateClassRequest {
 interface CreateClassResponse {
 }
 
-export const useCreateClass = (): [ (classItem: Class, organizationId: string, allSchools: School[]) => Promise<FetchResult<DeleteClassResponse, Record<string, any>, Record<string, any>>>, MutationResult<DeleteClassResponse> ] => {
+export const useCreateClass = (): [ (classItem: Class, organizationId: string) => Promise<FetchResult<DeleteClassResponse, Record<string, any>, Record<string, any>>>, MutationResult<DeleteClassResponse> ] => {
     const [ promise, mutationResult ] = useMutation<CreateClassResponse, CreateClassRequest>(CREATE_CLASS);
     return [
-        (classItem: Class, organizationId: string, allSchools: School[]) => {
+        (classItem: Class, organizationId: string) => {
             const {
                 class_name,
                 schools
@@ -84,7 +77,7 @@ export const useCreateClass = (): [ (classItem: Class, organizationId: string, a
                 variables: {
                     organization_id: organizationId,
                     class_name: class_name ?? "",
-                    school_ids: handleSchoolIds(schoolIds, allSchools),
+                    school_ids: schoolIds,
                 },
             });
         },

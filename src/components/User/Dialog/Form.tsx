@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, makeStyles, TextField, Theme } from "@material-ui/core";
-import { Class, OrganizationMembership } from "@/types/graphQL";
+import { OrganizationMembership } from "@/types/graphQL";
 import { useGetSchools } from "@/api/schools";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
-import { alphanumeric } from "@/utils/validations";
-import MultiSelect from "@/components/MultiSelect";
-import { useGetMyOrganization } from "@/api/organizations";
-import { userIdVar } from "@/cache";
-import { useGetOrganizationUsers } from "@/api/users";
+import { MultiSelect } from "kidsloop-px";
+import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
+import { emailAddressRegex, phoneNumberRegex } from "@/utils/validations";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -20,10 +18,18 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const getClassNameHelperText = (name: string) => {
-    if (!name.length) return "Class name can't be empty";
-    if (alphanumeric(name)) return "Only alphanumeric characters are valid";    
-    return "";
+const getContactInfoHelperText = (contactInfo: string) => {
+    if (contactInfo.length === 0) return "Email or Phone number required";
+    const validEmail = emailAddressRegex.test(contactInfo);
+    const validPhone = phoneNumberRegex.test(contactInfo);
+    if (!validEmail && !validPhone) {
+        if (!validEmail) return "Invalid email address";
+        if (!validPhone) return "Invalid phone number";
+    }
+};
+
+const getRolesHelperText = (roleIds: string[]) => {
+    if (roleIds.length === 0) return "At least one role required"; 
 };
 
 interface Props {
@@ -32,7 +38,7 @@ interface Props {
     onValidation: (valid: boolean) => void
 }
 
-export default function ClassDialogForm(props: Props) {
+export default function UserDialogForm(props: Props) {
     const {
         value,
         onChange,
@@ -40,49 +46,59 @@ export default function ClassDialogForm(props: Props) {
     } = props;
     const classes = useStyles();
     const organization = useReactiveVar(currentMembershipVar);
-    const userId = useReactiveVar(userIdVar);
     const { organization_id } = organization;
     const { data: schoolsData } = useGetSchools(organization_id);
-    const { data: organizationData } = useGetOrganizationUsers(organization_id);
+    const { data: organizationData } = useGetOrganizationMemberships(organization_id);
     const allSchools = schoolsData?.me.membership?.organization?.schools ?? [];
     const allRoles = organizationData?.organization?.roles ?? [];
     const [ givenName, setGivenName ] = useState(value.user?.given_name ?? "");
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? "");
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.organization?.schools?.map((s) => s.school_id) ?? []);
+    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schoolMemberships?.map((s) => s.school_id) ?? []);
     const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.map((r) => r.role_id) ?? []);
-    const [ status, setStatus ] = useState(value.status ?? "");
+    const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? "");
+    const [ status, setStatus ] = useState(value.status ?? "");    
 
     useEffect(() => {
-        onValidation(!getClassNameHelperText(givenName) && !getClassNameHelperText(familyName));
-    }, [value]);
+        onValidation(!getRolesHelperText(roleIds) && !getContactInfoHelperText(contactInfo));
+    }, [roleIds, contactInfo]);    
 
-    // useEffect(() => {
-    //     const updatedClass: Class = {
-    //         class_id: value.class_id,
-    //         class_name: className,
-    //         schools: allSchools.filter((s) => schoolIds.includes(s.school_id)),
-    //         status,
-    //     };
-    //     onChange(updatedClass);
-    // }, [ className, schoolIds, status ]);
+    useEffect(() => {
+        const userId = value.user?.user_id ?? "";
+        const email = (contactInfo && emailAddressRegex.test(contactInfo)) ? contactInfo : undefined;
+        const phone = (contactInfo && phoneNumberRegex.test(contactInfo)) ? contactInfo : undefined;
+        const updatedOrganizationMembership: OrganizationMembership = {
+            organization_id: value.organization_id,
+            user_id: userId,
+            user: {
+                user_id: userId,
+                given_name: givenName,
+                family_name: familyName,
+                email,
+                phone,
+            },
+            roles: allRoles.filter((r) => roleIds.includes(r.role_id)),
+            schoolMemberships: allSchools.filter((s) => schoolIds.includes(s.school_id)).map((s) => ({ user_id: userId, school_id: s.school_id })),
+            status,
+        };
+        onChange(updatedOrganizationMembership);
+        
+    }, [ givenName, familyName, schoolIds, roleIds, contactInfo, status ]);
 
     return (
         <div className={classes.root}>
             <TextField
                 fullWidth
-                error={!!getClassNameHelperText(givenName)}
-                helperText={getClassNameHelperText(givenName) + " "}
+                helperText=" "
                 value={givenName}
                 label="Given name"
                 variant="outlined"
                 type="text"
-                autoFocus={!value.user_id}
+                autoFocus={!value?.user?.user_id}
                 onChange={(e) => setGivenName(e.currentTarget.value)}
             />
             <TextField
                 fullWidth
-                error={!!getClassNameHelperText(familyName)}
-                helperText={getClassNameHelperText(familyName) + " "}
+                helperText=" "
                 value={familyName}
                 label="Family name"
                 variant="outlined"
@@ -90,9 +106,11 @@ export default function ClassDialogForm(props: Props) {
                 onChange={(e) => setFamilyName(e.currentTarget.value)}
             />
             <MultiSelect
-                label="Roles (optional)"
+                label="Roles"
                 items={allRoles}
                 value={roleIds}
+                error={!!getRolesHelperText(roleIds)}
+                helperText={getRolesHelperText(roleIds) ?? " "}
                 itemText={(role) => role.role_name ?? ""}
                 itemValue={(role) => role.role_id}
                 onChange={(values) => setRoleIds(values)}
@@ -104,6 +122,17 @@ export default function ClassDialogForm(props: Props) {
                 itemText={(school) => school.school_name ?? ""}
                 itemValue={(school) => school.school_id}
                 onChange={(values) => setSchoolIds(values)}
+            />
+            <TextField
+                disabled={!!value?.user?.user_id}
+                fullWidth
+                value={contactInfo}
+                variant="outlined"
+                label="Contact Info"
+                type="text"
+                error={!!getContactInfoHelperText(contactInfo)}
+                helperText={getContactInfoHelperText(contactInfo) ?? " "}
+                onChange={(e) => setContactInfo(e.currentTarget.value)}
             />
             <TextField
                 disabled

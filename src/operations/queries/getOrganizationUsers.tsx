@@ -25,6 +25,8 @@ export const GET_ORGANIZATION_USERS = gql`
                 }
             }
             memberships {
+                organization_id
+                user_id
                 join_timestamp
                 status
                 schoolMemberships {

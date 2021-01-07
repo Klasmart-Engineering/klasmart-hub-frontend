@@ -8,6 +8,7 @@ import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
 import { useGetSchools } from "@/api/schools";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
+import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
 
 const useStyles = makeStyles((theme) => createStyles({
 }));
@@ -27,23 +28,21 @@ export default function CreateUserDialog (props: Props) {
     const { organization_id } = organization;
     const { data } = useGetSchools(organization_id);
     const [ valid, setValid ] = useState(true);
-    const [ newUser, setNewUser ] = useState<OrganizationMembership>(buildEmptyOrganizationMembership());
-    // const [ createUser, { loading: loadingCreate } ] = useCreateUser();
+    const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
+    const [ createOrganizationMembership, { loading: loadingCreate } ] = useCreateOrganizationMembership();
 
     useEffect(() => {
         if (!open) return;
-        setNewUser(buildEmptyOrganizationMembership());
+        setNewOrganizationMembership(buildEmptyOrganizationMembership());
     }, [open]);
 
     const handleCreate = async () => {
         try {
-            const schools = data?.me.membership?.organization?.schools ?? [];
-            // await createUser(newUser, organization_id, schools);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "users_userDeletedMessage" })
-            onClose(newUser);
+            await createOrganizationMembership(newOrganizationMembership);
+            onClose(newOrganizationMembership);
+            // enqueueSnackbar("User has been created succesfully", { variant: "success" });
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "users_userDeletedError" })
+            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
 
@@ -61,15 +60,15 @@ export default function CreateUserDialog (props: Props) {
                 {
                     label: "Create",
                     color: "primary",
-                    // loading: loadingCreate,
+                    loading: loadingCreate,
                     disabled: !valid,
                     onClick: handleCreate,
                 },
             ]}
         >
             <UserDialogForm
-                value={newUser}
-                onChange={(value) => setNewUser(value)}
+                value={newOrganizationMembership}
+                onChange={(value) => setNewOrganizationMembership(value)}
                 onValidation={setValid}
             />
         </Dialog>

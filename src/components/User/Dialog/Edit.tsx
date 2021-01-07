@@ -1,63 +1,65 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, makeStyles } from "@material-ui/core";
-import { Class } from "@/types/graphQL";
-import ClassDialogForm from "./Form";
+import { Class, OrganizationMembership } from "@/types/graphQL";
+import UserDialogForm from "./Form";
 import { useUpdateClass, useDeleteClass } from "@/api/classes";
-import { Dialog } from "kidsloop-px";
+import { Dialog, useSnackbar } from "kidsloop-px";
 import { buildEmptyClass } from "@/utils/classes";
 import { useGetSchools } from "@/api/schools";
+import { useDeleteOrganizationMembership, useUpdateOrganizationMembership } from "@/api/organizationMemberships";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
+import { useIntl } from "react-intl";
+import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 
 const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
     open: boolean
-    value?: Class
-    onClose: (value?: Class) => void
+    value?: OrganizationMembership
+    onClose: (value?: OrganizationMembership) => void
 }
 
-export default function EditClassDialog (props: Props) {
+export default function EditUserDialog (props: Props) {
     const {
         open,
         value,
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
+    // const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
-    const { data } = useGetSchools(organization_id);
-    const [ editedClass, setEditedClass ] = useState<Class>(buildEmptyClass());
+    const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
-    const [ updateClass, { loading: loadingSave } ] = useUpdateClass();
-    const [ deleteClass, { loading: loadingDelete } ] = useDeleteClass();
+    const [ updateOrganizationMembership, { loading: loadingSave } ] = useUpdateOrganizationMembership();
+    const [ deleteOrganizationMembership, { loading: loadingDelete } ] = useDeleteOrganizationMembership();
+    
     
     useEffect(() => {
-        setEditedClass(value ?? buildEmptyClass());
+        setEditedOrganizationMembership(value ?? buildEmptyOrganizationMembership());
     }, [value]);
 
     const handleSave = async () => {
         try {
-            const schools = data?.me.membership?.organization?.schools ?? [];
-            await updateClass(editedClass, schools);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classSavedMessage" })
-            onClose(editedClass);
+            await updateOrganizationMembership(editedOrganizationMembership);
+            onClose(editedOrganizationMembership);
+            // enqueueSnackbar("User has been saved succesfully", { variant: "success" });
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classSaveError" })
+            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
     
     const handleDelete = async () => {
-        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`)) return;
+        const userName = `${value?.user?.given_name} ${value?.user?.family_name}`;
+        if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
         try {
-            await deleteClass(editedClass.class_id);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedMessage" })
-            onClose(editedClass);
+            await deleteOrganizationMembership(editedOrganizationMembership);
+            onClose(editedOrganizationMembership);
+            // enqueueSnackbar("User has been deleted succesfully", { variant: "success" });
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedError" })
+            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
 
@@ -84,15 +86,15 @@ export default function EditClassDialog (props: Props) {
                     label: "Save",
                     color: "primary",
                     align: "right",
-                    loading: loadingSave,
                     disabled: !valid,
+                    loading: loadingSave,
                     onClick: handleSave,
                 },
             ]}
         >
-            <ClassDialogForm
-                value={editedClass}
-                onChange={(value) => setEditedClass(value)}
+            <UserDialogForm
+                value={editedOrganizationMembership}
+                onChange={(value) => setEditedOrganizationMembership(value)}
                 onValidation={setValid}
             />
         </Dialog>

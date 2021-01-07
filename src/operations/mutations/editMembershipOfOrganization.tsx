@@ -22,18 +22,18 @@ export const EDIT_MEMBERSHIP_OF_ORGANIZATION = gql`
             school_role_ids: $school_role_ids
         ) {
             user {
-            user_id
+                user_id
             }
             membership {
-            roles {
-                role_id
-            }
+                roles {
+                    role_id
+                }
             }
             schoolMemberships {
-            school_id
-            roles {
-                role_id
-            }
+                school_id
+                roles {
+                    role_id
+                }
             }
         }
         }

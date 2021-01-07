@@ -11,7 +11,7 @@ import {
     utils,
 } from "kidsloop-px";
 import { getTableLocalization } from "@/utils/table";
-import { useGetOrganizationUsers } from "@/api/users";
+import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
 import {
     OrganizationMembership,
@@ -34,6 +34,8 @@ import {
 import clsx from "clsx";
 import { getPermissionState } from "@/utils/checkAllowed";
 import CreateUserDialog from "@/components/User/Dialog/Create";
+import EditUserDialog from "@/components/User/Dialog/Edit";
+import { useDeleteOrganizationMembership } from "@/api/organizationMemberships";
 
 const useStyles = makeStyles((theme) => createStyles({
     avatar: {
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface UserRow {
+<<<<<<< HEAD
     id: string;
     name: string;
     avatar: string;
@@ -66,6 +69,16 @@ interface UserRow {
     schools: School[];
     status: string;
     joinDate: Date;
+=======
+    id: string
+    name: string
+    avatar: string
+    contactInfo: string
+    roles: Role[]
+    schools: School[]
+    status: string
+    joinDate: Date
+>>>>>>> 4a4058f... add create, edit & delete organization membership
 }
 
 interface Props {
@@ -83,6 +96,7 @@ export default function UserTable (props: Props) {
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
+<<<<<<< HEAD
     const {
         data,
         refetch,
@@ -92,14 +106,27 @@ export default function UserTable (props: Props) {
     const canEdit = getPermissionState(organization_id, `edit_users_40330`);
     const canDelete = getPermissionState(organization_id, `delete_users_40440`);
 
+=======
+    const { data, refetch, loading } = useGetOrganizationMemberships(organization_id);
+    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
+    const canCreate = getPermissionState(organization_id, "create_users_40220");
+    const canEdit = getPermissionState(organization_id, "edit_users_40330");
+    const canDelete = getPermissionState(organization_id, "delete_users_40440");
+    
+>>>>>>> 4a4058f... add create, edit & delete organization membership
     const memberships = data?.organization?.memberships;
 
     useEffect(() => {
         const rows = memberships?.map((membership) => ({
             id: membership?.user?.user_id ?? ``,
             name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
+<<<<<<< HEAD
             avatar: membership?.user?.avatar ?? ``,
             email: membership?.user?.email ?? ``,
+=======
+            avatar: membership?.user?.avatar ?? "",
+            contactInfo: membership?.user?.email ?? membership?.user?.phone ?? "",
+>>>>>>> 4a4058f... add create, edit & delete organization membership
             roles: membership.roles ?? [],
             schools: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`) as School[] ?? [],
             status: membership?.status ?? ``,
@@ -141,8 +168,13 @@ export default function UserTable (props: Props) {
                 </Box>,
         },
         {
+<<<<<<< HEAD
             id: `roles`,
             label: `Roles`,
+=======
+            id: "roles",
+            label: intl.formatMessage({ id: "users_organizationRoles" }),
+>>>>>>> 4a4058f... add create, edit & delete organization membership
             searchable: true,
             render: (row) => row.roles?.map((role, i) =>
                 <Typography
@@ -155,8 +187,13 @@ export default function UserTable (props: Props) {
             ),
         },
         {
+<<<<<<< HEAD
             id: `schools`,
             label: `Schools`,
+=======
+            id: "schools",
+            label: intl.formatMessage({ id: "users_school" }),
+>>>>>>> 4a4058f... add create, edit & delete organization membership
             searchable: true,
             render: (row) => row.schools?.map((school, i) =>
                 <Typography
@@ -169,6 +206,7 @@ export default function UserTable (props: Props) {
             ),
         },
         {
+<<<<<<< HEAD
             id: `email`,
             label: `Email`,
             searchable: true,
@@ -176,6 +214,15 @@ export default function UserTable (props: Props) {
         {
             id: `status`,
             label: `Status`,
+=======
+            id: "contactInfo",
+            label: intl.formatMessage({ id: "users_contactInfo" }),
+            searchable: true,
+        },
+        {
+            id: "status",
+            label: intl.formatMessage({ id: "classes_statusTitle" }),
+>>>>>>> 4a4058f... add create, edit & delete organization membership
             searchable: true,
             render: (row) => <span
                 className={clsx(classes.statusText, {
@@ -207,7 +254,7 @@ export default function UserTable (props: Props) {
         if (!selectedOrganizationMembership) return;
         const userName = row.name;
         if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
-        // await deleteClass(selectedOrganizationMembership.class_id);
+        await deleteOrganizationMembership(selectedOrganizationMembership);
         refetch();
     };
 
@@ -253,6 +300,15 @@ export default function UserTable (props: Props) {
                     }),
                 },
             })}
+        />
+        <EditUserDialog
+            open={editDialogOpen}
+            value={selectedOrganizationMembership}
+            onClose={(value) => {
+                setSelectedOrganizationMembership(undefined);
+                setEditDialogOpen(false);
+                if (value) refetch();
+            }}
         />
         <CreateUserDialog
             open={createDialogOpen}

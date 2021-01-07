@@ -5,7 +5,7 @@ import { useGetSchools } from "@/api/schools";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
 import { alphanumeric } from "@/utils/validations";
-import MultiSelect from "@/components/MultiSelect";
+import { MultiSelect } from "kidsloop-px";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,7 +46,7 @@ export default function ClassDialogForm(props: Props) {
 
     useEffect(() => {
         onValidation(!getClassNameHelperText(className));
-    }, [value]);
+    }, [className]);
 
     useEffect(() => {
         const updatedClass: Class = {
