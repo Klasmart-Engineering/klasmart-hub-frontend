@@ -84,14 +84,14 @@ export default function MyOrganizationTable(props: Props) {
 
         const rows: MyOrganizationRow[] = myOrganization.map(
             (organizationOwnership: OrganizationOwnership) => ({
-                id: organizationOwnership?.organization?.organization_id,
+                id: organizationOwnership?.organization?.organization_id ?? "",
                 name:
                     organizationOwnership?.organization?.organization_name ??
                     "",
                 phone: organizationOwnership?.organization?.phone ?? "",
                 email: organizationOwnership?.user?.email ?? "",
                 roles:
-                    organizationOwnership?.organization.roles?.map(
+                    organizationOwnership?.organization?.roles?.map(
                         (role) => role.role_name ?? "",
                     ) ?? [],
                 status: organizationOwnership?.status ?? "",

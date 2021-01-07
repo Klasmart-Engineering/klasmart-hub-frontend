@@ -21,9 +21,11 @@ export interface User {
 }
 
 export interface OrganizationOwnership {
-    status: string;
-    organization: Organization;
-    user: User;
+    user_id: string;
+    organization_id: string;
+    status?: string | null;
+    organization?: Organization | null;
+    user?: User | null;
 }
 
 export interface Membership {
