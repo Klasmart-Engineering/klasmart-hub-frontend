@@ -3,11 +3,12 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { Class } from "@/types/graphQL";
 import ClassDialogForm from "./Form";
 import { useCreateClass } from "@/api/classes";
-import { Dialog } from "kidsloop-px";
+import { Dialog, useSnackbar } from "kidsloop-px";
 import { buildEmptyClass } from "@/utils/classes";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
 import { useGetSchools } from "@/api/schools";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
 }));
@@ -23,6 +24,8 @@ export default function CreateClassDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl()
+    const { enqueueSnackbar } = useSnackbar()
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const { data } = useGetSchools(organization_id);
@@ -39,11 +42,10 @@ export default function CreateClassDialog (props: Props) {
         try {
             const schools = data?.me.membership?.organization?.schools ?? [];
             await createClass(newClass, organization_id, schools);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedMessage" })
             onClose(newClass);
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classSavedMessage" }), { variant: "success" })
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedError" })
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classSaveError" }), { variant: "error" })
         }
     };
 

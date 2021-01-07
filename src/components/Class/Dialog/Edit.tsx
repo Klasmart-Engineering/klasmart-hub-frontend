@@ -3,11 +3,12 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { Class } from "@/types/graphQL";
 import ClassDialogForm from "./Form";
 import { useUpdateClass, useDeleteClass } from "@/api/classes";
-import { Dialog } from "kidsloop-px";
+import { Dialog, useSnackbar } from "kidsloop-px";
 import { buildEmptyClass } from "@/utils/classes";
 import { useGetSchools } from "@/api/schools";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
 }));
@@ -25,6 +26,8 @@ export default function EditClassDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const { data } = useGetSchools(organization_id);
@@ -41,11 +44,10 @@ export default function EditClassDialog (props: Props) {
         try {
             const schools = data?.me.membership?.organization?.schools ?? [];
             await updateClass(editedClass, schools);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classSavedMessage" })
             onClose(editedClass);
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classSavedMessage" }), { variant: "success" })
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classSaveError" })
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classSaveError" }), { variant: "error" })
         }
     };
     
@@ -53,11 +55,10 @@ export default function EditClassDialog (props: Props) {
         if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`)) return;
         try {
             await deleteClass(editedClass.class_id);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedMessage" })
             onClose(editedClass);
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedMessage" }), { variant: "success" })
         } catch (error) {
-            console.error(error);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedError" })
+            enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedError" }), { variant: "error" })
         }
     };
 
