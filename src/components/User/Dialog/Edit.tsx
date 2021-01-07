@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, makeStyles } from "@material-ui/core";
-import { Class, OrganizationMembership } from "@/types/graphQL";
+import { OrganizationMembership } from "@/types/graphQL";
 import UserDialogForm from "./Form";
-import { useUpdateClass, useDeleteClass } from "@/api/classes";
 import { Dialog, useSnackbar } from "kidsloop-px";
-import { buildEmptyClass } from "@/utils/classes";
-import { useGetSchools } from "@/api/schools";
 import { useDeleteOrganizationMembership, useUpdateOrganizationMembership } from "@/api/organizationMemberships";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
 import { useIntl } from "react-intl";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 
@@ -30,7 +25,6 @@ export default function EditUserDialog (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     // const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
     const [ updateOrganizationMembership, { loading: loadingSave } ] = useUpdateOrganizationMembership();

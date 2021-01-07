@@ -37,7 +37,6 @@ export default function CreateClassDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
-    const { data } = useGetSchools(organization_id);
     const [ valid, setValid ] = useState(true);
     const [ newClass, setNewClass ] = useState(buildEmptyClass());
     const [ createClass, { loading: loadingCreate } ] = useCreateClass();

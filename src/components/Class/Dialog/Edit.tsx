@@ -18,7 +18,6 @@ import {
     useSnackbar,
 } from "kidsloop-px";
 import { buildEmptyClass } from "@/utils/classes";
-import { useGetSchools } from "@/api/schools";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
 import { useIntl } from "react-intl";
@@ -41,8 +40,6 @@ export default function EditClassDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
-    const { data } = useGetSchools(organization_id);
     const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
     const [ valid, setValid ] = useState(true);
     const [ updateClass, { loading: loadingSave } ] = useUpdateClass();

@@ -6,7 +6,6 @@ import UserDialogForm from "./Form";
 import { Dialog } from "kidsloop-px";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
-import { useGetSchools } from "@/api/schools";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
 
@@ -24,9 +23,6 @@ export default function CreateUserDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
-    const { data } = useGetSchools(organization_id);
     const [ valid, setValid ] = useState(true);
     const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ createOrganizationMembership, { loading: loadingCreate } ] = useCreateOrganizationMembership();
