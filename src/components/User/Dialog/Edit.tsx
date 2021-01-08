@@ -24,7 +24,7 @@ export default function EditUserDialog (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    // const { enqueueSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
     const [ updateOrganizationMembership, { loading: loadingSave } ] = useUpdateOrganizationMembership();
@@ -39,9 +39,9 @@ export default function EditUserDialog (props: Props) {
         try {
             await updateOrganizationMembership(editedOrganizationMembership);
             onClose(editedOrganizationMembership);
-            // enqueueSnackbar("User has been saved succesfully", { variant: "success" });
+            enqueueSnackbar("User has been saved succesfully", { variant: "success" });
         } catch (error) {
-            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
+            enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
     
@@ -51,9 +51,9 @@ export default function EditUserDialog (props: Props) {
         try {
             await deleteOrganizationMembership(editedOrganizationMembership);
             onClose(editedOrganizationMembership);
-            // enqueueSnackbar("User has been deleted succesfully", { variant: "success" });
+            enqueueSnackbar("User has been deleted succesfully", { variant: "success" });
         } catch (error) {
-            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
+            enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
 

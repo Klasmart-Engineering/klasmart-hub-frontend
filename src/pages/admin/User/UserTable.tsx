@@ -8,6 +8,7 @@ import { useIntl } from "react-intl";
 import { currentMembershipVar } from "@/cache";
 import {
     BaseTable,
+    useSnackbar,
     utils,
 } from "kidsloop-px";
 import { getTableLocalization } from "@/utils/table";
@@ -60,25 +61,14 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface UserRow {
-<<<<<<< HEAD
     id: string;
     name: string;
     avatar: string;
-    email: string;
+    contactInfo: string;
     roles: Role[];
     schools: School[];
     status: string;
     joinDate: Date;
-=======
-    id: string
-    name: string
-    avatar: string
-    contactInfo: string
-    roles: Role[]
-    schools: School[]
-    status: string
-    joinDate: Date
->>>>>>> 4a4058f... add create, edit & delete organization membership
 }
 
 interface Props {
@@ -90,43 +80,31 @@ interface Props {
 export default function UserTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar()
     const organization = useReactiveVar(currentMembershipVar);
-    const organization_id = organization.organization_id;
+    const { organization_id } = organization;
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
-<<<<<<< HEAD
     const {
         data,
         refetch,
         loading,
-    } = useGetOrganizationUsers(organization_id);
+    } = useGetOrganizationMemberships(organization_id);
+    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
     const canCreate = getPermissionState(organization_id, `create_users_40220`);
     const canEdit = getPermissionState(organization_id, `edit_users_40330`);
     const canDelete = getPermissionState(organization_id, `delete_users_40440`);
 
-=======
-    const { data, refetch, loading } = useGetOrganizationMemberships(organization_id);
-    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
-    const canCreate = getPermissionState(organization_id, "create_users_40220");
-    const canEdit = getPermissionState(organization_id, "edit_users_40330");
-    const canDelete = getPermissionState(organization_id, "delete_users_40440");
-    
->>>>>>> 4a4058f... add create, edit & delete organization membership
     const memberships = data?.organization?.memberships;
 
     useEffect(() => {
         const rows = memberships?.map((membership) => ({
             id: membership?.user?.user_id ?? ``,
             name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
-<<<<<<< HEAD
             avatar: membership?.user?.avatar ?? ``,
-            email: membership?.user?.email ?? ``,
-=======
-            avatar: membership?.user?.avatar ?? "",
-            contactInfo: membership?.user?.email ?? membership?.user?.phone ?? "",
->>>>>>> 4a4058f... add create, edit & delete organization membership
+            contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
             roles: membership.roles ?? [],
             schools: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`) as School[] ?? [],
             status: membership?.status ?? ``,
@@ -168,13 +146,10 @@ export default function UserTable (props: Props) {
                 </Box>,
         },
         {
-<<<<<<< HEAD
             id: `roles`,
-            label: `Roles`,
-=======
-            id: "roles",
-            label: intl.formatMessage({ id: "users_organizationRoles" }),
->>>>>>> 4a4058f... add create, edit & delete organization membership
+            label: intl.formatMessage({
+                id: `users_organizationRoles`,
+            }),
             searchable: true,
             render: (row) => row.roles?.map((role, i) =>
                 <Typography
@@ -187,13 +162,10 @@ export default function UserTable (props: Props) {
             ),
         },
         {
-<<<<<<< HEAD
             id: `schools`,
-            label: `Schools`,
-=======
-            id: "schools",
-            label: intl.formatMessage({ id: "users_school" }),
->>>>>>> 4a4058f... add create, edit & delete organization membership
+            label: intl.formatMessage({
+                id: `users_school`,
+            }),
             searchable: true,
             render: (row) => row.schools?.map((school, i) =>
                 <Typography
@@ -206,23 +178,17 @@ export default function UserTable (props: Props) {
             ),
         },
         {
-<<<<<<< HEAD
-            id: `email`,
-            label: `Email`,
+            id: `contactInfo`,
+            label: intl.formatMessage({
+                id: `users_contactInfo`,
+            }),
             searchable: true,
         },
         {
             id: `status`,
-            label: `Status`,
-=======
-            id: "contactInfo",
-            label: intl.formatMessage({ id: "users_contactInfo" }),
-            searchable: true,
-        },
-        {
-            id: "status",
-            label: intl.formatMessage({ id: "classes_statusTitle" }),
->>>>>>> 4a4058f... add create, edit & delete organization membership
+            label: intl.formatMessage({
+                id: `classes_statusTitle`,
+            }),
             searchable: true,
             render: (row) => <span
                 className={clsx(classes.statusText, {
@@ -254,8 +220,13 @@ export default function UserTable (props: Props) {
         if (!selectedOrganizationMembership) return;
         const userName = row.name;
         if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
-        await deleteOrganizationMembership(selectedOrganizationMembership);
-        refetch();
+        try {
+            await deleteOrganizationMembership(selectedOrganizationMembership);
+            await refetch();
+            enqueueSnackbar("User has been deleted succesfully", { variant: "success" });
+        } catch (error) {
+            enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
+        }
     };
 
     return <>

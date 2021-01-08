@@ -100,7 +100,7 @@
     "interpolate-html-plugin": "^3.0.0",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.1.2",
-    "kidsloop-px": "git+ssh://git@bitbucket.org:calmisland/kidsloop-px.git#c4345d33474841d9dd0e200bbaa003851f59e1cf",
+    "kidsloop-px": "git+ssh://git@bitbucket.org:calmisland/kidsloop-px.git#ab4d4a941f8482427461a41ae01e469a3fc83d2b",
     "lodash": "^4.17.20",
     "logrocket": "^1.0.5",
     "material-table": "^1.69.2",

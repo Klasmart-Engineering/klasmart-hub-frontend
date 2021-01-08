@@ -1,4 +1,7 @@
-import { useGetOrganizations, useLeaveMembership } from "@/api/organizations";
+import {
+    useGetOrganizations,
+    useLeaveMembership,
+} from "@/api/organizations";
 import { userIdVar } from "@/cache";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client/react";
@@ -13,10 +16,16 @@ import {
     Typography,
 } from "@material-ui/core";
 import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
-import { BaseTable } from "kidsloop-px";
+import {
+    BaseTable,
+    useSnackbar,
+} from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import { useIntl } from "react-intl";
 
 interface JoinedOrganizationRow {
@@ -35,11 +44,16 @@ interface Props {}
  */
 export default function JoinedOrganizationTable(props: Props) {
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
     const userId = useReactiveVar(userIdVar);
-    const [organizationId, setOrganizationId] = useState("");
-    const [rows, setRows] = useState<JoinedOrganizationRow[]>([]);
-    const { data, loading, refetch } = useGetOrganizations();
-    const [leaveMembership, { loading: leaveLoading }] = useLeaveMembership();
+    const [ organizationId, setOrganizationId ] = useState(``);
+    const [ rows, setRows ] = useState<JoinedOrganizationRow[]>([]);
+    const {
+        data,
+        loading,
+        refetch,
+    } = useGetOrganizations();
+    const [ leaveMembership, { loading: leaveLoading } ] = useLeaveMembership();
 
     useEffect(() => {
         const memberships = data?.me.memberships ?? [];
@@ -51,37 +65,26 @@ export default function JoinedOrganizationTable(props: Props) {
         const rows = memberships
             .filter((m) => myEmail !== m?.organization?.owner?.email)
             .map((m) => ({
-                id: m.organization?.organization_id ?? "",
-                name: m.organization?.organization_name ?? "",
-                phone: m.organization?.phone ?? "",
-                email: m.organization?.owner?.email ?? "",
-                roles: m.roles?.map((r) => r.role_name ?? "") ?? [],
-                status: m.status ?? "",
+                id: m.organization?.organization_id ?? ``,
+                name: m.organization?.organization_name ?? ``,
+                phone: m.organization?.phone ?? ``,
+                email: m.organization?.owner?.email ?? ``,
+                roles: m.roles?.map((r) => r.role_name ?? ``) ?? [],
+                status: m.status ?? ``,
             }));
 
         setRows(rows);
-    }, [data]);
+    }, [ data ]);
 
-    const [
-        confirmLeaveOrganizationDialogOpen,
-        setConfirmLeaveOrganizationDialogOpen,
-    ] = useState(false);
+    const [ confirmLeaveOrganizationDialogOpen, setConfirmLeaveOrganizationDialogOpen ] = useState(false);
 
-    const showConfirmLeaveOrganization = (
-        organization: JoinedOrganizationRow,
-    ) => {
+    const showConfirmLeaveOrganization = (organization: JoinedOrganizationRow) => {
         setConfirmLeaveOrganizationDialogOpen(true);
         setOrganizationId(organization.id);
     };
 
     const closeConfirmLeaveOrganization = () => {
         setConfirmLeaveOrganizationDialogOpen(false);
-    };
-
-    const [leftMembershipDialog, setLeftMembershipDialog] = useState(false);
-
-    const closeConfirmationMessage = () => {
-        setLeftMembershipDialog(false);
     };
 
     const leaveSelectedOrganization = async (): Promise<void> => {
@@ -92,50 +95,58 @@ export default function JoinedOrganizationTable(props: Props) {
                     user_id: userId,
                 },
             });
-
             await refetch();
-
-            // Snackbar message "You have leave the organization successfully"
-        } catch (error) {
-            console.log({ error });
-            // snackbar message "An error occurred while leaving the organization"
-        } finally {
+            enqueueSnackbar(`You have leave the organization successfully`, {
+                variant: `success`,
+            });
             setConfirmLeaveOrganizationDialogOpen(false);
-            setLeftMembershipDialog(true);
+        } catch (error) {
+            enqueueSnackbar(`An error occurred while leaving the organization`, {
+                variant: `error`,
+            });
         }
     };
 
-    const columns: Array<TableColumn<JoinedOrganizationRow>> = [
+    const columns: TableColumn<JoinedOrganizationRow>[] = [
         {
-            id: "id",
-            label: "Id",
+            id: `id`,
+            label: `Id`,
             hidden: true,
         },
         {
-            id: "name",
+            id: `name`,
             label: intl.formatMessage({
-                id: "allOrganization_organizationName",
+                id: `allOrganization_organizationName`,
             }),
             searchable: true,
         },
         {
-            id: "phone",
-            label: intl.formatMessage({ id: "allOrganization_phone" }),
+            id: `phone`,
+            label: intl.formatMessage({
+                id: `allOrganization_phone`,
+            }),
             searchable: true,
         },
         {
-            id: "email",
-            label: intl.formatMessage({ id: "joinedOrganization_email" }),
+            id: `email`,
+            label: intl.formatMessage({
+                id: `joinedOrganization_email`,
+            }),
             searchable: true,
         },
         {
-            id: "roles",
-            label: intl.formatMessage({ id: "joinedOrganization_role" }),
+            id: `roles`,
+            label: intl.formatMessage({
+                id: `joinedOrganization_role`,
+            }),
             searchable: true,
             disableSort: true,
             render: (row) =>
                 row?.roles?.map((role, i) => (
-                    <Typography key={`role-${i}`} noWrap variant="body2">
+                    <Typography
+                        key={`role-${i}`}
+                        noWrap
+                        variant="body2">
                         {role}
                     </Typography>
                 )),
@@ -152,7 +163,7 @@ export default function JoinedOrganizationTable(props: Props) {
                 orderBy="name"
                 selectActions={[
                     {
-                        label: "Leave selected organizations",
+                        label: `Leave selected organizations`,
                         icon: ExitToAppIcon,
                         onClick: (data) => console.log(data),
                     },
@@ -160,27 +171,27 @@ export default function JoinedOrganizationTable(props: Props) {
                 rowActions={(row) => [
                     {
                         label: intl.formatMessage({
-                            id: "allOrganization_leaveOrganizationButton",
+                            id: `allOrganization_leaveOrganizationButton`,
                         }),
                         icon: ExitToAppIcon,
-                        disabled: row.status === "inactive",
+                        disabled: row.status === `inactive`,
                         onClick: (row) => showConfirmLeaveOrganization(row),
                     },
                 ]}
                 localization={getTableLocalization(intl, {
                     toolbar: {
                         title: intl.formatMessage({
-                            id: "allOrganization_joinedOrganizations",
+                            id: `allOrganization_joinedOrganizations`,
                         }),
                     },
                     search: {
                         placeholder: intl.formatMessage({
-                            id: "allOrganization_searchPlaceholder",
+                            id: `allOrganization_searchPlaceholder`,
                         }),
                     },
                     body: {
                         noData: intl.formatMessage({
-                            id: "allOrganization_noRecords",
+                            id: `allOrganization_noRecords`,
                         }),
                     },
                 })}
@@ -194,45 +205,32 @@ export default function JoinedOrganizationTable(props: Props) {
                 <DialogContent dividers>
                     <p>
                         {intl.formatMessage({
-                            id: "allOrganization_leaveOrganizationConfirm",
+                            id: `allOrganization_leaveOrganizationConfirm`,
                         })}
                     </p>
                     {leaveLoading && (
-                        <Grid container justify="center">
+                        <Grid
+                            container
+                            justify="center">
                             <CircularProgress />
                         </Grid>
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={leaveSelectedOrganization} color="primary">
-                        {intl.formatMessage({ id: "allOrganization_okButton" })}
+                    <Button
+                        color="primary"
+                        onClick={leaveSelectedOrganization}>
+                        {intl.formatMessage({
+                            id: `allOrganization_okButton`,
+                        })}
                     </Button>
                     <Button
                         color="primary"
                         onClick={closeConfirmLeaveOrganization}
                     >
                         {intl.formatMessage({
-                            id: "allOrganization_cancelButton",
+                            id: `allOrganization_cancelButton`,
                         })}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            <Dialog
-                open={leftMembershipDialog}
-                onClose={closeConfirmLeaveOrganization}
-            >
-                <DialogTitle />
-                <DialogContent dividers>
-                    <p>
-                        {intl.formatMessage({
-                            id: "allOrganization_leftOrganizationMessage",
-                        })}
-                    </p>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeConfirmationMessage} color="primary">
-                        {intl.formatMessage({ id: "allOrganization_okButton" })}
                     </Button>
                 </DialogActions>
             </Dialog>

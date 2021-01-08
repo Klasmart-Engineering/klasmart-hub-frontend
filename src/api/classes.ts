@@ -1,14 +1,23 @@
-import { FetchResult, MutationResult, useMutation, useQuery } from "@apollo/client";
-import { Class, School, User } from "@/types/graphQL";
+import {
+    FetchResult,
+    MutationResult,
+    useMutation,
+    useQuery,
+} from "@apollo/client";
+import {
+    Class,
+    School,
+    User,
+} from "@/types/graphQL";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
 
 interface UpdateClassRequest {
-    class_id: string
-    class_name: string
-    school_ids: string[]
+    class_id: string;
+    class_name: string;
+    school_ids: string[];
 }
 
 interface UpdateClassResponse {
@@ -27,9 +36,9 @@ export const useUpdateClass = (): [ (classItem: Class) => Promise<FetchResult<Up
             return promise({
                 variables: {
                     class_id,
-                    class_name: class_name ?? "",
+                    class_name: class_name ?? ``,
                     school_ids: schoolIds,
-                }
+                },
             });
         },
         mutationResult,
@@ -37,7 +46,7 @@ export const useUpdateClass = (): [ (classItem: Class) => Promise<FetchResult<Up
 };
 
 interface DeleteClassRequest {
-    class_id: string
+    class_id: string;
 }
 
 interface DeleteClassResponse {
@@ -49,16 +58,16 @@ export const useDeleteClass = (): [ (classId: string) => Promise<FetchResult<Del
         (classId: string) => promise({
             variables: {
                 class_id: classId,
-            }
+            },
         }),
         mutationResult,
     ];
 };
 
 interface CreateClassRequest {
-    organization_id: string
-    class_name: string
-    school_ids: string[]
+    organization_id: string;
+    class_name: string;
+    school_ids: string[];
 }
 
 interface CreateClassResponse {
@@ -70,13 +79,13 @@ export const useCreateClass = (): [ (classItem: Class, organizationId: string) =
         (classItem: Class, organizationId: string) => {
             const {
                 class_name,
-                schools
+                schools,
             } = classItem;
             const schoolIds = schools?.map((s) => s.school_id) ?? [];
             return promise({
                 variables: {
                     organization_id: organizationId,
-                    class_name: class_name ?? "",
+                    class_name: class_name ?? ``,
                     school_ids: schoolIds,
                 },
             });
@@ -86,16 +95,16 @@ export const useCreateClass = (): [ (classItem: Class, organizationId: string) =
 };
 
 interface GetAllClassesRequest {
-    organization_id: string
+    organization_id: string;
 }
 
 interface GetAllClassesResponse {
-    me: User
+    me: User;
 }
 
 export const useGetAllClasses = (organizationId: string) => {
     return useQuery<GetAllClassesResponse, GetAllClassesRequest>(GET_ALL_CLASSES, {
-        fetchPolicy: "network-only",
+        fetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
         },

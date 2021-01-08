@@ -17,7 +17,6 @@ import {
 import { buildEmptyClass } from "@/utils/classes";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
-import { useGetSchools } from "@/api/schools";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
@@ -49,7 +48,6 @@ export default function CreateClassDialog (props: Props) {
     const handleCreate = async () => {
         try {
             await createClass(newClass, organization_id);
-            // TODO (Henrik): show snackbar message intl.formatMessage({ id: "classes_classDeletedMessage" })
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classSavedMessage`,

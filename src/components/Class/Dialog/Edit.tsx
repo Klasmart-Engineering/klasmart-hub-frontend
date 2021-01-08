@@ -53,9 +53,17 @@ export default function EditClassDialog (props: Props) {
         try {
             await updateClass(editedClass);
             onClose(editedClass);
-            // enqueueSnackbar(intl.formatMessage({ id: "classes_classSavedMessage" }), { variant: "success" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSavedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            // enqueueSnackbar(intl.formatMessage({ id: "classes_classSaveError" }), { variant: "error" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSaveError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -64,9 +72,17 @@ export default function EditClassDialog (props: Props) {
         try {
             await deleteClass(editedClass.class_id);
             onClose(editedClass);
-            // enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedMessage" }), { variant: "success" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            // enqueueSnackbar(intl.formatMessage({ id: "classes_classDeletedError" }), { variant: "error" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 

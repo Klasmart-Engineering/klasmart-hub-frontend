@@ -2,8 +2,14 @@ import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATIONS } from "@/operations/queries/getOrganizations";
-import { Organization, User } from "@/types/graphQL";
-import { useMutation, useQuery } from "@apollo/client";
+import {
+    Organization,
+    User,
+} from "@/types/graphQL";
+import {
+    useMutation,
+    useQuery,
+} from "@apollo/client";
 
 interface GetOrganizationsRequest {}
 
@@ -15,7 +21,7 @@ export const useGetOrganizations = () => {
     return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(
         GET_ORGANIZATIONS,
         {
-            fetchPolicy: "network-only",
+            fetchPolicy: `network-only`,
         },
     );
 };
@@ -48,7 +54,7 @@ export const useGetOrganizationOwnerships = () => {
         GetOrganizationOwnershipsResponse,
         GetOrganizationOwnershipsRequest
     >(GET_ORGANIZATION_OWNERSHIPS, {
-        fetchPolicy: "network-only",
+        fetchPolicy: `network-only`,
     });
 };
 

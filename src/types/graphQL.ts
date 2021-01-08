@@ -19,6 +19,15 @@ export interface User {
     membership?: OrganizationMembership | null;
     memberships?: OrganizationMembership[] | null;
     my_organization?: Organization | null;
+    organization_ownerships?: OrganizationOwnership[];
+}
+
+export interface OrganizationOwnership {
+    user_id: string;
+    organization_id: string;
+    status?: string | null;
+    organization?: Organization | null;
+    user?: User | null;
 }
 
 export interface OrganizationMembership {

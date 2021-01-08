@@ -3,7 +3,7 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { OrganizationMembership } from "@/types/graphQL";
 import UserDialogForm from "./Form";
 // import { useCreateUser } from "@/api/users";
-import { Dialog } from "kidsloop-px";
+import { Dialog, useSnackbar } from "kidsloop-px";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
@@ -23,6 +23,7 @@ export default function CreateUserDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar()
     const [ valid, setValid ] = useState(true);
     const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ createOrganizationMembership, { loading: loadingCreate } ] = useCreateOrganizationMembership();
@@ -36,9 +37,9 @@ export default function CreateUserDialog (props: Props) {
         try {
             await createOrganizationMembership(newOrganizationMembership);
             onClose(newOrganizationMembership);
-            // enqueueSnackbar("User has been created succesfully", { variant: "success" });
+            enqueueSnackbar("User has been created succesfully", { variant: "success" });
         } catch (error) {
-            // enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
+            enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
         }
     };
 
