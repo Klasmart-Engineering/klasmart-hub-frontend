@@ -17,6 +17,7 @@ module.exports = {
         },
         ecmaVersion: 11,
         sourceType: `module`,
+        project: `tsconfig.json`,
     },
     plugins: [
         `react`,
@@ -25,12 +26,6 @@ module.exports = {
         `modules-newline`,
     ],
     rules: {
-        camelcase: [
-            `error`,
-            {
-                ignoreDestructuring: true,
-            },
-        ],
         indent: [ `error`, 4 ],
         "linebreak-style": [ `error`, `unix` ],
         semi: [ `error`, `always` ],
@@ -73,19 +68,19 @@ module.exports = {
         "object-curly-newline": [
             `error`,
             {
-                ObjectExpression: {
+                ObjectExpression: { // eslint-disable-line @typescript-eslint/naming-convention
                     multiline: true,
                     minProperties: 1,
                 },
-                ObjectPattern: {
+                ObjectPattern: { // eslint-disable-line @typescript-eslint/naming-convention
                     multiline: true,
                     minProperties: 3,
                 },
-                ImportDeclaration: {
+                ImportDeclaration: { // eslint-disable-line @typescript-eslint/naming-convention
                     multiline: true,
                     minProperties: 3,
                 },
-                ExportDeclaration: {
+                ExportDeclaration: { // eslint-disable-line @typescript-eslint/naming-convention
                     multiline: true,
                     minProperties: 3,
                 },
@@ -118,6 +113,58 @@ module.exports = {
         ],
         "@typescript-eslint/explicit-module-boundary-types": `off`,
         "@typescript-eslint/comma-spacing": [ `error` ], // turned on b/c 'comma-spacing' is disabled
+        '@typescript-eslint/naming-convention': [
+            `error`,
+            {
+                selector: `default`,
+                format: [ `camelCase` ],
+            },
+            {
+                selector: `typeLike`,
+                format: [ `PascalCase` ],
+            },
+            {
+                selector: `function`,
+                format: [ `camelCase`, `PascalCase` ],
+            },
+            {
+                selector: `variable`,
+                types: [ `boolean` ],
+                format: [ `PascalCase` ],
+                prefix: [
+                    `open`,
+                    `valid`,
+                    `loading`,
+                    `is`,
+                    `should`,
+                    `has`,
+                    `can`,
+                    `did`,
+                    `will`,
+                ],
+            },
+            {
+                selector: `variable`,
+                modifiers: [ `destructured` ],
+                format: [ `camelCase`, `snake_case` ],
+            },
+            {
+                selector: `enumMember`,
+                format: [ `UPPER_CASE` ],
+            },
+            {
+                selector: `property`,
+                format: [
+                    `camelCase`,
+                    `snake_case`,
+                    `UPPER_CASE`,
+                ],
+            },
+            {
+                selector: `memberLike`,
+                format: [ `camelCase` ],
+            },
+        ],
         "@typescript-eslint/no-empty-interface": `warn`,
         "@typescript-eslint/no-unused-vars": 1,
         "@typescript-eslint/no-var-requires": `off`,

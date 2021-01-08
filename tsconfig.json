@@ -1,19 +1,23 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "noEmit": true,
-    "noImplicitAny": true,
-    "module": "commonjs",
-    "target": "esnext",
-    "jsx": "react",
-    "allowJs": true,
-    "strictNullChecks": true,
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    }
-  }
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noEmit": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "esnext",
+        "jsx": "react",
+        "allowJs": true,
+        "strictNullChecks": true,
+        "esModuleInterop": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        }
+    },
+    "include": [
+        "src",
+        "**.js"
+    ]
 }
