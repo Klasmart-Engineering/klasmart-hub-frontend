@@ -25,11 +25,6 @@ module.exports = {
         `modules-newline`,
     ],
     rules: {
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-empty-interface": "warn",
-        "@typescript-eslint/no-unused-vars": [
-            1,
-        ],
         camelcase: [
             `error`,
             {
@@ -121,8 +116,9 @@ module.exports = {
                 reservedFirst: [ `key`, `ref` ],
             },
         ],
-        "@typescript-eslint/comma-spacing": [ `error` ], // turned on b/c 'comma-spacing' is disabled
         "@typescript-eslint/explicit-module-boundary-types": `off`,
+        "@typescript-eslint/comma-spacing": [ `error` ], // turned on b/c 'comma-spacing' is disabled
+        "@typescript-eslint/no-empty-interface": `warn`,
         "@typescript-eslint/no-unused-vars": 1,
         "@typescript-eslint/no-var-requires": `off`,
         "@typescript-eslint/quotes": [ `error`, `backtick` ],
