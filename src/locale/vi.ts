@@ -157,6 +157,7 @@ const messages: Record<string, string> = {
     users_invitationSent: "Lời mời đã được gửi đến người dùng.",
     users_actionsDeleteTooltip: "Bỏ tất cả người dùng đã chọn",
     users_errorDisplay: "Lỗi hiển thị danh sách người dùng",
+    users_organizationRoles: "Quyền trong tổ chức",
     allOrganization_myOrganizations: "Tổ chức của tôi",
     allOrganization_organizationName: "Tên Tổ Chức",
     allOrganization_roles: "Quyền",

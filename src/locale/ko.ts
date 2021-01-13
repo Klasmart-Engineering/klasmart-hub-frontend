@@ -157,6 +157,7 @@ const messages: Record<string, string> = {
     users_invitationSent: "사용자에게 초대를 보냈습니다",
     users_actionsDeleteTooltip: "선택한 모든 유저 삭제",
     users_errorDisplay: "사용자 에러",
+    users_organizationRoles: "",
     allOrganization_myOrganizations: "나의 기관",
     allOrganization_organizationName: "기관명",
     allOrganization_roles: "역할",

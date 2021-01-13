@@ -157,6 +157,7 @@ const messages: Record<string, string> = {
     users_invitationSent: "邀请已发送",
     users_actionsDeleteTooltip: "删除选择的用户",
     users_errorDisplay: "用户显示错误",
+    users_organizationRoles: "",
     allOrganization_myOrganizations: "我的组织",
     allOrganization_organizationName: "组织名称",
     allOrganization_roles: "角色",
