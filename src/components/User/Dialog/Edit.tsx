@@ -48,7 +48,23 @@ export default function EditUserDialog (props: Props) {
 
     const handleSave = async () => {
         try {
-            await updateOrganizationMembership(editedOrganizationMembership);
+            const {
+                organization_id,
+                user,
+                roles,
+                schoolMemberships,
+            } = editedOrganizationMembership;
+            await updateOrganizationMembership({
+                variables: {
+                    organization_id,
+                    organization_role_ids: roles?.map((r) => r.role_id) ?? [],
+                    school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
+                    given_name: user?.given_name,
+                    family_name: user?.family_name,
+                    email: user?.email,
+                    phone: user?.phone,
+                },
+            });
             onClose(editedOrganizationMembership);
             enqueueSnackbar(`User has been saved succesfully`, {
                 variant: `success`,
@@ -63,8 +79,17 @@ export default function EditUserDialog (props: Props) {
     const handleDelete = async () => {
         const userName = `${value?.user?.given_name} ${value?.user?.family_name}`;
         if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
+        const {
+            organization_id,
+            user_id,
+        } = editedOrganizationMembership;
         try {
-            await deleteOrganizationMembership(editedOrganizationMembership);
+            await deleteOrganizationMembership({
+                variables: {
+                    organization_id,
+                    user_id,
+                },
+            });
             onClose(editedOrganizationMembership);
             enqueueSnackbar(`User has been deleted succesfully`, {
                 variant: `success`,

@@ -13,10 +13,10 @@ import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
+import { useReactiveVar } from "@apollo/client";
+import { currentMembershipVar } from "@/cache";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -39,14 +39,28 @@ export default function CreateUserDialog (props: Props) {
 
     useEffect(() => {
         if (!open) return;
-        const membership = buildEmptyOrganizationMembership();
-        membership.organization_id = organization.organization_id;
-        setNewOrganizationMembership(membership);
-    }, [ open, organization ]);
+        setNewOrganizationMembership(buildEmptyOrganizationMembership());
+    }, [ open ]);
 
     const handleCreate = async () => {
         try {
-            await createOrganizationMembership(newOrganizationMembership);
+            const {
+                roles,
+                schoolMemberships,
+                user,
+            } = newOrganizationMembership;
+            const { organization_id } = organization;
+            await createOrganizationMembership({
+                variables: {
+                    organization_id,
+                    organization_role_ids: roles?.map((r) => r.role_id) ?? [],
+                    school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
+                    given_name: user?.given_name,
+                    family_name: user?.family_name,
+                    email: user?.email,
+                    phone: user?.phone,
+                },
+            });
             onClose(newOrganizationMembership);
             enqueueSnackbar(`User has been created succesfully`, {
                 variant: `success`,

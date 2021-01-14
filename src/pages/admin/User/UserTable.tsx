@@ -144,7 +144,7 @@ export default function UserTable (props: Props) {
                             noWrap
                             variant="inherit"
                         >
-                            {utils.nameToInitials(row.name) || <PersonIcon />}
+                            {utils.nameToInitials(row.name, 3) || <PersonIcon />}
                         </Typography>
                     </Avatar>
                     <span>{row.name}</span>
@@ -233,7 +233,12 @@ export default function UserTable (props: Props) {
         const userName = row.name;
         if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
         try {
-            await deleteOrganizationMembership(selectedOrganizationMembership);
+            await deleteOrganizationMembership({
+                variables: {
+                    organization_id: selectedOrganizationMembership.organization_id,
+                    user_id: selectedOrganizationMembership.user_id,
+                },
+            });
             await refetch();
             enqueueSnackbar(`User has been deleted succesfully`, {
                 variant: `success`,
@@ -255,7 +260,6 @@ export default function UserTable (props: Props) {
                 orderBy="joinDate"
                 order="desc"
                 groupBy="roleNames"
-                page={2}
                 primaryAction={{
                     label: `Create User`,
                     icon: PersonAddIcon,
