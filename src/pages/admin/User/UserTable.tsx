@@ -155,7 +155,9 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            groupable: true,
+            groups: orderedRoleNames.map((role) => ({
+                text: role,
+            })),
             sort: (a: string[], b: string[]) => {
                 const highestRoleA = getHighestRole(orderedRoleNames, a as RoleName[]);
                 const highestRoleB = getHighestRole(orderedRoleNames, b as RoleName[]);
@@ -163,7 +165,6 @@ export default function UserTable (props: Props) {
                 if (!highestRoleB) return 1;
                 return orderedRoleNames.indexOf(highestRoleB) - orderedRoleNames.indexOf(highestRoleA);
             },
-            groupSort: (a, b) => orderedRoleNames.indexOf(b as RoleName) - orderedRoleNames.indexOf(a as RoleName),
             render: (row) => row.roleNames.map((roleName, i) =>
                 <Typography
                     key={`role-${i}`}
