@@ -7,11 +7,6 @@ import CreateClassDialog from "@/components/Class/Dialog/Create";
 import { Class } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
-import Link from "@material-ui/core/Link";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core/styles";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -31,8 +26,17 @@ import React,
 import { useIntl } from "react-intl";
 import { currentMembershipVar } from "@/cache";
 import { getPermissionState } from "@/utils/checkAllowed";
+import {
+    createStyles,
+    Link,
+    makeStyles,
+    Paper,
+} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        width: `100%`,
+    },
     containerTable: {
         width: `100%`,
         "& table": {
@@ -171,74 +175,76 @@ export default function ClasessTable (props: Props) {
 
     return (
         <>
-            <Table
-                columns={columns}
-                rows={rows}
-                loading={loading}
-                idField="id"
-                orderBy="name"
-                primaryAction={{
-                    label: `Create Class`,
-                    icon: AddIcon,
-                    disabled: !canCreate,
-                    onClick: (data) => setCreateDialogOpen(true),
-                }}
-                selectActions={[
-                    {
-                        label: intl.formatMessage({
-                            id: `classes_actionsDeleteTooltip`,
-                        }),
-                        icon: DeleteIcon,
-                        disabled: !canDelete,
-                        onClick: (data) => alert(`You want to delete ${data.rows.length} rows`),
-                    },
-                ]}
-                rowActions={(row) => [
-                    {
-                        label: `Edit`,
-                        icon: EditIcon,
-                        disabled: !(row.status === `active` && canEdit),
-                        onClick: editSelectedRow,
-                    },
-                    {
-                        label: `Delete`,
-                        icon: DeleteIcon,
-                        disabled: !(row.status === `active` && canDelete),
-                        onClick: deleteSelectedRow,
-                    },
-                ]}
-                localization={getTableLocalization(intl, {
-                    toolbar: {
-                        title: `Classes`,
-                    },
-                    search: {
-                        placeholder: intl.formatMessage({
-                            id: `classes_searchPlaceholder`,
-                        }),
-                    },
-                    body: {
-                        noData: intl.formatMessage({
-                            id: `classes_noRecords`,
-                        }),
-                    },
-                })}
-            />
-            <EditClassDialog
-                open={editDialogOpen}
-                value={selectedClass}
-                onClose={(value) => {
-                    setSelectedClass(undefined);
-                    setEditDialogOpen(false);
-                    if (value) refetch();
-                }}
-            />
-            <CreateClassDialog
-                open={createDialogOpen}
-                onClose={(value) => {
-                    setCreateDialogOpen(false);
-                    if (value) refetch();
-                }}
-            />
+            <Paper className={classes.root}>
+                <Table
+                    columns={columns}
+                    rows={rows}
+                    loading={loading}
+                    idField="id"
+                    orderBy="name"
+                    primaryAction={{
+                        label: `Create Class`,
+                        icon: AddIcon,
+                        disabled: !canCreate,
+                        onClick: (data) => setCreateDialogOpen(true),
+                    }}
+                    selectActions={[
+                        {
+                            label: intl.formatMessage({
+                                id: `classes_actionsDeleteTooltip`,
+                            }),
+                            icon: DeleteIcon,
+                            disabled: !canDelete,
+                            onClick: (data) => alert(`You want to delete ${data.rows.length} rows`),
+                        },
+                    ]}
+                    rowActions={(row) => [
+                        {
+                            label: `Edit`,
+                            icon: EditIcon,
+                            disabled: !(row.status === `active` && canEdit),
+                            onClick: editSelectedRow,
+                        },
+                        {
+                            label: `Delete`,
+                            icon: DeleteIcon,
+                            disabled: !(row.status === `active` && canDelete),
+                            onClick: deleteSelectedRow,
+                        },
+                    ]}
+                    localization={getTableLocalization(intl, {
+                        toolbar: {
+                            title: `Classes`,
+                        },
+                        search: {
+                            placeholder: intl.formatMessage({
+                                id: `classes_searchPlaceholder`,
+                            }),
+                        },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `classes_noRecords`,
+                            }),
+                        },
+                    })}
+                />
+                <EditClassDialog
+                    open={editDialogOpen}
+                    value={selectedClass}
+                    onClose={(value) => {
+                        setSelectedClass(undefined);
+                        setEditDialogOpen(false);
+                        if (value) refetch();
+                    }}
+                />
+                <CreateClassDialog
+                    open={createDialogOpen}
+                    onClose={(value) => {
+                        setCreateDialogOpen(false);
+                        if (value) refetch();
+                    }}
+                />
+            </Paper>
         </>
     );
 }

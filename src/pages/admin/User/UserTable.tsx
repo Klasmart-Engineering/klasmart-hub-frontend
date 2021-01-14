@@ -13,17 +13,17 @@ import {
 } from "kidsloop-px";
 import { getTableLocalization } from "@/utils/table";
 import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import {
+    orderedRoleNames,
     OrganizationMembership,
-    Role,
-    School,
+    RoleName,
 } from "@/types/graphQL";
 import {
     Avatar,
     Box,
     createStyles,
     makeStyles,
+    Paper,
     Typography,
 } from "@material-ui/core";
 import {
@@ -37,8 +37,14 @@ import { getPermissionState } from "@/utils/checkAllowed";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useDeleteOrganizationMembership } from "@/api/organizationMemberships";
+import { getHighestRole } from "@/utils/userRoles";
+import { startCase } from "lodash";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 
 const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        width: `100%`,
+    },
     avatar: {
         width: theme.spacing(3),
         height: theme.spacing(3),
@@ -65,8 +71,8 @@ interface UserRow {
     name: string;
     avatar: string;
     contactInfo: string;
-    roles: Role[];
-    schools: School[];
+    roleNames: (string | null | undefined)[];
+    schoolNames: string[];
     status: string;
     joinDate: Date;
 }
@@ -105,8 +111,8 @@ export default function UserTable (props: Props) {
             name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
             avatar: membership?.user?.avatar ?? ``,
             contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
-            roles: membership.roles ?? [],
-            schools: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`) as School[] ?? [],
+            roleNames: membership.roles?.map((r) => r.role_name) ?? [],
+            schoolNames: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [],
             status: membership?.status ?? ``,
             joinDate: new Date(membership.join_timestamp ?? ``),
         }));
@@ -145,32 +151,41 @@ export default function UserTable (props: Props) {
                 </Box>,
         },
         {
-            id: `roles`,
+            id: `roleNames`,
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            render: (row) => row.roles?.map((role, i) =>
+            groupable: true,
+            sort: (a: string[], b: string[]) => {
+                const highestRoleA = getHighestRole(orderedRoleNames, a as RoleName[]);
+                const highestRoleB = getHighestRole(orderedRoleNames, b as RoleName[]);
+                if (!highestRoleA) return -1;
+                if (!highestRoleB) return 1;
+                return orderedRoleNames.indexOf(highestRoleB) - orderedRoleNames.indexOf(highestRoleA);
+            },
+            groupSort: (a, b) => orderedRoleNames.indexOf(b as RoleName) - orderedRoleNames.indexOf(a as RoleName),
+            render: (row) => row.roleNames.map((roleName, i) =>
                 <Typography
                     key={`role-${i}`}
                     noWrap
                     variant="body2"
                 >
-                    {role.role_name}
+                    {roleName}
                 </Typography>,
             ),
         },
         {
-            id: `schools`,
+            id: `schoolNames`,
             label: intl.formatMessage({
                 id: `users_school`,
             }),
-            render: (row) => row.schools?.map((school, i) =>
+            render: (row) => row.schoolNames?.map((schoolName, i) =>
                 <Typography
                     key={`school-${i}`}
                     noWrap
                     variant="body2"
                 >
-                    {school.school_name}
+                    {schoolName}
                 </Typography>,
             ),
         },
@@ -185,6 +200,7 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
+            groupText: (value: string) => startCase(value),
             render: (row) => <span
                 className={clsx(classes.statusText, {
                     [classes.activeColor]: row.status === `active`,
@@ -229,64 +245,69 @@ export default function UserTable (props: Props) {
     };
 
     return <>
-        <Table
-            columns={columns}
-            rows={rows}
-            loading={loading}
-            idField="id"
-            orderBy="name"
-            primaryAction={{
-                label: `Create User`,
-                icon: PersonAddIcon,
-                disabled: !canCreate,
-                onClick: (data) => setCreateDialogOpen(true),
-            }}
-            rowActions={(row) => [
-                {
-                    label: `Edit`,
-                    icon: EditIcon,
-                    disabled: !(row.status === `active` && canEdit),
-                    onClick: editSelectedRow,
-                },
-                {
-                    label: `Delete`,
-                    icon: DeleteIcon,
-                    disabled: !(row.status === `active` && canDelete),
-                    onClick: deleteSelectedRow,
-                },
-            ]}
-            localization={getTableLocalization(intl, {
-                toolbar: {
-                    title: `Users`,
-                },
-                search: {
-                    placeholder: intl.formatMessage({
-                        id: `classes_searchPlaceholder`,
-                    }),
-                },
-                body: {
-                    noData: intl.formatMessage({
-                        id: `classes_noRecords`,
-                    }),
-                },
-            })}
-        />
-        <EditUserDialog
-            open={editDialogOpen}
-            value={selectedOrganizationMembership}
-            onClose={(value) => {
-                setSelectedOrganizationMembership(undefined);
-                setEditDialogOpen(false);
-                if (value) refetch();
-            }}
-        />
-        <CreateUserDialog
-            open={createDialogOpen}
-            onClose={(value) => {
-                setCreateDialogOpen(false);
-                if (value) refetch();
-            }}
-        />
+        <Paper className={classes.root}>
+            <Table
+                columns={columns}
+                rows={rows}
+                loading={loading}
+                idField="id"
+                orderBy="joinDate"
+                order="desc"
+                groupBy="roleNames"
+                page={2}
+                primaryAction={{
+                    label: `Create User`,
+                    icon: PersonAddIcon,
+                    disabled: !canCreate,
+                    onClick: (data) => setCreateDialogOpen(true),
+                }}
+                rowActions={(row) => [
+                    {
+                        label: `Edit`,
+                        icon: EditIcon,
+                        disabled: !(row.status === `active` && canEdit),
+                        onClick: editSelectedRow,
+                    },
+                    {
+                        label: `Delete`,
+                        icon: DeleteIcon,
+                        disabled: !(row.status === `active` && canDelete),
+                        onClick: deleteSelectedRow,
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    toolbar: {
+                        title: `Users`,
+                    },
+                    search: {
+                        placeholder: intl.formatMessage({
+                            id: `classes_searchPlaceholder`,
+                        }),
+                    },
+                    body: {
+                        noData: intl.formatMessage({
+                            id: `classes_noRecords`,
+                        }),
+                    },
+                })}
+            />
+            <EditUserDialog
+                open={editDialogOpen}
+                value={selectedOrganizationMembership}
+                onClose={(value) => {
+                    setSelectedOrganizationMembership(undefined);
+                    setEditDialogOpen(false);
+                    if (value) refetch();
+                }}
+            />
+            <CreateUserDialog
+                open={createDialogOpen}
+                onClose={(value) => {
+                    setCreateDialogOpen(false);
+                    if (value) refetch();
+                }}
+            />
+        </Paper>
     </>;
 
 }

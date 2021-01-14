@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 import KidsloopLogo from "../../../assets/img/kidsloop.svg";
 import { currentMembershipVar, userIdVar } from "../../../cache";
 import { GET_USER } from "../../../operations/queries/getUser";
-import { User } from "../../../types/graphQL";
+import { orderedRoleNames, User } from "../../../types/graphQL";
 import { history } from "../../../utils/history";
 import { getHighestRole } from "../../../utils/userRoles";
 import StyledButton from "../button";
@@ -98,7 +98,7 @@ export default function NavBar(props: Props) {
     const user: User = data?.user;
 
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
-    const highestRole = getHighestRole(selectedMembershipOrganization?.roles) || "Unknown";
+    const highestRole = getHighestRole(orderedRoleNames, selectedMembershipOrganization?.roles?.map((r) => r.role_name) ?? []) || "Unknown";
     const showNavMenu = ["Organization Admin", "School Admin", "Teacher"].indexOf(highestRole);
 
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);

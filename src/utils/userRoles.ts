@@ -1,15 +1,8 @@
-import { Role, RoleName } from "../types/graphQL";
+import { RoleName } from "@/types/graphQL";
 
-export const getHighestRole = (roles?: Role[] | null) => {
-    if (!roles?.length) return null;
-    const rolePriority: RoleName[] = ["Organization Admin", "School Admin", "Parent", "Teacher", "Student"];
-    const foundPriorityIndexes = roles
-        .map(function (role) {
-            const roleName = role.role_name as RoleName;
-            return rolePriority.indexOf(roleName);
-        })
-        .filter((priority) => priority !== -1);
-    if (!foundPriorityIndexes.length) return null;
-    const highestPriorityIndex = Math.min(...foundPriorityIndexes);
-    return rolePriority[highestPriorityIndex];
+export const getHighestRole = (rolePriority: readonly RoleName[], roles: RoleName[]) => {
+    if (!roles.length) return null;
+    const rolePriorityIndexes = roles.map((role) => rolePriority.indexOf(role));
+    const highestPriorityRoleIndex = Math.min(...rolePriorityIndexes);
+    return rolePriority[highestPriorityRoleIndex];
 };

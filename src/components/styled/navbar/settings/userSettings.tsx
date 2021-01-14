@@ -18,7 +18,7 @@ import queryString from "querystring";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { currentMembershipVar } from "../../../../cache";
-import { User } from "../../../../types/graphQL";
+import { orderedRoleNames, User } from "../../../../types/graphQL";
 import { getHighestRole } from "../../../../utils/userRoles";
 import { getAuthEndpoint, getCookieDomain } from "../../../../config";
 import { LanguageSelect } from "kidsloop-px";
@@ -252,7 +252,7 @@ export default function UserSettings(props: Props) {
                         </ListItemAvatar>
                         <ListItemText
                             primary={selectedMembershipOrganization?.organization?.organization_name}
-                            secondary={getHighestRole(selectedMembershipOrganization?.roles) ?? "Unknown"}
+                            secondary={getHighestRole(orderedRoleNames, selectedMembershipOrganization?.roles?.map((r) => r.role_name) ?? []) ?? "Unknown"}
                         />
                     </ListItem>
                 </List>}
@@ -283,7 +283,7 @@ export default function UserSettings(props: Props) {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={membership?.organization?.organization_name}
-                                    secondary={getHighestRole(membership?.roles) ?? "Unknown"}
+                                    secondary={getHighestRole(orderedRoleNames, membership?.roles?.map((r) => r.role_name) ?? []) ?? "Unknown"}
                                 />
                             </ListItem>,
                             )}

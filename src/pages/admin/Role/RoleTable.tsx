@@ -14,6 +14,7 @@ import { useIntl } from "react-intl";
 import { currentMembershipVar } from "@/cache";
 import { useGetAllRoles } from "@/api/roles";
 import { getTableLocalization } from "@/utils/table";
+import { Paper } from "@material-ui/core";
 
 const useStyles = makeStyles(() => createStyles({
     root: {
@@ -81,28 +82,30 @@ export default function RoleTable (props: Props) {
 
     return (
         <>
-            <Table
-                columns={columns}
-                rows={rows}
-                loading={loading}
-                idField="id"
-                orderBy="role"
-                localization={getTableLocalization(intl, {
-                    toolbar: {
-                        title: `Roles`,
-                    },
-                    search: {
-                        placeholder: intl.formatMessage({
-                            id: `groups_searchPlaceholder`,
-                        }),
-                    },
-                    body: {
-                        noData: intl.formatMessage({
-                            id: `groups_noRecords`,
-                        }),
-                    },
-                })}
-            />
+            <Paper className={classes.root}>
+                <Table
+                    columns={columns}
+                    rows={rows}
+                    loading={loading}
+                    idField="id"
+                    orderBy="role"
+                    localization={getTableLocalization(intl, {
+                        toolbar: {
+                            title: `Roles`,
+                        },
+                        search: {
+                            placeholder: intl.formatMessage({
+                                id: `groups_searchPlaceholder`,
+                            }),
+                        },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `groups_noRecords`,
+                            }),
+                        },
+                    })}
+                />
+            </Paper>
         </>
     );
 }

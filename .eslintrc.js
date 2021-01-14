@@ -111,13 +111,26 @@ module.exports = {
                 reservedFirst: [ `key`, `ref` ],
             },
         ],
-        "@typescript-eslint/explicit-module-boundary-types": `off`,
+        "@typescript-eslint/ban-types": [
+            `error`,
+            {
+                extendDefaults: true,
+                types: {
+                    "{}": false,
+                },
+            },
+        ],
         "@typescript-eslint/comma-spacing": [ `error` ], // turned on b/c 'comma-spacing' is disabled
+        "@typescript-eslint/explicit-module-boundary-types": `off`,
         '@typescript-eslint/naming-convention': [
             `error`,
             {
                 selector: `default`,
                 format: [ `camelCase` ],
+            },
+            {
+                selector: `variable`,
+                format: [ `camelCase`, `UPPER_CASE` ],
             },
             {
                 selector: `typeLike`,
@@ -126,22 +139,6 @@ module.exports = {
             {
                 selector: `function`,
                 format: [ `camelCase`, `PascalCase` ],
-            },
-            {
-                selector: `variable`,
-                types: [ `boolean` ],
-                format: [ `PascalCase` ],
-                prefix: [
-                    `open`,
-                    `valid`,
-                    `loading`,
-                    `is`,
-                    `should`,
-                    `has`,
-                    `can`,
-                    `did`,
-                    `will`,
-                ],
             },
             {
                 selector: `variable`,

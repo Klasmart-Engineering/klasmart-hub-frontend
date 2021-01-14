@@ -15,6 +15,7 @@ import {
     DialogTitle,
     Grid,
     makeStyles,
+    Paper,
     Typography,
 } from "@material-ui/core";
 import {
@@ -35,20 +36,21 @@ import React,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) =>
-    createStyles({
-        activeColor: {
-            color: `#2BA600`,
-            fontWeight: `bold`,
-            textTransform: `capitalize`,
-        },
-        inactiveColor: {
-            color: `#FF0000`,
-            fontWeight: `bold`,
-            textTransform: `capitalize`,
-        },
-    }),
-);
+const useStyles = makeStyles((theme) => createStyles({
+    activeColor: {
+        color: `#2BA600`,
+        fontWeight: `bold`,
+        textTransform: `capitalize`,
+    },
+    inactiveColor: {
+        color: `#FF0000`,
+        fontWeight: `bold`,
+        textTransform: `capitalize`,
+    },
+    root: {
+        width: `100%`,
+    },
+}));
 
 interface MyOrganizationRow {
     id: string;
@@ -186,43 +188,45 @@ export default function MyOrganizationTable(props: Props) {
 
     return (
         <>
-            <Table
-                columns={columns}
-                rows={rows}
-                loading={loading}
-                idField={`id`}
-                primaryAction={{
-                    label: `Create`,
-                    icon: AddIcon,
-                    onClick: (tableData) => history.push(`/admin/create-organization`),
-                }}
-                rowActions={(row) => [
-                    {
-                        label: `Edit`,
-                        icon: EditIcon,
-                        onClick: (row) => history.push(`/admin/edit-organization/${row.id}`),
-                    },
-                    {
-                        label: `Delete`,
-                        icon: DeleteIcon,
-                        onClick: (row) => showConfirmDeleteOrganization(row),
-                    },
-                ]}
-                rowsPerPage={1}
-                rowsPerPageOptions={[]}
-                localization={getTableLocalization(intl, {
-                    toolbar: {
-                        title: intl.formatMessage({
-                            id: `allOrganization_myOrganizations`,
-                        }),
-                    },
-                    body: {
-                        noData: intl.formatMessage({
-                            id: `allOrganization_noRecords`,
-                        }),
-                    },
-                })}
-            />
+            <Paper className={classes.root}>
+                <Table
+                    columns={columns}
+                    rows={rows}
+                    loading={loading}
+                    idField={`id`}
+                    primaryAction={{
+                        label: `Create`,
+                        icon: AddIcon,
+                        onClick: (tableData) => history.push(`/admin/create-organization`),
+                    }}
+                    rowActions={(row) => [
+                        {
+                            label: `Edit`,
+                            icon: EditIcon,
+                            onClick: (row) => history.push(`/admin/edit-organization/${row.id}`),
+                        },
+                        {
+                            label: `Delete`,
+                            icon: DeleteIcon,
+                            onClick: (row) => showConfirmDeleteOrganization(row),
+                        },
+                    ]}
+                    rowsPerPage={1}
+                    rowsPerPageOptions={[]}
+                    localization={getTableLocalization(intl, {
+                        toolbar: {
+                            title: intl.formatMessage({
+                                id: `allOrganization_myOrganizations`,
+                            }),
+                        },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `allOrganization_noRecords`,
+                            }),
+                        },
+                    })}
+                />
+            </Paper>
             <Dialog
                 open={confirmLeaveOrganizationDialogOpen}
                 onClose={closeConfirmDeleteOrganization}

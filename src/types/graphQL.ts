@@ -1,12 +1,12 @@
-const roleNames = [
+export const orderedRoleNames = [
     `Organization Admin`,
     `School Admin`,
-    `Parent`,
     `Teacher`,
+    `Parent`,
     `Student`,
 ] as const;
 
-export type RoleName = typeof roleNames[number];
+export type RoleName = typeof orderedRoleNames[number];
 
 export interface User {
     user_id: string;

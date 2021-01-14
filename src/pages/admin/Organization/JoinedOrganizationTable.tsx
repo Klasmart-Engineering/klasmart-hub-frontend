@@ -8,11 +8,14 @@ import { useReactiveVar } from "@apollo/client/react";
 import {
     Button,
     CircularProgress,
+    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Grid,
+    makeStyles,
+    Paper,
     Typography,
 } from "@material-ui/core";
 import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
@@ -27,6 +30,12 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+
+const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        width: `100%`,
+    },
+}));
 
 interface JoinedOrganizationRow {
     id: string;
@@ -43,6 +52,7 @@ interface Props {}
  * Returns function to show Joined Organizations table
  */
 export default function JoinedOrganizationTable(props: Props) {
+    const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const userId = useReactiveVar(userIdVar);
@@ -151,48 +161,49 @@ export default function JoinedOrganizationTable(props: Props) {
 
     return (
         <>
-            <Table
-                columns={columns}
-                rows={rows}
-                loading={loading}
-                idField="id"
-                orderBy="name"
-                selectActions={[
-                    {
-                        label: `Leave selected organizations`,
-                        icon: ExitToAppIcon,
-                        onClick: (data) => console.log(data),
-                    },
-                ]}
-                rowActions={(row) => [
-                    {
-                        label: intl.formatMessage({
-                            id: `allOrganization_leaveOrganizationButton`,
-                        }),
-                        icon: ExitToAppIcon,
-                        disabled: row.status === `inactive`,
-                        onClick: (row) => showConfirmLeaveOrganization(row),
-                    },
-                ]}
-                localization={getTableLocalization(intl, {
-                    toolbar: {
-                        title: intl.formatMessage({
-                            id: `allOrganization_joinedOrganizations`,
-                        }),
-                    },
-                    search: {
-                        placeholder: intl.formatMessage({
-                            id: `allOrganization_searchPlaceholder`,
-                        }),
-                    },
-                    body: {
-                        noData: intl.formatMessage({
-                            id: `allOrganization_noRecords`,
-                        }),
-                    },
-                })}
-            />
-
+            <Paper className={classes.root}>
+                <Table
+                    columns={columns}
+                    rows={rows}
+                    loading={loading}
+                    idField="id"
+                    orderBy="name"
+                    selectActions={[
+                        {
+                            label: `Leave selected organizations`,
+                            icon: ExitToAppIcon,
+                            onClick: (data) => console.log(data),
+                        },
+                    ]}
+                    rowActions={(row) => [
+                        {
+                            label: intl.formatMessage({
+                                id: `allOrganization_leaveOrganizationButton`,
+                            }),
+                            icon: ExitToAppIcon,
+                            disabled: row.status === `inactive`,
+                            onClick: (row) => showConfirmLeaveOrganization(row),
+                        },
+                    ]}
+                    localization={getTableLocalization(intl, {
+                        toolbar: {
+                            title: intl.formatMessage({
+                                id: `allOrganization_joinedOrganizations`,
+                            }),
+                        },
+                        search: {
+                            placeholder: intl.formatMessage({
+                                id: `allOrganization_searchPlaceholder`,
+                            }),
+                        },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `allOrganization_noRecords`,
+                            }),
+                        },
+                    })}
+                />
+            </Paper>
             <Dialog
                 open={confirmLeaveOrganizationDialogOpen}
                 onClose={closeConfirmLeaveOrganization}
