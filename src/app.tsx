@@ -25,6 +25,7 @@ import SchoolTable from "./pages/admin/School/SchoolTable";
 import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
+import CreateRoles from "@/pages/admin/Role/CreateRoles";
 import { ActionTypes } from "./store/actions";
 import { redirectIfUnauthorized, refreshToken } from "./utils/redirectIfUnauthorized";
 
@@ -191,6 +192,11 @@ export function App() {
                     <Route path="/admin/roles">
                         <Layout>
                             <RoleTable />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/createRole">
+                        <Layout>
+                            <CreateRoles />
                         </Layout>
                     </Route>
                     <Route path="/admin/school">
