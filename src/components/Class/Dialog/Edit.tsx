@@ -43,12 +43,13 @@ export default function EditClassDialog(props: Props) {
     const [ valid, setValid ] = useState(true);
     const [ updateClass, { loading: loadingSave } ] = useUpdateClass();
     const [ deleteClass, { loading: loadingDelete } ] = useDeleteClass();
-    const [ editSchools ] = useEditSchools();
+    const [ editSchools, { loading: loadingEditSchools } ] = useEditSchools();
     const { organization_id } = organization;
     const canEditSchool = getPermissionState(
         organization_id,
         `edit_school_20330`,
     );
+    const loadingUpdateClass = loadingSave || loadingEditSchools;
 
     useEffect(() => {
         setEditedClass(value ?? buildEmptyClass());
@@ -131,7 +132,7 @@ export default function EditClassDialog(props: Props) {
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
-                    loading: loadingSave,
+                    loading: loadingUpdateClass,
                     onClick: handleSave,
                 },
             ]}
