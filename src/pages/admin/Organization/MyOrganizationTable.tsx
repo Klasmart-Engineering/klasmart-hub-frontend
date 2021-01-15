@@ -24,10 +24,10 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    BaseTable,
+    Table,
     useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import React,
 {
     useEffect,
@@ -186,7 +186,7 @@ export default function MyOrganizationTable(props: Props) {
 
     return (
         <>
-            <BaseTable
+            <Table
                 columns={columns}
                 rows={rows}
                 loading={loading}

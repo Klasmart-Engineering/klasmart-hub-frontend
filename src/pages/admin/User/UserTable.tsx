@@ -7,13 +7,13 @@ import React,
 import { useIntl } from "react-intl";
 import { currentMembershipVar } from "@/cache";
 import {
-    BaseTable,
+    Table,
     useSnackbar,
     utils,
 } from "kidsloop-px";
 import { getTableLocalization } from "@/utils/table";
 import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
-import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import {
     OrganizationMembership,
     Role,
@@ -80,7 +80,7 @@ interface Props {
 export default function UserTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
-    const { enqueueSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const [ rows, setRows ] = useState<UserRow[]>([]);
@@ -122,7 +122,6 @@ export default function UserTable (props: Props) {
         {
             id: `name`,
             label: `Name`,
-            searchable: true,
             render: (row) =>
                 <Box
                     display="flex"
@@ -150,7 +149,6 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            searchable: true,
             render: (row) => row.roles?.map((role, i) =>
                 <Typography
                     key={`role-${i}`}
@@ -166,7 +164,6 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_school`,
             }),
-            searchable: true,
             render: (row) => row.schools?.map((school, i) =>
                 <Typography
                     key={`school-${i}`}
@@ -182,14 +179,12 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_contactInfo`,
             }),
-            searchable: true,
         },
         {
             id: `status`,
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            searchable: true,
             render: (row) => <span
                 className={clsx(classes.statusText, {
                     [classes.activeColor]: row.status === `active`,
@@ -223,14 +218,18 @@ export default function UserTable (props: Props) {
         try {
             await deleteOrganizationMembership(selectedOrganizationMembership);
             await refetch();
-            enqueueSnackbar("User has been deleted succesfully", { variant: "success" });
+            enqueueSnackbar(`User has been deleted succesfully`, {
+                variant: `success`,
+            });
         } catch (error) {
-            enqueueSnackbar("Sorry, something went wrong, please try again", { variant: "error" });
+            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+                variant: `error`,
+            });
         }
     };
 
     return <>
-        <BaseTable
+        <Table
             columns={columns}
             rows={rows}
             loading={loading}

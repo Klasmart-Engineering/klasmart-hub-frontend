@@ -17,10 +17,10 @@ import {
 } from "@material-ui/core";
 import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
 import {
-    BaseTable,
+    Table,
     useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Base/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import React,
 {
     useEffect,
@@ -118,28 +118,24 @@ export default function JoinedOrganizationTable(props: Props) {
             label: intl.formatMessage({
                 id: `allOrganization_organizationName`,
             }),
-            searchable: true,
         },
         {
             id: `phone`,
             label: intl.formatMessage({
                 id: `allOrganization_phone`,
             }),
-            searchable: true,
         },
         {
             id: `email`,
             label: intl.formatMessage({
                 id: `joinedOrganization_email`,
             }),
-            searchable: true,
         },
         {
             id: `roles`,
             label: intl.formatMessage({
                 id: `joinedOrganization_role`,
             }),
-            searchable: true,
             disableSort: true,
             render: (row) =>
                 row?.roles?.map((role, i) => (
@@ -155,7 +151,7 @@ export default function JoinedOrganizationTable(props: Props) {
 
     return (
         <>
-            <BaseTable
+            <Table
                 columns={columns}
                 rows={rows}
                 loading={loading}
