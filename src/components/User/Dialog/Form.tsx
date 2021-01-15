@@ -72,7 +72,6 @@ export default function UserDialogForm(props: Props) {
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schoolMemberships?.map((s) => s.school_id) ?? []);
     const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.map((r) => r.role_id) ?? []);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
-    const [ status, setStatus ] = useState(value.status ?? ``);
 
     useEffect(() => {
         onValidation(!getRolesHelperText(roleIds) && !getContactInfoHelperText(contactInfo));
@@ -97,7 +96,6 @@ export default function UserDialogForm(props: Props) {
                 user_id: userId,
                 school_id: s.school_id,
             })),
-            status,
         };
         onChange(updatedOrganizationMembership);
 
@@ -107,7 +105,6 @@ export default function UserDialogForm(props: Props) {
         schoolIds,
         roleIds,
         contactInfo,
-        status,
     ]);
 
     return (
@@ -159,16 +156,6 @@ export default function UserDialogForm(props: Props) {
                 error={!!getContactInfoHelperText(contactInfo)}
                 helperText={getContactInfoHelperText(contactInfo) ?? ` `}
                 onChange={(e) => setContactInfo(e.currentTarget.value)}
-            />
-            <TextField
-                disabled
-                fullWidth
-                value={status}
-                variant="outlined"
-                label="Status"
-                type="text"
-                helperText=" "
-                onChange={(e) => setStatus(e.currentTarget.value)}
             />
         </div>
     );

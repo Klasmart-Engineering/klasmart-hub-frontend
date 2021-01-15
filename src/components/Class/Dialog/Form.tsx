@@ -55,7 +55,6 @@ export default function ClassDialogForm(props: Props) {
     const allSchools = data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const [ className, setClassName ] = useState(value.class_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((s) => s.school_id) ?? []);
-    const [ status, setStatus ] = useState(value.status ?? ``);
 
     useEffect(() => {
         onValidation(!getClassNameHelperText(className));
@@ -66,14 +65,9 @@ export default function ClassDialogForm(props: Props) {
             class_id: value.class_id,
             class_name: className,
             schools: allSchools.filter((s) => schoolIds.includes(s.school_id)),
-            status,
         };
         onChange(updatedClass);
-    }, [
-        className,
-        schoolIds,
-        status,
-    ]);
+    }, [ className, schoolIds ]);
 
     return (
         <div className={classes.root}>
@@ -95,16 +89,6 @@ export default function ClassDialogForm(props: Props) {
                 itemText={(school) => school.school_name ?? ``}
                 itemValue={(school) => school.school_id}
                 onChange={(values) => setSchoolIds(values)}
-            />
-            <TextField
-                disabled
-                fullWidth
-                value={status}
-                variant="outlined"
-                label="Status"
-                type="text"
-                helperText=" "
-                onChange={(e) => setStatus(e.currentTarget.value)}
             />
         </div>
     );
