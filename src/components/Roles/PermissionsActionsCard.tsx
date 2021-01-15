@@ -16,7 +16,7 @@ import {
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             height: `100px`,
             marginBottom: `13px`,
             borderRadius: 10,

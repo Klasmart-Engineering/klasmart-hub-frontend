@@ -16,7 +16,6 @@ const useStyles = makeStyles(() =>
     createStyles({
         root: {
             width: `1342px`,
-            height: `397px`,
             borderRadius: 10,
         },
         textField: {

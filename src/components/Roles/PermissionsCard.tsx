@@ -19,17 +19,17 @@ import {
     makeStyles,
 } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme ) =>
     createStyles({
         root: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             borderRadius: 10,
         },
         formControlLabel: {
             marginRight: `-5px`,
         },
         accordionContainer: {
-            width: `1340px`,
+            width: theme.breakpoints.values.lg,
             display: `grid`,
             gridTemplateColumns: `minmax(100px, 500px) minmax(100px, 500px) auto`,
             justifyContent: `space-between`,
