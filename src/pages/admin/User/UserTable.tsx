@@ -123,7 +123,7 @@ export default function UserTable (props: Props) {
         setRows(rows ?? []);
     }, [ memberships ]);
 
-    const roles = dataRoles?.organization?.roles?.map((role) => role.role_name) ?? [];
+    const roles = dataRoles?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {
