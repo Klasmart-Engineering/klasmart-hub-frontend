@@ -20,10 +20,11 @@ import { FormattedMessage } from "react-intl";
 import { currentMembershipVar } from "../../../../cache";
 import { User } from "../../../../types/graphQL";
 import { getHighestRole } from "../../../../utils/userRoles";
-import { getAuthEndpoint } from "../../../../config";
-import LanguageSelect from "../../../languageSelect";
+import { getAuthEndpoint, getCookieDomain } from "../../../../config";
+import { LanguageSelect } from "kidsloop-px";
 import StyledButton from "../../button";
 import CreateOrganizationDialog from "./createOrganization";
+import { LANGUAGES_LABEL } from "@/locale/locale";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -85,6 +86,7 @@ export default function UserSettings(props: Props) {
         error,
     } = props;
     const classes = useStyles();
+    
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
     const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
@@ -302,7 +304,7 @@ export default function UserSettings(props: Props) {
                                 xs={12}
                                 style={{ textAlign: "center" }}
                             >
-                                <LanguageSelect />
+                                <LanguageSelect cookieDomain={getCookieDomain()} languages={LANGUAGES_LABEL} />
                             </Grid>
                             <Grid
                                 item

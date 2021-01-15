@@ -59,7 +59,7 @@ export default function InviteButton({ url }: { url: string }): JSX.Element {
                         style: {
                             backgroundColor: "rgba(240, 240, 240, 0.8)",
                             borderRadius: 12,
-                            fontSize: "0.75em",
+                            fontSize: "1em",
                         },
                     }}
                 />

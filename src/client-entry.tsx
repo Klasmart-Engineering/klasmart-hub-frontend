@@ -24,6 +24,7 @@ import { themeProvider } from "./themeProvider";
 import { redirectIfUnauthorized } from "./utils/accountUtils";
 import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
+import Cookies, { useCookies } from "react-cookie";
 
 const link = createUploadLink({
     credentials: "include",
@@ -39,12 +40,14 @@ export const client = new ApolloClient({
 function ClientSide() {
     const memos = useMemo(() => {
         const url = new URL(window.location.href);
-        return { hostName: url.hostname };
+        const locale = url.searchParams.get("iso");
+        return { hostName: url.hostname, locale };
     }, []);
 
     const testing = memos.hostName === "localhost";
 
-    const languageCode = useSelector((state: State) => state.ui.locale || "");
+    const [cookies] = useCookies(["locale"]);
+    const languageCode = memos.locale ?? cookies.locale ?? useSelector((state: State) => state.ui.locale || "");
     const locale = getLanguage(languageCode);
 
     return (

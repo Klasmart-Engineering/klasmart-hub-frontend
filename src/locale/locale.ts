@@ -4,8 +4,31 @@ import korean from "./ko";
 import chinese from "./zh_cn";
 import vietnamese from "./vi";
 import indonesian from "./id";
+import { Language } from "kidsloop-px/dist/types/components/LanguageSelect";
 
 export const localeCodes = ["en-US", "ko", "zh-CN", "vi", "id"];
+export const LANGUAGES_LABEL: Language[] = [
+    {
+        code: "en-US",
+        text: "English",
+    },
+    {
+        code: "ko",
+        text: "한국어",
+    },
+    {
+        code: "zh-CN",
+        text: "汉语 (简体)",
+    },
+    {
+        code: "vi",
+        text: "Tiếng Việt",
+    },
+    {
+        code: "id",
+        text: "bahasa Indonesia",
+    },
+];
 
 const intlCache = createIntlCache();
 export const fallbackLocale = createIntl({ locale: "en", messages: english }, intlCache);
