@@ -47,7 +47,7 @@ function ClientSide() {
     const testing = memos.hostName === "localhost";
 
     const [cookies] = useCookies(["locale"]);
-    const languageCode = memos.locale ?? cookies.locale ?? useSelector((state: State) => state.ui.locale || "");
+    const languageCode = memos.locale ?? cookies.locale ?? useSelector((state: State) => state.ui.locale || "en");
     const locale = getLanguage(languageCode);
 
     return (
