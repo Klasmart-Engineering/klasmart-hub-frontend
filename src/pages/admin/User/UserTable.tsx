@@ -40,6 +40,7 @@ import { useDeleteOrganizationMembership } from "@/api/organizationMemberships";
 import { getHighestRole } from "@/utils/userRoles";
 import { startCase } from "lodash";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { useGetAllRoles } from "@/api/roles";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -94,17 +95,20 @@ export default function UserTable (props: Props) {
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
     const {
-        data,
+        data: dataOrganizationMemberships,
         refetch,
-        loading,
+        loading: loadingOrganizationMemberships,
     } = useGetOrganizationMemberships(organization_id);
+    const {
+        data: dataRoles,
+        loading: loadingRoles,
+    } = useGetAllRoles(organization_id);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
     const canCreate = getPermissionState(organization_id, `create_users_40220`);
     const canEdit = getPermissionState(organization_id, `edit_users_40330`);
     const canDelete = getPermissionState(organization_id, `delete_users_40440`);
 
-    const memberships = data?.organization?.memberships;
-
+    const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {
         const rows = memberships?.map((membership) => ({
             id: membership?.user?.user_id ?? ``,
@@ -118,6 +122,8 @@ export default function UserTable (props: Props) {
         }));
         setRows(rows ?? []);
     }, [ memberships ]);
+
+    const roles = dataRoles?.organization?.roles?.map((role) => role.role_name) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {
@@ -155,7 +161,7 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            groups: orderedRoleNames.map((role) => ({
+            groups: roles.map((role) => ({
                 text: role,
             })),
             sort: (a: string[], b: string[]) => {
@@ -255,7 +261,7 @@ export default function UserTable (props: Props) {
             <Table
                 columns={columns}
                 rows={rows}
-                loading={loading}
+                loading={loadingOrganizationMemberships || loadingRoles}
                 idField="id"
                 orderBy="joinDate"
                 order="desc"
@@ -296,23 +302,23 @@ export default function UserTable (props: Props) {
                     },
                 })}
             />
-            <EditUserDialog
-                open={editDialogOpen}
-                value={selectedOrganizationMembership}
-                onClose={(value) => {
-                    setSelectedOrganizationMembership(undefined);
-                    setEditDialogOpen(false);
-                    if (value) refetch();
-                }}
-            />
-            <CreateUserDialog
-                open={createDialogOpen}
-                onClose={(value) => {
-                    setCreateDialogOpen(false);
-                    if (value) refetch();
-                }}
-            />
         </Paper>
+        <EditUserDialog
+            open={editDialogOpen}
+            value={selectedOrganizationMembership}
+            onClose={(value) => {
+                setSelectedOrganizationMembership(undefined);
+                setEditDialogOpen(false);
+                if (value) refetch();
+            }}
+        />
+        <CreateUserDialog
+            open={createDialogOpen}
+            onClose={(value) => {
+                setCreateDialogOpen(false);
+                if (value) refetch();
+            }}
+        />
     </>;
 
 }
