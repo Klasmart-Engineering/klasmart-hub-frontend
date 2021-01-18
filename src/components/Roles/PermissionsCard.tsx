@@ -10,16 +10,15 @@ import {
     Divider,
     FormControlLabel,
 } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import SearchIcon from "@material-ui/icons/Search";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { ArrowDropDown } from "@material-ui/icons";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
+import { TableSearch } from "kidsloop-px";
 
-const useStyles = makeStyles((theme ) =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
             width: theme.breakpoints.values.lg,
@@ -88,15 +87,7 @@ export default function PermissionsCard() {
                 </Typography>
                 <Divider />
                 <div className={classes.searchContainer}>
-                    <div>
-                        <IconButton aria-label="delete">
-                            <SearchIcon />
-                        </IconButton>
-                    </div>
-                    <Typography component="p">
-                        Search for permissions by their name, description, or
-                        default role
-                    </Typography>
+                    <TableSearch />
                 </div>
                 <Divider />
                 <div>
