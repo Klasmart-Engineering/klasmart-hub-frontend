@@ -72,11 +72,17 @@ interface UserRow {
     name: string;
     avatar: string;
     contactInfo: string;
-    roleNames: (string | null | undefined)[];
+    roleNames: RoleName[];
     schoolNames: string[];
     status: string;
     joinDate: Date;
 }
+
+const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
+
+const sortRoleNames = (a: RoleName, b: RoleName) => {
+    return orderedRoleNames.indexOf(a) - orderedRoleNames.indexOf(b);
+};
 
 interface Props {
 }
@@ -110,16 +116,22 @@ export default function UserTable (props: Props) {
 
     const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {
-        const rows = memberships?.map((membership) => ({
-            id: membership?.user?.user_id ?? ``,
-            name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
-            avatar: membership?.user?.avatar ?? ``,
-            contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
-            roleNames: membership.roles?.map((r) => r.role_name) ?? [],
-            schoolNames: membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [],
-            status: membership?.status ?? ``,
-            joinDate: new Date(membership.join_timestamp ?? ``),
-        }));
+        const rows = memberships?.map((membership) => {
+            const roleNames = membership.roles?.map((r) => r.role_name) ?? [];
+            roleNames.sort(sortRoleNames);
+            const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [];
+            schoolNames?.sort(sortSchoolNames);
+            return {
+                id: membership?.user?.user_id ?? ``,
+                name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
+                avatar: membership?.user?.avatar ?? ``,
+                contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
+                roleNames,
+                schoolNames,
+                status: membership?.status ?? ``,
+                joinDate: new Date(membership.join_timestamp ?? ``),
+            };
+        });
         setRows(rows ?? []);
     }, [ memberships ]);
 
@@ -164,9 +176,9 @@ export default function UserTable (props: Props) {
             groups: roles.map((role) => ({
                 text: role,
             })),
-            sort: (a: string[], b: string[]) => {
-                const highestRoleA = getHighestRole(orderedRoleNames, a as RoleName[]);
-                const highestRoleB = getHighestRole(orderedRoleNames, b as RoleName[]);
+            sort: (a: RoleName[], b: RoleName[]) => {
+                const highestRoleA = getHighestRole(orderedRoleNames, a);
+                const highestRoleB = getHighestRole(orderedRoleNames, b);
                 if (!highestRoleA) return -1;
                 if (!highestRoleB) return 1;
                 return orderedRoleNames.indexOf(highestRoleB) - orderedRoleNames.indexOf(highestRoleA);
