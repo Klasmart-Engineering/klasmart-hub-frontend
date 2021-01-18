@@ -198,6 +198,7 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_school`,
             }),
+            groupable: true,
             render: (row) => row.schoolNames?.map((schoolName, i) =>
                 <Typography
                     key={`school-${i}`}
