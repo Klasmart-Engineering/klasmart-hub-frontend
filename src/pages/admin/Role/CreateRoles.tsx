@@ -126,7 +126,9 @@ export default function CreateRole() {
                     handleReset={handleReset}
                 />
                 <div className={classes.stepper}>
-                    <RoleStepper activeStep={activeStep} />
+                    <RoleStepper
+                        activeStep={activeStep}
+                        steps={steps}/>
                 </div>
                 <Grid
                     container

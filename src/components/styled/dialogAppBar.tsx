@@ -42,6 +42,7 @@ interface Props {
     handleBack?: () => void;
     handleNext?: () => void;
     handleReset?: () => void;
+    displayHome?: boolean;
 }
 
 export default function DialogAppBar(props: Props) {
@@ -56,6 +57,7 @@ export default function DialogAppBar(props: Props) {
         handleBack,
         handleNext,
         handleReset,
+        displayHome,
     } = props;
 
     return (
@@ -72,7 +74,7 @@ export default function DialogAppBar(props: Props) {
                     >
                         <CloseIcon />
                     </IconButton>
-                    {window.location.hash !== `#/` ? (
+                    {window.location.hash !== `#/` && displayHome ? (
                         <IconButton
                             aria-label="home"
                             color="inherit"

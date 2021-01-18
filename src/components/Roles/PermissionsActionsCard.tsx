@@ -12,6 +12,11 @@ import {
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
+import { teacherRole } from "@/utils/permissions/teacher";
+import { studentRole } from "@/utils/permissions/student";
+import { schoolAdminRole } from "@/utils/permissions/schoolAdmin";
+import { parentRole } from "@/utils/permissions/parent";
+import { organizationAdminRole } from "@/utils/permissions/organizationAdmin";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,20 +50,24 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const roles = [
     {
-        value: `USER`,
-        label: `user_code`,
+        value: teacherRole.role_name,
+        label: teacherRole.role_name,
     },
     {
-        value: `ADMIN`,
-        label: `admin_code`,
+        value: studentRole.role_name,
+        label: studentRole.role_name,
     },
     {
-        value: `Teacher`,
-        label: `teacher_code`,
+        value: schoolAdminRole.role_name,
+        label: schoolAdminRole.role_name,
     },
     {
-        value: `Student`,
-        label: `student_code`,
+        value: parentRole.role_name,
+        label: parentRole.role_name,
+    },
+    {
+        value: organizationAdminRole.role_name,
+        label: organizationAdminRole.role_name,
     },
 ];
 
