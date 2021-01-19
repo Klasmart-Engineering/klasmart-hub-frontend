@@ -90,7 +90,7 @@ export default function EditSchoolDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Edit class"
+            title="Edit school"
             actions={[
                 {
                     label: `Delete`,
