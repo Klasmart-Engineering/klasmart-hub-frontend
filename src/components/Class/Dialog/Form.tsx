@@ -47,8 +47,12 @@ export default function ClassDialogForm(props: Props) {
     const classes = useStyles();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
-    const { data } = useGetSchools(organization_id);
-    const allSchools = data?.me.membership?.organization?.schools ?? [];
+    const { data } = useGetSchools({
+        variables: {
+            organization_id,
+        },
+    });
+    const allSchools = data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const [ className, setClassName ] = useState(value.class_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((s) => s.school_id) ?? []);
     const [ status, setStatus ] = useState(value.status ?? ``);
