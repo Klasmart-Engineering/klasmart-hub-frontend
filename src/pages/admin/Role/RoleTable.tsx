@@ -40,9 +40,22 @@ interface Props {
 }
 
 /**
+ * Returns a match if property needs to be localized.
+ * @param role Role to be checked.
+ */
+const checkRoleMatch = (role: string | undefined | null) => {
+    if (!role) {
+        return null;
+    }
+
+    const regex = new RegExp(`Organization Admin|Parent|School Admin|Student|Teacher`, `gmi`);
+    return regex.test(role);
+};
+
+/**
  * Returns function to show Rol Table in "View roles"
  */
-export default function RoleTable (props: Props) {
+export default function RoleTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const [ rows, setRows ] = useState<RoleRow[]>([]);
@@ -60,8 +73,11 @@ export default function RoleTable (props: Props) {
         }
         const rows: RoleRow[] = data.organization.roles.map((role) => ({
             id: role.role_id,
-            role: role.role_name ?? ``,
+            role: checkRoleMatch(role.role_name) ? intl.formatMessage({
+                id: `roles_type${role.role_name?.replace(` `, ``)}`,
+            }) : role.role_name || ``,
         }));
+
         setRows(rows);
     }, [ data ]);
 
@@ -91,7 +107,9 @@ export default function RoleTable (props: Props) {
                     orderBy="role"
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Roles`,
+                            title: intl.formatMessage({
+                                id: `roles_title`,
+                            }),
                         },
                         search: {
                             placeholder: intl.formatMessage({

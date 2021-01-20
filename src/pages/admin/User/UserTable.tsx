@@ -90,7 +90,7 @@ interface Props {
 /**
  * Returns function to show Users table for "View Users" section
  */
-export default function UserTable (props: Props) {
+export default function UserTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -150,7 +150,9 @@ export default function UserTable (props: Props) {
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({
+                id: `users_name`,
+            }),
             render: (row) =>
                 <Box
                     display="flex"
@@ -232,12 +234,17 @@ export default function UserTable (props: Props) {
                     [classes.inactiveColor]: row.status === `inactive`,
                 })}
             >
-                {row.status}
+                {/* {row.status} */}
+                {intl.formatMessage({
+                    id: `users_${row.status}Status`,
+                })}
             </span>,
         },
         {
             id: `joinDate`,
-            label: `Join Date`,
+            label: intl.formatMessage({
+                id: `users_joinDate`,
+            }),
             render: (row) => <span>{intl.formatDate(row.joinDate)}</span>,
         },
     ];
@@ -286,7 +293,9 @@ export default function UserTable (props: Props) {
                 order="desc"
                 groupBy="roleNames"
                 primaryAction={{
-                    label: `Create User`,
+                    label: intl.formatMessage({
+                        id: `users_createUser`,
+                    }),
                     icon: PersonAddIcon,
                     disabled: !canCreate,
                     onClick: (data) => setCreateDialogOpen(true),
@@ -307,7 +316,9 @@ export default function UserTable (props: Props) {
                 ]}
                 localization={getTableLocalization(intl, {
                     toolbar: {
-                        title: `Users`,
+                        title: intl.formatMessage({
+                            id: `navMenu_usersTitle`,
+                        }),
                     },
                     search: {
                         placeholder: intl.formatMessage({

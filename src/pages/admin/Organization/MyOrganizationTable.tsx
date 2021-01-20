@@ -173,7 +173,9 @@ export default function MyOrganizationTable(props: Props) {
         },
         {
             id: `status`,
-            label: `Status`,
+            label: intl.formatMessage({
+                id: `organization_statusLabel`,
+            }),
             render: (row) =>
                 <span
                     className={clsx({
@@ -195,7 +197,9 @@ export default function MyOrganizationTable(props: Props) {
                     loading={loading}
                     idField={`id`}
                     primaryAction={{
-                        label: `Create`,
+                        label: intl.formatMessage({
+                            id: `button_create`,
+                        }),
                         icon: AddIcon,
                         onClick: (tableData) => history.push(`/admin/create-organization`),
                     }}

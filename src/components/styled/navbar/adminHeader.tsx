@@ -5,16 +5,17 @@ import Paper from "@material-ui/core/Paper";
 import Toolbar from "@material-ui/core/Toolbar";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { FormattedMessage } from "react-intl";
 import { history } from "../../../utils/history";
 
 const adminNavBar = [
-    { name: "View Organization", path: "allOrganization" },
-    { name: "View Users", path: "user" },
-    { name: "View Roles", path: "roles" },
-    { name: "View Schools", path: "school" },
-    { name: "Classes", path: "classes" },
-    { name: "Programs", path: "program" },
-    { name: "Grades", path: "grade" },
+    { name: "View Organization", path: "allOrganization", id: "adminHeader_viewOrg" },
+    { name: "View Users", path: "user", id: "adminHeader_viewUsers" },
+    { name: "View Roles", path: "roles", id: "adminHeader_viewRoles" },
+    { name: "View Schools", path: "school", id: "adminHeader_viewSchools" },
+    { name: "Classes", path: "classes", id: "adminHeader_viewClasses" },
+    { name: "Programs", path: "program", id: "adminHeader_viewPrograms" },
+    { name: "Grades", path: "grade", id: "adminHeader_viewGrades" },
 ];
 
 export default function Header() {
@@ -42,7 +43,7 @@ export default function Header() {
         >
             <Paper square style={{ flex: 1, height: "100%" }}>
                 <Toolbar variant="dense">
-                    { isMdDown ?
+                    {isMdDown ?
                         <FormControl>
                             <Select
                                 value={page}
@@ -50,7 +51,7 @@ export default function Header() {
                                 name="page"
                                 inputProps={{ "aria-label": "admin page select" }}
                             >
-                                { adminNavBar.map((item) => (
+                                {adminNavBar.map((item) => (
                                     <MenuItem key={item.path} value={item.path}>{item.name}</MenuItem>
                                 ))}
                             </Select>
@@ -68,7 +69,7 @@ export default function Header() {
                                                 textDecoration: url.hash.includes(item.path) ? "underline" : "none",
                                             }}
                                         >
-                                            {item.name}
+                                            <FormattedMessage id={item.id}></FormattedMessage>
                                         </Link>
                                     </Grid>
                                 ))

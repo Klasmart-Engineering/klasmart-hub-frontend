@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import HomeIcon from "@material-ui/icons/Home";
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import KidsloopLogo from "../../assets/img/kidsloop_icon.svg";
 import { history } from "../../utils/history";
 
@@ -41,7 +41,7 @@ export default function DialogAppBar(props: Props) {
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
                         <CloseIcon />
                     </IconButton>
-                    { window.location.hash !== "#/" ?
+                    {window.location.hash !== "#/" ?
                         <IconButton
                             aria-label="home"
                             color="inherit"
@@ -58,10 +58,10 @@ export default function DialogAppBar(props: Props) {
                     <Grid container item wrap="nowrap">
                         <img alt="kidsloop logo" className={classes.title} src={KidsloopLogo} height={32} />
                         <Typography id="nav-menu-title" variant="h6">
-                            for Organizations
+                            <FormattedMessage id="dialogAppBar_organizationsTitle" />
                         </Typography>
                     </Grid>
-                    { toolbarBtn ? toolbarBtn : null }
+                    {toolbarBtn ? toolbarBtn : null}
                 </Toolbar>
             </AppBar>
             <Grid

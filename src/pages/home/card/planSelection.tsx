@@ -9,6 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Share as ShareIcon } from "@styled-icons/material/Share";
 import jwtDecode from "jwt-decode";
+import { useIntl } from "react-intl";
 
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -20,7 +21,7 @@ import InviteButton from "../../../components/invite";
 import StyledFAB from "../../../components/styled/fabButton";
 import { getCNEndpoint, getLiveEndpoint } from "../../../config";
 import { LivePreviewJWT, PublishedContentItem } from "../../../types/objectTypes";
-import {history} from "../../../utils/history";
+import { history } from "../../../utils/history";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,6 +54,7 @@ export default function PlanSelection() {
     const classes = useStyles();
     const theme = useTheme();
     const restApi = useRestAPI();
+    const intl = useIntl();
 
     const [lessonPlan, setLessonPlan] = useState<PublishedContentItem | null>(null);
     const [lessonPlans, setLessonPlans] = useState<PublishedContentItem[] | undefined>(undefined);
@@ -139,15 +141,15 @@ export default function PlanSelection() {
                             >
                                 <FormattedMessage id="live_liveButton" />
                             </StyledFAB>
-                            { shareLink !== "" &&
-                                        <StyledFAB
-                                            flat
-                                            style={{ marginLeft: theme.spacing(1), minWidth: 0 }}
-                                            size="small"
-                                            onClick={() => setOpenShareLink(!openShareLink)}
-                                        >
-                                            <ShareIcon size="1rem" />
-                                        </StyledFAB>
+                            {shareLink !== "" &&
+                                <StyledFAB
+                                    flat
+                                    style={{ marginLeft: theme.spacing(1), minWidth: 0 }}
+                                    size="small"
+                                    onClick={() => setOpenShareLink(!openShareLink)}
+                                >
+                                    <ShareIcon size="1rem" />
+                                </StyledFAB>
                             }
                         </Grid>
                     </Grid>
@@ -156,7 +158,7 @@ export default function PlanSelection() {
                     </Collapse>
                     <Grid item>
                         <Typography variant="body2" gutterBottom>
-                            <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/library"); e.preventDefault(); }}>View Your Library &gt;</Link>
+                            <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/library"); e.preventDefault(); }}>{intl.formatMessage({ id: 'planSelection_viewLibraryLabel' })} &gt;</Link>
                         </Typography>
                     </Grid>
                 </CardContent>
@@ -171,6 +173,7 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
     setLessonPlan: React.Dispatch<React.SetStateAction<PublishedContentItem | null>>,
 }) {
     const [inputValue, setInputValue] = useState("");
+    const intl = useIntl();
 
     return (
         <Autocomplete
@@ -196,7 +199,11 @@ function LessonPlanSelect({ lessonPlans, lessonPlan, setLessonPlan }: {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label={lessonPlans ? "Select a Lesson Plan" : "No lesson plans available"}
+                    label={lessonPlans ? intl.formatMessage({
+                        id: 'planSelection_selectPlanLabel'
+                    }) : intl.formatMessage({
+                        id: 'planSelection_planNotAvailableLabel',
+                    })}
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: "new-password", // disable autocomplete and autofill

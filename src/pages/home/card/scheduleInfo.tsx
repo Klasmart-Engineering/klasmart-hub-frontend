@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormattedDate, FormattedTime } from "react-intl";
+import { FormattedDate, FormattedMessage, FormattedTime, useIntl } from "react-intl";
 
 import Grid from "@material-ui/core/Grid";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -10,6 +10,7 @@ import Link from "@material-ui/core/Link";
 import KidsloopLogo from "../../../assets/img/kidsloop_icon.svg";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
 import { history } from "../../../utils/history";
+import { SchedulePayload } from "@/types/objectTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[] }) {
     const classes = useStyles();
+    const intl = useIntl();
 
     const scheduledClass = schedule?.filter((event) => event.status !== "Closed");
 
@@ -63,20 +65,25 @@ export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[
                                 <CenterAlignChildren verticalCenter>
                                     <img alt="kidsloop logo" className={classes.logo} src={KidsloopLogo} width={38} />
                                     <Typography id="kidsloop live" className={classes.liveText} variant="caption">
-                                            Live
+                                        Live
                                     </Typography>
                                 </CenterAlignChildren>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                        { scheduledClass && scheduledClass.length !== 0 ?
+                        {scheduledClass && scheduledClass.length !== 0 ?
                             <>
                                 <Typography variant="body2">
-                                    You have { scheduledClass.length } scheduled classes upcoming in <FormattedDate value={time} month="long" />.
+                                    <FormattedMessage
+                                        id="scheduleInfo_scheduleClassesLabel"
+                                        values={{ scheduledClassAmount: scheduledClass.length }}
+                                    ></FormattedMessage> <FormattedDate value={time} month="long" />.
                                 </Typography>
                                 <Typography variant="body2" gutterBottom>
-                                    <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/schedule"); e.preventDefault(); }}>See Your Schedule &gt;</Link>
+                                    <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/schedule"); e.preventDefault(); }}>
+                                        <FormattedMessage id="scheduleInfo_seeScheduleLabel"></FormattedMessage> &gt;
+                                    </Link>
                                 </Typography>
                             </> :
                             <Typography variant="body2" gutterBottom>
@@ -86,16 +93,16 @@ export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container direction="column" alignContent="stretch">
-                            { scheduledClass && scheduledClass.length !== 0 &&
+                            {scheduledClass && scheduledClass.length !== 0 &&
                                 <Grid item style={{ maxHeight: 460, overflowY: "auto" }}>
-                                    { scheduledClass.map((item) =>
+                                    {scheduledClass.map((item) =>
                                         <Grid item key={item.id} style={{ paddingBottom: 4 }}>
                                             <Alert color="info" style={{ padding: "0 8px" }}>
                                                 <FormattedTime value={item.start_at * 1000} hour="2-digit" minute="2-digit" />{" • "}
-                                                <FormattedDate value={item.start_at * 1000} month="short" day="numeric" weekday="short" /> - { item.title }
+                                                <FormattedDate value={item.start_at * 1000} month="short" day="numeric" weekday="short" /> - {item.title}
                                             </Alert>
                                         </Grid>,
-                                    ) }
+                                    )}
                                 </Grid>
                             }
                         </Grid>

@@ -9,6 +9,7 @@ import { Loop as LoopIcon } from "@styled-icons/material/Loop";
 import { useEffect } from "react";
 import { useState } from "react";
 import { PieChart } from "react-minimal-pie-chart";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar } from "../../../cache";
 import CenterAlignChildren from "../../../components/centerAlignChildren";
@@ -38,6 +39,7 @@ export default function Assessments() {
     const classes = useStyles();
     const restApi = useRestAPI();
     const theme = useTheme();
+    const intl = useIntl();
 
     const [assessments, setAssessments] = useState<AssessmentItem[] | undefined>(undefined);
     const [inProgress, setInProgress] = useState<AssessmentItem[] | undefined>(undefined);
@@ -75,9 +77,9 @@ export default function Assessments() {
                 <Grid item>
                     <CenterAlignChildren>
                         <Typography variant="h6" style={{ padding: theme.spacing(1, 0) }}>
-                            Assessments
+                            <FormattedMessage id="assessment_assessmentsTitle"></FormattedMessage>
                         </Typography>
-                        <Tooltip title={`View as ${ chart ? "list" : "chart"}`} placement="right">
+                        <Tooltip title={`View as ${chart ? "list" : "chart"}`} placement="right">
                             <IconButton aria-label="switch view" onClick={() => setChart(!chart)}>
                                 <LoopIcon size="1em" />
                             </IconButton>
@@ -85,24 +87,24 @@ export default function Assessments() {
                     </CenterAlignChildren>
                 </Grid>
                 <Grid item xs={12}>
-                    { inProgress && inProgress.length !== 0 ?
+                    {inProgress && inProgress.length !== 0 ?
                         <>
                             <Typography variant="body2">
-                                You have { inProgress.length } of {total} assessments that require your attention.
+                                You have {inProgress.length} of {total} assessments that require your attention.
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Link href="#" onClick={(e: React.MouseEvent) => { history.push("/assessments/assessment-list"); e.preventDefault(); }}>View Assessments &gt;</Link>
                             </Typography>
                         </> :
                         <Typography variant="body2" gutterBottom>
-                            You have no new updates!
+                            <FormattedMessage id="assessment_noNewUpdatesLabel"></FormattedMessage>
                         </Typography>
                     }
                 </Grid>
                 <Grid item xs={12}>
                     <Grid container direction="column" alignContent="stretch">
-                        { assessments && inProgress &&
-                            ( chart ?
+                        {assessments && inProgress &&
+                            (chart ?
                                 <Grid item style={{ width: "80%", margin: "0 auto" }}>
                                     <PieChart
                                         data={[
@@ -121,13 +123,13 @@ export default function Assessments() {
                                     />
                                 </Grid> :
                                 <Grid item style={{ maxHeight: 460, overflowY: "auto" }}>
-                                    { inProgress.map((item) =>
+                                    {inProgress.map((item) =>
                                         <Grid item key={item.id} style={{ paddingBottom: 4 }}>
                                             <Alert color="warning" style={{ padding: "0 8px" }}>
-                                                { item.title }
+                                                {item.title}
                                             </Alert>
                                         </Grid>,
-                                    ) }
+                                    )}
                                 </Grid>
                             )
                         }

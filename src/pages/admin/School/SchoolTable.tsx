@@ -60,16 +60,16 @@ interface Props {
 /**
  * Returns function to show School Table in "View School section"
  */
-export default function SchoolTable (props: Props) {
+export default function SchoolTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [ rows, setRows ] = useState<SchoolRow[]>([]);
-    const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
-    const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedSchool, setSelectedSchool ] = useState<School>();
+    const [rows, setRows] = useState<SchoolRow[]>([]);
+    const [openCreateDialog, setOpenCreateDialog] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [selectedSchool, setSelectedSchool] = useState<School>();
     const organization = useReactiveVar(currentMembershipVar);
-    const [ deleteSchool ] = useDeleteSchool();
+    const [deleteSchool] = useDeleteSchool();
     const { organization_id } = organization;
     const canEdit = getPermissionState(organization_id, `edit_school_20330`);
     const canDelete = getPermissionState(organization_id, `delete_school_20440`);
@@ -94,7 +94,7 @@ export default function SchoolTable (props: Props) {
             status: school.status ?? ``,
         })) ?? [];
         setRows(rows);
-    }, [ data ]);
+    }, [data]);
 
     const columns: TableColumn<SchoolRow>[] = [
         {
@@ -165,7 +165,9 @@ export default function SchoolTable (props: Props) {
                     rows={rows}
                     orderBy="name"
                     primaryAction={{
-                        label: `Create School`,
+                        label: intl.formatMessage({
+                            id: `schools_createSchoolLabel`,
+                        }),
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: () => setOpenCreateDialog(true),

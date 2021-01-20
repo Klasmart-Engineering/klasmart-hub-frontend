@@ -7,6 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import { useEffect } from "react";
 import { SchedulePayload } from "../../../types/objectTypes";
 import { schedulePayload } from "./payload";
+import { useIntl, FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -33,6 +34,7 @@ export default function UsageInfo({ schedule }: { schedule?: SchedulePayload[] }
     const classType = ["OnlineClass", "OfflineClass", "Homework"];
 
     const [data, setData] = useState<Data[]>([]);
+    const intl = useIntl();
 
     useEffect(() => {
         const tmp: Data[] = [];
@@ -43,20 +45,26 @@ export default function UsageInfo({ schedule }: { schedule?: SchedulePayload[] }
 
             let type = "";
             switch (item) {
-            case "OnlineClass":
-                type = "live classes";
-                break;
-            case "OfflineClass":
-                type = "offline classes";
-                break;
-            case "Homework":
-                type = "homework";
-                break;
-            default:
-                type = "classes";
-                break;
+                case "OnlineClass":
+                    type = intl.formatMessage({
+                        id: `usageInfo_onlineClasses`,
+                    });
+                    break;
+                case "OfflineClass":
+                    type = intl.formatMessage({
+                        id: `usageInfo_offlineClasses`,
+                    });
+                    break;
+                case "Homework":
+                    type = intl.formatMessage({
+                        id: `usageInfo_homework`,
+                    });
+                    break;
+                default:
+                    type = "classes";
+                    break;
             }
-            tmp.push({type, total, attended});
+            tmp.push({ type, total, attended });
         });
         setData(tmp);
     }, [schedule]);
@@ -68,14 +76,22 @@ export default function UsageInfo({ schedule }: { schedule?: SchedulePayload[] }
                     <Card elevation={4} className={classes.infoCard}>
                         <CardContent>
                             <Typography variant="h4">
-                                { item.total }
+                                {item.total}
                             </Typography>
                             <Typography variant="caption">
-                                { item.type }
+                                {item.type}
                             </Typography>
-                            <Divider style={{ margin: theme.spacing(1, 0)}}/>
+                            <Divider style={{ margin: theme.spacing(1, 0) }} />
                             <Typography variant="body2">
-                                { item.attended } { item.type === "homework" ? "completed" : "attended" }
+                                {item.type === "homework" ?
+                                    <FormattedMessage
+                                        id="usageInfo_completedAmount"
+                                        values={{ amount: item.attended }}
+                                    ></FormattedMessage>
+                                    : <FormattedMessage
+                                        id="usageInfo_attendedAmount"
+                                        values={{ amount: item.attended }}></FormattedMessage>
+                                }
                             </Typography>
                         </CardContent>
                     </Card>

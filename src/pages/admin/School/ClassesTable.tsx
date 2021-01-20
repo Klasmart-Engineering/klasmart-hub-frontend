@@ -71,7 +71,7 @@ interface Props {
  * Returns function to show Classes Table in "Classes" section
  * @param  props {Object} intl - The object has a function (formatMessage) that support multiple languages
  */
-export default function ClasessTable (props: Props) {
+export default function ClasessTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -183,7 +183,9 @@ export default function ClasessTable (props: Props) {
                     idField="id"
                     orderBy="name"
                     primaryAction={{
-                        label: `Create Class`,
+                        label: intl.formatMessage({
+                            id: `classes_createClassLabel`,
+                        }),
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: (data) => setCreateDialogOpen(true),
@@ -200,13 +202,17 @@ export default function ClasessTable (props: Props) {
                     ]}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `classes_editRowTooltip`,
+                            }),
                             icon: EditIcon,
                             disabled: !(row.status === `active` && canEdit),
                             onClick: editSelectedRow,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `classes_deleteRowTooltip`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !(row.status === `active` && canDelete),
                             onClick: deleteSelectedRow,
@@ -214,7 +220,9 @@ export default function ClasessTable (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Classes`,
+                            title: intl.formatMessage({
+                                id: `adminHeader_viewClasses`,
+                            }),
                         },
                         search: {
                             placeholder: intl.formatMessage({
@@ -245,6 +253,22 @@ export default function ClasessTable (props: Props) {
                     }}
                 />
             </Paper>
+            <EditClassDialog
+                open={editDialogOpen}
+                value={selectedClass}
+                onClose={(value) => {
+                    setSelectedClass(undefined);
+                    setEditDialogOpen(false);
+                    if (value) refetch();
+                }}
+            />
+            <CreateClassDialog
+                open={createDialogOpen}
+                onClose={(value) => {
+                    setCreateDialogOpen(false);
+                    if (value) refetch();
+                }}
+            />
         </>
     );
 }

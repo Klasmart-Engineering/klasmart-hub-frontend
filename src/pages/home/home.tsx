@@ -8,7 +8,7 @@ import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/sty
 import Typography from "@material-ui/core/Typography";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { FormattedDate, FormattedTime } from "react-intl";
+import { FormattedDate, FormattedMessage, FormattedTime, useIntl } from "react-intl";
 
 import { useRestAPI } from "../../api/restapi";
 import { currentMembershipVar, userIdVar } from "../../cache";
@@ -47,12 +47,12 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-function Card({children}: {children: React.ReactNode}) {
+function Card({ children }: { children: React.ReactNode }) {
     const classes = useStyles();
 
     return (
         <Paper elevation={4} className={classes.paperContainer}>
-            { children }
+            { children}
         </Paper>
     );
 }
@@ -61,6 +61,7 @@ export default function Home() {
     const classes = useStyles();
     const restApi = useRestAPI();
     const theme = useTheme();
+    const intl = useIntl();
 
     const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -131,7 +132,7 @@ export default function Home() {
                                 </Tooltip>
                             </Typography>
                             <Typography variant="h4" align="center">
-                                    👋  Welcome{ user && user.given_name !== null && `, ${user.given_name}`}!
+                                👋 {user && user.given_name !== null && <FormattedMessage id="home_welcomeLabel" values={{ userName: user.given_name }}></FormattedMessage>}
                             </Typography>
                         </Grid>
                         <UsageInfo schedule={schedule} />
