@@ -1,7 +1,6 @@
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
-import Paper from "@material-ui/core/Paper";
 import {
     createStyles,
     makeStyles,
@@ -11,15 +10,9 @@ import {
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import HomeIcon from "@material-ui/icons/Home";
 import React from "react";
-import {
-    FormattedMessage,
-    useIntl,
-} from "react-intl";
-import KidsloopLogo from "../../assets/img/kidsloop_icon.svg";
-import { history } from "@/utils/history";
-import RoleStepperButtons from "@/components/Roles/roleStepperButtons";
+import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
+import RoleStepperButtons from "../Roles/roleStepperButtons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,7 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
     handleClose: () => void;
-    subtitleID: string;
     toolbarBtn?: React.ReactNode;
     steps?: string[];
     activeStep?: number;
@@ -50,7 +42,6 @@ export default function DialogAppBar(props: Props) {
     const theme = useTheme();
     const {
         handleClose,
-        subtitleID,
         toolbarBtn,
         steps,
         activeStep,
@@ -63,7 +54,7 @@ export default function DialogAppBar(props: Props) {
     return (
         <>
             <AppBar
-                color="inherit"
+                color="primary"
                 className={classes.appBar}>
                 <Toolbar>
                     <IconButton
@@ -74,22 +65,6 @@ export default function DialogAppBar(props: Props) {
                     >
                         <CloseIcon />
                     </IconButton>
-                    {window.location.hash !== `#/` && displayHome ? (
-                        <IconButton
-                            aria-label="home"
-                            color="inherit"
-                            edge="end"
-                            style={{
-                                marginRight: theme.spacing(2),
-                            }}
-                            onClick={() => {
-                                history.push(`/`);
-                                handleClose();
-                            }}
-                        >
-                            <HomeIcon />
-                        </IconButton>
-                    ) : null}
                     <Grid
                         container
                         item
@@ -118,25 +93,6 @@ export default function DialogAppBar(props: Props) {
                     )}
                 </Toolbar>
             </AppBar>
-            <Grid
-                container
-                direction="row">
-                <Paper
-                    square
-                    style={{
-                        flex: 1,
-                        height: `100%`,
-                    }}
-                >
-                    <Toolbar variant="dense">
-                        <Typography
-                            id="nav-menu-description"
-                            variant="body2">
-                            <FormattedMessage id={subtitleID} />
-                        </Typography>
-                    </Toolbar>
-                </Paper>
-            </Grid>
         </>
     );
 }

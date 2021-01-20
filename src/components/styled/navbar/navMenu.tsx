@@ -32,10 +32,15 @@ import { School as SchoolIcon } from "@styled-icons/material-twotone/School";
 import { Security as SecurityIcon } from "@styled-icons/material-twotone/Security";
 import { StackedLineChart as AssessmentIcon } from "@styled-icons/material-twotone/StackedLineChart";
 import { TableChart as TableIcon } from "@styled-icons/material-twotone/TableChart";
+import { Home as HomeIcon } from "@styled-icons/material-twotone/Home";
 import { useSnackbar } from "kidsloop-px";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        superAdminMenuContainer: {
+            backgroundColor: theme.palette.grey[100],
+        },
         menuContainer: {
             padding: theme.spacing(4, 5),
             [theme.breakpoints.down(`sm`)]: {
@@ -125,7 +130,83 @@ export default function NavMenu(props: Props) {
     const classes = useStyles();
     const [ open, setOpen ] = useState(false);
 
-    const MENU_ITEMS: MenuItem[] = [
+    const superAdminMenuItems: MenuItem[] = [
+        {
+            id: `navMenu_superOrganization`,
+            description: <FormattedMessage id="navMenu_superOrganizationDescription" />,
+            link: `/report`,
+            logo: <BusinessIcon
+                size="48px"
+                style={{
+                    color: `#0E78D5`,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_superOrganizationTitle" />,
+        },
+        {
+            id: `navMenu_contentLibrary`,
+            description: <FormattedMessage id="navMenu_contentLibraryDescription" />,
+            link: `/library`,
+            logo: <InboxIcon
+                size="48px"
+                style={{
+                    color: `#1f94e8`,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_contentLibraryTitle" />,
+        },
+        {
+            id: `navMenu_users`,
+            description: <FormattedMessage id="navMenu_usersDescription" />,
+            link: `/admin/user`,
+            logo: <PersonIcon
+                size="48px"
+                style={{
+                    color: `#0E78D5`,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_usersTitle" />,
+        },
+        {
+            id: `navMenu_billing`,
+            description: <FormattedMessage id="navMenu_billingDescription" />,
+            link: `#`,
+            logo: <CardIcon
+                size="48px"
+                style={{
+                    color: `gray` /* "#b0bec5" */,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_billingTitle" />,
+            disabled: true,
+        },
+        {
+            id: `navMenu_analyticsAndReports`,
+            description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
+            link: `/report`,
+            logo: <TableIcon
+                size="48px"
+                style={{
+                    color: `#f7a219`,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_analyticsAndReportsTitle" />,
+        },
+    ];
+
+    const menuItems: MenuItem[] = [
+        {
+            id: `navMenu_home`,
+            description: <FormattedMessage id="navMenu_homeDescription" />,
+            link: `/`,
+            logo: <HomeIcon
+                size="48px"
+                style={{
+                    color: `#1f94e8`,
+                    fontSize: 48,
+                }} />,
+            title: <FormattedMessage id="navMenu_home" />,
+        },
         {
             id: `navMenu_analyticsAndReports`,
             description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
@@ -297,6 +378,25 @@ export default function NavMenu(props: Props) {
         setOpen(false);
     };
 
+    function GridMenuItem (menuItem: MenuItem) {
+        return <Grid
+            key={`menuItem-${menuItem.id}`}
+            item
+            xs={6}
+            sm={4}
+            md={3}
+            lg={2}
+        >
+            <Link
+                to={menuItem.link}
+                className={classes.menuLink}
+                onClick={menuItem.link !== `#` ? () => setOpen(false) : undefined}
+            >
+                <MenuButton content={menuItem} />
+            </Link>
+        </Grid>;
+    }
+
     return (
         <>
             <Box
@@ -323,10 +423,17 @@ export default function NavMenu(props: Props) {
                 TransitionComponent={Motion}
                 onClose={handleClose}
             >
-                <DialogAppBar
-                    handleClose={handleClose}
-                    subtitleID={`navMenu_adminConsoleLabel`}
-                />
+                <DialogAppBar handleClose={handleClose}/>
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="stretch"
+                    spacing={2}
+                    className={clsx(classes.menuContainer, classes.superAdminMenuContainer)}
+                >
+                    {superAdminMenuItems.map((menuItem) => GridMenuItem(menuItem))}
+                </Grid>
                 <Grid
                     container
                     direction="row"
@@ -335,24 +442,7 @@ export default function NavMenu(props: Props) {
                     spacing={2}
                     className={classes.menuContainer}
                 >
-                    {MENU_ITEMS.map((menuItem) =>
-                        <Grid
-                            key={`menuItem-${menuItem.id}`}
-                            item
-                            xs={6}
-                            sm={4}
-                            md={3}
-                            lg={2}
-                        >
-                            <Link
-                                to={menuItem.link}
-                                className={classes.menuLink}
-                                onClick={menuItem.link !== `#` ? () => setOpen(false) : undefined}
-                            >
-                                <MenuButton content={menuItem} />
-                            </Link>
-                        </Grid>,
-                    )}
+                    {menuItems.map((menuItem) => GridMenuItem(menuItem))}
                 </Grid>
             </Dialog>
         </>
