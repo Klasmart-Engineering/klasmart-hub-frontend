@@ -23,6 +23,7 @@ export default function AllOrganization() {
             className={classes.root}
         >
             <MyOrganizationTable />
+            <div style={{ padding: 12 }} />
             <JoinedOrganizationTable />
         </Box>
     );
