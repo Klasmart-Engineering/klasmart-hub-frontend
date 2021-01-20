@@ -4,6 +4,8 @@ import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { GET_ORGANIZATION_USERS } from "@/operations/queries/getOrganizationUsers";
 import { Organization } from "@/types/graphQL";
 import {
+    MutationHookOptions,
+    QueryHookOptions,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -21,32 +23,8 @@ interface UpdateOrganizationMembershipRequest {
 interface UpdateOrganizationMembershipResponse {
 }
 
-export const useUpdateOrganizationMembership = () => {
-    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION);
-    // return [
-    //     async (membership: OrganizationMembership) => {
-    //         const {
-    //             organization_id,
-    //             user,
-    //             roles,
-    //             schoolMemberships,
-    //         } = membership;
-    //         const roleIds = roles?.map((r) => r.role_id) ?? [];
-    //         const schoolIds = schoolMemberships?.map((s) => s.school_id) ?? [];
-    //         return promise({
-    //             variables: {
-    //                 organization_id,
-    //                 email: user?.email,
-    //                 phone: user?.phone,
-    //                 given_name: user?.given_name,
-    //                 family_name: user?.family_name,
-    //                 organization_role_ids: roleIds,
-    //                 school_ids: schoolIds,
-    //             },
-    //         });
-    //     },
-    //     mutationResult,
-    // ];
+export const useUpdateOrganizationMembership = (options?: MutationHookOptions<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>) => {
+    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION, options);
 };
 
 interface DeleteOrganizationMembershipRequest {
@@ -57,8 +35,8 @@ interface DeleteOrganizationMembershipRequest {
 interface DeleteOrganizationMembershipResponse {
 }
 
-export const useDeleteOrganizationMembership = () => {
-    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP);
+export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
+    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, options);
 };
 
 interface CreateOrganizationMembershipRequest {
@@ -74,8 +52,8 @@ interface CreateOrganizationMembershipRequest {
 interface CreateOrganizationMembershipResponse {
 }
 
-export const useCreateOrganizationMembership = () => {
-    return useMutation<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>(INVITE_USER_TO_ORGANIZATION);
+export const useCreateOrganizationMembership = (options?: MutationHookOptions<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>) => {
+    return useMutation<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>(INVITE_USER_TO_ORGANIZATION, options);
 };
 
 interface GetOrganizationMembershipsRequest {
@@ -86,11 +64,6 @@ interface GetOrganizationMembershipsResponse {
     organization: Organization;
 }
 
-export const useGetOrganizationMemberships = (organizationId: string) => {
-    return useQuery<GetOrganizationMembershipsResponse, GetOrganizationMembershipsRequest>(GET_ORGANIZATION_USERS, {
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id: organizationId,
-        },
-    });
+export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationMembershipsResponse, GetOrganizationMembershipsRequest>) => {
+    return useQuery<GetOrganizationMembershipsResponse, GetOrganizationMembershipsRequest>(GET_ORGANIZATION_USERS, options);
 };

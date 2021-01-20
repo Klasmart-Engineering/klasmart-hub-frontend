@@ -64,7 +64,11 @@ export default function UserDialogForm(props: Props) {
             organization_id,
         },
     });
-    const { data: organizationData } = useGetOrganizationMemberships(organization_id);
+    const { data: organizationData } = useGetOrganizationMemberships({
+        variables: {
+            organization_id,
+        },
+    });
     const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const allRoles = organizationData?.organization?.roles ?? [];
     const [ givenName, setGivenName ] = useState(value.user?.given_name ?? ``);

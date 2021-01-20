@@ -72,7 +72,7 @@ interface UserRow {
     name: string;
     avatar: string;
     contactInfo: string;
-    roleNames: RoleName[];
+    roleNames: (RoleName | null | undefined)[];
     schoolNames: string[];
     status: string;
     joinDate: Date;
@@ -104,7 +104,12 @@ export default function UserTable (props: Props) {
         data: dataOrganizationMemberships,
         refetch,
         loading: loadingOrganizationMemberships,
-    } = useGetOrganizationMemberships(organization_id);
+    } = useGetOrganizationMemberships({
+        fetchPolicy: `network-only`,
+        variables: {
+            organization_id,
+        },
+    });
     const {
         data: dataRoles,
         loading: loadingRoles,
@@ -251,11 +256,12 @@ export default function UserTable (props: Props) {
         if (!selectedOrganizationMembership) return;
         const userName = row.name;
         if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
+        const { organization_id, user_id } = selectedOrganizationMembership;
         try {
             await deleteOrganizationMembership({
                 variables: {
-                    organization_id: selectedOrganizationMembership.organization_id,
-                    user_id: selectedOrganizationMembership.user_id,
+                    organization_id,
+                    user_id,
                 },
             });
             await refetch();
