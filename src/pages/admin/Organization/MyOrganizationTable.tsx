@@ -174,7 +174,7 @@ export default function MyOrganizationTable(props: Props) {
         {
             id: `status`,
             label: intl.formatMessage({
-                id: `organization_statusLabel`,
+                id: `organizations_statusLabel`,
             }),
             render: (row) =>
                 <span
