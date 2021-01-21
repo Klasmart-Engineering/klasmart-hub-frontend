@@ -24,6 +24,8 @@ module.exports = {
         `@typescript-eslint`,
         `putout`,
         `modules-newline`,
+        `simple-import-sort`,
+        `import`,
     ],
     rules: {
         indent: [ `error`, 4 ],
@@ -88,13 +90,6 @@ module.exports = {
         ],
         "object-property-newline": `error`,
         "quote-props": [ `error`, `as-needed` ],
-        "sort-imports": [
-            `error`,
-            {
-                ignoreCase: true,
-                ignoreDeclarationSort: true,
-            },
-        ],
         "no-warning-comments": 1,
         "no-console": process.env.NODE_ENV === `production` ? `error` : `off`,
         "react/react-in-jsx-scope": `off`,
@@ -194,5 +189,15 @@ module.exports = {
         ],
         "modules-newline/import-declaration-newline": `error`,
         "modules-newline/export-declaration-newline": `error`,
+        "simple-import-sort/imports": [
+            `error`,
+            {
+                groups: [],
+            },
+        ],
+        "simple-import-sort/exports": `error`,
+        "import/first": `error`,
+        "import/newline-after-import": `error`,
+        "import/no-duplicates": `error`,
     },
 };
