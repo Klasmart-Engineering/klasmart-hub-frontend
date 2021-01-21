@@ -1,40 +1,42 @@
-import { Box } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import Grid from "@material-ui/core/Grid";
-import Grow from "@material-ui/core/Grow";
-import IconButton from "@material-ui/core/IconButton";
+import DialogAppBar from "@/components/styled/dialogAppBar";
+import { MenuItem } from "@/types/objectTypes";
+import { useIsSuperAdmin as useIsUserSuperAdmin } from "@/utils/userRoles";
 import {
+    Box,
+    Button,
     createStyles,
+    Dialog,
+    Grid,
+    Grow,
+    IconButton,
     makeStyles,
     Theme,
-} from "@material-ui/core/styles";
+} from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
 import AppsIcon from "@material-ui/icons/Apps";
+import {
+    AllInbox as InboxIcon,
+    Business as BusinessIcon,
+    CalendarToday as CalendarIcon,
+    ContactSupport as SupportIcon,
+    CreditCard as CardIcon,
+    Group as GroupIcon,
+    Home as HomeIcon,
+    Lock as LockIcon,
+    PersonOutline as PersonIcon,
+    Phonelink as PhoneIcon,
+    School as SchoolIcon,
+    Security as SecurityIcon,
+    StackedLineChart as AssessmentIcon,
+    TableChart as TableIcon,
+} from "@styled-icons/material-twotone";
+import clsx from "clsx";
+import { useSnackbar } from "kidsloop-px";
 import React,
 { useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
-import DialogAppBar from "@/components/styled/dialogAppBar";
-import { MenuItem } from "@/types/objectTypes";
-
-import { AllInbox as InboxIcon } from "@styled-icons/material-twotone/AllInbox";
-import { Business as BusinessIcon } from "@styled-icons/material-twotone/Business";
-import { CalendarToday as CalendarIcon } from "@styled-icons/material-twotone/CalendarToday";
-import { ContactSupport as SupportIcon } from "@styled-icons/material-twotone/ContactSupport";
-import { CreditCard as CardIcon } from "@styled-icons/material-twotone/CreditCard";
-import { Group as GroupIcon } from "@styled-icons/material-twotone/Group";
-import { Lock as LockIcon } from "@styled-icons/material-twotone/Lock";
-import { PersonOutline as PersonIcon } from "@styled-icons/material-twotone/PersonOutline";
-import { Phonelink as PhoneIcon } from "@styled-icons/material-twotone/Phonelink";
-import { School as SchoolIcon } from "@styled-icons/material-twotone/School";
-import { Security as SecurityIcon } from "@styled-icons/material-twotone/Security";
-import { StackedLineChart as AssessmentIcon } from "@styled-icons/material-twotone/StackedLineChart";
-import { TableChart as TableIcon } from "@styled-icons/material-twotone/TableChart";
-import { Home as HomeIcon } from "@styled-icons/material-twotone/Home";
-import { useSnackbar } from "kidsloop-px";
-import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -59,28 +61,21 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface MenuItemProps {
-    content: MenuItem;
-}
+type MenuItemProps = Pick<MenuItem, `description` | `icon` | `title` | `link` | `color`>
 
 function MenuButton(props: MenuItemProps) {
-    const { content } = props;
+    const {
+        description,
+        icon: Icon, // capitilized to make React happy
+        title,
+        link,
+        color,
+    } = props;
     const classes = useStyles();
-
-    const { enqueueSnackbar } = useSnackbar();
-
-    const handleClick = () => {
-        if (content.disabled) {
-            enqueueSnackbar(`This is currently planned for a future release!`, {
-                variant: `info`,
-            });
-        }
-    };
 
     return <Button
         fullWidth
         className={classes.menuButton}
-        onClick={handleClick}
     >
         <Grid
             container
@@ -90,11 +85,14 @@ function MenuButton(props: MenuItemProps) {
             spacing={2}
         >
             <Grid item>
-                {props.content.logo}
+                <Icon
+                    size="48"
+                    color={link ? color : `gray`}
+                />
             </Grid>
             <Grid item>
                 <Typography variant="body1">
-                    {props.content.title}
+                    {title}
                 </Typography>
                 <Typography
                     variant="caption"
@@ -102,24 +100,22 @@ function MenuButton(props: MenuItemProps) {
                         color: `rgba(0, 0, 0, 0.6)`,
                     }}
                 >
-                    {props.content.description}
+                    {description}
                 </Typography>
             </Grid>
         </Grid>
     </Button>;
 }
 
-const Motion = React.forwardRef(function Transition(
+const Motion = React.forwardRef((
     props: TransitionProps & { children?: React.ReactElement },
     ref: React.Ref<unknown>,
-) {
-    return <Grow
-        ref={ref}
-        style={{
-            transformOrigin: `0 0 0`,
-        }}
-        {...props} />;
-});
+) => <Grow
+    ref={ref}
+    style={{
+        transformOrigin: `0 0 0`,
+    }}
+    {...props} />);
 
 interface Props {
     className: string;
@@ -128,245 +124,217 @@ interface Props {
 export default function NavMenu(props: Props) {
     const { className } = props;
     const classes = useStyles();
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
     const [ open, setOpen ] = useState(false);
+    const isSuperAdmin = useIsUserSuperAdmin();
 
     const superAdminMenuItems: MenuItem[] = [
         {
-            id: `navMenu_superOrganization`,
-            description: <FormattedMessage id="navMenu_superOrganizationDescription" />,
-            link: `/report`,
-            logo: <BusinessIcon
-                size="48px"
-                style={{
-                    color: `#0E78D5`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_superOrganizationTitle" />,
+            description: intl.formatMessage({
+                id: `navMenu_superOrganizationDescription`,
+            }),
+            color: `#0E78D5`,
+            icon: BusinessIcon,
+            title: intl.formatMessage({
+                id: `navMenu_superOrganization`,
+            }),
         },
         {
-            id: `navMenu_contentLibrary`,
-            description: <FormattedMessage id="navMenu_contentLibraryDescription" />,
-            link: `/library`,
-            logo: <InboxIcon
-                size="48px"
-                style={{
-                    color: `#1f94e8`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_contentLibraryTitle" />,
+            description: intl.formatMessage({
+                id: `navMenu_globalLibraryDescription`,
+            }),
+            color: `#1F94E8`,
+            icon: InboxIcon,
+            title: intl.formatMessage({
+                id: `navMenu_globalLibrary`,
+            }),
+
         },
         {
-            id: `navMenu_users`,
-            description: <FormattedMessage id="navMenu_usersDescription" />,
-            link: `/admin/user`,
-            logo: <PersonIcon
-                size="48px"
-                style={{
-                    color: `#0E78D5`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_usersTitle" />,
+            description: intl.formatMessage({
+                id: `navMenu_accountsDescription`,
+            }),
+            color: `#0E78D5`,
+            icon: PersonIcon,
+            title: intl.formatMessage({
+                id: `navMenu_accounts`,
+            }),
+
         },
         {
-            id: `navMenu_billing`,
-            description: <FormattedMessage id="navMenu_billingDescription" />,
-            link: `#`,
-            logo: <CardIcon
-                size="48px"
-                style={{
-                    color: `gray` /* "#b0bec5" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_billingTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_superBillingDescription`,
+            }),
+            color: `#B0BEC5`,
+            icon: CardIcon,
+            title: intl.formatMessage({
+                id: `navMenu_superBilling`,
+            }),
+
         },
         {
-            id: `navMenu_analyticsAndReports`,
-            description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
-            link: `/report`,
-            logo: <TableIcon
-                size="48px"
-                style={{
-                    color: `#f7a219`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_analyticsAndReportsTitle" />,
+            description: intl.formatMessage({
+                id: `navMenu_metricsAndReportDescription`,
+            }),
+            color: `#F7A219`,
+            icon: TableIcon,
+            title: intl.formatMessage({
+                id: `navMenu_metricsAndReport`,
+            }),
+
         },
     ];
 
     const menuItems: MenuItem[] = [
         {
-            id: `navMenu_home`,
-            description: <FormattedMessage id="navMenu_homeDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_homeDescription`,
+            }),
             link: `/`,
-            logo: <HomeIcon
-                size="48px"
-                style={{
-                    color: `#1f94e8`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_home" />,
+            color: `#1F94E8`,
+            icon: HomeIcon,
+            title: intl.formatMessage({
+                id: `navMenu_home`,
+            }),
         },
         {
-            id: `navMenu_analyticsAndReports`,
-            description: <FormattedMessage id="navMenu_analyticsAndReportsDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_analyticsAndReportsDescription`,
+            }),
             link: `/report`,
-            logo: <TableIcon
-                size="48px"
-                style={{
-                    color: `#f7a219`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_analyticsAndReportsTitle" />,
+            color: `#F7A219`,
+            icon: TableIcon,
+            title: intl.formatMessage({
+                id: `navMenu_analyticsAndReportsTitle`,
+            }),
         },
         {
-            id: `navMenu_assessments`,
-            description: <FormattedMessage id="navMenu_assessmentsDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_assessmentsDescription`,
+            }),
             link: `/assessments/assessment-list`,
-            logo: <AssessmentIcon
-                size="48px"
-                style={{
-                    color: `#98CE00`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_assessmentsTitle" />,
+            color: `#98CE00`,
+            icon: AssessmentIcon,
+            title: intl.formatMessage({
+                id: `navMenu_assessmentsTitle`,
+            }),
         },
         {
-            id: `navMenu_contentLibrary`,
-            description: <FormattedMessage id="navMenu_contentLibraryDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_contentLibraryDescription`,
+            }),
             link: `/library`,
-            logo: <InboxIcon
-                size="48px"
-                style={{
-                    color: `#1f94e8`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_contentLibraryTitle" />,
+            color: `#1F94E8`,
+            icon: InboxIcon,
+            title: intl.formatMessage({
+                id: `navMenu_contentLibraryTitle`,
+            }),
         },
         {
-            id: `navMenu_groups`,
-            description: <FormattedMessage id="navMenu_groupsDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_groupsDescription`,
+            }),
             link: `/admin/roles`,
-            logo: <GroupIcon
-                size="48px"
-                style={{
-                    color: `#27bed6`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_groupsTitle" />,
+            color: `#27BED6`,
+            icon: GroupIcon,
+            title: intl.formatMessage({
+                id: `navMenu_groupsTitle`,
+            }),
         },
         {
-            id: `navMenu_organization`,
-            description: <FormattedMessage id="navMenu_organizationDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_organizationDescription`,
+            }),
             link: `/admin/allOrganization`,
-            logo: <BusinessIcon
-                size="48px"
-                style={{
-                    color: `#0E78D5`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_organizationTitle" />,
+            color: `#0E78D5`,
+            icon: BusinessIcon,
+            title: intl.formatMessage({
+                id: `navMenu_organizationTitle`,
+            }),
         },
         {
-            id: `navMenu_schedule`,
-            description: <FormattedMessage id="navMenu_scheduleDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_scheduleDescription`,
+            }),
             link: `/schedule`,
-            logo: <CalendarIcon
-                size="48px"
-                style={{
-                    color: `#09BC8A`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_scheduleTitle" />,
+            color: `#09BC8A`,
+            icon: CalendarIcon,
+            title: intl.formatMessage({
+                id: `navMenu_scheduleTitle`,
+            }),
         },
         {
-            id: `navMenu_schools`,
-            description: <FormattedMessage id="navMenu_schoolsDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_schoolsDescription`,
+            }),
             link: `/admin/school`,
-            logo: <SchoolIcon
-                size="48px"
-                style={{
-                    color: `#0E78D5`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_schoolsTitle" />,
+            color: `#0E78D5`,
+            icon: SchoolIcon,
+            title: intl.formatMessage({
+                id: `navMenu_schoolsTitle`,
+            }),
         },
         {
-            id: `navMenu_users`,
-            description: <FormattedMessage id="navMenu_usersDescription" />,
+            description: intl.formatMessage({
+                id: `navMenu_usersDescription`,
+            }),
             link: `/admin/user`,
-            logo: <PersonIcon
-                size="48px"
-                style={{
-                    color: `#0E78D5`,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_usersTitle" />,
+            color: `#0E78D5`,
+            icon: PersonIcon,
+            title: intl.formatMessage({
+                id: `navMenu_usersTitle`,
+            }),
         },
         {
-            id: `navMenu_billing`,
-            description: <FormattedMessage id="navMenu_billingDescription" />,
-            link: `#`,
-            logo: <CardIcon
-                size="48px"
-                style={{
-                    color: `gray` /* "#b0bec5" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_billingTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_billingDescription`,
+            }),
+            color: `#B0BEC5`,
+            icon: CardIcon,
+            title: intl.formatMessage({
+                id: `navMenu_billingTitle`,
+            }),
         },
         {
-            id: `navMenu_dataSecurity`,
-            description: <FormattedMessage id="navMenu_dataSecurityDescription" />,
-            link: `#`,
-            logo: <LockIcon
-                size="48px"
-                style={{
-                    color: `gray` /* "#816961" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_dataSecurityTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_dataSecurityDescription`,
+            }),
+            color: `#816961`,
+            icon: LockIcon,
+            title: intl.formatMessage({
+                id: `navMenu_dataSecurityTitle`,
+            }),
         },
         {
-            id: `navMenu_devices`,
-            description: <FormattedMessage id="navMenu_devicesDescription" />,
-            link: `#`,
-            logo: <PhoneIcon
-                size="48px"
-                style={{
-                    color: `gray` /* theme.palette.type === "dark" ? "#fefefe" : "#263248" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_devicesTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_devicesDescription`,
+            }),
+            color: `#263248`,
+            icon: PhoneIcon,
+            title: intl.formatMessage({
+                id: `navMenu_devicesTitle`,
+            }),
         },
         {
-            id: `navMenu_security`,
-            description: <FormattedMessage id="navMenu_securityDescription" />,
-            link: `#`,
-            logo: <SecurityIcon
-                size="48px"
-                style={{
-                    color: `gray` /* "#8396a0" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_securityTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_securityDescription`,
+            }),
+            color: `#8396A0`,
+            icon: SecurityIcon,
+            title: intl.formatMessage({
+                id: `navMenu_securityTitle`,
+            }),
         },
         {
-            id: `navMenu_support`,
-            description: <FormattedMessage id="navMenu_supportDescription" />,
-            link: `#`,
-            logo: <SupportIcon
-                size="48px"
-                style={{
-                    color: `gray` /* "#3baf77" */,
-                    fontSize: 48,
-                }} />,
-            title: <FormattedMessage id="navMenu_supportTitle" />,
-            disabled: true,
+            description: intl.formatMessage({
+                id: `navMenu_supportDescription`,
+            }),
+            color: `#3BAF77`,
+            icon: SupportIcon,
+            title: intl.formatMessage({
+                id: `navMenu_supportTitle`,
+            }),
         },
     ];
 
@@ -378,9 +346,28 @@ export default function NavMenu(props: Props) {
         setOpen(false);
     };
 
-    function GridMenuItem (menuItem: MenuItem) {
+    const handleItemClick = (url?: string) => {
+        if (!url) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `navMenu_futureRelease`,
+            }), {
+                variant: `info`,
+            });
+            return;
+        }
+        handleClose();
+    };
+
+    function GridMenuItem (menuItem: MenuItem, id: string) {
+        const {
+            color,
+            description,
+            icon,
+            link,
+            title,
+        } = menuItem;
         return <Grid
-            key={`menuItem-${menuItem.id}`}
+            key={id}
             item
             xs={6}
             sm={4}
@@ -388,11 +375,17 @@ export default function NavMenu(props: Props) {
             lg={2}
         >
             <Link
-                to={menuItem.link}
+                to={link ?? `#`}
                 className={classes.menuLink}
-                onClick={menuItem.link !== `#` ? () => setOpen(false) : undefined}
+                onClick={() => handleItemClick(link)}
             >
-                <MenuButton content={menuItem} />
+                <MenuButton
+                    link={link}
+                    color={color}
+                    description={description}
+                    icon={icon}
+                    title={title}
+                />
             </Link>
         </Grid>;
     }
@@ -424,7 +417,7 @@ export default function NavMenu(props: Props) {
                 onClose={handleClose}
             >
                 <DialogAppBar handleClose={handleClose}/>
-                <Grid
+                {isSuperAdmin && <Grid
                     container
                     direction="row"
                     justify="flex-start"
@@ -432,8 +425,8 @@ export default function NavMenu(props: Props) {
                     spacing={2}
                     className={clsx(classes.menuContainer, classes.superAdminMenuContainer)}
                 >
-                    {superAdminMenuItems.map((menuItem) => GridMenuItem(menuItem))}
-                </Grid>
+                    {superAdminMenuItems.map((menuItem, i) => GridMenuItem(menuItem, `superMenuItem-${i}`))}
+                </Grid>}
                 <Grid
                     container
                     direction="row"
@@ -442,7 +435,7 @@ export default function NavMenu(props: Props) {
                     spacing={2}
                     className={classes.menuContainer}
                 >
-                    {menuItems.map((menuItem) => GridMenuItem(menuItem))}
+                    {menuItems.map((menuItem, i) => GridMenuItem(menuItem, `menuItem-${i}`))}
                 </Grid>
             </Dialog>
         </>

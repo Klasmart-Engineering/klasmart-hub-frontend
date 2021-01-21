@@ -1,3 +1,5 @@
+import { StyledIcon } from "@styled-icons/styled-icon";
+
 export interface PublishedContentPayload {
     total: number;
     list: PublishedContentItem[];
@@ -87,12 +89,11 @@ export interface UserAgent {
 }
 
 export interface MenuItem {
-    id: string;
-    description: JSX.Element;
-    link: string;
-    logo: JSX.Element;
-    title: JSX.Element;
-    disabled?: boolean;
+    description: string;
+    link?: string;
+    icon: StyledIcon;
+    color: string;
+    title: string;
 }
 
 export type LibraryContentType = "OwnedContent" | "Marketplace";
@@ -109,7 +110,7 @@ export type AssessmentsMenu = "library" | "pending" | "completed";
 
 type ColumnAttr = string | { [styleAttr: string]: string } | undefined;
 export type TableColumns = Array<{
-    [attr: string]: ColumnAttr,
+    [attr: string]: ColumnAttr;
 }>;
 
 export interface SkillCatOption {

@@ -1,46 +1,44 @@
-import {
-    useQuery,
-    useReactiveVar,
-} from "@apollo/client/react";
-import {
-    Box,
-    Button,
-    Link,
-    Paper,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Grid from "@material-ui/core/Grid";
-import {
-    createStyles,
-    makeStyles,
-    Theme,
-    useTheme,
-} from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import React from "react";
+import NavMenu from "./navMenu";
+import ClassSettings from "./settings/classSettings";
+import CreateOrganizationDialog from "./settings/createOrganization";
+import UserSettings from "./settings/userSettings";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import {
     currentMembershipVar,
     userIdVar,
 } from "@/cache";
 import { GET_USER } from "@/operations/queries/getUser";
-import {
-    orderedRoleNames,
-    User,
-} from "@/types/graphQL";
+import { User } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import { getHighestRole } from "@/utils/userRoles";
-import NavMenu from "./navMenu";
-import ClassSettings from "./settings/classSettings";
-import CreateOrganizationDialog from "./settings/createOrganization";
-import UserSettings from "./settings/userSettings";
+import {
+    useQuery,
+    useReactiveVar,
+} from "@apollo/client/react";
+import {
+    AppBar,
+    Box,
+    Button,
+    createStyles,
+    Grid,
+    Link,
+    makeStyles,
+    Paper,
+    Theme,
+    Toolbar,
+    useMediaQuery,
+    useTheme,
+} from "@material-ui/core";
+import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         logo: {
-            backgroundColor: `white`,
+            backgroundColor: `#FFF`,
             borderRadius: 12,
+            color: theme.palette.getContrastText(`#FFF`),
+            "&:hover": {
+                backgroundColor: theme.palette.grey[300],
+            },
         },
         avatar: {
             margin: theme.spacing(0, 1),
@@ -91,13 +89,13 @@ export default function NavBar(props: Props) {
     const user: User = data?.user;
 
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
-    const highestRole = getHighestRole(orderedRoleNames, selectedMembershipOrganization?.roles?.map((role) => role.role_name) ?? []) || `Unknown`;
-    const showNavMenu = [
+    const showMenuToRoles = [
+        `Super Admin`,
         `Organization Admin`,
         `School Admin`,
         `Teacher`,
-    ].indexOf(highestRole) !== -1;
-
+    ];
+    const showNavMenu = selectedMembershipOrganization?.roles?.map((role) => role.role_name).some((roleName) => showMenuToRoles.includes(roleName ?? ``));
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
 
     return (

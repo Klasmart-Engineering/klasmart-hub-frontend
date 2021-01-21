@@ -1,35 +1,55 @@
-import { ApolloError, useReactiveVar } from "@apollo/client";
-import { Box, List, ListItemAvatar, Popover, Tooltip } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import { PopoverProps } from "@material-ui/core/Popover";
-import { createStyles, makeStyles, withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import CreateOrganizationDialog from "./createOrganization";
+import { currentMembershipVar } from "@/cache";
+import StyledButton from "@/components/styled/button";
+import {
+    getAuthEndpoint,
+    getCookieDomain,
+} from "@/config";
+import { LANGUAGES_LABEL } from "@/locale/locale";
+import {
+    orderedRoleNames,
+    User,
+} from "@/types/graphQL";
+import { getHighestRole } from "@/utils/userRoles";
+import {
+    ApolloError,
+    useReactiveVar,
+} from "@apollo/client";
+import {
+    Avatar,
+    Box,
+    Button,
+    createStyles,
+    Divider,
+    Grid,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    makeStyles,
+    Popover,
+    PopoverProps,
+    Tooltip,
+    Typography,
+    withStyles,
+} from "@material-ui/core";
 import {
     Business as BusinessIcon,
     Person as PersonIcon,
 } from "@material-ui/icons";
-import { Loading, utils } from "kidsloop-px";
+import {
+    LanguageSelect,
+    utils,
+} from "kidsloop-px";
 import queryString from "querystring";
-import React, { useState } from "react";
+import React,
+{ useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { currentMembershipVar } from "../../../../cache";
-import { orderedRoleNames, User } from "../../../../types/graphQL";
-import { getHighestRole } from "../../../../utils/userRoles";
-import { getAuthEndpoint, getCookieDomain } from "../../../../config";
-import { LanguageSelect } from "kidsloop-px";
-import StyledButton from "../../button";
-import CreateOrganizationDialog from "./createOrganization";
-import { LANGUAGES_LABEL } from "@/locale/locale";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
         logo: {
-            [theme.breakpoints.up("sm")]: {
+            [theme.breakpoints.up(`sm`)]: {
                 margin: theme.spacing(0, 1),
             },
         },
@@ -42,29 +62,32 @@ const useStyles = makeStyles((theme) =>
             color: theme.palette.grey[600],
         },
         profileButton: {
-            backgroundColor: "white",
-            border: "1px solid #efefef",
+            backgroundColor: `#FFF`,
             borderRadius: 12,
-            padding: theme.spacing(1, 2),
+            padding: theme.spacing(6/8, 1),
+            color: theme.palette.getContrastText(`#FFF`),
+            "&:hover": {
+                backgroundColor: theme.palette.grey[300],
+            },
         },
     }),
 );
 
 const StyledMenu = withStyles({
     paper: {
-        border: "1px solid #dadce0",
+        border: `1px solid #dadce0`,
     },
 })((props: PopoverProps) => (
     <Popover
         elevation={0}
         getContentAnchorEl={null}
         anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
+            vertical: `bottom`,
+            horizontal: `right`,
         }}
         transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: `top`,
+            horizontal: `right`,
         }}
         {...props}
     />
@@ -86,17 +109,17 @@ export default function UserSettings(props: Props) {
         error,
     } = props;
     const classes = useStyles();
-    
+
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
     const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
 
-    const userNameColor = utils.stringToHslColor(user?.user_name ?? "??");
-    const userNameInitials = utils.nameToInitials(user?.user_name ?? "??", 3);
-    const selectedOrganizationColor = utils.stringToHslColor(selectedMembershipOrganization?.organization?.organization_name ?? "??");
-    const selectedOrganizationInitials = utils.nameToInitials(selectedMembershipOrganization?.organization?.organization_name ?? "??", 4);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const userNameColor = utils.stringToHslColor(user?.user_name ?? `??`);
+    const userNameInitials = utils.nameToInitials(user?.user_name ?? `??`, 3);
+    const selectedOrganizationColor = utils.stringToHslColor(selectedMembershipOrganization?.organization?.organization_name ?? `??`);
+    const selectedOrganizationInitials = utils.nameToInitials(selectedMembershipOrganization?.organization?.organization_name ?? `??`, 4);
+    const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -116,15 +139,17 @@ export default function UserSettings(props: Props) {
     async function handleSignOut() {
         try {
             const headers = new Headers();
-            headers.append("Accept", "application/json");
-            headers.append("Content-Type", "application/json");
+            headers.append(`Accept`, `application/json`);
+            headers.append(`Content-Type`, `application/json`);
             await fetch(`${getAuthEndpoint()}signout`, {
-                credentials: "include",
+                credentials: `include`,
                 headers,
-                method: "GET",
+                method: `GET`,
             })
                 .then(() => {
-                    const stringifiedQuery = queryString.stringify({ continue: window.location.href });
+                    const stringifiedQuery = queryString.stringify({
+                        continue: window.location.href,
+                    });
                     window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
                 });
         } catch (e) {
@@ -135,11 +160,11 @@ export default function UserSettings(props: Props) {
     return (
         <Grid item>
             <Button
+                fullWidth
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 className={classes.profileButton}
-                fullWidth
                 onClick={handleMenu}
             >
                 <Grid
@@ -147,17 +172,19 @@ export default function UserSettings(props: Props) {
                     direction="row"
                     justify="flex-end"
                     alignItems="center"
-                    style={{ flexWrap: "nowrap" }}
+                    style={{
+                        flexWrap: `nowrap`,
+                    }}
                 >
                     <Tooltip
                         aria-label="organization name"
-                        title={selectedMembershipOrganization?.organization?.organization_name || "Loading..." }
+                        title={selectedMembershipOrganization?.organization?.organization_name || `Loading...` }
                         placement="bottom"
                     >
                         <Avatar
                             variant="rounded"
                             style={{
-                                color: "white",
+                                color: `white`,
                                 backgroundColor: selectedOrganizationColor,
                             }}>
                             <Typography variant="caption">
@@ -169,9 +196,9 @@ export default function UserSettings(props: Props) {
                         </Avatar>
                     </Tooltip>
                     <Avatar
-                        src={user?.avatar ?? ""}
+                        src={user?.avatar ?? ``}
                         style={{
-                            color: "white",
+                            color: `white`,
                             backgroundColor: userNameColor,
                             marginLeft: 16,
                         }}>
@@ -185,9 +212,9 @@ export default function UserSettings(props: Props) {
                 </Grid>
             </Button>
             <StyledMenu
+                keepMounted
                 id="customized-menu"
                 anchorEl={anchorEl}
-                keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
@@ -201,10 +228,10 @@ export default function UserSettings(props: Props) {
                     tabIndex={undefined}
                 >
                     <Avatar
-                        src={user?.avatar ?? ""}
+                        src={user?.avatar ?? ``}
                         className={classes.avatarLarge}
                         style={{
-                            color: "white",
+                            color: `white`,
                             backgroundColor: userNameColor,
                         }}
                     >
@@ -227,7 +254,7 @@ export default function UserSettings(props: Props) {
                         {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
-                {!loading && !error && isEmptyMembership === "" &&
+                {!loading && !error && isEmptyMembership === `` &&
                     <ListItem>
                         <CreateOrganizationDialog />
                     </ListItem>
@@ -238,7 +265,7 @@ export default function UserSettings(props: Props) {
                             <Avatar
                                 variant="rounded"
                                 style={{
-                                    color: "white",
+                                    color: `white`,
                                     backgroundColor: selectedOrganizationColor,
                                 }}
                             >
@@ -252,7 +279,7 @@ export default function UserSettings(props: Props) {
                         </ListItemAvatar>
                         <ListItemText
                             primary={selectedMembershipOrganization?.organization?.organization_name}
-                            secondary={getHighestRole(orderedRoleNames, selectedMembershipOrganization?.roles?.map((r) => r.role_name) ?? []) ?? "Unknown"}
+                            secondary={getHighestRole(orderedRoleNames, selectedMembershipOrganization?.roles?.map((r) => r.role_name) ?? []) ?? `Unknown`}
                         />
                     </ListItem>
                 </List>}
@@ -269,13 +296,13 @@ export default function UserSettings(props: Props) {
                                     <Avatar
                                         variant="rounded"
                                         style={{
-                                            color: "white",
-                                            backgroundColor: utils.stringToHslColor(membership?.organization?.organization_name ?? "??"),
+                                            color: `white`,
+                                            backgroundColor: utils.stringToHslColor(membership?.organization?.organization_name ?? `??`),
                                         }}
                                     >
                                         <Typography variant="caption">
                                             {membership?.organization?.organization_name
-                                                ? utils.nameToInitials(membership?.organization?.organization_name ?? "??", 4)
+                                                ? utils.nameToInitials(membership?.organization?.organization_name ?? `??`, 4)
                                                 : <BusinessIcon />
                                             }
                                         </Typography>
@@ -283,10 +310,10 @@ export default function UserSettings(props: Props) {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={membership?.organization?.organization_name}
-                                    secondary={getHighestRole(orderedRoleNames, membership?.roles?.map((r) => r.role_name) ?? []) ?? "Unknown"}
+                                    secondary={getHighestRole(orderedRoleNames, membership?.roles?.map((r) => r.role_name) ?? []) ?? `Unknown`}
                                 />
                             </ListItem>,
-                            )}
+                        )}
                     </List>
                 </>}
                 <Divider />
@@ -302,24 +329,30 @@ export default function UserSettings(props: Props) {
                             <Grid
                                 item
                                 xs={12}
-                                style={{ textAlign: "center" }}
+                                style={{
+                                    textAlign: `center`,
+                                }}
                             >
-                                <LanguageSelect cookieDomain={getCookieDomain()} languages={LANGUAGES_LABEL} />
+                                <LanguageSelect
+                                    cookieDomain={getCookieDomain()}
+                                    languages={LANGUAGES_LABEL} />
                             </Grid>
                             <Grid
                                 item
                                 xs={12}
-                                style={{ textAlign: "center" }}
+                                style={{
+                                    textAlign: `center`,
+                                }}
                             >
                                 <StyledButton
                                     extendedOnly
-                                    onClick={() => handleSignOut()}
                                     style={{
-                                        backgroundColor: "#fff",
-                                        border: "1px solid #dadce0",
-                                        color: "#000",
-                                        padding: "8px 16px",
+                                        backgroundColor: `#fff`,
+                                        border: `1px solid #dadce0`,
+                                        color: `#000`,
+                                        padding: `8px 16px`,
                                     }}
+                                    onClick={() => handleSignOut()}
                                 >
                                     <FormattedMessage id="userSettings_signout" />
                                 </StyledButton>

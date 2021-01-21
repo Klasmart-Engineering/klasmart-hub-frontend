@@ -1,4 +1,5 @@
 export const orderedRoleNames = [
+    `Super Admin`,
     `Organization Admin`,
     `School Admin`,
     `Teacher`,
