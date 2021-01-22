@@ -2,11 +2,19 @@ import {
     useDeleteClass,
     useGetAllClasses,
 } from "@/api/classes";
-import EditClassDialog from "@/components/Class/Dialog/Edit";
+import { currentMembershipVar } from "@/cache";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
+import EditClassDialog from "@/components/Class/Dialog/Edit";
 import { Class } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
+import {
+    createStyles,
+    Link,
+    makeStyles,
+    Paper,
+} from "@material-ui/core";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -24,14 +32,6 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { currentMembershipVar } from "@/cache";
-import { getPermissionState } from "@/utils/checkAllowed";
-import {
-    createStyles,
-    Link,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -77,9 +77,9 @@ export default function ClasessTable(props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
-    const canCreate = getPermissionState(organization_id, `create_class_20224`);
-    const canEdit = getPermissionState(organization_id, `edit_class_20334`);
-    const canDelete = getPermissionState(organization_id, `delete_class_20444`);
+    const canCreate = usePermission(`create_class_20224`);
+    const canEdit = usePermission(`edit_class_20334`);
+    const canDelete = usePermission(`delete_class_20444`);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
@@ -89,7 +89,11 @@ export default function ClasessTable(props: Props) {
         refetch,
         loading,
         error,
-    } = useGetAllClasses(organization_id);
+    } = useGetAllClasses({
+        variables: {
+            organization_id,
+        },
+    });
     const [ deleteClass ] = useDeleteClass();
 
     const schoolClasses = data?.me?.membership?.organization?.classes;
@@ -117,9 +121,14 @@ export default function ClasessTable(props: Props) {
         const selectedClass = findClass(row);
         if (!selectedClass) return;
         if (!confirm(`Are you sure you want to delete "${selectedClass.class_name}"?`)) return;
+        const { class_id } = selectedClass;
         try {
-            await deleteClass(selectedClass.class_id);
-            refetch();
+            await deleteClass({
+                variables: {
+                    class_id,
+                },
+            });
+            await refetch();
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedMessage`,
             }), {

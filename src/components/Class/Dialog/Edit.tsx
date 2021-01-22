@@ -1,26 +1,26 @@
+import ClassDialogForm from "./Form";
+import {
+    useDeleteClass,
+    useEditClassSchools,
+    useUpdateClass,
+} from "@/api/classes";
+import { Class } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
+import { buildEmptyClass } from "@/utils/classes";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
+import {
+    Dialog,
+    useSnackbar,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
     useState,
 } from "react";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import { Class } from "@/types/graphQL";
-import ClassDialogForm from "./Form";
-import {
-    useDeleteClass,
-    useEditSchools,
-    useUpdateClass,
-} from "@/api/classes";
-import {
-    Dialog,
-    useSnackbar,
-} from "kidsloop-px";
-import { buildEmptyClass } from "@/utils/classes";
 import { useIntl } from "react-intl";
-import { getPermissionState } from "@/utils/checkAllowed";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -43,12 +43,8 @@ export default function EditClassDialog(props: Props) {
     const [ valid, setValid ] = useState(true);
     const [ updateClass, { loading: loadingSave } ] = useUpdateClass();
     const [ deleteClass, { loading: loadingDelete } ] = useDeleteClass();
-    const [ editSchools, { loading: loadingEditSchools } ] = useEditSchools();
-    const { organization_id } = organization;
-    const canEditSchool = getPermissionState(
-        organization_id,
-        `edit_school_20330`,
-    );
+    const [ editSchools, { loading: loadingEditSchools } ] = useEditClassSchools();
+    const canEditSchool = usePermission(`edit_school_20330`);
     const loadingUpdateClass = loadingSave || loadingEditSchools;
 
     useEffect(() => {
@@ -57,55 +53,62 @@ export default function EditClassDialog(props: Props) {
 
     const handleSave = async () => {
         try {
-            await updateClass(editedClass);
+            const {
+                class_id,
+                class_name,
+                schools,
+            } = editedClass;
+            await updateClass({
+                variables: {
+                    class_id,
+                    class_name: class_name ?? ``,
+                },
+            });
             if (canEditSchool) {
-                await editSchools(editedClass);
+                await editSchools({
+                    variables: {
+                        class_id,
+                        school_ids: schools?.map((s) => s.school_id) ?? [],
+                    },
+                });
             }
 
             onClose(editedClass);
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSavedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSavedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSaveError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSaveError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
     const handleDelete = async () => {
-        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`))
-            return;
+        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`)) return;
         try {
-            await deleteClass(editedClass.class_id);
+            const { class_id } = editedClass;
+            await deleteClass({
+                variables: {
+                    class_id,
+                },
+            });
             onClose(editedClass);
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 

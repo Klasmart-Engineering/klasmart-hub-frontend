@@ -1,7 +1,14 @@
 import { permissions } from "./permissions";
+import { RoleName } from "@/types/graphQL";
+
+export interface PermissionGroup {
+    role_name: RoleName;
+    permissions: PermissionId[];
+}
+export type PermissionId = typeof permissions[number]["name"]
 
 interface PermissionDetails {
-    name: string;
+    name: PermissionId;
     group: string;
     category: string;
     level: string;

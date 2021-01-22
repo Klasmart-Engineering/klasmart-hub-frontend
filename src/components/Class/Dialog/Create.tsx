@@ -1,22 +1,22 @@
+import ClassDialogForm from "./Form";
+import { useCreateClass } from "@/api/classes";
+import { currentMembershipVar } from "@/cache";
+import { Class } from "@/types/graphQL";
+import { buildEmptyClass } from "@/utils/classes";
+import { useReactiveVar } from "@apollo/client";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
+import {
+    Dialog,
+    useSnackbar,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
     useState,
 } from "react";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import { Class } from "@/types/graphQL";
-import ClassDialogForm from "./Form";
-import { useCreateClass } from "@/api/classes";
-import {
-    Dialog,
-    useSnackbar,
-} from "kidsloop-px";
-import { buildEmptyClass } from "@/utils/classes";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
@@ -47,7 +47,14 @@ export default function CreateClassDialog (props: Props) {
 
     const handleCreate = async () => {
         try {
-            await createClass(newClass, organization_id);
+            const { class_name, schools } = newClass;
+            await createClass({
+                variables: {
+                    organization_id,
+                    class_name: class_name ?? ``,
+                    school_ids: schools?.map((s) => s.school_id) ?? [],
+                },
+            });
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classSavedMessage`,

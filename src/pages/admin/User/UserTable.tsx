@@ -1,23 +1,20 @@
-import { useReactiveVar } from "@apollo/client/react";
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
-import { useIntl } from "react-intl";
-import { currentMembershipVar } from "@/cache";
 import {
-    Table,
-    useSnackbar,
-    utils,
-} from "kidsloop-px";
-import { getTableLocalization } from "@/utils/table";
-import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
+    useDeleteOrganizationMembership,
+    useGetOrganizationMemberships,
+} from "@/api/organizationMemberships";
+import { useGetAllRoles } from "@/api/roles";
+import { currentMembershipVar } from "@/cache";
+import CreateUserDialog from "@/components/User/Dialog/Create";
+import EditUserDialog from "@/components/User/Dialog/Edit";
 import {
     orderedRoleNames,
     OrganizationMembership,
     RoleName,
 } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
+import { getTableLocalization } from "@/utils/table";
+import { getHighestRole } from "@/utils/userRoles";
+import { useReactiveVar } from "@apollo/client/react";
 import {
     Avatar,
     Box,
@@ -29,18 +26,23 @@ import {
 import {
     Delete as DeleteIcon,
     Edit as EditIcon,
-    PersonAdd as PersonAddIcon,
     Person as PersonIcon,
+    PersonAdd as PersonAddIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
-import { getPermissionState } from "@/utils/checkAllowed";
-import CreateUserDialog from "@/components/User/Dialog/Create";
-import EditUserDialog from "@/components/User/Dialog/Edit";
-import { useDeleteOrganizationMembership } from "@/api/organizationMemberships";
-import { getHighestRole } from "@/utils/userRoles";
-import { startCase } from "lodash";
+import {
+    Table,
+    useSnackbar,
+    utils,
+} from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
-import { useGetAllRoles } from "@/api/roles";
+import { startCase } from "lodash";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -115,9 +117,9 @@ export default function UserTable(props: Props) {
         loading: loadingRoles,
     } = useGetAllRoles(organization_id);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
-    const canCreate = getPermissionState(organization_id, `create_users_40220`);
-    const canEdit = getPermissionState(organization_id, `edit_users_40330`);
-    const canDelete = getPermissionState(organization_id, `delete_users_40440`);
+    const canCreate = usePermission(`create_users_40220`);
+    const canEdit = usePermission(`edit_users_40330`);
+    const canDelete = usePermission(`delete_users_40440`);
 
     const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {

@@ -1,82 +1,36 @@
+import { CREATE_CLASS } from "@/operations/mutations/createClass";
+import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
+import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
+import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
+import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
+import { User } from "@/types/graphQL";
 import {
-    FetchResult,
-    MutationResult,
+    MutationHookOptions,
+    QueryHookOptions,
     useMutation,
     useQuery,
 } from "@apollo/client";
-import {
-    Class,
-    School,
-    User,
-} from "@/types/graphQL";
-import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
-import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
-import { CREATE_CLASS } from "@/operations/mutations/createClass";
-import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
-import { EDIT_SCHOOLS } from "@/operations/mutations/editSchools";
 
 interface UpdateClassRequest {
     class_id: string;
     class_name: string;
-    school_ids: string[];
 }
 
 interface UpdateClassResponse {}
 
-export const useUpdateClass = (): [
-    (
-        classItem: Class,
-    ) => Promise<
-        FetchResult<
-            UpdateClassResponse,
-            Record<string, any>,
-            Record<string, any>
-        >
-    >,
-    MutationResult<UpdateClassResponse>,
-] => {
-    const [ promise, mutationResult ] = useMutation<
-        UpdateClassResponse,
-        UpdateClassRequest
-    >(UPDATE_CLASS);
-    return [
-        async (classItem: Class) => {
-            const {
-                class_id,
-                class_name,
-            } = classItem;
-            return promise({
-                variables: {
-                    class_id,
-                    class_name: class_name ?? ``,
-                },
-            });
-        },
-        mutationResult,
-    ];
+export const useUpdateClass = (options?: MutationHookOptions<UpdateClassResponse, UpdateClassRequest>) => {
+    return useMutation<UpdateClassResponse, UpdateClassRequest>(UPDATE_CLASS, options);
 };
 
-export const useEditSchools = (): [
-    (classItem: Class) => Promise<FetchResult<UpdateClassResponse>>,
-    MutationResult<UpdateClassResponse>,
-] => {
-    const [ promise, mutationResult ] = useMutation<
-        UpdateClassResponse,
-        UpdateClassRequest
-    >(EDIT_SCHOOLS);
-    return [
-        async (classItem: Class) => {
-            const { class_id, schools } = classItem;
-            const schoolIds = schools?.map((s: School) => s.school_id) ?? [];
-            return promise({
-                variables: {
-                    class_id,
-                    school_ids: schoolIds,
-                },
-            });
-        },
-        mutationResult,
-    ];
+interface UpdateClassSchoolsRequest {
+    class_id: string;
+    school_ids: string[];
+}
+
+interface UpdateClassSchoolsResponse {}
+
+export const useEditClassSchools = (options?: MutationHookOptions<UpdateClassSchoolsResponse, UpdateClassSchoolsRequest>) => {
+    return useMutation<UpdateClassSchoolsResponse, UpdateClassSchoolsRequest>(EDIT_CLASS_SCHOOLS, options);
 };
 
 interface DeleteClassRequest {
@@ -85,31 +39,8 @@ interface DeleteClassRequest {
 
 interface DeleteClassResponse {}
 
-export const useDeleteClass = (): [
-    (
-        classId: string,
-    ) => Promise<
-        FetchResult<
-            DeleteClassResponse,
-            Record<string, any>,
-            Record<string, any>
-        >
-    >,
-    MutationResult<DeleteClassResponse>,
-] => {
-    const [ promise, mutationResult ] = useMutation<
-        DeleteClassResponse,
-        DeleteClassRequest
-    >(DELETE_CLASS);
-    return [
-        (classId: string) =>
-            promise({
-                variables: {
-                    class_id: classId,
-                },
-            }),
-        mutationResult,
-    ];
+export const useDeleteClass = (options?: MutationHookOptions<DeleteClassResponse, DeleteClassRequest>) => {
+    return useMutation<DeleteClassResponse, DeleteClassRequest>(DELETE_CLASS, options);
 };
 
 interface CreateClassRequest {
@@ -120,37 +51,8 @@ interface CreateClassRequest {
 
 interface CreateClassResponse {}
 
-export const useCreateClass = (): [
-    (
-        classItem: Class,
-        organizationId: string,
-    ) => Promise<
-        FetchResult<
-            DeleteClassResponse,
-            Record<string, any>,
-            Record<string, any>
-        >
-    >,
-    MutationResult<DeleteClassResponse>,
-] => {
-    const [ promise, mutationResult ] = useMutation<
-        CreateClassResponse,
-        CreateClassRequest
-    >(CREATE_CLASS);
-    return [
-        (classItem: Class, organizationId: string) => {
-            const { class_name, schools } = classItem;
-            const schoolIds = schools?.map((s) => s.school_id) ?? [];
-            return promise({
-                variables: {
-                    organization_id: organizationId,
-                    class_name: class_name ?? ``,
-                    school_ids: schoolIds,
-                },
-            });
-        },
-        mutationResult,
-    ];
+export const useCreateClass = (options?: MutationHookOptions<CreateClassResponse, CreateClassRequest>) => {
+    return useMutation<CreateClassResponse, CreateClassRequest>(CREATE_CLASS, options);
 };
 
 interface GetAllClassesRequest {
@@ -161,14 +63,6 @@ interface GetAllClassesResponse {
     me: User;
 }
 
-export const useGetAllClasses = (organizationId: string) => {
-    return useQuery<GetAllClassesResponse, GetAllClassesRequest>(
-        GET_ALL_CLASSES,
-        {
-            fetchPolicy: `network-only`,
-            variables: {
-                organization_id: organizationId,
-            },
-        },
-    );
+export const useGetAllClasses = (options?: QueryHookOptions<GetAllClassesResponse, GetAllClassesRequest>) => {
+    return useQuery<GetAllClassesResponse, GetAllClassesRequest>(GET_ALL_CLASSES, options);
 };

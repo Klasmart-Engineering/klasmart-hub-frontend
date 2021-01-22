@@ -2,6 +2,12 @@ import {
     useDeleteSchool,
     useGetSchools,
 } from "@/api/schools";
+import { currentMembershipVar } from "@/cache";
+import CreateSchoolDialog from "@/components/School/Dialog/Create";
+import EditSchoolDialog from "@/components/School/Dialog/Edit";
+import { School } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
+import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
@@ -13,24 +19,18 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@material-ui/icons";
+import clsx from "clsx";
 import {
     Table,
     useSnackbar,
 } from "kidsloop-px";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import React,
 {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { currentMembershipVar } from "@/cache";
-import { getPermissionState } from "@/utils/checkAllowed";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
-import clsx from "clsx";
-import { getTableLocalization } from "@/utils/table";
-import CreateSchoolDialog from "@/components/School/Dialog/Create";
-import EditSchoolDialog from "@/components/School/Dialog/Edit";
-import { School } from "@/types/graphQL";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -64,16 +64,16 @@ export default function SchoolTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [rows, setRows] = useState<SchoolRow[]>([]);
-    const [openCreateDialog, setOpenCreateDialog] = useState(false);
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [selectedSchool, setSelectedSchool] = useState<School>();
+    const [ rows, setRows ] = useState<SchoolRow[]>([]);
+    const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
+    const [ openEditDialog, setOpenEditDialog ] = useState(false);
+    const [ selectedSchool, setSelectedSchool ] = useState<School>();
     const organization = useReactiveVar(currentMembershipVar);
-    const [deleteSchool] = useDeleteSchool();
+    const [ deleteSchool ] = useDeleteSchool();
     const { organization_id } = organization;
-    const canEdit = getPermissionState(organization_id, `edit_school_20330`);
-    const canDelete = getPermissionState(organization_id, `delete_school_20440`);
-    const canCreate = getPermissionState(organization_id, `create_school_20220`);
+    const canEdit = usePermission(`edit_school_20330`);
+    const canDelete = usePermission(`delete_school_20440`);
+    const canCreate = usePermission(`create_school_20220`);
     const {
         data,
         refetch,
@@ -94,7 +94,7 @@ export default function SchoolTable(props: Props) {
             status: school.status ?? ``,
         })) ?? [];
         setRows(rows);
-    }, [data]);
+    }, [ data ]);
 
     const columns: TableColumn<SchoolRow>[] = [
         {

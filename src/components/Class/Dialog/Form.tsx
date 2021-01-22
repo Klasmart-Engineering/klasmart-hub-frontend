@@ -1,20 +1,21 @@
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
+import { useGetSchools } from "@/api/schools";
+import { currentMembershipVar } from "@/cache";
+import { Class } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
+import { alphanumeric } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
     TextField,
     Theme,
 } from "@material-ui/core";
-import { Class } from "@/types/graphQL";
-import { useGetSchools } from "@/api/schools";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
-import { alphanumeric } from "@/utils/validations";
 import { MultiSelect } from "kidsloop-px";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,6 +47,7 @@ export default function ClassDialogForm(props: Props) {
     } = props;
     const classes = useStyles();
     const organization = useReactiveVar(currentMembershipVar);
+    const canEditSchool = usePermission(`edit_school_20330`);
     const { organization_id } = organization;
     const { data } = useGetSchools({
         variables: {
@@ -86,6 +88,7 @@ export default function ClassDialogForm(props: Props) {
                 label="Schools (optional)"
                 items={allSchools}
                 value={schoolIds}
+                disabled={!canEditSchool}
                 itemText={(school) => school.school_name ?? ``}
                 itemValue={(school) => school.school_id}
                 onChange={(values) => setSchoolIds(values)}
