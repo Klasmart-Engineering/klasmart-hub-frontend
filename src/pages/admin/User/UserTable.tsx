@@ -165,7 +165,7 @@ export default function UserTable(props: Props) {
                         src={row.avatar ?? ``}
                         className={classes.avatar}
                         style={{
-                            backgroundColor: row.avatar ? undefined : utils.stringToHslColor(row.name),
+                            backgroundColor: row.avatar ? undefined : utils.stringToColor(row.name),
                         }}>
                         <Typography
                             noWrap

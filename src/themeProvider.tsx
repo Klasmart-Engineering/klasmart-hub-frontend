@@ -73,7 +73,10 @@ export function themeProvider() {
         fontWeightRegular: localeTypography.localeWeightRegular,
     } as any;
 
-    const organizationToolbarColor = utils.stringToHslColor(organization_name, 50, 90);
+    const organizationToolbarColor = utils.stringToColor(organization_name, {
+        saturation: 50,
+        light: 90,
+    });
 
     const overrides = {
         MuiAppBar: {
@@ -123,7 +126,7 @@ export function themeProvider() {
         },
     };
 
-    const organizationColor = utils.stringToHslColor(organization_name);
+    const organizationColor = utils.stringToColor(organization_name);
 
     const palette: PaletteOptions = {
         background: {

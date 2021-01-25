@@ -115,9 +115,9 @@ export default function UserSettings(props: Props) {
     const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
 
-    const userNameColor = utils.stringToHslColor(user?.user_name ?? `??`);
+    const userNameColor = utils.stringToColor(user?.user_name ?? `??`);
     const userNameInitials = utils.nameToInitials(user?.user_name ?? `??`, 3);
-    const selectedOrganizationColor = utils.stringToHslColor(selectedMembershipOrganization?.organization?.organization_name ?? `??`);
+    const selectedOrganizationColor = utils.stringToColor(selectedMembershipOrganization?.organization?.organization_name ?? `??`);
     const selectedOrganizationInitials = utils.nameToInitials(selectedMembershipOrganization?.organization?.organization_name ?? `??`, 4);
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -297,7 +297,7 @@ export default function UserSettings(props: Props) {
                                         variant="rounded"
                                         style={{
                                             color: `white`,
-                                            backgroundColor: utils.stringToHslColor(membership?.organization?.organization_name ?? `??`),
+                                            backgroundColor: utils.stringToColor(membership?.organization?.organization_name ?? `??`),
                                         }}
                                     >
                                         <Typography variant="caption">
