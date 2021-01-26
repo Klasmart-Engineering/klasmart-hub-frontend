@@ -466,7 +466,7 @@ const messages: Record<string, string> = {
     classRoster_previousTooltip: `이전 페이지`,
     classRoster_firstTooltip: `처음 페이지`,
     classRoster_lastTooltip: `마지막 페이지`,
-    home_welcomeLabel: `환영합니다, {userName}님!!`,
+    home_welcomeLabel: `환영합니다, {userName}님!`,
     usageInfo_onlineClasses: `라이브 수업`,
     usageInfo_offlineClasses: `오프라인 수업`,
     usageInfo_homework: `숙제`,
