@@ -61,7 +61,6 @@ const useStyles = makeStyles((theme) =>
             margin: `3px`,
         },
         searchContainer: {
-            // padding: `3px`,
             display: `flex`,
             alignItems: `center`,
         },
@@ -199,7 +198,7 @@ export default function PermissionsCard(props: Props) {
                 </div>
                 <Divider />
                 <div>
-                    {cardPermissions.map((groupElement, index) => (
+                    {cardPermissions.map((groupElement, groupIndex) => (
                         <Accordion
                             key={`Accordion${groupElement.group}`}
                             expanded={groupElement.open}
@@ -209,7 +208,7 @@ export default function PermissionsCard(props: Props) {
                                 aria-label="Expand"
                                 aria-controls="additional-actions1-content"
                                 id="additional-actions1-header"
-                                onClick={() => handleOpenAccordion(index)}
+                                onClick={() => handleOpenAccordion(groupIndex)}
                             >
                                 <FormControlLabel
                                     className={classes.formControlLabel}
@@ -217,7 +216,7 @@ export default function PermissionsCard(props: Props) {
                                     control={
                                         <Checkbox
                                             checked={groupElement.selectAll}
-                                            tabIndex={index}
+                                            tabIndex={groupIndex}
                                             onChange={
                                                 handleSelectAllPermissions
                                             }
@@ -269,7 +268,7 @@ export default function PermissionsCard(props: Props) {
                                                             id={
                                                                 permissionDetail.permissionName
                                                             }
-                                                            tabIndex={index}
+                                                            tabIndex={groupIndex}
                                                             onChange={
                                                                 handlePermissionCheck
                                                             }
