@@ -1,3 +1,5 @@
+import RoleStepperButtons from "../Roles/roleStepperButtons";
+import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -11,8 +13,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
-import RoleStepperButtons from "../Roles/roleStepperButtons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,9 +32,11 @@ interface Props {
     steps?: string[];
     activeStep?: number;
     handleBack?: () => void;
-    handleNext?: () => void;
+    handleNext?: () => Promise<void>;
     handleReset?: () => void;
     displayHome?: boolean;
+    roleInfoStepIsValid?: boolean;
+    permissionsStepIsValid?: boolean;
 }
 
 export default function DialogAppBar(props: Props) {
@@ -49,6 +51,8 @@ export default function DialogAppBar(props: Props) {
         handleNext,
         handleReset,
         displayHome,
+        roleInfoStepIsValid,
+        permissionsStepIsValid,
     } = props;
 
     return (
@@ -89,6 +93,8 @@ export default function DialogAppBar(props: Props) {
                             handleBack={handleBack}
                             handleNext={handleNext}
                             handleReset={handleReset}
+                            roleInfoStepIsValid={roleInfoStepIsValid}
+                            permissionsStepIsValid={permissionsStepIsValid}
                         />
                     )}
                 </Toolbar>

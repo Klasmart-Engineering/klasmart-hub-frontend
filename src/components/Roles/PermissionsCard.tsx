@@ -1,7 +1,8 @@
-import React from "react";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import {
+    Group,
+    PermissionDetail,
+    PermissionsCategory,
+} from "@/pages/admin/Role/CreateRole";
 import {
     Accordion,
     AccordionDetails,
@@ -10,19 +11,28 @@ import {
     Divider,
     FormControlLabel,
 } from "@material-ui/core";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import { ArrowDropDown } from "@material-ui/icons";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import { ArrowDropDown } from "@material-ui/icons";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { TableSearch } from "kidsloop-px";
+import React, {
+    Dispatch,
+    SetStateAction,
+    useEffect,
+} from "react";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
             width: theme.breakpoints.values.lg,
             borderRadius: 10,
+            marginBottom: `20px`,
         },
         formControlLabel: {
             marginRight: `-5px`,
@@ -39,6 +49,7 @@ const useStyles = makeStyles((theme) =>
         },
         tagContainer: {
             display: `flex`,
+            flexWrap: `wrap`,
         },
         tagText: {
             display: `inline-block`,
@@ -48,6 +59,7 @@ const useStyles = makeStyles((theme) =>
             fontWeight: 400,
             background: `#f1f1f1`,
             color: `#FF6B00`,
+            margin: `3px`,
         },
         searchContainer: {
             padding: `3px`,
@@ -68,12 +80,103 @@ const useStyles = makeStyles((theme) =>
     }),
 );
 
-export default function PermissionsCard() {
-    const classes = useStyles();
-    const [ open, setOpen ] = React.useState(true);
+interface Props {
+    category: string;
+    groups: Group[];
+    setPermissionsStepIsValid: Dispatch<SetStateAction<boolean>>;
+    rolesAndPermissions: PermissionsCategory[];
+}
 
-    const handleClick = () => {
-        setOpen(!open);
+export default function PermissionsCard(props: Props) {
+    const {
+        category,
+        groups,
+        setPermissionsStepIsValid,
+        rolesAndPermissions,
+    } = props;
+    const classes = useStyles();
+    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(
+        groups,
+    );
+
+    const handleOpenAccordion = (index: number) => {
+        const newPermissions = [ ...cardPermissions ];
+        newPermissions[index].open = !newPermissions[index].open;
+        setCardPermissions(newPermissions);
+    };
+
+    const handlePermissionCheck = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        const newPermissions = [ ...cardPermissions ];
+        const accordionDetails = newPermissions[
+            event.target.tabIndex
+        ].permissionDetails.map((e: PermissionDetail) => {
+            return e.permissionName === event.target.id
+                ? {
+                    ...e,
+                    checked: event.target.checked,
+                }
+                : e;
+        });
+
+        newPermissions[
+            event.target.tabIndex
+        ].permissionDetails = accordionDetails;
+
+        if (!event.target.checked) {
+            newPermissions[event.target.tabIndex].selectAll = false;
+        }
+
+        setCardPermissions(newPermissions);
+    };
+
+    const handleSelectAllPermissions = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        const newPermissions = [ ...cardPermissions ];
+        const accordionDetails = newPermissions[
+            event.target.tabIndex
+        ].permissionDetails.map((e: PermissionDetail) => {
+            return {
+                ...e,
+                checked: event.target.checked,
+            };
+        });
+
+        newPermissions[
+            event.target.tabIndex
+        ].permissionDetails = accordionDetails;
+        newPermissions[event.target.tabIndex].selectAll = event.target.checked;
+
+        setCardPermissions(newPermissions);
+    };
+
+    useEffect(() => {
+        const newPermissions = [ ...cardPermissions ];
+        newPermissions.forEach((e: Group) => {
+            if (e.permissionDetails.some((e: PermissionDetail) => e.checked)) {
+                e.open = true;
+            }
+        });
+
+        setCardPermissions(newPermissions);
+    }, []);
+
+    useEffect(() => {
+        const hasPermissions = rolesAndPermissions.some((role) =>
+            role.groups.some((group: Group) =>
+                group.permissionDetails.some(
+                    (detail: PermissionDetail) => detail.checked,
+                ),
+            ),
+        );
+
+        setPermissionsStepIsValid(hasPermissions);
+    }, [ rolesAndPermissions, cardPermissions ]);
+
+    const onChange = () => {
+        return ``;
     };
 
     return (
@@ -83,107 +186,122 @@ export default function PermissionsCard() {
                     gutterBottom
                     variant="h5"
                     component="h2">
-                    Accounts
+                    {category}
                 </Typography>
                 <Divider />
                 <div className={classes.searchContainer}>
-                    <TableSearch />
+                    <TableSearch
+                        value=""
+                        onChange={onChange} />
                 </div>
                 <Divider />
                 <div>
-                    <Accordion>
-                        <AccordionSummary
-                            aria-label="Expand"
-                            aria-controls="additional-actions1-content"
-                            id="additional-actions1-header"
-                            onClick={handleClick}
+                    {cardPermissions.map((e: Group, index) => (
+                        <Accordion
+                            key={`Accordion${e.group}`}
+                            expanded={e.open}
                         >
-                            <FormControlLabel
-                                className={classes.formControlLabel}
-                                aria-label="Acknowledge"
-                                control={<Checkbox color="primary" />}
-                                label=""
-                                onClick={(event) => {
-                                    // The click event of the nested action will propagate up and
-                                    // expand the accordion unless you explicitly stop it.
-                                    event.stopPropagation();
-                                }}
-                                onFocus={(event) => event.stopPropagation()}
-                            />
-                            <div className={classes.formControlContainer}>
-                                <div className={classes.arrowIcon}>
-                                    {open ? (
-                                        <ArrowDropUpIcon />
-                                    ) : (
-                                        <ArrowDropDown />
+                            <AccordionSummary
+                                key={`AccordionSummary${e.group}`}
+                                aria-label="Expand"
+                                aria-controls="additional-actions1-content"
+                                id="additional-actions1-header"
+                                onClick={() => handleOpenAccordion(index)}
+                            >
+                                <FormControlLabel
+                                    className={classes.formControlLabel}
+                                    aria-label="Acknowledge"
+                                    control={
+                                        <Checkbox
+                                            color="primary"
+                                            checked={e.selectAll}
+                                            tabIndex={index}
+                                            onChange={
+                                                handleSelectAllPermissions
+                                            }
+                                        />
+                                    }
+                                    label=""
+                                    onClick={(event) => {
+                                        // The click event of the nested action will propagate up and
+                                        // expand the accordion unless you explicitly stop it.
+                                        event.stopPropagation();
+                                    }}
+                                    onFocus={(event) => event.stopPropagation()}
+                                />
+                                <div className={classes.formControlContainer}>
+                                    <div className={classes.arrowIcon}>
+                                        {e.open ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDown />
+                                        )}
+                                    </div>
+                                    <div
+                                        color="textSecondary"
+                                        className={classes.category}
+                                    >
+                                        {e.group}
+                                    </div>
+                                </div>
+                            </AccordionSummary>
+                            <AccordionDetails
+                                key={`AccordionDetails${e.group}`}
+                            >
+                                <div className={classes.accordionContainer}>
+                                    {e.permissionDetails.map(
+                                        (e: PermissionDetail) => (
+                                            <React.Fragment
+                                                key={`React.Fragment${e.permissionName}${e.permissionDescription}`}
+                                            >
+                                                <div
+                                                    className={
+                                                        classes.accountItem
+                                                    }
+                                                >
+                                                    <div>
+                                                        <Checkbox
+                                                            color="primary"
+                                                            checked={e.checked}
+                                                            id={
+                                                                e.permissionName
+                                                            }
+                                                            tabIndex={index}
+                                                            onChange={
+                                                                handlePermissionCheck
+                                                            }
+                                                        />
+                                                        {e.permissionName}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    className={
+                                                        classes.accountItem
+                                                    }
+                                                >
+                                                    {e.permissionDescription}
+                                                </div>
+                                                <div className={classes.accountItem}>
+                                                    <div className={classes.tagContainer}>
+                                                        {e.levels?.map((e) => (
+                                                            <div
+                                                                key={e}
+                                                                className={
+                                                                    classes.tagText
+                                                                }
+                                                            >
+                                                                {e}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
+                                        ),
                                     )}
                                 </div>
-                                <div
-                                    color="textSecondary"
-                                    className={classes.category}
-                                >
-                                    My learners
-                                </div>
-                            </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <div className={classes.accordionContainer}>
-                                <div className={classes.accountItem}>
-                                    <div>
-                                        <Checkbox color="primary" />
-                                        Permission name
-                                    </div>
-                                </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to view my learners page
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            School Admin
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className={classes.accountItem}>
-                                    <div>
-                                        <Checkbox color="primary" />
-                                        Permission name that is super long and
-                                        specific
-                                    </div>
-                                </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to edit permissions and
-                                    other stuffs
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            Teacher
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className={classes.accountItem}>
-                                    <div>
-                                        <Checkbox color="primary" />
-                                        Permission for the organization admin
-                                    </div>
-                                </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to edit permissions and
-                                    other stuffs
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            Organization Admin
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </AccordionDetails>
-                    </Accordion>
+                            </AccordionDetails>
+                        </Accordion>
+                    ))}
                 </div>
             </CardContent>
         </Card>

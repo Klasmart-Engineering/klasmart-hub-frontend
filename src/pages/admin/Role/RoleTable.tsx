@@ -1,43 +1,56 @@
+import {
+    useCreateNewRole,
+    useGetAllRoles,
+} from "@/api/roles";
+import { currentMembershipVar } from "@/cache";
+import CreateRole, { NewRole } from "@/pages/admin/Role/CreateRole";
+import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
+import { Paper } from "@material-ui/core";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
-import { Table } from "kidsloop-px";
+import {
+    Add as AddIcon,
+    Delete as DeleteIcon,
+    Edit as EditIcon,
+} from "@material-ui/icons";
+import {
+    Table,
+    useConfirm,
+    useSnackbar,
+} from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
-import React,
-{
+import React, {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { currentMembershipVar } from "@/cache";
-import { useGetAllRoles } from "@/api/roles";
-import { getTableLocalization } from "@/utils/table";
-import { Paper } from "@material-ui/core";
 
-const useStyles = makeStyles(() => createStyles({
-    root: {
-        width: `100%`,
-    },
-    swatch: {
-        height: `27px`,
-        width: `27px`,
-        border: `1px solid #000`,
-    },
-    dashedData: {
-        borderBottom: `1px dashed`,
-        color: `#cacaca`,
-    },
-}));
+const useStyles = makeStyles(() =>
+    createStyles({
+        root: {
+            width: `100%`,
+        },
+        swatch: {
+            height: `27px`,
+            width: `27px`,
+            border: `1px solid #000`,
+        },
+        dashedData: {
+            borderBottom: `1px dashed`,
+            color: `#cacaca`,
+        },
+    }),
+);
 
 interface RoleRow {
     id: string;
     role: string;
 }
 
-interface Props {
-}
+interface Props {}
 
 /**
  * Returns a match if property needs to be localized.
@@ -48,7 +61,10 @@ const checkRoleMatch = (role: string | undefined | null) => {
         return null;
     }
 
-    const regex = new RegExp(`Organization Admin|Parent|School Admin|Student|Teacher`, `gmi`);
+    const regex = new RegExp(
+        `Organization Admin|Parent|School Admin|Student|Teacher`,
+        `gmi`,
+    );
     return regex.test(role);
 };
 
@@ -59,12 +75,30 @@ export default function RoleTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const [ rows, setRows ] = useState<RoleRow[]>([]);
+    const [ open, setOpen ] = useState(false);
+    const [ activeStep, setActiveStep ] = useState(0);
+    const steps = [
+        `Role Info`,
+        `Set Permissions`,
+        `Confirm role`,
+    ];
+    const [ newRole, setNewRole ] = useState<NewRole>({
+        role_name: ``,
+        role_description: ``,
+        permission_names: [],
+    });
+
     const membership = useReactiveVar(currentMembershipVar);
     const {
         data,
         loading,
-        error,
-    } = useGetAllRoles(membership.organization_id);
+        refetch,
+    } = useGetAllRoles(
+        membership.organization_id,
+    );
+    const [ createNewRole, { loading: loadingCreateNewRole } ] = useCreateNewRole();
+    const confirm = useConfirm();
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (!data?.organization?.roles?.length) {
@@ -73,9 +107,11 @@ export default function RoleTable(props: Props) {
         }
         const rows: RoleRow[] = data.organization.roles.map((role) => ({
             id: role.role_id,
-            role: checkRoleMatch(role.role_name) ? intl.formatMessage({
-                id: `roles_type${role.role_name?.replace(` `, ``)}`,
-            }) : role.role_name || ``,
+            role: checkRoleMatch(role.role_name)
+                ? intl.formatMessage({
+                    id: `roles_type${role.role_name?.replace(` `, ``)}`,
+                })
+                : role.role_name || ``,
         }));
 
         setRows(rows);
@@ -96,6 +132,55 @@ export default function RoleTable(props: Props) {
         },
     ];
 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleNext = async (): Promise<void> => {
+        if (steps && activeStep === steps.length - 1) {
+            try {
+                if (
+                    !(await confirm({
+                        title: `Create New Role?`,
+                        content: `This will create a new role in this organization`,
+                        okLabel: `Create`,
+                    }))
+                ) {
+                    return;
+                }
+
+                const response = await createNewRole({
+                    variables: {
+                        organization_id: membership.organization_id,
+                        role_name: newRole.role_name,
+                        role_description: newRole.role_description,
+                        permission_names: newRole.permission_names,
+                    },
+                });
+
+                if (response?.data?.organization?.createRole === null) {
+                    throw new Error();
+                }
+
+                await refetch();
+                enqueueSnackbar(`A new role has been created successfully`, {
+                    variant: `success`,
+                });
+            } catch (e) {
+                enqueueSnackbar(
+                    `Sorry, something went wrong, please try again`,
+                    {
+                        variant: `error`,
+                    },
+                );
+            } finally {
+                setOpen(false);
+            }
+        } else {
+            setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
+        }
+    };
+
     return (
         <>
             <Paper className={classes.root}>
@@ -105,6 +190,33 @@ export default function RoleTable(props: Props) {
                     loading={loading}
                     idField="id"
                     orderBy="role"
+                    primaryAction={{
+                        label: `Create`,
+                        icon: AddIcon,
+                        onClick: () => handleOpen(),
+                    }}
+                    rowActions={(row) => [
+                        {
+                            label: `Edit`,
+                            icon: EditIcon,
+                            onClick: (row) => console.log(`clicked`, row),
+                        },
+                        {
+                            label: `Delete`,
+                            icon: DeleteIcon,
+                            onClick: async (row) => {
+                                if (
+                                    !(await confirm({
+                                        variant: `error`,
+                                        title: `Delete`,
+                                        content: `Are you sure you to delete this role? This will permanently remove the role.`,
+                                    }))
+                                )
+                                    return;
+                                console.log(`we done`);
+                            },
+                        },
+                    ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
@@ -124,6 +236,18 @@ export default function RoleTable(props: Props) {
                     })}
                 />
             </Paper>
+            {open && (
+                <CreateRole
+                    open={open}
+                    setOpen={setOpen}
+                    steps={steps}
+                    activeStep={activeStep}
+                    setActiveStep={setActiveStep}
+                    setNewRole={setNewRole}
+                    handleNext={handleNext}
+                    loadingCreateNewRole={loadingCreateNewRole}
+                />
+            )}
         </>
     );
 }

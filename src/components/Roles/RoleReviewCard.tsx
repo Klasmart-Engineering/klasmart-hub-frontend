@@ -1,25 +1,30 @@
-import React from "react";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import {
+    Group,
+    PermissionDetail,
+} from "@/pages/admin/Role/CreateRole";
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Divider,
 } from "@material-ui/core";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import { ArrowDropDown } from "@material-ui/icons";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import { ArrowDropDown } from "@material-ui/icons";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import React, { useEffect } from "react";
 
 const useStyles = makeStyles(() =>
     createStyles({
         root: {
             width: `1342px`,
             borderRadius: 10,
+            marginBottom: `20px`,
         },
         content: {
             marginTop: `15px`,
@@ -38,8 +43,7 @@ const useStyles = makeStyles(() =>
         accountGrid: {
             width: `1340px`,
             display: `grid`,
-            gridTemplateColumns:
-                `minmax(100px, 500px) minmax(100px, 500px) auto`,
+            gridTemplateColumns: `minmax(100px, 500px) minmax(100px, 500px) auto`,
             justifyContent: `space-between`,
         },
         accountItem: {
@@ -48,6 +52,7 @@ const useStyles = makeStyles(() =>
         },
         tagContainer: {
             display: `flex`,
+            flexWrap: `wrap`,
         },
         tagText: {
             display: `inline-block`,
@@ -57,17 +62,52 @@ const useStyles = makeStyles(() =>
             fontWeight: 400,
             background: `#f1f1f1`,
             color: `#FF6B00`,
+            margin: `3px`,
         },
     }),
 );
 
-export default function RoleReviewCard() {
-    const classes = useStyles();
-    const [ open, setOpen ] = React.useState(true);
+interface Props {
+    category: string;
+    groups: Group[];
+}
 
-    const handleClick = () => {
-        setOpen(!open);
+export default function RoleReviewCard(props: Props) {
+    const classes = useStyles();
+    const { category, groups } = props;
+    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(
+        groups,
+    );
+
+    const handleOpenAccordion = (index: number) => {
+        const newPermissions = [ ...cardPermissions ];
+        newPermissions[index].open = !newPermissions[index].open;
+        setCardPermissions(newPermissions);
     };
+
+    useEffect(() => {
+        const newPermissions = [ ...cardPermissions ];
+        newPermissions.forEach((e: Group) => {
+            if (e.permissionDetails.some((e: PermissionDetail) => e.checked)) {
+                e.open = true;
+            }
+        });
+
+        const onlyCheckedPermissions = newPermissions.reduce(
+            (acc: Group[], e: Group) => {
+                if (
+                    e.permissionDetails.some((e: PermissionDetail) => e.checked)
+                ) {
+                    acc.push(e);
+                }
+
+                return acc;
+            },
+            [],
+        );
+
+        setCardPermissions(onlyCheckedPermissions);
+    }, []);
 
     return (
         <Card className={classes.root}>
@@ -76,86 +116,86 @@ export default function RoleReviewCard() {
                     gutterBottom
                     variant="h5"
                     component="h2">
-                    Accounts
+                    {category}
                 </Typography>
                 <Divider />
                 <div className={classes.content}>
-                    <Accordion>
-                        <AccordionSummary
-                            aria-label="Expand"
-                            aria-controls="additional-actions1-content"
-                            id="additional-actions1-header"
-                            onClick={handleClick}
+                    {cardPermissions.map((e: Group, index) => (
+                        <Accordion
+                            key={`Accordion${e.group}`}
+                            expanded={e.open}
                         >
-                            <div className={classes.categoryContainer}>
-                                <div className={classes.arrowIcon}>
-                                    {open ? (
-                                        <ArrowDropUpIcon />
-                                    ) : (
-                                        <ArrowDropDown />
-                                    )}
-                                </div>
-                                <div
-                                    color="textSecondary"
-                                    className={classes.categoryItem}
-                                >
-                                    My learners
-                                </div>
-                            </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <div className={classes.accountGrid}>
-                                <div className={classes.accountItem}>
-                                    <div>Permission name</div>
-                                </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to view my learners page
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            School Admin
-                                        </div>
+                            <AccordionSummary
+                                key={`AccordionSummary${e.group}`}
+                                aria-label="Expand"
+                                aria-controls="additional-actions1-content"
+                                id="additional-actions1-header"
+                                onClick={() => handleOpenAccordion(index)}
+                            >
+                                <div className={classes.categoryContainer}>
+                                    <div className={classes.arrowIcon}>
+                                        {e.open ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDown />
+                                        )}
+                                    </div>
+                                    <div
+                                        color="textSecondary"
+                                        className={classes.categoryItem}
+                                    >
+                                        {e.group}
                                     </div>
                                 </div>
-
-                                <div className={classes.accountItem}>
-                                    <div>
-                                        Permission name that is super long and
-                                        specific
-                                    </div>
+                            </AccordionSummary>
+                            <AccordionDetails
+                                key={`AccordionDetails${e.group}`}
+                            >
+                                <div className={classes.accountGrid}>
+                                    {e.permissionDetails
+                                        .filter(
+                                            (e: PermissionDetail) => e.checked,
+                                        )
+                                        .map((e: PermissionDetail) => (
+                                            <React.Fragment
+                                                key={`React.Fragment${e.permissionName}${e.permissionDescription}`}
+                                            >
+                                                <div
+                                                    className={
+                                                        classes.accountItem
+                                                    }
+                                                >
+                                                    <div>
+                                                        {e.permissionName}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    className={
+                                                        classes.accountItem
+                                                    }
+                                                >
+                                                    {e.permissionDescription}
+                                                </div>
+                                                <div className={classes.accountItem}>
+                                                    <div className={classes.tagContainer}>
+                                                        {e.levels?.map((e) => (
+                                                            <div
+                                                                key={e}
+                                                                className={
+                                                                    classes.tagText
+                                                                }
+                                                            >
+                                                                {e}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
+                                        ))}
                                 </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to edit permissions and
-                                    other stuffs
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            Teacher
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className={classes.accountItem}>
-                                    <div>
-                                        Permission for the organization admin
-                                    </div>
-                                </div>
-                                <div className={classes.accountItem}>
-                                    Gives users access to edit permissions and
-                                    other stuffs
-                                </div>
-                                <div className={classes.accountItem}>
-                                    <div className={classes.tagContainer}>
-                                        <div className={classes.tagText}>
-                                            Organization Admin
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </AccordionDetails>
-                    </Accordion>
+                            </AccordionDetails>
+                        </Accordion>
+                    ))}
                 </div>
             </CardContent>
         </Card>

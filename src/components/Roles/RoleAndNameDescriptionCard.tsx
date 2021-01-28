@@ -1,11 +1,12 @@
+import { RoleInfo } from "@/pages/admin/Role/CreateRole";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import React from "react";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -31,7 +32,12 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-export default function RoleAndNameDescriptionCard() {
+interface Props {
+    roleInfo: RoleInfo;
+}
+
+export default function RoleAndNameDescriptionCard(props: Props) {
+    const { roleInfo } = props;
     const classes = useStyles();
 
     return (
@@ -44,8 +50,10 @@ export default function RoleAndNameDescriptionCard() {
                     Role
                 </Typography>
                 <div className={classes.nameContainer}>
-                    <div className={classes.name}>Role name</div>
-                    <div className={classes.description}>Role description</div>
+                    <div className={classes.name}>{roleInfo.name}</div>
+                    <div className={classes.description}>
+                        {roleInfo.description}
+                    </div>
                 </div>
             </CardContent>
         </Card>

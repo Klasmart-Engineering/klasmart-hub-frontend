@@ -55,6 +55,7 @@ export interface Organization {
     classes?: Class[] | null;
     schools?: School[] | null;
     memberships?: OrganizationMembership[] | null;
+    createRole?: Role;
 }
 
 export interface Role {
