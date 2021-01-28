@@ -1,4 +1,4 @@
-import { RoleInfo } from "@/pages/admin/Role/CreateRole";
+import { RoleInfo } from "@/pages/admin/Role/CreateRoleDialog";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {

@@ -1,8 +1,7 @@
 import {
     Group,
-    PermissionDetail,
     PermissionsCategory,
-} from "@/pages/admin/Role/CreateRole";
+} from "@/pages/admin/Role/CreateRoleDialog";
 import {
     Accordion,
     AccordionDetails,
@@ -62,7 +61,7 @@ const useStyles = makeStyles((theme) =>
             margin: `3px`,
         },
         searchContainer: {
-            padding: `3px`,
+            // padding: `3px`,
             display: `flex`,
             alignItems: `center`,
         },
@@ -111,13 +110,13 @@ export default function PermissionsCard(props: Props) {
         const newPermissions = [ ...cardPermissions ];
         const accordionDetails = newPermissions[
             event.target.tabIndex
-        ].permissionDetails.map((e: PermissionDetail) => {
-            return e.permissionName === event.target.id
+        ].permissionDetails.map((permissionDetail) => {
+            return permissionDetail.permissionName === event.target.id
                 ? {
-                    ...e,
+                    ...permissionDetail,
                     checked: event.target.checked,
                 }
-                : e;
+                : permissionDetail;
         });
 
         newPermissions[
@@ -137,9 +136,9 @@ export default function PermissionsCard(props: Props) {
         const newPermissions = [ ...cardPermissions ];
         const accordionDetails = newPermissions[
             event.target.tabIndex
-        ].permissionDetails.map((e: PermissionDetail) => {
+        ].permissionDetails.map((permissionDetail) => {
             return {
-                ...e,
+                ...permissionDetail,
                 checked: event.target.checked,
             };
         });
@@ -154,9 +153,13 @@ export default function PermissionsCard(props: Props) {
 
     useEffect(() => {
         const newPermissions = [ ...cardPermissions ];
-        newPermissions.forEach((e: Group) => {
-            if (e.permissionDetails.some((e: PermissionDetail) => e.checked)) {
-                e.open = true;
+        newPermissions.forEach((group) => {
+            if (
+                group.permissionDetails.some(
+                    (permissionDetail) => permissionDetail.checked,
+                )
+            ) {
+                group.open = true;
             }
         });
 
@@ -164,10 +167,10 @@ export default function PermissionsCard(props: Props) {
     }, []);
 
     useEffect(() => {
-        const hasPermissions = rolesAndPermissions.some((role) =>
-            role.groups.some((group: Group) =>
+        const hasPermissions = rolesAndPermissions.some((permissionCategory) =>
+            permissionCategory.groups.some((group) =>
                 group.permissionDetails.some(
-                    (detail: PermissionDetail) => detail.checked,
+                    (permissionDetail) => permissionDetail.checked,
                 ),
             ),
         );
@@ -189,20 +192,20 @@ export default function PermissionsCard(props: Props) {
                     {category}
                 </Typography>
                 <Divider />
-                <div className={classes.searchContainer}>
+                <div>
                     <TableSearch
                         value=""
                         onChange={onChange} />
                 </div>
                 <Divider />
                 <div>
-                    {cardPermissions.map((e: Group, index) => (
+                    {cardPermissions.map((groupElement, index) => (
                         <Accordion
-                            key={`Accordion${e.group}`}
-                            expanded={e.open}
+                            key={`Accordion${groupElement.group}`}
+                            expanded={groupElement.open}
                         >
                             <AccordionSummary
-                                key={`AccordionSummary${e.group}`}
+                                key={`AccordionSummary${groupElement.group}`}
                                 aria-label="Expand"
                                 aria-controls="additional-actions1-content"
                                 id="additional-actions1-header"
@@ -213,8 +216,7 @@ export default function PermissionsCard(props: Props) {
                                     aria-label="Acknowledge"
                                     control={
                                         <Checkbox
-                                            color="primary"
-                                            checked={e.selectAll}
+                                            checked={groupElement.selectAll}
                                             tabIndex={index}
                                             onChange={
                                                 handleSelectAllPermissions
@@ -231,7 +233,7 @@ export default function PermissionsCard(props: Props) {
                                 />
                                 <div className={classes.formControlContainer}>
                                     <div className={classes.arrowIcon}>
-                                        {e.open ? (
+                                        {groupElement.open ? (
                                             <ArrowDropUpIcon />
                                         ) : (
                                             <ArrowDropDown />
@@ -241,18 +243,18 @@ export default function PermissionsCard(props: Props) {
                                         color="textSecondary"
                                         className={classes.category}
                                     >
-                                        {e.group}
+                                        {groupElement.group}
                                     </div>
                                 </div>
                             </AccordionSummary>
                             <AccordionDetails
-                                key={`AccordionDetails${e.group}`}
+                                key={`AccordionDetails${groupElement.group}`}
                             >
                                 <div className={classes.accordionContainer}>
-                                    {e.permissionDetails.map(
-                                        (e: PermissionDetail) => (
+                                    {groupElement.permissionDetails.map(
+                                        (permissionDetail) => (
                                             <React.Fragment
-                                                key={`React.Fragment${e.permissionName}${e.permissionDescription}`}
+                                                key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
                                             >
                                                 <div
                                                     className={
@@ -261,17 +263,20 @@ export default function PermissionsCard(props: Props) {
                                                 >
                                                     <div>
                                                         <Checkbox
-                                                            color="primary"
-                                                            checked={e.checked}
+                                                            checked={
+                                                                permissionDetail.checked
+                                                            }
                                                             id={
-                                                                e.permissionName
+                                                                permissionDetail.permissionName
                                                             }
                                                             tabIndex={index}
                                                             onChange={
                                                                 handlePermissionCheck
                                                             }
                                                         />
-                                                        {e.permissionName}
+                                                        {
+                                                            permissionDetail.permissionName
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div
@@ -279,20 +284,32 @@ export default function PermissionsCard(props: Props) {
                                                         classes.accountItem
                                                     }
                                                 >
-                                                    {e.permissionDescription}
+                                                    {
+                                                        permissionDetail.permissionDescription
+                                                    }
                                                 </div>
-                                                <div className={classes.accountItem}>
-                                                    <div className={classes.tagContainer}>
-                                                        {e.levels?.map((e) => (
-                                                            <div
-                                                                key={e}
-                                                                className={
-                                                                    classes.tagText
-                                                                }
-                                                            >
-                                                                {e}
-                                                            </div>
-                                                        ))}
+                                                <div
+                                                    className={
+                                                        classes.accountItem
+                                                    }
+                                                >
+                                                    <div
+                                                        className={
+                                                            classes.tagContainer
+                                                        }
+                                                    >
+                                                        {permissionDetail.levels?.map(
+                                                            (level) => (
+                                                                <div
+                                                                    key={level}
+                                                                    className={
+                                                                        classes.tagText
+                                                                    }
+                                                                >
+                                                                    {level}
+                                                                </div>
+                                                            ),
+                                                        )}
                                                     </div>
                                                 </div>
                                             </React.Fragment>

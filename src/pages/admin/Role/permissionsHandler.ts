@@ -1,10 +1,8 @@
 import {
-    Group,
     Permission,
-    PermissionDetail,
     PermissionsCategory,
     Role,
-} from "@/pages/admin/Role/CreateRole";
+} from "@/pages/admin/Role/CreateRoleDialog";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 
 /**
@@ -16,10 +14,10 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
     const permissions: Permission[] = [];
 
     roles
-        .filter((e: Role) => systemRoles.includes(e.role_name))
-        .forEach((role: Role, roleIndex: number) => {
+        .filter((role) => systemRoles.includes(role.role_name))
+        .forEach((role, roleIndex) => {
             role.permissions?.forEach(
-                (permission: Permission, permissionIndex: number) => {
+                (permission, permissionIndex) => {
                     const permissionId =
                         roles[roleIndex].permissions[permissionIndex]
                             .permission_id;
@@ -37,7 +35,7 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
                             .permission_description;
 
                     const index = permissions.findIndex(
-                        (permission: Permission) =>
+                        (permission) =>
                             permission.permission_id === permissionId,
                     );
 
@@ -45,7 +43,9 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
                         index === -1 &&
                         permissionId &&
                         permissionGroup &&
-                        permissionCategory
+                        permissionCategory &&
+                        permissionLevel &&
+                        permissionDescription
                     ) {
                         permissions.push({
                             permission_id: permissionId,
@@ -106,11 +106,11 @@ export const sectionHandler = (
 ): PermissionsCategory[] => {
     const data: PermissionsCategory[] = [];
 
-    permissions.forEach((permission: Permission, i: number) => {
-        const category = permissions[i].permission_category;
-        const group = permissions[i].permission_group;
+    permissions.forEach((permission, permissionIndex) => {
+        const category = permissions[permissionIndex].permission_category;
+        const group = permissions[permissionIndex].permission_group;
         const categoryIndex = data.findIndex(
-            (item: PermissionsCategory) => item.category === category,
+            (item) => item.category === category,
         );
 
         if (categoryIndex === -1) {
@@ -128,7 +128,7 @@ export const sectionHandler = (
         } else {
             data[categoryIndex].groups.forEach(() => {
                 const permissionIndex = data[categoryIndex].groups.findIndex(
-                    (item: Group) => item.group === group,
+                    (item) => item.group === group,
                 );
 
                 if (permissionIndex === -1) {
@@ -143,14 +143,14 @@ export const sectionHandler = (
         }
     });
 
-    permissions.forEach((permission: Permission, permissionIndex: number) => {
+    permissions.forEach((permission, permissionIndex) => {
         const uniquePermission = permissions[permissionIndex];
 
-        data.forEach((role: PermissionsCategory, roleIndex: number) => {
+        data.forEach((role, roleIndex) => {
             const category = data[roleIndex].category;
 
             data[roleIndex].groups.forEach(
-                (group: Group, sectionIndex: number) => {
+                (group, sectionIndex) => {
                     const permission = data[roleIndex].groups[sectionIndex];
 
                     if (!permission.permissionDetails.length) {
@@ -178,7 +178,7 @@ export const sectionHandler = (
                         const permissionDetailsIndex = data[roleIndex].groups[
                             sectionIndex
                         ].permissionDetails.findIndex(
-                            (item: PermissionDetail) =>
+                            (item) =>
                                 item.permissionId ===
                                 uniquePermission.permission_id,
                         );

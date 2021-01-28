@@ -37,11 +37,8 @@ import React, {
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root: {
-            width: `100%`,
-        },
         confirmationCard: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             height: `106px`,
             borderRadius: 10,
             marginBottom: `13px`,
@@ -122,26 +119,26 @@ export interface NewRole {
 
 interface Props {
     open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
     steps: string[];
     activeStep: number;
     setActiveStep: Dispatch<SetStateAction<number>>;
     handleNext: () => Promise<void>;
-    loadingCreateNewRole: boolean;
+    loadingCreateRole: boolean;
     setNewRole: Dispatch<SetStateAction<NewRole>>;
+    handleClose: () => void;
 }
 
-export default function CreateRole(props: Props) {
+export default function CreateRoleDialog(props: Props) {
     const classes = useStyles();
     const {
         open,
-        setOpen,
         steps,
         activeStep,
         setActiveStep,
         handleNext,
-        loadingCreateNewRole,
+        loadingCreateRole,
         setNewRole,
+        handleClose,
     } = props;
     const [ roleInfo, setRoleInfo ] = useState<RoleInfo>({
         name: ``,
@@ -175,19 +172,24 @@ export default function CreateRole(props: Props) {
     }, [ rolePermissionsLoading, rolesAndPermissions ]);
 
     const reviewPermissions = rolesAndPermissions.reduce(
-        (acc: PermissionsCategory[], e: PermissionsCategory) => {
-            const hasPermissions = e.groups.reduce((acc: Group[], e: Group) => {
-                if (
-                    e.permissionDetails.some((e: PermissionDetail) => e.checked)
-                ) {
-                    acc.push(e);
-                }
+        (acc: PermissionsCategory[], permissionsCategory) => {
+            const hasPermissions = permissionsCategory.groups.reduce(
+                (acc: Group[], group) => {
+                    if (
+                        group.permissionDetails.some(
+                            (permissionDetail) => permissionDetail.checked,
+                        )
+                    ) {
+                        acc.push(group);
+                    }
 
-                return acc;
-            }, []);
+                    return acc;
+                },
+                [],
+            );
 
             if (hasPermissions.length) {
-                acc.push(e);
+                acc.push(permissionsCategory);
             }
 
             return acc;
@@ -246,11 +248,11 @@ export default function CreateRole(props: Props) {
             return (
                 <>
                     <PermissionsActionsCard />
-                    {rolesAndPermissions.map((e: PermissionsCategory) => (
+                    {rolesAndPermissions.map((permissionsCategory) => (
                         <PermissionsCard
-                            key={e.category}
-                            category={e.category}
-                            groups={e.groups}
+                            key={permissionsCategory.category}
+                            category={permissionsCategory.category}
+                            groups={permissionsCategory.groups}
                             setPermissionsStepIsValid={
                                 setPermissionsStepIsValid
                             }
@@ -262,7 +264,7 @@ export default function CreateRole(props: Props) {
         case 2:
             return (
                 <>
-                    {loadingCreateNewRole ? (
+                    {loadingCreateRole ? (
                         <Card className={classes.confirmationCard}>
                             <CardContent>
                                 <div>
@@ -289,11 +291,13 @@ export default function CreateRole(props: Props) {
                                 roleInfo={roleInfo}
                             />
                             {reviewPermissions.map(
-                                (e: PermissionsCategory) => (
+                                (permissionsCategory) => (
                                     <RoleReviewCard
-                                        key={e.category}
-                                        category={e.category}
-                                        groups={e.groups}
+                                        key={permissionsCategory.category}
+                                        category={
+                                            permissionsCategory.category
+                                        }
+                                        groups={permissionsCategory.groups}
                                     />
                                 ),
                             )}
@@ -306,18 +310,14 @@ export default function CreateRole(props: Props) {
         }
     }
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
     useEffect(() => {
         if (activeStep === 2) {
             const permissions = rolesAndPermissions.reduce(
-                (acc: string[], e: PermissionsCategory) => {
-                    e.groups.forEach((group: Group) => {
-                        group.permissionDetails.forEach((permission) => {
-                            if (permission.checked) {
-                                acc.push(permission.permissionId);
+                (acc: string[], permissionsCategory) => {
+                    permissionsCategory.groups.forEach((group) => {
+                        group.permissionDetails.forEach((permissionDetail) => {
+                            if (permissionDetail.checked) {
+                                acc.push(permissionDetail.permissionId);
                             }
                         });
                     });
@@ -336,41 +336,39 @@ export default function CreateRole(props: Props) {
     }, [ rolesAndPermissions, activeStep ]);
 
     return (
-        <div className={classes.root}>
-            <Dialog
-                fullScreen
-                aria-labelledby="nav-menu-title"
-                aria-describedby="nav-menu-description"
-                open={open}
-                TransitionComponent={motion}
-                onClose={handleClose}
-            >
-                <DialogAppBar
-                    handleClose={handleClose}
-                    // subtitleID={`navMenu_adminConsoleLabel`}
-                    steps={steps}
+        <Dialog
+            fullScreen
+            aria-labelledby="nav-menu-title"
+            aria-describedby="nav-menu-description"
+            open={open}
+            TransitionComponent={motion}
+            onClose={handleClose}
+        >
+            <DialogAppBar
+                handleClose={handleClose}
+                // subtitleID={`navMenu_adminConsoleLabel`}
+                steps={steps}
+                activeStep={activeStep}
+                handleBack={handleBack}
+                handleNext={handleNext}
+                handleReset={handleReset}
+                roleInfoStepIsValid={roleInfoStepIsValid()}
+                permissionsStepIsValid={permissionsStepIsValid}
+            />
+            <div className={classes.stepper}>
+                <RoleStepper
                     activeStep={activeStep}
-                    handleBack={handleBack}
-                    handleNext={handleNext}
-                    handleReset={handleReset}
-                    roleInfoStepIsValid={roleInfoStepIsValid()}
-                    permissionsStepIsValid={permissionsStepIsValid}
-                />
-                <div className={classes.stepper}>
-                    <RoleStepper
-                        activeStep={activeStep}
-                        steps={steps} />
-                </div>
-                <Grid
-                    container
-                    direction="row"
-                    justify="center"
-                    spacing={2}
-                    className={classes.menuContainer}
-                >
-                    {getStepContent(activeStep)}
-                </Grid>
-            </Dialog>
-        </div>
+                    steps={steps} />
+            </div>
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                spacing={2}
+                className={classes.menuContainer}
+            >
+                {getStepContent(activeStep)}
+            </Grid>
+        </Dialog>
     );
 }

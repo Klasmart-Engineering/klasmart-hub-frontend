@@ -1,9 +1,9 @@
 import {
-    useCreateNewRole,
+    useCreateRole,
     useGetAllRoles,
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
-import CreateRole, { NewRole } from "@/pages/admin/Role/CreateRole";
+import CreateRoleDialog, { NewRole } from "@/pages/admin/Role/CreateRoleDialog";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
 import { Paper } from "@material-ui/core";
@@ -32,15 +32,6 @@ const useStyles = makeStyles(() =>
     createStyles({
         root: {
             width: `100%`,
-        },
-        swatch: {
-            height: `27px`,
-            width: `27px`,
-            border: `1px solid #000`,
-        },
-        dashedData: {
-            borderBottom: `1px dashed`,
-            color: `#cacaca`,
         },
     }),
 );
@@ -96,7 +87,7 @@ export default function RoleTable(props: Props) {
     } = useGetAllRoles(
         membership.organization_id,
     );
-    const [ createNewRole, { loading: loadingCreateNewRole } ] = useCreateNewRole();
+    const [ createRole, { loading: loadingCreateRole } ] = useCreateRole();
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -136,6 +127,11 @@ export default function RoleTable(props: Props) {
         setOpen(true);
     };
 
+    const handleClose = () => {
+        setOpen(false);
+        setActiveStep(0);
+    };
+
     const handleNext = async (): Promise<void> => {
         if (steps && activeStep === steps.length - 1) {
             try {
@@ -149,7 +145,7 @@ export default function RoleTable(props: Props) {
                     return;
                 }
 
-                const response = await createNewRole({
+                const response = await createRole({
                     variables: {
                         organization_id: membership.organization_id,
                         role_name: newRole.role_name,
@@ -166,6 +162,7 @@ export default function RoleTable(props: Props) {
                 enqueueSnackbar(`A new role has been created successfully`, {
                     variant: `success`,
                 });
+                handleClose();
             } catch (e) {
                 enqueueSnackbar(
                     `Sorry, something went wrong, please try again`,
@@ -173,12 +170,12 @@ export default function RoleTable(props: Props) {
                         variant: `error`,
                     },
                 );
-            } finally {
-                setOpen(false);
+                handleClose();
             }
-        } else {
-            setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
+            return;
         }
+
+        setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
     };
 
     return (
@@ -237,15 +234,15 @@ export default function RoleTable(props: Props) {
                 />
             </Paper>
             {open && (
-                <CreateRole
+                <CreateRoleDialog
                     open={open}
-                    setOpen={setOpen}
                     steps={steps}
                     activeStep={activeStep}
                     setActiveStep={setActiveStep}
                     setNewRole={setNewRole}
                     handleNext={handleNext}
-                    loadingCreateNewRole={loadingCreateNewRole}
+                    loadingCreateRole={loadingCreateRole}
+                    handleClose={handleClose}
                 />
             )}
         </>

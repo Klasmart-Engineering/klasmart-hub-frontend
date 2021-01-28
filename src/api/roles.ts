@@ -34,21 +34,21 @@ export const useGetOrganizationRolesPermissions = (organizationId: string) => {
     });
 };
 
-interface CreateNewRoleResponse {
+interface CreateRoleResponse {
     organization: Organization;
 }
 
-interface CreateNewRoleRequest {
+interface CreateRoleRequest {
     organization_id: string;
     role_name: string;
     role_description: string;
     permission_names: string[];
 }
 
-export const useCreateNewRole = (
-    options?: MutationHookOptions<CreateNewRoleResponse, CreateNewRoleRequest>,
+export const useCreateRole = (
+    options?: MutationHookOptions<CreateRoleResponse, CreateRoleRequest>,
 ) => {
-    return useMutation<CreateNewRoleResponse, CreateNewRoleRequest>(
+    return useMutation<CreateRoleResponse, CreateRoleRequest>(
         CREATE_NEW_ROLE,
         options,
     );

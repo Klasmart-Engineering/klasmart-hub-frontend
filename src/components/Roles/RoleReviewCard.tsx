@@ -1,7 +1,7 @@
 import {
     Group,
     PermissionDetail,
-} from "@/pages/admin/Role/CreateRole";
+} from "@/pages/admin/Role/CreateRoleDialog";
 import {
     Accordion,
     AccordionDetails,
@@ -19,10 +19,10 @@ import { ArrowDropDown } from "@material-ui/icons";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import React, { useEffect } from "react";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             borderRadius: 10,
             marginBottom: `20px`,
         },
