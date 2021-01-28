@@ -5,33 +5,27 @@ import { Class } from "@/types/graphQL";
 import { buildEmptyClass } from "@/utils/classes";
 import { useReactiveVar } from "@apollo/client";
 import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
-import React,
-{
+import React, {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({}));
-
 interface Props {
     open: boolean;
     onClose: (value?: Class) => void;
+    schoolClasses?: Class[] | null;
 }
 
-export default function CreateClassDialog (props: Props) {
+export default function CreateClassDialog(props: Props) {
     const {
         open,
         onClose,
+        schoolClasses,
     } = props;
-    const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
@@ -52,21 +46,28 @@ export default function CreateClassDialog (props: Props) {
                 variables: {
                     organization_id,
                     class_name: class_name ?? ``,
-                    school_ids: schools?.map((s) => s.school_id) ?? [],
+                    school_ids:
+                        schools?.map((school) => school.school_id) ?? [],
                 },
             });
             onClose(newClass);
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSavedMessage`,
-            }), {
-                variant: `success`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classSavedMessage`,
+                }),
+                {
+                    variant: `success`,
+                },
+            );
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSaveError`,
-            }), {
-                variant: `error`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classSaveError`,
+                }),
+                {
+                    variant: `error`,
+                },
+            );
         }
     };
 
@@ -92,6 +93,7 @@ export default function CreateClassDialog (props: Props) {
         >
             <ClassDialogForm
                 value={newClass}
+                schoolClasses={schoolClasses}
                 onChange={(value) => setNewClass(value)}
                 onValidation={setValid}
             />

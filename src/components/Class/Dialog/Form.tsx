@@ -11,8 +11,7 @@ import {
     Theme,
 } from "@material-ui/core";
 import { MultiSelect } from "kidsloop-px";
-import React,
-{
+import React, {
     useEffect,
     useState,
 } from "react";
@@ -27,9 +26,22 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const getClassNameHelperText = (name: string) => {
+const getClassNameHelperText = (
+    name: string,
+    classes: Class[] | null | undefined,
+    currentClassName: string,
+) => {
     if (!name.length) return `Class name can't be empty`;
     if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
+    if (
+        classes &&
+        classes
+            .filter(
+                (schoolClass) => schoolClass.class_name !== currentClassName,
+            )
+            .find((schoolClass) => schoolClass.class_name === name)
+    )
+        return `Class names must be unique`;
     return ``;
 };
 
@@ -37,6 +49,7 @@ interface Props {
     value: Class;
     onChange: (value: Class) => void;
     onValidation: (valid: boolean) => void;
+    schoolClasses?: Class[] | null;
 }
 
 export default function ClassDialogForm(props: Props) {
@@ -44,6 +57,7 @@ export default function ClassDialogForm(props: Props) {
         value,
         onChange,
         onValidation,
+        schoolClasses,
     } = props;
     const classes = useStyles();
     const organization = useReactiveVar(currentMembershipVar);
@@ -54,19 +68,31 @@ export default function ClassDialogForm(props: Props) {
             organization_id,
         },
     });
-    const allSchools = data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
+    const allSchools =
+        data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const [ className, setClassName ] = useState(value.class_name ?? ``);
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((s) => s.school_id) ?? []);
+    const [ schoolIds, setSchoolIds ] = useState<string[]>(
+        value.schools?.map((school) => school.school_id) ?? [],
+    );
+    const [ currentClassName ] = useState(value.class_name ?? ``);
 
     useEffect(() => {
-        onValidation(!getClassNameHelperText(className));
+        onValidation(
+            !getClassNameHelperText(
+                className,
+                schoolClasses,
+                currentClassName,
+            ),
+        );
     }, [ className ]);
 
     useEffect(() => {
         const updatedClass: Class = {
             class_id: value.class_id,
             class_name: className,
-            schools: allSchools.filter((s) => schoolIds.includes(s.school_id)),
+            schools: allSchools.filter((school) =>
+                schoolIds.includes(school.school_id),
+            ),
         };
         onChange(updatedClass);
     }, [ className, schoolIds ]);
@@ -75,8 +101,18 @@ export default function ClassDialogForm(props: Props) {
         <div className={classes.root}>
             <TextField
                 fullWidth
-                error={!!getClassNameHelperText(className)}
-                helperText={getClassNameHelperText(className) + ` `}
+                error={
+                    !!getClassNameHelperText(
+                        className,
+                        schoolClasses,
+                        currentClassName,
+                    )
+                }
+                helperText={getClassNameHelperText(
+                    className,
+                    schoolClasses,
+                    currentClassName,
+                )}
                 value={className}
                 label="Class name"
                 variant="outlined"

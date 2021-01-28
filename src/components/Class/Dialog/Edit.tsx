@@ -8,26 +8,20 @@ import { Class } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptyClass } from "@/utils/classes";
 import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
-import React,
-{
+import React, {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({}));
-
 interface Props {
     open: boolean;
     value?: Class;
     onClose: (value?: Class) => void;
+    schoolClasses?: Class[] | null;
 }
 
 export default function EditClassDialog(props: Props) {
@@ -35,8 +29,8 @@ export default function EditClassDialog(props: Props) {
         open,
         value,
         onClose,
+        schoolClasses,
     } = props;
-    const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
@@ -68,28 +62,36 @@ export default function EditClassDialog(props: Props) {
                 await editSchools({
                     variables: {
                         class_id,
-                        school_ids: schools?.map((s) => s.school_id) ?? [],
+                        school_ids:
+                            schools?.map((school) => school.school_id) ?? [],
                     },
                 });
             }
 
             onClose(editedClass);
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSavedMessage`,
-            }), {
-                variant: `success`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classSavedMessage`,
+                }),
+                {
+                    variant: `success`,
+                },
+            );
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSaveError`,
-            }), {
-                variant: `error`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classSaveError`,
+                }),
+                {
+                    variant: `error`,
+                },
+            );
         }
     };
 
     const handleDelete = async () => {
-        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`)) return;
+        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`))
+            return;
         try {
             const { class_id } = editedClass;
             await deleteClass({
@@ -98,17 +100,23 @@ export default function EditClassDialog(props: Props) {
                 },
             });
             onClose(editedClass);
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classDeletedMessage`,
-            }), {
-                variant: `success`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classDeletedMessage`,
+                }),
+                {
+                    variant: `success`,
+                },
+            );
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classDeletedError`,
-            }), {
-                variant: `error`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classDeletedError`,
+                }),
+                {
+                    variant: `error`,
+                },
+            );
         }
     };
 
@@ -143,6 +151,7 @@ export default function EditClassDialog(props: Props) {
         >
             <ClassDialogForm
                 value={editedClass}
+                schoolClasses={schoolClasses}
                 onChange={(value) => setEditedClass(value)}
                 onValidation={setValid}
             />

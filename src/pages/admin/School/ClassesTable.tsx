@@ -26,36 +26,37 @@ import {
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
-import React,
-{
+import React, {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
-    containerTable: {
-        width: `100%`,
-        "& table": {
-            overflowY: `auto`,
+const useStyles = makeStyles(() =>
+    createStyles({
+        root: {
+            width: `100%`,
         },
-    },
-    activeColor: {
-        color: `#2BA600`,
-        fontWeight: `bold`,
-    },
-    inactiveColor: {
-        color: `#FF0000`,
-        fontWeight: `bold`,
-    },
-    statusText: {
-        fontWeight: `bold`,
-        textTransform: `capitalize`,
-    },
-}));
+        containerTable: {
+            width: `100%`,
+            "& table": {
+                overflowY: `auto`,
+            },
+        },
+        activeColor: {
+            color: `#2BA600`,
+            fontWeight: `bold`,
+        },
+        inactiveColor: {
+            color: `#FF0000`,
+            fontWeight: `bold`,
+        },
+        statusText: {
+            fontWeight: `bold`,
+            textTransform: `capitalize`,
+        },
+    }),
+);
 
 interface ClassRow {
     id: string;
@@ -64,8 +65,7 @@ interface ClassRow {
     status: string;
 }
 
-interface Props {
-}
+interface Props {}
 
 /**
  * Returns function to show Classes Table in "Classes" section
@@ -88,7 +88,6 @@ export default function ClasessTable(props: Props) {
         data,
         refetch,
         loading,
-        error,
     } = useGetAllClasses({
         variables: {
             organization_id,
@@ -102,13 +101,14 @@ export default function ClasessTable(props: Props) {
         const rows = schoolClasses?.map((c) => ({
             id: c.class_id,
             name: c.class_name ?? ``,
-            schoolNames: c.schools?.map((s) => s.school_name ?? ``) ?? [],
+            schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
             status: c.status ?? ``,
         }));
         setRows(rows ?? []);
     }, [ schoolClasses ]);
 
-    const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
+    const findClass = (row: ClassRow) =>
+        schoolClasses?.find((c) => c.class_id === row.id);
 
     const editSelectedRow = (row: ClassRow) => {
         const selectedClass = findClass(row);
@@ -120,7 +120,12 @@ export default function ClasessTable(props: Props) {
     const deleteSelectedRow = async (row: ClassRow) => {
         const selectedClass = findClass(row);
         if (!selectedClass) return;
-        if (!confirm(`Are you sure you want to delete "${selectedClass.class_name}"?`)) return;
+        if (
+            !confirm(
+                `Are you sure you want to delete "${selectedClass.class_name}"?`,
+            )
+        )
+            return;
         const { class_id } = selectedClass;
         try {
             await deleteClass({
@@ -129,17 +134,23 @@ export default function ClasessTable(props: Props) {
                 },
             });
             await refetch();
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classDeletedMessage`,
-            }), {
-                variant: `success`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classDeletedMessage`,
+                }),
+                {
+                    variant: `success`,
+                },
+            );
         } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classDeletedError`,
-            }), {
-                variant: `error`,
-            });
+            enqueueSnackbar(
+                intl.formatMessage({
+                    id: `classes_classDeletedError`,
+                }),
+                {
+                    variant: `error`,
+                },
+            );
         }
     };
 
@@ -155,7 +166,9 @@ export default function ClasessTable(props: Props) {
                 id: `classes_classTitle`,
             }),
             persistent: true,
-            render: (row) => <Link href={`/#/admin/classRoster/${row.id}`}>{row.name}</Link>,
+            render: (row) => (
+                <Link href={`/#/admin/classRoster/${row.id}`}>{row.name}</Link>
+            ),
         },
         {
             id: `schoolNames`,
@@ -163,14 +176,17 @@ export default function ClasessTable(props: Props) {
                 id: `classes_schoolTitle`,
             }),
             disableSort: true,
-            render: (row) => row.schoolNames.map((s, i) => <div key={`school-${i}`}>{s}</div>),
+            render: (row) =>
+                row.schoolNames.map((s, i) => (
+                    <div key={`school-${i}`}>{s}</div>
+                )),
         },
         {
             id: `status`,
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            render: (row) =>
+            render: (row) => (
                 <span
                     className={clsx(classes.statusText, {
                         [classes.activeColor]: row.status === `active`,
@@ -178,7 +194,8 @@ export default function ClasessTable(props: Props) {
                     })}
                 >
                     {row.status}
-                </span>,
+                </span>
+            ),
         },
     ];
 
@@ -206,7 +223,10 @@ export default function ClasessTable(props: Props) {
                             }),
                             icon: DeleteIcon,
                             disabled: !canDelete,
-                            onClick: (data) => alert(`You want to delete ${data.rows.length} rows`),
+                            onClick: (data) =>
+                                alert(
+                                    `You want to delete ${data.rows.length} rows`,
+                                ),
                         },
                     ]}
                     rowActions={(row) => [
@@ -248,6 +268,7 @@ export default function ClasessTable(props: Props) {
                 <EditClassDialog
                     open={editDialogOpen}
                     value={selectedClass}
+                    schoolClasses={schoolClasses}
                     onClose={(value) => {
                         setSelectedClass(undefined);
                         setEditDialogOpen(false);
@@ -256,6 +277,7 @@ export default function ClasessTable(props: Props) {
                 />
                 <CreateClassDialog
                     open={createDialogOpen}
+                    schoolClasses={schoolClasses}
                     onClose={(value) => {
                         setCreateDialogOpen(false);
                         if (value) refetch();
@@ -265,6 +287,7 @@ export default function ClasessTable(props: Props) {
             <EditClassDialog
                 open={editDialogOpen}
                 value={selectedClass}
+                schoolClasses={schoolClasses}
                 onClose={(value) => {
                     setSelectedClass(undefined);
                     setEditDialogOpen(false);
@@ -273,6 +296,7 @@ export default function ClasessTable(props: Props) {
             />
             <CreateClassDialog
                 open={createDialogOpen}
+                schoolClasses={schoolClasses}
                 onClose={(value) => {
                     setCreateDialogOpen(false);
                     if (value) refetch();
