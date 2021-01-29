@@ -268,7 +268,6 @@ export default function ClasessTable(props: Props) {
                 <EditClassDialog
                     open={editDialogOpen}
                     value={selectedClass}
-                    schoolClasses={schoolClasses}
                     onClose={(value) => {
                         setSelectedClass(undefined);
                         setEditDialogOpen(false);
@@ -277,7 +276,6 @@ export default function ClasessTable(props: Props) {
                 />
                 <CreateClassDialog
                     open={createDialogOpen}
-                    schoolClasses={schoolClasses}
                     onClose={(value) => {
                         setCreateDialogOpen(false);
                         if (value) refetch();
@@ -287,7 +285,6 @@ export default function ClasessTable(props: Props) {
             <EditClassDialog
                 open={editDialogOpen}
                 value={selectedClass}
-                schoolClasses={schoolClasses}
                 onClose={(value) => {
                     setSelectedClass(undefined);
                     setEditDialogOpen(false);
@@ -296,7 +293,6 @@ export default function ClasessTable(props: Props) {
             />
             <CreateClassDialog
                 open={createDialogOpen}
-                schoolClasses={schoolClasses}
                 onClose={(value) => {
                     setCreateDialogOpen(false);
                     if (value) refetch();

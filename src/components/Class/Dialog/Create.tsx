@@ -17,14 +17,12 @@ import { useIntl } from "react-intl";
 interface Props {
     open: boolean;
     onClose: (value?: Class) => void;
-    schoolClasses?: Class[] | null;
 }
 
 export default function CreateClassDialog(props: Props) {
     const {
         open,
         onClose,
-        schoolClasses,
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -93,7 +91,6 @@ export default function CreateClassDialog(props: Props) {
         >
             <ClassDialogForm
                 value={newClass}
-                schoolClasses={schoolClasses}
                 onChange={(value) => setNewClass(value)}
                 onValidation={setValid}
             />

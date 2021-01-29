@@ -1,3 +1,4 @@
+import { useGetAllClasses } from "@/api/classes";
 import { useGetSchools } from "@/api/schools";
 import { currentMembershipVar } from "@/cache";
 import { Class } from "@/types/graphQL";
@@ -33,14 +34,8 @@ const getClassNameHelperText = (
 ) => {
     if (!name.length) return `Class name can't be empty`;
     if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
-    if (
-        classes &&
-        classes
-            .filter(
-                (schoolClass) => schoolClass.class_name !== currentClassName,
-            )
-            .find((schoolClass) => schoolClass.class_name === name)
-    )
+    if (classes?.filter((schoolClass) => schoolClass.class_name !== currentClassName)
+        .find((schoolClass) => schoolClass.class_name === name))
         return `Class names must be unique`;
     return ``;
 };
@@ -49,7 +44,6 @@ interface Props {
     value: Class;
     onChange: (value: Class) => void;
     onValidation: (valid: boolean) => void;
-    schoolClasses?: Class[] | null;
 }
 
 export default function ClassDialogForm(props: Props) {
@@ -57,7 +51,6 @@ export default function ClassDialogForm(props: Props) {
         value,
         onChange,
         onValidation,
-        schoolClasses,
     } = props;
     const classes = useStyles();
     const organization = useReactiveVar(currentMembershipVar);
@@ -68,6 +61,12 @@ export default function ClassDialogForm(props: Props) {
             organization_id,
         },
     });
+    const { data: allClasses } = useGetAllClasses({
+        variables: {
+            organization_id,
+        },
+    });
+    const schoolClasses = allClasses?.me?.membership?.organization?.classes;
     const allSchools =
         data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const [ className, setClassName ] = useState(value.class_name ?? ``);
@@ -78,11 +77,7 @@ export default function ClassDialogForm(props: Props) {
 
     useEffect(() => {
         onValidation(
-            !getClassNameHelperText(
-                className,
-                schoolClasses,
-                currentClassName,
-            ),
+            !getClassNameHelperText(className, schoolClasses, currentClassName),
         );
     }, [ className ]);
 
@@ -108,11 +103,13 @@ export default function ClassDialogForm(props: Props) {
                         currentClassName,
                     )
                 }
-                helperText={getClassNameHelperText(
-                    className,
-                    schoolClasses,
-                    currentClassName,
-                )}
+                helperText={
+                    getClassNameHelperText(
+                        className,
+                        schoolClasses,
+                        currentClassName,
+                    ) + ` `
+                }
                 value={className}
                 label="Class name"
                 variant="outlined"

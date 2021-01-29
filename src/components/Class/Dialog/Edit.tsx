@@ -21,7 +21,6 @@ interface Props {
     open: boolean;
     value?: Class;
     onClose: (value?: Class) => void;
-    schoolClasses?: Class[] | null;
 }
 
 export default function EditClassDialog(props: Props) {
@@ -29,7 +28,6 @@ export default function EditClassDialog(props: Props) {
         open,
         value,
         onClose,
-        schoolClasses,
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -151,7 +149,6 @@ export default function EditClassDialog(props: Props) {
         >
             <ClassDialogForm
                 value={editedClass}
-                schoolClasses={schoolClasses}
                 onChange={(value) => setEditedClass(value)}
                 onValidation={setValid}
             />
