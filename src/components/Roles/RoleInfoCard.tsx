@@ -24,10 +24,10 @@ const useStyles = makeStyles(() =>
             borderRadius: 10,
         },
         textField: {
-            padding: `13px`,
+            paddingTop: `10px`,
         },
         requiredField: {
-            padding: `17px 0 0 10px`,
+            paddingTop: `19px`,
         },
     }),
 );
@@ -135,7 +135,7 @@ export default function RoleInfoCard(props: Props) {
                             component="div"
                         >
                             <div className={classes.requiredField}>
-                                *Required fields
+                                Required field*
                             </div>
                         </Typography>
                     </div>
@@ -144,4 +144,3 @@ export default function RoleInfoCard(props: Props) {
         </Card>
     );
 }
-
