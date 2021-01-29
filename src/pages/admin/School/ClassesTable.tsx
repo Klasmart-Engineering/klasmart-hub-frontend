@@ -265,22 +265,6 @@ export default function ClasessTable(props: Props) {
                         },
                     })}
                 />
-                <EditClassDialog
-                    open={editDialogOpen}
-                    value={selectedClass}
-                    onClose={(value) => {
-                        setSelectedClass(undefined);
-                        setEditDialogOpen(false);
-                        if (value) refetch();
-                    }}
-                />
-                <CreateClassDialog
-                    open={createDialogOpen}
-                    onClose={(value) => {
-                        setCreateDialogOpen(false);
-                        if (value) refetch();
-                    }}
-                />
             </Paper>
             <EditClassDialog
                 open={editDialogOpen}
