@@ -8,6 +8,7 @@
     "build:test": "rm dist/*;webpack --config webpack.test.config.js",
     "build:prod": "rm dist/*;webpack --config webpack.prod.config.js",
     "build:prod-cn": "rm dist/*;webpack --config webpack.prod.cn.config.js",
+    "build:prod-uk": "rm dist/*;webpack --config webpack.prod.uk.config.js",
     "start": "webpack serve",
     "start:test": "webpack serve --config webpack.test.config.js",
     "start:beta": "webpack serve --config webpack.beta.config.js",
