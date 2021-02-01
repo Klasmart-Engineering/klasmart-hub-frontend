@@ -170,7 +170,6 @@ export default function RoleTable(props: Props) {
                         variant: `error`,
                     },
                 );
-                handleClose();
             }
             return;
         }

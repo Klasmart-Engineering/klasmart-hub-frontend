@@ -1,5 +1,6 @@
 import { RoleInfo } from "@/pages/admin/Role/CreateRoleDialog";
 import {
+    CardHeader,
     Divider,
     Grid,
     LinearProgress,
@@ -17,14 +18,11 @@ import React, {
     SetStateAction,
 } from "react";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             borderRadius: 10,
-        },
-        textField: {
-            paddingTop: `10px`,
         },
         requiredField: {
             paddingTop: `19px`,
@@ -61,72 +59,63 @@ export default function RoleInfoCard(props: Props) {
 
     return (
         <Card className={classes.root}>
-            <CardContent>
-                {loading ? (
-                    <div>
-                        <LinearProgress />
-                        <Typography
-                            variant="body1"
-                            color="textSecondary"
-                            component="div"
+            {loading ? (
+                <CardContent>
+                    <LinearProgress />
+                    <Typography
+                        variant="body1"
+                        color="textSecondary"
+                        component="div"
+                    >
+                        <div
+                            style={{
+                                paddingTop: `10px`,
+                            }}
                         >
-                            <div
-                                style={{
-                                    padding: `10px`,
-                                }}
-                            >
                                 Fetching permissions
-                            </div>
-                        </Typography>
-                    </div>
-                ) : (
-                    <div>
-                        <Typography
-                            gutterBottom
-                            variant="h5"
-                            component="h2">
-                            Role Info
-                        </Typography>
-                        <Divider />
+                        </div>
+                    </Typography>
+                </CardContent>
+            ) : (
+                <>
+                    <CardHeader title="Role Info"/>
+                    <Divider />
+                    <CardContent>
                         <form
                             noValidate
                             autoComplete="off">
                             <Grid
                                 item
                                 xs={12}>
-                                <div className={classes.textField}>
-                                    <TextField
-                                        fullWidth
-                                        error={
-                                            nameTextHelper(roleInfo.name)
-                                                .length !== 0
-                                        }
-                                        id="name"
-                                        label="Name*"
-                                        defaultValue={roleInfo.name}
-                                        helperText={nameTextHelper(
-                                            roleInfo.name,
-                                        )}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className={classes.textField}>
-                                    <TextField
-                                        fullWidth
-                                        error={
-                                            descriptionTextHelper(
-                                                roleInfo.description,
-                                            ).length !== 0
-                                        }
-                                        id="description"
-                                        label="Description"
-                                        defaultValue={roleInfo.description}
-                                        helperText={descriptionTextHelper(
+                                <TextField
+                                    fullWidth
+                                    error={
+                                        nameTextHelper(roleInfo.name)
+                                            .length !== 0
+                                    }
+                                    id="name"
+                                    label="Name*"
+                                    defaultValue={roleInfo.name}
+                                    helperText={nameTextHelper(
+                                        roleInfo.name,
+                                    )}
+                                    onChange={handleInputChange}
+                                />
+                                <TextField
+                                    fullWidth
+                                    error={
+                                        descriptionTextHelper(
                                             roleInfo.description,
-                                        )}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
+                                        ).length !== 0
+                                    }
+                                    id="description"
+                                    label="Description"
+                                    defaultValue={roleInfo.description}
+                                    helperText={descriptionTextHelper(
+                                        roleInfo.description,
+                                    )}
+                                    onChange={handleInputChange}
+                                />
                             </Grid>
                         </form>
                         <Typography
@@ -138,9 +127,9 @@ export default function RoleInfoCard(props: Props) {
                                 Required field*
                             </div>
                         </Typography>
-                    </div>
-                )}
-            </CardContent>
+                    </CardContent>
+                </>
+            )}
         </Card>
     );
 }

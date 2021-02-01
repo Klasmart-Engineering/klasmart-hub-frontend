@@ -6,17 +6,16 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    CardHeader,
     Checkbox,
     Divider,
     FormControlLabel,
 } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import {
     createStyles,
     makeStyles,
 } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import { ArrowDropDown } from "@material-ui/icons";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { TableSearch } from "kidsloop-px";
@@ -183,15 +182,8 @@ export default function PermissionsCard(props: Props) {
 
     return (
         <Card className={classes.root}>
-            <CardContent>
-                <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="h2">
-                    {category}
-                </Typography>
-                <Divider />
-            </CardContent>
+            <CardHeader title={category}/>
+            <Divider />
             <TableSearch
                 value=""
                 onChange={onChange} />

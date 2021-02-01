@@ -8,10 +8,10 @@ import {
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            width: `1342px`,
+            width: theme.breakpoints.values.lg,
             height: `106px`,
             borderRadius: 10,
             marginBottom: `13px`,
