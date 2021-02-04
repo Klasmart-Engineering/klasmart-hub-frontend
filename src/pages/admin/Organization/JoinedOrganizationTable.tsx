@@ -172,7 +172,7 @@ export default function JoinedOrganizationTable(props: Props) {
                         {
                             label: `Leave selected organizations`,
                             icon: ExitToAppIcon,
-                            onClick: (data) => console.log(data),
+                            onClick: (rowIds) => console.log(rowIds),
                         },
                     ]}
                     rowActions={(row) => [

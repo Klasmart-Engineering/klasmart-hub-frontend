@@ -214,7 +214,7 @@ export default function ClasessTable(props: Props) {
                         }),
                         icon: AddIcon,
                         disabled: !canCreate,
-                        onClick: (data) => setCreateDialogOpen(true),
+                        onClick: () => setCreateDialogOpen(true),
                     }}
                     selectActions={[
                         {
@@ -223,10 +223,7 @@ export default function ClasessTable(props: Props) {
                             }),
                             icon: DeleteIcon,
                             disabled: !canDelete,
-                            onClick: (data) =>
-                                alert(
-                                    `You want to delete ${data.rows.length} rows`,
-                                ),
+                            onClick: (rowIds) => alert(`You want to delete ${rowIds.length} rows`),
                         },
                     ]}
                     rowActions={(row) => [

@@ -401,8 +401,8 @@ const messages: Record<string, string> = {
     grades_actionsDeleteTooltip: `Remove selected grades`,
     navMenu_superOrganization: `Super Organization`, // TODO (Henrik): confirm
     navMenu_superOrganizationDescription: `Super Organization Description`, // TODO (Henrik): confirm
-    navMenu_globalLibrary: `Global Library`, // TODO (Henrik): confirm
-    navMenu_globalLibraryDescription: `A library of all organizations' lesson material`, // TODO (Henrik): confirm
+    navMenu_superContentLibrary: `Content Library`, // TODO (Henrik): confirm
+    navMenu_superContentLibraryDescription: `A library of all organizations' lesson material`, // TODO (Henrik): confirm
     navMenu_accounts: `Accounts`, // TODO (Henrik): confirm
     navMenu_accountsDescription: `A list of user accounts`, // TODO (Henrik): confirm
     navMenu_superBilling: `Super Billing`, // TODO (Henrik): confirm

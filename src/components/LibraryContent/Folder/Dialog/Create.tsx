@@ -1,8 +1,8 @@
-import SchoolDialogForm from "./Form";
-import { useCreateSchool } from "@/api/schools";
+import LibraryFolderDialogForm from "./Form";
+import { useRestAPI } from "@/api/restapi";
 import { currentMembershipVar } from "@/cache";
-import { School } from "@/types/graphQL";
-import { buildEmptySchool } from "@/utils/schools";
+import { ContentItemDetails } from "@/types/objectTypes";
+import { newLibraryContent } from "@/utils/libraryContents";
 import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
@@ -22,38 +22,43 @@ const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
     open: boolean;
-    onClose: (value?: School) => void;
+    parentId?: string;
+    onClose: (value?: ContentItemDetails) => void;
 }
 
-export default function CreateSchoolDialog (props: Props) {
+export default function CreateFolderDialog (props: Props) {
     const {
         open,
+        parentId,
         onClose,
     } = props;
     const classes = useStyles();
+    const restApi = useRestAPI();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
-    const [ newSchool, setNewSchool ] = useState(buildEmptySchool());
-    const [ createSchool ] = useCreateSchool();
+    const [ newFolder, setNewFolder ] = useState(newLibraryContent());
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
 
     useEffect(() => {
         if (!open) return;
-        setNewSchool(buildEmptySchool());
+        setNewFolder(newLibraryContent());
     }, [ open ]);
 
     const handleCreate = async () => {
-        const { school_name } = newSchool;
+        const {
+            name,
+            partition,
+        } = newFolder;
         try {
-            await createSchool({
-                variables: {
-                    organization_id,
-                    school_name: school_name ?? ``,
-                },
+            await restApi.createFoldersItems({
+                name,
+                parent_id: parentId,
+                partition,
+                org_id: organization_id,
             });
-            onClose(newSchool);
-            enqueueSnackbar(`School has been created succesfully`, {
+            onClose(newFolder);
+            enqueueSnackbar(`Folder has been created succesfully`, {
                 variant: `success`,
             });
         } catch (error) {
@@ -66,7 +71,7 @@ export default function CreateSchoolDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Create school"
+            title="Create folder"
             actions={[
                 {
                     label: `Cancel`,
@@ -82,10 +87,10 @@ export default function CreateSchoolDialog (props: Props) {
             ]}
             onClose={() => onClose()}
         >
-            <SchoolDialogForm
-                value={newSchool}
+            <LibraryFolderDialogForm
+                value={newFolder}
                 onValidation={setValid}
-                onChange={(value) => setNewSchool(value)}
+                onChange={(value) => setNewFolder(value)}
             />
         </Dialog>
     );

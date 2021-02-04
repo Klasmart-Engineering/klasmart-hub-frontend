@@ -1,22 +1,22 @@
+import UserDialogForm from "./Form";
+import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
+import { currentMembershipVar } from "@/cache";
+import { OrganizationMembership } from "@/types/graphQL";
+import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
+import { useReactiveVar } from "@apollo/client";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
+import {
+    Dialog,
+    useSnackbar,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
     useState,
 } from "react";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import { OrganizationMembership } from "@/types/graphQL";
-import UserDialogForm from "./Form";
-import {
-    Dialog,
-    useSnackbar,
-} from "kidsloop-px";
-import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
-import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -35,7 +35,7 @@ export default function CreateUserDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const organization = useReactiveVar(currentMembershipVar);
     const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
-    const [ createOrganizationMembership, { loading: loadingCreate } ] = useCreateOrganizationMembership();
+    const [ createOrganizationMembership ] = useCreateOrganizationMembership();
 
     useEffect(() => {
         if (!open) return;
@@ -85,7 +85,6 @@ export default function CreateUserDialog (props: Props) {
                 {
                     label: `Create`,
                     color: `primary`,
-                    loading: loadingCreate,
                     disabled: !valid,
                     onClick: handleCreate,
                 },

@@ -201,7 +201,7 @@ export default function MyOrganizationTable(props: Props) {
                             id: `button_create`,
                         }),
                         icon: AddIcon,
-                        onClick: (tableData) => history.push(`/admin/create-organization`),
+                        onClick: () => history.push(`/admin/create-organization`),
                     }}
                     rowActions={(row) => [
                         {

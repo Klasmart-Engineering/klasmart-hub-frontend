@@ -30,7 +30,7 @@ export default function CreateClassDialog(props: Props) {
     const { organization_id } = organization;
     const [ valid, setValid ] = useState(true);
     const [ newClass, setNewClass ] = useState(buildEmptyClass());
-    const [ createClass, { loading: loadingCreate } ] = useCreateClass();
+    const [ createClass ] = useCreateClass();
 
     useEffect(() => {
         if (!open) return;
@@ -82,7 +82,6 @@ export default function CreateClassDialog(props: Props) {
                 {
                     label: `Create`,
                     color: `primary`,
-                    loading: loadingCreate,
                     disabled: !valid,
                     onClick: handleCreate,
                 },

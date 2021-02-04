@@ -300,7 +300,7 @@ export default function UserTable(props: Props) {
                     }),
                     icon: PersonAddIcon,
                     disabled: !canCreate,
-                    onClick: (data) => setCreateDialogOpen(true),
+                    onClick: () => setCreateDialogOpen(true),
                 }}
                 rowActions={(row) => [
                     {

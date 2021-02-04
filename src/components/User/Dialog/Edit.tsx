@@ -1,24 +1,24 @@
+import UserDialogForm from "./Form";
+import {
+    useDeleteOrganizationMembership,
+    useUpdateOrganizationMembership,
+} from "@/api/organizationMemberships";
+import { OrganizationMembership } from "@/types/graphQL";
+import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
+import {
+    Dialog,
+    useSnackbar,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
     useState,
 } from "react";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import { OrganizationMembership } from "@/types/graphQL";
-import UserDialogForm from "./Form";
-import {
-    Dialog,
-    useSnackbar,
-} from "kidsloop-px";
-import {
-    useDeleteOrganizationMembership,
-    useUpdateOrganizationMembership,
-} from "@/api/organizationMemberships";
 import { useIntl } from "react-intl";
-import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -39,8 +39,8 @@ export default function EditUserDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
-    const [ updateOrganizationMembership, { loading: loadingSave } ] = useUpdateOrganizationMembership();
-    const [ deleteOrganizationMembership, { loading: loadingDelete } ] = useDeleteOrganizationMembership();
+    const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
+    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
     useEffect(() => {
         setEditedOrganizationMembership(value ?? buildEmptyOrganizationMembership());
@@ -110,7 +110,6 @@ export default function EditUserDialog (props: Props) {
                     label: `Delete`,
                     color: `error`,
                     align: `left`,
-                    loading: loadingDelete,
                     onClick: handleDelete,
                 },
                 {
@@ -124,7 +123,6 @@ export default function EditUserDialog (props: Props) {
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
-                    loading: loadingSave,
                     onClick: handleSave,
                 },
             ]}

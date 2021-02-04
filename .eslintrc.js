@@ -125,7 +125,12 @@ module.exports = {
             },
             {
                 selector: `variable`,
-                format: [ `camelCase`, `UPPER_CASE` ],
+                format: [
+                    `camelCase`,
+                    `UPPER_CASE`,
+                    `PascalCase`,
+                ],
+                trailingUnderscore: `allow`,
             },
             {
                 selector: `typeLike`,
@@ -150,6 +155,7 @@ module.exports = {
                     `camelCase`,
                     `snake_case`,
                     `UPPER_CASE`,
+                    `PascalCase`,
                 ],
             },
             {

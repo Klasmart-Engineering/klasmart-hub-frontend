@@ -142,14 +142,14 @@ export default function NavMenu(props: Props) {
         },
         {
             description: intl.formatMessage({
-                id: `navMenu_globalLibraryDescription`,
+                id: `navMenu_superContentLibraryDescription`,
             }),
+            link: `/superAdmin/contentLibrary`,
             color: `#1F94E8`,
             icon: InboxIcon,
             title: intl.formatMessage({
-                id: `navMenu_globalLibrary`,
+                id: `navMenu_superContentLibrary`,
             }),
-
         },
         {
             description: intl.formatMessage({
@@ -160,7 +160,6 @@ export default function NavMenu(props: Props) {
             title: intl.formatMessage({
                 id: `navMenu_accounts`,
             }),
-
         },
         {
             description: intl.formatMessage({
@@ -171,7 +170,6 @@ export default function NavMenu(props: Props) {
             title: intl.formatMessage({
                 id: `navMenu_superBilling`,
             }),
-
         },
         {
             description: intl.formatMessage({
@@ -182,7 +180,6 @@ export default function NavMenu(props: Props) {
             title: intl.formatMessage({
                 id: `navMenu_metricsAndReport`,
             }),
-
         },
     ];
 

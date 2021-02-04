@@ -33,11 +33,10 @@ export default function EditClassDialog(props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
     const [ valid, setValid ] = useState(true);
-    const [ updateClass, { loading: loadingSave } ] = useUpdateClass();
-    const [ deleteClass, { loading: loadingDelete } ] = useDeleteClass();
-    const [ editSchools, { loading: loadingEditSchools } ] = useEditClassSchools();
+    const [ updateClass ] = useUpdateClass();
+    const [ deleteClass ] = useDeleteClass();
+    const [ editSchools ] = useEditClassSchools();
     const canEditSchool = usePermission(`edit_school_20330`);
-    const loadingUpdateClass = loadingSave || loadingEditSchools;
 
     useEffect(() => {
         setEditedClass(value ?? buildEmptyClass());
@@ -127,7 +126,6 @@ export default function EditClassDialog(props: Props) {
                     label: `Delete`,
                     color: `error`,
                     align: `left`,
-                    loading: loadingDelete,
                     onClick: handleDelete,
                 },
                 {
@@ -141,7 +139,6 @@ export default function EditClassDialog(props: Props) {
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
-                    loading: loadingUpdateClass,
                     onClick: handleSave,
                 },
             ]}

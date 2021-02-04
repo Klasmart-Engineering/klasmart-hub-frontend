@@ -6,6 +6,12 @@ import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
 import { useReactiveVar } from "@apollo/client";
 import {
+    blue,
+    green,
+    orange,
+    red,
+} from "@material-ui/core/colors";
+import {
     createMuiTheme,
     responsiveFontSizes,
     Theme,
@@ -105,12 +111,6 @@ export function themeProvider() {
                 backgroundColor: themeMode === `light` ? `#fafafa` : `#030D1C !important`,
             },
         },
-        MuiIconButton: {
-            colorPrimary: {
-                color: themeMode === `light` ? `#0E78D5` : `#fafafa !important`, // TODO: Confirm color
-                backgroundColor: themeMode === `light` ? `#f6fafe` : `#0E78D5 !important`, // TODO: Confirm color
-            },
-        },
         MuiToggleButton: {
             root: {
                 color: themeMode === `light` ? `#1B365D` : `#FFF`,
@@ -134,10 +134,27 @@ export function themeProvider() {
             paper: themeMode === `light` ? `#FFF` : `#030D1C`,
         },
         primary: {
+            contrastText: `#FFF`,
             main: organizationColor,
         },
         secondary: {
             main: organizationColor,
+        },
+        error: {
+            contrastText: `#FFF`,
+            main: red[500],
+        },
+        info: {
+            contrastText: `#FFF`,
+            main: blue[500],
+        },
+        success: {
+            contrastText: `#FFF`,
+            main: green[500],
+        },
+        warning: {
+            contrastText: `#FFF`,
+            main: orange[500],
         },
     };
 

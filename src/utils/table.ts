@@ -1,6 +1,6 @@
 import { TableLocalization } from "kidsloop-px/dist/types/components/Table/Base";
-import { IntlShape } from "react-intl";
 import { merge } from "lodash";
+import { IntlShape } from "react-intl";
 
 export const getTableLocalization = (intl: IntlShape, localization: TableLocalization): TableLocalization => merge<TableLocalization, TableLocalization>({
     toolbar: {
@@ -11,7 +11,7 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
     },
     groupTabs: {
         selectLabel: `Group by`,
-        selectNone: `No group`,
+        selectNone: `None`,
         tabAll: `All`,
     },
     head: {

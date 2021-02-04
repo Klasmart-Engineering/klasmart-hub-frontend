@@ -22,12 +22,14 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { createUploadLink } from "apollo-upload-client";
 import {
+    AlertDialogProvider,
     ConfirmDialogProvider,
+    PromptDialogProvider,
     SnackbarProvider,
 } from "kidsloop-px";
 import LogRocket from "logrocket";
 import React, { useMemo } from "react";
-import Cookies, { useCookies } from "react-cookie";
+import { useCookies } from "react-cookie";
 import * as ReactDOM from "react-dom";
 import { RawIntlProvider } from "react-intl";
 import {
@@ -63,10 +65,7 @@ function ClientSide() {
     const testing = memos.hostName === `localhost`;
 
     const [ cookies ] = useCookies([ `locale` ]);
-    const languageCode =
-        memos.locale ??
-        cookies.locale ??
-        useSelector((state: State) => state.ui.locale || `en`);
+    const languageCode = memos.locale ?? cookies.locale ?? useSelector((state: State) => state.ui.locale || `en`);
     const locale = getLanguage(languageCode);
 
     return (
@@ -74,10 +73,14 @@ function ClientSide() {
             <RawIntlProvider value={locale}>
                 <ThemeProvider theme={themeProvider()}>
                     <ConfirmDialogProvider>
-                        <SnackbarProvider closeButtonLabel="Dismiss">
-                            <CssBaseline />
-                            <Layout />
-                        </SnackbarProvider>
+                        <PromptDialogProvider>
+                            <AlertDialogProvider>
+                                <SnackbarProvider closeButtonLabel="Dismiss">
+                                    <CssBaseline />
+                                    <Layout />
+                                </SnackbarProvider>
+                            </AlertDialogProvider>
+                        </PromptDialogProvider>
                     </ConfirmDialogProvider>
                 </ThemeProvider>
             </RawIntlProvider>

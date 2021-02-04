@@ -1,5 +1,7 @@
 import { StyledIcon } from "@styled-icons/styled-icon";
 
+export type PublishStatus = `draft` | `pending` | `published` | `rejected` | `attachment` | `archive` | `hidden`
+
 export interface PublishedContentPayload {
     total: number;
     list: PublishedContentItem[];
@@ -13,7 +15,7 @@ export interface PublishedContentItem {
     keywords: string;
     author: string;
     items_count: number;
-    publish_status: string;
+    publish_status: PublishStatus;
     thumbnail: string;
     data: string;
     author_name: string;
@@ -128,6 +130,26 @@ export interface Student {
     profileId: string;
     profileName: string;
     iconLink: string;
+}
+
+export interface ContentItemDetails {
+    available?: number;
+    create_at?: number;
+    creator?: string;
+    dir_path?: string;
+    editor?: string;
+    id: string;
+    item_type?: number;
+    items?: any[];
+    items_count?: number;
+    link?: string;
+    name: string;
+    owner?: string;
+    owner_type?: number;
+    parent_id?: string;
+    partition?: string;
+    thumbnail?: string;
+    update_at?: number;
 }
 
 export interface LiveSessionData {
