@@ -1,22 +1,24 @@
-import React from "react";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import {
+    PermissionsCategory,
+    Role,
+} from "@/pages/admin/Role/CreateRoleDialog";
 import {
     MenuItem,
     TextField,
 } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import {
     createStyles,
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
-import { teacherRole } from "@/utils/permissions/teacher";
-import { studentRole } from "@/utils/permissions/student";
-import { schoolAdminRole } from "@/utils/permissions/schoolAdmin";
-import { parentRole } from "@/utils/permissions/parent";
-import { organizationAdminRole } from "@/utils/permissions/organizationAdmin";
+import Typography from "@material-ui/core/Typography";
+import React, {
+    Dispatch,
+    SetStateAction,
+} from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,34 +50,84 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const roles = [
-    {
-        value: teacherRole.role_name,
-        label: teacherRole.role_name,
-    },
-    {
-        value: studentRole.role_name,
-        label: studentRole.role_name,
-    },
-    {
-        value: schoolAdminRole.role_name,
-        label: schoolAdminRole.role_name,
-    },
-    {
-        value: parentRole.role_name,
-        label: parentRole.role_name,
-    },
-    {
-        value: organizationAdminRole.role_name,
-        label: organizationAdminRole.role_name,
-    },
-];
+interface Props {
+    roles: Role[];
+    rolesAndPermissions: PermissionsCategory[];
+    setRolesAndPermissions: Dispatch<SetStateAction<PermissionsCategory[]>>;
+}
 
-export default function PermissionsActionsCard() {
+export default function PermissionsActionsCard(props: Props) {
+    const {
+        roles,
+        rolesAndPermissions,
+        setRolesAndPermissions,
+    } = props;
     const classes = useStyles();
-    const [ role, setRole ] = React.useState(``);
+    const [ roleId, setRoleId ] = React.useState(``);
+
+    const permissionIds = (roles: Role[], roleId: string) => {
+        return roles
+            .filter((role) => role.role_id === roleId)
+            .reduce((acc: string[], role) => {
+                role.permissions.forEach((permission) => {
+                    acc.push(permission.permission_id);
+                });
+
+                return acc;
+            }, []);
+    };
+
+    const newRolesAndPermissions = (
+        roles: Role[],
+        roleId: string,
+    ) => {
+        const newPermissions = [ ...rolesAndPermissions ];
+
+        newPermissions.forEach((permissionCategory) => {
+            permissionCategory.groups.forEach((group) => {
+                group.permissionDetails.forEach((permissionDetail) => {
+                    permissionDetail.checked = !!permissionIds(
+                        roles,
+                        roleId,
+                    )?.includes(permissionDetail.permissionId);
+                });
+
+                group.open = group.permissionDetails.some(
+                    (permissionDetail) => permissionDetail.checked,
+                );
+
+                group.selectAll = false;
+            });
+        });
+
+        setRolesAndPermissions(newPermissions);
+    };
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRole(event.target.value);
+        setRoleId(event.target.value);
+        newRolesAndPermissions(roles, event.target.value);
+    };
+
+    const handleClear = () => {
+        setRoleId(``);
+        const newPermissions = [ ...rolesAndPermissions ];
+
+        newPermissions.forEach((permissionCategory) => {
+            permissionCategory.groups.forEach((group) => {
+                group.permissionDetails.forEach((permissionDetail) => {
+                    permissionDetail.checked = false;
+                });
+
+                group.open = false;
+                group.selectAll = false;
+            });
+        });
+
+        setRolesAndPermissions(newPermissions);
+    };
+
+    const handleResetDefault = () => {
+        newRolesAndPermissions(roles, roleId);
     };
 
     return (
@@ -95,6 +147,7 @@ export default function PermissionsActionsCard() {
                             classes={{
                                 label: classes.label,
                             }}
+                            onClick={handleClear}
                         >
                             Clear
                         </Button>
@@ -102,6 +155,8 @@ export default function PermissionsActionsCard() {
                             classes={{
                                 label: classes.label,
                             }}
+                            disabled={roleId.length === 0}
+                            onClick={handleResetDefault}
                         >
                             Reset to Default
                         </Button>
@@ -110,18 +165,20 @@ export default function PermissionsActionsCard() {
                                 select
                                 id="filled"
                                 label="Copy role from..."
-                                value={role}
+                                value={roleId}
                                 variant="outlined"
                                 onChange={handleChange}
                             >
-                                {roles.map((option) => (
-                                    <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                    >
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
+                                {roles
+                                    .filter((role) => role.role_name !== null)
+                                    .map((role) => (
+                                        <MenuItem
+                                            key={role.role_id}
+                                            value={role.role_id}
+                                        >
+                                            {role.role_name}
+                                        </MenuItem>
+                                    ))}
                             </TextField>
                         </div>
                     </div>

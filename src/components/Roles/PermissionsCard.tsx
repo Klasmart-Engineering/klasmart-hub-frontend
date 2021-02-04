@@ -182,7 +182,7 @@ export default function PermissionsCard(props: Props) {
 
     return (
         <Card className={classes.root}>
-            <CardHeader title={category}/>
+            <CardHeader title={category} />
             <Divider />
             <TableSearch
                 value=""
@@ -206,9 +206,7 @@ export default function PermissionsCard(props: Props) {
                                 <Checkbox
                                     checked={groupElement.selectAll}
                                     tabIndex={groupIndex}
-                                    onChange={
-                                        handleSelectAllPermissions
-                                    }
+                                    onChange={handleSelectAllPermissions}
                                 />
                             }
                             label=""
@@ -244,11 +242,7 @@ export default function PermissionsCard(props: Props) {
                                     <React.Fragment
                                         key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
                                     >
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
+                                        <div className={classes.accountItem}>
                                             <div>
                                                 <Checkbox
                                                     checked={
@@ -267,24 +261,14 @@ export default function PermissionsCard(props: Props) {
                                                 }
                                             </div>
                                         </div>
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
+                                        <div className={classes.accountItem}>
                                             {
                                                 permissionDetail.permissionDescription
                                             }
                                         </div>
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
+                                        <div className={classes.accountItem}>
                                             <div
-                                                className={
-                                                    classes.tagContainer
-                                                }
+                                                className={classes.tagContainer}
                                             >
                                                 {permissionDetail.levels?.map(
                                                     (level) => (

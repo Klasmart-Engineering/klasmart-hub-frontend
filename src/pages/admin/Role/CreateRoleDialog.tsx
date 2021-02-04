@@ -146,7 +146,7 @@ export default function CreateRoleDialog(props: Props) {
     });
     const [ rolesAndPermissions, setRolesAndPermissions ] = useState<
         PermissionsCategory[]
-    >([]);
+        >([]);
     const [ loading, setLoading ] = useState(true);
     const [ permissionsStepIsValid, setPermissionsStepIsValid ] = useState(false);
     const membership = useReactiveVar(currentMembershipVar);
@@ -154,10 +154,10 @@ export default function CreateRoleDialog(props: Props) {
         data: rolePermissions,
         loading: rolePermissionsLoading,
     } = useGetOrganizationRolesPermissions(membership.organization_id);
+    const roles: Role[] = rolePermissions?.organization?.roles ?? [];
 
     useEffect(() => {
-        if (rolePermissions) {
-            const roles = rolePermissions.organization.roles ?? [];
+        if (roles) {
             const permissions = uniquePermissions(roles) ?? [];
             const data = sectionHandler(permissions) ?? [];
 
@@ -247,7 +247,11 @@ export default function CreateRoleDialog(props: Props) {
         case 1:
             return (
                 <>
-                    <PermissionsActionsCard />
+                    <PermissionsActionsCard
+                        roles={roles}
+                        rolesAndPermissions={rolesAndPermissions}
+                        setRolesAndPermissions={setRolesAndPermissions}
+                    />
                     {rolesAndPermissions.map((permissionsCategory) => (
                         <PermissionsCard
                             key={permissionsCategory.category}
