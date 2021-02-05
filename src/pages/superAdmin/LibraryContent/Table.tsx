@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => {
             borderRadius: theme.spacing(0.5),
         },
         keywordChip: {
-            marginRight: theme.spacing(0.5),
+            margin: theme.spacing(0.25),
         },
         contentTypeText: {
             textTransform: `capitalize`,
@@ -306,16 +306,11 @@ export default function LibraryTable (props: Props) {
         {
             id: `keywords`,
             label: `Keywords`,
-            render: (row) => row.keywords.length ? <Box whiteSpace="nowrap">
-                <Chip
-                    label={row.keywords[0]}
-                    className={classes.keywordChip}
-                />
-                <Chip
-                    label={`+${row.keywords.slice(1).reduce((total) => total + 1, 0)}`}
-                    className={classes.keywordChip}
-                />
-            </Box> : <span />,
+            render: (row) => row.keywords.map((keyword, i) => <Chip
+                key={`keyword-${i}`}
+                label={keyword}
+                className={classes.keywordChip}
+            />),
         },
         {
             id: `publishStatus`,
