@@ -5,7 +5,7 @@ import {
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
-import { BaseFabButton } from "kidsloop-px";
+import { Fab } from "kidsloop-px";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -66,16 +66,22 @@ export default function RoleStepperButtons(props: Props) {
                     Back
                 </Button>
                 {steps && activeStep === steps.length ? (
-                    <BaseFabButton onClick={handleReset}>Reset</BaseFabButton>
+                    <Fab
+                        color="primary"
+                        label="Reset"
+                        variant="extended"
+                        onClick={handleReset}
+                    />
                 ) : (
-                    <BaseFabButton
+                    <Fab
+                        color="primary"
                         disabled={disabledHandler()}
-                        onClick={handleNext}
-                    >
-                        {steps && activeStep === steps.length - 1
+                        variant="extended"
+                        label={steps && activeStep === steps.length - 1
                             ? `Finish`
                             : `Continue`}
-                    </BaseFabButton>
+                        onClick={handleNext}
+                    />
                 )}
             </div>
         </Grid>
