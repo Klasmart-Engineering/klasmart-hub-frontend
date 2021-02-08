@@ -1,4 +1,4 @@
-import { useGetOrganizations } from "@/api/organizations";
+import { useGetAllOrganizations } from "@/api/organizations";
 import { useRestAPI } from "@/api/restapi";
 import { currentMembershipVar } from "@/cache";
 import { ContentItemDetails } from "@/types/objectTypes";
@@ -40,7 +40,6 @@ interface OrganizationRow {
     id: string;
     name: string;
     phone: string;
-    email: string;
 }
 
 interface Props {
@@ -62,7 +61,7 @@ export default function (props: Props) {
     const { organization_id } = organization;
     const [ selectedOrganizationIds, setSelectedOrganizationIds ] = useState<string[]>([]);
     const [ initSelectedOrganizationIds, setInitSelectedOrganizationIds ] = useState<string[]>();
-    const { data: dataOrganizations, loading: loadingGetOrganizations } = useGetOrganizations();
+    const { data: dataOrganizations, loading: loadingGetOrganizations } = useGetAllOrganizations();
     const [ loadingGetFolderShareStatus, setLoadingGetFolderShareStatus ] = useState(false);
     const [ rows, setRows ] = useState<OrganizationRow[]>([]);
 
@@ -122,13 +121,12 @@ export default function (props: Props) {
     ]);
 
     useEffect(() => {
-        const rows: OrganizationRow[] = dataOrganizations?.me.memberships
-            ?.filter((membership) => membership.status === `active` && membership.organization?.organization_id !== organization_id)
-            .map((membership) => ({
-                id: membership.organization?.organization_id ?? ``,
-                name: membership.organization?.organization_name ?? ``,
-                email: membership.organization?.owner?.email ?? ``,
-                phone: membership.organization?.phone ?? ``,
+        const rows: OrganizationRow[] = dataOrganizations?.organizations
+            ?.filter((organization) => organization.status === `active` && organization?.organization_id !== organization_id)
+            .map((organization) => ({
+                id: organization?.organization_id ?? ``,
+                name: organization?.organization_name ?? ``,
+                phone: organization?.phone ?? ``,
             })) ?? [];
         setRows(rows);
     }, [ dataOrganizations, organization_id ]);
@@ -167,10 +165,6 @@ export default function (props: Props) {
             ),
         },
         {
-            id: `email`,
-            label: `Email`,
-        },
-        {
             id: `phone`,
             label: `Phone`,
         },
@@ -196,7 +190,6 @@ export default function (props: Props) {
                 columns={columns}
                 selectedRows={selectedOrganizationIds}
                 onSelected={handleSelected}
-                onChange={(data)  => console.log(`woop`, data.rows)}
             />
         </Paper>
     </FullScreenDialog>;

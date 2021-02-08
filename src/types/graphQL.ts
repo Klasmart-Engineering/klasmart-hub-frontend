@@ -46,6 +46,7 @@ export interface OrganizationMembership {
 export interface Organization {
     organization_id: string;
     organization_name?: string | null;
+    status?: string | null;
     address1?: string | null;
     shortCode?: string | null;
     phone?: string | null;

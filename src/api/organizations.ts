@@ -1,5 +1,6 @@
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
+import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATIONS } from "@/operations/queries/getOrganizations";
 import {
@@ -7,6 +8,7 @@ import {
     User,
 } from "@/types/graphQL";
 import {
+    QueryHookOptions,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -24,6 +26,16 @@ export const useGetOrganizations = () => {
             fetchPolicy: `network-only`,
         },
     );
+};
+
+interface GetAllOrganizationsRequest {}
+
+interface GetAllOrganizationsResponse {
+    organizations: Organization[];
+}
+
+export const useGetAllOrganizations = (options?: QueryHookOptions<GetAllOrganizationsResponse, GetAllOrganizationsRequest>) => {
+    return useQuery<GetAllOrganizationsResponse, GetAllOrganizationsRequest>(GET_ALL_ORGANIZATIONS, options);
 };
 
 interface LeaveMembershipRequest {
