@@ -114,18 +114,19 @@ export default function MoveContentDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
-    const [ loadingMoveContent, setLoadingMoveContent ] = useState(false);
     const [ selectedNodeId, setSelectedNodeId ] = useState<string>();
     const [ folderStructure, setFolderStructure ] = useState<Folder>();
 
     const title = value ? (value?.length === 1 ? `Move "${value?.[0].name }"` : `Move ${value?.length} items`) : `Move`;
-    const parentIds = value?.[0].dir_path?.split(`/`).filter((path) => !!path) ?? [ ROOT ];
+
+    const paths = value?.[0].dir_path?.split(`/`).filter((path) => !!path) ?? [];
+    const parentIds = paths.length ? paths : [ ROOT ];
 
     const FolderTreeItem = (folder: Folder) => {
         const id = folder.details?.id ?? ROOT;
         const isSelected = id === selectedNodeId;
-        const isCurrentFolderParent = parentIds[parentIds.length - 1] === id;
-        const isDisabled = !!value?.find((v) => v.id === folder.details?.id || isCurrentFolderParent || !!folder.details?.dir_path?.includes(v.id));
+        const isParentFolder = parentIds[parentIds.length - 1] === id;
+        const isDisabled = !!value?.find((v) => v.id === folder.details?.id || isParentFolder || !!folder.details?.dir_path?.includes(v.id));
         const folderArr = Array.from(folder.files);
         folderArr.sort(([ , a ], [ , b ]) => a.details?.name.localeCompare(b.details?.name ?? ``) ?? 0);
         return <TreeItem
@@ -170,8 +171,8 @@ export default function MoveContentDialog (props: Props) {
                     </Typography>
                 }
                 <Box flex="1" />
-                {isCurrentFolderParent && <Typography className={clsx(classes.currentFolder, classes.disabledText)}>Current folder</Typography>}
-                {isDisabled && !isCurrentFolderParent &&
+                {isParentFolder && <Typography className={clsx(classes.currentFolder, classes.disabledText)}>Current folder</Typography>}
+                {isDisabled && !isParentFolder &&
                     <Tooltip title="Folder being moved">
                         <OpenWithIcon
                             color="disabled"
@@ -228,7 +229,6 @@ export default function MoveContentDialog (props: Props) {
     };
 
     const handleMoveContent = async () => {
-        setLoadingMoveContent(true);
         try {
             const folderInfo = value?.map((content) => ({
                 id: content.id,
@@ -248,7 +248,6 @@ export default function MoveContentDialog (props: Props) {
                 variant: `error`,
             });
         }
-        setLoadingMoveContent(false);
     };
 
     const handleNodeSelect = (event: React.ChangeEvent<{}>, nodeId: string) => {
