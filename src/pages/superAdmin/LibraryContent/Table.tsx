@@ -8,7 +8,7 @@ import { currentMembershipVar } from "@/cache";
 import Breadcrumbs from "@/components/LibraryContent/Breadcrumbs";
 import CreateContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/Create";
 import EditContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/Edit";
-import ShareContentFolderDialog from "@/components/LibraryContent/Folder/ShareDialog";
+import DistributeContentFolderDialog from "@/components/LibraryContent/Folder/DistributeDialog";
 import MoveContentDialog from "@/components/LibraryContent/MoveDialog";
 import globalCss from "@/globalCss";
 import {
@@ -43,7 +43,6 @@ import {
     Table,
     usePrompt,
     useSnackbar,
-    utils,
     validations,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
@@ -152,7 +151,7 @@ export default function LibraryTable (props: Props) {
     const [ selectedContentBulk, setSelectedContentBulk ] = useState<PublishedContentItem[]>();
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ openShareDialog, setOpenShareDialog ] = useState(false);
+    const [ openDistributeDialog, setOpenDistributeDialog ] = useState(false);
     const [ openMoveDialog, setOpenMoveDialog ] = useState(false);
     const [ loadingGet, setLoadingGet ] = useState(false);
     const [ rows, setRows ] = useState<ContentRow[]>([]);
@@ -210,7 +209,7 @@ export default function LibraryTable (props: Props) {
     useEffect(() => {
         setOpenCreateDialog(false);
         setOpenEditDialog(false);
-        setOpenShareDialog(false);
+        setOpenDistributeDialog(false);
     }, [ route ]);
 
     const columns: TableColumn<ContentRow>[] = [
@@ -337,11 +336,11 @@ export default function LibraryTable (props: Props) {
 
     const findContentByRow = (row: ContentRow) => data?.list.find((content) => content.id === row.id);
 
-    const shareSelectedRow = (row: ContentRow) => {
+    const distributeSelectedRow = (row: ContentRow) => {
         const selectedContent = findContentByRow(row);
         if (!selectedContent) return;
         setSelectedContent(selectedContent);
-        setOpenShareDialog(true);
+        setOpenDistributeDialog(true);
     };
 
     const editSelectedRow = (row: ContentRow) => {
@@ -432,10 +431,10 @@ export default function LibraryTable (props: Props) {
                     ]}
                     rowActions={(row) =>[
                         {
-                            label: `Share`,
+                            label: `Distribute`,
                             icon: ShareIcon,
                             disabled: row.contentType !== ContentType.FOLDER || paths.length > 0,
-                            onClick: (row) => shareSelectedRow(row),
+                            onClick: (row) => distributeSelectedRow(row),
                         },
                         {
                             label: `Move`,
@@ -481,12 +480,12 @@ export default function LibraryTable (props: Props) {
                     if (value) getContentsFolders();
                 }}
             />
-            <ShareContentFolderDialog
-                open={openShareDialog}
+            <DistributeContentFolderDialog
+                open={openDistributeDialog}
                 value={selectedContent}
                 onClose={() => {
                     setSelectedContent(undefined);
-                    setOpenShareDialog(false);
+                    setOpenDistributeDialog(false);
                 }}
             />
             <MoveContentDialog

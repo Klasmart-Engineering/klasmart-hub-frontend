@@ -7,9 +7,18 @@ import {
     Avatar,
     Box,
     createStyles,
+    Divider,
+    fade,
+    FormControlLabel,
     makeStyles,
     Paper,
+    Radio,
+    RadioGroup,
+    Toolbar,
+    Tooltip,
 } from "@material-ui/core";
+import { Info as InfoIcon } from "@material-ui/icons";
+import clsx from "clsx";
 import {
     FullScreenDialog,
     Table,
@@ -27,6 +36,9 @@ const useStyles = makeStyles((theme) => createStyles({
     paperRoot: {
         width: `100%`,
     },
+    organizationsPaper: {
+        marginTop: theme.spacing(1),
+    },
     avatar: {
         width: theme.spacing(4),
         height: theme.spacing(4),
@@ -34,7 +46,25 @@ const useStyles = makeStyles((theme) => createStyles({
         marginRight: 16,
         fontSize: 10,
     },
+    tableOverlayContainer: {
+        position: `relative`,
+    },
+    table: {
+        position: `absolute`,
+    },
+    disabledOverlay: {
+        backgroundColor: fade(theme.palette.grey[500], 0.66),
+        width: `100%`,
+        height: `100%`,
+        position: `absolute`,
+        borderRadius: `inherit`,
+    },
 }));
+
+enum DistributeStatus {
+    PRESET = `{share_all}`,
+    SELECTED = `selected`,
+}
 
 interface OrganizationRow {
     id: string;
@@ -59,47 +89,48 @@ export default function (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
-    const [ selectedOrganizationIds, setSelectedOrganizationIds ] = useState<string[]>([]);
     const [ initSelectedOrganizationIds, setInitSelectedOrganizationIds ] = useState<string[]>();
+    const [ selectedOrganizationIds, setSelectedOrganizationIds ] = useState<string[]>([]);
+    const [ finalOrganizationIds, setFinalOrganizationIds ] = useState<string[]>([]);
     const { data: dataOrganizations, loading: loadingGetOrganizations } = useGetAllOrganizations();
-    const [ loadingGetFolderShareStatus, setLoadingGetFolderShareStatus ] = useState(false);
+    const [ loadingGetFolderDistributeStatus, setLoadingGetFolderDistributeStatus ] = useState(false);
+    const [ distributeStatus, setDistributeStatus ] = useState<DistributeStatus>(DistributeStatus.PRESET);
     const [ rows, setRows ] = useState<OrganizationRow[]>([]);
 
-    const getFolderShareStatus = async () => {
-        setLoadingGetFolderShareStatus(true);
+    const getFolderDistributeStatus = async () => {
+        setLoadingGetFolderDistributeStatus(true);
         try {
-            const folderShareStatus = await restApi.getFoldersShare({
+            const folderDistributeStatus = await restApi.getFoldersShare({
                 folder_ids: value?.id ?? ``,
                 metaLoading: true,
                 org_id: organization_id,
             });
-            const organizationsIds = folderShareStatus.data?.flatMap((d) => d.orgs.map((org) => org.id)) ?? [];
+            const organizationsIds = folderDistributeStatus.data?.flatMap((d) => d.orgs.map((org) => org.id)) ?? [];
             organizationsIds.sort((a, b) => a.localeCompare(b));
-            setSelectedOrganizationIds(organizationsIds);
+            const isDistributeStatusPreset = organizationsIds.length === 1 && organizationsIds[0] === DistributeStatus.PRESET;
+            setSelectedOrganizationIds(isDistributeStatusPreset ? [] : organizationsIds);
+            setDistributeStatus(isDistributeStatusPreset ? DistributeStatus.PRESET : DistributeStatus.SELECTED);
             if (!initSelectedOrganizationIds) setInitSelectedOrganizationIds(organizationsIds);
         } catch (err) {
-            console.error(err);
             enqueueSnackbar(`Sorry, something went wrong, please try again`, {
                 variant: `error`,
             });
         }
-        setLoadingGetFolderShareStatus(false);
+        setLoadingGetFolderDistributeStatus(false);
     };
 
-    const putFolderShareStatus = async () => {
+    const putFolderDistributeStatus = async () => {
         try {
-            setSelectedOrganizationIds([]);
             await restApi.putFoldersShare({
                 folder_ids: [ value?.id ?? `` ],
                 org_id: organization_id,
-                org_ids: selectedOrganizationIds,
+                org_ids: finalOrganizationIds,
             });
-            enqueueSnackbar(`Share settings successfully updated`, {
+            enqueueSnackbar(`Distribute settings successfully updated`, {
                 variant: `success`,
             });
             onClose();
         } catch (err) {
-            console.error(err);
             enqueueSnackbar(`Sorry, something went wrong, please try again`, {
                 variant: `error`,
             });
@@ -111,9 +142,13 @@ export default function (props: Props) {
         setSelectedOrganizationIds(selectedIds);
     };
 
+    const handleDistributeStatusChange = (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
+        setDistributeStatus(value as DistributeStatus);
+    };
+
     useEffect(() => {
         if (!open || !value || !organization_id) return;
-        getFolderShareStatus();
+        getFolderDistributeStatus();
     }, [
         open,
         value,
@@ -133,8 +168,19 @@ export default function (props: Props) {
 
     useEffect(() => {
         setSelectedOrganizationIds([]);
+        setDistributeStatus(DistributeStatus.PRESET);
         setInitSelectedOrganizationIds(undefined);
     }, [ open ]);
+
+    useEffect(() => {
+        const organizationIds = distributeStatus === DistributeStatus.PRESET ? [ DistributeStatus.PRESET ] : selectedOrganizationIds;
+        setFinalOrganizationIds(organizationIds);
+
+    }, [
+        distributeStatus,
+        selectedOrganizationIds,
+        initSelectedOrganizationIds,
+    ]);
 
     const columns: TableColumn<OrganizationRow>[] = [
         {
@@ -172,25 +218,64 @@ export default function (props: Props) {
 
     return <FullScreenDialog
         open={open}
-        title={`Share "${value?.name ?? ``}"`}
+        title={`Distribute "${value?.name ?? ``}"`}
         action={{
             label: `Save`,
-            disabled: !initSelectedOrganizationIds || isEqual(selectedOrganizationIds, initSelectedOrganizationIds),
-            onClick: putFolderShareStatus,
+            disabled: !initSelectedOrganizationIds || isEqual(finalOrganizationIds, initSelectedOrganizationIds),
+            onClick: putFolderDistributeStatus,
+        }}
+        style={{
+            backgroundColor: `red`,
         }}
         onClose={onClose}
     >
-        <Paper className={classes.paperRoot}>
-            <Table
-                showCheckboxes
-                idField="id"
-                orderBy="name"
-                loading={loadingGetFolderShareStatus || loadingGetOrganizations}
-                rows={rows}
-                columns={columns}
-                selectedRows={selectedOrganizationIds}
-                onSelected={handleSelected}
-            />
-        </Paper>
+        <RadioGroup
+            aria-label="gender"
+            name="gender1"
+            value={distributeStatus}
+            onChange={handleDistributeStatusChange}
+        >
+            <Paper className={classes.paperRoot}>
+                <Toolbar>
+                    <FormControlLabel
+                        value={DistributeStatus.PRESET}
+                        control={<Radio />}
+                        label="Preset"
+                    />
+                    <Tooltip
+                        arrow
+                        title="Choosing this option will make the selected content available to current and future organizations."
+                        placement="right"
+                    >
+                        <InfoIcon
+                            color="action"
+                            fontSize="small"
+                        />
+                    </Tooltip>
+                </Toolbar>
+            </Paper>
+            <Paper className={clsx(classes.paperRoot, classes.organizationsPaper)}>
+                <Toolbar>
+                    <FormControlLabel
+                        value={DistributeStatus.SELECTED}
+                        control={<Radio />}
+                        label="Select Organizations"
+                    />
+                </Toolbar>
+                {distributeStatus === DistributeStatus.SELECTED && <>
+                    <Divider />
+                    <Table
+                        showCheckboxes
+                        idField="id"
+                        orderBy="name"
+                        loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}
+                        rows={rows}
+                        columns={columns}
+                        selectedRows={selectedOrganizationIds}
+                        onSelected={handleSelected}
+                    />
+                </>}
+            </Paper>
+        </RadioGroup>
     </FullScreenDialog>;
 }
