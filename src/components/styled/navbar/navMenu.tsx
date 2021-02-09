@@ -6,6 +6,7 @@ import {
     Button,
     createStyles,
     Dialog,
+    DialogContent,
     Grid,
     Grow,
     IconButton,
@@ -38,28 +39,29 @@ import React,
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        superAdminMenuContainer: {
-            backgroundColor: theme.palette.grey[100],
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    dialogContent: {
+        padding: 0,
+    },
+    superAdminMenuContainer: {
+        backgroundColor: theme.palette.grey[100],
+    },
+    menuContainer: {
+        padding: theme.spacing(4, 5),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(2, 2),
         },
-        menuContainer: {
-            padding: theme.spacing(4, 5),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 2),
-            },
-        },
-        menuButton: {
-            minHeight: 64,
-            padding: theme.spacing(2),
-        },
-        menuLink: {
-            textDecoration: `none`,
-            textAlign: `center`,
-            display: `block`,
-        },
-    }),
-);
+    },
+    menuButton: {
+        minHeight: 64,
+        padding: theme.spacing(2),
+    },
+    menuLink: {
+        textDecoration: `none`,
+        textAlign: `center`,
+        display: `block`,
+    },
+}));
 
 type MenuItemProps = Pick<MenuItem, `description` | `icon` | `title` | `link` | `color`>
 
@@ -414,26 +416,28 @@ export default function NavMenu(props: Props) {
                 onClose={handleClose}
             >
                 <DialogAppBar handleClose={handleClose}/>
-                {isSuperAdmin && <Grid
-                    container
-                    direction="row"
-                    justify="flex-start"
-                    alignItems="stretch"
-                    spacing={2}
-                    className={clsx(classes.menuContainer, classes.superAdminMenuContainer)}
-                >
-                    {superAdminMenuItems.map((menuItem, i) => GridMenuItem(menuItem, `superMenuItem-${i}`))}
-                </Grid>}
-                <Grid
-                    container
-                    direction="row"
-                    justify="flex-start"
-                    alignItems="stretch"
-                    spacing={2}
-                    className={classes.menuContainer}
-                >
-                    {menuItems.map((menuItem, i) => GridMenuItem(menuItem, `menuItem-${i}`))}
-                </Grid>
+                <DialogContent className={classes.dialogContent}>
+                    {isSuperAdmin && <Grid
+                        container
+                        direction="row"
+                        justify="flex-start"
+                        alignItems="stretch"
+                        spacing={2}
+                        className={clsx(classes.menuContainer, classes.superAdminMenuContainer)}
+                    >
+                        {superAdminMenuItems.map((menuItem, i) => GridMenuItem(menuItem, `superMenuItem-${i}`))}
+                    </Grid>}
+                    <Grid
+                        container
+                        direction="row"
+                        justify="flex-start"
+                        alignItems="stretch"
+                        spacing={2}
+                        className={classes.menuContainer}
+                    >
+                        {menuItems.map((menuItem, i) => GridMenuItem(menuItem, `menuItem-${i}`))}
+                    </Grid>
+                </DialogContent>
             </Dialog>
         </>
     );
