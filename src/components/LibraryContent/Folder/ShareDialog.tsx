@@ -174,7 +174,7 @@ export default function (props: Props) {
         open={open}
         title={`Share "${value?.name ?? ``}"`}
         action={{
-            label: `Share`,
+            label: `Save`,
             disabled: !initSelectedOrganizationIds || isEqual(selectedOrganizationIds, initSelectedOrganizationIds),
             onClick: putFolderShareStatus,
         }}
