@@ -44,7 +44,12 @@ interface GetContentByIdRequest {
     org_id: string;
 }
 
-interface DeleteContentByIdRequest {
+interface DeleteFoldersItemsByIdRequest {
+    folder_id: string;
+    org_id: string;
+}
+
+interface DeleteContentsByIdRequest {
     content_id: string;
     org_id: string;
 }
@@ -306,7 +311,19 @@ export class RestAPI {
         return response?.json();
     }
 
-    public async deleteFoldersItemsById (request: DeleteContentByIdRequest) {
+    public async deleteFoldersItemsById (request: DeleteFoldersItemsByIdRequest) {
+        const {
+            folder_id,
+            org_id,
+        } = request;
+        const str = queryString.stringify({
+            org_id,
+        });
+        const response = await this.contentCall(`DELETE`, `v1/folders/items/${folder_id}?${str}`);
+        return response?.json();
+    }
+
+    public async deleteContentsItemsById (request: DeleteContentsByIdRequest) {
         const {
             content_id,
             org_id,
@@ -314,7 +331,7 @@ export class RestAPI {
         const str = queryString.stringify({
             org_id,
         });
-        const response = await this.contentCall(`DELETE`, `v1/folders/items/${content_id}?${str}`);
+        const response = await this.contentCall(`DELETE`, `v1/contents/${content_id}?${str}`);
         return response?.json();
     }
 

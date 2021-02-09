@@ -362,12 +362,19 @@ export default function LibraryTable (props: Props) {
             variant: `error`,
         });
         if (input !== selectedContent.name) return;
-        const { id } = selectedContent;
+        const { id, content_type } = selectedContent;
         try {
-            await restApi.deleteFoldersItemsById({
-                org_id: organization_id,
-                content_id: id,
-            });
+            if (content_type === ContentType.FOLDER)
+                await restApi.deleteFoldersItemsById({
+                    org_id: organization_id,
+                    folder_id: id,
+                });
+            else if ([ ContentType.MATERIAL, ContentType.PLAN ].includes(content_type))
+                await restApi.deleteContentsItemsById({
+                    org_id: organization_id,
+                    content_id: id,
+                });
+            else throw Error(`unknown-type`);
             getContentsFolders();
             enqueueSnackbar(`Content has been deleted succesfully`, {
                 variant: `success`,

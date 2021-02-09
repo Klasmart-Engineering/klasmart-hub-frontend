@@ -82,7 +82,7 @@ export default function EditFolderDialog (props: Props) {
         try {
             await restApi.deleteFoldersItemsById({
                 org_id: organization_id,
-                content_id: id,
+                folder_id: id,
             });
             onClose(editedLibraryContent);
             enqueueSnackbar(`Folder has been deleted succesfully`, {
