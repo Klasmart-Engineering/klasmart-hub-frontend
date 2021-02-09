@@ -17,6 +17,7 @@ import {
     PublishedContentPayload,
     PublishStatus,
 } from "@/types/objectTypes";
+import { handleError } from "@/utils/images";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -259,6 +260,7 @@ export default function LibraryTable (props: Props) {
                         alt="Thumbail"
                         src={`v1/contents_resources/${row.thumbnail}`}
                         className={classes.itemThumbnail}
+                        onError={handleError}
                     />
                     <span>{row.name}</span>
                 </Box>;
