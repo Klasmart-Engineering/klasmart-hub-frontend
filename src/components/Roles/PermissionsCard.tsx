@@ -81,7 +81,7 @@ interface Props {
     category: string;
     groups: Group[];
     setPermissionsStepIsValid: Dispatch<SetStateAction<boolean>>;
-    rolesAndPermissions: PermissionsCategory[];
+    permissionCategories: PermissionsCategory[];
 }
 
 export default function PermissionsCard(props: Props) {
@@ -89,7 +89,7 @@ export default function PermissionsCard(props: Props) {
         category,
         groups,
         setPermissionsStepIsValid,
-        rolesAndPermissions,
+        permissionCategories,
     } = props;
     const classes = useStyles();
     const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(
@@ -165,7 +165,7 @@ export default function PermissionsCard(props: Props) {
     }, []);
 
     useEffect(() => {
-        const hasPermissions = rolesAndPermissions.some((permissionCategory) =>
+        const hasPermissions = permissionCategories.some((permissionCategory) =>
             permissionCategory.groups.some((group) =>
                 group.permissionDetails.some(
                     (permissionDetail) => permissionDetail.checked,
@@ -174,7 +174,7 @@ export default function PermissionsCard(props: Props) {
         );
 
         setPermissionsStepIsValid(hasPermissions);
-    }, [ rolesAndPermissions, cardPermissions ]);
+    }, [ permissionCategories, cardPermissions ]);
 
     const onChange = () => {
         return ``;

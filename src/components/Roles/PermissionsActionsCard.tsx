@@ -52,20 +52,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
     roles: Role[];
-    rolesAndPermissions: PermissionsCategory[];
-    setRolesAndPermissions: Dispatch<SetStateAction<PermissionsCategory[]>>;
+    permissionCategories: PermissionsCategory[];
+    setPermissionCategories: Dispatch<SetStateAction<PermissionsCategory[]>>;
 }
 
 export default function PermissionsActionsCard(props: Props) {
     const {
         roles,
-        rolesAndPermissions,
-        setRolesAndPermissions,
+        permissionCategories,
+        setPermissionCategories,
     } = props;
     const classes = useStyles();
     const [ roleId, setRoleId ] = React.useState(``);
 
-    const permissionIds = (roles: Role[], roleId: string) => {
+    const getPermissionIdsByRoleId = (roles: Role[], roleId: string) => {
         return roles
             .filter((role) => role.role_id === roleId)
             .reduce((acc: string[], role) => {
@@ -77,16 +77,13 @@ export default function PermissionsActionsCard(props: Props) {
             }, []);
     };
 
-    const newRolesAndPermissions = (
-        roles: Role[],
-        roleId: string,
-    ) => {
-        const newPermissions = [ ...rolesAndPermissions ];
+    const newRolesAndPermissionsByRoleId = (roles: Role[], roleId: string) => {
+        const newPermissions = [ ...permissionCategories ];
 
         newPermissions.forEach((permissionCategory) => {
             permissionCategory.groups.forEach((group) => {
                 group.permissionDetails.forEach((permissionDetail) => {
-                    permissionDetail.checked = !!permissionIds(
+                    permissionDetail.checked = !!getPermissionIdsByRoleId(
                         roles,
                         roleId,
                     )?.includes(permissionDetail.permissionId);
@@ -100,17 +97,17 @@ export default function PermissionsActionsCard(props: Props) {
             });
         });
 
-        setRolesAndPermissions(newPermissions);
+        setPermissionCategories(newPermissions);
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRoleId(event.target.value);
-        newRolesAndPermissions(roles, event.target.value);
+        newRolesAndPermissionsByRoleId(roles, event.target.value);
     };
 
     const handleClear = () => {
         setRoleId(``);
-        const newPermissions = [ ...rolesAndPermissions ];
+        const newPermissions = [ ...permissionCategories ];
 
         newPermissions.forEach((permissionCategory) => {
             permissionCategory.groups.forEach((group) => {
@@ -123,11 +120,11 @@ export default function PermissionsActionsCard(props: Props) {
             });
         });
 
-        setRolesAndPermissions(newPermissions);
+        setPermissionCategories(newPermissions);
     };
 
     const handleResetDefault = () => {
-        newRolesAndPermissions(roles, roleId);
+        newRolesAndPermissionsByRoleId(roles, roleId);
     };
 
     return (
@@ -170,7 +167,11 @@ export default function PermissionsActionsCard(props: Props) {
                                 onChange={handleChange}
                             >
                                 {roles
-                                    .filter((role) => role.role_name !== null)
+                                    .filter(
+                                        (role) =>
+                                            role.role_name &&
+                                            role.role_name.length,
+                                    )
                                     .map((role) => (
                                         <MenuItem
                                             key={role.role_id}

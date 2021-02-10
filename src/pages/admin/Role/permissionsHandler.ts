@@ -16,8 +16,8 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
     roles
         .filter((role) => systemRoles.includes(role.role_name))
         .forEach((role, roleIndex) => {
-            role.permissions?.forEach(
-                (permission, permissionIndex) => {
+            role.permissions?.forEach((permission, permissionIndex) => {
+                if (roles[roleIndex]?.permissions[permissionIndex]) {
                     const permissionId =
                         roles[roleIndex].permissions[permissionIndex]
                             .permission_id;
@@ -66,8 +66,8 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
                             permissions[index]?.levels?.push(permissionLevel);
                         }
                     }
-                },
-            );
+                }
+            });
         });
 
     return permissions;

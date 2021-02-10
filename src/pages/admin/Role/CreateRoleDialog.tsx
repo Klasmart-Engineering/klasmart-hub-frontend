@@ -144,7 +144,7 @@ export default function CreateRoleDialog(props: Props) {
         name: ``,
         description: ``,
     });
-    const [ rolesAndPermissions, setRolesAndPermissions ] = useState<
+    const [ permissionCategories, setPermissionCategories ] = useState<
         PermissionsCategory[]
         >([]);
     const [ loading, setLoading ] = useState(true);
@@ -157,21 +157,21 @@ export default function CreateRoleDialog(props: Props) {
     const roles: Role[] = rolePermissions?.organization?.roles ?? [];
 
     useEffect(() => {
-        if (roles) {
+        if (roles.length) {
             const permissions = uniquePermissions(roles) ?? [];
             const data = sectionHandler(permissions) ?? [];
 
-            setRolesAndPermissions(data);
+            setPermissionCategories(data);
         }
     }, [ rolePermissions ]);
 
     useEffect(() => {
-        if (!rolePermissionsLoading && rolesAndPermissions.length) {
+        if (!rolePermissionsLoading && permissionCategories.length) {
             setLoading(false);
         }
-    }, [ rolePermissionsLoading, rolesAndPermissions ]);
+    }, [ rolePermissionsLoading, permissionCategories ]);
 
-    const reviewPermissions = rolesAndPermissions.reduce(
+    const reviewPermissions = permissionCategories.reduce(
         (acc: PermissionsCategory[], permissionsCategory) => {
             const hasPermissions = permissionsCategory.groups.reduce(
                 (acc: Group[], group) => {
@@ -249,10 +249,10 @@ export default function CreateRoleDialog(props: Props) {
                 <>
                     <PermissionsActionsCard
                         roles={roles}
-                        rolesAndPermissions={rolesAndPermissions}
-                        setRolesAndPermissions={setRolesAndPermissions}
+                        permissionCategories={permissionCategories}
+                        setPermissionCategories={setPermissionCategories}
                     />
-                    {rolesAndPermissions.map((permissionsCategory) => (
+                    {permissionCategories.map((permissionsCategory) => (
                         <PermissionsCard
                             key={permissionsCategory.category}
                             category={permissionsCategory.category}
@@ -260,7 +260,7 @@ export default function CreateRoleDialog(props: Props) {
                             setPermissionsStepIsValid={
                                 setPermissionsStepIsValid
                             }
-                            rolesAndPermissions={rolesAndPermissions}
+                            permissionCategories={permissionCategories}
                         />
                     ))}
                 </>
@@ -316,7 +316,7 @@ export default function CreateRoleDialog(props: Props) {
 
     useEffect(() => {
         if (activeStep === 2) {
-            const permissions = rolesAndPermissions.reduce(
+            const permissions = permissionCategories.reduce(
                 (acc: string[], permissionsCategory) => {
                     permissionsCategory.groups.forEach((group) => {
                         group.permissionDetails.forEach((permissionDetail) => {
@@ -337,7 +337,7 @@ export default function CreateRoleDialog(props: Props) {
                 permission_names: permissions,
             });
         }
-    }, [ rolesAndPermissions, activeStep ]);
+    }, [ permissionCategories, activeStep ]);
 
     return (
         <Dialog

@@ -4,6 +4,7 @@ import {
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
 import CreateRoleDialog, { NewRole } from "@/pages/admin/Role/CreateRoleDialog";
+import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
 import { Paper } from "@material-ui/core";
@@ -52,11 +53,7 @@ const checkRoleMatch = (role: string | undefined | null) => {
         return null;
     }
 
-    const regex = new RegExp(
-        `Organization Admin|Parent|School Admin|Student|Teacher`,
-        `gmi`,
-    );
-    return regex.test(role);
+    return systemRoles.includes(role.trim());
 };
 
 /**
