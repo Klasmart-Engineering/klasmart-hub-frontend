@@ -167,11 +167,7 @@ export default function PermissionsActionsCard(props: Props) {
                                 onChange={handleChange}
                             >
                                 {roles
-                                    .filter(
-                                        (role) =>
-                                            role.role_name &&
-                                            role.role_name.length,
-                                    )
+                                    .filter((role) => role.role_name)
                                     .map((role) => (
                                         <MenuItem
                                             key={role.role_id}
