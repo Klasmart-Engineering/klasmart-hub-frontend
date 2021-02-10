@@ -11,8 +11,6 @@ import GradeTable from "./pages/admin/Grade/GradesTable";
 import Layout from "./pages/admin/Layout";
 import AllOrganization from "./pages/admin/Organization/AllOrganitation";
 import EditOrganization from "./pages/admin/Organization/EditOrganization";
-import JoinedOrganizationTable from "./pages/admin/Organization/JoinedOrganizationTable";
-import MyOrganizationTable from "./pages/admin/Organization/MyOrganizationTable";
 import Organization from "./pages/admin/Organization/Organization";
 import RoleTable from "./pages/admin/Role/RoleTable";
 import ClasessTable from "./pages/admin/School/ClassesTable";
@@ -49,40 +47,13 @@ import {
     useLocation,
 } from "react-router-dom";
 
-const TIMEOUT = 360000; // 1 minute
 const ENDPOINT = getCNEndpoint();
-
-export const mainNavBar = [
-    {
-        name: `home`,
-        path: `/`,
-    },
-    {
-        name: `library`,
-        path: `/library/my-content-list`,
-    },
-    {
-        name: `schedule`,
-        path: `/schedule/calendar`,
-    },
-    {
-        name: `assessments`,
-        path: `/assessments/assessment-list`,
-    },
-    {
-        name: `report`,
-        path: `/report`,
-    },
-];
 
 export function App() {
     const store = useStore();
     const location = useLocation().pathname;
-    const url = new URL(window.location.href);
 
     const [ organizationData, setOrganizationData ] = useState([]);
-    const [ expiration, setExpiration ] = useState(TIMEOUT);
-    const [ key, setKey ] = useState(Math.random().toString(36));
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
@@ -144,7 +115,7 @@ export function App() {
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
         <>
             <Grid item>
-                <NavBar menuLabels={mainNavBar} />
+                <NavBar />
             </Grid>
             <Grid
                 item
@@ -206,7 +177,7 @@ export function App() {
                             />
                         </>} />
                     <Route
-                        path="/report"
+                        path="/reports"
                         render={() => <>
                             <iframe
                                 src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
@@ -219,32 +190,22 @@ export function App() {
                         </>} />
                     <Route
                         exact
-                        path="/admin/edit-organization/:organizationId">
+                        path="/admin/organizations/:organizationId/edit">
                         <AdminLayout>
                             <EditOrganization />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/create-organization">
+                    <Route path="/admin/organizations/create">
                         <AdminLayout>
                             <Organization />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/my-organization">
-                        <AdminLayout>
-                            <MyOrganizationTable />
-                        </AdminLayout>
-                    </Route>
-                    <Route path="/admin/joined-organization">
-                        <AdminLayout>
-                            <JoinedOrganizationTable />
-                        </AdminLayout>
-                    </Route>
-                    <Route path="/admin/allOrganization">
+                    <Route path="/admin/organizations">
                         <AdminLayout>
                             <AllOrganization />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/user">
+                    <Route path="/admin/users">
                         <AdminLayout>
                             <User />
                         </AdminLayout>
@@ -254,9 +215,14 @@ export function App() {
                             <RoleTable />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/school">
+                    <Route path="/admin/schools">
                         <AdminLayout>
                             <SchoolTable />
+                        </AdminLayout>
+                    </Route>
+                    <Route path="/admin/classes/:classId/roster">
+                        <AdminLayout>
+                            <ClassRosterTable />
                         </AdminLayout>
                     </Route>
                     <Route path="/admin/classes">
@@ -264,19 +230,14 @@ export function App() {
                             <ClasessTable />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/program">
+                    <Route path="/admin/programs">
                         <AdminLayout>
                             <ProgramTable />
                         </AdminLayout>
                     </Route>
-                    <Route path="/admin/grade">
+                    <Route path="/admin/grades">
                         <AdminLayout>
                             <GradeTable />
-                        </AdminLayout>
-                    </Route>
-                    <Route path="/admin/classRoster/:classId">
-                        <AdminLayout>
-                            <ClassRosterTable />
                         </AdminLayout>
                     </Route>
                     <Route path="/admin">
@@ -284,7 +245,7 @@ export function App() {
                             <User />
                         </AdminLayout>
                     </Route>
-                    <Route path="/superAdmin/contentLibrary">
+                    <Route path="/super-admin/content-library">
                         <Layout>
                             <SuperAdminContentLibraryTable />
                         </Layout>

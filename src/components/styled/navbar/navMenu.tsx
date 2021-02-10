@@ -146,7 +146,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_superContentLibraryDescription`,
             }),
-            link: `/superAdmin/contentLibrary`,
+            link: `/super-admin/content-library`,
             color: `#1F94E8`,
             icon: InboxIcon,
             title: intl.formatMessage({
@@ -201,7 +201,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_analyticsAndReportsDescription`,
             }),
-            link: `/report`,
+            link: `/reports`,
             color: `#F7A219`,
             icon: TableIcon,
             title: intl.formatMessage({
@@ -212,7 +212,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_assessmentsDescription`,
             }),
-            link: `/assessments/assessment-list`,
+            link: `/assessments`,
             color: `#98CE00`,
             icon: AssessmentIcon,
             title: intl.formatMessage({
@@ -245,7 +245,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_organizationDescription`,
             }),
-            link: `/admin/allOrganization`,
+            link: `/admin/organizations`,
             color: `#0E78D5`,
             icon: BusinessIcon,
             title: intl.formatMessage({
@@ -267,7 +267,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_schoolsDescription`,
             }),
-            link: `/admin/school`,
+            link: `/admin/schools`,
             color: `#0E78D5`,
             icon: SchoolIcon,
             title: intl.formatMessage({
@@ -278,7 +278,7 @@ export default function NavMenu(props: Props) {
             description: intl.formatMessage({
                 id: `navMenu_usersDescription`,
             }),
-            link: `/admin/user`,
+            link: `/admin/users`,
             color: `#0E78D5`,
             icon: PersonIcon,
             title: intl.formatMessage({

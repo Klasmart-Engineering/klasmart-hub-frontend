@@ -98,7 +98,7 @@ export default function Organization() {
     };
 
     const reset = () => {
-        return history.push("/admin/allOrganization");
+        return history.push("/admin/organizations");
     };
 
     const onSubmit = async (e: any) => {
@@ -171,7 +171,7 @@ export default function Organization() {
 
     useEffect(() => {
         if (success) {
-            history.push("/admin/allOrganization");
+            history.push("/admin/organizations");
         }
     });
 

@@ -201,13 +201,13 @@ export default function MyOrganizationTable(props: Props) {
                             id: `button_create`,
                         }),
                         icon: AddIcon,
-                        onClick: () => history.push(`/admin/create-organization`),
+                        onClick: () => history.push(`/admin/organizations/create`),
                     }}
                     rowActions={(row) => [
                         {
                             label: `Edit`,
                             icon: EditIcon,
-                            onClick: (row) => history.push(`/admin/edit-organization/${row.id}`),
+                            onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
                         },
                         {
                             label: `Delete`,

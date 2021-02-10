@@ -171,7 +171,7 @@ export default function Organization(isDialog: { isDialog?: boolean }) {
     };
 
     const reset = () => {
-        return history.push("/admin/allOrganization");
+        return history.push("/admin/organizations");
     };
 
     const setPhoneFormik = (phone: string) => {
@@ -180,7 +180,7 @@ export default function Organization(isDialog: { isDialog?: boolean }) {
 
     useEffect(() => {
         if (success) {
-            history.push("/admin/allOrganization");
+            history.push("/admin/organizations");
         }
     }, [success]);
 

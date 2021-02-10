@@ -20,15 +20,16 @@ import {
     Button,
     createStyles,
     Grid,
-    Link,
     makeStyles,
-    Paper,
     Theme,
     Toolbar,
     useMediaQuery,
     useTheme,
 } from "@material-ui/core";
+import { Tabs } from "kidsloop-px";
+import { Tab } from "kidsloop-px/dist/types/components/Tabs";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -58,19 +59,69 @@ const useStyles = makeStyles((theme: Theme) =>
             flex: 1,
             marginLeft: theme.spacing(2),
         },
+        tabs: {
+            padding: theme.spacing(0, 2),
+        },
     }),
 );
 
+const CONTENT_TABS: Tab[] = [
+    {
+        text: `Organization Content`,
+        value: `/library`,
+    },
+    {
+        text: `Badanamu Content`,
+        value: `/badanamu-content`,
+    },
+];
+
+const ADMIN_TABS: Tab[] = [
+    {
+        text: `Organizations`,
+        value: `/admin/organizations`,
+    },
+    {
+        text: `Users`,
+        value: `/admin/users`,
+    },
+    {
+        text: `Roles`,
+        value: `/admin/roles`,
+    },
+    {
+        text: `Schools`,
+        value: `/admin/schools`,
+    },
+    {
+        text: `Classes`,
+        value: `/admin/classes`,
+    },
+    // {
+    //     text: `Programs`,
+    //     value: `/admin/programs`,
+    // },
+    // {
+    //     text: `Grades`,
+    //     value: `/admin/grades`,
+    // },
+];
+
+const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
+
+const getTabs = (path: string): Tab[] => {
+    return findTabs(CONTENT_TABS, path)
+        ?? findTabs(ADMIN_TABS, path)
+        ?? [];
+};
+
 interface Props {
-    menuLabels?: Array<{ name: string; path: string }>;
 }
 
 export default function NavBar(props: Props) {
-    const { menuLabels } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const url = new URL(window.location.href);
-
+    const location = useLocation();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
 
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
@@ -97,13 +148,15 @@ export default function NavBar(props: Props) {
     ];
     const showNavMenu = selectedMembershipOrganization?.roles?.map((role) => role.role_name).some((roleName) => showMenuToRoles.includes(roleName ?? ``));
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
+    const tabs = getTabs(location.pathname);
 
     return (
         <div className={classes.root}>
             <AppBar
                 color="primary"
                 position="sticky"
-                className={classes.safeArea}>
+                className={classes.safeArea}
+            >
                 <Toolbar>
                     <Grid
                         container
@@ -144,56 +197,13 @@ export default function NavBar(props: Props) {
                         </Box>
                     </Grid>
                 </Toolbar>
+                {tabs.length > 0 && <Tabs
+                    valuesAsPaths
+                    className={classes.tabs}
+                    tabs={tabs}
+                    value={location.pathname}
+                />}
             </AppBar>
-            {
-                url.hash.includes(`#/library`) || url.hash.includes(`#/badanamu-content`) ?
-                    <Grid
-                        container
-                        direction="row"
-                    >
-                        <Paper
-                            square
-                            style={{
-                                flex: 1,
-                                height: `100%`,
-                            }}>
-                            <Toolbar variant="dense">
-                                <Grid
-                                    container
-                                    direction="row"
-                                    spacing={2}>
-                                    <Grid item>
-                                        <Link
-                                            href="#"
-                                            variant="body2"
-                                            style={{
-                                                color: url.hash.includes(`#/library`) ? `#0E78D5` : `black`,
-                                                textDecoration: url.hash.includes(`#/library`) ? `underline` : `none`,
-                                            }}
-                                            onClick={(e: React.MouseEvent) => { history.push(`/library`); e.preventDefault(); }}
-                                        >
-                                            Organization Content
-                                        </Link>
-                                    </Grid>
-                                    <Grid item>
-                                        <Link
-                                            href="#"
-                                            variant="body2"
-                                            style={{
-                                                color: url.hash.includes(`#/badanamu-content`) ? `#0E78D5` : `black`,
-                                                textDecoration: url.hash.includes(`#/badanamu-content`) ? `underline` : `none`,
-                                            }}
-                                            onClick={(e: React.MouseEvent) => { history.push(`/badanamu-content`); e.preventDefault(); }}
-                                        >
-                                            Badanamu Content
-                                        </Link>
-                                    </Grid>
-                                </Grid>
-                            </Toolbar>
-                        </Paper>
-                    </Grid>
-                    : null
-            }
             <ClassSettings />
         </div>
     );

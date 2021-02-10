@@ -167,7 +167,7 @@ export default function ClasessTable(props: Props) {
             }),
             persistent: true,
             render: (row) => (
-                <Link href={`/#/admin/classRoster/${row.id}`}>{row.name}</Link>
+                <Link href={`/#/admin/classes/${row.id}/roster`}>{row.name}</Link>
             ),
         },
         {
