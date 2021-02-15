@@ -1,24 +1,24 @@
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
+import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
+import { useGetSchools } from "@/api/schools";
+import { currentMembershipVar } from "@/cache";
+import { OrganizationMembership } from "@/types/graphQL";
+import {
+    emailAddressRegex,
+    phoneNumberRegex,
+} from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
     TextField,
     Theme,
 } from "@material-ui/core";
-import { OrganizationMembership } from "@/types/graphQL";
-import { useGetSchools } from "@/api/schools";
-import { useReactiveVar } from "@apollo/client";
-import { currentMembershipVar } from "@/cache";
 import { MultiSelect } from "kidsloop-px";
-import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
-import {
-    emailAddressRegex,
-    phoneNumberRegex,
-} from "@/utils/validations";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -70,11 +70,11 @@ export default function UserDialogForm(props: Props) {
         },
     });
     const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
-    const allRoles = organizationData?.organization?.roles ?? [];
+    const allRoles = organizationData?.organization?.roles?.filter((role) => role.status === `active`) ?? [];
     const [ givenName, setGivenName ] = useState(value.user?.given_name ?? ``);
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schoolMemberships?.map((s) => s.school_id) ?? []);
-    const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.map((r) => r.role_id) ?? []);
+    const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.filter((role) => role.status === `active`).map((role) => role.role_id) ?? []);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
 
     useEffect(() => {

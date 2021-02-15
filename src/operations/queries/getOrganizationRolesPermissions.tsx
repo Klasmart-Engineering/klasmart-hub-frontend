@@ -6,6 +6,8 @@ export const GET_ORGANIZATION_ROLES_PERMISSIONS = gql`
             roles {
                 role_id
                 role_name
+                status
+                system_role
                 permissions {
                     permission_id
                     permission_name

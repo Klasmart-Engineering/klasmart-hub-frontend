@@ -21,7 +21,7 @@ import React, {
 const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            width: theme.breakpoints.values.lg,
+            width: `100%`,
             borderRadius: 10,
         },
         requiredField: {

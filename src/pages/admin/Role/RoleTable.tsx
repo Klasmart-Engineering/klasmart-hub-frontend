@@ -4,6 +4,8 @@ import {
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
 import CreateRoleDialog, { NewRole } from "@/pages/admin/Role/CreateRoleDialog";
+import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
+import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
@@ -24,6 +26,7 @@ import {
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
 import React, {
+    ChangeEvent,
     useEffect,
     useState,
 } from "react";
@@ -37,9 +40,26 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-interface RoleRow {
+export interface RoleRow {
     id: string;
     role: string;
+    description: string;
+    type: string;
+    systemRole: boolean;
+}
+
+export interface ActionButton {
+    text: string;
+    disabled: boolean;
+    onClick: () => void;
+}
+
+export interface Actions {
+    onChange:
+        | ((event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void)
+        | undefined;
+    buttons?: ActionButton[];
+    textFieldLabel: string;
 }
 
 interface Props {}
@@ -62,8 +82,19 @@ const checkRoleMatch = (role: string | undefined | null) => {
 export default function RoleTable(props: Props) {
     const classes = useStyles();
     const intl = useIntl();
+    const canView = usePermission(`view_role_permissions_30112`);
+    const canCreate = usePermission(`create_role_with_permissions_30222`);
+    const canDelete = usePermission(`delete_groups_30440`);
     const [ rows, setRows ] = useState<RoleRow[]>([]);
     const [ open, setOpen ] = useState(false);
+    const [ openDeleteDialog, setOpenDeleteDialog ] = useState(false);
+    const [ row, setRow ] = useState<RoleRow>({
+        id: ``,
+        role: ``,
+        description: ``,
+        type: ``,
+        systemRole: false,
+    });
     const [ activeStep, setActiveStep ] = useState(0);
     const steps = [
         `Role Info`,
@@ -88,19 +119,28 @@ export default function RoleTable(props: Props) {
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
 
+    const systemTypeHandler = (systemRole: boolean | null | undefined) => {
+        return systemRole ? `System Role` : `Custom Role`;
+    };
+
     useEffect(() => {
         if (!data?.organization?.roles?.length) {
             setRows([]);
             return;
         }
-        const rows: RoleRow[] = data.organization.roles.map((role) => ({
-            id: role.role_id,
-            role: checkRoleMatch(role.role_name)
-                ? intl.formatMessage({
-                    id: `roles_type${role.role_name?.replace(` `, ``)}`,
-                })
-                : role.role_name || ``,
-        }));
+        const rows: RoleRow[] = data.organization.roles
+            .filter((role) => role.status === `active`)
+            .map((role) => ({
+                id: role.role_id,
+                role: checkRoleMatch(role.role_name)
+                    ? intl.formatMessage({
+                        id: `roles_type${role.role_name?.replace(` `, ``)}`,
+                    })
+                    : role.role_name || ``,
+                description: role.role_description || ``,
+                type: systemTypeHandler(role.system_role),
+                systemRole: role.system_role ?? false,
+            }));
 
         setRows(rows);
     }, [ data ]);
@@ -118,6 +158,14 @@ export default function RoleTable(props: Props) {
             }),
             persistent: true,
         },
+        {
+            id: `description`,
+            label: `Role Description`,
+        },
+        {
+            id: `type`,
+            label: `Type`,
+        },
     ];
 
     const handleOpen = () => {
@@ -127,6 +175,15 @@ export default function RoleTable(props: Props) {
     const handleClose = () => {
         setOpen(false);
         setActiveStep(0);
+    };
+
+    const handleOpenDeleteDialog = (row: RoleRow) => {
+        setOpenDeleteDialog(true);
+        setRow(row);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
     };
 
     const handleNext = async (): Promise<void> => {
@@ -176,60 +233,58 @@ export default function RoleTable(props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <Table
-                    columns={columns}
-                    rows={rows}
-                    loading={loading}
-                    idField="id"
-                    orderBy="role"
-                    primaryAction={{
-                        label: `Create`,
-                        icon: AddIcon,
-                        onClick: () => handleOpen(),
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: `Edit`,
-                            icon: EditIcon,
-                            onClick: (row) => console.log(`clicked`, row),
-                        },
-                        {
-                            label: `Delete`,
-                            icon: DeleteIcon,
-                            onClick: async (row) => {
-                                if (
-                                    !(await confirm({
-                                        variant: `error`,
-                                        title: `Delete`,
-                                        content: `Are you sure you to delete this role? This will permanently remove the role.`,
-                                    }))
-                                )
-                                    return;
-                                console.log(`we done`);
+            {canView && (
+                <Paper className={classes.root}>
+                    <Table
+                        columns={columns}
+                        rows={rows}
+                        loading={loading}
+                        idField="id"
+                        orderBy="role"
+                        primaryAction={{
+                            label: `Create`,
+                            icon: AddIcon,
+                            disabled: !canCreate,
+                            onClick: () => handleOpen(),
+                        }}
+                        rowActions={(row) => [
+                            {
+                                label: `Edit`,
+                                icon: EditIcon,
+                                onClick: (row) => console.log(`clicked`, row),
                             },
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `roles_title`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `groups_searchPlaceholder`,
-                            }),
-                        },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `groups_noRecords`,
-                            }),
-                        },
-                    })}
-                />
-            </Paper>
-            {open && (
+                            {
+                                label: `Delete`,
+                                icon: DeleteIcon,
+                                disabled:
+                                    !canDelete || row.systemRole,
+                                onClick: async (row) => {
+                                    handleOpenDeleteDialog(row);
+                                },
+                            },
+                        ]}
+                        localization={getTableLocalization(intl, {
+                            toolbar: {
+                                title: intl.formatMessage({
+                                    id: `roles_title`,
+                                }),
+                            },
+                            search: {
+                                placeholder: intl.formatMessage({
+                                    id: `groups_searchPlaceholder`,
+                                }),
+                            },
+                            body: {
+                                noData: intl.formatMessage({
+                                    id: `groups_noRecords`,
+                                }),
+                            },
+                        })}
+                    />
+                </Paper>
+            )}
+
+            {canView && open && (
                 <CreateRoleDialog
                     open={open}
                     steps={steps}
@@ -239,6 +294,14 @@ export default function RoleTable(props: Props) {
                     handleNext={handleNext}
                     loadingCreateRole={loadingCreateRole}
                     handleClose={handleClose}
+                />
+            )}
+
+            {canView && openDeleteDialog && (
+                <DeleteRoleDialog
+                    open={openDeleteDialog}
+                    handleClose={handleCloseDeleteDialog}
+                    row={row}
                 />
             )}
         </>

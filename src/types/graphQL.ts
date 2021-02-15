@@ -21,6 +21,7 @@ export interface User {
     memberships?: OrganizationMembership[] | null;
     my_organization?: Organization | null;
     organization_ownerships?: OrganizationOwnership[];
+    full_name?: string | null;
 }
 
 export interface OrganizationOwnership {
@@ -62,6 +63,10 @@ export interface Organization {
 export interface Role {
     role_id: string;
     role_name?: RoleName | null;
+    role_description?: string | null;
+    system_role?: boolean | null;
+    delete_role?: boolean | null;
+    status?: string | null;
 }
 
 export interface Student {
@@ -80,6 +85,7 @@ export interface School {
     school_id: string;
     school_name?: string | null;
     status?: string | null;
+    memberships?: SchoolMembership[] | null;
 }
 
 export interface SchoolMembership {
@@ -87,4 +93,6 @@ export interface SchoolMembership {
     school_id: string;
     school?: School | null;
     roles?: Role[] | null;
+    user?: User | null;
+    status?: string | null;
 }

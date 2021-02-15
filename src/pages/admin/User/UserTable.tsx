@@ -124,7 +124,10 @@ export default function UserTable(props: Props) {
     const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {
         const rows = memberships?.map((membership) => {
-            const roleNames = membership.roles?.map((r) => r.role_name) ?? [];
+            const roleNames =
+                membership.roles
+                    ?.filter((role) => role.status === `active`)
+                    .map((role) => role.role_name) ?? [];
             roleNames.sort(sortRoleNames);
             const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [];
             schoolNames?.sort(sortSchoolNames);
@@ -142,7 +145,10 @@ export default function UserTable(props: Props) {
         setRows(rows ?? []);
     }, [ memberships ]);
 
-    const roles = dataRoles?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [];
+    const roles =
+        dataRoles?.organization?.roles
+            ?.filter((role) => role.status === `active`)
+            .map((role) => role.role_name ?? ``) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {

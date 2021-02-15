@@ -1,7 +1,11 @@
 import { CREATE_NEW_ROLE } from "@/operations/mutations/createNewRole";
+import { DELETE_ROLE } from "@/operations/mutations/deleteRole";
 import { GET_ALL_GROUPS } from "@/operations/queries/getAllGroups";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
-import { Organization } from "@/types/graphQL";
+import {
+    Organization,
+    Role,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     useMutation,
@@ -50,6 +54,23 @@ export const useCreateRole = (
 ) => {
     return useMutation<CreateRoleResponse, CreateRoleRequest>(
         CREATE_NEW_ROLE,
+        options,
+    );
+};
+
+interface DeleteRoleRequest {
+    role_id: string;
+}
+
+interface DeleteRoleResponse {
+    role: Role;
+}
+
+export const useDeleteRole = (
+    options?: MutationHookOptions<DeleteRoleResponse, DeleteRoleRequest>,
+) => {
+    return useMutation<DeleteRoleResponse, DeleteRoleRequest>(
+        DELETE_ROLE,
         options,
     );
 };

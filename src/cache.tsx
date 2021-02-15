@@ -1,27 +1,31 @@
-import { InMemoryCache, makeVar, ReactiveVar } from "@apollo/client";
-import { ICurrentMembership } from "./models/CurrentMembership";
-import { IUserProfile } from "./models/UserProfile";
+import { CurrentMembership } from "./models/CurrentMembership";
+import { User } from "@/types/graphQL";
+import {
+    InMemoryCache,
+    makeVar,
+    ReactiveVar,
+} from "@apollo/client";
 
 /**
  * Set initial values when we create cache variables.
  */
 
-const currentMembershipInitialValue: ICurrentMembership = {
-    organization_email: "",
-    organization_id: "",
-    organization_name: "",
+const currentMembershipInitialValue: CurrentMembership = {
+    organization_email: ``,
+    organization_id: ``,
+    organization_name: ``,
 };
-const userIdInitialValue = "";
-const userProfileInitialValue: IUserProfile = {
-    avatar: "",
-    email: "",
-    user_id: "",
-    user_name: "",
+const userIdInitialValue = ``;
+const userProfileInitialValue: User = {
+    avatar: ``,
+    email: ``,
+    user_id: ``,
+    user_name: ``,
 };
 
-const organizationIdInitialValue = "";
+const organizationIdInitialValue = ``;
 
-export const currentMembershipVar: ReactiveVar<ICurrentMembership> = makeVar<ICurrentMembership>(
+export const currentMembershipVar: ReactiveVar<CurrentMembership> = makeVar<CurrentMembership>(
     currentMembershipInitialValue,
 );
 
@@ -29,7 +33,7 @@ export const userIdVar: ReactiveVar<string> = makeVar<string>(
     userIdInitialValue,
 );
 
-export const userProfileVar: ReactiveVar<IUserProfile> = makeVar<IUserProfile>(
+export const userProfileVar: ReactiveVar<User> = makeVar<User>(
     userProfileInitialValue,
 );
 

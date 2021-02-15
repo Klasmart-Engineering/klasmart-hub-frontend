@@ -18,7 +18,7 @@ import React, { useEffect } from "react";
 const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            width: theme.breakpoints.values.lg,
+            width: `100%`,
             borderRadius: 10,
             marginBottom: `20px`,
         },

@@ -1,6 +1,6 @@
 import { useGetOrganizationRolesPermissions } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
-import PermissionsActionsCard from "@/components/Roles/PermissionsActionsCard";
+import ActionsCard from "@/components/Roles/ActionsCard";
 import PermissionsCard from "@/components/Roles/PermissionsCard";
 import RoleAndNameDescriptionCard from "@/components/Roles/RoleAndNameDescriptionCard";
 import RoleInfoCard from "@/components/Roles/RoleInfoCard";
@@ -11,6 +11,7 @@ import {
     sectionHandler,
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
+import { Actions } from "@/pages/admin/Role/RoleTable";
 import { alphanumeric } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -38,7 +39,7 @@ import React, {
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         confirmationCard: {
-            width: theme.breakpoints.values.lg,
+            width: `100%`,
             height: `106px`,
             borderRadius: 10,
             marginBottom: `13px`,
@@ -84,6 +85,8 @@ export interface Role {
     role_id: string;
     role_name: string;
     permissions: Permission[];
+    status: string;
+    system_role?: boolean | null;
 }
 
 export interface PermissionDetail {
@@ -146,7 +149,8 @@ export default function CreateRoleDialog(props: Props) {
     });
     const [ permissionCategories, setPermissionCategories ] = useState<
         PermissionsCategory[]
-        >([]);
+    >([]);
+    const [ roleId, setRoleId ] = useState(``);
     const [ loading, setLoading ] = useState(true);
     const [ permissionsStepIsValid, setPermissionsStepIsValid ] = useState(false);
     const membership = useReactiveVar(currentMembershipVar);
@@ -206,6 +210,15 @@ export default function CreateRoleDialog(props: Props) {
             return `Role name should not be longer than 20 characters`;
 
         if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
+
+        if (
+            roles.find(
+                (role) => role.role_name === name && role.status === `active`,
+            )
+        ) {
+            return `That name is already been taken`;
+        }
+
         return ``;
     };
 
@@ -232,6 +245,85 @@ export default function CreateRoleDialog(props: Props) {
         setActiveStep(0);
     };
 
+    const getPermissionIdsByRoleId = (roles: Role[], roleId: string) => {
+        return roles
+            .filter((role) => role.role_id === roleId)
+            .reduce((acc: string[], role) => {
+                role.permissions.forEach((permission) => {
+                    acc.push(permission.permission_id);
+                });
+
+                return acc;
+            }, []);
+    };
+
+    const newRolesAndPermissionsByRoleId = (roles: Role[], roleId: string) => {
+        const newPermissions = [ ...permissionCategories ];
+
+        newPermissions.forEach((permissionCategory) => {
+            permissionCategory.groups.forEach((group) => {
+                group.permissionDetails.forEach((permissionDetail) => {
+                    permissionDetail.checked = !!getPermissionIdsByRoleId(
+                        roles,
+                        roleId,
+                    )?.includes(permissionDetail.permissionId);
+                });
+
+                group.open = group.permissionDetails.some(
+                    (permissionDetail) => permissionDetail.checked,
+                );
+
+                group.selectAll = false;
+            });
+        });
+
+        setPermissionCategories(newPermissions);
+    };
+
+    const copyRoleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRoleId(event.target.value);
+        newRolesAndPermissionsByRoleId(roles, event.target.value);
+    };
+
+    const handleClear = () => {
+        setRoleId(``);
+        const newPermissions = [ ...permissionCategories ];
+
+        newPermissions.forEach((permissionCategory) => {
+            permissionCategory.groups.forEach((group) => {
+                group.permissionDetails.forEach((permissionDetail) => {
+                    permissionDetail.checked = false;
+                });
+
+                group.open = false;
+                group.selectAll = false;
+            });
+        });
+
+        setPermissionCategories(newPermissions);
+    };
+
+    const handleResetDefault = () => {
+        newRolesAndPermissionsByRoleId(roles, roleId);
+    };
+
+    const actions: Actions = {
+        onChange: copyRoleHandler,
+        textFieldLabel: `Copy role from...`,
+        buttons: [
+            {
+                text: `Clear`,
+                disabled: false,
+                onClick: handleClear,
+            },
+            {
+                text: `Reset to Default`,
+                disabled: roleId.length === 0,
+                onClick: handleResetDefault,
+            },
+        ],
+    };
+
     function getStepContent(step: number) {
         switch (step) {
         case 0:
@@ -247,10 +339,10 @@ export default function CreateRoleDialog(props: Props) {
         case 1:
             return (
                 <>
-                    <PermissionsActionsCard
+                    <ActionsCard
                         roles={roles}
-                        permissionCategories={permissionCategories}
-                        setPermissionCategories={setPermissionCategories}
+                        roleId={roleId}
+                        actions={actions}
                     />
                     {permissionCategories.map((permissionsCategory) => (
                         <PermissionsCard

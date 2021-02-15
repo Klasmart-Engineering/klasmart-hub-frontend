@@ -11,6 +11,7 @@ export const GET_ORGANIZATION_USERS = gql`
                 memberships {
                     school_id
                     join_timestamp
+                    status
                     user {
                         user_id
                         user_name
@@ -48,15 +49,18 @@ export const GET_ORGANIZATION_USERS = gql`
                     email
                     phone
                     avatar
+                    full_name
                 }
                 roles {
                     role_id
                     role_name
+                    status
                 }
             }
             roles {
                 role_id
                 role_name
+                status
             }
         }
     }
