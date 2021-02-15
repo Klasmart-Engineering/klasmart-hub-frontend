@@ -162,7 +162,7 @@ export default function DeleteRoleDialog(props: Props) {
             );
             const organizationRoles =
                 roles.filter(
-                    (e: Role) => e.role_id !== row.id && e.status === `active`,
+                    (role) => role.role_id !== row.id && role.status === `active`,
                 ) ?? [];
             memberships?.forEach((membership) => {
                 const role = membership.roles?.find(
@@ -464,7 +464,7 @@ export default function DeleteRoleDialog(props: Props) {
                     <>
                         <ActionsCard
                             roles={roles.filter(
-                                (e: Role) => e.role_id !== row.id,
+                                (role) => role.role_id !== row.id,
                             )}
                             roleId={roleId}
                             actions={actions}
