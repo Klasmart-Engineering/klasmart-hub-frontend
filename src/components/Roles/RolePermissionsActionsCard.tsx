@@ -1,5 +1,4 @@
 import { Role } from "@/pages/admin/Role/CreateRoleDialog";
-import { Actions } from "@/pages/admin/Role/RoleTable";
 import {
     MenuItem,
     TextField,
@@ -13,7 +12,7 @@ import {
     Theme,
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
+import React, { ChangeEvent } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -49,17 +48,27 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+export interface RolePermissionsAction {
+    text: string;
+    disabled: boolean;
+    onClick: () => void;
+}
+
 interface Props {
     roles: Role[];
     roleId: string;
-    actions: Actions;
+    onChange: ((event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) | undefined;
+    actions?: RolePermissionsAction[];
+    textFieldLabel: string;
 }
 
-export default function ActionsCard(props: Props) {
+export default function RolePermissionsActionsCard(props: Props) {
     const {
         roles,
         roleId,
         actions,
+        textFieldLabel,
+        onChange,
     } = props;
     const classes = useStyles();
 
@@ -76,7 +85,7 @@ export default function ActionsCard(props: Props) {
                         </Typography>
                     </div>
                     <div className={classes.actionsContainer}>
-                        {actions.buttons?.map((action, index) => (
+                        {actions?.map((action, index) => (
                             <Button
                                 key={index}
                                 className={classes.margin}
@@ -92,22 +101,17 @@ export default function ActionsCard(props: Props) {
                         <TextField
                             select
                             id="filled"
-                            label={actions.textFieldLabel}
+                            label={textFieldLabel}
                             value={roleId}
                             variant="outlined"
-                            onChange={actions.onChange}
+                            onChange={onChange}
                         >
                             {roles
-                                .filter(
-                                    (role) =>
-                                        role.role_name &&
-                                        role.status === `active`,
-                                )
+                                .filter((role) => role.role_name && role.status === `active`)
                                 .map((role) => (
                                     <MenuItem
                                         key={role.role_id}
-                                        value={role.role_id}
-                                    >
+                                        value={role.role_id}>
                                         {role.role_name}
                                     </MenuItem>
                                 ))}

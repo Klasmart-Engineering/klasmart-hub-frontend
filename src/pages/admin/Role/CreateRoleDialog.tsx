@@ -1,9 +1,9 @@
 import { useGetOrganizationRolesPermissions } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
-import ActionsCard from "@/components/Roles/ActionsCard";
 import PermissionsCard from "@/components/Roles/PermissionsCard";
 import RoleAndNameDescriptionCard from "@/components/Roles/RoleAndNameDescriptionCard";
 import RoleInfoCard from "@/components/Roles/RoleInfoCard";
+import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
 import RoleReviewCard from "@/components/Roles/RoleReviewCard";
 import RoleStepper from "@/components/Roles/RoleStepper";
 import DialogAppBar from "@/components/styled/dialogAppBar";
@@ -11,7 +11,6 @@ import {
     sectionHandler,
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
-import { Actions } from "@/pages/admin/Role/RoleTable";
 import { alphanumeric } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -143,31 +142,29 @@ export default function CreateRoleDialog(props: Props) {
         setNewRole,
         handleClose,
     } = props;
-    const [ roleInfo, setRoleInfo ] = useState<RoleInfo>({
+    const initialRoleInfo = {
         name: ``,
         description: ``,
-    });
-    const [ permissionCategories, setPermissionCategories ] = useState<
-        PermissionsCategory[]
-    >([]);
+    };
+    const [ roleInfo, setRoleInfo ] = useState<RoleInfo>(initialRoleInfo);
+    const [ permissionCategories, setPermissionCategories ] = useState<PermissionsCategory[]>([]);
     const [ roleId, setRoleId ] = useState(``);
     const [ loading, setLoading ] = useState(true);
     const [ permissionsStepIsValid, setPermissionsStepIsValid ] = useState(false);
     const membership = useReactiveVar(currentMembershipVar);
-    const {
-        data: rolePermissions,
-        loading: rolePermissionsLoading,
-    } = useGetOrganizationRolesPermissions(membership.organization_id);
+    const { data: rolePermissions, loading: rolePermissionsLoading } = useGetOrganizationRolesPermissions(
+        membership.organization_id,
+    );
     const roles: Role[] = rolePermissions?.organization?.roles ?? [];
 
     useEffect(() => {
-        if (roles.length) {
+        if (open && roles.length) {
             const permissions = uniquePermissions(roles) ?? [];
             const data = sectionHandler(permissions) ?? [];
 
             setPermissionCategories(data);
         }
-    }, [ rolePermissions ]);
+    }, [ rolePermissions, open ]);
 
     useEffect(() => {
         if (!rolePermissionsLoading && permissionCategories.length) {
@@ -175,28 +172,29 @@ export default function CreateRoleDialog(props: Props) {
         }
     }, [ rolePermissionsLoading, permissionCategories ]);
 
-    const reviewPermissions = permissionCategories.reduce(
-        (acc: PermissionsCategory[], permissionsCategory) => {
-            const hasPermissions = permissionsCategory.groups.reduce(
-                (acc: Group[], group) => {
-                    if (
-                        group.permissionDetails.some(
-                            (permissionDetail) => permissionDetail.checked,
-                        )
-                    ) {
-                        acc.push(group);
-                    }
+    useEffect(() => {
+        if (!open) {
+            setRoleInfo(initialRoleInfo);
+            setRoleId(``);
+            setPermissionCategories([]);
+        }
+    }, [ open ]);
 
-                    return acc;
-                },
-                [],
-            );
+    const reviewPermissions = permissionCategories.reduce(
+        (permissionsCategories: PermissionsCategory[], permissionsCategory) => {
+            const hasPermissions = permissionsCategory.groups.reduce((groups: Group[], group) => {
+                if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
+                    groups.push(group);
+                }
+
+                return groups;
+            }, []);
 
             if (hasPermissions.length) {
-                acc.push(permissionsCategory);
+                permissionsCategories.push(permissionsCategory);
             }
 
-            return acc;
+            return permissionsCategories;
         },
         [],
     ) as PermissionsCategory[];
@@ -206,16 +204,11 @@ export default function CreateRoleDialog(props: Props) {
 
         if (name.length < 2) return `Role name should be at least 2 characters`;
 
-        if (name.length > 20)
-            return `Role name should not be longer than 20 characters`;
+        if (name.length > 20) return `Role name should not be longer than 20 characters`;
 
         if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
 
-        if (
-            roles.find(
-                (role) => role.role_name === name && role.status === `active`,
-            )
-        ) {
+        if (roles.find((role) => role.role_name === name && role.status === `active`)) {
             return `That name is already been taken`;
         }
 
@@ -223,8 +216,7 @@ export default function CreateRoleDialog(props: Props) {
     };
 
     const roleDescriptionTextHelper = (name: string): string => {
-        if (name.length > 30)
-            return `Description can't be longer than 30 characters`;
+        if (name.length > 30) return `Description can't be longer than 30 characters`;
 
         if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
         return ``;
@@ -232,8 +224,7 @@ export default function CreateRoleDialog(props: Props) {
 
     const roleInfoStepIsValid = (): boolean => {
         return (
-            roleNameTextHelper(roleInfo.name).length > 0 ||
-            roleDescriptionTextHelper(roleInfo.description).length > 0
+            roleNameTextHelper(roleInfo.name).length > 0 || roleDescriptionTextHelper(roleInfo.description).length > 0
         );
     };
 
@@ -248,12 +239,12 @@ export default function CreateRoleDialog(props: Props) {
     const getPermissionIdsByRoleId = (roles: Role[], roleId: string) => {
         return roles
             .filter((role) => role.role_id === roleId)
-            .reduce((acc: string[], role) => {
+            .reduce((permissionIds: string[], role) => {
                 role.permissions.forEach((permission) => {
-                    acc.push(permission.permission_id);
+                    permissionIds.push(permission.permission_id);
                 });
 
-                return acc;
+                return permissionIds;
             }, []);
     };
 
@@ -263,17 +254,14 @@ export default function CreateRoleDialog(props: Props) {
         newPermissions.forEach((permissionCategory) => {
             permissionCategory.groups.forEach((group) => {
                 group.permissionDetails.forEach((permissionDetail) => {
-                    permissionDetail.checked = !!getPermissionIdsByRoleId(
-                        roles,
-                        roleId,
-                    )?.includes(permissionDetail.permissionId);
+                    permissionDetail.checked = !!getPermissionIdsByRoleId(roles, roleId)?.includes(
+                        permissionDetail.permissionId,
+                    );
                 });
 
-                group.open = group.permissionDetails.some(
-                    (permissionDetail) => permissionDetail.checked,
-                );
+                group.open = group.permissionDetails.some((permissionDetail) => permissionDetail.checked);
 
-                group.selectAll = false;
+                group.selectAll = group.permissionDetails.every((permissionDetail) => permissionDetail.checked);
             });
         });
 
@@ -307,23 +295,6 @@ export default function CreateRoleDialog(props: Props) {
         newRolesAndPermissionsByRoleId(roles, roleId);
     };
 
-    const actions: Actions = {
-        onChange: copyRoleHandler,
-        textFieldLabel: `Copy role from...`,
-        buttons: [
-            {
-                text: `Clear`,
-                disabled: false,
-                onClick: handleClear,
-            },
-            {
-                text: `Reset to Default`,
-                disabled: roleId.length === 0,
-                onClick: handleResetDefault,
-            },
-        ],
-    };
-
     function getStepContent(step: number) {
         switch (step) {
         case 0:
@@ -339,19 +310,30 @@ export default function CreateRoleDialog(props: Props) {
         case 1:
             return (
                 <>
-                    <ActionsCard
+                    <RolePermissionsActionsCard
                         roles={roles}
                         roleId={roleId}
-                        actions={actions}
+                        actions={[
+                            {
+                                text: `Clear`,
+                                disabled: false,
+                                onClick: handleClear,
+                            },
+                            {
+                                text: `Reset to Default`,
+                                disabled: roleId.length === 0,
+                                onClick: handleResetDefault,
+                            },
+                        ]}
+                        textFieldLabel={`Copy role from...`}
+                        onChange={copyRoleHandler}
                     />
                     {permissionCategories.map((permissionsCategory) => (
                         <PermissionsCard
                             key={permissionsCategory.category}
                             category={permissionsCategory.category}
                             groups={permissionsCategory.groups}
-                            setPermissionsStepIsValid={
-                                setPermissionsStepIsValid
-                            }
+                            setPermissionsStepIsValid={setPermissionsStepIsValid}
                             permissionCategories={permissionCategories}
                         />
                     ))}
@@ -368,8 +350,7 @@ export default function CreateRoleDialog(props: Props) {
                                     <Typography
                                         variant="body1"
                                         color="textSecondary"
-                                        component="div"
-                                    >
+                                        component="div">
                                         <div
                                             style={{
                                                 padding: `10px`,
@@ -383,20 +364,14 @@ export default function CreateRoleDialog(props: Props) {
                         </Card>
                     ) : (
                         <>
-                            <RoleAndNameDescriptionCard
-                                roleInfo={roleInfo}
-                            />
-                            {reviewPermissions.map(
-                                (permissionsCategory) => (
-                                    <RoleReviewCard
-                                        key={permissionsCategory.category}
-                                        category={
-                                            permissionsCategory.category
-                                        }
-                                        groups={permissionsCategory.groups}
-                                    />
-                                ),
-                            )}
+                            <RoleAndNameDescriptionCard roleInfo={roleInfo} />
+                            {reviewPermissions.map((permissionsCategory) => (
+                                <RoleReviewCard
+                                    key={permissionsCategory.category}
+                                    category={permissionsCategory.category}
+                                    groups={permissionsCategory.groups}
+                                />
+                            ))}
                         </>
                     )}
                 </>
@@ -408,20 +383,17 @@ export default function CreateRoleDialog(props: Props) {
 
     useEffect(() => {
         if (activeStep === 2) {
-            const permissions = permissionCategories.reduce(
-                (acc: string[], permissionsCategory) => {
-                    permissionsCategory.groups.forEach((group) => {
-                        group.permissionDetails.forEach((permissionDetail) => {
-                            if (permissionDetail.checked) {
-                                acc.push(permissionDetail.permissionId);
-                            }
-                        });
+            const permissions = permissionCategories.reduce((permissionIds: string[], permissionsCategory) => {
+                permissionsCategory.groups.forEach((group) => {
+                    group.permissionDetails.forEach((permissionDetail) => {
+                        if (permissionDetail.checked) {
+                            permissionIds.push(permissionDetail.permissionId);
+                        }
                     });
+                });
 
-                    return acc;
-                },
-                [],
-            );
+                return permissionIds;
+            }, []);
 
             setNewRole({
                 role_name: roleInfo.name,
@@ -461,8 +433,7 @@ export default function CreateRoleDialog(props: Props) {
                 direction="row"
                 justify="center"
                 spacing={2}
-                className={classes.menuContainer}
-            >
+                className={classes.menuContainer}>
                 {getStepContent(activeStep)}
             </Grid>
         </Dialog>

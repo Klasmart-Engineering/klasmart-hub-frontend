@@ -9,12 +9,10 @@ import {
 } from "@/api/roles";
 import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "@/cache";
-import ActionsCard from "@/components/Roles/ActionsCard";
+import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
 import { Role } from "@/pages/admin/Role/CreateRoleDialog";
-import {
-    Actions,
-    RoleRow,
-} from "@/pages/admin/Role/RoleTable";
+import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
 import {
     Avatar,
@@ -121,26 +119,22 @@ interface Props {
 }
 
 export default function DeleteRoleDialog(props: Props) {
-    const classes = useStyles();
-    const intl = useIntl();
-    const confirm = useConfirm();
-    const { enqueueSnackbar } = useSnackbar();
     const {
         open,
         handleClose,
         row,
     } = props;
+    const classes = useStyles();
+    const intl = useIntl();
+    const confirm = useConfirm();
+    const { enqueueSnackbar } = useSnackbar();
     const [ roleId, setRoleId ] = useState(``);
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const membership = useReactiveVar(currentMembershipVar);
-    const {
-        data: organizationRoles,
-        loading: organizationRolesLoading,
-    } = useGetOrganizationRolesPermissions(membership.organization_id);
-    const {
-        data: organizationMemberships,
-        loading: organizationMembershipsLoading,
-    } = useGetOrganizationMemberships({
+    const { data: organizationRoles, loading: organizationRolesLoading } = useGetOrganizationRolesPermissions(
+        membership.organization_id,
+    );
+    const { data: organizationMemberships, loading: organizationMembershipsLoading } = useGetOrganizationMemberships({
         fetchPolicy: `network-only`,
         variables: {
             organization_id: membership.organization_id,
@@ -150,24 +144,16 @@ export default function DeleteRoleDialog(props: Props) {
     const [ deleteRole ] = useDeleteRole();
     const { refetch } = useGetAllRoles(membership.organization_id);
     const roles: Role[] = organizationRoles?.organization?.roles ?? [];
-    const memberships =
-        organizationMemberships?.organization?.memberships ?? [];
+    const memberships = organizationMemberships?.organization?.memberships ?? [];
     const schools = organizationMemberships?.organization?.schools ?? [];
 
     useEffect(() => {
-        if (roles.length && memberships.length && schools.length) {
+        if (open && roles.length && memberships.length && schools.length) {
             const users: UserRow[] = [];
-            const defaultRole = roles.find(
-                (role) => role.role_name === `Student` && role.system_role,
-            );
-            const organizationRoles =
-                roles.filter(
-                    (role) => role.role_id !== row.id && role.status === `active`,
-                ) ?? [];
+            const defaultRole = roles.find((role) => role.role_name === `Student` && role.system_role);
+            const organizationRoles = roles.filter((role) => role.role_id !== row.id && role.status === `active`) ?? [];
             memberships?.forEach((membership) => {
-                const role = membership.roles?.find(
-                    (role) => role.role_id === row.id,
-                );
+                const role = membership.roles?.find((role) => role.role_id === row.id);
 
                 if (role && membership.status === `active`) {
                     users.push({
@@ -183,16 +169,9 @@ export default function DeleteRoleDialog(props: Props) {
 
             schools?.forEach((school) => {
                 school.memberships?.forEach((schoolMembership) => {
-                    const role = schoolMembership.roles?.find(
-                        (role) => role.role_id === row.id,
-                    );
+                    const role = schoolMembership.roles?.find((role) => role.role_id === row.id);
                     if (role && schoolMembership.status === `active`) {
-                        if (
-                            !users.find(
-                                (user) =>
-                                    user.id === schoolMembership.user?.user_id,
-                            )
-                        ) {
+                        if (!users.find((user) => user.id === schoolMembership.user?.user_id)) {
                             users.push({
                                 id: schoolMembership.user?.user_id ?? ``,
                                 name: schoolMembership.user?.full_name ?? ``,
@@ -212,31 +191,36 @@ export default function DeleteRoleDialog(props: Props) {
         memberships,
         schools,
         roles,
+        open,
     ]);
 
-    const roleChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newRow = [ ...rows ];
+    useEffect(() => {
+        if (!open) {
+            setRoleId(``);
+        }
+    }, [ open ]);
 
-        newRow.forEach((user) => {
+    const roleChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newRows = [ ...rows ];
+
+        newRows.forEach((user) => {
             if (user.id === event.target.name) {
                 user.newRoleId = event.target.value;
             }
         });
 
-        setRows(newRow);
+        setRows(newRows);
     };
 
-    const reAssignAllUsersHandler = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        const newRow = [ ...rows ];
+    const reAssignAllUsersHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newRows = [ ...rows ];
 
-        newRow.forEach((user) => {
+        newRows.forEach((user) => {
             setRoleId(event.target.value);
             user.newRoleId = event.target.value;
         });
 
-        setRows(newRow);
+        setRows(newRows);
     };
 
     const deleteRoleHandler = async () => {
@@ -253,17 +237,13 @@ export default function DeleteRoleDialog(props: Props) {
             }
 
             const findOrganizationMembership = (row: UserRow) =>
-                memberships?.find(
-                    (membership) => membership.user?.user_id === row.id,
-                );
+                memberships?.find((membership) => membership.user?.user_id === row.id);
 
             for (const user of rows) {
                 const userMembership = findOrganizationMembership(user);
 
                 const organizationRoleIdsHandler = (): string[] => {
-                    const roleIds =
-                        userMembership?.roles?.map((role) => role.role_id) ??
-                        [];
+                    const roleIds = userMembership?.roles?.map((role) => role.role_id) ?? [];
                     if (!roleIds.includes(user.newRoleId)) {
                         roleIds.push(user.newRoleId);
                     }
@@ -275,10 +255,7 @@ export default function DeleteRoleDialog(props: Props) {
                     variables: {
                         organization_id: membership.organization_id,
                         organization_role_ids: organizationRoleIdsHandler(),
-                        school_ids:
-                            userMembership?.schoolMemberships?.map(
-                                (school) => school.school_id,
-                            ) ?? [],
+                        school_ids: userMembership?.schoolMemberships?.map((school) => school.school_id) ?? [],
                         email: userMembership?.user?.email,
                     },
                 });
@@ -302,10 +279,6 @@ export default function DeleteRoleDialog(props: Props) {
         }
     };
 
-    const actions: Actions = {
-        onChange: reAssignAllUsersHandler,
-        textFieldLabel: `Reassign all users to`,
-    };
     const columns: TableColumn<UserRow>[] = [
         {
             id: `id`,
@@ -326,17 +299,13 @@ export default function DeleteRoleDialog(props: Props) {
                         src={row.avatar ?? ``}
                         className={classes.avatar}
                         style={{
-                            backgroundColor: row.avatar
-                                ? undefined
-                                : utils.stringToColor(row.name),
+                            backgroundColor: row.avatar ? undefined : utils.stringToColor(row.name),
                         }}
                     >
                         <Typography
                             noWrap
                             variant="inherit">
-                            {utils.nameToInitials(row.name, 3) || (
-                                <PersonIcon />
-                            )}
+                            {utils.nameToInitials(row.name, 3) || <PersonIcon />}
                         </Typography>
                     </Avatar>
                     <span>{row.name}</span>
@@ -392,8 +361,7 @@ export default function DeleteRoleDialog(props: Props) {
                         edge="start"
                         color="inherit"
                         aria-label="close"
-                        onClick={handleClose}
-                    >
+                        onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
                     <Grid
@@ -404,8 +372,7 @@ export default function DeleteRoleDialog(props: Props) {
                             alt="kidsloop logo"
                             className={classes.title}
                             src={KidsloopLogo}
-                            height={32}
-                        />
+                            height={32} />
                         <Typography
                             id="nav-menu-title"
                             variant="h6">
@@ -420,16 +387,14 @@ export default function DeleteRoleDialog(props: Props) {
                         <div>
                             <Button
                                 className={classes.backButton}
-                                onClick={handleClose}
-                            >
+                                onClick={handleClose}>
                                 Cancel
                             </Button>
                             <Fab
                                 color="primary"
                                 label="Next"
                                 variant="extended"
-                                onClick={deleteRoleHandler}
-                            />
+                                onClick={deleteRoleHandler} />
                         </div>
                     </Grid>
                 </Toolbar>
@@ -439,8 +404,7 @@ export default function DeleteRoleDialog(props: Props) {
                 direction="row"
                 justify="center"
                 spacing={2}
-                className={classes.menuContainer}
-            >
+                className={classes.menuContainer}>
                 {organizationRolesLoading || organizationMembershipsLoading ? (
                     <Card className={classes.root}>
                         <CardContent>
@@ -448,8 +412,7 @@ export default function DeleteRoleDialog(props: Props) {
                             <Typography
                                 variant="body1"
                                 color="textSecondary"
-                                component="div"
-                            >
+                                component="div">
                                 <div
                                     style={{
                                         paddingTop: `10px`,
@@ -462,12 +425,11 @@ export default function DeleteRoleDialog(props: Props) {
                     </Card>
                 ) : (
                     <>
-                        <ActionsCard
-                            roles={roles.filter(
-                                (role) => role.role_id !== row.id,
-                            )}
+                        <RolePermissionsActionsCard
+                            roles={roles.filter((role) => role.role_id !== row.id)}
                             roleId={roleId}
-                            actions={actions}
+                            textFieldLabel={`Reassign all users to`}
+                            onChange={reAssignAllUsersHandler}
                         />
 
                         <Paper className={classes.root}>
@@ -476,7 +438,7 @@ export default function DeleteRoleDialog(props: Props) {
                                 rows={rows}
                                 idField="id"
                                 orderBy="organizationRoles"
-                                localization={{
+                                localization={getTableLocalization(intl, {
                                     toolbar: {
                                         title: row.role,
                                     },
@@ -486,7 +448,7 @@ export default function DeleteRoleDialog(props: Props) {
                                     body: {
                                         noData: `There are no users associated with this role`,
                                     },
-                                }}
+                                })}
                             />
                         </Paper>
                     </>
