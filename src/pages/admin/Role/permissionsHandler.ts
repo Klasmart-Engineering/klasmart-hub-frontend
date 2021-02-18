@@ -14,58 +14,36 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
     const permissions: Permission[] = [];
 
     roles
-        .filter((role) => systemRoles.includes(role.role_name))
-        .forEach((role, roleIndex) => {
-            role.permissions?.forEach((permission, permissionIndex) => {
-                if (roles[roleIndex]?.permissions[permissionIndex]) {
-                    const permissionId =
-                        roles[roleIndex].permissions[permissionIndex]
-                            .permission_id;
-                    const permissionGroup =
-                        roles[roleIndex].permissions[permissionIndex]
-                            .permission_group;
-                    const permissionLevel =
-                        roles[roleIndex].permissions[permissionIndex]
-                            .permission_level;
-                    const permissionCategory =
-                        roles[roleIndex].permissions[permissionIndex]
-                            .permission_category;
-                    const permissionDescription =
-                        roles[roleIndex].permissions[permissionIndex]
-                            .permission_description;
+        ?.filter((role) => systemRoles.includes(role.role_name))
+        .forEach((role) => {
+            role.permissions?.forEach((permission) => {
+                const permissionId = permission.permission_id;
+                const permissionGroup = permission.permission_group;
+                const permissionLevel = permission.permission_level;
+                const permissionCategory = permission.permission_category;
+                const permissionDescription = permission.permission_description;
 
-                    const index = permissions.findIndex(
-                        (permission) =>
-                            permission.permission_id === permissionId,
-                    );
+                const index = permissions.findIndex(
+                    (permission: Permission) => permission.permission_id === permissionId,
+                );
 
-                    if (
-                        index === -1 &&
-                        permissionId &&
-                        permissionGroup &&
-                        permissionCategory &&
-                        permissionLevel &&
-                        permissionDescription
-                    ) {
-                        permissions.push({
-                            permission_id: permissionId,
-                            permission_name: permissionId,
-                            permission_group: permissionGroup,
-                            permission_level: permissionLevel,
-                            permission_category: permissionCategory,
-                            permission_description: permissionDescription,
-                            levels: [ permissionLevel ],
-                        });
-                    } else {
-                        if (
-                            permissions[index] &&
-                            !permissions[index]?.levels?.includes(
-                                permissionLevel,
-                            )
-                        ) {
-                            permissions[index]?.levels?.push(permissionLevel);
-                        }
-                    }
+                if (
+                    index === -1 &&
+                    permissionId &&
+                    permissionGroup &&
+                    permissionLevel &&
+                    permissionCategory &&
+                    permissionDescription
+                ) {
+                    permissions.push({
+                        permission_id: permissionId,
+                        permission_name: permissionId,
+                        permission_group: permissionGroup,
+                        permission_level: permissionLevel,
+                        permission_category: permissionCategory,
+                        permission_description: permissionDescription,
+                        levels: [ permissionLevel ],
+                    });
                 }
             });
         });
@@ -101,17 +79,13 @@ export const uniquePermissions = (roles: Role[]): Permission[] => {
    }
  ]
  */
-export const sectionHandler = (
-    permissions: Permission[] = [],
-): PermissionsCategory[] => {
+export const sectionHandler = (permissions: Permission[] = []): PermissionsCategory[] => {
     const data: PermissionsCategory[] = [];
 
-    permissions.forEach((permission, permissionIndex) => {
-        const category = permissions[permissionIndex].permission_category;
-        const group = permissions[permissionIndex].permission_group;
-        const categoryIndex = data.findIndex(
-            (item) => item.category === category,
-        );
+    permissions?.forEach((permission) => {
+        const category = permission.permission_category;
+        const group = permission.permission_group;
+        const categoryIndex = data.findIndex((item) => item.category === category);
 
         if (categoryIndex === -1) {
             data.push({
@@ -127,9 +101,7 @@ export const sectionHandler = (
             });
         } else {
             data[categoryIndex].groups.forEach(() => {
-                const permissionIndex = data[categoryIndex].groups.findIndex(
-                    (item) => item.group === group,
-                );
+                const permissionIndex = data[categoryIndex].groups.findIndex((item) => item.group === group);
 
                 if (permissionIndex === -1) {
                     data[categoryIndex].groups.push({
@@ -143,70 +115,51 @@ export const sectionHandler = (
         }
     });
 
-    permissions.forEach((permission, permissionIndex) => {
-        const uniquePermission = permissions[permissionIndex];
+    permissions?.forEach((permission) => {
+        const uniquePermission = permission;
 
         data.forEach((role, roleIndex) => {
-            const category = data[roleIndex].category;
+            const category = role.category;
 
-            data[roleIndex].groups.forEach(
-                (group, sectionIndex) => {
-                    const permission = data[roleIndex].groups[sectionIndex];
+            role.groups.forEach((group, sectionIndex) => {
+                const permission = group;
 
-                    if (!permission.permissionDetails.length) {
+                if (!permission.permissionDetails.length) {
+                    if (
+                        category === uniquePermission.permission_category &&
+                        permission.group === uniquePermission.permission_group
+                    ) {
+                        data[roleIndex].groups[sectionIndex][`permissionDetails`] = [
+                            {
+                                permissionName: uniquePermission.permission_name,
+                                permissionId: uniquePermission.permission_id,
+                                permissionDescription: uniquePermission.permission_description,
+                                checked: false,
+                                levels: uniquePermission.levels,
+                            },
+                        ];
+                    }
+                } else {
+                    const permissionDetailsIndex = group.permissionDetails.findIndex(
+                        (item) => item.permissionId === uniquePermission.permission_id,
+                    );
+
+                    if (permissionDetailsIndex === -1) {
                         if (
                             category === uniquePermission.permission_category &&
-                            permission.group ===
-                                uniquePermission.permission_group
+                            permission.group === uniquePermission.permission_group
                         ) {
-                            data[roleIndex].groups[sectionIndex][
-                                `permissionDetails`
-                            ] = [
-                                {
-                                    permissionName:
-                                        uniquePermission.permission_name,
-                                    permissionId:
-                                        uniquePermission.permission_id,
-                                    permissionDescription:
-                                        uniquePermission.permission_description,
-                                    checked: false,
-                                    levels: uniquePermission.levels,
-                                },
-                            ];
-                        }
-                    } else {
-                        const permissionDetailsIndex = data[roleIndex].groups[
-                            sectionIndex
-                        ].permissionDetails.findIndex(
-                            (item) =>
-                                item.permissionId ===
-                                uniquePermission.permission_id,
-                        );
-
-                        if (permissionDetailsIndex === -1) {
-                            if (
-                                category ===
-                                    uniquePermission.permission_category &&
-                                permission.group ===
-                                    uniquePermission.permission_group
-                            ) {
-                                data[roleIndex].groups[
-                                    sectionIndex
-                                ].permissionDetails.push({
-                                    permissionName:
-                                        uniquePermission.permission_name,
-                                    permissionId:
-                                        uniquePermission.permission_id,
-                                    permissionDescription:
-                                        uniquePermission.permission_description,
-                                    checked: false,
-                                    levels: uniquePermission.levels,
-                                });
-                            }
+                            data[roleIndex].groups[sectionIndex].permissionDetails.push({
+                                permissionName: uniquePermission.permission_name,
+                                permissionId: uniquePermission.permission_id,
+                                permissionDescription: uniquePermission.permission_description,
+                                checked: false,
+                                levels: uniquePermission.levels,
+                            });
                         }
                     }
-                },
-            );
+                }
+            });
         });
     });
 

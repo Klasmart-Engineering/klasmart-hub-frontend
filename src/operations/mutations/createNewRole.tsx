@@ -15,7 +15,6 @@ export const CREATE_NEW_ROLE = gql`
                 role_name
                 role_id
                 edit_permissions(permission_names: $permission_names) {
-                    role_id
                     permission_id
                 }
             }
