@@ -65,8 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(2, 2),
             },
         },
-
-        //
         avatar: {
             width: theme.spacing(3),
             height: theme.spacing(3),
