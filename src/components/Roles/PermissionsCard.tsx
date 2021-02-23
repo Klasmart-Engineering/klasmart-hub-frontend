@@ -1,7 +1,8 @@
 import {
     Group,
     PermissionsCategory,
-} from "@/pages/admin/Role/CreateRoleDialog";
+} from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { formatPermissionName } from "@/utils/validations";
 import {
     Accordion,
     AccordionDetails,
@@ -92,9 +93,7 @@ export default function PermissionsCard(props: Props) {
         permissionCategories,
     } = props;
     const classes = useStyles();
-    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(
-        groups,
-    );
+    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(groups);
 
     const handleOpenAccordion = (index: number) => {
         const newPermissions = [ ...cardPermissions ];
@@ -102,13 +101,9 @@ export default function PermissionsCard(props: Props) {
         setCardPermissions(newPermissions);
     };
 
-    const handlePermissionCheck = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handlePermissionCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPermissions = [ ...cardPermissions ];
-        const accordionDetails = newPermissions[
-            event.target.tabIndex
-        ].permissionDetails.map((permissionDetail) => {
+        const accordionDetails = newPermissions[event.target.tabIndex].permissionDetails.map((permissionDetail) => {
             return permissionDetail.permissionName === event.target.id
                 ? {
                     ...permissionDetail,
@@ -117,9 +112,7 @@ export default function PermissionsCard(props: Props) {
                 : permissionDetail;
         });
 
-        newPermissions[
-            event.target.tabIndex
-        ].permissionDetails = accordionDetails;
+        newPermissions[event.target.tabIndex].permissionDetails = accordionDetails;
 
         if (!event.target.checked) {
             newPermissions[event.target.tabIndex].selectAll = false;
@@ -128,22 +121,16 @@ export default function PermissionsCard(props: Props) {
         setCardPermissions(newPermissions);
     };
 
-    const handleSelectAllPermissions = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleSelectAllPermissions = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPermissions = [ ...cardPermissions ];
-        const accordionDetails = newPermissions[
-            event.target.tabIndex
-        ].permissionDetails.map((permissionDetail) => {
+        const accordionDetails = newPermissions[event.target.tabIndex].permissionDetails.map((permissionDetail) => {
             return {
                 ...permissionDetail,
                 checked: event.target.checked,
             };
         });
 
-        newPermissions[
-            event.target.tabIndex
-        ].permissionDetails = accordionDetails;
+        newPermissions[event.target.tabIndex].permissionDetails = accordionDetails;
         newPermissions[event.target.tabIndex].selectAll = event.target.checked;
 
         setCardPermissions(newPermissions);
@@ -152,11 +139,7 @@ export default function PermissionsCard(props: Props) {
     useEffect(() => {
         const newPermissions = [ ...cardPermissions ];
         newPermissions.forEach((group) => {
-            if (
-                group.permissionDetails.some(
-                    (permissionDetail) => permissionDetail.checked,
-                )
-            ) {
+            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
                 group.open = true;
             }
         });
@@ -167,9 +150,7 @@ export default function PermissionsCard(props: Props) {
     useEffect(() => {
         const hasPermissions = permissionCategories.some((permissionCategory) =>
             permissionCategory.groups.some((group) =>
-                group.permissionDetails.some(
-                    (permissionDetail) => permissionDetail.checked,
-                ),
+                group.permissionDetails.some((permissionDetail) => permissionDetail.checked),
             ),
         );
 
@@ -187,110 +168,90 @@ export default function PermissionsCard(props: Props) {
             <TableSearch
                 value=""
                 onChange={onChange} />
-            {cardPermissions.map((groupElement, groupIndex) => (
-                <Accordion
-                    key={`Accordion${groupElement.group}`}
-                    expanded={groupElement.open}
-                >
-                    <AccordionSummary
-                        key={`AccordionSummary${groupElement.group}`}
-                        aria-label="Expand"
-                        aria-controls="additional-actions1-content"
-                        id="additional-actions1-header"
-                        onClick={() => handleOpenAccordion(groupIndex)}
-                    >
-                        <FormControlLabel
-                            className={classes.formControlLabel}
-                            aria-label="Acknowledge"
-                            control={
-                                <Checkbox
-                                    checked={groupElement.selectAll}
-                                    tabIndex={groupIndex}
-                                    onChange={handleSelectAllPermissions}
-                                />
-                            }
-                            label=""
-                            onClick={(event) => {
-                                // The click event of the nested action will propagate up and
-                                // expand the accordion unless you explicitly stop it.
-                                event.stopPropagation();
-                            }}
-                            onFocus={(event) => event.stopPropagation()}
-                        />
-                        <div className={classes.formControlContainer}>
-                            <div className={classes.arrowIcon}>
-                                {groupElement.open ? (
-                                    <ArrowDropUpIcon />
-                                ) : (
-                                    <ArrowDropDown />
-                                )}
+            {cardPermissions.map((groupElement, groupIndex) => {
+                const checked = groupElement.permissionDetails.every((permissionDetail) => permissionDetail.checked);
+                const indeterminate =
+                    groupElement.permissionDetails.some((permissionDetail) => permissionDetail.checked) && !checked;
+
+                return (
+                    <Accordion
+                        key={`Accordion${groupElement.group}`}
+                        expanded={groupElement.open}>
+                        <AccordionSummary
+                            key={`AccordionSummary${groupElement.group}`}
+                            aria-label="Expand"
+                            aria-controls="additional-actions1-content"
+                            id="additional-actions1-header"
+                            onClick={() => handleOpenAccordion(groupIndex)}
+                        >
+                            <FormControlLabel
+                                className={classes.formControlLabel}
+                                aria-label="Acknowledge"
+                                control={
+                                    <Checkbox
+                                        checked={checked}
+                                        indeterminate={indeterminate}
+                                        tabIndex={groupIndex}
+                                        onChange={handleSelectAllPermissions}
+                                    />
+                                }
+                                label=""
+                                onClick={(event) => {
+                                    // The click event of the nested action will propagate up and
+                                    // expand the accordion unless you explicitly stop it.
+                                    event.stopPropagation();
+                                }}
+                                onFocus={(event) => event.stopPropagation()}
+                            />
+                            <div className={classes.formControlContainer}>
+                                <div className={classes.arrowIcon}>
+                                    {groupElement.open ? <ArrowDropUpIcon /> : <ArrowDropDown />}
+                                </div>
+                                <div
+                                    color="textSecondary"
+                                    className={classes.category}>
+                                    {groupElement.group}
+                                </div>
                             </div>
-                            <div
-                                color="textSecondary"
-                                className={classes.category}
-                            >
-                                {groupElement.group}
-                            </div>
-                        </div>
-                    </AccordionSummary>
-                    <AccordionDetails
-                        key={`AccordionDetails${groupElement.group}`}
-                    >
-                        <div className={classes.accordionContainer}>
-                            {groupElement.permissionDetails.map(
-                                (permissionDetail) => (
+                        </AccordionSummary>
+                        <AccordionDetails key={`AccordionDetails${groupElement.group}`}>
+                            <div className={classes.accordionContainer}>
+                                {groupElement.permissionDetails.map((permissionDetail) => (
                                     <React.Fragment
                                         key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
                                     >
                                         <div className={classes.accountItem}>
                                             <div>
                                                 <Checkbox
-                                                    checked={
-                                                        permissionDetail.checked
-                                                    }
-                                                    id={
-                                                        permissionDetail.permissionName
-                                                    }
+                                                    checked={permissionDetail.checked}
+                                                    id={permissionDetail.permissionName}
                                                     tabIndex={groupIndex}
-                                                    onChange={
-                                                        handlePermissionCheck
-                                                    }
+                                                    onChange={handlePermissionCheck}
                                                 />
-                                                {
-                                                    permissionDetail.permissionName
-                                                }
+                                                {formatPermissionName(permissionDetail.permissionName)}
                                             </div>
                                         </div>
                                         <div className={classes.accountItem}>
-                                            {
-                                                permissionDetail.permissionDescription
-                                            }
+                                            {permissionDetail.permissionDescription}
                                         </div>
                                         <div className={classes.accountItem}>
-                                            <div
-                                                className={classes.tagContainer}
-                                            >
-                                                {permissionDetail.levels?.map(
-                                                    (level) => (
-                                                        <div
-                                                            key={level}
-                                                            className={
-                                                                classes.tagText
-                                                            }
-                                                        >
-                                                            {level}
-                                                        </div>
-                                                    ),
-                                                )}
+                                            <div className={classes.tagContainer}>
+                                                {permissionDetail.levels?.map((level) => (
+                                                    <div
+                                                        key={level}
+                                                        className={classes.tagText}>
+                                                        {level}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </React.Fragment>
-                                ),
-                            )}
-                        </div>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+                                ))}
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                );
+            })}
         </Card>
     );
 }

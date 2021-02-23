@@ -1,4 +1,4 @@
-import { RoleInfo } from "@/pages/admin/Role/CreateRoleDialog";
+import { RoleInfo } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {
@@ -8,7 +8,7 @@ import {
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
     createStyles({
         root: {
             width: `100%`,

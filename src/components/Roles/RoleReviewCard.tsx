@@ -1,4 +1,5 @@
-import { Group } from "@/pages/admin/Role/CreateRoleDialog";
+import { Group } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { formatPermissionName } from "@/utils/validations";
 import {
     Accordion,
     AccordionDetails,
@@ -68,9 +69,7 @@ interface Props {
 export default function RoleReviewCard(props: Props) {
     const classes = useStyles();
     const { category, groups } = props;
-    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(
-        groups,
-    );
+    const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(groups);
 
     const handleOpenAccordion = (index: number) => {
         const newPermissions = [ ...cardPermissions ];
@@ -81,42 +80,30 @@ export default function RoleReviewCard(props: Props) {
     useEffect(() => {
         const newPermissions = [ ...cardPermissions ];
         newPermissions.forEach((group) => {
-            if (
-                group.permissionDetails.some(
-                    (permissionDetail) => permissionDetail.checked,
-                )
-            ) {
+            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
                 group.open = true;
             }
         });
 
-        const onlyCheckedPermissions = newPermissions.reduce(
-            (acc: Group[], group) => {
-                if (
-                    group.permissionDetails.some(
-                        (permissionDetail) => permissionDetail.checked,
-                    )
-                ) {
-                    acc.push(group);
-                }
+        const onlyCheckedPermissions = newPermissions.reduce((acc: Group[], group) => {
+            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
+                acc.push(group);
+            }
 
-                return acc;
-            },
-            [],
-        );
+            return acc;
+        }, []);
 
         setCardPermissions(onlyCheckedPermissions);
     }, []);
 
     return (
         <Card className={classes.root}>
-            <CardHeader title={category}/>
+            <CardHeader title={category} />
             <Divider />
             {cardPermissions.map((groupElement, groupIndex) => (
                 <Accordion
                     key={`Accordion${groupElement.group}`}
-                    expanded={groupElement.open}
-                >
+                    expanded={groupElement.open}>
                     <AccordionSummary
                         key={`AccordionSummary${groupElement.group}`}
                         aria-label="Expand"
@@ -126,75 +113,38 @@ export default function RoleReviewCard(props: Props) {
                     >
                         <div className={classes.categoryContainer}>
                             <div className={classes.arrowIcon}>
-                                {groupElement.open ? (
-                                    <ArrowDropUpIcon />
-                                ) : (
-                                    <ArrowDropDown />
-                                )}
+                                {groupElement.open ? <ArrowDropUpIcon /> : <ArrowDropDown />}
                             </div>
                             <div
                                 color="textSecondary"
-                                className={classes.categoryItem}
-                            >
+                                className={classes.categoryItem}>
                                 {groupElement.group}
                             </div>
                         </div>
                     </AccordionSummary>
-                    <AccordionDetails
-                        key={`AccordionDetails${groupElement.group}`}
-                    >
+                    <AccordionDetails key={`AccordionDetails${groupElement.group}`}>
                         <div className={classes.accountGrid}>
                             {groupElement.permissionDetails
-                                .filter(
-                                    (permissionDetail) =>
-                                        permissionDetail.checked,
-                                )
+                                .filter((permissionDetail) => permissionDetail.checked)
                                 .map((permissionDetail) => (
                                     <React.Fragment
                                         key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
                                     >
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
-                                            <div>
-                                                {
-                                                    permissionDetail.permissionName
-                                                }
-                                            </div>
+                                        <div className={classes.accountItem}>
+                                            <div>{formatPermissionName(permissionDetail.permissionName)}</div>
                                         </div>
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
-                                            {
-                                                permissionDetail.permissionDescription
-                                            }
+                                        <div className={classes.accountItem}>
+                                            {permissionDetail.permissionDescription}
                                         </div>
-                                        <div
-                                            className={
-                                                classes.accountItem
-                                            }
-                                        >
-                                            <div
-                                                className={
-                                                    classes.tagContainer
-                                                }
-                                            >
-                                                {permissionDetail.levels?.map(
-                                                    (level) => (
-                                                        <div
-                                                            key={level}
-                                                            className={
-                                                                classes.tagText
-                                                            }
-                                                        >
-                                                            {level}
-                                                        </div>
-                                                    ),
-                                                )}
+                                        <div className={classes.accountItem}>
+                                            <div className={classes.tagContainer}>
+                                                {permissionDetail.levels?.map((level) => (
+                                                    <div
+                                                        key={level}
+                                                        className={classes.tagText}>
+                                                        {level}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     </React.Fragment>

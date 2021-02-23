@@ -1,4 +1,4 @@
-import { RoleInfo } from "@/pages/admin/Role/CreateRoleDialog";
+import { RoleInfo } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import {
     CardHeader,
     Divider,
@@ -18,7 +18,7 @@ import React, {
     SetStateAction,
 } from "react";
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
     createStyles({
         root: {
             width: `100%`,
@@ -47,7 +47,6 @@ export default function RoleInfoCard(props: Props) {
         descriptionTextHelper,
     } = props;
     const classes = useStyles();
-
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, id } = event.target;
 
@@ -65,20 +64,19 @@ export default function RoleInfoCard(props: Props) {
                     <Typography
                         variant="body1"
                         color="textSecondary"
-                        component="div"
-                    >
+                        component="div">
                         <div
                             style={{
                                 paddingTop: `10px`,
                             }}
                         >
-                                Fetching permissions
+                            Fetching permissions
                         </div>
                     </Typography>
                 </CardContent>
             ) : (
                 <>
-                    <CardHeader title="Role Info"/>
+                    <CardHeader title="Role Info" />
                     <Divider />
                     <CardContent>
                         <form
@@ -89,31 +87,20 @@ export default function RoleInfoCard(props: Props) {
                                 xs={12}>
                                 <TextField
                                     fullWidth
-                                    error={
-                                        nameTextHelper(roleInfo.name)
-                                            .length !== 0
-                                    }
+                                    error={nameTextHelper(roleInfo.name).length !== 0}
                                     id="name"
                                     label="Name*"
-                                    defaultValue={roleInfo.name}
-                                    helperText={nameTextHelper(
-                                        roleInfo.name,
-                                    )}
+                                    value={roleInfo.name}
+                                    helperText={nameTextHelper(roleInfo.name)}
                                     onChange={handleInputChange}
                                 />
                                 <TextField
                                     fullWidth
-                                    error={
-                                        descriptionTextHelper(
-                                            roleInfo.description,
-                                        ).length !== 0
-                                    }
+                                    error={descriptionTextHelper(roleInfo.description).length !== 0}
                                     id="description"
                                     label="Description"
-                                    defaultValue={roleInfo.description}
-                                    helperText={descriptionTextHelper(
-                                        roleInfo.description,
-                                    )}
+                                    value={roleInfo.description}
+                                    helperText={descriptionTextHelper(roleInfo.description)}
                                     onChange={handleInputChange}
                                 />
                             </Grid>
@@ -121,11 +108,8 @@ export default function RoleInfoCard(props: Props) {
                         <Typography
                             variant="body2"
                             color="textSecondary"
-                            component="div"
-                        >
-                            <div className={classes.requiredField}>
-                                Required field*
-                            </div>
+                            component="div">
+                            <div className={classes.requiredField}>Required field*</div>
                         </Typography>
                     </CardContent>
                 </>

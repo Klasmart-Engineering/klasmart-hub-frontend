@@ -2,7 +2,7 @@ import {
     Permission,
     PermissionsCategory,
     Role,
-} from "@/pages/admin/Role/CreateRoleDialog";
+} from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 
 /**

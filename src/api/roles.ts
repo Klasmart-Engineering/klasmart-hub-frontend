@@ -1,7 +1,9 @@
 import { CREATE_NEW_ROLE } from "@/operations/mutations/createNewRole";
 import { DELETE_ROLE } from "@/operations/mutations/deleteRole";
+import { EDIT_ROLE } from "@/operations/mutations/editRole";
 import { GET_ALL_GROUPS } from "@/operations/queries/getAllGroups";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
+import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
     Organization,
     Role,
@@ -49,13 +51,8 @@ interface CreateRoleRequest {
     permission_names: string[];
 }
 
-export const useCreateRole = (
-    options?: MutationHookOptions<CreateRoleResponse, CreateRoleRequest>,
-) => {
-    return useMutation<CreateRoleResponse, CreateRoleRequest>(
-        CREATE_NEW_ROLE,
-        options,
-    );
+export const useCreateRole = (options?: MutationHookOptions<CreateRoleResponse, CreateRoleRequest>) => {
+    return useMutation<CreateRoleResponse, CreateRoleRequest>(CREATE_NEW_ROLE, options);
 };
 
 interface DeleteRoleRequest {
@@ -66,11 +63,38 @@ interface DeleteRoleResponse {
     role: Role;
 }
 
-export const useDeleteRole = (
-    options?: MutationHookOptions<DeleteRoleResponse, DeleteRoleRequest>,
-) => {
-    return useMutation<DeleteRoleResponse, DeleteRoleRequest>(
-        DELETE_ROLE,
-        options,
-    );
+export const useDeleteRole = (options?: MutationHookOptions<DeleteRoleResponse, DeleteRoleRequest>) => {
+    return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, options);
+};
+
+interface GetRolePermissionsRequest {
+    role_id: string;
+}
+
+export interface GetRolePermissionsResponse {
+    role: Role;
+}
+
+export const useGetRolePermissions = (roleId: string) => {
+    return useQuery<GetRolePermissionsResponse, GetRolePermissionsRequest>(GET_ROLE_PERMISSIONS, {
+        fetchPolicy: `network-only`,
+        variables: {
+            role_id: roleId,
+        },
+    });
+};
+
+interface EditRoleRequest {
+    role_id: string;
+    role_name: string;
+    role_description: string;
+    permission_names: string[];
+}
+
+interface EditRoleResponse {
+    role: Role;
+}
+
+export const useEditRole = (options?: MutationHookOptions<EditRoleResponse, EditRoleRequest>) => {
+    return useMutation<EditRoleResponse, EditRoleRequest>(EDIT_ROLE, options);
 };

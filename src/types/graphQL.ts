@@ -67,6 +67,7 @@ export interface Role {
     system_role?: boolean | null;
     delete_role?: boolean | null;
     status?: string | null;
+    permissions: Permission[];
 }
 
 export interface Student {
@@ -95,4 +96,13 @@ export interface SchoolMembership {
     roles?: Role[] | null;
     user?: User | null;
     status?: string | null;
+}
+
+export interface Permission {
+    permission_name: string;
+    permission_id: string;
+    permission_group: string;
+    permission_level: string;
+    permission_category: string;
+    permission_description: string;
 }

@@ -1,5 +1,4 @@
-import { useGetOrganizationRolesPermissions } from "@/api/roles";
-import { currentMembershipVar } from "@/cache";
+import { GetRolePermissionsResponse } from "@/api/roles";
 import PermissionsCard from "@/components/Roles/PermissionsCard";
 import RoleAndNameDescriptionCard from "@/components/Roles/RoleAndNameDescriptionCard";
 import RoleInfoCard from "@/components/Roles/RoleInfoCard";
@@ -11,8 +10,8 @@ import {
     sectionHandler,
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
+import { RoleRow } from "@/pages/admin/Role/RoleTable";
 import { alphanumeric } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     LinearProgress,
@@ -83,9 +82,10 @@ export interface Permission {
 export interface Role {
     role_id: string;
     role_name: string;
-    permissions: Permission[];
-    status: string;
+    role_description?: string | null;
     system_role?: boolean | null;
+    status?: string | null;
+    permissions: Permission[];
 }
 
 export interface PermissionDetail {
@@ -125,58 +125,83 @@ interface Props {
     activeStep: number;
     setActiveStep: Dispatch<SetStateAction<number>>;
     handleNext: () => Promise<void>;
-    loadingCreateRole: boolean;
     setNewRole: Dispatch<SetStateAction<NewRole>>;
     handleClose: () => void;
+    row: RoleRow;
+    roles: Role[];
+    loading: boolean;
+    rolePermissions: GetRolePermissionsResponse | undefined;
+    rolePermissionsLoading: boolean;
 }
 
-export default function CreateRoleDialog(props: Props) {
-    const classes = useStyles();
+export default function CreateAndEditRoleDialog(props: Props) {
     const {
         open,
         steps,
         activeStep,
         setActiveStep,
         handleNext,
-        loadingCreateRole,
         setNewRole,
         handleClose,
+        row,
+        roles,
+        loading,
+        rolePermissions,
+        rolePermissionsLoading,
     } = props;
-    const initialRoleInfo = {
-        name: ``,
-        description: ``,
-    };
-    const [ roleInfo, setRoleInfo ] = useState<RoleInfo>(initialRoleInfo);
+    const classes = useStyles();
+    const [ roleInfo, setRoleInfo ] = useState<RoleInfo>({
+        name: row.role,
+        description: row.description,
+    });
     const [ permissionCategories, setPermissionCategories ] = useState<PermissionsCategory[]>([]);
     const [ roleId, setRoleId ] = useState(``);
-    const [ loading, setLoading ] = useState(true);
+    const [ roleInfoLoading, setRoleInfoLoading ] = useState(true);
     const [ permissionsStepIsValid, setPermissionsStepIsValid ] = useState(false);
-    const membership = useReactiveVar(currentMembershipVar);
-    const { data: rolePermissions, loading: rolePermissionsLoading } = useGetOrganizationRolesPermissions(
-        membership.organization_id,
-    );
-    const roles: Role[] = rolePermissions?.organization?.roles ?? [];
 
     useEffect(() => {
         if (open && roles.length) {
             const permissions = uniquePermissions(roles) ?? [];
             const data = sectionHandler(permissions) ?? [];
 
+            if (rolePermissions?.role) {
+                data.forEach((permissionCategory) => {
+                    permissionCategory.groups.forEach((group) => {
+                        group.permissionDetails.forEach((permissionDetail) => {
+                            permissionDetail.checked = rolePermissions?.role.permissions.some(
+                                (permission) => permission.permission_id === permissionDetail.permissionId,
+                            );
+                        });
+                    });
+                });
+            }
+
             setPermissionCategories(data);
         }
-    }, [ rolePermissions, open ]);
+    }, [
+        open,
+        roles,
+        rolePermissions,
+    ]);
 
     useEffect(() => {
         if (!rolePermissionsLoading && permissionCategories.length) {
-            setLoading(false);
+            setRoleInfoLoading(false);
         }
     }, [ rolePermissionsLoading, permissionCategories ]);
 
     useEffect(() => {
+        setRoleInfo({
+            name: row.role,
+            description: row.description,
+        });
+    }, [ row ]);
+
+    useEffect(() => {
         if (!open) {
-            setRoleInfo(initialRoleInfo);
             setRoleId(``);
             setPermissionCategories([]);
+            setRoleInfoLoading(true);
         }
     }, [ open ]);
 
@@ -208,7 +233,7 @@ export default function CreateRoleDialog(props: Props) {
 
         if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
 
-        if (roles.find((role) => role.role_name === name && role.status === `active`)) {
+        if (roles.find((role) => role.role_name === name && role.status === `active` && name !== row.role)) {
             return `That name is already been taken`;
         }
 
@@ -302,7 +327,7 @@ export default function CreateRoleDialog(props: Props) {
                 <RoleInfoCard
                     roleInfo={roleInfo}
                     setRoleInfo={setRoleInfo}
-                    loading={loading}
+                    loading={roleInfoLoading}
                     nameTextHelper={roleNameTextHelper}
                     descriptionTextHelper={roleDescriptionTextHelper}
                 />
@@ -311,7 +336,7 @@ export default function CreateRoleDialog(props: Props) {
             return (
                 <>
                     <RolePermissionsActionsCard
-                        roles={roles}
+                        roles={roles.filter((role) => role.role_id !== row.id)}
                         roleId={roleId}
                         actions={[
                             {
@@ -342,7 +367,7 @@ export default function CreateRoleDialog(props: Props) {
         case 2:
             return (
                 <>
-                    {loadingCreateRole ? (
+                    {loading ? (
                         <Card className={classes.confirmationCard}>
                             <CardContent>
                                 <div>
@@ -356,7 +381,7 @@ export default function CreateRoleDialog(props: Props) {
                                                 padding: `10px`,
                                             }}
                                         >
-                                                Creating a new role
+                                            {row.id ? `Editing role` : `Creating a new role`}
                                         </div>
                                     </Typography>
                                 </div>

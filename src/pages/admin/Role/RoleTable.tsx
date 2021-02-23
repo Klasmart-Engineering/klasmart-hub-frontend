@@ -1,9 +1,14 @@
 import {
     useCreateRole,
-    useGetAllRoles,
+    useEditRole,
+    useGetOrganizationRolesPermissions,
+    useGetRolePermissions,
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
-import CreateRoleDialog, { NewRole } from "@/pages/admin/Role/CreateRoleDialog";
+import CreateAndEditRoleDialog, {
+    NewRole,
+    Role,
+} from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
 import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
@@ -47,8 +52,6 @@ export interface RoleRow {
     systemRole: boolean;
 }
 
-interface Props {}
-
 /**
  * Returns a match if property needs to be localized.
  * @param role Role to be checked.
@@ -64,22 +67,24 @@ const checkRoleMatch = (role: string | undefined | null) => {
 /**
  * Returns function to show Rol Table in "View roles"
  */
-export default function RoleTable(props: Props) {
+export default function RoleTable() {
     const classes = useStyles();
     const intl = useIntl();
     const canView = usePermission(`view_role_permissions_30112`);
     const canCreate = usePermission(`create_role_with_permissions_30222`);
     const canDelete = usePermission(`delete_groups_30440`);
+    const canEdit  = usePermission(`edit_role_permissions_30332`);
     const [ rows, setRows ] = useState<RoleRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openDeleteDialog, setOpenDeleteDialog ] = useState(false);
-    const [ row, setRow ] = useState<RoleRow>({
+    const initialRow = {
         id: ``,
         role: ``,
         description: ``,
         type: ``,
         systemRole: false,
-    });
+    };
+    const [ row, setRow ] = useState<RoleRow>(initialRow);
     const [ activeStep, setActiveStep ] = useState(0);
     const steps = [
         `Role Info`,
@@ -95,43 +100,51 @@ export default function RoleTable(props: Props) {
     const membership = useReactiveVar(currentMembershipVar);
     const {
         data,
-        loading,
+        loading: getAllRolesLoading,
         refetch,
-    } = useGetAllRoles(membership.organization_id);
-    const [ createRole, { loading: loadingCreateRole } ] = useCreateRole();
+    } = useGetOrganizationRolesPermissions(
+        membership.organization_id,
+    );
+    const roles: Role[] = data?.organization?.roles ?? [];
+    const {
+        data: rolePermissions,
+        loading: rolePermissionsLoading,
+        refetch: refetchRolePermissions,
+    } = useGetRolePermissions(row.id);
+    const [ createRole ] = useCreateRole();
+    const [ editRole ] = useEditRole();
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
+    const [ loading, setLoading ] = useState(false);
 
     const systemTypeHandler = (systemRole: boolean | null | undefined) => {
         return systemRole ? `System Role` : `Custom Role`;
     };
 
     useEffect(() => {
-        if (!data?.organization?.roles?.length) {
-            setRows([]);
-            return;
-        }
-        const rows: RoleRow[] = data.organization.roles
-            .filter((role) => role.status === `active`)
-            .map((role) => ({
-                id: role.role_id,
-                role: checkRoleMatch(role.role_name)
-                    ? intl.formatMessage({
-                        id: `roles_type${role.role_name?.replace(` `, ``)}`,
-                    })
-                    : role.role_name || ``,
-                description: role.role_description || ``,
-                type: systemTypeHandler(role.system_role),
-                systemRole: role.system_role ?? false,
-            }));
+        if (roles.length) {
+            const rows: RoleRow[] = roles
+                .filter((role) => role.status === `active`)
+                .map((role) => ({
+                    id: role.role_id,
+                    role: checkRoleMatch(role.role_name)
+                        ? intl.formatMessage({
+                            id: `roles_type${role.role_name?.replace(` `, ``)}`,
+                        })
+                        : role.role_name || ``,
+                    description: role.role_description || ``,
+                    type: systemTypeHandler(role.system_role),
+                    systemRole: role.system_role ?? false,
+                }));
 
-        if (!canView) {
-            setRows([]);
-            return;
-        }
+            if (!canView) {
+                setRows([]);
+                return;
+            }
 
-        setRows(rows);
-    }, [ data, canView ]);
+            setRows(rows);
+        }
+    }, [ roles, canView ]);
 
     const columns: TableColumn<RoleRow>[] = [
         {
@@ -156,13 +169,16 @@ export default function RoleTable(props: Props) {
         },
     ];
 
-    const handleOpen = () => {
+    const handleOpenDialog = (row: RoleRow) => {
         setOpenCreateDialog(true);
+        setRow(row);
     };
 
-    const handleClose = () => {
+    const handleCloseDialog = () => {
         setOpenCreateDialog(false);
         setActiveStep(0);
+        setRow(initialRow);
+        setLoading(false);
     };
 
     const handleOpenDeleteDialog = (row: RoleRow) => {
@@ -174,43 +190,88 @@ export default function RoleTable(props: Props) {
         setOpenDeleteDialog(false);
     };
 
+    const createNewRoleHandler = async (): Promise<void> => {
+        try {
+            if (
+                !(await confirm({
+                    title: `Create New Role?`,
+                    content: `This will create a new role in this organization`,
+                    okLabel: `Create`,
+                }))
+            ) {
+                return;
+            }
+
+            setLoading(true);
+
+            const response = await createRole({
+                variables: {
+                    organization_id: membership.organization_id,
+                    role_name: newRole.role_name,
+                    role_description: newRole.role_description,
+                    permission_names: newRole.permission_names,
+                },
+            });
+
+            if (response?.data?.organization?.createRole === null) {
+                throw new Error();
+            }
+
+            await refetch();
+            enqueueSnackbar(`A new role has been created successfully`, {
+                variant: `success`,
+            });
+            handleCloseDialog();
+        } catch (e) {
+            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+                variant: `error`,
+            });
+        }
+    };
+
+    const editRoleHandler = async (): Promise<void> => {
+        try {
+            if (
+                !(await confirm({
+                    title: `Edit this Role?`,
+                    content: `This will edit the role in this organization`,
+                    okLabel: `Edit`,
+                }))
+            ) {
+                return;
+            }
+
+            setLoading(true);
+
+            await editRole({
+                variables: {
+                    role_id: row.id,
+                    role_name: newRole.role_name,
+                    role_description: newRole.role_description,
+                    permission_names: newRole.permission_names,
+                },
+            });
+
+            await refetch();
+            await refetchRolePermissions();
+            enqueueSnackbar(`The role has been edited successfully`, {
+                variant: `success`,
+            });
+            handleCloseDialog();
+        } catch (e) {
+            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+                variant: `error`,
+            });
+        }
+    };
+
     const handleNext = async (): Promise<void> => {
         if (steps && activeStep === steps.length - 1) {
-            try {
-                if (
-                    !(await confirm({
-                        title: `Create New Role?`,
-                        content: `This will create a new role in this organization`,
-                        okLabel: `Create`,
-                    }))
-                ) {
-                    return;
-                }
-
-                const response = await createRole({
-                    variables: {
-                        organization_id: membership.organization_id,
-                        role_name: newRole.role_name,
-                        role_description: newRole.role_description,
-                        permission_names: newRole.permission_names,
-                    },
-                });
-
-                if (response?.data?.organization?.createRole === null) {
-                    throw new Error();
-                }
-
-                await refetch();
-                enqueueSnackbar(`A new role has been created successfully`, {
-                    variant: `success`,
-                });
-                handleClose();
-            } catch (e) {
-                enqueueSnackbar(`Sorry, something went wrong, please try again`, {
-                    variant: `error`,
-                });
+            if (row.id) {
+                return await editRoleHandler();
             }
-            return;
+
+            return await createNewRoleHandler();
         }
 
         setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
@@ -222,28 +283,27 @@ export default function RoleTable(props: Props) {
                 <Table
                     columns={columns}
                     rows={rows}
-                    loading={loading}
+                    loading={getAllRolesLoading}
                     idField="id"
                     orderBy="role"
                     primaryAction={{
                         label: `Create`,
                         icon: AddIcon,
                         disabled: !canCreate,
-                        onClick: () => handleOpen(),
+                        onClick: () => handleOpenDialog(initialRow),
                     }}
                     rowActions={(row) => [
                         {
                             label: `Edit`,
                             icon: EditIcon,
-                            onClick: (row) => console.log(`clicked`, row),
+                            disabled: !canEdit || row.systemRole,
+                            onClick: (row) => handleOpenDialog(row),
                         },
                         {
                             label: `Delete`,
                             icon: DeleteIcon,
                             disabled: !canDelete || row.systemRole,
-                            onClick: (row) => {
-                                handleOpenDeleteDialog(row);
-                            },
+                            onClick: (row) => handleOpenDeleteDialog(row),
                         },
                     ]}
                     localization={getTableLocalization(intl, {
@@ -266,21 +326,29 @@ export default function RoleTable(props: Props) {
                 />
             </Paper>
 
-            <CreateRoleDialog
+            <CreateAndEditRoleDialog
                 open={openCreateDialog}
                 steps={steps}
                 activeStep={activeStep}
                 setActiveStep={setActiveStep}
                 setNewRole={setNewRole}
                 handleNext={handleNext}
-                loadingCreateRole={loadingCreateRole}
-                handleClose={handleClose}
+                handleClose={handleCloseDialog}
+                row={row}
+                roles={roles}
+                loading={loading}
+                rolePermissions={rolePermissions}
+                rolePermissionsLoading={rolePermissionsLoading}
             />
 
             <DeleteRoleDialog
                 open={openDeleteDialog}
                 handleClose={handleCloseDeleteDialog}
-                row={row} />
+                row={row}
+                roles={roles}
+                getAllRolesLoading={getAllRolesLoading}
+                refetch={refetch}
+            />
         </>
     );
 }

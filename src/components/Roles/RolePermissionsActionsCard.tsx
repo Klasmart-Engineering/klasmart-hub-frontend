@@ -1,4 +1,4 @@
-import { Role } from "@/pages/admin/Role/CreateRoleDialog";
+import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import {
     MenuItem,
     TextField,

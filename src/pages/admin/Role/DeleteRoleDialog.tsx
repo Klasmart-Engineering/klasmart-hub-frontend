@@ -2,18 +2,17 @@ import {
     useGetOrganizationMemberships,
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
-import {
-    useDeleteRole,
-    useGetAllRoles,
-    useGetOrganizationRolesPermissions,
-} from "@/api/roles";
+import { useDeleteRole } from "@/api/roles";
 import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
 import { currentMembershipVar } from "@/cache";
 import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
-import { Role } from "@/pages/admin/Role/CreateRoleDialog";
+import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
 import { getTableLocalization } from "@/utils/table";
-import { useReactiveVar } from "@apollo/client";
+import {
+    ApolloQueryResult,
+    useReactiveVar,
+} from "@apollo/client";
 import {
     Avatar,
     Box,
@@ -114,6 +113,9 @@ interface Props {
     open: boolean;
     handleClose: () => void;
     row: RoleRow;
+    roles: Role[];
+    getAllRolesLoading: boolean;
+    refetch: (variables?: Partial<{ organization_id: string }> | undefined) => Promise<ApolloQueryResult<any>>;
 }
 
 export default function DeleteRoleDialog(props: Props) {
@@ -121,6 +123,9 @@ export default function DeleteRoleDialog(props: Props) {
         open,
         handleClose,
         row,
+        roles,
+        getAllRolesLoading,
+        refetch,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -129,9 +134,6 @@ export default function DeleteRoleDialog(props: Props) {
     const [ roleId, setRoleId ] = useState(``);
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const membership = useReactiveVar(currentMembershipVar);
-    const { data: organizationRoles, loading: organizationRolesLoading } = useGetOrganizationRolesPermissions(
-        membership.organization_id,
-    );
     const { data: organizationMemberships, loading: organizationMembershipsLoading } = useGetOrganizationMemberships({
         fetchPolicy: `network-only`,
         variables: {
@@ -140,8 +142,6 @@ export default function DeleteRoleDialog(props: Props) {
     });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteRole ] = useDeleteRole();
-    const { refetch } = useGetAllRoles(membership.organization_id);
-    const roles: Role[] = organizationRoles?.organization?.roles ?? [];
     const memberships = organizationMemberships?.organization?.memberships ?? [];
     const schools = organizationMemberships?.organization?.schools ?? [];
 
@@ -403,7 +403,7 @@ export default function DeleteRoleDialog(props: Props) {
                 justify="center"
                 spacing={2}
                 className={classes.menuContainer}>
-                {organizationRolesLoading || organizationMembershipsLoading ? (
+                {getAllRolesLoading || organizationMembershipsLoading ? (
                     <Card className={classes.root}>
                         <CardContent>
                             <LinearProgress />
