@@ -1,6 +1,7 @@
 import SubjectDialogForm from "./Form";
 import { currentMembershipVar } from "@/cache";
 import { Subject } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
@@ -32,6 +33,7 @@ export default function CreateSubjectDialog (props: Props) {
     const prompt = usePrompt();
     const { required, equals } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
+    const canDelete = usePermission(`delete_subjects_20447`);
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const [ valid, setValid ] = useState(true);
@@ -92,6 +94,7 @@ export default function CreateSubjectDialog (props: Props) {
                     label: `Delete`,
                     color: `error`,
                     align: `left`,
+                    disabled: !canDelete,
                     onClick: handleDelete,
                 },
                 {
