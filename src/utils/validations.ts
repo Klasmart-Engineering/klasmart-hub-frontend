@@ -1,4 +1,7 @@
-export function alphanumeric(name: string): boolean {
+import { validations } from "kidsloop-px";
+import { useIntl } from "react-intl";
+
+export function alphanumeric (name: string): boolean {
     const regularExpression = /[^a-zA-Z0-9\s]/;
     return regularExpression.test(name);
 }
@@ -9,3 +12,16 @@ export const emailAddressRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"
 
 export const formatPermissionName = (str: string) =>
     str.replace(/[^A-Za-z]+/g, ` `).replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
+
+export const useValidations = () => {
+    const intl = useIntl();
+    return {
+        alphanumeric: (errorMessage?: string) => validations.alphanumeric(errorMessage ?? `The value is not alphanumeric`),
+        equals: (value: any, errorMessage?: string) => validations.equals(value, errorMessage ?? `The values don't match`),
+        email: (errorMessage?: string) => validations.email(errorMessage ?? `Invalid email address`),
+        max: (max: number, errorMessage?: string) => validations.max(max, errorMessage ?? `Input needs to be maximum ${max} characters`),
+        min: (min: number, errorMessage?: string) => validations.min(min, errorMessage ?? `Input needs to be minimum ${min} characters`),
+        phone: (errorMessage?: string) => validations.phone(errorMessage ?? `Invalid phone number`),
+        required: (errorMessage?: string) => validations.required(errorMessage ?? `Required`),
+    };
+};

@@ -41,12 +41,12 @@ import { Person as PersonIcon } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import {
     Fab,
-    Table,
+    PageTable,
     useConfirm,
     useSnackbar,
     utils,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -431,7 +431,7 @@ export default function DeleteRoleDialog(props: Props) {
                         />
 
                         <Paper className={classes.root}>
-                            <Table
+                            <PageTable
                                 columns={columns}
                                 rows={rows}
                                 idField="id"

@@ -106,3 +106,27 @@ export interface Permission {
     permission_category: string;
     permission_description: string;
 }
+
+export interface AgeRange {
+    age_range_id: string;
+    from?: number | null;
+    fromUnit?: string | null;
+    to?: number | null;
+    toUnit?: string | null;
+}
+
+export interface Grade {
+    grade_id: string;
+    grade_name?: string | null;
+    age_range?: AgeRange | null;
+    progress_from_grade?: Grade | null;
+    progress_to_grade?: Grade | null;
+}
+
+export interface Subject {
+    subject_id: string;
+    subject_name?: string | null;
+    grades?: Grade[] | null;
+    category?: string | null;
+    subcategories?: string[] | null;
+}

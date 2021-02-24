@@ -40,12 +40,12 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    Table,
+    PageTable,
     usePrompt,
     useSnackbar,
     validations,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -408,7 +408,7 @@ export default function LibraryTable (props: Props) {
             <Paper className={classes.root}>
                 <Breadcrumbs/>
                 <Divider />
-                <Table
+                <PageTable
                     rows={rows}
                     columns={columns}
                     idField="id"

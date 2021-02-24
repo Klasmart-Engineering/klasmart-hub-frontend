@@ -21,11 +21,11 @@ import { Info as InfoIcon } from "@material-ui/icons";
 import clsx from "clsx";
 import {
     FullScreenDialog,
-    Table,
+    PageTable,
     useSnackbar,
     utils,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { isEqual } from "lodash";
 import React, {
     useEffect,
@@ -264,7 +264,7 @@ export default function (props: Props) {
                 </Toolbar>
                 {distributeStatus === DistributeStatus.SELECTED && <>
                     <Divider />
-                    <Table
+                    <PageTable
                         showCheckboxes
                         idField="id"
                         orderBy="name"

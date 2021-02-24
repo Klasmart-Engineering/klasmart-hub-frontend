@@ -16,6 +16,7 @@ import RoleTable from "./pages/admin/Role/RoleTable";
 import ClasessTable from "./pages/admin/School/ClassesTable";
 import ProgramTable from "./pages/admin/School/ProgramsTable";
 import SchoolTable from "./pages/admin/School/SchoolTable";
+import SubjectsPage from "./pages/admin/subjects";
 import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
@@ -239,6 +240,11 @@ export function App() {
                         <AdminLayout>
                             <GradeTable />
                         </AdminLayout>
+                    </Route>
+                    <Route path="/admin/subjects">
+                        <Layout>
+                            <SubjectsPage />
+                        </Layout>
                     </Route>
                     <Route path="/admin">
                         <AdminLayout>

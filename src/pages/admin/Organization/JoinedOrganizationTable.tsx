@@ -20,10 +20,10 @@ import {
 } from "@material-ui/core";
 import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
 import {
-    Table,
+    PageTable,
     useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
     useEffect,
@@ -162,7 +162,7 @@ export default function JoinedOrganizationTable(props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <Table
+                <PageTable
                     columns={columns}
                     rows={rows}
                     loading={loading}

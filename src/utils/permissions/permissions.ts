@@ -2512,4 +2512,39 @@ export const permissions = [
         description:
             `Gives users access to publish frree content for all organizations`,
     },
+    {
+        name: `define_subject_page_20106`,
+        category: `Academic Profile`,
+        group: `Subjects`,
+        level: `School Admin`,
+        description: `Gives users access to define subject page`,
+    },
+    {
+        name: `view_subjects_20115`,
+        category: `Academic Profile`,
+        group: `Subjects`,
+        level: `School Admin`,
+        description: `Gives users access to view subjects`,
+    },
+    {
+        name: `create_subjects_20227`,
+        category: `Academic Profile`,
+        group: `Subjects`,
+        level: `School Admin`,
+        description: `Gives users access to create subjects`,
+    },
+    {
+        name: `edit_subjects_20337`,
+        category: `Academic Profile`,
+        group: `Subjects`,
+        level: `School Admin`,
+        description: `Gives users access to edit subjects`,
+    },
+    {
+        name: `delete_subjects_20447`,
+        category: `Academic Profile`,
+        group: `Subjects`,
+        level: `School Admin`,
+        description: `Gives users access to delete subjects`,
+    },
 ] as const;

@@ -58,6 +58,8 @@ module.exports = {
         ],
         "comma-spacing": `off`, // turned off b/c '@typescript-eslint/comma-spacing' is enabled
         "eol-last": [ `error`, `always` ],
+        "function-call-argument-newline": [ `error`, `never` ],
+        "function-paren-newline": [ `error`, `never` ],
         "no-trailing-spaces": `error`,
         "no-multiple-empty-lines": [
             `error`,
@@ -106,6 +108,7 @@ module.exports = {
                 reservedFirst: [ `key`, `ref` ],
             },
         ],
+        "space-before-function-paren": [ `error`, `always` ],
         "@typescript-eslint/ban-types": [
             `error`,
             {

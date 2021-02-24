@@ -1,5 +1,6 @@
 import DialogAppBar from "@/components/styled/dialogAppBar";
 import { MenuItem } from "@/types/objectTypes";
+import { usePermission } from "@/utils/checkAllowed";
 import { useIsSuperAdmin as useIsUserSuperAdmin } from "@/utils/userRoles";
 import {
     Box,
@@ -25,6 +26,7 @@ import {
     Group as GroupIcon,
     Home as HomeIcon,
     Lock as LockIcon,
+    MenuBook as MenuBookIcon,
     PersonOutline as PersonIcon,
     Phonelink as PhoneIcon,
     School as SchoolIcon,
@@ -274,6 +276,19 @@ export default function NavMenu(props: Props) {
                 id: `navMenu_schoolsTitle`,
             }),
         },
+        ...usePermission(`define_subject_page_20106`) ? [
+            {
+                description: intl.formatMessage({
+                    id: `navMenu_subjectsDescription`,
+                }),
+                link: `/admin/subjects`,
+                color: `#0E78D5`,
+                icon: MenuBookIcon,
+                title: intl.formatMessage({
+                    id: `navMenu_subjectsTitle`,
+                }),
+            },
+        ] : [],
         {
             description: intl.formatMessage({
                 id: `navMenu_usersDescription`,

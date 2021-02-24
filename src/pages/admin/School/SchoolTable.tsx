@@ -21,10 +21,10 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    Table,
+    PageTable,
     useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
     useEffect,
@@ -158,7 +158,7 @@ export default function SchoolTable(props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <Table
+                <PageTable
                     idField="id"
                     loading={loading}
                     columns={columns}

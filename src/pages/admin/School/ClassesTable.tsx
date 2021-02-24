@@ -22,10 +22,10 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    Table,
+    PageTable,
     useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Head";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -202,7 +202,7 @@ export default function ClasessTable(props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <Table
+                <PageTable
                     columns={columns}
                     rows={rows}
                     loading={loading}

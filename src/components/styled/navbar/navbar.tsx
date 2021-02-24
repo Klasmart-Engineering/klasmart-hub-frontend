@@ -9,6 +9,7 @@ import {
 } from "@/cache";
 import { GET_USER } from "@/operations/queries/getUser";
 import { User } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
 import {
     useQuery,
@@ -65,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const CONTENT_TABS: Tab[] = [
+const getContentTabs = (): Tab[] => [
     {
         text: `Organization Content`,
         value: `/library`,
@@ -76,7 +77,7 @@ const CONTENT_TABS: Tab[] = [
     },
 ];
 
-const ADMIN_TABS: Tab[] = [
+const getAdminTabs = (): Tab[] => [
     {
         text: `Organizations`,
         value: `/admin/organizations`,
@@ -105,13 +106,19 @@ const ADMIN_TABS: Tab[] = [
     //     text: `Grades`,
     //     value: `/admin/grades`,
     // },
+    ...usePermission(`define_subject_page_20106`) ? [
+        {
+            text: `Subjects`,
+            value: `/admin/subjects`,
+        },
+    ] : [],
 ];
 
 const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
 
 const getTabs = (path: string): Tab[] => {
-    return findTabs(CONTENT_TABS, path)
-        ?? findTabs(ADMIN_TABS, path)
+    return findTabs(getContentTabs(), path)
+        ?? findTabs(getAdminTabs(), path)
         ?? [];
 };
 

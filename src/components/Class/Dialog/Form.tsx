@@ -11,7 +11,7 @@ import {
     TextField,
     Theme,
 } from "@material-ui/core";
-import { MultiSelect } from "kidsloop-px";
+import { Select } from "kidsloop-px";
 import React, {
     useEffect,
     useState,
@@ -117,7 +117,9 @@ export default function ClassDialogForm(props: Props) {
                 autoFocus={!value.class_id}
                 onChange={(e) => setClassName(e.currentTarget.value)}
             />
-            <MultiSelect
+            <Select
+                fullWidth
+                multiple
                 label="Schools (optional)"
                 items={allSchools}
                 value={schoolIds}

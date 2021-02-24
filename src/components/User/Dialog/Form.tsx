@@ -5,6 +5,7 @@ import { OrganizationMembership } from "@/types/graphQL";
 import {
     emailAddressRegex,
     phoneNumberRegex,
+    useValidations,
 } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -13,7 +14,7 @@ import {
     TextField,
     Theme,
 } from "@material-ui/core";
-import { MultiSelect } from "kidsloop-px";
+import { Select } from "kidsloop-px";
 import React,
 {
     useEffect,
@@ -38,10 +39,6 @@ const getContactInfoHelperText = (contactInfo: string) => {
         if (!validEmail) return `Invalid email address`;
         if (!validPhone) return `Invalid phone number`;
     }
-};
-
-const getRolesHelperText = (roleIds: string[]) => {
-    if (roleIds.length === 0) return `At least one role required`;
 };
 
 interface Props {
@@ -75,11 +72,13 @@ export default function UserDialogForm(props: Props) {
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schoolMemberships?.map((s) => s.school_id) ?? []);
     const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.filter((role) => role.status === `active`).map((role) => role.role_id) ?? []);
+    const [ roleIdsValid, setRoleIdsValid ] = useState(false);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
+    const { required } = useValidations();
 
     useEffect(() => {
-        onValidation(!getRolesHelperText(roleIds) && !getContactInfoHelperText(contactInfo));
-    }, [ roleIds, contactInfo ]);
+        onValidation(roleIdsValid && !getContactInfoHelperText(contactInfo));
+    }, [ roleIdsValid, contactInfo ]);
 
     useEffect(() => {
         const userId = value.user?.user_id ?? ``;
@@ -132,17 +131,21 @@ export default function UserDialogForm(props: Props) {
                 type="text"
                 onChange={(e) => setFamilyName(e.currentTarget.value)}
             />
-            <MultiSelect
+            <Select
+                multiple
+                fullWidth
                 label="Roles"
                 items={allRoles}
                 value={roleIds}
-                error={!!getRolesHelperText(roleIds)}
-                helperText={getRolesHelperText(roleIds) ?? ` `}
+                validations={[ required() ]}
                 itemText={(role) => role.role_name ?? ``}
                 itemValue={(role) => role.role_id}
                 onChange={(values) => setRoleIds(values)}
+                onValidate={setRoleIdsValid}
             />
-            <MultiSelect
+            <Select
+                multiple
+                fullWidth
                 label="Schools (optional)"
                 items={allSchools}
                 value={schoolIds}
