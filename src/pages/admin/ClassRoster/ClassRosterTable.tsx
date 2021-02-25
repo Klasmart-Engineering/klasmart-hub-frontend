@@ -1,44 +1,58 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { constantValues } from "../constants";
+import { currentMembershipVar } from "@/cache";
+import { User } from "@/models/Membership";
+import { School } from "@/models/UserSchool";
+import { ADD_STUDENT_TO_CLASS } from "@/operations/mutations/addStudentToClass";
+import { ADD_TEACHER_TO_CLASS } from "@/operations/mutations/addTeacherToClass";
+import { REMOVE_STUDENT_FROM_CLASS } from "@/operations/mutations/removeStudentFromClass";
+import { REMOVE_TEACHER_FROM_CLASS } from "@/operations/mutations/removeTeacherFromClass";
+import { GET_CLASS_USERS } from "@/operations/queries/getClassUsers";
+import {
+    EligibleUser,
+    EligibleUsers,
+    GET_ELIGIBLE_USERS,
+} from "@/operations/queries/getEligibleUsers";
+import { ParameterHOC } from "@/utils/history";
+import {
+    useMutation,
+    useQuery,
+} from "@apollo/client";
+import { useReactiveVar } from "@apollo/client/react";
 import { TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Delete } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
 import { useSnackbar } from "kidsloop-px";
 import _get from "lodash/get";
-import MaterialTable, { EditComponentProps } from "material-table";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { injectIntl, IntlFormatters } from "react-intl";
-import { User } from "../../../models/Membership";
-import { School } from "../../../models/UserSchool";
-import { ADD_STUDENT_TO_CLASS } from "../../../operations/mutations/addStudentToClass";
-import { ADD_TEACHER_TO_CLASS } from "../../../operations/mutations/addTeacherToClass";
-import { REMOVE_STUDENT_FROM_CLASS } from "../../../operations/mutations/removeStudentFromClass";
-import { REMOVE_TEACHER_FROM_CLASS } from "../../../operations/mutations/removeTeacherFromClass";
-import { GET_CLASS_USERS } from "../../../operations/queries/getClassUsers";
+import MaterialTable,
+{ EditComponentProps } from "material-table";
+import React,
+{
+    ChangeEvent,
+    useEffect,
+    useState,
+} from "react";
 import {
-    EligibleUser,
-    EligibleUsers,
-    GET_ELIGIBLE_USERS,
-} from "../../../operations/queries/getEligibleUsers";
-import { ParameterHOC } from "../../../utils/history";
-import { constantValues } from "../constants";
+    injectIntl,
+    IntlFormatters,
+} from "react-intl";
 
 const useStyles = makeStyles((theme) => ({
     containerTable: {
-        width: "100%",
+        width: `100%`,
         "& table": {
-            overflowY: "auto",
+            overflowY: `auto`,
         },
     },
     dashedData: {
-        borderBottom: "1px dashed",
-        color: "#cacaca",
+        borderBottom: `1px dashed`,
+        color: `#cacaca`,
     },
     form: {
-        display: "flex",
-        flexDirection: "column",
-        margin: "auto",
-        width: "fit-content",
+        display: `flex`,
+        flexDirection: `column`,
+        margin: `auto`,
+        width: `fit-content`,
     },
     formControl: {
         marginTop: theme.spacing(2),
@@ -46,9 +60,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface ClassRosterSchool {
+interface ClassRoster {
     school_id: string;
     user: {
+        membership: any;
         user_id: string;
     };
 }
@@ -56,154 +71,117 @@ interface ClassRosterSchool {
 /**
  * Returns function to show Class Roster Table in "View Class Roster section"
  */
-function ClassRosterTable(props: { intl: IntlFormatters }) {
+function ClassRosterTable (props: { intl: IntlFormatters }) {
     const { intl } = props;
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const { classId } = ParameterHOC();
-    const teacherRole = "Teacher";
-    const studentRole = "Student";
-    const [dataTable, setData] = useState<User[]>([]);
-    const [addTeacherToClass] = useMutation(ADD_TEACHER_TO_CLASS);
-    const [addStudentToClass] = useMutation(ADD_STUDENT_TO_CLASS);
-    const [removeTeacherFromClass] = useMutation(REMOVE_TEACHER_FROM_CLASS);
-    const [removeStudentFromClass] = useMutation(REMOVE_STUDENT_FROM_CLASS);
-    const [users, setUsers] = useState<User[]>([]);
-    const { data: classUsers, refetch, loading: loadingTableUsers } = useQuery(
-        GET_CLASS_USERS,
-        {
-            fetchPolicy: "network-only",
-            variables: {
-                class_id: classId,
-            },
+    const teacherRole = `Teacher`;
+    const studentRole = `Student`;
+    const membership = useReactiveVar(currentMembershipVar);
+    const [ dataTable, setData ] = useState<User[]>([]);
+    const [ addTeacherToClass ] = useMutation(ADD_TEACHER_TO_CLASS);
+    const [ addStudentToClass ] = useMutation(ADD_STUDENT_TO_CLASS);
+    const [ removeTeacherFromClass ] = useMutation(REMOVE_TEACHER_FROM_CLASS);
+    const [ removeStudentFromClass ] = useMutation(REMOVE_STUDENT_FROM_CLASS);
+    const [ users, setUsers ] = useState<User[]>([]);
+    const {
+        data: classUsers,
+        refetch,
+        loading: loadingTableUsers,
+    } = useQuery(GET_CLASS_USERS, {
+        fetchPolicy: `network-only`,
+        variables: {
+            class_id: classId,
         },
-    );
+    });
 
-    const { data: eligibleUsers, loading: loadingUsers } = useQuery(
-        GET_ELIGIBLE_USERS,
-        {
-            fetchPolicy: "network-only",
-            variables: {
-                class_id: classId,
-            },
+    const { data: eligibleUsers, loading: loadingUsers } = useQuery(GET_ELIGIBLE_USERS, {
+        fetchPolicy: `network-only`,
+        variables: {
+            class_id: classId,
+            organization_id: membership.organization_id,
         },
-    );
+    });
 
     useEffect(() => {
         if (eligibleUsers && eligibleUsers.class && classUsers) {
             const eligibleUserList: EligibleUsers = eligibleUsers;
             const students: User[] = [];
             const teachers: User[] = [];
-            const schools = _get(classUsers, "class.schools", []).map(
-                (e: School) => e.school_id,
-            );
+            const schools = _get(classUsers, `class.schools`, []).map((e: School) => e.school_id);
 
-            eligibleUserList.class.eligibleStudents.forEach(
-                (eligible_students) => {
-                    if (eligible_students.school_memberships.length) {
-                        const schoolMemberships = eligible_students.school_memberships.reduce(
-                            (
-                                acc: Map<string, { user_id: string }>,
-                                e: ClassRosterSchool,
-                            ) => {
-                                if (schools.includes(e.school_id)) {
-                                    acc.set(e.user.user_id, e.user);
-                                }
+            eligibleUserList.class.eligibleStudents.forEach((eligibleStudents) => {
+                if (eligibleStudents.school_memberships.length) {
+                    const schoolMemberships = eligibleStudents.school_memberships.reduce((uniqueUserIds: Map<string, { user_id: string }>, school: ClassRoster) => {
+                        if (schools.includes(school.school_id) && school.user.membership?.status === `active`) {
+                            uniqueUserIds.set(school.user.user_id, school.user);
+                        }
 
-                                return acc;
-                            },
-                            new Map(),
-                        );
-                        schoolMemberships.forEach((student: EligibleUser) => {
-                            students.push({
-                                role: studentRole,
-                                user_id: student.user_id,
-                                given_name:
-                                    student.given_name +
-                                    " " +
-                                    student.family_name,
-                            });
+                        return uniqueUserIds;
+                    }, new Map());
+                    schoolMemberships.forEach((student: EligibleUser) => {
+                        students.push({
+                            role: studentRole,
+                            user_id: student.user_id,
+                            given_name: student.given_name + ` ` + student.family_name,
                         });
-                    }
-                },
-            );
+                    });
+                }
+            });
 
-            eligibleUserList.class.eligibleTeachers.forEach(
-                (eligibleTeachers) => {
-                    if (eligibleTeachers.school_memberships.length) {
-                        const schoolMemberships = eligibleTeachers.school_memberships.reduce(
-                            (
-                                acc: Map<string, { user_id: string }>,
-                                e: ClassRosterSchool,
-                            ) => {
-                                if (schools.includes(e.school_id)) {
-                                    acc.set(e.user.user_id, e.user);
-                                }
+            eligibleUserList.class.eligibleTeachers.forEach((eligibleTeachers) => {
+                if (eligibleTeachers.school_memberships.length) {
+                    const schoolMemberships = eligibleTeachers.school_memberships.reduce((uniqueUserIds: Map<string, { user_id: string }>, school: ClassRoster) => {
+                        if (schools.includes(school.school_id) && school.user.membership?.status === `active`) {
+                            uniqueUserIds.set(school.user.user_id, school.user);
+                        }
 
-                                return acc;
-                            },
-                            new Map(),
-                        );
+                        return uniqueUserIds;
+                    }, new Map());
 
-                        schoolMemberships.forEach((value: EligibleUser) => {
-                            teachers.push({
-                                role: teacherRole,
-                                user_id: value.user_id,
-                                given_name:
-                                    value.given_name + " " + value.family_name,
-                            });
+                    schoolMemberships.forEach((value: EligibleUser) => {
+                        teachers.push({
+                            role: teacherRole,
+                            user_id: value.user_id,
+                            given_name: value.given_name + ` ` + value.family_name,
                         });
-                    }
-                },
-            );
+                    });
+                }
+            });
 
-            setUsers([...teachers, ...students]);
+            setUsers([ ...teachers, ...students ]);
         }
-    }, [eligibleUsers]);
+    }, [ eligibleUsers ]);
 
     useEffect(() => {
         if (classUsers) {
-            const userRoleHelper = (
-                users: User[],
-                path: string,
-                role: string,
-            ): User[] => {
-                return _get(users, path, []).reduce(
-                    (acc: User[], user: User) => {
-                        const hasGivenName = _get(user, "given_name", false);
-                        const hasId = _get(user, "user_id", false);
-                        const className = _get(users, "class.class_name", "");
+            const userRoleHelper = (users: User[], path: string, role: string): User[] => {
+                return _get(users, path, []).reduce((acc: User[], user: User) => {
+                    const hasGivenName = _get(user, `given_name`, false);
+                    const hasId = _get(user, `user_id`, false);
+                    const className = _get(users, `class.class_name`, ``);
 
-                        if (hasId && hasGivenName) {
-                            return acc.concat({
-                                user_id: user.user_id,
-                                role,
-                                given_name: user.given_name,
-                                class_name: className,
-                            });
-                        }
+                    if (hasId && hasGivenName) {
+                        return acc.concat({
+                            user_id: user.user_id,
+                            role,
+                            given_name: user.given_name,
+                            class_name: className,
+                        });
+                    }
 
-                        return acc;
-                    },
-                    [],
-                );
+                    return acc;
+                }, []);
             };
 
-            const teachers = userRoleHelper(
-                classUsers,
-                "class.teachers",
-                teacherRole,
-            );
-            const students = userRoleHelper(
-                classUsers,
-                "class.students",
-                studentRole,
-            );
-            const teachersAndStudentsInClass = [...teachers, ...students];
+            const teachers = userRoleHelper(classUsers, `class.teachers`, teacherRole);
+            const students = userRoleHelper(classUsers, `class.students`, studentRole);
+            const teachersAndStudentsInClass = [ ...teachers, ...students ];
 
             setData(teachersAndStudentsInClass);
         }
-    }, [classUsers]);
+    }, [ classUsers ]);
 
     const addUser = async (user: User): Promise<void> => {
         try {
@@ -216,14 +194,10 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                         user_id,
                     },
                 });
-                const validationError = _get(
-                    response,
-                    "data.class.addTeacher",
-                    true,
-                );
+                const validationError = _get(response, `data.class.addTeacher`, true);
 
                 if (validationError === null) {
-                    throw Error("Validation error");
+                    throw Error(`Validation error`);
                 }
             }
 
@@ -235,21 +209,25 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                     },
                 });
 
-                const validationError = _get(
-                    response,
-                    "data.class.addStudent",
-                    true,
-                );
+                const validationError = _get(response, `data.class.addStudent`, true);
 
                 if (validationError === null) {
-                    throw Error("Validation error");
+                    throw Error(`Validation error`);
                 }
             }
 
             await refetch();
-            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userAddedMessage" }), { variant: "success" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classRoster_userAddedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userAddedError" }), { variant: "error" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classRoster_userAddedError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -276,9 +254,17 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
             }
 
             await refetch();
-            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userRemovedMessage" }), { variant: "success" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classRoster_userRemovedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (e) {
-            enqueueSnackbar(intl.formatMessage({ id: "classRoster_userRemovedError" }), { variant: "error" });
+            enqueueSnackbar(intl.formatMessage({
+                id: `classRoster_userRemovedError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -289,9 +275,9 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                 options={{
                     selection: true,
                     headerStyle: {
-                        backgroundColor: "#fff",
-                        color: "#000",
-                        fontWeight: "bold",
+                        backgroundColor: `#fff`,
+                        color: `#000`,
+                        fontWeight: `bold`,
                     },
                 }}
                 isLoading={loadingTableUsers && loadingUsers}
@@ -299,110 +285,75 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                 columns={[
                     {
                         title: intl.formatMessage({
-                            id: "classRoster_nameTitle",
+                            id: `classRoster_nameTitle`,
                         }),
-                        field: "user",
+                        field: `user`,
                         cellStyle: {
                             minWidth: 200,
                             width: 200,
                         },
                         render: (rowData) => <span>{rowData.given_name}</span>,
                         editComponent: (props: EditComponentProps<any>) => {
-                            const user_id = _get(
-                                props,
-                                "rowData.user_id",
-                                false,
-                            );
-                            if (!user_id) {
-                                const userIds = dataTable.map(
-                                    (e: User) => e.user_id,
-                                );
-                                const unassignedUsers = users.filter(
-                                    (e: User) => !userIds.includes(e.user_id),
-                                );
+                            const userId = _get(props, `rowData.user_id`, false);
+                            if (!userId) {
+                                const userIds = dataTable.map((e: User) => e.user_id);
+                                const unassignedUsers = users.filter((e: User) => !userIds.includes(e.user_id));
 
                                 return (
                                     <Autocomplete
                                         id="slContactName"
-                                        onChange={(
-                                            event: ChangeEvent<
-                                                Record<string, unknown>
-                                            >,
-                                            newValue: User | null,
-                                        ) => {
+                                        options={unassignedUsers}
+                                        getOptionLabel={(option) => option.given_name}
+                                        style={{
+                                            width: 200,
+                                        }}
+                                        renderInput={(params) => <TextField
+                                            {...params}
+                                            variant="outlined" />}
+                                        groupBy={(option): string => option.role}
+                                        onChange={(event: ChangeEvent<Record<string, unknown>>,
+                                            newValue: User | null) => {
                                             props.onChange(newValue);
                                         }}
-                                        options={unassignedUsers}
-                                        getOptionLabel={(option) =>
-                                            option.given_name
-                                        }
-                                        style={{ width: 200 }}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                variant="outlined"
-                                            />
-                                        )}
-                                        groupBy={(option): string =>
-                                            option.role
-                                        }
                                     />
                                 );
                             }
 
-                            const role = _get(props, "rowData.role", "");
-                            const defaultValue = users.find(
-                                (e: User) =>
-                                    e.user_id === user_id && e.role === role,
-                            );
-                            const given_name = _get(
-                                defaultValue,
-                                "given_name",
-                                "",
-                            );
+                            const role = _get(props, `rowData.role`, ``);
+                            const defaultValue = users.find((e: User) => e.user_id === userId && e.role === role);
+                            const givenName = _get(defaultValue, `given_name`, ``);
 
                             return (
                                 <Autocomplete
                                     id="slContactName"
-                                    onChange={(
-                                        event: ChangeEvent<
-                                            Record<string, unknown>
-                                        >,
-                                        newValue: User | null,
-                                    ) => {
-                                        props.onChange(newValue);
-                                    }}
                                     options={users}
                                     defaultValue={{
-                                        given_name,
+                                        givenName,
                                         role,
-                                        user_id,
+                                        userId,
                                     }}
                                     getOptionSelected={(option, value) => {
-                                        return (
-                                            option.given_name ===
-                                            value.given_name
-                                        );
+                                        return option.given_name === value.given_name;
                                     }}
-                                    getOptionLabel={(option) =>
-                                        option.given_name
-                                    }
-                                    style={{ width: 200 }}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            variant="outlined"
-                                        />
-                                    )}
+                                    getOptionLabel={(option) => option.given_name}
+                                    style={{
+                                        width: 200,
+                                    }}
+                                    renderInput={(params) => <TextField
+                                        {...params}
+                                        variant="outlined" />}
                                     groupBy={(option): string => option.role}
+                                    onChange={(event: ChangeEvent<Record<string, unknown>>, newValue: User | null) => {
+                                        props.onChange(newValue);
+                                    }}
                                 />
                             );
                         },
                     },
                     {
-                        title: "Class name",
-                        field: "role",
-                        editable: "never",
+                        title: `Class name`,
+                        field: `role`,
+                        editable: `never`,
                         cellStyle: {
                             width: 200,
                             minWidth: 200,
@@ -413,20 +364,16 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                     },
                     {
                         title: intl.formatMessage({
-                            id: "classRoster_groupTitle",
+                            id: `classRoster_groupTitle`,
                         }),
-                        field: "role",
-                        editable: "never",
+                        field: `role`,
+                        editable: `never`,
                         cellStyle: {
                             width: 200,
                             minWidth: 200,
                         },
                         render: (rowData) => {
-                            return (
-                                <span className={classes.dashedData}>
-                                    {rowData.role}
-                                </span>
-                            );
+                            return <span className={classes.dashedData}>{rowData.role}</span>;
                         },
                     },
                 ]}
@@ -453,81 +400,83 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                 }}
                 localization={{
                     header: {
-                        actions: "",
+                        actions: ``,
                     },
                     body: {
                         emptyDataSourceMessage: intl.formatMessage({
-                            id: "classRoster_noRecords",
+                            id: `classRoster_noRecords`,
                         }),
                         addTooltip: intl.formatMessage({
-                            id: "classRoster_addTooltip",
+                            id: `classRoster_addTooltip`,
                         }),
                         deleteTooltip: intl.formatMessage({
-                            id: "classRoster_deleteRowTooltip",
+                            id: `classRoster_deleteRowTooltip`,
                         }),
                         editTooltip: intl.formatMessage({
-                            id: "classRoster_editRowTooltip",
+                            id: `classRoster_editRowTooltip`,
                         }),
                         editRow: {
                             saveTooltip: intl.formatMessage({
-                                id: "classRoster_saveRowTooltip",
+                                id: `classRoster_saveRowTooltip`,
                             }),
                             cancelTooltip: intl.formatMessage({
-                                id: "classRoster_cancelSaveRowTooltip",
+                                id: `classRoster_cancelSaveRowTooltip`,
                             }),
                             deleteText: intl.formatMessage({
-                                id: "classRoster_deleteRowText",
+                                id: `classRoster_deleteRowText`,
                             }),
                         },
                     },
                     toolbar: {
                         searchPlaceholder: intl.formatMessage({
-                            id: "classRoster_searchPlaceholder",
+                            id: `classRoster_searchPlaceholder`,
                         }),
                         searchTooltip: intl.formatMessage({
-                            id: "classRoster_searchTooltip",
+                            id: `classRoster_searchTooltip`,
                         }),
                         exportTitle: intl.formatMessage({
-                            id: "classRoster_exportTooltip",
+                            id: `classRoster_exportTooltip`,
                         }),
                         exportCSVName: intl.formatMessage({
-                            id: "classRoster_exportCSVName",
+                            id: `classRoster_exportCSVName`,
                         }),
                         exportPDFName: intl.formatMessage({
-                            id: "classRoster_exportPDFName",
+                            id: `classRoster_exportPDFName`,
                         }),
                     },
                     pagination: {
                         labelDisplayedRows: `{from}-{to} ${intl.formatMessage({
-                            id: "classRoster_labelDisplayedRows",
+                            id: `classRoster_labelDisplayedRows`,
                         })} {count}`,
                         labelRowsSelect: intl.formatMessage({
-                            id: "classRoster_labelRowsSelect",
+                            id: `classRoster_labelRowsSelect`,
                         }),
                         nextTooltip: intl.formatMessage({
-                            id: "classRoster_nextTooltip",
+                            id: `classRoster_nextTooltip`,
                         }),
                         previousTooltip: intl.formatMessage({
-                            id: "classRoster_previousTooltip",
+                            id: `classRoster_previousTooltip`,
                         }),
                         firstTooltip: intl.formatMessage({
-                            id: "classRoster_firstTooltip",
+                            id: `classRoster_firstTooltip`,
                         }),
                         lastTooltip: intl.formatMessage({
-                            id: "classRoster_lastTooltip",
+                            id: `classRoster_lastTooltip`,
                         }),
                     },
                 }}
                 actions={[
                     {
                         tooltip: intl.formatMessage({
-                            id: "classRoster_actionsDeleteTooltip",
+                            id: `classRoster_actionsDeleteTooltip`,
                         }),
                         icon: Delete,
                         onClick: (evt, data: any) =>
-                            alert(
-                                intl.formatMessage({ id: `data_deleteRows` }, { rows: data.length })
-                            ),
+                            alert(intl.formatMessage({
+                                id: `data_deleteRows`,
+                            }, {
+                                rows: data.length,
+                            })),
                     },
                 ]}
             />

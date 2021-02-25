@@ -219,6 +219,7 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_editButton`,
                             }),
                             icon: EditIcon,
+                            disabled: row.status === `inactive`,
                             onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
                         },
                         {
@@ -226,6 +227,7 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_deleteButton`,
                             }),
                             icon: DeleteIcon,
+                            disabled: row.status === `inactive`,
                             onClick: (row) => showConfirmDeleteOrganization(row),
                         },
                     ]}

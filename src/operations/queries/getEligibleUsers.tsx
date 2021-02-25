@@ -1,12 +1,15 @@
 import { gql } from "@apollo/client";
 
 export const GET_ELIGIBLE_USERS = gql`
-    query class($class_id: ID!) {
+    query class($class_id: ID!, $organization_id: ID!) {
         class(class_id: $class_id) {
             eligibleTeachers {
                 school_memberships {
                     school_id
                     user {
+                        membership(organization_id: $organization_id) {
+                            status
+                        }
                         user_id
                         user_name
                         given_name
@@ -18,6 +21,9 @@ export const GET_ELIGIBLE_USERS = gql`
                 school_memberships {
                     school_id
                     user {
+                        membership(organization_id: $organization_id) {
+                            status
+                        }
                         user_id
                         user_name
                         given_name

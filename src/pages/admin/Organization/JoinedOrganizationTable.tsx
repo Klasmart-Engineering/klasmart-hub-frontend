@@ -51,7 +51,7 @@ interface Props {}
 /**
  * Returns function to show Joined Organizations table
  */
-export default function JoinedOrganizationTable(props: Props) {
+export default function JoinedOrganizationTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -73,14 +73,15 @@ export default function JoinedOrganizationTable(props: Props) {
         }
         const myEmail = data?.me.email;
         const rows = memberships
-            .filter((m) => myEmail !== m?.organization?.owner?.email)
-            .map((m) => ({
-                id: m.organization?.organization_id ?? ``,
-                name: m.organization?.organization_name ?? ``,
-                phone: m.organization?.phone ?? ``,
-                email: m.organization?.owner?.email ?? ``,
-                roles: m.roles?.map((r) => r.role_name ?? ``) ?? [],
-                status: m.status ? intl.formatMessage({ id: `data_${m.status}Status` }) : ``,
+            .filter((organization) =>
+                myEmail !== organization?.organization?.owner?.email && organization?.status === `active`)
+            .map((organization) => ({
+                id: organization.organization?.organization_id ?? ``,
+                name: organization.organization?.organization_name ?? ``,
+                phone: organization.organization?.phone ?? ``,
+                email: organization.organization?.owner?.email ?? ``,
+                roles: organization.roles?.map((r) => r.role_name ?? ``) ?? [],
+                status: organization.status ?? ``,
             }));
 
         setRows(rows);
