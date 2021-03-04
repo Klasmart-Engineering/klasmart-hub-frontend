@@ -22,6 +22,8 @@ export interface User {
     my_organization?: Organization | null;
     organization_ownerships?: OrganizationOwnership[];
     full_name?: string | null;
+    role?: string | null;
+    address?: string | null;
 }
 
 export interface OrganizationOwnership {

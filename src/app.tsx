@@ -13,7 +13,7 @@ import EditOrganization from "./pages/admin/Organization/EditOrganization";
 import Organization from "./pages/admin/Organization/Organization";
 import ProgramsPage from "./pages/admin/programs";
 import RoleTable from "./pages/admin/Role/RoleTable";
-import ClasessTable from "./pages/admin/School/ClassesTable";
+import ClassesPage from "./pages/admin/classes";
 import SchoolTable from "./pages/admin/School/SchoolTable";
 import SubjectsPage from "./pages/admin/subjects";
 import User from "./pages/admin/User";
@@ -227,7 +227,7 @@ export function App () {
                     </Route>
                     <Route path="/admin/classes">
                         <Layout>
-                            <ClasessTable />
+                            <ClassesPage />
                         </Layout>
                     </Route>
                     <Route path="/admin/programs">

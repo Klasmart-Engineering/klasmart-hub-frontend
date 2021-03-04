@@ -8,7 +8,8 @@ import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
-import React, {
+import React,
+{
     useEffect,
     useState,
 } from "react";
@@ -19,11 +20,8 @@ interface Props {
     onClose: (value?: Class) => void;
 }
 
-export default function CreateClassDialog(props: Props) {
-    const {
-        open,
-        onClose,
-    } = props;
+export default function CreateClassDialog (props: Props) {
+    const { open, onClose } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
@@ -44,28 +42,21 @@ export default function CreateClassDialog(props: Props) {
                 variables: {
                     organization_id,
                     class_name: class_name ?? ``,
-                    school_ids:
-                        schools?.map((school) => school.school_id) ?? [],
+                    school_ids: schools?.map((school) => school.school_id) ?? [],
                 },
             });
             onClose(newClass);
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSavedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSavedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (error) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSaveError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSaveError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -83,7 +74,7 @@ export default function CreateClassDialog(props: Props) {
                     label: `Create`,
                     color: `primary`,
                     disabled: !valid,
-                    onClick: handleCreate,
+                    onClick: () => console.log(`create`),
                 },
             ]}
             onClose={() => onClose()}
@@ -91,8 +82,7 @@ export default function CreateClassDialog(props: Props) {
             <ClassDialogForm
                 value={newClass}
                 onChange={(value) => setNewClass(value)}
-                onValidation={setValid}
-            />
+                onValidation={setValid} />
         </Dialog>
     );
 }

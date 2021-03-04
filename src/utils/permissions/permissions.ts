@@ -2513,6 +2513,13 @@ export const permissions = [
             `Gives users access to publish frree content for all organizations`,
     },
     {
+        name: `define_class_page_20104`,
+        category: `Academic Profile`,
+        group: `Classes`,
+        level: `School Admin`,
+        description: `Gives users access to define class page`,
+    },
+    {
         name: `define_subject_page_20106`,
         category: `Academic Profile`,
         group: `Subjects`,

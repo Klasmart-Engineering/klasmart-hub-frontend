@@ -100,7 +100,7 @@
     "iframe-resizer-react": "^1.1.0",
     "interpolate-html-plugin": "^4.0.0",
     "jwt-decode": "^3.1.2",
-    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#38b676ac8d80532aba0459ee166971728013a9e5",
+    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#fd7c5979b83ae9599643e23e92a306714db1dfb7",
     "lodash": "^4.17.21",
     "logrocket": "^1.0.14",
     "material-table": "^1.69.2",

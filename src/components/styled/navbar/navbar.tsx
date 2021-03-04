@@ -127,10 +127,12 @@ export default function NavBar (props: Props) {
             text: `Schools`,
             value: `/admin/schools`,
         },
-        {
-            text: `Classes`,
-            value: `/admin/classes`,
-        },
+        ...usePermission(`define_class_page_20104`) ? [
+            {
+                text: `Classes`,
+                value: `/admin/classes`,
+            },
+        ] : [],
         ...usePermission(`define_program_page_20105`) ? [
             {
                 text: `Programs`,

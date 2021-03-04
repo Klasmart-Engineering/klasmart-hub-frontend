@@ -11,7 +11,8 @@ import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
-import React, {
+import React,
+{
     useEffect,
     useState,
 } from "react";
@@ -23,7 +24,7 @@ interface Props {
     onClose: (value?: Class) => void;
 }
 
-export default function EditClassDialog(props: Props) {
+export default function EditClassDialog (props: Props) {
     const {
         open,
         value,
@@ -59,61 +60,23 @@ export default function EditClassDialog(props: Props) {
                 await editSchools({
                     variables: {
                         class_id,
-                        school_ids:
-                            schools?.map((school) => school.school_id) ?? [],
+                        school_ids: schools?.map((school) => school.school_id) ?? [],
                     },
                 });
             }
 
             onClose(editedClass);
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSavedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
-        } catch (error) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classSaveError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!confirm(`Are you sure you want to delete "${value?.class_name}"?`))
-            return;
-        try {
-            const { class_id } = editedClass;
-            await deleteClass({
-                variables: {
-                    class_id,
-                },
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSavedMessage`,
+            }), {
+                variant: `success`,
             });
-            onClose(editedClass);
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
         } catch (error) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSaveError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -123,19 +86,13 @@ export default function EditClassDialog(props: Props) {
             title="Edit class"
             actions={[
                 {
-                    label: `Delete`,
-                    color: `error`,
-                    align: `left`,
-                    onClick: handleDelete,
-                },
-                {
                     label: `Cancel`,
                     color: `primary`,
                     align: `right`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Save`,
+                    label: `Edit`,
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
@@ -147,8 +104,7 @@ export default function EditClassDialog(props: Props) {
             <ClassDialogForm
                 value={editedClass}
                 onChange={(value) => setEditedClass(value)}
-                onValidation={setValid}
-            />
+                onValidation={setValid} />
         </Dialog>
     );
 }

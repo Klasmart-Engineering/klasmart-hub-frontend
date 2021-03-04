@@ -3,15 +3,19 @@ import {
     useGetAllClasses,
 } from "@/api/classes";
 import { currentMembershipVar } from "@/cache";
+import ClassRoster from "@/components/Class/ClassRoster/Table";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
+import ViewClassDialog from "@/components/Class/Dialog/View";
 import { Class } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
+    Chip,
     createStyles,
-    Link,
+    DialogContentText,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -19,20 +23,23 @@ import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
+    Pageview as ViewIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
     PageTable,
+    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import React, {
+import React,
+{
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
             width: `100%`,
@@ -55,12 +62,22 @@ const useStyles = makeStyles(() =>
             fontWeight: `bold`,
             textTransform: `capitalize`,
         },
+        chip: {
+            margin: theme.spacing(0.25),
+        },
+        roleName: {
+            color: `#0094FF`,
+            cursor: `pointer`,
+        },
     }));
 
 interface ClassRow {
     id: string;
     name: string;
     schoolNames: string[];
+    grades: string[];
+    programs: string[];
+    subject: string;
     status: string;
 }
 
@@ -70,8 +87,9 @@ interface Props {}
  * Returns function to show Classes Table in "Classes" section
  * @param  props {Object} intl - The object has a function (formatMessage) that support multiple languages
  */
-export default function ClasessTable (props: Props) {
+export default function ClassesTable (props: Props) {
     const classes = useStyles();
+    const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
@@ -79,10 +97,14 @@ export default function ClasessTable (props: Props) {
     const canCreate = usePermission(`create_class_20224`);
     const canEdit = usePermission(`edit_class_20334`);
     const canDelete = usePermission(`delete_class_20444`);
+    const canView = usePermission(`view_classes_20114`);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
+    const [ viewDialogOpen, setViewDialogOpen ] = useState(false);
+    const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
     const [ rows, setRows ] = useState<ClassRow[]>([]);
+    const { required, equals } = useValidations();
     const {
         data,
         refetch,
@@ -101,15 +123,28 @@ export default function ClasessTable (props: Props) {
             id: c.class_id,
             name: c.class_name ?? ``,
             schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
-            status: c.status ? intl.formatMessage({
-                id: `data_${c.status}Status`,
-            }) : ``,
+            grades: [
+                `PreK-1`,
+                `PreK-2`,
+                `+1`,
+            ],
+            programs: [
+                `Program 01`,
+                `Programs 02`,
+                `+1`,
+            ],
+            subject: `Math`,
+            status: c.status ?? ``,
         }));
-        setRows(rows ?? []);
-    }, [ schoolClasses ]);
 
-    const findClass = (row: ClassRow) =>
-        schoolClasses?.find((c) => c.class_id === row.id);
+        if (canView) {
+            setRows(rows ?? []);
+        } else {
+            setRows([]);
+        }
+    }, [ schoolClasses, canView ]);
+
+    const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
 
     const editSelectedRow = (row: ClassRow) => {
         const selectedClass = findClass(row);
@@ -121,11 +156,29 @@ export default function ClasessTable (props: Props) {
     const deleteSelectedRow = async (row: ClassRow) => {
         const selectedClass = findClass(row);
         if (!selectedClass) return;
-        if (!confirm(intl.formatMessage({
-            id: `class_confirmDelete`,
-        }, {
-            name: selectedClass.class_name,
-        }))) return;
+
+        const { class_name } = selectedClass;
+
+        if (
+            !(await prompt({
+                variant: `error`,
+                title: `Delete Class`,
+                okLabel: `Delete`,
+                content: (
+                    <>
+                        <DialogContentText>
+                            Are you sure you want to delete {`"${class_name}"`} class?
+                        </DialogContentText>
+                        <DialogContentText>
+                            Type <strong>{class_name}</strong> to confirm deletion.
+                        </DialogContentText>
+                    </>
+                ),
+                validations: [ required(), equals(class_name) ],
+            }))
+        )
+            return;
+
         const { class_id } = selectedClass;
         try {
             await deleteClass({
@@ -161,19 +214,52 @@ export default function ClasessTable (props: Props) {
             }),
             persistent: true,
             render: (row) => (
-                <Link href={`/#/admin/classes/${row.id}/roster`}>{row.name}</Link>
+                <div
+                    className={classes.roleName}
+                    onClick={() => {
+                        setClassRosterDialogOpen(true);
+                    }}
+                >
+                    {row.name}
+                </div>
             ),
         },
         {
-            id: `schoolNames`,
-            label: intl.formatMessage({
-                id: `classes_schoolTitle`,
-            }),
+            id: `grades`,
+            label: `Grades`,
+            render: (row) => (
+                <>
+                    {row.grades.map((grade, i) => (
+                        <Chip
+                            key={`grade-${i}`}
+                            label={grade}
+                            className={classes.chip} />
+                    ))}
+                </>
+            ),
+        },
+        {
+            id: `programs`,
+            label: `Programs`,
             disableSort: true,
-            render: (row) =>
-                row.schoolNames.map((s, i) => (
-                    <div key={`school-${i}`}>{s}</div>
-                )),
+            render: (row) => (
+                <>
+                    {row.programs.map((program, i) => (
+                        <Chip
+                            key={`program-${i}`}
+                            label={program}
+                            className={classes.chip} />
+                    ))}
+                </>
+            ),
+        },
+        {
+            id: `subject`,
+            label: `Subject`,
+            disableSort: true,
+            render: (row) => <Chip
+                label={row.subject}
+                className={classes.chip} />,
         },
         {
             id: `status`,
@@ -210,21 +296,13 @@ export default function ClasessTable (props: Props) {
                         disabled: !canCreate,
                         onClick: () => setCreateDialogOpen(true),
                     }}
-                    selectActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `classes_actionsDeleteTooltip`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete,
-                            onClick: (rowIds) => alert(intl.formatMessage({
-                                id: `class_deleteRows`,
-                            }, {
-                                rows: rowIds.length,
-                            })),
-                        },
-                    ]}
                     rowActions={(row) => [
+                        {
+                            label: `View class details`,
+                            icon: ViewIcon,
+                            // disabled: !(row.status === `active` && canEdit),
+                            onClick: () => setViewDialogOpen(true),
+                        },
                         {
                             label: intl.formatMessage({
                                 id: `classes_editRowTooltip`,
@@ -261,6 +339,7 @@ export default function ClasessTable (props: Props) {
                     })}
                 />
             </Paper>
+
             <EditClassDialog
                 open={editDialogOpen}
                 value={selectedClass}
@@ -270,11 +349,26 @@ export default function ClasessTable (props: Props) {
                     if (value) refetch();
                 }}
             />
+
             <CreateClassDialog
                 open={createDialogOpen}
                 onClose={(value) => {
                     setCreateDialogOpen(false);
                     if (value) refetch();
+                }}
+            />
+
+            <ViewClassDialog
+                open={viewDialogOpen}
+                onClose={() => {
+                    setViewDialogOpen(false);
+                }}
+            />
+
+            <ClassRoster
+                open={classRosterDialogOpen}
+                onClose={() => {
+                    setClassRosterDialogOpen(false);
                 }}
             />
         </>

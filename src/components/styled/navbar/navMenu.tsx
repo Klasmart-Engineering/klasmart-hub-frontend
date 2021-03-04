@@ -22,6 +22,7 @@ import {
     Business as BusinessIcon,
     CalendarToday as CalendarIcon,
     ChildCare as ChildCareIcon,
+    Class as ClassIcon,
     ContactSupport as SupportIcon,
     CreditCard as CardIcon,
     Grade as GradeIcon,
@@ -289,6 +290,19 @@ export default function NavMenu (props: Props) {
                 icon: LibraryBooksIcon,
                 title: intl.formatMessage({
                     id: `navMenu_programsTitle`,
+                }),
+            },
+        ] : [],
+        ...usePermission(`define_class_page_20104`) ? [
+            {
+                description: intl.formatMessage({
+                    id: `navMenu_classesDescription`,
+                }),
+                link: `/admin/classes`,
+                color: `#0E78D5`,
+                icon: ClassIcon,
+                title: intl.formatMessage({
+                    id: `navMenu_classesTitle`,
                 }),
             },
         ] : [],
