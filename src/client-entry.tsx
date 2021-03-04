@@ -4,7 +4,7 @@ import "typeface-nanum-square-round";
 import "./assets/css/index.min.css";
 import { cache } from "./cache";
 import { getAPIEndpoint } from "./config";
-import { Layout } from "./layout";
+import Layout from "./layout";
 import {
     createDefaultStore,
     State,
@@ -28,7 +28,8 @@ import {
     SnackbarProvider,
 } from "kidsloop-px";
 import LogRocket from "logrocket";
-import React, { useMemo } from "react";
+import React,
+{ useMemo } from "react";
 import { useCookies } from "react-cookie";
 import * as ReactDOM from "react-dom";
 import { RawIntlProvider } from "react-intl";
@@ -52,7 +53,7 @@ export const client = new ApolloClient({
     cache,
 });
 
-function ClientSide() {
+function ClientSide () {
     const memos = useMemo(() => {
         const url = new URL(window.location.href);
         const locale = url.searchParams.get(`iso`);
@@ -88,7 +89,7 @@ function ClientSide() {
     );
 }
 
-async function main() {
+async function main () {
     const { store, persistor } = createDefaultStore();
     if (process.env.NODE_ENV !== `production`) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -101,18 +102,15 @@ async function main() {
     }
 
     const div = document.getElementById(`app`);
-    ReactDOM.render(
-        <Router history={history}>
-            <Provider store={store}>
-                <PersistGate
-                    loading={null}
-                    persistor={persistor}>
-                    <ClientSide />
-                </PersistGate>
-            </Provider>
-        </Router>,
-        div,
-    );
+    ReactDOM.render(<Router history={history}>
+        <Provider store={store}>
+            <PersistGate
+                loading={null}
+                persistor={persistor}>
+                <ClientSide />
+            </PersistGate>
+        </Provider>
+    </Router>, div);
 }
 
 main();

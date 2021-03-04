@@ -1,12 +1,24 @@
-import LogRocket from "logrocket";
-import { applyMiddleware, combineReducers, createStore, Store as ReduxStore } from "redux";
-import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import { Actions } from "./actions";
-import { account, postAuthorizationRoute, ui } from "./reducers";
+import {
+    account,
+    postAuthorizationRoute,
+    ui,
+} from "./reducers";
+import LogRocket from "logrocket";
+import {
+    applyMiddleware,
+    combineReducers,
+    createStore,
+    Store as ReduxStore,
+} from "redux";
+import {
+    persistReducer,
+    persistStore,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
-    key: "root",
+    key: `root`,
     storage,
 };
 
@@ -18,10 +30,13 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export function createDefaultStore() {
+export function createDefaultStore () {
     const store = createStore(persistedReducer, applyMiddleware(LogRocket.reduxMiddleware()));
     const persistor = persistStore(store);
-    return { store, persistor };
+    return {
+        store,
+        persistor,
+    };
 }
 
 export type State = ReturnType<typeof rootReducer>;

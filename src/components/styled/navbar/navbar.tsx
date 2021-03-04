@@ -7,6 +7,7 @@ import {
     currentMembershipVar,
     userIdVar,
 } from "@/cache";
+import { DRAWER_WIDTH } from "@/components/SideNavigation";
 import { GET_USER } from "@/operations/queries/getUser";
 import { User } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
@@ -27,6 +28,7 @@ import {
     useMediaQuery,
     useTheme,
 } from "@material-ui/core";
+import clsx from "clsx";
 import { Tabs } from "kidsloop-px";
 import { Tab } from "kidsloop-px/dist/types/components/Tabs";
 import React from "react";
@@ -62,6 +64,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     tabs: {
         padding: theme.spacing(0, 2),
+    },
+    appBar: {
+        [theme.breakpoints.up(`sm`)]: {
+            width: `calc(100% - ${DRAWER_WIDTH}px)`,
+            marginLeft: DRAWER_WIDTH,
+        },
     },
 }));
 
@@ -178,8 +186,8 @@ export default function NavBar (props: Props) {
         <div className={classes.root}>
             <AppBar
                 color="primary"
-                position="sticky"
-                className={classes.safeArea}
+                position="absolute"
+                className={clsx(classes.safeArea, classes.appBar)}
             >
                 <Toolbar>
                     <Grid

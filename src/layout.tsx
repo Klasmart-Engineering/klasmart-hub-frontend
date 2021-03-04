@@ -1,4 +1,6 @@
-import { App } from "./app";
+import SideNavigation from "./components/SideNavigation";
+import NavBar from "./components/styled/navbar/navbar";
+import Router from "./router";
 import Grid from "@material-ui/core/Grid";
 import {
     createStyles,
@@ -8,53 +10,29 @@ import {
 import * as React from "react";
 import { withOrientationChange } from "react-device-detect";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        layout: {
-            flex: 1,
-        },
-        root: {
-            height: `100%`,
-            paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(5),
-            paddingRight: theme.spacing(5),
-            paddingTop: theme.spacing(4),
-            width: `calc(100% - 2*1.5rem)`,
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 1),
-            },
-        },
-        safeArea: {
-            paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(5),
-            paddingRight: theme.spacing(5),
-            paddingTop: theme.spacing(4),
-            [theme.breakpoints.down(`sm`)]: {
-                paddingBottom: theme.spacing(2),
-                paddingLeft: `max(${theme.spacing(1)}px,env(safe-area-inset-left)`,
-                paddingRight: `max(${theme.spacing(1)}px,env(safe-area-inset-right)`,
-                paddingTop: theme.spacing(2),
-            },
-        },
-    }),
-);
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    root: {
+        display: `flex`,
+    },
+    content: {
+        flexGrow: 1,
+    },
+}));
 
-let Layout = (props: any) => {
+const Layout = (props: any) => {
     const classes = useStyles();
 
+    console.log(`classes`, classes);
+
     return (
-        <Grid
-            container
-            direction="column"
-            justify="flex-start"
-            wrap="nowrap"
-            className={classes.layout}
-        >
-            <App />
-        </Grid>
+        <div className={classes.root}>
+            <NavBar />
+            <SideNavigation />
+            <main className={classes.content}>
+                <Router />
+            </main>
+        </div>
     );
 };
 
-Layout = withOrientationChange(Layout);
-
-export { Layout };
+export default withOrientationChange(Layout);
