@@ -7,14 +7,17 @@ import {
 } from "@material-ui/core/styles";
 import { Fab } from "kidsloop-px";
 import React from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         backButton: {
             marginRight: theme.spacing(1),
         },
-    }),
-);
+    }));
 
 interface Props {
     steps?: string[];
@@ -26,8 +29,9 @@ interface Props {
     permissionsStepIsValid?: boolean;
 }
 
-export default function RoleStepperButtons(props: Props) {
+export default function RoleStepperButtons (props: Props) {
     const classes = useStyles();
+    const intl = useIntl();
 
     const {
         steps,
@@ -63,7 +67,7 @@ export default function RoleStepperButtons(props: Props) {
                     className={classes.backButton}
                     onClick={handleBack}
                 >
-                    Back
+                    <FormattedMessage id="rolesInfoCard_backButton" />
                 </Button>
                 {steps && activeStep === steps.length ? (
                     <Fab
@@ -78,8 +82,12 @@ export default function RoleStepperButtons(props: Props) {
                         disabled={disabledHandler()}
                         variant="extended"
                         label={steps && activeStep === steps.length - 1
-                            ? `Finish`
-                            : `Continue`}
+                            ? intl.formatMessage({
+                                id: `rolesInfoCard_finishButton`,
+                            })
+                            : intl.formatMessage({
+                                id: `rolesInfoCard_continueButton`,
+                            }) }
                         onClick={handleNext}
                     />
                 )}

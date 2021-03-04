@@ -17,6 +17,10 @@ import React, {
     Dispatch,
     SetStateAction,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -27,8 +31,7 @@ const useStyles = makeStyles(() =>
         requiredField: {
             paddingTop: `19px`,
         },
-    }),
-);
+    }));
 
 interface Props {
     setRoleInfo: Dispatch<SetStateAction<RoleInfo>>;
@@ -38,7 +41,7 @@ interface Props {
     descriptionTextHelper: (description: string) => string;
 }
 
-export default function RoleInfoCard(props: Props) {
+export default function RoleInfoCard (props: Props) {
     const {
         roleInfo,
         setRoleInfo,
@@ -47,6 +50,8 @@ export default function RoleInfoCard(props: Props) {
         descriptionTextHelper,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
+
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, id } = event.target;
 
@@ -70,13 +75,15 @@ export default function RoleInfoCard(props: Props) {
                                 paddingTop: `10px`,
                             }}
                         >
-                            Fetching permissions
+                            <FormattedMessage id="rolesInfoCard_fetchingLabel" />
                         </div>
                     </Typography>
                 </CardContent>
             ) : (
                 <>
-                    <CardHeader title="Role Info" />
+                    <CardHeader title={intl.formatMessage({
+                        id: `rolesInfoCard_title`,
+                    })}/>
                     <Divider />
                     <CardContent>
                         <form
@@ -89,18 +96,24 @@ export default function RoleInfoCard(props: Props) {
                                     fullWidth
                                     error={nameTextHelper(roleInfo.name).length !== 0}
                                     id="name"
-                                    label="Name*"
                                     value={roleInfo.name}
                                     helperText={nameTextHelper(roleInfo.name)}
+                                    label={intl.formatMessage({
+                                        id: `rolesInfoCard_nameFieldLabel`,
+                                    })}
+                                    defaultValue={roleInfo.name}
                                     onChange={handleInputChange}
                                 />
                                 <TextField
                                     fullWidth
                                     error={descriptionTextHelper(roleInfo.description).length !== 0}
                                     id="description"
-                                    label="Description"
                                     value={roleInfo.description}
                                     helperText={descriptionTextHelper(roleInfo.description)}
+                                    label={intl.formatMessage({
+                                        id: `rolesInfoCard_descriptionFieldLabel`,
+                                    })}
+                                    defaultValue={roleInfo.description}
                                     onChange={handleInputChange}
                                 />
                             </Grid>
@@ -108,8 +121,11 @@ export default function RoleInfoCard(props: Props) {
                         <Typography
                             variant="body2"
                             color="textSecondary"
-                            component="div">
-                            <div className={classes.requiredField}>Required field*</div>
+                            component="div"
+                        >
+                            <div className={classes.requiredField}>
+                                <FormattedMessage id="rolesInfoCard_requiredFieldLabel" />
+                            </div>
                         </Typography>
                     </CardContent>
                 </>

@@ -80,7 +80,7 @@ export default function JoinedOrganizationTable(props: Props) {
                 phone: m.organization?.phone ?? ``,
                 email: m.organization?.owner?.email ?? ``,
                 roles: m.roles?.map((r) => r.role_name ?? ``) ?? [],
-                status: m.status ?? ``,
+                status: m.status ? intl.formatMessage({ id: `data_${m.status}Status` }) : ``,
             }));
 
         setRows(rows);
@@ -106,12 +106,16 @@ export default function JoinedOrganizationTable(props: Props) {
                 },
             });
             await refetch();
-            enqueueSnackbar(`You have leave the organization successfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `allOrganization_leftOrganizationSuccess`,
+            }), {
                 variant: `success`,
             });
             setConfirmLeaveOrganizationDialogOpen(false);
         } catch (error) {
-            enqueueSnackbar(`An error occurred while leaving the organization`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `allOrganization_leftOrganizationError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -170,7 +174,9 @@ export default function JoinedOrganizationTable(props: Props) {
                     orderBy="name"
                     selectActions={[
                         {
-                            label: `Leave selected organizations`,
+                            label: intl.formatMessage({
+                                id: `allOrganization_leaveOrganizationLabel`,
+                            }),
                             icon: ExitToAppIcon,
                             onClick: (rowIds) => console.log(rowIds),
                         },

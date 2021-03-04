@@ -50,7 +50,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
     useLocation,
     useRouteMatch,
@@ -139,9 +139,9 @@ interface Props {
 
 export default function LibraryTable (props: Props) {
     const classes = useStyles();
+    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const prompt = usePrompt();
-    const intl = useIntl();
     const restApi = useRestAPI();
     const location = useLocation();
     const route = useRouteMatch();
@@ -176,7 +176,7 @@ export default function LibraryTable (props: Props) {
             });
             setData(resp);
         } catch (e) {
-            enqueueSnackbar(`Sorry, something went wrong`, {
+            enqueueSnackbar(intl.formatMessage({ id: `superAdmin_contentFolderError` }), {
                 variant: `error`,
             });
         }
@@ -220,7 +220,7 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({ id: `superAdmin_nameLabel` }),
             render: (row) => {
                 if (row.contentType === ContentType.FOLDER) return <Link
                     className={clsx({
@@ -267,11 +267,11 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `authorName`,
-            label: `Author Name`,
+            label: intl.formatMessage({ id: `superAdmin_authorNameLabel` }),
         },
         {
             id: `contentType`,
-            label: `Content Type`,
+            label: intl.formatMessage({ id: `superAdmin_contentTypeLabel` }),
             groupText: (rowValue) => {
                 switch (rowValue) {
                 case ContentType.FOLDER: return ContentGroup.FOLDER;
@@ -297,16 +297,16 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `authorId`,
-            label: `Author ID`,
+            label: intl.formatMessage({ id: `superAdmin_authorIdLabel` }),
             hidden: true,
         },
         {
             id: `description`,
-            label: `Description`,
+            label: intl.formatMessage({ id: `superAdmin_descriptionLabel` }),
         },
         {
             id: `keywords`,
-            label: `Keywords`,
+            label: intl.formatMessage({ id: `superAdmin_keywordsLabel` }),
             render: (row) => row.keywords.map((keyword, i) => <Chip
                 key={`keyword-${i}`}
                 label={keyword}
@@ -315,7 +315,7 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `publishStatus`,
-            label: `Publish Status`,
+            label: intl.formatMessage({ id: `superAdmin_publishStatusLabel` }),
             render: (row) => <span
                 className={clsx(classes.statusText, getPublishStatusColor(row.publishStatus, classes))}
             >
@@ -324,12 +324,12 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `createdAt`,
-            label: `Created`,
+            label: intl.formatMessage({ id: `superAdmin_createdLabel` }),
             render: (row) => <span>{intl.formatDate(row.createdAt)}</span>,
         },
         {
             id: `updatedAt`,
-            label: `Last Modified`,
+            label: intl.formatMessage({ id: `superAdmin_lastModifiedLabel` }),
             render: (row) => <span>{intl.formatDate(row.updatedAt)}</span>,
         },
     ];
@@ -354,10 +354,10 @@ export default function LibraryTable (props: Props) {
         const selectedContent = findContentByRow(row);
         if (!selectedContent) return;
         const input = await prompt({
-            title: `Delete Content`,
+            title: intl.formatMessage({ id: `superAdmin_deleteContentTitle` }),
             content: <>
                 <DialogContentText>Are you sure you want to delete {`"${selectedContent.name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{selectedContent.name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText><FormattedMessage id="superAdmin_type" /> <strong>{selectedContent.name}</strong> <FormattedMessage id="superAdmin_confirmDeletion" /></DialogContentText>
             </>,
             validations: [ validations.required(`Required`), validations.equals(selectedContent.name, `Input doesn't match the expected value`) ],
             variant: `error`,
@@ -377,11 +377,11 @@ export default function LibraryTable (props: Props) {
                 });
             else throw Error(`unknown-type`);
             getContentsFolders();
-            enqueueSnackbar(`Content has been deleted succesfully`, {
+            enqueueSnackbar(intl.formatMessage({ id: 'superAdmin_deleteSuccess'}), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({ id: 'superAdmin_deleteError'}), {
                 variant: `error`,
             });
         }
@@ -417,48 +417,48 @@ export default function LibraryTable (props: Props) {
                     groupBy="contentType"
                     secondaryActions={[
                         {
-                            label: `Create Folder`,
+                            label: intl.formatMessage({ id: 'superAdmin_createFolderLabel'}),
                             icon: CreateNewFolderIcon,
                             onClick: () => setOpenCreateDialog(true),
                         },
                     ]}
                     selectActions={[
                         {
-                            label: `Move Selected`,
+                            label: intl.formatMessage({ id: 'superAdmin_moveSelectedLabel'}),
                             icon: ExitToAppIcon,
                             onClick: (rowIds: string[]) => moveSelectedBulk(rowIds),
                         },
                     ]}
                     rowActions={(row) =>[
                         {
-                            label: `Distribute`,
+                            label: intl.formatMessage({ id: 'superAdmin_distributeLabel'}),
                             icon: ShareIcon,
                             disabled: row.contentType !== ContentType.FOLDER || paths.length > 0,
                             onClick: (row) => distributeSelectedRow(row),
                         },
                         {
-                            label: `Move`,
+                            label: intl.formatMessage({ id: 'superAdmin_moveLabel'}),
                             icon: ExitToAppIcon,
                             onClick: () => moveSelectedRow(row),
                         },
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({ id: 'superAdmin_editLabel'}),
                             icon: EditIcon,
                             disabled: row.contentType !== ContentType.FOLDER,
                             onClick: (row) => editSelectedRow(row),
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({ id: 'superAdmin_deleteLabel'}),
                             icon: DeleteIcon,
                             onClick: (row) => deleteSelectedRow(row),
                         },
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Library`,
+                            title: intl.formatMessage({ id: 'superAdmin_libraryLabel'}),
                         },
                         search: {
-                            placeholder: `Search for content by folder names, author, author ID and keywords`,
+                            placeholder: intl.formatMessage({ id: 'superAdmin_searchPlaceholder'}),
                         },
                     })}
                 />

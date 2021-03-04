@@ -65,7 +65,7 @@ export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[
                                 <CenterAlignChildren verticalCenter>
                                     <img alt="kidsloop logo" className={classes.logo} src={KidsloopLogo} width={38} />
                                     <Typography id="kidsloop live" className={classes.liveText} variant="caption">
-                                        Live
+                                        <FormattedMessage id="scheduleInfo_live"></FormattedMessage>
                                     </Typography>
                                 </CenterAlignChildren>
                             </Grid>
@@ -87,7 +87,7 @@ export default function ScheduleInfo({ schedule }: { schedule?: SchedulePayload[
                                 </Typography>
                             </> :
                             <Typography variant="body2" gutterBottom>
-                                You don&apos;t have any upcoming classes scheduled!
+                                <FormattedMessage id="scheduleInfo_noClasses"></FormattedMessage>
                             </Typography>
                         }
                     </Grid>

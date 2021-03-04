@@ -16,6 +16,10 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -24,21 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 marginBottom: theme.spacing(2),
             },
         },
-    }),
-);
-
-const getClassNameHelperText = (
-    name: string,
-    classes: Class[] | null | undefined,
-    currentClassName: string,
-) => {
-    if (!name.length) return `Class name can't be empty`;
-    if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
-    if (classes?.filter((schoolClass) => schoolClass.class_name !== currentClassName)
-        .find((schoolClass) => schoolClass.class_name === name))
-        return `Class names must be unique`;
-    return ``;
-};
+    }));
 
 interface Props {
     value: Class;
@@ -46,13 +36,14 @@ interface Props {
     onValidation: (valid: boolean) => void;
 }
 
-export default function ClassDialogForm(props: Props) {
+export default function ClassDialogForm (props: Props) {
     const {
         value,
         onChange,
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const organization = useReactiveVar(currentMembershipVar);
     const canEditSchool = usePermission(`edit_school_20330`);
     const { organization_id } = organization;
@@ -70,15 +61,28 @@ export default function ClassDialogForm(props: Props) {
     const allSchools =
         data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
     const [ className, setClassName ] = useState(value.class_name ?? ``);
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(
-        value.schools?.map((school) => school.school_id) ?? [],
-    );
+    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((school) => school.school_id) ?? []);
     const [ currentClassName ] = useState(value.class_name ?? ``);
 
+    const getClassNameHelperText = (name: string,
+        classes: Class[] | null | undefined,
+        currentClassName: string) => {
+        if (!name.length) return intl.formatMessage({
+            id: `class_required`,
+        });
+        if (alphanumeric(name)) return intl.formatMessage({
+            id: `class_alphanumeric`,
+        });
+        if (classes?.filter((schoolClass) => schoolClass.class_name !== currentClassName)
+            .find((schoolClass) => schoolClass.class_name === name))
+            return intl.formatMessage({
+                id: `class_unique`,
+            });
+        return ``;
+    };
+
     useEffect(() => {
-        onValidation(
-            !getClassNameHelperText(className, schoolClasses, currentClassName),
-        );
+        onValidation(!getClassNameHelperText(className, schoolClasses, currentClassName));
     }, [ className ]);
 
     useEffect(() => {
@@ -86,8 +90,7 @@ export default function ClassDialogForm(props: Props) {
             class_id: value.class_id,
             class_name: className,
             schools: allSchools.filter((school) =>
-                schoolIds.includes(school.school_id),
-            ),
+                schoolIds.includes(school.school_id)),
         };
         onChange(updatedClass);
     }, [ className, schoolIds ]);
@@ -97,21 +100,15 @@ export default function ClassDialogForm(props: Props) {
             <TextField
                 fullWidth
                 error={
-                    !!getClassNameHelperText(
-                        className,
-                        schoolClasses,
-                        currentClassName,
-                    )
+                    !!getClassNameHelperText(className, schoolClasses, currentClassName)
                 }
                 helperText={
-                    getClassNameHelperText(
-                        className,
-                        schoolClasses,
-                        currentClassName,
-                    ) + ` `
+                    getClassNameHelperText(className, schoolClasses, currentClassName) + ` `
                 }
                 value={className}
-                label="Class name"
+                label={intl.formatMessage({
+                    id: `class_classLabel`,
+                })}
                 variant="outlined"
                 type="text"
                 autoFocus={!value.class_id}
@@ -120,7 +117,9 @@ export default function ClassDialogForm(props: Props) {
             <Select
                 fullWidth
                 multiple
-                label="Schools (optional)"
+                label={intl.formatMessage({
+                    id: `class_schoolsLabel`,
+                })}
                 items={allSchools}
                 value={schoolIds}
                 disabled={!canEditSchool}

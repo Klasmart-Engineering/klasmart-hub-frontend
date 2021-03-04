@@ -92,7 +92,7 @@ interface Props {
 /**
  * Returns function to show Users table for "View Users" section
  */
-export default function UserTable(props: Props) {
+export default function UserTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -145,10 +145,19 @@ export default function UserTable(props: Props) {
         setRows(rows ?? []);
     }, [ memberships ]);
 
+    const roleLibrary: { [key: string]: string } = {
+        'Super Admin': `users_superAdminRole`,
+        'Organization Admin': `users_organizationAdminRole`,
+        'School Admin': `users_schoolAdminRole`,
+        Parent: `users_parentRole`,
+        Student: `users_studentRole`,
+        Teacher: `users_teacherRole`,
+    };
+
     const roles =
         dataRoles?.organization?.roles
             ?.filter((role) => role.status === `active`)
-            .map((role) => role.role_name ?? ``) ?? [];
+            .map((role) => roleLibrary[role.role_name as string] ?? role.role_name) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {
@@ -189,7 +198,9 @@ export default function UserTable(props: Props) {
                 id: `users_organizationRoles`,
             }),
             groups: roles.map((role) => ({
-                text: role,
+                text: intl.formatMessage({
+                    id: role,
+                }),
             })),
             sort: (a: RoleName[], b: RoleName[]) => {
                 const highestRoleA = getHighestRole(orderedRoleNames, a);
@@ -205,8 +216,7 @@ export default function UserTable(props: Props) {
                     variant="body2"
                 >
                     {roleName}
-                </Typography>,
-            ),
+                </Typography>),
         },
         {
             id: `schoolNames`,
@@ -221,8 +231,7 @@ export default function UserTable(props: Props) {
                     variant="body2"
                 >
                     {schoolName}
-                </Typography>,
-            ),
+                </Typography>),
         },
         {
             id: `contactInfo`,
@@ -310,13 +319,17 @@ export default function UserTable(props: Props) {
                 }}
                 rowActions={(row) => [
                     {
-                        label: `Edit`,
+                        label: intl.formatMessage({
+                            id: `users_editButton`,
+                        }),
                         icon: EditIcon,
                         disabled: !(row.status === `active` && canEdit),
                         onClick: editSelectedRow,
                     },
                     {
-                        label: `Delete`,
+                        label: intl.formatMessage({
+                            id: `users_deleteButton`,
+                        }),
                         icon: DeleteIcon,
                         disabled: !(row.status === `active` && canDelete),
                         onClick: deleteSelectedRow,

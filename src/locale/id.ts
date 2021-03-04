@@ -53,7 +53,7 @@ const messages: Record<string, string> = {
     component_switchLight: `cahaya`,
 
     button_create: `Membuat`,
-    button_continue: `lanjutkan`,
+    button_continue: `Lanjutkan`,
     button_continueSignUp: `Lanjutkan dengan Mendaftar`,
 
     form_emailLabel: `Email atau Telepon`,
@@ -69,8 +69,8 @@ const messages: Record<string, string> = {
     invited_successPrompt: `Berhasil bergabung dengan {organization}.`,
     invited_failedPrompt: `Ups! Ada yang tidak beres!`,
 
-    locale_select: `Pilih bahasa`,
-    locale_tooltip: `Ganti bahasa`,
+    locale_select: `Pilih Bahasa`,
+    locale_tooltip: `Ganti Bahasa`,
 
     login_createAccount: `Buat sebuah akun`,
     login_forgotPassword: `Tidak ingat kata sandi?`,
@@ -79,10 +79,10 @@ const messages: Record<string, string> = {
 
     navMenu_adminConsoleLabel: `Konsol Admin`,
     navMenu_assessmentsLabel: `Penilaian`,
-    navMenu_scheduleLabel: `jadwal`,
+    navMenu_scheduleLabel: `Jadwal`,
     navMenu_libraryLabel: `Perpustakaan`,
     navMenu_liveLabel: `langsung`,
-    navMenu_homeLabel: `Home`, // TODO(Henrik): translate
+    navMenu_homeLabel: `Beranda`, // TODO(Henrik): translate
     navMenu_peopleLabel: `Orang-orang`,
     navMenu_reportLabel: `Melaporkan`,
     navMenu_adminLabel: `Admin`,
@@ -96,9 +96,9 @@ const messages: Record<string, string> = {
     privacy_termsLink: `Persyaratan`,
 
     live_welcome: `Selamat datang di KidsLoop`,
-    live_lessonPlanLabel: `Rencana pelajaran`,
+    live_lessonPlanLabel: `Rencana Pelajaran`,
     live_lessonPlanSelect: `Pilih Rencana Pelajaran`,
-    live_liveButton: `Tampilan langsung`,
+    live_liveButton: `Tampilan Live`,
     live_featuredContent: `Konten Unggulan`,
 
     header_viewOrg: `lihat organisasi`,

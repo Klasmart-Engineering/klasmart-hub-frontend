@@ -78,11 +78,11 @@ const messages: Record<string, string> = {
     login_loginPrompt: `로그인`,
 
     navMenu_adminConsoleLabel: `어드민 콘솔`,
-    navMenu_assessmentsLabel: `어세스먼트`,
-    navMenu_scheduleLabel: `스케줄`,
+    navMenu_assessmentsLabel: `평가`,
+    navMenu_scheduleLabel: `스케줄 관리`,
     navMenu_libraryLabel: `라이브러리`,
     navMenu_liveLabel: `라이브`,
-    navMenu_homeLabel: `Home`, // TODO(Henrik): translate
+    navMenu_homeLabel: `홈`, // TODO(Henrik): translate
     navMenu_peopleLabel: `피플`,
     navMenu_reportLabel: `리포트`,
     navMenu_adminLabel: `어드민`,

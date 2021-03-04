@@ -66,11 +66,15 @@ export default function EditUserDialog (props: Props) {
                 },
             });
             onClose(editedOrganizationMembership);
-            enqueueSnackbar(`User has been saved succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_savedSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_savedError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -78,7 +82,13 @@ export default function EditUserDialog (props: Props) {
 
     const handleDelete = async () => {
         const userName = `${value?.user?.given_name} ${value?.user?.family_name}`;
-        if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
+        if (!confirm(intl.formatMessage({
+                id: `editDialog_deleteConfirm`,
+            }, {
+                userName,
+            }
+        ))) return;
+
         const {
             organization_id,
             user_id,
@@ -91,11 +101,15 @@ export default function EditUserDialog (props: Props) {
                 },
             });
             onClose(editedOrganizationMembership);
-            enqueueSnackbar(`User has been deleted succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -107,19 +121,25 @@ export default function EditUserDialog (props: Props) {
             title="Edit user"
             actions={[
                 {
-                    label: `Delete`,
+                    label: intl.formatMessage({
+                        id: `editDialog_delete`,
+                    }),
                     color: `error`,
                     align: `left`,
                     onClick: handleDelete,
                 },
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `editDialog_cancel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Save`,
+                    label: intl.formatMessage({
+                        id: `editDialog_save`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,

@@ -7,31 +7,57 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
         numSelected: (num) => `${num} selected`,
     },
     search: {
-        placeholder: `Search`,
+        placeholder: intl.formatMessage({
+            id: `groups_searchPlaceholder`,
+        }),
     },
     groupTabs: {
-        selectLabel: `Group by`,
-        selectNone: `None`,
-        tabAll: `All`,
+        selectLabel: intl.formatMessage({
+            id: `groups_groupBy`,
+        }),
+        selectNone: intl.formatMessage({
+            id: `groups_none`,
+        }),
+        tabAll: intl.formatMessage({
+            id: `groups_allResults`,
+        }),
     },
     head: {
-        hideColumnButton: `Hide`,
+        hideColumnButton: intl.formatMessage({
+            id: `groups_hideButton`,
+        }),
     },
     checkboxDropdown: {
-        allGroupsPages: `All groups & pages`,
-        allPages: `All pages`,
-        thisPage: `This page`,
-        none: `None`,
+        allGroupsPages: intl.formatMessage({
+            id: `groups_allGroupsPages`,
+        }),
+        allPages: intl.formatMessage({
+            id: `groups_allPages`,
+        }),
+        thisPage: intl.formatMessage({
+            id: `groups_thisPage`,
+        }),
+        none: intl.formatMessage({
+            id: `groups_none`,
+        }),
     },
     columnSelector: {
-        addButton: `Add columns`,
-        listTitle: `Select columns`,
+        addButton: intl.formatMessage({
+            id: `groups_addColumnsButton`,
+        }),
+        listTitle: intl.formatMessage({
+            id: `groups_selectColumnsTitle`,
+        }),
     },
     body: {
-        noData: `No data found`,
+        noData: intl.formatMessage({
+            id: `groups_noData`,
+        }),
     },
     rowMoreMenu: {
-        moreMenuButton: `More actions`,
+        moreMenuButton: intl.formatMessage({
+            id: `groups_rowMoreActions`,
+        }),
     },
     pagination: {
         nextPage: intl.formatMessage({
@@ -45,6 +71,16 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
         }),
         lastPage: intl.formatMessage({
             id: `groups_lastTooltip`,
+        }),
+        rowsPerPage: intl.formatMessage({
+            id: `groups_rowsPerPage`
+        }),
+        fromToMax: (from: number, to: number, max: number) => intl.formatMessage({
+            id: `groups_fromToMaxCount`
+        }, {
+            from,
+            to,
+            max
         }),
     },
 }, localization);

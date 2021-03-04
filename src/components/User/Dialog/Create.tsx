@@ -17,6 +17,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -31,6 +32,7 @@ export default function CreateUserDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
     const organization = useReactiveVar(currentMembershipVar);
@@ -62,11 +64,15 @@ export default function CreateUserDialog (props: Props) {
                 },
             });
             onClose(newOrganizationMembership);
-            enqueueSnackbar(`User has been created succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `createUser_createSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `createUser_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -75,15 +81,21 @@ export default function CreateUserDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Create user"
+            title={intl.formatMessage({
+                id: `createUser_title`,
+            })}
             actions={[
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `createUser_cancel`,
+                    }),
                     color: `primary`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Create`,
+                    label: intl.formatMessage({
+                        id: `createUser_create`,
+                    }),
                     color: `primary`,
                     disabled: !valid,
                     onClick: handleCreate,

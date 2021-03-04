@@ -41,8 +41,7 @@ const useStyles = makeStyles(() =>
         root: {
             width: `100%`,
         },
-    }),
-);
+    }));
 
 export interface RoleRow {
     id: string;
@@ -67,7 +66,7 @@ const checkRoleMatch = (role: string | undefined | null) => {
 /**
  * Returns function to show Rol Table in "View roles"
  */
-export default function RoleTable() {
+export default function RoleTable () {
     const classes = useStyles();
     const intl = useIntl();
     const canView = usePermission(`view_role_permissions_30112`);
@@ -87,9 +86,15 @@ export default function RoleTable() {
     const [ row, setRow ] = useState<RoleRow>(initialRow);
     const [ activeStep, setActiveStep ] = useState(0);
     const steps = [
-        `Role Info`,
-        `Set Permissions`,
-        `Confirm role`,
+        intl.formatMessage({
+            id: `roles_roleInfoStep`,
+        }),
+        intl.formatMessage({
+            id: `roles_setPermissionsStep`,
+        }),
+        intl.formatMessage({
+            id: `roles_confirmRoleStep`,
+        }),
     ];
     const [ newRole, setNewRole ] = useState<NewRole>({
         role_name: ``,
@@ -102,9 +107,7 @@ export default function RoleTable() {
         data,
         loading: getAllRolesLoading,
         refetch,
-    } = useGetOrganizationRolesPermissions(
-        membership.organization_id,
-    );
+    } = useGetOrganizationRolesPermissions(membership.organization_id);
     const roles: Role[] = data?.organization?.roles ?? [];
     const {
         data: rolePermissions,
@@ -161,11 +164,15 @@ export default function RoleTable() {
         },
         {
             id: `description`,
-            label: `Role Description`,
+            label: intl.formatMessage({
+                id: `roles_roleDescription`,
+            }),
         },
         {
             id: `type`,
-            label: `Type`,
+            label: intl.formatMessage({
+                id: `roles_type`,
+            }),
         },
     ];
 
@@ -194,9 +201,15 @@ export default function RoleTable() {
         try {
             if (
                 !(await confirm({
-                    title: `Create New Role?`,
-                    content: `This will create a new role in this organization`,
-                    okLabel: `Create`,
+                    title: intl.formatMessage({
+                        id: `roles_confirmNewRoleTitle`,
+                    }),
+                    content: intl.formatMessage({
+                        id: `roles_confirmNewRoleContent`,
+                    }),
+                    okLabel: intl.formatMessage({
+                        id: `roles_confirmNewRoleLabel`,
+                    }),
                 }))
             ) {
                 return;
@@ -213,17 +226,19 @@ export default function RoleTable() {
                 },
             });
 
-            if (response?.data?.organization?.createRole === null) {
-                throw new Error();
-            }
+            if (response?.data?.organization?.createRole === null) throw new Error();
 
             await refetch();
-            enqueueSnackbar(`A new role has been created successfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `roles_confirmSuccess`,
+            }), {
                 variant: `success`,
             });
             handleCloseDialog();
         } catch (e) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `roles_confirmError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -287,20 +302,26 @@ export default function RoleTable() {
                     idField="id"
                     orderBy="role"
                     primaryAction={{
-                        label: `Create`,
+                        label: intl.formatMessage({
+                            id: `roles_createRole`,
+                        }),
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: () => handleOpenDialog(initialRow),
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `roles_editButton`,
+                            }),
                             icon: EditIcon,
                             disabled: !canEdit || row.systemRole,
                             onClick: (row) => handleOpenDialog(row),
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `roles_deleteButton`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !canDelete || row.systemRole,
                             onClick: (row) => handleOpenDeleteDialog(row),

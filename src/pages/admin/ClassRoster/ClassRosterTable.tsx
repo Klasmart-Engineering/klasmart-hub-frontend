@@ -526,7 +526,7 @@ function ClassRosterTable(props: { intl: IntlFormatters }) {
                         icon: Delete,
                         onClick: (evt, data: any) =>
                             alert(
-                                "You want to delete " + data.length + " rows",
+                                intl.formatMessage({ id: `data_deleteRows` }, { rows: data.length })
                             ),
                     },
                 ]}

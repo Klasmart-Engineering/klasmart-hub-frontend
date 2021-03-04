@@ -31,6 +31,7 @@ import { Tabs } from "kidsloop-px";
 import { Tab } from "kidsloop-px/dist/types/components/Tabs";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -129,6 +130,7 @@ export default function NavBar(props: Props) {
     const classes = useStyles();
     const theme = useTheme();
     const location = useLocation();
+    const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
 
     const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
@@ -155,7 +157,7 @@ export default function NavBar(props: Props) {
     ];
     const showNavMenu = selectedMembershipOrganization?.roles?.map((role) => role.role_name).some((roleName) => showMenuToRoles.includes(roleName ?? ``));
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
-    const tabs = getTabs(location.pathname);
+    const tabs = getTabs(location.pathname).map((tab: { text: string, value: string }) => ({ ...tab, text: intl.formatMessage({ id: `navbar_${tab.text}Tab` }) }));
 
     return (
         <div className={classes.root}>

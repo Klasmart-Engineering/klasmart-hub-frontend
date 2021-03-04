@@ -268,7 +268,7 @@ function GradesTable(props: { intl: IntlFormatters }) {
             tooltip: intl.formatMessage({ id: "grades_actionsDeleteTooltip" }),
             icon: Delete,
             onClick: (evt, data: any) =>
-              alert("You want to delete " + data.length + " rows"),
+              alert(intl.formatMessage({ id: `data_deleteRows` }, { rows: data.length })),
           },
           {
             icon: AddBox,

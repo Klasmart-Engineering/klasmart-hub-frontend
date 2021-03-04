@@ -34,7 +34,7 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     activeColor: {
@@ -104,7 +104,7 @@ export default function MyOrganizationTable(props: Props) {
                 phone: organizationOwnership?.organization?.phone ?? ``,
                 email: organizationOwnership?.user?.email ?? ``,
                 roles: organizationOwnership?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [],
-                status: organizationOwnership?.status ?? ``,
+                status: organizationOwnership?.status ? intl.formatMessage({ id: `data_${organizationOwnership?.status}Status` }) : ``,
             }),
         );
 
@@ -121,11 +121,15 @@ export default function MyOrganizationTable(props: Props) {
             });
             await refetch();
             setConfirmLeaveOrganizationDialogOpen(false);
-            enqueueSnackbar(`The organization has been deleted successfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `allOrganization_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`An error occurred while deleting the organization`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `allOrganization_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -205,12 +209,16 @@ export default function MyOrganizationTable(props: Props) {
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `allOrganization_editButton`,
+                            }),
                             icon: EditIcon,
                             onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `allOrganization_deleteButton`,
+                            }),
                             icon: DeleteIcon,
                             onClick: (row) => showConfirmDeleteOrganization(row),
                         },
@@ -228,6 +236,11 @@ export default function MyOrganizationTable(props: Props) {
                                 id: `allOrganization_noRecords`,
                             }),
                         },
+                        search: {
+                            placeholder: intl.formatMessage({
+                                id: `allOrganization_searchPlaceholder`,
+                            }),
+                        },
                     })}
                 />
             </Paper>
@@ -238,7 +251,7 @@ export default function MyOrganizationTable(props: Props) {
                 <DialogTitle />
                 <DialogContent dividers>
                     <p>
-                        Are you sure you want to delete {selectedOrganization?.name}?
+                        <FormattedMessage id="allOrganization_deleteConfirmLabel" values={{ name: selectedOrganization?.name }}></FormattedMessage>
                     </p>
                     {deleteLoading && (
                         <Grid

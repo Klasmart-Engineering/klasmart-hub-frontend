@@ -14,13 +14,14 @@ import { alphanumeric } from "@/utils/validations";
 import { useGetSchools } from "@/api/schools";
 import { useReactiveVar } from "@apollo/client";
 import { currentMembershipVar } from "@/cache";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}));
 
 const getSchoolNameHelperText = (name: string | undefined, schools: School[]) => {
-    if (!name?.length) return `Required`;
-    if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
-    if (schools.find((s) => s.school_name === name)) return `School names must be unique`;
+    if (!name?.length) return <FormattedMessage id="schools_required" />;
+    if (alphanumeric(name)) return <FormattedMessage id="schools_alphanumeric" />;
+    if (schools.find((s) => s.school_name === name)) return <FormattedMessage id="schools_unique" />;
 };
 
 interface Props {
@@ -38,6 +39,7 @@ export default function SchoolDialogForm(props: Props) {
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const { data } = useGetSchools({
@@ -68,7 +70,7 @@ export default function SchoolDialogForm(props: Props) {
                 helperText={getSchoolNameHelperText(schoolName, schools) ?? ` `}
                 error={!!getSchoolNameHelperText(schoolName, schools)}
                 value={schoolName}
-                label="School name"
+                label={intl.formatMessage({ id: `schools_nameLabel` })}
                 variant="outlined"
                 type="text"
                 autoFocus={!value?.school_id}

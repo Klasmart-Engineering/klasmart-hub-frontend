@@ -145,11 +145,15 @@ export default function SchoolTable(props: Props) {
                 },
             });
             await refetch();
-            enqueueSnackbar(`School has been deleted succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `schools_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `schools_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -174,13 +178,17 @@ export default function SchoolTable(props: Props) {
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `schools_editButton`,
+                            }),
                             icon: EditIcon,
                             disabled: !(row.status === `active` && canEdit),
                             onClick: editSelectedRow,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `schools_deleteButton`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !(row.status === `active` && canDelete),
                             onClick: deleteSelectedRow,

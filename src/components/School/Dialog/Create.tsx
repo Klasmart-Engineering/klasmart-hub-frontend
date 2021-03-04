@@ -17,6 +17,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -31,6 +32,7 @@ export default function CreateSchoolDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
     const [ newSchool, setNewSchool ] = useState(buildEmptySchool());
@@ -53,11 +55,11 @@ export default function CreateSchoolDialog (props: Props) {
                 },
             });
             onClose(newSchool);
-            enqueueSnackbar(`School has been created succesfully`, {
+            enqueueSnackbar(intl.formatMessage({ id: `schools_createdSuccess` }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({ id: `schools_createdError` }), {
                 variant: `error`,
             });
         }
@@ -66,15 +68,15 @@ export default function CreateSchoolDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Create school"
+            title={intl.formatMessage({ id: `schools_createTitle` })}
             actions={[
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({ id: `schools_cancelLabel` }),
                     color: `primary`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Create`,
+                    label: intl.formatMessage({ id: `schools_createLabel` }),
                     color: `primary`,
                     disabled: !valid,
                     onClick: handleCreate,

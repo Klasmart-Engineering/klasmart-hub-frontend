@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React, { ChangeEvent } from "react";
+import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -81,7 +82,7 @@ export default function RolePermissionsActionsCard(props: Props) {
                             gutterBottom
                             variant="h5"
                             component="h2">
-                            Actions
+                            <FormattedMessage id="rolesInfoCard_actionsTitle" />
                         </Typography>
                     </div>
                     <div className={classes.actionsContainer}>

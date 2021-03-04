@@ -33,6 +33,10 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,13 +55,10 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(2, 2),
             },
         },
-    }),
-);
+    }));
 
-const motion = React.forwardRef(function Transition(
-    props: TransitionProps & { children?: React.ReactElement },
-    ref: React.Ref<unknown>,
-) {
+const motion = React.forwardRef(function Transition (props: TransitionProps & { children?: React.ReactElement },
+    ref: React.Ref<unknown>) {
     return (
         <Grow
             ref={ref}
@@ -134,7 +135,7 @@ interface Props {
     rolePermissionsLoading: boolean;
 }
 
-export default function CreateAndEditRoleDialog(props: Props) {
+export default function CreateAndEditRoleDialog (props: Props) {
     const {
         open,
         steps,
@@ -150,6 +151,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
         rolePermissionsLoading,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const [ roleInfo, setRoleInfo ] = useState<RoleInfo>({
         name: row.role,
         description: row.description,
@@ -168,9 +170,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
                 data.forEach((permissionCategory) => {
                     permissionCategory.groups.forEach((group) => {
                         group.permissionDetails.forEach((permissionDetail) => {
-                            permissionDetail.checked = rolePermissions?.role.permissions.some(
-                                (permission) => permission.permission_id === permissionDetail.permissionId,
-                            );
+                            permissionDetail.checked = rolePermissions?.role.permissions.some((permission) => permission.permission_id === permissionDetail.permissionId);
                         });
                     });
                 });
@@ -205,45 +205,42 @@ export default function CreateAndEditRoleDialog(props: Props) {
         }
     }, [ open ]);
 
-    const reviewPermissions = permissionCategories.reduce(
-        (permissionsCategories: PermissionsCategory[], permissionsCategory) => {
-            const hasPermissions = permissionsCategory.groups.reduce((groups: Group[], group) => {
-                if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
-                    groups.push(group);
-                }
-
-                return groups;
-            }, []);
-
-            if (hasPermissions.length) {
-                permissionsCategories.push(permissionsCategory);
+    const reviewPermissions = permissionCategories.reduce((permissionsCategories: PermissionsCategory[], permissionsCategory) => {
+        const hasPermissions = permissionsCategory.groups.reduce((groups: Group[], group) => {
+            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
+                groups.push(group);
             }
 
-            return permissionsCategories;
-        },
-        [],
-    ) as PermissionsCategory[];
+            return groups;
+        }, []);
+
+        if (hasPermissions.length) {
+            permissionsCategories.push(permissionsCategory);
+        }
+
+        return permissionsCategories;
+    }, []) as PermissionsCategory[];
 
     const roleNameTextHelper = (name: string): string => {
-        if (!name.length) return `Role name can't be empty`;
+        if (!name.length) return <FormattedMessage id="rolesInfoCard_roleEmpty" /> as unknown as string;
 
-        if (name.length < 2) return `Role name should be at least 2 characters`;
+        if (name.length < 2) return <FormattedMessage id="rolesInfoCard_minChar" /> as unknown as string;
 
-        if (name.length > 20) return `Role name should not be longer than 20 characters`;
+        if (name.length > 20) return <FormattedMessage id="rolesInfoCard_maxChar" /> as unknown as string;
 
-        if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
+        if (alphanumeric(name)) return <FormattedMessage id="rolesInfoCard_alphaNumeric" /> as unknown as string;
 
         if (roles.find((role) => role.role_name === name && role.status === `active` && name !== row.role)) {
-            return `That name is already been taken`;
+            return <FormattedMessage id="rolesInfoCard_nameTaken" /> as unknown as string;
         }
 
         return ``;
     };
 
     const roleDescriptionTextHelper = (name: string): string => {
-        if (name.length > 30) return `Description can't be longer than 30 characters`;
+        if (name.length > 30) return <FormattedMessage id="rolesInfoCard_descriptionMaxChar" /> as unknown as string;
 
-        if (alphanumeric(name)) return `Only alphanumeric characters are valid`;
+        if (alphanumeric(name)) return <FormattedMessage id="rolesInfoCard_descriptionAlphanumeric" /> as unknown as string;
         return ``;
     };
 
@@ -279,9 +276,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
         newPermissions.forEach((permissionCategory) => {
             permissionCategory.groups.forEach((group) => {
                 group.permissionDetails.forEach((permissionDetail) => {
-                    permissionDetail.checked = !!getPermissionIdsByRoleId(roles, roleId)?.includes(
-                        permissionDetail.permissionId,
-                    );
+                    permissionDetail.checked = !!getPermissionIdsByRoleId(roles, roleId)?.includes(permissionDetail.permissionId);
                 });
 
                 group.open = group.permissionDetails.some((permissionDetail) => permissionDetail.checked);
@@ -320,7 +315,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
         newRolesAndPermissionsByRoleId(roles, roleId);
     };
 
-    function getStepContent(step: number) {
+    function getStepContent (step: number) {
         switch (step) {
         case 0:
             return (
@@ -340,17 +335,23 @@ export default function CreateAndEditRoleDialog(props: Props) {
                         roleId={roleId}
                         actions={[
                             {
-                                text: `Clear`,
+                                text: intl.formatMessage({
+                                    id: `rolesInfoCard_clearLabel`,
+                                }),
                                 disabled: false,
                                 onClick: handleClear,
                             },
                             {
-                                text: `Reset to Default`,
+                                text: intl.formatMessage({
+                                    id: `rolesInfoCard_resetLabel`,
+                                }),
                                 disabled: roleId.length === 0,
                                 onClick: handleResetDefault,
                             },
                         ]}
-                        textFieldLabel={`Copy role from...`}
+                        textFieldLabel={intl.formatMessage({
+                            id: `rolesInfoCard_copyLabel`,
+                        })}
                         onChange={copyRoleHandler}
                     />
                     {permissionCategories.map((permissionsCategory) => (
@@ -381,7 +382,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
                                                 padding: `10px`,
                                             }}
                                         >
-                                            {row.id ? `Editing role` : `Creating a new role`}
+                                            {row.id ? `Editing role` : <FormattedMessage id="rolesInfoCard_createNewRoleLabel" />}
                                         </div>
                                     </Typography>
                                 </div>
@@ -402,7 +403,7 @@ export default function CreateAndEditRoleDialog(props: Props) {
                 </>
             );
         default:
-            return `You have finish the role creation process`;
+            return <FormattedMessage id="rolesInfoCard_finishLabel" />;
         }
     }
 

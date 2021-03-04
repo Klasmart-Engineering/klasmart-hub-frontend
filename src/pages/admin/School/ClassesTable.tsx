@@ -102,7 +102,7 @@ export default function ClasessTable(props: Props) {
             id: c.class_id,
             name: c.class_name ?? ``,
             schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
-            status: c.status ?? ``,
+            status: c.status ? intl.formatMessage({ id: `data_${c.status}Status` }) : ``,
         }));
         setRows(rows ?? []);
     }, [ schoolClasses ]);
@@ -122,7 +122,7 @@ export default function ClasessTable(props: Props) {
         if (!selectedClass) return;
         if (
             !confirm(
-                `Are you sure you want to delete "${selectedClass.class_name}"?`,
+                intl.formatMessage({ id: `class_confirmDelete` }, { name: selectedClass.class_name })
             )
         )
             return;
@@ -223,7 +223,7 @@ export default function ClasessTable(props: Props) {
                             }),
                             icon: DeleteIcon,
                             disabled: !canDelete,
-                            onClick: (rowIds) => alert(`You want to delete ${rowIds.length} rows`),
+                            onClick: (rowIds) => alert(intl.formatMessage({ id: `class_deleteRows` }, { rows: rowIds.length})),
                         },
                     ]}
                     rowActions={(row) => [

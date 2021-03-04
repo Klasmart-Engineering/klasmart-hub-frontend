@@ -229,6 +229,9 @@ function LessonPlanSelect({
                 </React.Fragment>
             )}
             value={lessonPlan}
+            noOptionsText={intl.formatMessage({
+                id: `planSelection_noOptionLabel`,
+            })}
             inputValue={inputValue}
             renderInput={(params) => (
                 <TextField

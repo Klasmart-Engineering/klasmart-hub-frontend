@@ -20,6 +20,10 @@ import React,
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,16 +32,15 @@ const useStyles = makeStyles((theme: Theme) =>
                 marginBottom: theme.spacing(2),
             },
         },
-    }),
-);
+    }));
 
 const getContactInfoHelperText = (contactInfo: string) => {
-    if (contactInfo.length === 0) return `Email or Phone number required`;
+    if (contactInfo.length === 0) return <FormattedMessage id="createUser_emailPhoneRequired" />;
     const validEmail = emailAddressRegex.test(contactInfo);
     const validPhone = phoneNumberRegex.test(contactInfo);
     if (!validEmail && !validPhone) {
-        if (!validEmail) return `Invalid email address`;
-        if (!validPhone) return `Invalid phone number`;
+        if (!validEmail) return <FormattedMessage id="createUser_invalidEmail" />;
+        if (!validPhone) return <FormattedMessage id="createUser_invalidPhone" />;
     }
 };
 
@@ -47,13 +50,14 @@ interface Props {
     onValidation: (valid: boolean) => void;
 }
 
-export default function UserDialogForm(props: Props) {
+export default function UserDialogForm (props: Props) {
     const {
         value,
         onChange,
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const { data: schoolsData } = useGetSchools({
@@ -116,7 +120,9 @@ export default function UserDialogForm(props: Props) {
                 fullWidth
                 helperText=" "
                 value={givenName}
-                label="Given name"
+                label={intl.formatMessage({
+                    id: `createUser_givenNameLabel`,
+                })}
                 variant="outlined"
                 type="text"
                 autoFocus={!value?.user?.user_id}
@@ -126,7 +132,9 @@ export default function UserDialogForm(props: Props) {
                 fullWidth
                 helperText=" "
                 value={familyName}
-                label="Family name"
+                label={intl.formatMessage({
+                    id: `createUser_familyNameLabel`,
+                })}
                 variant="outlined"
                 type="text"
                 onChange={(e) => setFamilyName(e.currentTarget.value)}
@@ -134,23 +142,35 @@ export default function UserDialogForm(props: Props) {
             <Select
                 multiple
                 fullWidth
-                label="Roles"
+                label={intl.formatMessage({
+                    id: `createUser_rolesLabel`,
+                })}
                 items={allRoles}
                 value={roleIds}
                 validations={[ required() ]}
-                itemText={(role) => role.role_name ?? ``}
+                itemText={(role) => intl.formatMessage({
+                    id: `users_${role.role_name?.replace(` `, ``)}`,
+                }) ?? ``}
                 itemValue={(role) => role.role_id}
+                selectAllLabel={intl.formatMessage({
+                    id: `users_selectAll`,
+                })}
                 onChange={(values) => setRoleIds(values)}
                 onValidate={setRoleIdsValid}
             />
             <Select
                 multiple
                 fullWidth
-                label="Schools (optional)"
+                label={intl.formatMessage({
+                    id: `createUser_schoolsLabel`,
+                })}
                 items={allSchools}
                 value={schoolIds}
                 itemText={(school) => school.school_name ?? ``}
                 itemValue={(school) => school.school_id}
+                selectAllLabel={intl.formatMessage({
+                    id: `users_selectAll`,
+                })}
                 onChange={(values) => setSchoolIds(values)}
             />
             <TextField
@@ -158,7 +178,9 @@ export default function UserDialogForm(props: Props) {
                 disabled={!!value?.user?.user_id}
                 value={contactInfo}
                 variant="outlined"
-                label="Contact Info"
+                label={intl.formatMessage({
+                    id: `createUser_contactInfoLabel`,
+                })}
                 type="text"
                 error={!!getContactInfoHelperText(contactInfo)}
                 helperText={getContactInfoHelperText(contactInfo) ?? ` `}

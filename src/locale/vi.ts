@@ -82,7 +82,7 @@ const messages: Record<string, string> = {
     navMenu_scheduleLabel: `Thời khóa biểu`,
     navMenu_libraryLabel: `Thư viện`,
     navMenu_liveLabel: `Trực tuyến`,
-    navMenu_homeLabel: `Home`, // TODO(Henrik): translate
+    navMenu_homeLabel: `Trang chủ`, // TODO(Henrik): translate
     navMenu_peopleLabel: `Người `,
     navMenu_reportLabel: `Báo cáo`,
     navMenu_adminLabel: `Admin`,
