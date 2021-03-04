@@ -5,9 +5,8 @@ import {
 import NavBar from "./components/styled/navbar/navbar";
 import { getCNEndpoint } from "./config";
 import { GET_USER } from "./operations/queries/getUser";
-import AdminLayout from "./pages/admin/AdminLayout";
 import ClassRosterTable from "./pages/admin/ClassRoster/ClassRosterTable";
-import GradeTable from "./pages/admin/Grade/GradesTable";
+import Grades from "./pages/admin/grades";
 import Layout from "./pages/admin/Layout";
 import AllOrganization from "./pages/admin/Organization/AllOrganitation";
 import EditOrganization from "./pages/admin/Organization/EditOrganization";
@@ -192,54 +191,54 @@ export function App () {
                     <Route
                         exact
                         path="/admin/organizations/:organizationId/edit">
-                        <AdminLayout>
+                        <Layout>
                             <EditOrganization />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/organizations/create">
-                        <AdminLayout>
+                        <Layout>
                             <Organization />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/organizations">
-                        <AdminLayout>
+                        <Layout>
                             <AllOrganization />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/users">
-                        <AdminLayout>
+                        <Layout>
                             <User />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/roles">
-                        <AdminLayout>
+                        <Layout>
                             <RoleTable />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/schools">
-                        <AdminLayout>
+                        <Layout>
                             <SchoolTable />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/classes/:classId/roster">
-                        <AdminLayout>
+                        <Layout>
                             <ClassRosterTable />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/classes">
-                        <AdminLayout>
+                        <Layout>
                             <ClasessTable />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/programs">
-                        <AdminLayout>
+                        <Layout>
                             <ProgramTable />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/admin/grades">
-                        <AdminLayout>
-                            <GradeTable />
-                        </AdminLayout>
+                        <Layout>
+                            <Grades />
+                        </Layout>
                     </Route>
                     <Route path="/admin/subjects">
                         <Layout>
@@ -252,9 +251,9 @@ export function App () {
                         </Layout>
                     </Route>
                     <Route path="/admin">
-                        <AdminLayout>
+                        <Layout>
                             <User />
-                        </AdminLayout>
+                        </Layout>
                     </Route>
                     <Route path="/super-admin/content-library">
                         <Layout>

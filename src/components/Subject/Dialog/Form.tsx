@@ -1,8 +1,10 @@
 import { currentMembershipVar } from "@/cache";
 import {
+    AgeRange,
     Grade,
     Subject,
 } from "@/types/graphQL";
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -46,12 +48,15 @@ export default function SubjectDialogForm (props: Props) {
     const [ subjectNameValid, setSubjectNameValid ] = useState(true);
     const [ gradeIds, setGradeIds ] = useState(value.grades?.map((grade) => grade.grade_id) ?? []);
     const [ gradeIdsValid, setGradeIdsValid ] = useState(true);
+    const [ ageRangeIds, setAgeRangeIds ] = useState(value.grades?.map((grade) => grade.grade_id) ?? []);
+    const [ ageRangeIdsValid, setAgeRangeIdsValid ] = useState(true);
     const [ category, setCategory ] = useState(value.category ?? ``);
     const [ categoryValid, setCategoryValid ] = useState(true);
     const [ subcategories, setSubcategories ] = useState(value.subcategories?.map((subcategory) => subcategory) ?? []);
     const [ subcategoriesValid, setSubcategoriesValid ] = useState(true);
     const { required } = useValidations();
     const allGrades: Grade[] = [];
+    const allAgeRanges: AgeRange[] = [];
     const allCategories: string[] = [];
     const allSubcategories: string[] = [];
 
@@ -59,12 +64,14 @@ export default function SubjectDialogForm (props: Props) {
         onValidation([
             subjectNameValid,
             gradeIdsValid,
+            ageRangeIdsValid,
             categoryValid,
             subcategoriesValid,
         ].every((validation) => validation));
     }, [
         subjectNameValid,
         gradeIdsValid,
+        ageRangeIdsValid,
         categoryValid,
         subcategoriesValid,
     ]);
@@ -104,6 +111,17 @@ export default function SubjectDialogForm (props: Props) {
                 itemValue={(grade) => grade.grade_id}
                 onChange={setGradeIds}
                 onValidate={setGradeIdsValid}
+            />
+            <Select
+                multiple
+                fullWidth
+                label="Age Ranges"
+                value={ageRangeIds}
+                items={allAgeRanges}
+                itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
+                itemValue={(ageRange) => ageRange.age_range_id}
+                onChange={setAgeRangeIds}
+                onValidate={setAgeRangeIdsValid}
             />
             <Select
                 fullWidth

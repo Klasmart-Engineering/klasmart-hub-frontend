@@ -1,6 +1,7 @@
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
 import { Subject } from "@/types/graphQL";
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -41,6 +42,7 @@ interface SubjectRow {
     id: string;
     name: string;
     grades: string[];
+    ageRanges: string[];
     category: string;
     subcategories: string[];
 }
@@ -71,6 +73,15 @@ export default function SubjectsTable (props: Props) {
                     grade_name: `Grade 1`,
                 },
             ],
+            age_ranges: [
+                {
+                    age_range_id: `1`,
+                    from: 1,
+                    fromUnit: `month`,
+                    to: 2,
+                    toUnit: `year`,
+                },
+            ],
             category: `Some Category`,
             subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
@@ -81,6 +92,7 @@ export default function SubjectsTable (props: Props) {
             id: subject.subject_id,
             name: subject.subject_name ?? ``,
             grades: subject.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
+            ageRanges: subject.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
             category: subject.category ?? ``,
             subcategories: subject.subcategories ?? [],
         })) ?? [];
@@ -107,6 +119,19 @@ export default function SubjectsTable (props: Props) {
                     <Chip
                         key={`grade-${i}`}
                         label={grade}
+                        className={classes.chip}
+                    />
+                ))}
+            </>,
+        },
+        {
+            id: `ageRanges`,
+            label: `Age Ranges`,
+            render: (row) => <>
+                {row.ageRanges.map((ageRange, i) => (
+                    <Chip
+                        key={`ageRange-${i}`}
+                        label={ageRange}
                         className={classes.chip}
                     />
                 ))}

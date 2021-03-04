@@ -24,6 +24,7 @@ import {
     ChildCare as ChildCareIcon,
     ContactSupport as SupportIcon,
     CreditCard as CardIcon,
+    Grade as GradeIcon,
     Group as GroupIcon,
     Home as HomeIcon,
     Lock as LockIcon,
@@ -300,6 +301,19 @@ export default function NavMenu (props: Props) {
                 icon: ChildCareIcon,
                 title: intl.formatMessage({
                     id: `navMenu_ageRangesTitle`,
+                }),
+            },
+        ] : [],
+        ...usePermission(`define_grade_page_20103`) ? [
+            {
+                description: intl.formatMessage({
+                    id: `navMenu_gradesDescription`,
+                }),
+                link: `/admin/grades`,
+                color: `#0E78D5`,
+                icon: GradeIcon,
+                title: intl.formatMessage({
+                    id: `navMenu_gradesTitle`,
                 }),
             },
         ] : [],

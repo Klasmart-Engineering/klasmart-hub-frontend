@@ -118,7 +118,6 @@ export interface AgeRange {
 export interface Grade {
     grade_id: string;
     grade_name?: string | null;
-    age_range?: AgeRange | null;
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
 }
@@ -127,6 +126,7 @@ export interface Subject {
     subject_id: string;
     subject_name?: string | null;
     grades?: Grade[] | null;
+    age_ranges?: AgeRange[] | null;
     category?: string | null;
     subcategories?: string[] | null;
 }
