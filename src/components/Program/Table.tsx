@@ -1,6 +1,6 @@
-import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
-import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
-import { Subject } from "@/types/graphQL";
+import CreateProgramDialog from "@/components/Program/Dialog/Create";
+import EditProgramDialog from "@/components/Program/Dialog/Edit";
+import { Program } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
@@ -38,45 +38,33 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-interface SubjectRow {
+interface ProgramRow {
     id: string;
     name: string;
     grades: string[];
     ageRanges: string[];
-    category: string;
-    subcategories: string[];
+    subjects: string[];
 }
 
 interface Props {
-    disabled?: boolean;
-    selectedIds?: string[];
-    subjects?: Subject[] | null;
-    onSelected?: (selectedIds: string[]) => void;
 }
 
-export default function SubjectsTable (props: Props) {
-    const {
-        disabled,
-        selectedIds,
-        subjects,
-        onSelected,
-    } = props;
+export default function ProgramsTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
-    const [ rows_, setRows ] = useState<SubjectRow[]>([]);
+    const [ rows, setRows ] = useState<ProgramRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedSubject, setSelectedSubject ] = useState<Subject>();
-    const canCreate = usePermission(`create_subjects_20227`);
-    const canEdit = usePermission(`edit_subjects_20337`);
-    const canDelete = usePermission(`delete_subjects_20447`);
+    const [ selectedProgram, setSelectedProgram ] = useState<Program>();
+    const canCreate = usePermission(`create_program_20221`);
+    const canEdit = usePermission(`edit_program_20331`);
+    const canDelete = usePermission(`delete_program_20441`);
     const { required, equals } = useValidations();
-    const dataSubjects: Subject[] = [
+    const dataPrograms: Program[] = [
         {
-            subject_id: `1`,
-            subject_name: `General`,
+            program_id: `1`,
             grades: [
                 {
                     grade_id: `1`,
@@ -86,61 +74,56 @@ export default function SubjectsTable (props: Props) {
             age_ranges: [
                 {
                     age_range_id: `1`,
-                    from: 1,
-                    fromUnit: `month`,
-                    to: 2,
+                    from: 0,
+                    fromUnit: `year`,
+                    to: 1,
                     toUnit: `year`,
                 },
             ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
-        },
-        {
-            subject_id: `2`,
-            subject_name: `Toodles`,
-            grades: [
+            program_name: `Hello`,
+            subjects: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    subject_id: `1`,
+                    subject_name: `General`,
+                    grades: [
+                        {
+                            grade_id: `1`,
+                            grade_name: `Grade 1`,
+                        },
+                    ],
+                    category: `Some Category`,
+                    subcategories: [ `Subcategory 1`, `Subcategory 2` ],
                 },
             ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
     ];
 
     useEffect(() => {
-        const rows = (subjects ?? dataSubjects)?.map((subject) => ({
-            id: subject.subject_id,
-            name: subject.subject_name ?? ``,
-            grades: subject.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
-            ageRanges: subject.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-            category: subject.category ?? ``,
-            subcategories: subject.subcategories ?? [],
+        const rows = dataPrograms?.map((program) => ({
+            id: program.program_id,
+            name: program.program_name ?? ``,
+            grades: program.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
+            ageRanges: program.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
+            subjects: program.subjects?.map((subject) => subject.subject_name ?? ``) ?? [],
         })) ?? [];
         setRows(rows);
     }, []);
-    // }, [ dataSubjects ]);
+    // }, [ dataPrograms ]);
 
-    const Hello = undefined;
-
-    const columns: TableColumn<SubjectRow>[] = [
+    const columns: TableColumn<ProgramRow>[] = [
         {
             id: `id`,
             label: `ID`,
             hidden: true,
-            disableSearch: disabled,
         },
         {
             id: `name`,
             label: `Name`,
             persistent: true,
-            disableSearch: disabled,
         },
         {
             id: `grades`,
             label: `Grades`,
-            disableSearch: disabled,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
                     <Chip
@@ -165,19 +148,13 @@ export default function SubjectsTable (props: Props) {
             </>,
         },
         {
-            id: `category`,
-            label: `Category`,
-            disableSearch: disabled,
-        },
-        {
-            id: `subcategories`,
-            label: `Subcategories`,
-            disableSearch: disabled,
+            id: `subjects`,
+            label: `Subjects`,
             render: (row) => <>
-                {row.subcategories.map((subcategory, i) => (
+                {row.subjects.map((subject, i) => (
                     <Chip
-                        key={`subcategory-${i}`}
-                        label={subcategory}
+                        key={`subject-${i}`}
+                        label={subject}
                         className={classes.chip}
                     />
                 ))}
@@ -185,33 +162,33 @@ export default function SubjectsTable (props: Props) {
         },
     ];
 
-    const findSubject = (row: SubjectRow) => dataSubjects.find((subject) => subject.subject_id === row.id);
+    const findProgram = (row: ProgramRow) => dataPrograms.find((program) => program.program_id === row.id);
 
-    const handleEditRowClick = async (row: SubjectRow) => {
-        const selectedSubject = findSubject(row);
-        if (!selectedSubject) return;
-        console.log(`selectedSubject`, selectedSubject);
-        setSelectedSubject(selectedSubject);
+    const handleEditRowClick = async (row: ProgramRow) => {
+        const selectedProgram = findProgram(row);
+        if (!selectedProgram) return;
+        console.log(`selectedProgram`, selectedProgram);
+        setSelectedProgram(selectedProgram);
         setOpenEditDialog(true);
     };
 
-    const handleDeleteRowClick = async (row: SubjectRow) => {
-        const selectedSubject = findSubject(row);
-        if (!selectedSubject) return;
-        setSelectedSubject(selectedSubject);
-        const { subject_name } = selectedSubject;
+    const handleDeleteRowClick = async (row: ProgramRow) => {
+        const selectedProgram = findProgram(row);
+        if (!selectedProgram) return;
+        setSelectedProgram(selectedProgram);
+        const { program_name } = selectedProgram;
         if (!await prompt({
             variant: `error`,
-            title: `Delete Subject`,
+            title: `Delete Program`,
             okLabel: `Delete`,
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${subject_name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{subject_name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>Are you sure you want to delete {`"${program_name}"`}?</DialogContentText>
+                <DialogContentText>Type <strong>{program_name}</strong> to confirm deletion.</DialogContentText>
             </>,
-            validations: [ required(), equals(subject_name) ],
+            validations: [ required(), equals(program_name) ],
         })) return;
         try {
-            enqueueSnackbar(`Subject successfully deleted`, {
+            enqueueSnackbar(`Program successfully deleted`, {
                 variant: `success`,
             });
         } catch (err) {
@@ -225,18 +202,16 @@ export default function SubjectsTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
                     idField="id"
-                    rows={rows_}
+                    rows={rows}
                     columns={columns}
-                    selectedRows={selectedIds}
-                    primaryAction={!disabled ? {
-                        label: `Create Subject`,
+                    primaryAction={{
+                        label: `Create Program`,
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
-                    } : undefined}
-                    rowActions={!disabled ? (row) => [
+                    }}
+                    rowActions={(row) => [
                         {
                             label: `Edit`,
                             icon: EditIcon,
@@ -249,27 +224,25 @@ export default function SubjectsTable (props: Props) {
                             disabled: !canDelete,
                             onClick: handleDeleteRowClick,
                         },
-                    ] : undefined}
+                    ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Subjects`,
+                            title: `Programs`,
                         },
                     })}
-                    onSelected={onSelected}
                 />
             </Paper>
-            <CreateSubjectDialog
+            <CreateProgramDialog
                 open={openCreateDialog}
-                onClose={(subject) => {
+                onClose={(program) => {
                     setOpenCreateDialog(false);
                 }}
             />
-            <EditSubjectDialog
+            <EditProgramDialog
                 open={openEditDialog}
-                value={selectedSubject}
-                onClose={(subject) => {
-                    console.log(`subject`, subject);
-                    setSelectedSubject(undefined);
+                value={selectedProgram}
+                onClose={(program) => {
+                    setSelectedProgram(undefined);
                     setOpenEditDialog(false);
                 }}
             />

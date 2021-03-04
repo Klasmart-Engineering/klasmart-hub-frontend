@@ -27,6 +27,7 @@ import {
     Grade as GradeIcon,
     Group as GroupIcon,
     Home as HomeIcon,
+    LibraryBooks as LibraryBooksIcon,
     Lock as LockIcon,
     MenuBook as MenuBookIcon,
     PersonOutline as PersonIcon,
@@ -278,6 +279,19 @@ export default function NavMenu (props: Props) {
                 id: `navMenu_schoolsTitle`,
             }),
         },
+        ...usePermission(`define_program_page_20105`) ? [
+            {
+                description: intl.formatMessage({
+                    id: `navMenu_programsDescription`,
+                }),
+                link: `/admin/programs`,
+                color: `#0E78D5`,
+                icon: LibraryBooksIcon,
+                title: intl.formatMessage({
+                    id: `navMenu_programsTitle`,
+                }),
+            },
+        ] : [],
         ...usePermission(`define_subject_page_20106`) ? [
             {
                 description: intl.formatMessage({

@@ -131,10 +131,12 @@ export default function NavBar (props: Props) {
             text: `Classes`,
             value: `/admin/classes`,
         },
-        // {
-        //     text: `Programs`,
-        //     value: `/admin/programs`,
-        // },
+        ...usePermission(`define_program_page_20105`) ? [
+            {
+                text: `Programs`,
+                value: `/admin/programs`,
+            },
+        ] : [],
         ...usePermission(`define_grade_page_20103`) ? [
             {
                 text: `Grades`,

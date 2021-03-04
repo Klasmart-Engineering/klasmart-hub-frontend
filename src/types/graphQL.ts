@@ -130,3 +130,11 @@ export interface Subject {
     category?: string | null;
     subcategories?: string[] | null;
 }
+
+export interface Program {
+    program_id: string;
+    program_name?: string | null;
+    age_ranges?: AgeRange[] | null;
+    grades?: Grade[] | null;
+    subjects?: Subject[] | null;
+}
