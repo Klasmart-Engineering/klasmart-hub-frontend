@@ -14,6 +14,7 @@ export const GET_ORGANIZATION_OWNERSHIPS = gql`
                     roles {
                         role_id
                         role_name
+                        status
                     }
                 }
                 user {

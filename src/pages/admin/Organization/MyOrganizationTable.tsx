@@ -105,7 +105,10 @@ export default function MyOrganizationTable (props: Props) {
             name: organizationOwnership?.organization?.organization_name ?? ``,
             phone: organizationOwnership?.organization?.phone ?? ``,
             email: organizationOwnership?.user?.email ?? ``,
-            roles: organizationOwnership?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [],
+            roles:
+                    organizationOwnership?.organization?.roles
+                        ?.filter((role) => role.status === `active`)
+                        .map((role) => role.role_name ?? ``) ?? [],
             status: organizationOwnership?.status ? intl.formatMessage({
                 id: `data_${organizationOwnership?.status}Status`,
             }) : ``,

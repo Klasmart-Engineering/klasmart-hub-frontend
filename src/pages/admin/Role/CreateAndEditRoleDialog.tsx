@@ -7,6 +7,7 @@ import RoleReviewCard from "@/components/Roles/RoleReviewCard";
 import RoleStepper from "@/components/Roles/RoleStepper";
 import DialogAppBar from "@/components/styled/dialogAppBar";
 import {
+    permissionsCategoriesHandler,
     sectionHandler,
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
@@ -205,21 +206,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
         }
     }, [ open ]);
 
-    const reviewPermissions = permissionCategories.reduce((permissionsCategories: PermissionsCategory[], permissionsCategory) => {
-        const hasPermissions = permissionsCategory.groups.reduce((groups: Group[], group) => {
-            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
-                groups.push(group);
-            }
-
-            return groups;
-        }, []);
-
-        if (hasPermissions.length) {
-            permissionsCategories.push(permissionsCategory);
-        }
-
-        return permissionsCategories;
-    }, []) as PermissionsCategory[];
+    const reviewPermissions = permissionsCategoriesHandler(permissionCategories);
 
     const roleNameTextHelper = (name: string): string => {
         if (!name.length) return <FormattedMessage id="rolesInfoCard_roleEmpty" /> as unknown as string;

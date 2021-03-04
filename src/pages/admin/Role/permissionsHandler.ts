@@ -1,4 +1,5 @@
 import {
+    Group,
     Permission,
     PermissionsCategory,
     Role,
@@ -164,4 +165,22 @@ export const sectionHandler = (permissions: Permission[] = []): PermissionsCateg
     });
 
     return data;
+};
+
+export const permissionsCategoriesHandler = (permissionCategories: PermissionsCategory[]) => {
+    return permissionCategories.reduce((permissionsCategories: PermissionsCategory[], permissionsCategory) => {
+        const hasPermissions = permissionsCategory.groups.reduce((groups: Group[], group) => {
+            if (group.permissionDetails.some((permissionDetail) => permissionDetail.checked)) {
+                groups.push(group);
+            }
+
+            return groups;
+        }, []);
+
+        if (hasPermissions.length) {
+            permissionsCategories.push(permissionsCategory);
+        }
+
+        return permissionsCategories;
+    }, []) as PermissionsCategory[];
 };

@@ -10,6 +10,7 @@ import CreateAndEditRoleDialog, {
     Role,
 } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
+import ViewRoleDetailsDialog from "@/pages/admin/Role/ViewRoleDetailsDialog";
 import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
@@ -36,12 +37,15 @@ import React, {
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        root: {
-            width: `100%`,
-        },
-    }));
+const useStyles = makeStyles(() => createStyles({
+    root: {
+        width: `100%`,
+    },
+    roleName: {
+        color: `#0094FF`,
+        cursor: `pointer`,
+    },
+}));
 
 export interface RoleRow {
     id: string;
@@ -72,10 +76,11 @@ export default function RoleTable () {
     const canView = usePermission(`view_role_permissions_30112`);
     const canCreate = usePermission(`create_role_with_permissions_30222`);
     const canDelete = usePermission(`delete_groups_30440`);
-    const canEdit  = usePermission(`edit_role_permissions_30332`);
+    const canEdit = usePermission(`edit_role_permissions_30332`);
     const [ rows, setRows ] = useState<RoleRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openDeleteDialog, setOpenDeleteDialog ] = useState(false);
+    const [ openViewDialog, setOpenViewDialog ] = useState(false);
     const initialRow = {
         id: ``,
         role: ``,
@@ -161,6 +166,13 @@ export default function RoleTable () {
                 id: `groups_roleTitle`,
             }),
             persistent: true,
+            render: (row) => (
+                <div
+                    className={classes.roleName}
+                    onClick={() => handleOpenViewDialog(row)}>
+                    {row.role}
+                </div>
+            ),
         },
         {
             id: `description`,
@@ -195,6 +207,16 @@ export default function RoleTable () {
 
     const handleCloseDeleteDialog = () => {
         setOpenDeleteDialog(false);
+    };
+
+    const handleOpenViewDialog = (row: RoleRow) => {
+        setOpenViewDialog(true);
+        setRow(row);
+    };
+
+    const handleCloseViewDialog = () => {
+        setOpenViewDialog(false);
+        setRow(initialRow);
     };
 
     const createNewRoleHandler = async (): Promise<void> => {
@@ -369,6 +391,15 @@ export default function RoleTable () {
                 roles={roles}
                 getAllRolesLoading={getAllRolesLoading}
                 refetch={refetch}
+            />
+
+            <ViewRoleDetailsDialog
+                open={openViewDialog}
+                row={row}
+                handleClose={handleCloseViewDialog}
+                roles={roles}
+                rolePermissions={rolePermissions}
+                rolePermissionsLoading={rolePermissionsLoading}
             />
         </>
     );
