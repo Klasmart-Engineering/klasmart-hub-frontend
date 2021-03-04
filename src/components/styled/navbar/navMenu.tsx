@@ -21,6 +21,7 @@ import {
     AllInbox as InboxIcon,
     Business as BusinessIcon,
     CalendarToday as CalendarIcon,
+    ChildCare as ChildCareIcon,
     ContactSupport as SupportIcon,
     CreditCard as CardIcon,
     Group as GroupIcon,
@@ -67,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 type MenuItemProps = Pick<MenuItem, `description` | `icon` | `title` | `link` | `color`>
 
-function MenuButton(props: MenuItemProps) {
+function MenuButton (props: MenuItemProps) {
     const {
         description,
         icon: Icon, // capitilized to make React happy
@@ -111,21 +112,21 @@ function MenuButton(props: MenuItemProps) {
     </Button>;
 }
 
-const Motion = React.forwardRef((
-    props: TransitionProps & { children?: React.ReactElement },
-    ref: React.Ref<unknown>,
-) => <Grow
-    ref={ref}
-    style={{
-        transformOrigin: `0 0 0`,
-    }}
-    {...props} />);
+const Motion = React.forwardRef((props: TransitionProps & { children?: React.ReactElement }, ref: React.Ref<unknown>) => (
+    <Grow
+        ref={ref}
+        style={{
+            transformOrigin: `0 0 0`,
+        }}
+        {...props}
+    />
+));
 
 interface Props {
     className: string;
 }
 
-export default function NavMenu(props: Props) {
+export default function NavMenu (props: Props) {
     const { className } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -286,6 +287,19 @@ export default function NavMenu(props: Props) {
                 icon: MenuBookIcon,
                 title: intl.formatMessage({
                     id: `navMenu_subjectsTitle`,
+                }),
+            },
+        ] : [],
+        ...usePermission(`define_age_ranges_page_20102`) ? [
+            {
+                description: intl.formatMessage({
+                    id: `navMenu_ageRangesDescription`,
+                }),
+                link: `/admin/age-ranges`,
+                color: `#0E78D5`,
+                icon: ChildCareIcon,
+                title: intl.formatMessage({
+                    id: `navMenu_ageRangesTitle`,
                 }),
             },
         ] : [],

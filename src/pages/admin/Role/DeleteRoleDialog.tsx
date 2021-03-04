@@ -81,13 +81,10 @@ const useStyles = makeStyles((theme: Theme) =>
         backButton: {
             marginRight: theme.spacing(1),
         },
-    }),
-);
+    }));
 
-const motion = React.forwardRef(function Transition(
-    props: TransitionProps & { children?: React.ReactElement },
-    ref: React.Ref<unknown>,
-) {
+const motion = React.forwardRef(function Transition(props: TransitionProps & { children?: React.ReactElement },
+    ref: React.Ref<unknown>) {
     return (
         <Grow
             ref={ref}

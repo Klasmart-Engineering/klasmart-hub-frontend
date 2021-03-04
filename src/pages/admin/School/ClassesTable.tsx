@@ -55,8 +55,7 @@ const useStyles = makeStyles(() =>
             fontWeight: `bold`,
             textTransform: `capitalize`,
         },
-    }),
-);
+    }));
 
 interface ClassRow {
     id: string;
@@ -71,7 +70,7 @@ interface Props {}
  * Returns function to show Classes Table in "Classes" section
  * @param  props {Object} intl - The object has a function (formatMessage) that support multiple languages
  */
-export default function ClasessTable(props: Props) {
+export default function ClasessTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -102,7 +101,9 @@ export default function ClasessTable(props: Props) {
             id: c.class_id,
             name: c.class_name ?? ``,
             schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
-            status: c.status ? intl.formatMessage({ id: `data_${c.status}Status` }) : ``,
+            status: c.status ? intl.formatMessage({
+                id: `data_${c.status}Status`,
+            }) : ``,
         }));
         setRows(rows ?? []);
     }, [ schoolClasses ]);
@@ -120,12 +121,11 @@ export default function ClasessTable(props: Props) {
     const deleteSelectedRow = async (row: ClassRow) => {
         const selectedClass = findClass(row);
         if (!selectedClass) return;
-        if (
-            !confirm(
-                intl.formatMessage({ id: `class_confirmDelete` }, { name: selectedClass.class_name })
-            )
-        )
-            return;
+        if (!confirm(intl.formatMessage({
+            id: `class_confirmDelete`,
+        }, {
+            name: selectedClass.class_name,
+        }))) return;
         const { class_id } = selectedClass;
         try {
             await deleteClass({
@@ -134,23 +134,17 @@ export default function ClasessTable(props: Props) {
                 },
             });
             await refetch();
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedMessage`,
-                }),
-                {
-                    variant: `success`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedMessage`,
+            }), {
+                variant: `success`,
+            });
         } catch (err) {
-            enqueueSnackbar(
-                intl.formatMessage({
-                    id: `classes_classDeletedError`,
-                }),
-                {
-                    variant: `error`,
-                },
-            );
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedError`,
+            }), {
+                variant: `error`,
+            });
         }
     };
 
@@ -223,7 +217,11 @@ export default function ClasessTable(props: Props) {
                             }),
                             icon: DeleteIcon,
                             disabled: !canDelete,
-                            onClick: (rowIds) => alert(intl.formatMessage({ id: `class_deleteRows` }, { rows: rowIds.length})),
+                            onClick: (rowIds) => alert(intl.formatMessage({
+                                id: `class_deleteRows`,
+                            }, {
+                                rows: rowIds.length,
+                            })),
                         },
                     ]}
                     rowActions={(row) => [

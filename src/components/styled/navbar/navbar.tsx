@@ -30,103 +30,45 @@ import {
 import { Tabs } from "kidsloop-px";
 import { Tab } from "kidsloop-px/dist/types/components/Tabs";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { useIntl } from "react-intl";
+import { useLocation } from "react-router-dom";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        logo: {
-            backgroundColor: `#FFF`,
-            borderRadius: 12,
-            color: theme.palette.getContrastText(`#FFF`),
-            "&:hover": {
-                backgroundColor: theme.palette.grey[300],
-            },
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    logo: {
+        backgroundColor: `#FFF`,
+        borderRadius: 12,
+        color: theme.palette.getContrastText(`#FFF`),
+        "&:hover": {
+            backgroundColor: theme.palette.grey[300],
         },
-        avatar: {
-            margin: theme.spacing(0, 1),
-        },
-        menuButton: {
-            marginRight: theme.spacing(2),
-        },
-        root: {
-            flexGrow: 1,
-        },
-        safeArea: {
-            paddingLeft: `env(safe-area-inset-left)`,
-            paddingRight: `env(safe-area-inset-right)`,
-            zIndex: theme.zIndex.drawer + 1,
-        },
-        title: {
-            flex: 1,
-            marginLeft: theme.spacing(2),
-        },
-        tabs: {
-            padding: theme.spacing(0, 2),
-        },
-    }),
-);
-
-const getContentTabs = (): Tab[] => [
-    {
-        text: `Organization Content`,
-        value: `/library`,
     },
-    {
-        text: `Badanamu Content`,
-        value: `/badanamu-content`,
+    avatar: {
+        margin: theme.spacing(0, 1),
     },
-];
-
-const getAdminTabs = (): Tab[] => [
-    {
-        text: `Organizations`,
-        value: `/admin/organizations`,
+    menuButton: {
+        marginRight: theme.spacing(2),
     },
-    {
-        text: `Users`,
-        value: `/admin/users`,
+    root: {
+        flexGrow: 1,
     },
-    {
-        text: `Roles`,
-        value: `/admin/roles`,
+    safeArea: {
+        paddingLeft: `env(safe-area-inset-left)`,
+        paddingRight: `env(safe-area-inset-right)`,
+        zIndex: theme.zIndex.drawer + 1,
     },
-    {
-        text: `Schools`,
-        value: `/admin/schools`,
+    title: {
+        flex: 1,
+        marginLeft: theme.spacing(2),
     },
-    {
-        text: `Classes`,
-        value: `/admin/classes`,
+    tabs: {
+        padding: theme.spacing(0, 2),
     },
-    // {
-    //     text: `Programs`,
-    //     value: `/admin/programs`,
-    // },
-    // {
-    //     text: `Grades`,
-    //     value: `/admin/grades`,
-    // },
-    ...usePermission(`define_subject_page_20106`) ? [
-        {
-            text: `Subjects`,
-            value: `/admin/subjects`,
-        },
-    ] : [],
-];
-
-const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
-
-const getTabs = (path: string): Tab[] => {
-    return findTabs(getContentTabs(), path)
-        ?? findTabs(getAdminTabs(), path)
-        ?? [];
-};
+}));
 
 interface Props {
 }
 
-export default function NavBar(props: Props) {
+export default function NavBar (props: Props) {
     const classes = useStyles();
     const theme = useTheme();
     const location = useLocation();
@@ -139,13 +81,12 @@ export default function NavBar(props: Props) {
         data,
         loading,
         error,
-    } = useQuery(GET_USER,
-        {
-            fetchPolicy: `network-only`,
-            variables: {
-                user_id: userId,
-            },
-        });
+    } = useQuery(GET_USER, {
+        fetchPolicy: `network-only`,
+        variables: {
+            user_id: userId,
+        },
+    });
     const user: User = data?.user;
 
     const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
@@ -157,7 +98,75 @@ export default function NavBar(props: Props) {
     ];
     const showNavMenu = selectedMembershipOrganization?.roles?.map((role) => role.role_name).some((roleName) => showMenuToRoles.includes(roleName ?? ``));
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
-    const tabs = getTabs(location.pathname).map((tab: { text: string, value: string }) => ({ ...tab, text: intl.formatMessage({ id: `navbar_${tab.text}Tab` }) }));
+
+    const contentTabs: Tab[] = [
+        {
+            text: `Organization Content`,
+            value: `/library`,
+        },
+        {
+            text: `Badanamu Content`,
+            value: `/badanamu-content`,
+        },
+    ];
+
+    const adminTabs: Tab[] = [
+        {
+            text: `Organizations`,
+            value: `/admin/organizations`,
+        },
+        {
+            text: `Users`,
+            value: `/admin/users`,
+        },
+        {
+            text: `Roles`,
+            value: `/admin/roles`,
+        },
+        {
+            text: `Schools`,
+            value: `/admin/schools`,
+        },
+        {
+            text: `Classes`,
+            value: `/admin/classes`,
+        },
+        // {
+        //     text: `Programs`,
+        //     value: `/admin/programs`,
+        // },
+        // {
+        //     text: `Grades`,
+        //     value: `/admin/grades`,
+        // },
+        ...usePermission(`define_subject_page_20106`) ? [
+            {
+                text: `Subjects`,
+                value: `/admin/subjects`,
+            },
+        ] : [],
+        ...usePermission(`define_age_ranges_page_20102`) ? [
+            {
+                text: `Age Ranges`,
+                value: `/admin/age-ranges`,
+            },
+        ] : [],
+    ];
+
+    const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
+
+    const getTabs = (path: string): Tab[] => {
+        return findTabs(contentTabs, path)
+        ?? findTabs(adminTabs, path)
+        ?? [];
+    };
+
+    const tabs = getTabs(location.pathname).map((tab: { text: string; value: string }) => ({
+        ...tab,
+        text: intl.formatMessage({
+            id: `navbar_${tab.text}Tab`,
+        }),
+    }));
 
     return (
         <div className={classes.root}>

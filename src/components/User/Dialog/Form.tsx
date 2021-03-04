@@ -25,14 +25,13 @@ import {
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            "& > *": {
-                marginBottom: theme.spacing(2),
-            },
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    root: {
+        "& > *": {
+            marginBottom: theme.spacing(2),
         },
-    }));
+    },
+}));
 
 const getContactInfoHelperText = (contactInfo: string) => {
     if (contactInfo.length === 0) return <FormattedMessage id="createUser_emailPhoneRequired" />;

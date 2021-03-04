@@ -23,6 +23,7 @@ import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
 import { ActionTypes } from "./store/actions";
 import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
+import AgeRanges from "@/pages/admin/age-ranges/index";
 import {
     useQuery,
     useReactiveVar,
@@ -50,7 +51,7 @@ import {
 
 const ENDPOINT = getCNEndpoint();
 
-export function App() {
+export function App () {
     const store = useStore();
     const location = useLocation().pathname;
 
@@ -79,13 +80,12 @@ export function App() {
         data: userData,
         loading: userDataLoading,
         error,
-    } = useQuery(GET_USER,
-        {
-            fetchPolicy: `network-only`,
-            variables: {
-                user_id,
-            },
-        });
+    } = useQuery(GET_USER, {
+        fetchPolicy: `network-only`,
+        variables: {
+            user_id,
+        },
+    });
 
     useEffect(() => {
         if (userData) {
@@ -244,6 +244,11 @@ export function App() {
                     <Route path="/admin/subjects">
                         <Layout>
                             <SubjectsPage />
+                        </Layout>
+                    </Route>
+                    <Route path="/admin/age-ranges">
+                        <Layout>
+                            <AgeRanges />
                         </Layout>
                     </Route>
                     <Route path="/admin">

@@ -34,7 +34,10 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     activeColor: {
@@ -67,7 +70,7 @@ interface Props {
 /**
  * Returns function to show My Organizations Table for "All Organizations" section
  */
-export default function MyOrganizationTable(props: Props) {
+export default function MyOrganizationTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -97,16 +100,16 @@ export default function MyOrganizationTable(props: Props) {
             return;
         }
 
-        const rows: MyOrganizationRow[] = organizationOwnerships.map(
-            (organizationOwnership: OrganizationOwnership) => ({
-                id: organizationOwnership?.organization?.organization_id ?? ``,
-                name: organizationOwnership?.organization?.organization_name ?? ``,
-                phone: organizationOwnership?.organization?.phone ?? ``,
-                email: organizationOwnership?.user?.email ?? ``,
-                roles: organizationOwnership?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [],
-                status: organizationOwnership?.status ? intl.formatMessage({ id: `data_${organizationOwnership?.status}Status` }) : ``,
-            }),
-        );
+        const rows: MyOrganizationRow[] = organizationOwnerships.map((organizationOwnership: OrganizationOwnership) => ({
+            id: organizationOwnership?.organization?.organization_id ?? ``,
+            name: organizationOwnership?.organization?.organization_name ?? ``,
+            phone: organizationOwnership?.organization?.phone ?? ``,
+            email: organizationOwnership?.user?.email ?? ``,
+            roles: organizationOwnership?.organization?.roles?.map((role) => role.role_name ?? ``) ?? [],
+            status: organizationOwnership?.status ? intl.formatMessage({
+                id: `data_${organizationOwnership?.status}Status`,
+            }) : ``,
+        }));
 
         setRows(rows);
     }, [ data ]);
@@ -251,7 +254,11 @@ export default function MyOrganizationTable(props: Props) {
                 <DialogTitle />
                 <DialogContent dividers>
                     <p>
-                        <FormattedMessage id="allOrganization_deleteConfirmLabel" values={{ name: selectedOrganization?.name }}></FormattedMessage>
+                        <FormattedMessage
+                            id="allOrganization_deleteConfirmLabel"
+                            values={{
+                                name: selectedOrganization?.name,
+                            }}></FormattedMessage>
                     </p>
                     {deleteLoading && (
                         <Grid
