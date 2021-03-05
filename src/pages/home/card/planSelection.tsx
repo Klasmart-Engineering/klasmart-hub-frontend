@@ -61,10 +61,9 @@ const useStyles = makeStyles((theme: Theme) =>
         select: {
             display: `block`,
         },
-    }),
-);
+    }));
 
-export default function PlanSelection() {
+export default function PlanSelection () {
     const classes = useStyles();
     const theme = useTheme();
     const restApi = useRestAPI();
@@ -78,7 +77,7 @@ export default function PlanSelection() {
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
-    async function getPublishedLessonPlans() {
+    async function getPublishedLessonPlans () {
         try {
             const response = await restApi.getContentsFolders(currentOrganization.organization_id);
             console.log(response);
@@ -88,7 +87,7 @@ export default function PlanSelection() {
         }
     }
 
-    async function getLiveToken(lessonPlanId: string) {
+    async function getLiveToken (lessonPlanId: string) {
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
@@ -131,7 +130,7 @@ export default function PlanSelection() {
         return () => { prepared = false; };
     }, [ lessonPlan ]);
 
-    function goLive() {
+    function goLive () {
         const liveLink = `${getLiveEndpoint()}class-live/?token=${liveToken}`;
         window.open(liveLink);
     }
@@ -205,7 +204,7 @@ export default function PlanSelection() {
     );
 }
 
-function LessonPlanSelect({
+function LessonPlanSelect ({
     lessonPlans, lessonPlan, setLessonPlan,
 }: {
     lessonPlans?: PublishedContentItem[];
@@ -230,7 +229,7 @@ function LessonPlanSelect({
             )}
             value={lessonPlan}
             noOptionsText={intl.formatMessage({
-                id: `planSelection_noOptionLabel`,
+                id: `planSelection_noOptionsLabel`,
             })}
             inputValue={inputValue}
             renderInput={(params) => (
