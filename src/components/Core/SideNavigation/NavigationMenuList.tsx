@@ -16,6 +16,7 @@ import {
     AssignmentInd,
     Business,
     ChildCare,
+    Class,
     CreditCard,
     Event,
     Grade,
@@ -186,6 +187,15 @@ export default function NavigationMenuList (props: Props) {
                         }),
                         icon: LibraryBooks,
                         link: `/admin/programs`,
+                    },
+                ] : [],
+                ...usePermission(`define_class_page_20104`) ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_classesTitle`,
+                        }),
+                        icon: Class,
+                        link: `/admin/classes`,
                     },
                 ] : [],
                 ...usePermission(`define_subject_page_20106`) ? [

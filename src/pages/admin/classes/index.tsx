@@ -1,8 +1,9 @@
 import ClassTable from "@/components/Class/Table";
 import React from "react";
 
-interface Props {}
+interface Props {
+}
 
-export default function SubjectsPage (props: Props) {
+export default function ClassesPage (props: Props) {
     return <ClassTable />;
 }

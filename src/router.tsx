@@ -1,5 +1,6 @@
 import { currentMembershipVar } from "./cache";
 import { getCNEndpoint } from "./config";
+import ClassesPage from "./pages/admin/classes";
 import ClassRosterTable from "./pages/admin/ClassRoster/ClassRosterTable";
 import Grades from "./pages/admin/grades";
 import Layout from "./pages/admin/Layout";
@@ -8,7 +9,6 @@ import EditOrganization from "./pages/admin/Organization/EditOrganization";
 import Organization from "./pages/admin/Organization/Organization";
 import ProgramsPage from "./pages/admin/programs";
 import RoleTable from "./pages/admin/Role/RoleTable";
-import ClasessTable from "./pages/admin/School/ClassesTable";
 import SchoolsPage from "./pages/admin/School/SchoolTable";
 import SubjectsPage from "./pages/admin/subjects";
 import User from "./pages/admin/User";
@@ -140,7 +140,7 @@ export default function Router ()  {
             </Route>
             <Route path="/admin/classes">
                 <Layout>
-                    <ClasessTable />
+                    <ClassesPage />
                 </Layout>
             </Route>
             <Route path="/admin/programs">
