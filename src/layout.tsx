@@ -1,13 +1,15 @@
-import SideNavigation from "./components/SideNavigation";
-import NavBar from "./components/styled/navbar/navbar";
+import Toolbar from "./components/Core/AppBar/Toolbar";
+import SideNavigationDrawer,
+{ DRAWER_WIDTH } from "./components/Core/SideNavigation/Drawer";
 import Router from "./router";
-import Grid from "@material-ui/core/Grid";
 import {
     createStyles,
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
-import * as React from "react";
+import clsx from "clsx";
+import React,
+{ useState } from "react";
 import { withOrientationChange } from "react-device-detect";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -17,20 +19,37 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     content: {
         flexGrow: 1,
     },
+    navMainContainer: {
+        display: `flex`,
+        flex: 1,
+        flexDirection: `column`,
+        width: `calc(100vw - 256px)`,
+        height: `100vh`,
+    },
 }));
 
-const Layout = (props: any) => {
-    const classes = useStyles();
+interface Props {
+}
 
-    console.log(`classes`, classes);
+const Layout = (props: Props) => {
+    const classes = useStyles();
+    const [ navigationDrawerOpen, setNavigationDrawerOpen ] = useState<boolean>();
 
     return (
         <div className={classes.root}>
-            <NavBar />
-            <SideNavigation />
-            <main className={classes.content}>
-                <Router />
-            </main>
+            <SideNavigationDrawer
+                open={navigationDrawerOpen}
+                onClose={setNavigationDrawerOpen}
+            />
+            <div className={classes.navMainContainer}>
+                <Toolbar
+                    sideNavigationDrawerOpen={navigationDrawerOpen}
+                    onMenuButtonClick={() => setNavigationDrawerOpen((open) => open === false ? true : false)}
+                />
+                <main className={classes.content}>
+                    <Router />
+                </main>
+            </div>
         </div>
     );
 };

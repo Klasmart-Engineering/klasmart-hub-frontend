@@ -2,6 +2,7 @@ import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
+import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
 import { GET_ORGANIZATIONS } from "@/operations/queries/getOrganizations";
 import {
     Organization,
@@ -13,19 +14,26 @@ import {
     useQuery,
 } from "@apollo/client";
 
+interface GetOrganizationRequest {
+    organization_id: string;
+}
+
+interface GetOrganizationResponse {
+    organization: Organization;
+}
+
+export const useGetOrganization = (options?: QueryHookOptions<GetOrganizationResponse, GetOrganizationRequest>) => {
+    return useQuery<GetOrganizationResponse, GetOrganizationRequest>(GET_ORGANIZATION, options);
+};
+
 interface GetOrganizationsRequest {}
 
 interface GetOrganizationsResponse {
     me: User;
 }
 
-export const useGetOrganizations = () => {
-    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(
-        GET_ORGANIZATIONS,
-        {
-            fetchPolicy: `network-only`,
-        },
-    );
+export const useGetOrganizations = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {
+    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(GET_ORGANIZATIONS, options);
 };
 
 interface GetAllOrganizationsRequest {}
@@ -48,9 +56,7 @@ interface LeaveMembershipResponse {
 }
 
 export const useLeaveMembership = () => {
-    return useMutation<LeaveMembershipResponse, LeaveMembershipRequest>(
-        LEAVE_MEMBERSHIP,
-    );
+    return useMutation<LeaveMembershipResponse, LeaveMembershipRequest>(LEAVE_MEMBERSHIP);
 };
 
 interface GetOrganizationOwnershipsRequest {
@@ -79,7 +85,5 @@ interface DeleteOrganizationResponse {
 }
 
 export const useDeleteOrganizationOwnership = () => {
-    return useMutation<DeleteOrganizationResponse, DeleteOrganizationRequest>(
-        DELETE_ORGANIZATION,
-    );
+    return useMutation<DeleteOrganizationResponse, DeleteOrganizationRequest>(DELETE_ORGANIZATION);
 };

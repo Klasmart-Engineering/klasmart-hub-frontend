@@ -46,11 +46,9 @@ interface JoinedOrganizationRow {
     status: string;
 }
 
-interface Props {}
+interface Props {
+}
 
-/**
- * Returns function to show Joined Organizations table
- */
 export default function JoinedOrganizationTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
@@ -66,22 +64,23 @@ export default function JoinedOrganizationTable (props: Props) {
     const [ leaveMembership, { loading: leaveLoading } ] = useLeaveMembership();
 
     useEffect(() => {
-        const memberships = data?.me.memberships ?? [];
+        const memberships = data?.me?.memberships ?? [];
         if (memberships.length === 0) {
             setRows([]);
             return;
         }
-        const myEmail = data?.me.email;
+        const myEmail = data?.me?.email;
         const rows = memberships
-            .filter((organization) =>
-                myEmail !== organization?.organization?.owner?.email && organization?.status === `active`)
-            .map((organization) => ({
-                id: organization.organization?.organization_id ?? ``,
-                name: organization.organization?.organization_name ?? ``,
-                phone: organization.organization?.phone ?? ``,
-                email: organization.organization?.owner?.email ?? ``,
-                roles: organization.roles?.map((r) => r.role_name ?? ``) ?? [],
-                status: organization.status ?? ``,
+            .filter((membership) => myEmail !== membership?.organization?.owner?.email && membership?.status === `active`)
+            .map((membership) => ({
+                id: membership.organization?.organization_id ?? ``,
+                name: membership.organization?.organization_name ?? ``,
+                phone: membership.organization?.phone ?? ``,
+                email: membership.organization?.owner?.email ?? ``,
+                roles: membership.roles?.map((r) => r.role_name ?? ``) ?? [],
+                status: membership.status ? intl.formatMessage({
+                    id: `data_${membership.status}Status`,
+                }) : ``,
             }));
 
         setRows(rows);

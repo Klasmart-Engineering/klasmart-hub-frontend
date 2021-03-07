@@ -425,7 +425,7 @@ const messages: Record<string, string> = {
     navMenu_devicesDescription: `Organization-owned devices and app licenses`,
     navMenu_groupsTitle: `Roles`,
     navMenu_groupsDescription: `Add or manage roles`,
-    navMenu_organizationTitle: `Organization Profile`,
+    navMenu_organizationTitle: `Organizations`,
     navMenu_organizationDescription: `Update personalization and manage your organization`,
     navMenu_securityTitle: `Security`,
     navMenu_securityDescription: `Configure security settings`,
@@ -648,7 +648,7 @@ const messages: Record<string, string> = {
     class_create: `Create`,
     class_confirmDelete: `Are you sure you want to delete {name}?`,
     class_deleteRows: `You want to delete {rows} rows`,
-    
+
     data_deleteRows: `You want to delete {rows} rows`,
 
     superAdmin_searchPlaceholder: `Search for content by folder names, author, author ID and keywords`,

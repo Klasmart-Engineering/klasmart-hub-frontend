@@ -2,9 +2,9 @@ import "@babel/polyfill";
 import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "./assets/css/index.min.css";
+import App from "./app";
 import { cache } from "./cache";
 import { getAPIEndpoint } from "./config";
-import Layout from "./layout";
 import {
     createDefaultStore,
     State,
@@ -78,7 +78,7 @@ function ClientSide () {
                             <AlertDialogProvider>
                                 <SnackbarProvider closeButtonLabel="Dismiss">
                                     <CssBaseline />
-                                    <Layout />
+                                    <App />
                                 </SnackbarProvider>
                             </AlertDialogProvider>
                         </PromptDialogProvider>

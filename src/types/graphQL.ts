@@ -1,4 +1,4 @@
-export const orderedRoleNames = [
+export const orderedSystemRoleNames = [
     `Super Admin`,
     `Organization Admin`,
     `School Admin`,
@@ -6,8 +6,6 @@ export const orderedRoleNames = [
     `Parent`,
     `Student`,
 ] as const;
-
-export type RoleName = typeof orderedRoleNames[number];
 
 export interface User {
     user_id: string;
@@ -64,7 +62,7 @@ export interface Organization {
 
 export interface Role {
     role_id: string;
-    role_name?: RoleName | null;
+    role_name?: string | null;
     role_description?: string | null;
     system_role?: boolean | null;
     delete_role?: boolean | null;

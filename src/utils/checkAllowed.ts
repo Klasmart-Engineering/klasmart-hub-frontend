@@ -22,7 +22,6 @@ export interface CheckAllowedResponse {
 
 export const checkAllowed = (organizationId: string, permissionName: string) => {
     const { data } = useQuery<CheckAllowedResponse, CheckAllowedRequest>(CHECK_ALLOWED, {
-        fetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
             permission_name: permissionName,

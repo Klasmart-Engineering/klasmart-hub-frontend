@@ -1,6 +1,7 @@
 import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "./assets/css/index.min.css";
+import { useGetOrganization } from "./api/organizations";
 import { currentMembershipVar } from "./cache";
 import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
@@ -21,7 +22,7 @@ import { utils } from "kidsloop-px";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 
-export function themeProvider() {
+export function themeProvider () {
     const themeMode = useSelector((state: State) => state.ui.darkMode);
     const languageCode = useSelector((state: State) => state.ui.locale || ``);
     const [ cookies ] = useCookies([ `locale` ]);
@@ -29,7 +30,7 @@ export function themeProvider() {
     const { organization_name } = useReactiveVar(currentMembershipVar);
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 
-    function setTypography() {
+    function setTypography () {
         let localeFontFamily = `Circular Std`;
         const localeWeightLight = 400;
         const localeWeightMedium = 600;

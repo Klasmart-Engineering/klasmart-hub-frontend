@@ -1,9 +1,5 @@
-import {
-    currentMembershipVar,
-    userIdVar,
-} from "./cache";
+import { currentMembershipVar } from "./cache";
 import { getCNEndpoint } from "./config";
-import { GET_USER } from "./operations/queries/getUser";
 import ClassRosterTable from "./pages/admin/ClassRoster/ClassRosterTable";
 import Grades from "./pages/admin/grades";
 import Layout from "./pages/admin/Layout";
@@ -19,32 +15,12 @@ import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
-import { ActionTypes } from "./store/actions";
 import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
 import AgeRanges from "@/pages/admin/age-ranges/index";
-import {
-    useQuery,
-    useReactiveVar,
-} from "@apollo/client/react";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import _get from "lodash/get";
-import _isEmpty from "lodash/isEmpty";
-import React, {
-    useEffect,
-    useState,
-} from "react";
-import {
-    isEdge,
-    isIE,
-    isIOS,
-    isMobile,
-    isMobileSafari,
-} from "react-device-detect";
-import { useStore } from "react-redux";
+import { useReactiveVar } from "@apollo/client/react";
+import React,
+{ useEffect } from "react";
+import { isIE } from "react-device-detect";
 import {
     Route,
     Switch,
@@ -53,74 +29,10 @@ import {
 
 const ENDPOINT = getCNEndpoint();
 
-const useStyles = makeStyles((theme) => createStyles({
-    content: {
-        display: `flex`,
-    },
-}));
-
 export default function Router ()  {
-    const classes = useStyles();
-    const store = useStore();
     const location = useLocation().pathname;
-
-    const [ organizationData, setOrganizationData ] = useState([]);
-    const currentOrganization = useReactiveVar(currentMembershipVar);
-
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
-
-    useEffect(() => {
-        const userInformation = {
-            isEdge,
-            isIE,
-            isIOS,
-            isMobile,
-            isMobileSafari,
-        };
-
-        store.dispatch({
-            type: ActionTypes.USER_AGENT,
-            payload: userInformation,
-        });
-    }, []);
-
-    const userId = useReactiveVar(userIdVar);
-    const {
-        data: userData,
-        loading: userDataLoading,
-        error,
-    } = useQuery(GET_USER, {
-        fetchPolicy: `network-only`,
-        variables: {
-            user_id: userId,
-        },
-    });
-
-    useEffect(() => {
-        if (userData) {
-            let joinedOrgArray = [];
-            const arr: any = [];
-            const joinedOrganization = _get(userData, `user.memberships`, false);
-            if (joinedOrganization) {
-                arr.push(joinedOrganization);
-                joinedOrgArray = arr.map((o: any) => ({
-                    ...o,
-                }));
-                setOrganizationData(joinedOrgArray[0]);
-            }
-        }
-    }, [ userData ]);
-
-    useEffect(() => {
-        if (_isEmpty(organizationData)) { return; }
-        if (organizationData[0].organization !== undefined) {
-            currentMembershipVar({
-                organization_name: organizationData[0].organization.organization_name,
-                organization_id: organizationData[0].organization.organization_id,
-                organization_email: organizationData[0].organization.email,
-            });
-        }
-    }, [ organizationData, userId ]);
+    const currentOrganization = useReactiveVar(currentMembershipVar);
 
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
         <Switch>

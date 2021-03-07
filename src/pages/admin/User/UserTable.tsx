@@ -6,14 +6,14 @@ import { useGetAllRoles } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import EditUserDialog from "@/components/User/Dialog/Edit";
-import {
-    orderedRoleNames,
-    OrganizationMembership,
-    RoleName,
-} from "@/types/graphQL";
+import { OrganizationMembership } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
-import { getHighestRole } from "@/utils/userRoles";
+import {
+    getHighestRole,
+    roleNameTranslations,
+    sortRoleNames,
+} from "@/utils/userRoles";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     Avatar,
@@ -74,7 +74,7 @@ interface UserRow {
     name: string;
     avatar: string;
     contactInfo: string;
-    roleNames: (RoleName | null | undefined)[];
+    roleNames: string[];
     schoolNames: string[];
     status: string;
     joinDate: Date;
@@ -82,16 +82,9 @@ interface UserRow {
 
 const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
-const sortRoleNames = (a: RoleName, b: RoleName) => {
-    return orderedRoleNames.indexOf(a) - orderedRoleNames.indexOf(b);
-};
-
 interface Props {
 }
 
-/**
- * Returns function to show Users table for "View Users" section
- */
 export default function UserTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
@@ -127,7 +120,8 @@ export default function UserTable (props: Props) {
             const roleNames =
                 membership.roles
                     ?.filter((role) => role.status === `active`)
-                    .map((role) => role.role_name) ?? [];
+                    .map((role) => role.role_name)
+                    .filter((roleName): roleName is string => !!roleName) ?? [];
             roleNames.sort(sortRoleNames);
             const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [];
             schoolNames?.sort(sortSchoolNames);
@@ -145,19 +139,14 @@ export default function UserTable (props: Props) {
         setRows(rows ?? []);
     }, [ memberships ]);
 
-    const roleLibrary: { [key: string]: string } = {
-        'Super Admin': `users_superAdminRole`,
-        'Organization Admin': `users_organizationAdminRole`,
-        'School Admin': `users_schoolAdminRole`,
-        Parent: `users_parentRole`,
-        Student: `users_studentRole`,
-        Teacher: `users_teacherRole`,
-    };
-
-    const roles =
-        dataRoles?.organization?.roles
-            ?.filter((role) => role.status === `active`)
-            .map((role) => roleLibrary[role.role_name as string] ?? role.role_name) ?? [];
+    const roles = dataRoles?.organization?.roles
+        ?.filter((role) => role.status === `active`)
+        .map((role) => role.role_name)
+        .filter((roleName): roleName is string => !!roleName)
+        .sort(sortRoleNames)
+        .map((roleName) => roleNameTranslations[roleName] ? intl.formatMessage({
+            id: roleNameTranslations[roleName],
+        }) : roleName) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {
@@ -198,16 +187,14 @@ export default function UserTable (props: Props) {
                 id: `users_organizationRoles`,
             }),
             groups: roles.map((role) => ({
-                text: intl.formatMessage({
-                    id: role,
-                }),
+                text: role,
             })),
-            sort: (a: RoleName[], b: RoleName[]) => {
-                const highestRoleA = getHighestRole(orderedRoleNames, a);
-                const highestRoleB = getHighestRole(orderedRoleNames, b);
+            sort: (a: string[], b: string[]) => {
+                const highestRoleA = getHighestRole(a);
+                const highestRoleB = getHighestRole(b);
                 if (!highestRoleA) return -1;
                 if (!highestRoleB) return 1;
-                return orderedRoleNames.indexOf(highestRoleB) - orderedRoleNames.indexOf(highestRoleA);
+                return roles.indexOf(highestRoleB) - roles.indexOf(highestRoleA);
             },
             render: (row) => row.roleNames.map((roleName, i) =>
                 <Typography
@@ -251,7 +238,6 @@ export default function UserTable (props: Props) {
                     [classes.inactiveColor]: row.status === `inactive`,
                 })}
             >
-                {/* {row.status} */}
                 {intl.formatMessage({
                     id: `users_${row.status}Status`,
                 })}

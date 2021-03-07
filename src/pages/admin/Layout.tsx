@@ -1,13 +1,20 @@
-import Grid from "@material-ui/core/Grid";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
 import React from "react";
 
-export default function Layout(props: { children: React.ReactNode }) {
-    return <Grid
-        container
-        style={{
-            width: `100vw`,
-            padding: 24,
-        }}>
+const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        width: `100%`,
+        padding: 24,
+    },
+}));
+
+export default function Layout (props: { children: React.ReactNode }) {
+    const classes = useStyles();
+
+    return <div className={classes.root}>
         {props.children}
-    </Grid>;
+    </div>;
 }

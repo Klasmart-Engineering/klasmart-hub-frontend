@@ -3,14 +3,30 @@ import {
     currentMembershipVar,
     userIdVar,
 } from "@/cache";
-import { RoleName } from "@/types/graphQL";
+import { orderedSystemRoleNames } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
 
-export const getHighestRole = (rolePriority: readonly RoleName[], roles: (RoleName | null | undefined )[]) => {
+export const roleNameTranslations: { [key: string]: string } = {
+    'Super Admin': `users_superAdminRole`,
+    'Organization Admin': `users_organizationAdminRole`,
+    'School Admin': `users_schoolAdminRole`,
+    Parent: `users_parentRole`,
+    Student: `users_studentRole`,
+    Teacher: `users_teacherRole`,
+};
+
+const orderedRoleNames = orderedSystemRoleNames.slice() as string[];
+
+export const sortRoleNames = (a: string, b: string) => {
+    const aIndex = orderedRoleNames.indexOf(a);
+    const bIndex = orderedRoleNames.indexOf(b);
+    if (aIndex === bIndex) return a.localeCompare(b);
+    return aIndex - bIndex;
+};
+
+export const getHighestRole = (roles: string[]) => {
     if (!roles.length) return null;
-    const rolePriorityIndexes = roles.map((role) => !role ? Number.MAX_SAFE_INTEGER : rolePriority.indexOf(role));
-    const highestPriorityRoleIndex = Math.min(...rolePriorityIndexes);
-    return rolePriority[highestPriorityRoleIndex];
+    return roles.sort(sortRoleNames)[0];
 };
 
 export const useIsSuperAdmin = () => {
