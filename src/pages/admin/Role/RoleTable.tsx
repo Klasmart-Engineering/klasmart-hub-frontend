@@ -5,6 +5,7 @@ import {
     useGetRolePermissions,
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
+import globalCss from "@/globalCss";
 import CreateAndEditRoleDialog, {
     NewRole,
     Role,
@@ -15,7 +16,10 @@ import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client";
-import { Paper } from "@material-ui/core";
+import {
+    Link,
+    Paper,
+} from "@material-ui/core";
 import {
     createStyles,
     makeStyles,
@@ -37,15 +41,15 @@ import React, {
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles(() => createStyles({
-    root: {
-        width: `100%`,
-    },
-    roleName: {
-        color: `#0094FF`,
-        cursor: `pointer`,
-    },
-}));
+const useStyles = makeStyles((theme) => {
+    const { clickable } = globalCss(theme);
+    return createStyles({
+        clickable,
+        root: {
+            width: `100%`,
+        },
+    });
+});
 
 export interface RoleRow {
     id: string;
@@ -167,11 +171,13 @@ export default function RoleTable () {
             }),
             persistent: true,
             render: (row) => (
-                <div
-                    className={classes.roleName}
-                    onClick={() => handleOpenViewDialog(row)}>
+                <Link
+                    href={undefined}
+                    className={classes.clickable}
+                    onClick={() => handleOpenViewDialog(row)}
+                >
                     {row.role}
-                </div>
+                </Link>
             ),
         },
         {

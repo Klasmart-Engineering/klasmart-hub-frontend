@@ -23,4 +23,7 @@ export default (theme: Theme) => createStyles({
     warningColor: {
         color: theme.palette.warning.main,
     },
+    clickable: {
+        cursor: `pointer`,
+    },
 });

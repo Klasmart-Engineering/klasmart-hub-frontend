@@ -7,6 +7,7 @@ import ClassRoster from "@/components/Class/ClassRoster/Table";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
 import ViewClassDialog from "@/components/Class/Dialog/View";
+import globalCss from "@/globalCss";
 import { Class } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
@@ -16,6 +17,7 @@ import {
     Chip,
     createStyles,
     DialogContentText,
+    Link,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -39,8 +41,10 @@ import React,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) =>
-    createStyles({
+const useStyles = makeStyles((theme) => {
+    const { clickable } = globalCss(theme);
+    return createStyles({
+        clickable,
         root: {
             width: `100%`,
         },
@@ -69,7 +73,8 @@ const useStyles = makeStyles((theme) =>
             color: `#0094FF`,
             cursor: `pointer`,
         },
-    }));
+    });
+});
 
 interface ClassRow {
     id: string;
@@ -214,14 +219,13 @@ export default function ClassesTable (props: Props) {
             }),
             persistent: true,
             render: (row) => (
-                <div
-                    className={classes.roleName}
-                    onClick={() => {
-                        setClassRosterDialogOpen(true);
-                    }}
+                <Link
+                    href={undefined}
+                    className={classes.clickable}
+                    onClick={() => setClassRosterDialogOpen(true)}
                 >
                     {row.name}
-                </div>
+                </Link>
             ),
         },
         {
