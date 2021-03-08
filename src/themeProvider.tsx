@@ -1,6 +1,6 @@
 import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
-import "./assets/css/index.min.css";
+import "inter-ui";
 import { useGetOrganization } from "./api/organizations";
 import { currentMembershipVar } from "./cache";
 import { State } from "./store/store";
@@ -31,16 +31,16 @@ export function themeProvider () {
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 
     function setTypography () {
-        let localeFontFamily = `Circular Std`;
+        let localeFontFamily = `Inter`;
         const localeWeightLight = 400;
         const localeWeightMedium = 600;
-        let localeWeightRegular = 400;
+        let localeWeightRegular = 500;
         const localeWeightBold = 700;
 
         switch (locale) {
         case `en`:
-            localeFontFamily = `Circular Std`;
-            localeWeightRegular = 400;
+            localeFontFamily = `Inter`;
+            localeWeightRegular = 500;
             break;
         case `ko`:
             localeFontFamily = `NanumSquareRound`;

@@ -1,14 +1,19 @@
-import { print } from "graphql";
-import queryString from "querystring";
-import { userIdVar, userProfileVar } from "../cache";
-import { getAPIEndpoint, getAuthEndpoint } from "../config";
+import {
+    userIdVar,
+    userProfileVar,
+} from "../cache";
+import {
+    getAPIEndpoint,
+    getAuthEndpoint,
+} from "../config";
 import { IUserProfile } from "../models/UserProfile";
 import { ME } from "../operations/queries/me";
+import { useLocalStorage } from "./localStorage";
+import { print } from "graphql";
+import queryString from "querystring";
 
-export async function redirectIfUnauthorized(
-    continueParam?: string,
-    retry = true,
-) {
+export async function redirectIfUnauthorized (continueParam?: string,
+    retry = true) {
     try {
         const session = await refreshToken();
 
@@ -24,13 +29,15 @@ export async function redirectIfUnauthorized(
         }
 
         const headers = new Headers();
-        headers.append("Accept", "application/json");
-        headers.append("Content-Type", "application/json");
+        headers.append(`Accept`, `application/json`);
+        headers.append(`Content-Type`, `application/json`);
         const request = await fetch(`${getAPIEndpoint()}user/`, {
-            body: JSON.stringify({ query: print(ME) }),
-            credentials: "include",
+            body: JSON.stringify({
+                query: print(ME),
+            }),
+            credentials: `include`,
             headers,
-            method: "POST",
+            method: `POST`,
         });
         const data = await request.json();
 
@@ -44,7 +51,7 @@ export async function redirectIfUnauthorized(
         const me: IUserProfile = data.data.me;
         userProfileVar({
             user_id: me.user_id,
-            user_name: me.user_name,
+            username: me.username,
             given_name: me.given_name,
             family_name: me.family_name,
             email: me.email,
@@ -59,15 +66,15 @@ export async function redirectIfUnauthorized(
 
 let expirationTimer: NodeJS.Timeout | undefined;
 
-export async function refreshToken() {
+export async function refreshToken () {
     try {
         const headers = new Headers();
-        headers.append("Accept", "application/json");
-        headers.append("Content-Type", "application/json");
+        headers.append(`Accept`, `application/json`);
+        headers.append(`Content-Type`, `application/json`);
         const request = await fetch(`${getAuthEndpoint()}refresh`, {
-            credentials: "include",
+            credentials: `include`,
             headers,
-            method: "GET",
+            method: `GET`,
         });
 
         if (!request.ok) {
@@ -80,10 +87,7 @@ export async function refreshToken() {
             clearTimeout(expirationTimer);
         }
 
-        expirationTimer = setTimeout(
-            () => refreshToken(),
-            targetDuration,
-        );
+        expirationTimer = setTimeout(() => refreshToken(), targetDuration);
 
         return response;
     } catch (e) {

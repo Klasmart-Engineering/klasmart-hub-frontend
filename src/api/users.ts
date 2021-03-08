@@ -1,9 +1,59 @@
+import { SWITCH_USER } from "@/operations/mutations/switchUser";
+import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
 import { GET_USER } from "@/operations/queries/getUser";
 import { User } from "@/types/graphQL";
 import {
     QueryHookOptions,
+    useMutation,
     useQuery,
 } from "@apollo/client";
+
+export const myUsersSampleResponse = {
+    data: {
+        my_users: [
+            {
+                user_id: `d6725ee8-234b-5462-a725-479000f5ed66`,
+                given_name: `Shawn`,
+                family_name: `Lee`,
+                username: ``,
+                email: `shawn.lee@calmid.com`,
+                phone: ``,
+                date_of_birth: `12-1994`,
+            },
+            {
+                user_id: `a2e44561-677f-5215-b75f-41cb4277c1db`,
+                given_name: null,
+                family_name: null,
+                username: `Shawn`,
+                email: `shawn.lee@calmid.com`,
+                phone: null,
+                date_of_birth: null,
+            },
+        ],
+    },
+};
+
+interface SwitchUserRequest {
+    user_id: string;
+}
+
+interface SwitchUserResponse {
+    user: User;
+}
+
+export const setSwitchUser = () => {
+    return useMutation<SwitchUserResponse, SwitchUserRequest>(SWITCH_USER);
+};
+
+interface GetMyUsersRequest {}
+
+interface GetMyUsersResponse {
+    my_users: User[];
+}
+
+export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {
+    return useQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
+};
 
 interface GetUserRequest {
     user_id: string;

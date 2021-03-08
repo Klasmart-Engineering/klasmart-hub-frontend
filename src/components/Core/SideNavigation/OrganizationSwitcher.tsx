@@ -182,8 +182,8 @@ export default function OrganizationSwitcher (props: Props) {
                     onClick={() => handleShowOrganizationsChange(!showOrganizations_)}
                 >
                     <ListItemText
-                        primary={organizationName || `Unknown`}
-                        secondary={translatedRole ?? `Unknown`}
+                        primary={organizationName || `No Organizations Available`}
+                        secondary={translatedRole ?? `No Roles Found`}
                     />
                     <ListItemSecondaryAction>
                         <ArrowDropDown className={clsx(classes.showOrganizationsMenuButton, {

@@ -1,8 +1,14 @@
 import {
-    Organization,
-    User,
-} from "@/types/graphQL";
+    myUsersSampleResponse,
+    setSwitchUser,
+    useGetMyUsers,
+} from "@/api/users";
+import { userIdVar } from "@/cache";
+import { User } from "@/types/graphQL";
+import { useReactiveVar } from "@apollo/client";
 import {
+    Avatar,
+    Chip,
     createStyles,
     List,
     ListItem,
@@ -11,32 +17,81 @@ import {
     makeStyles,
 } from "@material-ui/core";
 import { UserAvatar } from "kidsloop-px";
-import React from "react";
+import React,
+{
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
-    users: Organization[];
+    // users: User[];
 }
 
 export default function UserProfileSwitcher (props: Props) {
-    const { users } = props;
-    const classes = useStyles();
+    // const { users } = props;
+    const history = useHistory();
+    const selectedUserId = useReactiveVar(userIdVar);
+    const { loading, data } = useGetMyUsers();
+
+    const [ users, setUsers ] = useState<User[]>([]);
+    const [ switchUser ] = setSwitchUser();
+
+    const url = useMemo(() => {
+        const url = new URL(window.location.href);
+        return url;
+    }, []);
+
+    useEffect(() => {
+        if (data) {
+            setUsers(data.my_users);
+        }
+    }, [ data ]);
+
+    const switchUsers = async (userId: string) => {
+        try {
+            const response = await switchUser({
+                variables: {
+                    user_id: userId,
+                },
+            });
+            return response;
+        } catch (error) {
+            console.log(`Error switching user: `, error);
+        }
+    };
+
+    function handleClick (userId: string) {
+        switchUsers(userId).then((response) => {
+            userIdVar(userId);
+            history.push(`/`);
+        });
+    }
 
     return (
         <List dense>
-            {users?.map((user) => {
-                const userName = user.organization_name ?? ``;
+            {users?.filter((user => user.user_id !== selectedUserId)).map((user) => {
+                const givenName = user.given_name ?? ``;
+                const familyName = user.family_name ?? ``;
+                const fullName = givenName + ` ` + familyName;
+                const username = user.username ?? ``;
+                const userName = fullName === ` ` ? username ?? `Name undefined` : fullName;
                 return <ListItem
-                    key={user.organization_id}
+                    key={user.user_id}
                     button
+                    onClick={() => handleClick(user.user_id)}
                 >
                     <ListItemAvatar>
                         <UserAvatar name={userName}/>
                     </ListItemAvatar>
                     <ListItemText
                         primary={userName}
-                        secondary={`Happy Birthday`}
+                        secondary={userName === `Name undefined` ?
+                            `Please update your profile` :
+                            user.date_of_birth ? `Birthday: ` + user.date_of_birth : `` }
                     />
                 </ListItem>;})}
         </List>

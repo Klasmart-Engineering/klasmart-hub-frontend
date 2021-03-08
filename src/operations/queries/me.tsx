@@ -7,7 +7,9 @@ export const ME = gql`
             email
             phone
             user_id
-            user_name
+            username
+            given_name
+            family_name
         }
     }
 `;

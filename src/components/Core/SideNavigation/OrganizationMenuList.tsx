@@ -98,8 +98,8 @@ export default function OrganizationMenuList (props: Props) {
                         <OrganizationAvatar name={membership.organization?.organization_name ?? ``} />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={membership.organization?.organization_name ?? `Unknown`}
-                        secondary={translatedRole ?? `Unknown`}
+                        primary={membership.organization?.organization_name ?? `Organization Name Undefined`}
+                        secondary={translatedRole ?? `No Roles Found`}
                     />
                 </ListItem>;
             })}

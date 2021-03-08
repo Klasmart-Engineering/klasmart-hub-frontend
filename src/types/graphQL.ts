@@ -16,7 +16,7 @@ export enum Status {
 
 export interface User {
     user_id: string;
-    user_name?: string | null;
+    username?: string | null;
     given_name?: string | null;
     family_name?: string | null;
     email?: string | null;
@@ -29,6 +29,7 @@ export interface User {
     full_name?: string | null;
     role?: string | null;
     address?: string | null;
+    date_of_birth?: string | null;
 }
 
 export interface OrganizationOwnership {

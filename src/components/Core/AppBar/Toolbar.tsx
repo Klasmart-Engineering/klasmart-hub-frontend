@@ -122,53 +122,6 @@ export default function Toolbar (props: Props) {
         },
     ];
 
-    // const adminTabs: Tab[] = [
-    //     {
-    //         text: `Organizations`,
-    //         value: `/admin/organizations`,
-    //     },
-    //     {
-    //         text: `Users`,
-    //         value: `/admin/users`,
-    //     },
-    //     {
-    //         text: `Roles`,
-    //         value: `/admin/roles`,
-    //     },
-    //     {
-    //         text: `Schools`,
-    //         value: `/admin/schools`,
-    //     },
-    //     {
-    //         text: `Classes`,
-    //         value: `/admin/classes`,
-    //     },
-    //     ...usePermission(`define_program_page_20105`) ? [
-    //         {
-    //             text: `Programs`,
-    //             value: `/admin/programs`,
-    //         },
-    //     ] : [],
-    //     ...usePermission(`define_grade_page_20103`) ? [
-    //         {
-    //             text: `Grades`,
-    //             value: `/admin/grades`,
-    //         },
-    //     ] : [],
-    //     ...usePermission(`define_subject_page_20106`) ? [
-    //         {
-    //             text: `Subjects`,
-    //             value: `/admin/subjects`,
-    //         },
-    //     ] : [],
-    //     ...usePermission(`define_age_ranges_page_20102`) ? [
-    //         {
-    //             text: `Age Ranges`,
-    //             value: `/admin/age-ranges`,
-    //         },
-    //     ] : [],
-    // ];
-
     const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
 
     const getTabs = (path: string): Tab[] => {

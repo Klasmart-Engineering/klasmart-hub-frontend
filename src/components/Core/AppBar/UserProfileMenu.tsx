@@ -7,10 +7,7 @@ import {
     getCookieDomain,
 } from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import {
-    Organization,
-    User,
-} from "@/types/graphQL";
+import { User } from "@/types/graphQL";
 import {
     ApolloError,
     useReactiveVar,
@@ -35,7 +32,10 @@ import {
 } from "kidsloop-px";
 import queryString from "querystring";
 import React,
-{ useState } from "react";
+{
+    useEffect,
+    useState,
+} from "react";
 import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme) =>
@@ -88,6 +88,18 @@ export default function UserProfileMenu (props: Props) {
     const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
 
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
+    const [ userName, setUserName ] = useState<string>(``);
+
+    useEffect(() => {
+        if (user) {
+            const givenName = user.given_name ?? ``;
+            const familyName = user.family_name ?? ``;
+            const fullName = givenName + ` ` + familyName;
+            const username = user.username ?? ``;
+            setUserName(fullName === ` ` ? username ?? `Name undefined` : fullName);
+        }
+    }, [ user ]);
+
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -125,7 +137,7 @@ export default function UserProfileMenu (props: Props) {
                 className={classes.userProfileMenu}
                 onClick={handleMenu}
             >
-                <UserAvatar name={user?.user_name ?? ``} />
+                <UserAvatar name={userName} />
             </ButtonBase>
             <StyledMenu
                 keepMounted
@@ -144,14 +156,14 @@ export default function UserProfileMenu (props: Props) {
                     tabIndex={undefined}
                 >
                     <UserAvatar
-                        name={user?.user_name ?? ``}
+                        name={userName ?? ``}
                         src={user?.avatar ?? ``}
                         size="large"
                     />
                     <Typography
                         variant="body1"
                     >
-                        {user?.user_name}
+                        {userName}
                     </Typography>
                     <Typography
                         variant="body2"
@@ -165,7 +177,7 @@ export default function UserProfileMenu (props: Props) {
                         <CreateOrganizationDialog />
                     </ListItem>
                 }
-                {!loading && !error && (otherAvailableOrganizations?.length ?? 0) > 0 && <UserProfileSwitcher users={otherAvailableOrganizations?.map((membership) => membership.organization).filter((organization): organization is Organization => !!organization) ?? []} />}
+                <UserProfileSwitcher />
                 <Divider />
                 <List>
                     <ListItem>

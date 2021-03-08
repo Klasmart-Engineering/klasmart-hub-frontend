@@ -8,6 +8,7 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
+    ListSubheader,
     makeStyles,
     Typography,
 } from "@material-ui/core";
@@ -45,9 +46,16 @@ import {
 
 const useStyles = makeStyles((theme) => createStyles({
     sectionHeader: {
-        padding: theme.spacing(1, 2, 0),
+        backgroundColor: `#fff`,
+        lineHeight: `36px`,
+        fontSize: `0.8em`,
         fontWeight: 600,
         textTransform: `uppercase`,
+    },
+    defaultLink: {
+        width: `90%`,
+        margin: `0 auto`,
+        borderRadius: theme.spacing(2),
     },
     selectedLink: {
         backgroundColor: lighten(theme.palette.primary.main, 0.9),
@@ -131,7 +139,6 @@ export default function NavigationMenuList (props: Props) {
             },
         ] : [],
         {
-            header: `Create`,
             items: [
                 {
                     text: intl.formatMessage({
@@ -140,6 +147,10 @@ export default function NavigationMenuList (props: Props) {
                     icon: Inbox,
                     link: `/library`,
                 },
+            ],
+        },
+        {
+            items: [
                 {
                     text: intl.formatMessage({
                         id: `navMenu_scheduleTitle`,
@@ -224,11 +235,12 @@ export default function NavigationMenuList (props: Props) {
                         icon: ChildCare,
                         link: `/admin/age-ranges`,
                     },
-                ] : [],
+                ]
+                    : [],
             ],
         },
         {
-            header: `Analyze`,
+            header: `Data`,
             items: [
                 {
                     text: intl.formatMessage({
@@ -286,16 +298,12 @@ export default function NavigationMenuList (props: Props) {
         {menuSections.map((section, i) => (
             <Fragment key={`section-${i}`}>
                 {i !== 0 && <Divider />}
-                {section.header &&
-                <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    className={classes.sectionHeader}
-                >
-                    {section.header}
-                </Typography>
-                }
                 <List dense>
+                    {section.header &&
+                        <ListSubheader className={classes.sectionHeader}>
+                            {section.header}
+                        </ListSubheader>
+                    }
                     {section.items.map((item, j) => (
                         <ListItem
                             key={`item-${i}-${j}`}
@@ -304,7 +312,7 @@ export default function NavigationMenuList (props: Props) {
                             disabled={!item.link}
                             component={Link}
                             to={item.link ?? ``}
-                            className={clsx({
+                            className={clsx(classes.defaultLink, {
                                 [classes.selectedLink]: item.link === location.pathname,
                             })}
                         >

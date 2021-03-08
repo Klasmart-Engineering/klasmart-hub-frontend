@@ -101,6 +101,7 @@
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "iframe-resizer-react": "^1.1.0",
+    "inter-ui": "^3.15.0",
     "interpolate-html-plugin": "^4.0.0",
     "jwt-decode": "^3.1.2",
     "kidsloop-px": "bitbucket:calmisland/kidsloop-px#7e0895fee4f11cb94ae656370539a2df04507f42",
