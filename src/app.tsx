@@ -45,7 +45,7 @@ export default function App (props: Props) {
             user_id: userId,
         },
     });
-    const [ organizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.email}-${userData?.user.phone}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
+    const [ organizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
     const { data: organizationData } = useGetOrganization({
         variables: {
             organization_id: organizationIdStack?.[0],

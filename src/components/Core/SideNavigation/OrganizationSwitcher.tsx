@@ -86,7 +86,7 @@ export default function OrganizationSwitcher (props: Props) {
         },
     });
 
-    const [ organizationIdStack, setOrganizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.email}-${userData?.user.phone}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
+    const [ organizationIdStack, setOrganizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
     const [ showOrganizations_, setShowOrganizations ] = useState(showOrganizations);
     const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
 
