@@ -2,6 +2,7 @@ import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
 import { useGetSchools } from "@/api/schools";
 import { currentMembershipVar } from "@/cache";
 import { OrganizationMembership } from "@/types/graphQL";
+import { roleNameTranslations } from "@/utils/userRoles";
 import {
     emailAddressRegex,
     phoneNumberRegex,
@@ -147,9 +148,9 @@ export default function UserDialogForm (props: Props) {
                 items={allRoles}
                 value={roleIds}
                 validations={[ required() ]}
-                itemText={(role) => intl.formatMessage({
-                    id: `users_${role.role_name?.replace(` `, ``)}`,
-                }) ?? ``}
+                itemText={(role) => role.role_name && roleNameTranslations[role.role_name] ? intl.formatMessage({
+                    id: roleNameTranslations[role.role_name],
+                }) : role.role_name ?? ``}
                 itemValue={(role) => role.role_id}
                 selectAllLabel={intl.formatMessage({
                     id: `users_selectAll`,
