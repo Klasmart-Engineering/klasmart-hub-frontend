@@ -131,7 +131,7 @@ export default function PlanSelection () {
     }, [ lessonPlan ]);
 
     function goLive () {
-        const liveLink = `${getLiveEndpoint()}class-live/?token=${liveToken}`;
+        const liveLink = `${getLiveEndpoint()}?token=${liveToken}`;
         window.open(liveLink);
     }
 
@@ -185,7 +185,7 @@ export default function PlanSelection () {
                         </Grid>
                     </Grid>
                     <Collapse in={openShareLink}>
-                        <InviteButton url={`${getLiveEndpoint()}/class-live/?roomId=${shareLink}`} />
+                        <InviteButton url={`${getLiveEndpoint()}?roomId=${shareLink}`} />
                     </Collapse>
                     <Grid item>
                         <Typography

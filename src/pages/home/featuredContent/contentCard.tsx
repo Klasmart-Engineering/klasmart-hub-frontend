@@ -88,14 +88,13 @@ const useStyles = makeStyles((theme: Theme) =>
         select: {
             display: `block`,
         },
-    }),
-);
+    }));
 
 interface Props {
     featuredContent: FeaturedContentData;
 }
 
-export default function ContentCard(props: Props) {
+export default function ContentCard (props: Props) {
     const { featuredContent } = props;
     const classes = useStyles();
     const theme = useTheme();
@@ -107,8 +106,8 @@ export default function ContentCard(props: Props) {
     //     window.open(liveLink, "_blank");
     // }
 
-    function destinationLink(live: boolean, link?: string) {
-        const liveLink = `${getLiveEndpoint()}live/?teacher&roomId=${classId}&materials=${JSON.stringify(featuredContent.activities)}`;
+    function destinationLink (live: boolean, link?: string) {
+        const liveLink = `${getLiveEndpoint()}/?teacher&roomId=${classId}&materials=${JSON.stringify(featuredContent.activities)}`;
 
         window.open(live ? liveLink : link, `_blank`);
     }

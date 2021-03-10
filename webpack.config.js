@@ -1,12 +1,12 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const UnusedWebpackPlugin = require("unused-webpack-plugin");
+const path = require(`path`);
+const HtmlWebpackPlugin = require(`html-webpack-plugin`);
+const webpack = require(`webpack`);
+const UnusedWebpackPlugin = require(`unused-webpack-plugin`);
 
 module.exports = {
-    mode: "development",
+    mode: `development`,
     entry: {
-        ui: "./src/client-entry.tsx",
+        ui: `./src/client-entry.tsx`,
     },
     module: {
         rules: [
@@ -14,12 +14,12 @@ module.exports = {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader",
-                }
+                    loader: `babel-loader`,
+                },
             },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                use: [ `style-loader`, `css-loader` ],
                 // use: [
                 //     {
                 //         loader: "style-loader",
@@ -36,9 +36,9 @@ module.exports = {
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
                 use: [
-                    "file-loader",
+                    `file-loader`,
                     {
-                        loader: "image-webpack-loader",
+                        loader: `image-webpack-loader`,
                         options: {
                             // mozjpeg: {
                             //     progressive: true,
@@ -49,72 +49,75 @@ module.exports = {
                             //     enabled: false,
                             // },
                             pngquant: {
-                                quality: [0.65, 0.90],
-                                speed: 4
+                                quality: [ 0.65, 0.90 ],
+                                speed: 4,
                             },
-                        }
+                        },
                     },
                 ],
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [
-                    "file-loader",
-                ],
+                use: [ `file-loader` ],
             },
             {
                 test: /\.mp4$/,
-                use: "file-loader?name=videos/[name].[ext]",
+                use: `file-loader?name=videos/[name].[ext]`,
             },
         ],
     },
     resolve: {
-        extensions: [".js", ".jsx", ".tsx", ".ts"],
+        extensions: [
+            `.js`,
+            `.jsx`,
+            `.tsx`,
+            `.ts`,
+        ],
         alias: {
-            react: path.resolve("./node_modules/react"),
-            "@": path.resolve(__dirname, "src") 
+            react: path.resolve(`./node_modules/react`),
+            "@": path.resolve(__dirname, `src`),
         },
     },
     output: {
-        filename: "[name].js",
-        path: path.resolve(__dirname, "dist"),
+        filename: `[name].js`,
+        path: path.resolve(__dirname, `dist`),
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "src/index.html",
+            template: `src/index.html`,
         }),
         new webpack.EnvironmentPlugin({
-            "STAGE": "dev",
-            "CN_CMS_ENDPOINT": "https://kl2-test.kidsloop.net/",
-            "API_ENDPOINT": "https://api.kidsloop.net/",
-            "AUTH_ENDPOINT": "https://auth.kidsloop.net/",
-            "LIVE_ENDPOINT": "https://live.kidsloop.net/",
-            "COOKIE_DOMAIN": "kidsloop.net",
+            STAGE: `dev`,
+            CN_CMS_ENDPOINT: `https://kl2-test.kidsloop.net/`,
+            API_ENDPOINT: `https://api.kidsloop.net/`,
+            AUTH_ENDPOINT: `https://auth.kidsloop.net/`,
+            LIVE_ENDPOINT: `https://live.kidsloop.net/class-live/`,
+            COOKIE_DOMAIN: `kidsloop.net`,
         }),
         new UnusedWebpackPlugin({
             // Source directories
-            directories: [path.join(__dirname, "src")],
+            directories: [ path.join(__dirname, `src`) ],
             // Exclude patterns
-            exclude: ["/assets/*"],
+            exclude: [ `/assets/*` ],
             // Root directory (optional)
             root: __dirname,
         }),
     ],
     devServer: {
-        host: "fe.kidsloop.net",
+        host: `fe.kidsloop.net`,
         port: 8080,
         https: true,
         historyApiFallback: true,
         proxy: {
             "/v1": {
-                target: "https://kl2-test.kidsloop.net/",
+                target: `https://kl2-test.kidsloop.net/`,
                 changeOrigin: true,
             },
             "/h5p": {
-                target: "https://kl2-test.kidsloop.net/",
+                target: `https://kl2-test.kidsloop.net/`,
                 secure: true,
                 changeOrigin: true,
-            }
-        }
+            },
+        },
     },
 };

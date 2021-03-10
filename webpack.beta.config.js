@@ -98,7 +98,7 @@ module.exports = {
             CN_CMS_ENDPOINT: `https://kl2-test.kidsloop.net/`,
             API_ENDPOINT: `https://api.kidsloop.net/`,
             AUTH_ENDPOINT: `https://auth.kidsloop.net/`,
-            LIVE_ENDPOINT: `https://live.kidsloop.net/`,
+            LIVE_ENDPOINT: `https://live.kidsloop.net/class-live/`,
             COOKIE_DOMAIN: `kidsloop.net`,
         }),
     ],
