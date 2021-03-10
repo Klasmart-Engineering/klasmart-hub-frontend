@@ -1,6 +1,7 @@
 import { TabContent } from "./shared";
 import SubjectsTable from "@/components/Subject/Table";
 import { Subject } from "@/types/graphQL";
+import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     FormHelperText,
@@ -21,38 +22,54 @@ export default function SubjectStep (props: TabContent) {
         onChange,
     } = props;
     const classes = useStyles();
+    const { required } = useValidations();
     const [ selectedSubjectIds, setSelectedIds ] = useState<string[]>(value.subjects?.map((subject) => subject.subject_id) ?? []);
-    const [ selectedSubjectIdsError, setSelectedIdsError ] = useState(!value.subjects?.length ? `At least one subject is required` : ` `);
     const subjectsData: Subject[] = [
         {
             subject_id: `1`,
             subject_name: `General`,
-            grades: [
+            categories: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    id: `1`,
+                    name: `Some Category 1`,
+                    subcategories: [
+                        {
+                            id: `1`,
+                            name: `Subcategory 1`,
+                        },
+                        {
+                            id: `3`,
+                            name: `Subcategory 3`,
+                        },
+                    ],
                 },
             ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
         {
             subject_id: `2`,
             subject_name: `Toodles`,
-            grades: [
+            categories: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    id: `2`,
+                    name: `Some Category 2`,
+                    subcategories: [
+                        {
+                            id: `2`,
+                            name: `Subcategory 2`,
+                        },
+                        {
+                            id: `4`,
+                            name: `Subcategory 4`,
+                        },
+                    ],
                 },
             ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
     ];
 
+    const selectedSubjectsError = required()(value.subjects);
+
     useEffect(() => {
-        const error = !selectedSubjectIds.length ? `At least one subject is required` : ``;
-        setSelectedIdsError(error);
         onChange?.({
             ...value,
             subjects: selectedSubjectIds
@@ -69,7 +86,7 @@ export default function SubjectStep (props: TabContent) {
                 subjects={disabled ? value.subjects : undefined}
                 onSelected={setSelectedIds}
             />
-            {!disabled && <FormHelperText error>{selectedSubjectIdsError || ` `}</FormHelperText>}
+            {!disabled && <FormHelperText error>{selectedSubjectsError === true ? ` ` : selectedSubjectsError}</FormHelperText>}
         </>
     );
 }

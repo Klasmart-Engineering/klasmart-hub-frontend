@@ -46,32 +46,22 @@ export default function SubjectDialogForm (props: Props) {
     const { organization_id } = organization;
     const [ subjectName, setSubjectName ] = useState(value.subject_name ?? ``);
     const [ subjectNameValid, setSubjectNameValid ] = useState(true);
-    const [ gradeIds, setGradeIds ] = useState(value.grades?.map((grade) => grade.grade_id) ?? []);
-    const [ gradeIdsValid, setGradeIdsValid ] = useState(true);
-    const [ ageRangeIds, setAgeRangeIds ] = useState(value.grades?.map((grade) => grade.grade_id) ?? []);
-    const [ ageRangeIdsValid, setAgeRangeIdsValid ] = useState(true);
-    const [ category, setCategory ] = useState(value.category ?? ``);
+    const [ categories, setCategories ] = useState(value.categories ?? []);
     const [ categoryValid, setCategoryValid ] = useState(true);
-    const [ subcategories, setSubcategories ] = useState(value.subcategories?.map((subcategory) => subcategory) ?? []);
+    const [ subcategories, setSubcategories ] = useState(value.categories?.flatMap((category) => category.subcategories ?? []) ?? []);
     const [ subcategoriesValid, setSubcategoriesValid ] = useState(true);
     const { required } = useValidations();
-    const allGrades: Grade[] = [];
-    const allAgeRanges: AgeRange[] = [];
     const allCategories: string[] = [];
     const allSubcategories: string[] = [];
 
     useEffect(() => {
         onValidation([
             subjectNameValid,
-            gradeIdsValid,
-            ageRangeIdsValid,
             categoryValid,
             subcategoriesValid,
         ].every((validation) => validation));
     }, [
         subjectNameValid,
-        gradeIdsValid,
-        ageRangeIdsValid,
         categoryValid,
         subcategoriesValid,
     ]);
@@ -80,14 +70,14 @@ export default function SubjectDialogForm (props: Props) {
         const updatedSubject: Subject = {
             subject_id: value.subject_id,
             subject_name: subjectName,
-            grades: gradeIds.map((gradeId) => ({
-                grade_id: gradeId,
-            })),
-            category: category,
-            subcategories: subcategories,
+            categories: categories,
         };
         onChange(updatedSubject);
-    }, [ subjectName, gradeIds ]);
+    }, [
+        subjectName,
+        categories,
+        subcategories,
+    ]);
 
     return (
         <div className={subjectes.root}>
@@ -102,33 +92,12 @@ export default function SubjectDialogForm (props: Props) {
                 onValidate={setSubjectNameValid}
             />
             <Select
-                multiple
-                fullWidth
-                label="Grades"
-                value={gradeIds}
-                items={allGrades}
-                itemText={(grade) => grade.grade_name ?? ``}
-                itemValue={(grade) => grade.grade_id}
-                onChange={setGradeIds}
-                onValidate={setGradeIdsValid}
-            />
-            <Select
-                multiple
-                fullWidth
-                label="Age Ranges"
-                value={ageRangeIds}
-                items={allAgeRanges}
-                itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
-                itemValue={(ageRange) => ageRange.age_range_id}
-                onChange={setAgeRangeIds}
-                onValidate={setAgeRangeIdsValid}
-            />
-            <Select
                 fullWidth
                 label="Category"
-                value={category}
+                value={categories}
                 items={allCategories}
-                onChange={setCategory}
+                validations={[ required() ]}
+                onChange={setCategories}
                 onValidate={setCategoryValid}
             />
             <Select
@@ -137,6 +106,7 @@ export default function SubjectDialogForm (props: Props) {
                 label="Subcategories"
                 value={subcategories}
                 items={allSubcategories}
+                validations={[ required() ]}
                 onChange={setSubcategories}
                 onValidate={setSubcategoriesValid}
             />

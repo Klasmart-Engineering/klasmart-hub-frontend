@@ -8,9 +8,11 @@ import EditSchoolDialog from "@/components/School/Dialog/Edit";
 import { School } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
+    DialogContentText,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -22,6 +24,7 @@ import {
 import clsx from "clsx";
 import {
     PageTable,
+    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
@@ -51,6 +54,7 @@ const useStyles = makeStyles((theme) => createStyles({
 interface SchoolRow {
     id: string;
     name: string;
+    shortCode: string;
     status: string;
 }
 
@@ -60,10 +64,12 @@ interface Props {
 /**
  * Returns function to show School Table in "View School section"
  */
-export default function SchoolTable(props: Props) {
+export default function SchoolTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const { required, equals } = useValidations();
+    const prompt = usePrompt();
     const [ rows, setRows ] = useState<SchoolRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
@@ -91,6 +97,7 @@ export default function SchoolTable(props: Props) {
         const rows: SchoolRow[] = schools?.map((school) => ({
             id: school.school_id,
             name: school.school_name ?? ``,
+            shortCode: school.short_code ?? ``,
             status: school.status ?? ``,
         })) ?? [];
         setRows(rows);
@@ -107,6 +114,10 @@ export default function SchoolTable(props: Props) {
             label: intl.formatMessage({
                 id: `schools_schoolNameTitle`,
             }),
+        },
+        {
+            id: `shortCode`,
+            label: `Short Code`,
         },
         {
             id: `status`,
@@ -136,7 +147,16 @@ export default function SchoolTable(props: Props) {
     const deleteSelectedRow = async (row: SchoolRow) => {
         const selectedSchool = findSchool(row);
         if (!selectedSchool) return;
-        if (!confirm(`Are you sure you want to delete "${selectedSchool.school_name}"?`)) return;
+        if (!await prompt({
+            variant: `error`,
+            title: `Delete School`,
+            okLabel: `Delete`,
+            content: <>
+                <DialogContentText>Are you sure you want to delete {`"${selectedSchool.school_name}"`}?</DialogContentText>
+                <DialogContentText>Type <strong>{selectedSchool.school_name}</strong> to confirm deletion.</DialogContentText>
+            </>,
+            validations: [ required(), equals(selectedSchool.school_name) ],
+        })) return;
         const { school_id } = selectedSchool;
         try {
             await deleteSchool({

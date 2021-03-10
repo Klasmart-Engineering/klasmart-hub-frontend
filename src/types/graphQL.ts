@@ -85,7 +85,10 @@ export interface Class {
 export interface School {
     school_id: string;
     school_name?: string | null;
+    short_code?: string | null;
     status?: string | null;
+    classes?: Class[] | null;
+    programs?: Program[] | null;
     memberships?: SchoolMembership[] | null;
 }
 
@@ -125,10 +128,7 @@ export interface Grade {
 export interface Subject {
     subject_id: string;
     subject_name?: string | null;
-    grades?: Grade[] | null;
-    age_ranges?: AgeRange[] | null;
-    category?: string | null;
-    subcategories?: string[] | null;
+    categories?: Category[] | null;
 }
 
 export interface Program {
@@ -137,4 +137,19 @@ export interface Program {
     age_ranges?: AgeRange[] | null;
     grades?: Grade[] | null;
     subjects?: Subject[] | null;
+}
+
+export interface Category {
+    id: string;
+    name?: string | null;
+    subcategories?: Subcategory[] | null;
+    system?: boolean | null;
+    status?: string | null;
+}
+
+export interface Subcategory {
+    id: string;
+    name?: string | null;
+    system?: boolean | null;
+    status?: string | null;
 }

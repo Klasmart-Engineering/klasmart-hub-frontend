@@ -1,3 +1,4 @@
+import ViewSubjectDetailsDrawer from "./DetailsDrawer";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
 import { Subject } from "@/types/graphQL";
@@ -16,6 +17,7 @@ import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
+    ViewList as ViewListIcon,
 } from "@material-ui/icons";
 import {
     PageTable,
@@ -41,9 +43,7 @@ const useStyles = makeStyles((theme) => createStyles({
 interface SubjectRow {
     id: string;
     name: string;
-    grades: string[];
-    ageRanges: string[];
-    category: string;
+    categories: string[];
     subcategories: string[];
 }
 
@@ -66,10 +66,12 @@ export default function SubjectsTable (props: Props) {
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ rows_, setRows ] = useState<SubjectRow[]>([]);
+    const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedSubject, setSelectedSubject ] = useState<Subject>();
     const canCreate = usePermission(`create_subjects_20227`);
+    const canView = usePermission(`view_subjects_20115`);
     const canEdit = usePermission(`edit_subjects_20337`);
     const canDelete = usePermission(`delete_subjects_20447`);
     const { required, equals } = useValidations();
@@ -77,35 +79,56 @@ export default function SubjectsTable (props: Props) {
         {
             subject_id: `1`,
             subject_name: `General`,
-            grades: [
+            categories: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    id: `1`,
+                    name: `Some Category 1`,
+                    subcategories: [
+                        {
+                            id: `1`,
+                            name: `Subcategory 1`,
+                        },
+                        {
+                            id: `3`,
+                            name: `Subcategory 3`,
+                        },
+                    ],
+                },
+                {
+                    id: `2`,
+                    name: `Some Category 2`,
+                    subcategories: [
+                        {
+                            id: `2`,
+                            name: `Subcategory 2`,
+                        },
+                        {
+                            id: `4`,
+                            name: `Subcategory 4`,
+                        },
+                    ],
                 },
             ],
-            age_ranges: [
-                {
-                    age_range_id: `1`,
-                    from: 1,
-                    fromUnit: `month`,
-                    to: 2,
-                    toUnit: `year`,
-                },
-            ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
         {
             subject_id: `2`,
             subject_name: `Toodles`,
-            grades: [
+            categories: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    id: `2`,
+                    name: `Some Category 2`,
+                    subcategories: [
+                        {
+                            id: `2`,
+                            name: `Subcategory 2`,
+                        },
+                        {
+                            id: `4`,
+                            name: `Subcategory 4`,
+                        },
+                    ],
                 },
             ],
-            category: `Some Category`,
-            subcategories: [ `Subcategory 1`, `Subcategory 2` ],
         },
     ];
 
@@ -113,16 +136,12 @@ export default function SubjectsTable (props: Props) {
         const rows = (subjects ?? dataSubjects)?.map((subject) => ({
             id: subject.subject_id,
             name: subject.subject_name ?? ``,
-            grades: subject.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
-            ageRanges: subject.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-            category: subject.category ?? ``,
-            subcategories: subject.subcategories ?? [],
+            categories: subject.categories?.map((category) => category.name ?? ``) ?? [],
+            subcategories: subject.categories?.flatMap((category) => category.subcategories ?? []).map((subcategory) => subcategory?.name ?? ``) ?? [],
         })) ?? [];
         setRows(rows);
     }, []);
     // }, [ dataSubjects ]);
-
-    const Hello = undefined;
 
     const columns: TableColumn<SubjectRow>[] = [
         {
@@ -138,36 +157,18 @@ export default function SubjectsTable (props: Props) {
             disableSearch: disabled,
         },
         {
-            id: `grades`,
-            label: `Grades`,
+            id: `categories`,
+            label: `Categories`,
             disableSearch: disabled,
             render: (row) => <>
-                {row.grades.map((grade, i) => (
+                {row.categories.map((category, i) => (
                     <Chip
-                        key={`grade-${i}`}
-                        label={grade}
+                        key={`category-${i}`}
+                        label={category}
                         className={classes.chip}
                     />
                 ))}
             </>,
-        },
-        {
-            id: `ageRanges`,
-            label: `Age Ranges`,
-            render: (row) => <>
-                {row.ageRanges.map((ageRange, i) => (
-                    <Chip
-                        key={`ageRange-${i}`}
-                        label={ageRange}
-                        className={classes.chip}
-                    />
-                ))}
-            </>,
-        },
-        {
-            id: `category`,
-            label: `Category`,
-            disableSearch: disabled,
         },
         {
             id: `subcategories`,
@@ -186,6 +187,13 @@ export default function SubjectsTable (props: Props) {
     ];
 
     const findSubject = (row: SubjectRow) => dataSubjects.find((subject) => subject.subject_id === row.id);
+
+    const handleViewDetailsRowClick = (row: SubjectRow) => {
+        const selectedSubject = findSubject(row);
+        if (!selectedSubject) return;
+        setSelectedSubject(selectedSubject);
+        setOpenViewDetailsDrawer(true);
+    };
 
     const handleEditRowClick = async (row: SubjectRow) => {
         const selectedSubject = findSubject(row);
@@ -238,6 +246,12 @@ export default function SubjectsTable (props: Props) {
                     } : undefined}
                     rowActions={!disabled ? (row) => [
                         {
+                            label: `View Details`,
+                            icon: ViewListIcon,
+                            disabled: !canView,
+                            onClick: handleViewDetailsRowClick,
+                        },
+                        {
                             label: `Edit`,
                             icon: EditIcon,
                             disabled: !canEdit,
@@ -258,6 +272,14 @@ export default function SubjectsTable (props: Props) {
                     onSelected={onSelected}
                 />
             </Paper>
+            <ViewSubjectDetailsDrawer
+                value={selectedSubject}
+                open={openViewDetailsDrawer}
+                onClose={() => {
+                    setSelectedSubject(undefined);
+                    setOpenViewDetailsDrawer(false);
+                }}
+            />
             <CreateSubjectDialog
                 open={openCreateDialog}
                 onClose={(subject) => {

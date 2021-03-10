@@ -8,7 +8,7 @@ import EditOrganization from "./pages/admin/Organization/EditOrganization";
 import Organization from "./pages/admin/Organization/Organization";
 import ProgramsPage from "./pages/admin/programs";
 import RoleTable from "./pages/admin/Role/RoleTable";
-import SchoolsPage from "./pages/admin/School/SchoolTable";
+import SchoolsPage from "./pages/admin/schools";
 import SubjectsPage from "./pages/admin/subjects";
 import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";

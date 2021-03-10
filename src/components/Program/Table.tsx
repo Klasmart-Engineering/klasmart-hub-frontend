@@ -1,3 +1,4 @@
+import ViewProgramDetailsDrawer from "./DetailsDrawer";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
 import { Program } from "@/types/graphQL";
@@ -16,6 +17,7 @@ import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
+    ViewList as ViewListIcon,
 } from "@material-ui/icons";
 import {
     PageTable,
@@ -47,18 +49,30 @@ interface ProgramRow {
 }
 
 interface Props {
+    disabled?: boolean;
+    selectedIds?: string[];
+    programs?: Program[] | null;
+    onSelected?: (ids: string[]) => void;
 }
 
-export default function ProgramsTable (props: Props) {
+export default function ProgramTable (props: Props) {
+    const {
+        disabled,
+        programs,
+        selectedIds,
+        onSelected,
+    } = props;
     const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ rows, setRows ] = useState<ProgramRow[]>([]);
+    const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedProgram, setSelectedProgram ] = useState<Program>();
     const canCreate = usePermission(`create_program_20221`);
+    const canView = usePermission(`view_program_20111`);
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
     const { required, equals } = useValidations();
@@ -85,21 +99,49 @@ export default function ProgramsTable (props: Props) {
                 {
                     subject_id: `1`,
                     subject_name: `General`,
-                    grades: [
+                    categories: [
                         {
-                            grade_id: `1`,
-                            grade_name: `Grade 1`,
+                            id: `1`,
+                            name: `Some Category 1`,
+                            subcategories: [
+                                {
+                                    id: `1`,
+                                    name: `Subcategory 1`,
+                                },
+                                {
+                                    id: `3`,
+                                    name: `Subcategory 1`,
+                                },
+                            ],
                         },
                     ],
-                    category: `Some Category`,
-                    subcategories: [ `Subcategory 1`, `Subcategory 2` ],
+                },
+                {
+                    subject_id: `2`,
+                    subject_name: `Toodles`,
+                    categories: [
+                        {
+                            id: `2`,
+                            name: `Some Category 2`,
+                            subcategories: [
+                                {
+                                    id: `2`,
+                                    name: `Subcategory 2`,
+                                },
+                                {
+                                    id: `4`,
+                                    name: `Subcategory 4`,
+                                },
+                            ],
+                        },
+                    ],
                 },
             ],
         },
     ];
 
     useEffect(() => {
-        const rows = dataPrograms?.map((program) => ({
+        const rows = (programs ?? dataPrograms)?.map((program) => ({
             id: program.program_id,
             name: program.program_name ?? ``,
             grades: program.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
@@ -115,15 +157,18 @@ export default function ProgramsTable (props: Props) {
             id: `id`,
             label: `ID`,
             hidden: true,
+            disableSearch: disabled,
         },
         {
             id: `name`,
             label: `Name`,
             persistent: true,
+            disableSearch: disabled,
         },
         {
             id: `grades`,
             label: `Grades`,
+            disableSearch: disabled,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
                     <Chip
@@ -137,6 +182,7 @@ export default function ProgramsTable (props: Props) {
         {
             id: `ageRanges`,
             label: `Age Ranges`,
+            disableSearch: disabled,
             render: (row) => <>
                 {row.ageRanges.map((ageRange, i) => (
                     <Chip
@@ -150,6 +196,7 @@ export default function ProgramsTable (props: Props) {
         {
             id: `subjects`,
             label: `Subjects`,
+            disableSearch: disabled,
             render: (row) => <>
                 {row.subjects.map((subject, i) => (
                     <Chip
@@ -163,6 +210,13 @@ export default function ProgramsTable (props: Props) {
     ];
 
     const findProgram = (row: ProgramRow) => dataPrograms.find((program) => program.program_id === row.id);
+
+    const handleViewDetailsRowClick = (row: ProgramRow) => {
+        const selectedProgram = findProgram(row);
+        if (!selectedProgram) return;
+        setSelectedProgram(selectedProgram);
+        setOpenViewDetailsDrawer(true);
+    };
 
     const handleEditRowClick = async (row: ProgramRow) => {
         const selectedProgram = findProgram(row);
@@ -202,16 +256,24 @@ export default function ProgramsTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
+                    showCheckboxes={!disabled}
                     idField="id"
                     rows={rows}
                     columns={columns}
-                    primaryAction={{
+                    selectedRows={selectedIds}
+                    primaryAction={!disabled ? {
                         label: `Create Program`,
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
-                    }}
-                    rowActions={(row) => [
+                    } : undefined}
+                    rowActions={!disabled ? (row) => [
+                        {
+                            label: `View Details`,
+                            icon: ViewListIcon,
+                            disabled: !canView,
+                            onClick: handleViewDetailsRowClick,
+                        },
                         {
                             label: `Edit`,
                             icon: EditIcon,
@@ -224,14 +286,23 @@ export default function ProgramsTable (props: Props) {
                             disabled: !canDelete,
                             onClick: handleDeleteRowClick,
                         },
-                    ]}
+                    ] : undefined}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: `Programs`,
                         },
                     })}
+                    onSelected={onSelected}
                 />
             </Paper>
+            <ViewProgramDetailsDrawer
+                value={selectedProgram}
+                open={openViewDetailsDrawer}
+                onClose={() => {
+                    setSelectedProgram(undefined);
+                    setOpenViewDetailsDrawer(false);
+                }}
+            />
             <CreateProgramDialog
                 open={openCreateDialog}
                 onClose={(program) => {
