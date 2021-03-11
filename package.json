@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "build": "rm dist/*;webpack --config webpack.beta.config.js",
+    "build:alpha": "rm dist/*;webpack --config webpack.alpha.config.js",
     "build:beta": "rm dist/*;webpack --config webpack.beta.config.js",
     "build:beta-vn": "rm dist/*;webpack --config webpack.beta.vn.config.js",
     "build:test": "rm dist/*;webpack --config webpack.test.config.js",
