@@ -1,3 +1,4 @@
+import { ClassDetails } from "@/components/Class/Table";
 import {
     Avatar,
     Box,
@@ -87,47 +88,60 @@ const useStyles = makeStyles((theme) =>
 interface Props {
     open: boolean;
     onClose: () => void;
+    classDetails: ClassDetails;
 }
 
 export default function ViewClassDialog (props: Props) {
-    const classes = useStyles();
+    const {
+        open,
+        onClose,
+        classDetails,
+    } = props;
 
-    const { open, onClose } = props;
+    const {
+        className,
+        programSubjects,
+        students,
+        teachers,
+    } = classDetails;
+
+    const classes = useStyles();
 
     return (
         <Drawer
             open={open}
-            title="Class Name"
+            title={className}
             sections={[
                 {
                     header: `Programs`,
                     content: (
                         <>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1a-content"
-                                    id="panel1a-header"
-                                >
-                                    <Typography className={classes.heading}>Program 01</Typography>
-                                </AccordionSummary>
-                                <Typography
-                                    variant="caption"
-                                    className={classes.subjectHeader}>
-                                    Subjects
-                                </Typography>
-                                <Divider />
-                                <AccordionDetails className={classes.accordionDetails}>
-                                    <List>
-                                        <ListItem>
-                                            <ListItemText secondary="Math" />
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListItemText secondary="English" />
-                                        </ListItem>
-                                    </List>
-                                </AccordionDetails>
-                            </Accordion>
+                            {programSubjects.map((program, i) => (
+                                <Accordion key={`program-${i}`}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls="panel1a-content"
+                                        id="panel1a-header"
+                                    >
+                                        <Typography className={classes.heading}>{program.programName}</Typography>
+                                    </AccordionSummary>
+                                    <Typography
+                                        variant="caption"
+                                        className={classes.subjectHeader}>
+                                        Subjects
+                                    </Typography>
+                                    <Divider />
+                                    <AccordionDetails className={classes.accordionDetails}>
+                                        <List>
+                                            {program.subjects.map((subject, i) => (
+                                                <ListItem key={`subject-${i}`}>
+                                                    <ListItemText secondary={subject.name} />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </AccordionDetails>
+                                </Accordion>
+                            ))}
                         </>
                     ),
                 },
@@ -141,76 +155,36 @@ export default function ViewClassDialog (props: Props) {
                                     aria-controls="panel1a-content"
                                     id="panel1a-header"
                                 >
-                                    <Typography className={classes.heading}>Teachers (1)</Typography>
+                                    <Typography className={classes.heading}>
+                                        Teachers ({teachers.length})
+                                    </Typography>
                                 </AccordionSummary>
 
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <List>
-                                        <ListItem>
-                                            <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                alignItems="center">
-                                                <Avatar
-                                                    src={``}
-                                                    className={classes.avatar}
-                                                    style={{
-                                                        backgroundColor: utils.stringToColor(`row.name`),
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        noWrap
-                                                        variant="inherit">
-                                                        {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                    </Typography>
-                                                </Avatar>
-                                                <span>Teacher name</span>
-                                            </Box>
-                                        </ListItem>
-
-                                        <ListItem>
-                                            <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                alignItems="center">
-                                                <Avatar
-                                                    src={``}
-                                                    className={classes.avatar}
-                                                    style={{
-                                                        backgroundColor: utils.stringToColor(`row.name`),
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        noWrap
-                                                        variant="inherit">
-                                                        {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                    </Typography>
-                                                </Avatar>
-                                                <span>Teacher name</span>
-                                            </Box>
-                                        </ListItem>
-
-                                        <ListItem>
-                                            <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                alignItems="center">
-                                                <Avatar
-                                                    src={``}
-                                                    className={classes.avatar}
-                                                    style={{
-                                                        backgroundColor: utils.stringToColor(`row.name`),
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        noWrap
-                                                        variant="inherit">
-                                                        {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                    </Typography>
-                                                </Avatar>
-                                                <span>Teacher name</span>
-                                            </Box>
-                                        </ListItem>
+                                        {teachers.map((teacher, i) => (
+                                            <ListItem key={`teacher-${i}`}>
+                                                <Box
+                                                    display="flex"
+                                                    flexDirection="row"
+                                                    alignItems="center">
+                                                    <Avatar
+                                                        src={``}
+                                                        className={classes.avatar}
+                                                        style={{
+                                                            backgroundColor: utils.stringToColor(`row.name`),
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            noWrap
+                                                            variant="inherit">
+                                                            {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
+                                                        </Typography>
+                                                    </Avatar>
+                                                    <span>{teacher}</span>
+                                                </Box>
+                                            </ListItem>
+                                        ))}
                                     </List>
                                 </AccordionDetails>
                             </Accordion>
@@ -221,53 +195,36 @@ export default function ViewClassDialog (props: Props) {
                                     aria-controls="panel1a-content"
                                     id="panel1a-header"
                                 >
-                                    <Typography className={classes.heading}>Students (1)</Typography>
+                                    <Typography className={classes.heading}>
+                                        Students ({students.length})
+                                    </Typography>
                                 </AccordionSummary>
                                 <AccordionDetails className={classes.accordionDetails}>
                                     <List>
-                                        <ListItem>
-                                            <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                alignItems="center">
-                                                <Avatar
-                                                    src={``}
-                                                    className={classes.avatar}
-                                                    style={{
-                                                        backgroundColor: utils.stringToColor(`row.name`),
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        noWrap
-                                                        variant="inherit">
-                                                        {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                    </Typography>
-                                                </Avatar>
-                                                <span>Student name</span>
-                                            </Box>
-                                        </ListItem>
+                                        {students.map((student, i) => (
+                                            <ListItem key={`student-${i}`}>
+                                                <Box
+                                                    display="flex"
+                                                    flexDirection="row"
+                                                    alignItems="center">
+                                                    <Avatar
+                                                        src={``}
+                                                        className={classes.avatar}
+                                                        style={{
+                                                            backgroundColor: utils.stringToColor(`row.name`),
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            noWrap
+                                                            variant="inherit">
+                                                            {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
+                                                        </Typography>
+                                                    </Avatar>
+                                                    <span>{student}</span>
+                                                </Box>
+                                            </ListItem>
+                                        ))}
 
-                                        <ListItem>
-                                            <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                alignItems="center">
-                                                <Avatar
-                                                    src={``}
-                                                    className={classes.avatar}
-                                                    style={{
-                                                        backgroundColor: utils.stringToColor(`row.name`),
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        noWrap
-                                                        variant="inherit">
-                                                        {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                    </Typography>
-                                                </Avatar>
-                                                <span>Student name</span>
-                                            </Box>
-                                        </ListItem>
                                     </List>
                                 </AccordionDetails>
                             </Accordion>

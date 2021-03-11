@@ -8,8 +8,13 @@ import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
 import ViewClassDialog from "@/components/Class/Dialog/View";
 import globalCss from "@/globalCss";
-import { Class } from "@/types/graphQL";
+import {
+    Class,
+    Subject,
+} from "@/types/graphQL";
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
+import { buildEmptyClassDetails } from "@/utils/classes";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
@@ -69,37 +74,42 @@ const useStyles = makeStyles((theme) => {
         chip: {
             margin: theme.spacing(0.25),
         },
-        roleName: {
-            color: `#0094FF`,
-            cursor: `pointer`,
-        },
     });
 });
+
+interface ProgramSubject {
+    programName: string;
+    subjects: Subject[];
+}
+
+export interface ClassDetails {
+    className: string;
+    programSubjects: ProgramSubject[];
+    teachers: string[];
+    students: string[];
+}
 
 interface ClassRow {
     id: string;
     name: string;
+    ageRanges: string[];
     schoolNames: string[];
     grades: string[];
     programs: string[];
-    subject: string;
+    subjects: string[];
     status: string;
+    programSubjects: ProgramSubject[];
+    teachers: string[];
+    students: string[];
 }
 
-interface Props {
-    disabled?: boolean;
-    selectedIds?: string[];
-    classesItems?: Class[] | null;
-    onSelected?: (ids: string[]) => void;
-}
+interface Props {}
 
+/**
+ * Returns function to show Classes Table in "Classes" section
+ * @param  props {Object} intl - The object has a function (formatMessage) that support multiple languages
+ */
 export default function ClassesTable (props: Props) {
-    const {
-        disabled,
-        classesItems,
-        selectedIds,
-        onSelected,
-    } = props;
     const classes = useStyles();
     const prompt = usePrompt();
     const intl = useIntl();
@@ -113,6 +123,8 @@ export default function ClassesTable (props: Props) {
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ viewDialogOpen, setViewDialogOpen ] = useState(false);
+
+    const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
     const [ rows, setRows ] = useState<ClassRow[]>([]);
@@ -128,34 +140,55 @@ export default function ClassesTable (props: Props) {
     });
     const [ deleteClass ] = useDeleteClass();
 
-    const organizationClasses = data?.me?.membership?.organization?.classes;
+    const schoolClasses = data?.organization?.classes;
 
     useEffect(() => {
-        if (!canView) {
-            setRows([]);
-            return;
-        }
-        const rows = (classesItems ?? organizationClasses)?.map((c) => ({
-            id: c.class_id,
-            name: c.class_name ?? ``,
-            schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
-            grades: [
-                `PreK-1`,
-                `PreK-2`,
-                `+1`,
-            ],
-            programs: [
-                `Program 01`,
-                `Programs 02`,
-                `+1`,
-            ],
-            subject: `Math`,
-            status: c.status ?? ``,
-        }));
-        setRows(rows ?? []);
-    }, [ organizationClasses, canView ]);
+        const rows = schoolClasses?.map((c) => {
+            const programSubjects: ProgramSubject[] = [];
 
-    const findClass = (row: ClassRow) => organizationClasses?.find((c) => c.class_id === row.id);
+            c.programs?.forEach((program) => {
+                programSubjects.push({
+                    programName: program.name ?? ``,
+                    subjects: program?.subjects ?? [],
+                });
+            });
+
+            return {
+                id: c.class_id,
+                name: c.class_name ?? ``,
+                schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
+                programs: c.programs?.map((program) => program.name ?? ``) ?? [],
+                subjects: c.subjects?.map((subject) => subject.name ?? ``) ?? [],
+                grades: c.grades?.map((grade) => grade.name ?? ``) ?? [],
+                ageRanges:
+                    c.age_ranges
+                        ?.filter((ageRange, index, ageRanges) => ageRanges.indexOf(ageRange) === index)
+                        .map((ageRange) => {
+                            const ageRangeProps = {
+                                id: ageRange.id,
+                                from: ageRange.low_value,
+                                fromUnit: ageRange.low_value_unit,
+                                to: ageRange.high_value,
+                                toUnit: ageRange.high_value_unit,
+                            };
+
+                            return buildAgeRangeLabel(ageRangeProps) ?? ``;
+                        }) ?? [],
+                students: c.students?.map((student) => student?.given_name ?? ``) ?? [],
+                teachers: c.teachers?.map((teacher) => teacher?.given_name ?? ``) ?? [],
+                status: c.status ?? ``,
+                programSubjects,
+            };
+        });
+
+        if (canView) {
+            setRows(rows ?? []);
+        } else {
+            setRows([]);
+        }
+    }, [ schoolClasses, canView ]);
+
+    const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
 
     const editSelectedRow = (row: ClassRow) => {
         const selectedClass = findClass(row);
@@ -215,8 +248,7 @@ export default function ClassesTable (props: Props) {
     const columns: TableColumn<ClassRow>[] = [
         {
             id: `id`,
-            label: `ID`,
-            disableSearch: disabled,
+            label: `Id`,
             hidden: true,
         },
         {
@@ -224,7 +256,6 @@ export default function ClassesTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_classTitle`,
             }),
-            disableSearch: disabled,
             persistent: true,
             render: (row) => (
                 <Link
@@ -237,9 +268,12 @@ export default function ClassesTable (props: Props) {
             ),
         },
         {
+            id: `ageRanges`,
+            label: `Age Range`,
+        },
+        {
             id: `grades`,
             label: `Grades`,
-            disableSearch: disabled,
             render: (row) => (
                 <>
                     {row.grades.map((grade, i) => (
@@ -254,7 +288,6 @@ export default function ClassesTable (props: Props) {
         {
             id: `programs`,
             label: `Programs`,
-            disableSearch: disabled,
             disableSort: true,
             render: (row) => (
                 <>
@@ -268,20 +301,25 @@ export default function ClassesTable (props: Props) {
             ),
         },
         {
-            id: `subject`,
-            label: `Subject`,
-            disableSearch: disabled,
+            id: `subjects`,
+            label: `Subjects`,
             disableSort: true,
-            render: (row) => <Chip
-                label={row.subject}
-                className={classes.chip} />,
+            render: (row) => (
+                <>
+                    {row.subjects.map((subject, i) => (
+                        <Chip
+                            key={`subject-${i}`}
+                            label={subject}
+                            className={classes.chip} />
+                    ))}
+                </>
+            ),
         },
         {
             id: `status`,
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            disableSearch: disabled,
             render: (row) => (
                 <span
                     className={clsx(classes.statusText, {
@@ -299,27 +337,33 @@ export default function ClassesTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
                     columns={columns}
                     rows={rows}
                     loading={loading}
                     idField="id"
                     orderBy="name"
-                    selectedRows={selectedIds}
-                    primaryAction={!disabled ? {
+                    primaryAction={{
                         label: intl.formatMessage({
                             id: `classes_createClassLabel`,
                         }),
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: () => setCreateDialogOpen(true),
-                    } : undefined}
-                    rowActions={!disabled ? (row) => [
+                    }}
+                    rowActions={(row) => [
                         {
                             label: `View class details`,
                             icon: ViewIcon,
-                            // disabled: !(row.status === `active` && canEdit),
-                            onClick: () => setViewDialogOpen(true),
+                            onClick: (row) => {
+                                setClassDetails({
+                                    className: row.name,
+                                    programSubjects: row.programSubjects,
+                                    teachers: row.teachers,
+                                    students: row.students,
+                                });
+
+                                setViewDialogOpen(true);
+                            },
                         },
                         {
                             label: intl.formatMessage({
@@ -337,7 +381,7 @@ export default function ClassesTable (props: Props) {
                             disabled: !(row.status === `active` && canDelete),
                             onClick: deleteSelectedRow,
                         },
-                    ] : undefined}
+                    ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
@@ -355,7 +399,6 @@ export default function ClassesTable (props: Props) {
                             }),
                         },
                     })}
-                    onSelected={onSelected}
                 />
             </Paper>
 
@@ -379,8 +422,10 @@ export default function ClassesTable (props: Props) {
 
             <ViewClassDialog
                 open={viewDialogOpen}
+                classDetails={classDetails}
                 onClose={() => {
                     setViewDialogOpen(false);
+                    setClassDetails(buildEmptyClassDetails());
                 }}
             />
 

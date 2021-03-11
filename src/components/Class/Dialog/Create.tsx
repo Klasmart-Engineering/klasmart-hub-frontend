@@ -1,5 +1,11 @@
 import ClassDialogForm from "./Form";
-import { useCreateClass } from "@/api/classes";
+import {
+    useCreateClass,
+    useEditClassAgeRanges,
+    useEditClassGrades,
+    useEditClassPrograms,
+    useEditClassSubjects,
+} from "@/api/classes";
 import { currentMembershipVar } from "@/cache";
 import { Class } from "@/types/graphQL";
 import { buildEmptyClass } from "@/utils/classes";
@@ -29,6 +35,10 @@ export default function CreateClassDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const [ newClass, setNewClass ] = useState(buildEmptyClass());
     const [ createClass ] = useCreateClass();
+    const [ createPrograms ] = useEditClassPrograms();
+    const [ createSubjects ] = useEditClassSubjects();
+    const [ createGrades ] = useEditClassGrades();
+    const [ createAgeRanges ] = useEditClassAgeRanges();
 
     useEffect(() => {
         if (!open) return;
@@ -37,14 +47,59 @@ export default function CreateClassDialog (props: Props) {
 
     const handleCreate = async () => {
         try {
-            const { class_name, schools } = newClass;
-            await createClass({
+            const {
+                class_name,
+                schools,
+                programs,
+                subjects,
+                grades,
+                age_ranges,
+            } = newClass;
+
+            const variables = {
+                organization_id,
+                class_name: class_name ?? ``,
+                school_ids: schools?.map((school) => school.school_id) ?? [],
+            };
+
+            const response = await createClass({
+                variables,
+            });
+
+            const classId = response?.data?.organization?.createClass?.class_id;
+
+            if (!classId) {
+                throw Error();
+            }
+
+            await createPrograms({
                 variables: {
-                    organization_id,
-                    class_name: class_name ?? ``,
-                    school_ids: schools?.map((school) => school.school_id) ?? [],
+                    class_id: classId,
+                    program_ids: programs?.map((program) => program.id) ?? [],
                 },
             });
+
+            await createSubjects({
+                variables: {
+                    class_id: classId,
+                    subject_ids: subjects?.map((subject) => subject.id) ?? [],
+                },
+            });
+
+            await createGrades({
+                variables: {
+                    class_id: classId,
+                    grade_ids: grades?.map((grade) => grade.id) ?? [],
+                },
+            });
+
+            await createAgeRanges({
+                variables: {
+                    class_id: classId,
+                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id) ?? [],
+                },
+            });
+
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classSavedMessage`,
@@ -74,7 +129,7 @@ export default function CreateClassDialog (props: Props) {
                     label: `Create`,
                     color: `primary`,
                     disabled: !valid,
-                    onClick: () => console.log(`create`),
+                    onClick: handleCreate,
                 },
             ]}
             onClose={() => onClose()}
@@ -82,7 +137,8 @@ export default function CreateClassDialog (props: Props) {
             <ClassDialogForm
                 value={newClass}
                 onChange={(value) => setNewClass(value)}
-                onValidation={setValid} />
+                onValidation={setValid}
+            />
         </Dialog>
     );
 }

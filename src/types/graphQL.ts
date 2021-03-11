@@ -58,6 +58,11 @@ export interface Organization {
     schools?: School[] | null;
     memberships?: OrganizationMembership[] | null;
     createRole?: Role;
+    ageRanges?: AgeRange[] | null;
+    programs?: Program[] | null;
+    subjects?: Subject[] | null;
+    grades?: Grade[] | null;
+    createClass?: Class | null;
 }
 
 export interface Role {
@@ -73,6 +78,13 @@ export interface Role {
 export interface Student {
     user_id: string;
     user?: User | null;
+    given_name?: string | null;
+}
+
+export interface Teacher {
+    user_id: string;
+    user?: User | null;
+    given_name?: string | null;
 }
 
 export interface Class {
@@ -80,6 +92,12 @@ export interface Class {
     class_name?: string | null;
     schools?: School[] | null;
     status?: string | null;
+    age_ranges?: AgeRange[] | null;
+    programs?: Program[] | null;
+    subjects?: Subject[] | null;
+    grades?: Grade[] | null;
+    students?: Student[] | null;
+    teachers?: Teacher[] | null;
 }
 
 export interface School {
@@ -90,6 +108,7 @@ export interface School {
     classes?: Class[] | null;
     programs?: Program[] | null;
     memberships?: SchoolMembership[] | null;
+    programs?: Program[] | null;
 }
 
 export interface SchoolMembership {
@@ -111,16 +130,21 @@ export interface Permission {
 }
 
 export interface AgeRange {
-    age_range_id: string;
+    id: string;
     from?: number | null;
     fromUnit?: string | null;
     to?: number | null;
     toUnit?: string | null;
+    name?: string | null;
+    high_value?: number | null;
+    high_value_unit?: string | null;
+    low_value?: number | null;
+    low_value_unit?: string | null;
 }
 
 export interface Grade {
-    grade_id: string;
-    grade_name?: string | null;
+    id: string;
+    name?: string | null;
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
 }
@@ -129,11 +153,17 @@ export interface Subject {
     subject_id: string;
     subject_name?: string | null;
     categories?: Category[] | null;
+    id: string;
+    name?: string | null;
+    grades?: Grade[] | null;
+    age_ranges?: AgeRange[] | null;
+    category?: string | null;
+    subcategories?: string[] | null;
 }
 
 export interface Program {
-    program_id: string;
-    program_name?: string | null;
+    id: string;
+    name?: string | null;
     age_ranges?: AgeRange[] | null;
     grades?: Grade[] | null;
     subjects?: Subject[] | null;

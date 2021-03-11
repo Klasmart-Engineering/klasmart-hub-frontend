@@ -1,20 +1,52 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_CLASSES = gql`
-    query me($organization_id: ID!) {
-        me {
-            membership(organization_id: $organization_id) {
-                organization {
-                    classes {
-                        schools {
-                            school_id
-                            school_name
-                            status
-                        }
-                        class_id
-                        class_name
+    query organization($organization_id: ID!) {
+        organization(organization_id: $organization_id) {
+            classes {
+                class_id
+                class_name
+                status
+                schools {
+                    school_id
+                    school_name
+                }
+                age_ranges {
+                    id
+                    name
+                    high_value
+                    high_value_unit
+                    low_value
+                    low_value_unit
+                    status
+                }
+                programs {
+                    id
+                    name
+                    status
+                    subjects {
+                        id
+                        name
                         status
                     }
+                }
+                subjects {
+                    id
+                    name
+                    status
+                }
+                grades {
+                    id
+                    name
+                    status
+                }
+                students {
+                    user_id
+                    given_name
+                }
+                teachers {
+                    user_id
+                    given_name
                 }
             }
         }

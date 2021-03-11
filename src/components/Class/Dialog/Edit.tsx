@@ -1,7 +1,10 @@
 import ClassDialogForm from "./Form";
 import {
-    useDeleteClass,
+    useEditClassAgeRanges,
+    useEditClassGrades,
+    useEditClassPrograms,
     useEditClassSchools,
+    useEditClassSubjects,
     useUpdateClass,
 } from "@/api/classes";
 import { Class } from "@/types/graphQL";
@@ -35,27 +38,42 @@ export default function EditClassDialog (props: Props) {
     const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
     const [ valid, setValid ] = useState(true);
     const [ updateClass ] = useUpdateClass();
-    const [ deleteClass ] = useDeleteClass();
     const [ editSchools ] = useEditClassSchools();
+    const [ editPrograms ] = useEditClassPrograms();
+    const [ editSubjects ] = useEditClassSubjects();
+    const [ editGrades ] = useEditClassGrades();
+    const [ editAgeRanges ] = useEditClassAgeRanges();
     const canEditSchool = usePermission(`edit_school_20330`);
 
     useEffect(() => {
         setEditedClass(value ?? buildEmptyClass());
     }, [ value ]);
 
-    const handleSave = async () => {
+    const handleEdit = async () => {
         try {
             const {
                 class_id,
                 class_name,
                 schools,
+                programs,
+                subjects,
+                grades,
+                age_ranges,
             } = editedClass;
-            await updateClass({
+
+            const response = await updateClass({
                 variables: {
                     class_id,
                     class_name: class_name ?? ``,
                 },
             });
+
+            const classId = response?.data?.class?.class_id;
+
+            if (!classId) {
+                throw Error();
+            }
+
             if (canEditSchool) {
                 await editSchools({
                     variables: {
@@ -64,6 +82,34 @@ export default function EditClassDialog (props: Props) {
                     },
                 });
             }
+
+            await editPrograms({
+                variables: {
+                    class_id: classId,
+                    program_ids: programs?.map((program) => program.id) ?? [],
+                },
+            });
+
+            await editSubjects({
+                variables: {
+                    class_id: classId,
+                    subject_ids: subjects?.map((subject) => subject.id) ?? [],
+                },
+            });
+
+            await editGrades({
+                variables: {
+                    class_id: classId,
+                    grade_ids: grades?.map((grade) => grade.id) ?? [],
+                },
+            });
+
+            await editAgeRanges({
+                variables: {
+                    class_id: classId,
+                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id) ?? [],
+                },
+            });
 
             onClose(editedClass);
             enqueueSnackbar(intl.formatMessage({
@@ -96,7 +142,7 @@ export default function EditClassDialog (props: Props) {
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
-                    onClick: handleSave,
+                    onClick: handleEdit,
                 },
             ]}
             onClose={() => onClose()}
