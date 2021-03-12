@@ -177,7 +177,7 @@ export default function UserProfileMenu (props: Props) {
                         <CreateOrganizationDialog />
                     </ListItem>
                 }
-                <UserProfileSwitcher />
+                {/* <UserProfileSwitcher /> */}
                 <Divider />
                 <List>
                     <ListItem>
