@@ -1,6 +1,9 @@
 import GradeForm from "./Form";
+import { useCreateUpdateGrade } from "@/api/grades";
+import { currentMembershipVar } from "@/cache";
 import { Grade } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -15,8 +18,6 @@ import React, {
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({}));
-
 interface Props {
     open: boolean;
     onClose: (newGrade?: Grade) => void;
@@ -24,11 +25,14 @@ interface Props {
 
 export default function (props: Props) {
     const { open, onClose } = props;
-    const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ newGrade, setNewGrade ] = useState(buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
+
+    const [ createGrade ] = useCreateUpdateGrade();
+    const organization = useReactiveVar(currentMembershipVar);
+    const { organization_id } = organization;
 
     useEffect(() => {
         setNewGrade(buildEmptyGrade());
@@ -36,6 +40,17 @@ export default function (props: Props) {
 
     const handleCreate = async () => {
         try {
+            const grade: Grade = {
+                name: newGrade.name,
+                progress_from_grade_id: newGrade.progress_from_grade_id ?? null,
+                progress_to_grade_id: newGrade.progress_to_grade_id ?? null,
+            };
+            const response = await createGrade({
+                variables: {
+                    organization_id,
+                    grades: [ grade ],
+                },
+            });
             onClose(newGrade);
             enqueueSnackbar(`Grade successfully created`, {
                 variant: `success`,

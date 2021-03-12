@@ -1,3 +1,8 @@
+import {
+    useDeleteGrade,
+    useGetAllGrades,
+} from "@/api/grades";
+import { currentMembershipVar } from "@/cache";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
 import { Grade } from "@/types/graphQL";
@@ -5,6 +10,7 @@ import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -52,28 +58,42 @@ export default function (props: Props) {
     const [ rows, setRows ] = useState<GradeRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
+    const [ grades, setGrades ] = useState<Grade[]>([]);
     const [ selectedGrade, setSelectedGrade ] = useState<Grade>();
     const { equals, required } = useValidations();
+
+    const organization = useReactiveVar(currentMembershipVar);
+    const { organization_id } = organization;
+
     const canCreate = usePermission(`create_grade_20223`);
     const canEdit = usePermission(`edit_grade_20333`);
     const canDelete = usePermission(`delete_grade_20443`);
-    const dataGrades: Grade[] = [
-        {
-            grade_id: `1`,
-            grade_name: `PreK-0`,
+
+    const {
+        loading,
+        data,
+        refetch,
+    } = useGetAllGrades({
+        fetchPolicy: `network-only`,
+        variables: {
+            organization_id,
         },
-    ];
+    });
+
+    const [ deleteGrade ] = useDeleteGrade();
 
     useEffect(() => {
-        const rows = dataGrades?.map((grade) => ({
-            id: grade.grade_id,
-            name: grade.grade_name ?? ``,
-            progressFrom: grade.progress_from_grade?.grade_name ?? `Not specified`,
-            progressTo: grade.progress_to_grade?.grade_name ?? `Not specified`,
-        })) ?? [];
-        setRows(rows);
-    }, []);
-    // }, [ dataGrades ]);
+        if (data) {
+            const rows = data.organization.grades.filter(grade => grade.status === `active`).map((grade) => ({
+                id: grade.id ?? ``,
+                name: grade.name ?? ``,
+                progressFrom: grade.progress_from_grade?.name ?? `Not specified`,
+                progressTo: grade.progress_to_grade?.name ?? `Not specified`,
+            })) ?? [];
+            setRows(rows);
+            setGrades(data?.organization.grades);
+        }
+    }, [ data ]);
 
     const columns: TableColumn<GradeRow>[] = [
         {
@@ -96,7 +116,7 @@ export default function (props: Props) {
         },
     ];
 
-    const findGrade = (row: GradeRow) => dataGrades.find((grade) => grade.grade_id === row.id);
+    const findGrade = (row: GradeRow) => grades?.find((grade) => grade.id === row.id);
 
     const handleEditRowClick = async (row: GradeRow) => {
         const selectedGrade = findGrade(row);
@@ -109,18 +129,24 @@ export default function (props: Props) {
         const selectedGrade = findGrade(row);
         if (!selectedGrade) return;
         setSelectedGrade(selectedGrade);
-        const { grade_name } = selectedGrade;
+        const { name } = selectedGrade;
         if (!await prompt({
             variant: `error`,
             title: `Delete Grade`,
             okLabel: `Delete`,
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${grade_name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{grade_name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
+                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
             </>,
-            validations: [ required(), equals(grade_name) ],
+            validations: [ required(), equals(name) ],
         })) return;
         try {
+            const response = await deleteGrade({
+                variables: {
+                    id: row.id,
+                },
+            });
+            refetch();
             enqueueSnackbar(`Grade successfully deleted`, {
                 variant: `success`,
             });
@@ -168,6 +194,7 @@ export default function (props: Props) {
             <CreateGradeDialog
                 open={openCreateDialog}
                 onClose={(grade) => {
+                    refetch();
                     setOpenCreateDialog(false);
                 }}
             />
@@ -175,7 +202,9 @@ export default function (props: Props) {
                 open={openEditDialog}
                 value={selectedGrade}
                 onClose={(grade) => {
-                    console.log(`grade`, grade);
+                    if (grade) {
+                        refetch();
+                    }
                     setSelectedGrade(undefined);
                     setOpenEditDialog(false);
                 }}

@@ -1,7 +1,13 @@
 import GradeForm from "./Form";
+import {
+    useCreateUpdateGrade,
+    useDeleteGrade,
+} from "@/api/grades";
+import { currentMembershipVar } from "@/cache";
 import { Grade } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -18,8 +24,6 @@ import React, {
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({}));
-
 interface Props {
     value?: Grade;
     open: boolean;
@@ -32,7 +36,6 @@ export default function (props: Props) {
         onClose,
         value,
     } = props;
-    const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
     const { equals, required } = useValidations();
@@ -40,12 +43,23 @@ export default function (props: Props) {
     const [ updatedGrade, setUpdatedGrade ] = useState(value ?? buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
 
+    const [ updateGrade ] = useCreateUpdateGrade();
+    const [ deleteGrade ] = useDeleteGrade();
+    const organization = useReactiveVar(currentMembershipVar);
+    const { organization_id } = organization;
+
     useEffect(() => {
         setUpdatedGrade(value ?? buildEmptyGrade());
     }, [ open ]);
 
     const handleSave = async () => {
         try {
+            const response = await updateGrade({
+                variables: {
+                    organization_id,
+                    grades: [ updatedGrade ],
+                },
+            });
             onClose(updatedGrade);
             enqueueSnackbar(`Grade successfully saved`, {
                 variant: `success`,
@@ -64,11 +78,17 @@ export default function (props: Props) {
                 title: `Delete Grade`,
                 okLabel: `Delete`,
                 content: <>
-                    <DialogContentText>Are you sure you want to delete {`"${value?.grade_name}"`}?</DialogContentText>
-                    <DialogContentText>Type <strong>{value?.grade_name}</strong> to confirm deletion.</DialogContentText>
+                    <DialogContentText>Are you sure you want to delete {`"${value?.name}"`}?</DialogContentText>
+                    <DialogContentText>Type <strong>{value?.name}</strong> to confirm deletion.</DialogContentText>
                 </>,
-                validations: [ required(), equals(value?.grade_name) ],
+                validations: [ required(), equals(value?.name) ],
             })) return;
+
+            const response = await deleteGrade({
+                variables: {
+                    id: value?.id ?? ``,
+                },
+            });
             onClose(updatedGrade);
             enqueueSnackbar(`Grade successfully deleted`, {
                 variant: `success`,

@@ -144,22 +144,23 @@ export interface AgeRange {
 }
 
 export interface Grade {
-    id: string;
+    id?: string;
     name?: string | null;
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
+    progress_from_grade_id?: string | null;
+    progress_to_grade_id?: string | null;
+    system?: boolean | null;
+    status?: string | null;
 }
 
 export interface Subject {
-    subject_id: string;
-    subject_name?: string | null;
-    categories?: Category[] | null;
     id: string;
     name?: string | null;
-    grades?: Grade[] | null;
-    age_ranges?: AgeRange[] | null;
-    category?: string | null;
-    subcategories?: string[] | null;
+    categories?: Category[] | null;
+    subcategories?: Subcategory[] | null;
+    system?: boolean | null;
+    status?: string | null;
 }
 
 export interface Program {
