@@ -1,7 +1,7 @@
 import { AgeRange } from "@/types/graphQL";
 
 export const buildEmptyAgeRange = (): AgeRange => ({
-    age_range_id: ``,
+    id: ``,
 });
 
 const buildUnit = (unit: string) => {
@@ -13,6 +13,6 @@ const buildUnit = (unit: string) => {
 };
 
 export const buildAgeRangeLabel = (ageRange: AgeRange) => {
-    const showFromUnit = ageRange.fromUnit !== ageRange.toUnit;
-    return `${ageRange.from}${showFromUnit ? ` ${buildUnit(ageRange.fromUnit ?? ``)}` : ``} - ${ageRange.to} ${buildUnit(ageRange.toUnit ?? ``)}`;
+    const showFromUnit = ageRange.low_value_unit !== ageRange.high_value_unit;
+    return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
 };

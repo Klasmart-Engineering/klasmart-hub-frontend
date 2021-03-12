@@ -1,10 +1,16 @@
 import AgeRangeForm from "./Form";
+import {
+    useDeleteAgeRange,
+    useEditAgeRange,
+} from "@/api/age_ranges";
+import { currentMembershipVar } from "@/cache";
 import { AgeRange } from "@/types/graphQL";
 import {
     buildAgeRangeLabel,
     buildEmptyAgeRange,
 } from "@/utils/ageRanges";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -27,6 +33,7 @@ interface Props {
     value?: AgeRange;
     open: boolean;
     onClose: (updatedAgeRange?: AgeRange) => void;
+    refetch: () => void;
 }
 
 export default function (props: Props) {
@@ -34,13 +41,17 @@ export default function (props: Props) {
         open,
         onClose,
         value,
+        refetch,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
     const { required, equals } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
+    const [ editAgeRange ] = useEditAgeRange();
+    const [ deleteAgeRange ] = useDeleteAgeRange();
     const [ updatedAgeRange, setUpdatedAgeRange ] = useState(value ?? buildEmptyAgeRange());
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ valid, setValid ] = useState(true);
 
     useEffect(() => {
@@ -50,6 +61,20 @@ export default function (props: Props) {
     const handleSave = async () => {
         try {
             onClose(updatedAgeRange);
+            await editAgeRange({
+                variables: {
+                    organization_id: organization_id,
+                    id: updatedAgeRange.id,
+                    name: `${updatedAgeRange.low_value}-${updatedAgeRange.high_value}`,
+                    low_value: updatedAgeRange.low_value,
+                    low_value_unit: updatedAgeRange.low_value_unit,
+                    high_value: updatedAgeRange.high_value,
+                    high_value_unit: updatedAgeRange.high_value_unit,
+                },
+            });
+
+            refetch();
+
             enqueueSnackbar(`Age range successfully saved`, {
                 variant: `success`,
             });
@@ -73,7 +98,14 @@ export default function (props: Props) {
                 </>,
                 validations: [ required(), equals(ageRangeName) ],
             })) return;
+
+            await deleteAgeRange({
+                variables: {
+                    id: updatedAgeRange.id,
+                },
+            });
             onClose(updatedAgeRange);
+            refetch();
             enqueueSnackbar(`Age range successfully deleted`, {
                 variant: `success`,
             });

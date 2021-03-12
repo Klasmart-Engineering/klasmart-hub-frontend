@@ -108,7 +108,6 @@ export interface School {
     classes?: Class[] | null;
     programs?: Program[] | null;
     memberships?: SchoolMembership[] | null;
-    programs?: Program[] | null;
 }
 
 export interface SchoolMembership {
@@ -140,6 +139,8 @@ export interface AgeRange {
     high_value_unit?: string | null;
     low_value?: number | null;
     low_value_unit?: string | null;
+    system?: boolean;
+    status?: string;
 }
 
 export interface Grade {

@@ -1,3 +1,8 @@
+import {
+    useDeleteAgeRange,
+    useGetAllAgeRanges,
+} from "@/api/age_ranges";
+import { currentMembershipVar } from "@/cache";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
 import { AgeRange } from "@/types/graphQL";
@@ -5,6 +10,7 @@ import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -34,13 +40,8 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-interface AgeRangeRow {
-    id: string;
+export interface AgeRangeRow extends AgeRange{
     ageRange: string;
-    from: number;
-    fromUnit: string;
-    to: number;
-    toUnit: string;
 }
 
 interface Props {
@@ -59,28 +60,24 @@ export default function (props: Props) {
     const canCreate = usePermission(`create_age_range_20222`);
     const canEdit = usePermission(`edit_age_range_20332`);
     const canDelete = usePermission(`delete_age_range_20442`);
-    const dataAgeRanges: AgeRange[] = [
-        {
-            age_range_id: `1`,
-            from: 12,
-            fromUnit: `month`,
-            to: 2,
-            toUnit: `year`,
+    const organization = useReactiveVar(currentMembershipVar);
+    const { organization_id } = organization;
+    const [ deleteAgeRange ] = useDeleteAgeRange();
+    const { data, refetch } = useGetAllAgeRanges({
+        variables: {
+            organization_id,
         },
-    ];
+    });
 
     useEffect(() => {
-        const rows = dataAgeRanges?.map((ageRange) => ({
-            id: ageRange.age_range_id,
-            ageRange: buildAgeRangeLabel(ageRange),
-            from: ageRange.from ?? 0,
-            fromUnit: ageRange.fromUnit ?? ``,
-            to: ageRange.to ?? 0,
-            toUnit: ageRange.fromUnit ?? ``,
-        })) ?? [];
+        const rows = data?.organization?.ageRanges?.filter((range: AgeRange) => range.status === `active`)
+            .map((range: AgeRange): AgeRangeRow => ({
+                ...range,
+                ageRange: buildAgeRangeLabel(range),
+            })) ?? [];
+
         setRows(rows);
-    }, []);
-    // }, [ dataAgeRanges ]);
+    }, [ data ]);
 
     const columns: TableColumn<AgeRangeRow>[] = [
         {
@@ -95,11 +92,18 @@ export default function (props: Props) {
         },
     ];
 
-    const findAgeRange = (row: AgeRangeRow) => dataAgeRanges.find((ageRange) => ageRange.age_range_id === row.id);
+    const findAgeRange = (row: AgeRangeRow) => data?.organization?.ageRanges?.find((ageRange: AgeRange) => ageRange.id === row.id);
 
     const handleEditRowClick = async (row: AgeRangeRow) => {
         const selectedAgeRange = findAgeRange(row);
         if (!selectedAgeRange) return;
+        setSelectedAgeRange({
+            age_range_id: selectedAgeRange.id,
+            from: selectedAgeRange.low_value,
+            fromUnit: selectedAgeRange.low_value_unit,
+            to: selectedAgeRange.high_value,
+            toUnit: selectedAgeRange.high_value_unit,
+        } as unknown as AgeRange);
         setSelectedAgeRange(selectedAgeRange);
         setOpenEditDialog(true);
     };
@@ -108,7 +112,8 @@ export default function (props: Props) {
         const selectedAgeRange = findAgeRange(row);
         if (!selectedAgeRange) return;
         setSelectedAgeRange(selectedAgeRange);
-        const ageRangeName = buildAgeRangeLabel(selectedAgeRange);
+        const ageRangeName = buildAgeRangeLabel(row);
+
         if (!await prompt({
             variant: `error`,
             title: `Delete Age Range`,
@@ -120,10 +125,19 @@ export default function (props: Props) {
             validations: [ required(), equals(ageRangeName) ],
         })) return;
         try {
+
+            await deleteAgeRange({
+                variables: {
+                    id: selectedAgeRange.id,
+                },
+            });
+
+            refetch();
             enqueueSnackbar(`Age range successfully deleted`, {
                 variant: `success`,
             });
         } catch (err) {
+            console.error(err);
             enqueueSnackbar(`Sorry, something went wrong, please try again`, {
                 variant: `error`,
             });
@@ -143,7 +157,7 @@ export default function (props: Props) {
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
-                    rowActions={(row) => [
+                    rowActions={() => [
                         {
                             label: `Edit`,
                             icon: EditIcon,
@@ -166,13 +180,15 @@ export default function (props: Props) {
             </Paper>
             <CreateAgeRangeDialog
                 open={openCreateDialog}
-                onClose={(ageRange) => {
+                refetch={refetch}
+                onClose={() => {
                     setOpenCreateDialog(false);
                 }}
             />
             <EditAgeRangeDialog
                 open={openEditDialog}
                 value={selectedAgeRange}
+                refetch={refetch}
                 onClose={(ageRange) => {
                     console.log(`ageRange`, ageRange);
                     setSelectedAgeRange(undefined);

@@ -27,17 +27,6 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-const convertValue = (value: number, fromUnit: string, toUnit: string) => {
-    if (fromUnit === toUnit) return value;
-    switch (toUnit) {
-    case `month`:
-        return value * 12;
-    case `year`:
-        return Math.ceil(value / 12);
-    }
-    return value;
-};
-
 interface Props {
     value: AgeRange;
     onChange: (value: AgeRange) => void;
@@ -56,13 +45,13 @@ export default function ClassDialogForm (props: Props) {
         min,
         max,
     } = useValidations();
-    const [ from, setFrom ] = useState(value.from ?? 0);
+    const [ from, setFrom ] = useState(value.low_value ?? 0);
     const [ fromValid, setFromValid ] = useState(true);
-    const [ fromUnit, setFromUnit ] = useState(value.fromUnit ?? `year`);
+    const [ fromUnit, setFromUnit ] = useState(value.low_value_unit ?? `year`);
     const [ fromUnitValid, setFromUnitValid ] = useState(true);
-    const [ to, setTo ] = useState(value.to ?? 1);
+    const [ to, setTo ] = useState(value.high_value ?? 1);
     const [ toValid, setToValid ] = useState(true);
-    const [ toUnit, setToUnit ] = useState(value.toUnit ?? `year`);
+    const [ toUnit, setToUnit ] = useState(value.high_value_unit ?? `year`);
     const [ toUnitValid, setToUnitValid ] = useState(true);
 
     const units = [
@@ -92,11 +81,11 @@ export default function ClassDialogForm (props: Props) {
 
     useEffect(() => {
         const updatedAgeRange: AgeRange = {
-            age_range_id: value.age_range_id,
-            from,
-            fromUnit,
-            to,
-            toUnit,
+            id: value.id,
+            low_value: from,
+            low_value_unit: fromUnit,
+            high_value: to,
+            high_value_unit: toUnit,
         };
         onChange(updatedAgeRange);
     }, [
@@ -127,7 +116,7 @@ export default function ClassDialogForm (props: Props) {
                         value={from}
                         label="From"
                         type="number"
-                        autoFocus={!value.age_range_id}
+                        autoFocus={!value.id}
                         validations={[
                             required(),
                             min(0, `Min 0`),
