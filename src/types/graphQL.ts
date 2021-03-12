@@ -7,6 +7,13 @@ export const orderedSystemRoleNames = [
     `Student`,
 ] as const;
 
+export const NON_SPECIFIED = `Non specified`;
+
+export enum Status {
+    ACTIVE = `active`,
+    INACTIVE = `inactive`,
+}
+
 export interface User {
     user_id: string;
     user_name?: string | null;
@@ -27,7 +34,7 @@ export interface User {
 export interface OrganizationOwnership {
     user_id: string;
     organization_id: string;
-    status?: string | null;
+    status?: Status | null;
     organization?: Organization | null;
     user?: User | null;
 }
@@ -40,14 +47,14 @@ export interface OrganizationMembership {
     organization?: Organization | null;
     roles?: Role[] | null;
     checkAllowed?: boolean | null;
-    status?: string | null;
+    status?: Status | null;
     schoolMemberships?: SchoolMembership[] | null;
 }
 
 export interface Organization {
     organization_id: string;
     organization_name?: string | null;
-    status?: string | null;
+    status?: Status | null;
     address1?: string | null;
     shortCode?: string | null;
     phone?: string | null;
@@ -63,6 +70,8 @@ export interface Organization {
     subjects?: Subject[] | null;
     grades?: Grade[] | null;
     createClass?: Class | null;
+    categories?: Category[] | null;
+    subcategories?: Subcategory[] | null;
 }
 
 export interface Role {
@@ -71,7 +80,7 @@ export interface Role {
     role_description?: string | null;
     system_role?: boolean | null;
     delete_role?: boolean | null;
-    status?: string | null;
+    status?: Status | null;
     permissions: Permission[];
 }
 
@@ -91,22 +100,22 @@ export interface Class {
     class_id: string;
     class_name?: string | null;
     schools?: School[] | null;
-    status?: string | null;
     age_ranges?: AgeRange[] | null;
     programs?: Program[] | null;
     subjects?: Subject[] | null;
     grades?: Grade[] | null;
     students?: Student[] | null;
     teachers?: Teacher[] | null;
+    status?: Status | null;
 }
 
 export interface School {
     school_id: string;
     school_name?: string | null;
     shortcode?: string | null;
-    status?: string | null;
     classes?: Class[] | null;
     programs?: Program[] | null;
+    status?: Status | null;
     memberships?: SchoolMembership[] | null;
 }
 
@@ -116,7 +125,7 @@ export interface SchoolMembership {
     school?: School | null;
     roles?: Role[] | null;
     user?: User | null;
-    status?: string | null;
+    status?: Status | null;
 }
 
 export interface Permission {
@@ -155,12 +164,12 @@ export interface Grade {
 }
 
 export interface Subject {
-    id: string;
+    id?: string | null;
     name?: string | null;
-    categories?: Category[] | null;
     subcategories?: Subcategory[] | null;
+    categories?: Category[] | null;
     system?: boolean | null;
-    status?: string | null;
+    status?: Status | null;
 }
 
 export interface Program {
@@ -172,16 +181,16 @@ export interface Program {
 }
 
 export interface Category {
-    id: string;
+    id?: string;
     name?: string | null;
     subcategories?: Subcategory[] | null;
     system?: boolean | null;
-    status?: string | null;
+    status?: Status | null;
 }
 
 export interface Subcategory {
-    id: string;
+    id?: string;
     name?: string | null;
     system?: boolean | null;
-    status?: string | null;
+    status?: Status | null;
 }

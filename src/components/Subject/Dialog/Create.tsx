@@ -1,6 +1,10 @@
 import SubjectDialogForm from "./Form";
+import { useCreateOrUpdateCategories } from "@/api/categories";
+import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
+import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { currentMembershipVar } from "@/cache";
 import { Subject } from "@/types/graphQL";
+import { buildEmptyCategory } from "@/utils/categories";
 import { buildEmptySubject } from "@/utils/subjects";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -25,19 +29,70 @@ export default function CreateSubjectDialog (props: Props) {
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ valid, setValid ] = useState(true);
-    const [ newSubject, setNewSubject ] = useState(buildEmptySubject());
+    const [ newSubject, setNewSubject ] = useState(buildEmptySubject({
+        categories: [ buildEmptyCategory() ],
+    }));
+    const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
+    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
+    const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
 
     useEffect(() => {
         if (!open) return;
-        setNewSubject(buildEmptySubject());
+        setNewSubject(buildEmptySubject({
+            categories: [ buildEmptyCategory() ],
+        }));
     }, [ open ]);
 
-    const handleCreate = async () => {
+    const handleCreateOrUpdate = async () => {
         try {
-            const { subject_name } = newSubject;
+            const {
+                id,
+                name,
+                categories,
+            } = newSubject;
+
+            const updatedCategories = await Promise.all((categories ?? []).map(async (category) => {
+                const subcategoriesResp = await createOrUpdateSubcategories({
+                    variables: {
+                        organization_id,
+                        subcategories: category?.subcategories?.map((subcategory) => ({
+                            id: subcategory.id,
+                            name: subcategory.name ?? ``,
+                        })) ?? [],
+                    },
+                });
+                return buildEmptyCategory({
+                    ...category,
+                    subcategories: subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? [],
+                });
+            }));
+
+            const updatedCategoriesResp = await createOrUpdateCategories({
+                variables: {
+                    organization_id,
+                    categories: updatedCategories.map((category) => ({
+                        id: category.id,
+                        name: category.name ?? ``,
+                        subcategories: category.subcategories?.map((subcategory) => subcategory.id).filter((id): id is string => !!id) ?? [],
+                    })),
+                },
+            });
+
+            await createOrUpdateSubjects({
+                variables: {
+                    organization_id,
+                    subjects: [
+                        {
+                            id,
+                            name: name ?? ``,
+                            categories: (updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []).map((category) => category.id).filter((id): id is string => !!id),
+                        },
+                    ],
+                },
+            });
+
             onClose(newSubject);
             enqueueSnackbar(intl.formatMessage({
                 id: `subjects_subjectSavedMessage`,
@@ -67,7 +122,7 @@ export default function CreateSubjectDialog (props: Props) {
                     label: `Create`,
                     color: `primary`,
                     disabled: !valid,
-                    onClick: handleCreate,
+                    onClick: handleCreateOrUpdate,
                 },
             ]}
             onClose={() => onClose()}

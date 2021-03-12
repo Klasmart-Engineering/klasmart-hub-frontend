@@ -1,8 +1,6 @@
 import { Subject } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import {
     Box,
-    Chip,
     createStyles,
     List,
     ListItem,
@@ -112,7 +110,7 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
     return (
         <Drawer
             open={open}
-            title={value?.subject_name ?? ``}
+            title={value?.name ?? ``}
             sections={[
                 {
                     header: `Categories`,
@@ -123,7 +121,7 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
                                     key={category.id}
                                     square
                                     expanded={expandedSubject === category.id}
-                                    onChange={handleChangeSubject(category.id)}
+                                    onChange={handleChangeSubject(category.id ?? ``)}
                                 >
                                     <AccordionSummary>
                                         <Box

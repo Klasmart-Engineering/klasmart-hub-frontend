@@ -78,27 +78,27 @@ export default function ProgramTable (props: Props) {
     const { required, equals } = useValidations();
     const dataPrograms: Program[] = [
         {
-            program_id: `1`,
+            id: `1`,
             grades: [
                 {
-                    grade_id: `1`,
-                    grade_name: `Grade 1`,
+                    id: `1`,
+                    name: `Grade 1`,
                 },
             ],
             age_ranges: [
                 {
-                    age_range_id: `1`,
+                    id: `1`,
                     from: 0,
                     fromUnit: `year`,
                     to: 1,
                     toUnit: `year`,
                 },
             ],
-            program_name: `Hello`,
+            name: `Hello`,
             subjects: [
                 {
-                    subject_id: `1`,
-                    subject_name: `General`,
+                    id: `1`,
+                    name: `General`,
                     categories: [
                         {
                             id: `1`,
@@ -117,8 +117,8 @@ export default function ProgramTable (props: Props) {
                     ],
                 },
                 {
-                    subject_id: `2`,
-                    subject_name: `Toodles`,
+                    id: `2`,
+                    name: `Toodles`,
                     categories: [
                         {
                             id: `2`,
@@ -142,11 +142,11 @@ export default function ProgramTable (props: Props) {
 
     useEffect(() => {
         const rows = (programs ?? dataPrograms)?.map((program) => ({
-            id: program.program_id,
-            name: program.program_name ?? ``,
-            grades: program.grades?.map((grade) => grade.grade_name ?? ``) ?? [],
+            id: program.id,
+            name: program.name ?? ``,
+            grades: program.grades?.map((grade) => grade.name ?? ``) ?? [],
             ageRanges: program.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-            subjects: program.subjects?.map((subject) => subject.subject_name ?? ``) ?? [],
+            subjects: program.subjects?.map((subject) => subject.name ?? ``) ?? [],
         })) ?? [];
         setRows(rows);
     }, []);
@@ -209,7 +209,7 @@ export default function ProgramTable (props: Props) {
         },
     ];
 
-    const findProgram = (row: ProgramRow) => dataPrograms.find((program) => program.program_id === row.id);
+    const findProgram = (row: ProgramRow) => dataPrograms.find((program) => program.id === row.id);
 
     const handleViewDetailsRowClick = (row: ProgramRow) => {
         const selectedProgram = findProgram(row);
@@ -230,16 +230,16 @@ export default function ProgramTable (props: Props) {
         const selectedProgram = findProgram(row);
         if (!selectedProgram) return;
         setSelectedProgram(selectedProgram);
-        const { program_name } = selectedProgram;
+        const { name } = selectedProgram;
         if (!await prompt({
             variant: `error`,
             title: `Delete Program`,
             okLabel: `Delete`,
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${program_name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{program_name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
+                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
             </>,
-            validations: [ required(), equals(program_name) ],
+            validations: [ required(), equals(name) ],
         })) return;
         try {
             enqueueSnackbar(`Program successfully deleted`, {

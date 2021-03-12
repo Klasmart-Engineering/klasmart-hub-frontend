@@ -1,6 +1,13 @@
 import SubjectDialogForm from "./Form";
+import { useCreateOrUpdateCategories } from "@/api/categories";
+import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
+import {
+    useCreateOrUpdateSubjects,
+    useDeleteSubject,
+} from "@/api/subjects";
 import { currentMembershipVar } from "@/cache";
 import { Subject } from "@/types/graphQL";
+import { buildEmptyCategory } from "@/utils/categories";
 import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
@@ -34,10 +41,13 @@ export default function CreateSubjectDialog (props: Props) {
     const { required, equals } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const canDelete = usePermission(`delete_subjects_20447`);
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ valid, setValid ] = useState(true);
     const [ updatedSubject, setUpdatedSubject ] = useState(value ?? buildEmptySubject());
+    const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
+    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
+    const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
+    const [ deleteSubject ] = useDeleteSubject();
 
     useEffect(() => {
         if (!open) return;
@@ -46,7 +56,51 @@ export default function CreateSubjectDialog (props: Props) {
 
     const handleSave = async () => {
         try {
-            const { subject_name } = updatedSubject;
+            const {
+                id,
+                name,
+                categories,
+            } = updatedSubject;
+
+            const updatedCategories = await Promise.all((categories ?? []).map(async (category) => {
+                const subcategoriesResp = await createOrUpdateSubcategories({
+                    variables: {
+                        organization_id,
+                        subcategories: category?.subcategories?.map((subcategory) => ({
+                            id: subcategory.id,
+                            name: subcategory.name ?? ``,
+                        })) ?? [],
+                    },
+                });
+                return buildEmptyCategory({
+                    ...category,
+                    subcategories: subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? [],
+                });
+            }));
+
+            const updatedCategoriesResp = await createOrUpdateCategories({
+                variables: {
+                    organization_id,
+                    categories: updatedCategories.map((category) => ({
+                        id: category.id,
+                        name: category.name ?? ``,
+                        subcategories: category.subcategories?.map((subcategory) => subcategory.id).filter((id): id is string => !!id) ?? [],
+                    })),
+                },
+            });
+
+            await createOrUpdateSubjects({
+                variables: {
+                    organization_id,
+                    subjects: [
+                        {
+                            id,
+                            name: name ?? ``,
+                            categories: (updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []).map((category) => category.id).filter((id): id is string => !!id),
+                        },
+                    ],
+                },
+            });
             onClose(updatedSubject);
             enqueueSnackbar(intl.formatMessage({
                 id: `subjects_subjectSavedMessage`,
@@ -69,13 +123,18 @@ export default function CreateSubjectDialog (props: Props) {
                 title: `Delete Subject`,
                 okLabel: `Delete`,
                 content: <>
-                    <DialogContentText>Are you sure you want to delete {`"${value?.subject_name}"`}?</DialogContentText>
-                    <DialogContentText>Type <strong>{value?.subject_name}</strong> to confirm deletion.</DialogContentText>
+                    <DialogContentText>Are you sure you want to delete {`"${value?.name}"`}?</DialogContentText>
+                    <DialogContentText>Type <strong>{value?.name}</strong> to confirm deletion.</DialogContentText>
                 </>,
-                validations: [ required(), equals(value?.subject_name) ],
+                validations: [ required(), equals(value?.name) ],
             })) return;
+            await deleteSubject({
+                variables: {
+                    id: value?.id ?? ``,
+                },
+            });
             onClose(updatedSubject);
-            enqueueSnackbar(`Grade successfully deleted`, {
+            enqueueSnackbar(`Subject successfully deleted`, {
                 variant: `success`,
             });
         } catch (error) {

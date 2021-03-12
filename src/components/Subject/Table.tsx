@@ -1,17 +1,26 @@
 import ViewSubjectDetailsDrawer from "./DetailsDrawer";
+import {
+    useDeleteSubject,
+    useGetAllSubjects,
+} from "@/api/subjects";
+import { currentMembershipVar } from "@/cache";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
-import { Subject } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import {
+    Status,
+    Subject,
+} from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
     DialogContentText,
     makeStyles,
     Paper,
+    Typography,
 } from "@material-ui/core";
 import {
     Add as AddIcon,
@@ -44,7 +53,7 @@ interface SubjectRow {
     id: string;
     name: string;
     categories: string[];
-    subcategories: string[];
+    system: boolean;
 }
 
 interface Props {
@@ -65,83 +74,43 @@ export default function SubjectsTable (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ rows_, setRows ] = useState<SubjectRow[]>([]);
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedSubject, setSelectedSubject ] = useState<Subject>();
+    const [ deleteSubject ] = useDeleteSubject();
+    const {
+        data,
+        refetch,
+        loading,
+    } = useGetAllSubjects({
+        variables: {
+            organization_id,
+        },
+    });
     const canCreate = usePermission(`create_subjects_20227`);
     const canView = usePermission(`view_subjects_20115`);
     const canEdit = usePermission(`edit_subjects_20337`);
     const canDelete = usePermission(`delete_subjects_20447`);
     const { required, equals } = useValidations();
-    const dataSubjects: Subject[] = [
-        {
-            subject_id: `1`,
-            subject_name: `General`,
-            categories: [
-                {
-                    id: `1`,
-                    name: `Some Category 1`,
-                    subcategories: [
-                        {
-                            id: `1`,
-                            name: `Subcategory 1`,
-                        },
-                        {
-                            id: `3`,
-                            name: `Subcategory 3`,
-                        },
-                    ],
-                },
-                {
-                    id: `2`,
-                    name: `Some Category 2`,
-                    subcategories: [
-                        {
-                            id: `2`,
-                            name: `Subcategory 2`,
-                        },
-                        {
-                            id: `4`,
-                            name: `Subcategory 4`,
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            subject_id: `2`,
-            subject_name: `Toodles`,
-            categories: [
-                {
-                    id: `2`,
-                    name: `Some Category 2`,
-                    subcategories: [
-                        {
-                            id: `2`,
-                            name: `Subcategory 2`,
-                        },
-                        {
-                            id: `4`,
-                            name: `Subcategory 4`,
-                        },
-                    ],
-                },
-            ],
-        },
-    ];
+
+    const subjects_ = data?.organization.subjects ?? [];
 
     useEffect(() => {
-        const rows = (subjects ?? dataSubjects)?.map((subject) => ({
-            id: subject.subject_id,
-            name: subject.subject_name ?? ``,
+        if (!canView) {
+            setRows([]);
+            return;
+        }
+        const rows = (subjects ?? subjects_)?.filter((subject) => subject.status === Status.ACTIVE).map((subject) => ({
+            id: subject.id ?? ``,
+            name: subject.name ?? ``,
             categories: subject.categories?.map((category) => category.name ?? ``) ?? [],
-            subcategories: subject.categories?.flatMap((category) => category.subcategories ?? []).map((subcategory) => subcategory?.name ?? ``) ?? [],
+            system: subject.system ?? false,
         })) ?? [];
         setRows(rows);
-    }, []);
-    // }, [ dataSubjects ]);
+    }, [ data, canView ]);
 
     const columns: TableColumn<SubjectRow>[] = [
         {
@@ -171,22 +140,14 @@ export default function SubjectsTable (props: Props) {
             </>,
         },
         {
-            id: `subcategories`,
-            label: `Subcategories`,
+            id: `system`,
+            label: `Type`,
             disableSearch: disabled,
-            render: (row) => <>
-                {row.subcategories.map((subcategory, i) => (
-                    <Chip
-                        key={`subcategory-${i}`}
-                        label={subcategory}
-                        className={classes.chip}
-                    />
-                ))}
-            </>,
+            render: (row) => row.system ? `System Value` : `Custom Value`,
         },
     ];
 
-    const findSubject = (row: SubjectRow) => dataSubjects.find((subject) => subject.subject_id === row.id);
+    const findSubject = (row: SubjectRow) => subjects_.find((subject) => subject.id === row.id);
 
     const handleViewDetailsRowClick = (row: SubjectRow) => {
         const selectedSubject = findSubject(row);
@@ -198,7 +159,6 @@ export default function SubjectsTable (props: Props) {
     const handleEditRowClick = async (row: SubjectRow) => {
         const selectedSubject = findSubject(row);
         if (!selectedSubject) return;
-        console.log(`selectedSubject`, selectedSubject);
         setSelectedSubject(selectedSubject);
         setOpenEditDialog(true);
     };
@@ -207,17 +167,23 @@ export default function SubjectsTable (props: Props) {
         const selectedSubject = findSubject(row);
         if (!selectedSubject) return;
         setSelectedSubject(selectedSubject);
-        const { subject_name } = selectedSubject;
+        const { id, name } = selectedSubject;
         if (!await prompt({
             variant: `error`,
             title: `Delete Subject`,
             okLabel: `Delete`,
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${subject_name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{subject_name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
+                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
             </>,
-            validations: [ required(), equals(subject_name) ],
+            validations: [ required(), equals(name) ],
         })) return;
+        await deleteSubject({
+            variables: {
+                id: id ?? ``,
+            },
+        });
+        refetch();
         try {
             enqueueSnackbar(`Subject successfully deleted`, {
                 variant: `success`,
@@ -233,10 +199,13 @@ export default function SubjectsTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
+                    loading={loading}
+                    showCheckboxes={disabled === false}
                     idField="id"
                     rows={rows_}
                     columns={columns}
+                    orderBy="name"
+                    order="asc"
                     selectedRows={selectedIds}
                     primaryAction={!disabled ? {
                         label: `Create Subject`,
@@ -254,13 +223,13 @@ export default function SubjectsTable (props: Props) {
                         {
                             label: `Edit`,
                             icon: EditIcon,
-                            disabled: !canEdit,
+                            disabled: !canEdit || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
                             label: `Delete`,
                             icon: DeleteIcon,
-                            disabled: !canDelete,
+                            disabled: !canDelete || row.system,
                             onClick: handleDeleteRowClick,
                         },
                     ] : undefined}
@@ -283,6 +252,7 @@ export default function SubjectsTable (props: Props) {
             <CreateSubjectDialog
                 open={openCreateDialog}
                 onClose={(subject) => {
+                    if (subject) refetch();
                     setOpenCreateDialog(false);
                 }}
             />
@@ -290,7 +260,7 @@ export default function SubjectsTable (props: Props) {
                 open={openEditDialog}
                 value={selectedSubject}
                 onClose={(subject) => {
-                    console.log(`subject`, subject);
+                    if (subject) refetch();
                     setSelectedSubject(undefined);
                     setOpenEditDialog(false);
                 }}

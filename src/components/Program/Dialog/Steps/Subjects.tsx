@@ -1,6 +1,7 @@
 import { TabContent } from "./shared";
 import SubjectsTable from "@/components/Subject/Table";
 import { Subject } from "@/types/graphQL";
+import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
 import {
     createStyles,
@@ -23,48 +24,17 @@ export default function SubjectStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const { required } = useValidations();
-    const [ selectedSubjectIds, setSelectedIds ] = useState<string[]>(value.subjects?.map((subject) => subject.subject_id) ?? []);
+    const [ selectedSubjectIds, setSelectedIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
+    const [ selectedSubjectIdsError, setSelectedIdsError ] = useState(!value.subjects?.length ? `At least one subject is required` : ` `);
     const subjectsData: Subject[] = [
-        {
-            subject_id: `1`,
-            subject_name: `General`,
-            categories: [
-                {
-                    id: `1`,
-                    name: `Some Category 1`,
-                    subcategories: [
-                        {
-                            id: `1`,
-                            name: `Subcategory 1`,
-                        },
-                        {
-                            id: `3`,
-                            name: `Subcategory 3`,
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            subject_id: `2`,
-            subject_name: `Toodles`,
-            categories: [
-                {
-                    id: `2`,
-                    name: `Some Category 2`,
-                    subcategories: [
-                        {
-                            id: `2`,
-                            name: `Subcategory 2`,
-                        },
-                        {
-                            id: `4`,
-                            name: `Subcategory 4`,
-                        },
-                    ],
-                },
-            ],
-        },
+        buildEmptySubject({
+            id: `1`,
+            name: `General`,
+        }),
+        buildEmptySubject({
+            id: `2`,
+            name: `Toodles`,
+        }),
     ];
 
     const selectedSubjectsError = required()(value.subjects);
@@ -73,7 +43,7 @@ export default function SubjectStep (props: TabContent) {
         onChange?.({
             ...value,
             subjects: selectedSubjectIds
-                .map((subjectId) => subjectsData.find((subject) => subject.subject_id === subjectId))
+                .map((subjectId) => subjectsData.find((subject) => subject.id === subjectId))
                 .filter((subject): subject is Subject => !!subject),
         });
     }, [ selectedSubjectIds ]);
