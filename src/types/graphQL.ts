@@ -103,7 +103,7 @@ export interface Class {
 export interface School {
     school_id: string;
     school_name?: string | null;
-    short_code?: string | null;
+    shortcode?: string | null;
     status?: string | null;
     classes?: Class[] | null;
     programs?: Program[] | null;

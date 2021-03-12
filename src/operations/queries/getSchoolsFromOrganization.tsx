@@ -7,6 +7,7 @@ export const GET_SCHOOLS_FROM_ORGANIZATION = gql`
                 school_id
                 school_name
                 status
+                shortcode
                 programs {
                     id
                     name

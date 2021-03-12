@@ -35,21 +35,22 @@ import React,
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
-    statusActive: {
-        textTransform: `capitalize`,
-        color: theme.palette.success.main,
-        fontWeight: `bold`,
-    },
-    statusInactive: {
-        textTransform: `capitalize`,
-        color: theme.palette.error.main,
-        fontWeight: `bold`,
-    },
-}));
+const useStyles = makeStyles((theme) =>
+    createStyles({
+        root: {
+            width: `100%`,
+        },
+        statusActive: {
+            textTransform: `capitalize`,
+            color: theme.palette.success.main,
+            fontWeight: `bold`,
+        },
+        statusInactive: {
+            textTransform: `capitalize`,
+            color: theme.palette.error.main,
+            fontWeight: `bold`,
+        },
+    }));
 
 interface SchoolRow {
     id: string;
@@ -58,8 +59,7 @@ interface SchoolRow {
     status: string;
 }
 
-interface Props {
-}
+interface Props {}
 
 /**
  * Returns function to show School Table in "View School section"
@@ -80,6 +80,8 @@ export default function SchoolTable (props: Props) {
     const canEdit = usePermission(`edit_school_20330`);
     const canDelete = usePermission(`delete_school_20440`);
     const canCreate = usePermission(`create_school_20220`);
+    const canView = usePermission(`view_school_20110`);
+
     const {
         data,
         refetch,
@@ -94,13 +96,22 @@ export default function SchoolTable (props: Props) {
     const schools = data?.organization?.schools;
 
     useEffect(() => {
-        const rows: SchoolRow[] = schools?.map((school) => ({
-            id: school.school_id,
-            name: school.school_name ?? ``,
-            shortCode: school.short_code ?? ``,
-            status: school.status ?? ``,
-        })) ?? [];
-        setRows(rows);
+        const rows: SchoolRow[] =
+            schools
+                ?.filter((school) => school.status === `active`)
+                .map((school) => ({
+                    id: school.school_id,
+                    name: school.school_name ?? ``,
+                    shortCode: school.shortcode ?? ``,
+                    status: school.status ?? ``,
+                })) ?? [];
+
+        if (canView) {
+            setRows(rows ?? []);
+        } else {
+            setRows([]);
+        }
+
     }, [ data ]);
 
     const columns: TableColumn<SchoolRow>[] = [
@@ -124,14 +135,16 @@ export default function SchoolTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            render: (row) => <span
-                className={clsx({
-                    [classes.statusActive]: row.status === `active`,
-                    [classes.statusInactive]: row.status === `inactive`,
-                })}
-            >
-                {row.status}
-            </span>,
+            render: (row) => (
+                <span
+                    className={clsx({
+                        [classes.statusActive]: row.status === `active`,
+                        [classes.statusInactive]: row.status === `inactive`,
+                    })}
+                >
+                    {row.status}
+                </span>
+            ),
         },
     ];
 
@@ -147,16 +160,25 @@ export default function SchoolTable (props: Props) {
     const deleteSelectedRow = async (row: SchoolRow) => {
         const selectedSchool = findSchool(row);
         if (!selectedSchool) return;
-        if (!await prompt({
-            variant: `error`,
-            title: `Delete School`,
-            okLabel: `Delete`,
-            content: <>
-                <DialogContentText>Are you sure you want to delete {`"${selectedSchool.school_name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{selectedSchool.school_name}</strong> to confirm deletion.</DialogContentText>
-            </>,
-            validations: [ required(), equals(selectedSchool.school_name) ],
-        })) return;
+        if (
+            !(await prompt({
+                variant: `error`,
+                title: `Delete School`,
+                okLabel: `Delete`,
+                content: (
+                    <>
+                        <DialogContentText>
+                            Are you sure you want to delete {`"${selectedSchool.school_name}"`}?
+                        </DialogContentText>
+                        <DialogContentText>
+                            Type <strong>{selectedSchool.school_name}</strong> to confirm deletion.
+                        </DialogContentText>
+                    </>
+                ),
+                validations: [ required(), equals(selectedSchool.school_name) ],
+            }))
+        )
+            return;
         const { school_id } = selectedSchool;
         try {
             await deleteSchool({
@@ -231,6 +253,7 @@ export default function SchoolTable (props: Props) {
                     })}
                 />
             </Paper>
+
             <CreateSchoolDialog
                 open={openCreateDialog}
                 onClose={(value) => {
@@ -238,6 +261,7 @@ export default function SchoolTable (props: Props) {
                     if (value) refetch();
                 }}
             />
+
             <EditSchoolDialog
                 open={openEditDialog}
                 value={selectedSchool}
