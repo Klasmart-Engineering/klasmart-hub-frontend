@@ -1,5 +1,10 @@
+import {
+    ClassUser,
+    useDeleteClassStudent,
+    useDeleteClassTeacher,
+    useGetClassRoster,
+} from "@/api/classRoster";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
-import { User } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
@@ -29,56 +34,58 @@ const useStyles = makeStyles(() =>
         },
     }));
 
-interface ClassRosterRow {
-    id: string;
-    username: string;
-    role: string;
-    address: string;
-    email: string;
-    phoneNumber: string;
-}
-
 interface Props {
-    open: boolean;
     onClose: () => void;
+    classId: string;
+    organizationId: string;
 }
 
 export default function ClassRoster (props: Props) {
-    const { open, onClose } = props;
+    const {
+        onClose,
+        classId,
+        organizationId,
+    } = props;
 
     const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
-    const [ selectedUser, setSelectedUser ] = useState<User>();
     const { required, equals } = useValidations();
+    const [ deleteStudent ] = useDeleteClassStudent();
+    const [ deleteTeacher ] = useDeleteClassTeacher();
+    const {
+        data,
+        refetch,
+    } = useGetClassRoster({
+        variables: {
+            class_id: classId,
+        },
+    });
 
-    const rows = [
-        {
-            id: `1`,
-            user_id: `1`,
-            username: `User 01`,
+    let classInfo = data?.class || {
+        students: [],
+        teachers: [],
+    };
+
+    classInfo = {
+        students: classInfo.students.map((user: ClassUser) => ({
+            ...user,
             role: `Student`,
-            address: `Address 1`,
-            email: `user01@01.com`,
-            phoneNumber: `+82 (0)  2-514-6421`,
-        },
-        {
-            id: `2`,
-            user_id: `2`,
-            username: `User 02`,
+            user_id: `${user.user_id}-student`,
+        })),
+        teachers: classInfo.teachers.map((user: ClassUser) => ({
+            ...user,
             role: `Teacher`,
-            address: `Address 2`,
-            email: `user02@02.com`,
-            phoneNumber: `+82 (0)  2-514-9999`,
-        },
-    ];
+            user_id: `${user.user_id}-teacher`,
+        })),
+    };
 
+    const rows: ClassUser[] = [ ...classInfo.students, ...classInfo.teachers ];
     const roles = [ `Student`, `Teacher` ];
-
-    const columns: TableColumn<ClassRosterRow>[] = [
+    const columns: TableColumn<ClassUser>[] = [
         {
-            id: `id`,
+            id: `user_id`,
             label: `Id`,
             hidden: true,
         },
@@ -95,29 +102,23 @@ export default function ClassRoster (props: Props) {
             })),
         },
         {
-            id: `address`,
-            label: `Address`,
-        },
-        {
             id: `email`,
             label: `Email`,
             disableSort: true,
         },
         {
-            id: `phoneNumber`,
+            id: `phone`,
             label: `Phone number`,
         },
     ];
 
-    const findClass = (row: ClassRosterRow) => rows.find((user) => user.user_id === row.id);
+    const findClass = (row: ClassUser) => rows.find((user) => user.user_id === row.user_id);
 
-    const handleRemoveUser = async (row: ClassRosterRow) => {
+    const handleRemoveUser = async (row: ClassUser) => {
         const selectedUser = findClass(row);
         if (!selectedUser) return;
 
-        setSelectedUser(selectedUser);
-
-        const { username } = selectedUser;
+        const { username, email } = selectedUser;
 
         if (
             !(await prompt({
@@ -127,22 +128,37 @@ export default function ClassRoster (props: Props) {
                 content: (
                     <>
                         <DialogContentText>
-                            Are you sure you want to remove {`"${username}"`} from the class?
+                            Are you sure you want to remove {`"${username || email}"`} from the class?
                         </DialogContentText>
                         <DialogContentText>
                             Type <strong>{username}</strong> to confirm removing.
                         </DialogContentText>
                     </>
                 ),
-                validations: [ required(), equals(username) ],
+                validations: [ required(), equals(username || email) ],
             }))
         )
             return;
+
+        const deleteProps = {
+            variables: {
+                class_id: classId,
+                user_id: selectedUser.user_id.replace(`-student`, ``).replace(`-teacher`, ``),
+            },
+        };
+
+        if (selectedUser.role === `Student`) {
+            await deleteStudent(deleteProps);
+        } else {
+            await deleteTeacher(deleteProps);
+        }
+
+        refetch();
     };
 
     return (
         <FullScreenDialog
-            open={open}
+            open={true}
             title="Class Roster"
             onClose={() => {
                 onClose();
@@ -152,7 +168,7 @@ export default function ClassRoster (props: Props) {
                 <PageTable
                     columns={columns}
                     rows={rows}
-                    idField="id"
+                    idField="user_id"
                     groupBy="role"
                     primaryAction={{
                         label: `Add User`,
@@ -183,12 +199,20 @@ export default function ClassRoster (props: Props) {
                 />
             </Paper>
 
-            <SchoolRoster
-                open={schoolRosterDialogOpen}
-                onClose={() => {
-                    setSchoolRosterDialogOpen(false);
-                }}
-            />
+            {classId &&
+                <SchoolRoster
+                    open={schoolRosterDialogOpen}
+                    refetchClassRoster={refetch}
+                    classId={classId}
+                    existingStudents={classInfo.students.map((user: ClassUser) => user.user_id)}
+                    existingTeachers={classInfo.teachers.map((user: ClassUser) => user.user_id)}
+                    organizationId={organizationId}
+                    onClose={() => {
+                        refetch();
+                        setSchoolRosterDialogOpen(false);
+                    }}
+                />
+            }
         </FullScreenDialog>
     );
 }

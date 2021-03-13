@@ -134,6 +134,7 @@ export default function ClassesTable (props: Props) {
 
     const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
+    const [ classRosterId, setClassRosterId ] = useState<string | null>(null);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
     const [ rows, setRows ] = useState<ClassRow[]>([]);
     const { required, equals } = useValidations();
@@ -247,7 +248,10 @@ export default function ClassesTable (props: Props) {
                 <Link
                     href={undefined}
                     className={classes.clickable}
-                    onClick={() => setClassRosterDialogOpen(true)}
+                    onClick={() => {
+                        setClassRosterId(row.id);
+                        setClassRosterDialogOpen(true);
+                    }}
                 >
                     {row.name}
                 </Link>
@@ -427,12 +431,15 @@ export default function ClassesTable (props: Props) {
                 }}
             />
 
-            <ClassRoster
-                open={classRosterDialogOpen}
-                onClose={() => {
-                    setClassRosterDialogOpen(false);
-                }}
-            />
+            {classRosterId &&
+                <ClassRoster
+                    organizationId={organization_id}
+                    classId={classRosterId}
+                    onClose={() => {
+                        setClassRosterId(null);
+                    }}
+                />
+            }
         </>
     );
 }

@@ -1,3 +1,8 @@
+import {
+    ClassUser,
+    useAddUsersToClass,
+    useGetClassRosterEligibleUsers,
+} from "@/api/classRoster";
 import { getTableLocalization } from "@/utils/table";
 import {
     createStyles,
@@ -9,7 +14,8 @@ import {
     PageTable,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import React from "react";
+import React,
+{ useState } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles(() =>
@@ -21,45 +27,67 @@ const useStyles = makeStyles(() =>
 
 interface ClassRosterRow {
     id: string;
-    username: string;
+    username: string | undefined;
     role: string;
-    address: string;
     email: string;
-    phoneNumber: string;
+    phoneNumber: string | null;
 }
 
 interface Props {
     open: boolean;
     onClose: () => void;
+    classId: string;
+    organizationId: string;
+    existingStudents: string[];
+    existingTeachers: string[];
+    refetchClassRoster: () => void;
 }
 
 export default function SchoolRoster (props: Props) {
-    const { open, onClose } = props;
-
+    const {
+        open,
+        onClose,
+        classId,
+        organizationId,
+        existingStudents,
+        existingTeachers,
+        refetchClassRoster,
+    } = props;
     const classes = useStyles();
     const intl = useIntl();
+    const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
+    const [ addUsersToClass ] = useAddUsersToClass();
 
-    const rows = [
-        {
-            id: `3`,
-            username: `User 03`,
+    const { data } =  useGetClassRosterEligibleUsers({
+        variables: {
+            class_id: classId,
+            organization_id: organizationId,
+        },
+    });
+
+    const students = data?.class
+        ?.eligibleStudents?.filter((student: ClassUser) => student.school_memberships?.length)
+        .filter((student: ClassUser) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
+        .map((student: ClassUser) => ({
+            id: `${student.user_id}-student`,
+            username: student.user_name,
             role: `Student`,
-            address: `Address 3`,
-            email: `user03@03.com`,
-            phoneNumber: `+82 (0)  2-514-6403`,
-        },
-        {
-            id: `4`,
-            username: `User 04`,
+            email: student.email,
+            phoneNumber: student.phone,
+        }));
+    const teachers = data?.class
+        ?.eligibleTeachers?.filter((teacher: ClassUser) => teacher.school_memberships?.length)
+        .filter((teacher: ClassUser) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
+        .map((teacher: ClassUser) => ({
+            id: `${teacher.user_id}-teacher`,
+            username: teacher.user_name,
             role: `Teacher`,
-            address: `Address 4`,
-            email: `user04@04.com`,
-            phoneNumber: `+82 (0)  2-514-9904`,
-        },
-    ];
+            email: teacher.email,
+            phoneNumber: teacher.phone,
+        }));
 
+    const rows = teachers && students ? [ ...students, ...teachers ] : [];
     const roles = [ `Student`, `Teacher` ];
-
     const columns: TableColumn<ClassRosterRow>[] = [
         {
             id: `id`,
@@ -79,10 +107,6 @@ export default function SchoolRoster (props: Props) {
             })),
         },
         {
-            id: `address`,
-            label: `Address`,
-        },
-        {
             id: `email`,
             label: `Email`,
             disableSort: true,
@@ -93,13 +117,36 @@ export default function SchoolRoster (props: Props) {
         },
     ];
 
+    const addUsers = async () => {
+        if (!selectedIds.length) {
+            return;
+        }
+
+        let studentIds = selectedIds.filter((id: string) => id.match(/-student/gi));
+        studentIds = [ ...existingStudents, ...studentIds ].map((id: string) => (id.replace(`-student`, ``)));
+
+        let teacherIds = selectedIds.filter((id: string) => id.match(/-teacher/gi));
+        teacherIds = [ ...existingTeachers, ...teacherIds ].map((id: string) => (id.replace(`-teacher`, ``)));
+
+        await addUsersToClass({
+            variables: {
+                class_id: classId,
+                student_ids: studentIds,
+                teacher_ids: teacherIds,
+            },
+        });
+
+        refetchClassRoster();
+        onClose();
+    };
+
     return (
         <FullScreenDialog
             open={open}
             title="Add User"
             action={{
                 label: `Add`,
-                onClick: () => console.log(`clicked`),
+                onClick: addUsers,
             }
             }
             onClose={() => {
@@ -126,7 +173,7 @@ export default function SchoolRoster (props: Props) {
                             }),
                         },
                     })}
-                    onSelected={(rows) => console.log(rows)}
+                    onSelected={(rows) => setSelectedIds(rows as string[])}
                 />
             </Paper>
         </FullScreenDialog>
