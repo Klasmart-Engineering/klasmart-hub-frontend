@@ -3,6 +3,7 @@ import {
     useLeaveMembership,
 } from "@/api/organizations";
 import { userIdVar } from "@/cache";
+import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client/react";
 import {
@@ -71,7 +72,7 @@ export default function JoinedOrganizationTable (props: Props) {
         }
         const myEmail = data?.me?.email;
         const rows = memberships
-            .filter((membership) => myEmail !== membership?.organization?.owner?.email && membership?.status === `active`)
+            .filter((membership) => myEmail !== membership?.organization?.owner?.email && membership?.status === Status.ACTIVE)
             .map((membership) => ({
                 id: membership.organization?.organization_id ?? ``,
                 name: membership.organization?.organization_name ?? ``,
@@ -187,7 +188,7 @@ export default function JoinedOrganizationTable (props: Props) {
                                 id: `allOrganization_leaveOrganizationButton`,
                             }),
                             icon: ExitToAppIcon,
-                            disabled: row.status === `inactive`,
+                            disabled: row.status === Status.INACTIVE,
                             onClick: (row) => showConfirmLeaveOrganization(row),
                         },
                     ]}

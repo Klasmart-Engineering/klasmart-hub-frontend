@@ -1,4 +1,7 @@
-import { AgeRange } from "@/types/graphQL";
+import {
+    AgeRange,
+    NON_SPECIFIED,
+} from "@/types/graphQL";
 
 export const buildEmptyAgeRange = (): AgeRange => ({
     id: ``,
@@ -13,7 +16,7 @@ const buildUnit = (unit: string) => {
 };
 
 export const buildAgeRangeLabel = (ageRange: AgeRange) => {
-    if (ageRange.system && ageRange.name === `Non specified`) return `Non specified`;
+    if (ageRange.system && ageRange.name === NON_SPECIFIED) return NON_SPECIFIED;
     const showFromUnit = ageRange.low_value_unit !== ageRange.high_value_unit;
     return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
 };

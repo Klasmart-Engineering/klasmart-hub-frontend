@@ -2,7 +2,10 @@ import {
     useDeleteOrganizationOwnership,
     useGetOrganizationOwnerships,
 } from "@/api/organizations";
-import { OrganizationOwnership } from "@/types/graphQL";
+import {
+    OrganizationOwnership,
+    Status,
+} from "@/types/graphQL";
 import { history } from "@/utils/history";
 import { getTableLocalization } from "@/utils/table";
 import {
@@ -107,7 +110,7 @@ export default function MyOrganizationTable (props: Props) {
             email: organizationOwnership?.user?.email ?? ``,
             roles:
                     organizationOwnership?.organization?.roles
-                        ?.filter((role) => role.status === `active`)
+                        ?.filter((role) => role.status === Status.ACTIVE)
                         .map((role) => role.role_name ?? ``) ?? [],
             status: organizationOwnership?.status ? intl.formatMessage({
                 id: `data_${organizationOwnership?.status}Status`,
@@ -189,8 +192,8 @@ export default function MyOrganizationTable (props: Props) {
             render: (row) =>
                 <span
                     className={clsx({
-                        [classes.activeColor]: row.status === `active`,
-                        [classes.inactiveColor]: row.status === `inactive`,
+                        [classes.activeColor]: row.status === Status.ACTIVE,
+                        [classes.inactiveColor]: row.status === Status.INACTIVE,
                     })}
                 >
                     {row.status}
@@ -219,7 +222,7 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_editButton`,
                             }),
                             icon: EditIcon,
-                            disabled: row.status === `inactive`,
+                            disabled: row.status === Status.INACTIVE,
                             onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
                         },
                         {
@@ -227,7 +230,7 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_deleteButton`,
                             }),
                             icon: DeleteIcon,
-                            disabled: row.status === `inactive`,
+                            disabled: row.status === Status.INACTIVE,
                             onClick: (row) => showConfirmDeleteOrganization(row),
                         },
                     ]}

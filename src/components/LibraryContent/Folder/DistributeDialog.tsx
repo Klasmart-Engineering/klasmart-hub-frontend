@@ -1,6 +1,7 @@
 import { useGetAllOrganizations } from "@/api/organizations";
 import { useRestAPI } from "@/api/restapi";
 import { currentMembershipVar } from "@/cache";
+import { Status } from "@/types/graphQL";
 import { ContentItemDetails } from "@/types/objectTypes";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -157,7 +158,7 @@ export default function (props: Props) {
 
     useEffect(() => {
         const rows: OrganizationRow[] = dataOrganizations?.organizations
-            ?.filter((organization) => organization.status === `active` && organization?.organization_id !== organization_id)
+            ?.filter((organization) => organization.status === Status.ACTIVE && organization?.organization_id !== organization_id)
             .map((organization) => ({
                 id: organization?.organization_id ?? ``,
                 name: organization?.organization_name ?? ``,

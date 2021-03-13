@@ -5,7 +5,10 @@ import {
 import { currentMembershipVar } from "@/cache";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
-import { AgeRange } from "@/types/graphQL";
+import {
+    AgeRange,
+    Status,
+} from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
@@ -70,7 +73,7 @@ export default function (props: Props) {
     });
 
     useEffect(() => {
-        const rows = data?.organization?.ageRanges?.filter((range: AgeRange) => range.status === `active`)
+        const rows = data?.organization?.ageRanges?.filter((range: AgeRange) => range.status === Status.ACTIVE)
             .map((range: AgeRange): AgeRangeRow => ({
                 ...range,
                 ageRange: buildAgeRangeLabel(range),
@@ -137,7 +140,6 @@ export default function (props: Props) {
                 variant: `success`,
             });
         } catch (err) {
-            console.error(err);
             enqueueSnackbar(`Sorry, something went wrong, please try again`, {
                 variant: `error`,
             });
@@ -190,7 +192,6 @@ export default function (props: Props) {
                 value={selectedAgeRange}
                 refetch={refetch}
                 onClose={(ageRange) => {
-                    console.log(`ageRange`, ageRange);
                     setSelectedAgeRange(undefined);
                     setOpenEditDialog(false);
                 }}

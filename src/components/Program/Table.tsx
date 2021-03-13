@@ -110,7 +110,11 @@ export default function ProgramTable (props: Props) {
             system: program.system ?? false,
         })) ?? [];
         setRows(rows);
-    }, [ data, canView ]);
+    }, [
+        data,
+        canView,
+        programs,
+    ]);
 
     const columns: TableColumn<ProgramRow>[] = [
         {
@@ -222,7 +226,7 @@ export default function ProgramTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={disabled === false}
+                    showCheckboxes={!disabled}
                     idField="id"
                     rows={rows}
                     columns={columns}

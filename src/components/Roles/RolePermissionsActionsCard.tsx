@@ -1,4 +1,5 @@
 import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { Status } from "@/types/graphQL";
 import {
     MenuItem,
     TextField,
@@ -12,7 +13,8 @@ import {
     Theme,
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import React, { ChangeEvent } from "react";
+import React,
+{ ChangeEvent } from "react";
 import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,8 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: {
             marginRight: theme.spacing(3),
         },
-    }),
-);
+    }));
 
 export interface RolePermissionsAction {
     text: string;
@@ -63,7 +64,7 @@ interface Props {
     textFieldLabel: string;
 }
 
-export default function RolePermissionsActionsCard(props: Props) {
+export default function RolePermissionsActionsCard (props: Props) {
     const {
         roles,
         roleId,
@@ -108,7 +109,7 @@ export default function RolePermissionsActionsCard(props: Props) {
                             onChange={onChange}
                         >
                             {roles
-                                .filter((role) => role.role_name && role.status === `active`)
+                                .filter((role) => role.role_name && role.status === Status.ACTIVE)
                                 .map((role) => (
                                     <MenuItem
                                         key={role.role_id}

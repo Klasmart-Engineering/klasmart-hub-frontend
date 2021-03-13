@@ -2,7 +2,10 @@ import ClassesStep from "./Steps/Classes";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
 import SummaryStep from "./Steps/Summary";
-import { useUpdateSchool } from "@/api/schools";
+import {
+    useEditSchoolPrograms,
+    useUpdateSchool,
+} from "@/api/schools";
 import { School } from "@/types/graphQL";
 import { buildEmptySchool } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
@@ -10,6 +13,7 @@ import {
     Box,
     createStyles,
     makeStyles,
+    Toolbar,
 } from "@material-ui/core";
 import {
     Button,
@@ -27,15 +31,12 @@ import React,
 } from "react";
 
 const useStyles = makeStyles((theme) => createStyles({
-    paper: {
-        padding: theme.spacing(3),
-    },
     actionsContainer: {
-        margin: theme.spacing(2, 0),
+        backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));
 
-const INITIAL_STEP_INDEX = 3;
+const INITIAL_STEP_INDEX = 2;
 
 interface Props {
     open: boolean;
@@ -57,6 +58,7 @@ export default function EditSchoolDialog (props: Props) {
     } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const [ updateSchool ] = useUpdateSchool();
+    const [ editSchoolPrograms ] = useEditSchoolPrograms();
     const [ editedSchool, setEditedSchool ] = useState(value ?? buildEmptySchool());
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
@@ -89,8 +91,8 @@ export default function EditSchoolDialog (props: Props) {
                 error: [
                     required()(editedSchool?.school_name),
                     alphanumeric()(editedSchool?.school_name),
-                    max(10)(editedSchool?.short_code?.length),
-                    alphanumeric()(editedSchool?.short_code ?? ``), // TODO: fix temp fix and remove "?? ``" part
+                    max(10)(editedSchool?.shortcode?.length),
+                    alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -101,14 +103,14 @@ export default function EditSchoolDialog (props: Props) {
                 />,
                 error: [ required()(editedSchool?.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
-            {
-                label: `Classes`,
-                content: <ClassesStep
-                    value={editedSchool}
-                    onChange={handleChange}
-                />,
-                error: [ required()(editedSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
-            },
+            // {
+            //     label: `Classes`,
+            //     content: <ClassesStep
+            //         value={editedSchool}
+            //         onChange={handleChange}
+            //     />,
+            //     error: [ required()(editedSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
+            // },
             {
                 label: `Summary`,
                 content: <SummaryStep
@@ -121,14 +123,25 @@ export default function EditSchoolDialog (props: Props) {
     }, [ editedSchool ]);
 
     const handleSave = async () => {
-        const { school_name } = editedSchool;
         if (!value) return;
-        const { school_id } = value;
+        const {
+            school_id,
+            school_name,
+            programs,
+            shortcode,
+        } = editedSchool;
         try {
             await updateSchool({
                 variables: {
                     school_id,
                     school_name: school_name ?? ``,
+                    shortcode: shortcode ?? undefined,
+                },
+            });
+            await editSchoolPrograms({
+                variables: {
+                    school_id,
+                    program_ids: programs?.map((program) => program.id).filter((id): id is string => !!id) ?? [],
                 },
             });
             onClose(editedSchool);
@@ -146,11 +159,6 @@ export default function EditSchoolDialog (props: Props) {
         <FullScreenDialog
             open={open}
             title="Edit School"
-            action={{
-                label: `Save`,
-                disabled: steps_.some((step) => step.error),
-                onClick: handleSave,
-            }}
             header={
                 <Stepper
                     step={stepIndex_}
@@ -158,36 +166,40 @@ export default function EditSchoolDialog (props: Props) {
                     onChange={setStepIndex}
                 />
             }
+            footer={
+                <Toolbar className={classes.actionsContainer}>
+                    <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        flex="1"
+                    >
+                        <Button
+                            label="Previous"
+                            variant="contained"
+                            color="primary"
+                            disabled={stepIndex_ === 0}
+                            onClick={() => setStepIndex((value) => value - 1)}
+                        />
+                        <Button
+                            label="Save"
+                            variant="contained"
+                            color="primary"
+                            disabled={steps_.some((step) => step.error)}
+                            onClick={handleSave}
+                        />
+                        <Button
+                            label="Next"
+                            variant="contained"
+                            color="primary"
+                            disabled={stepIndex_ === steps_.length - 1}
+                            onClick={() => setStepIndex((value) => value + 1)}
+                        />
+                    </Box>
+                </Toolbar>
+            }
             onClose={() => onClose()}
         >
             {StepComponent && StepComponent}
-            <Box
-                display="flex"
-                justifyContent="space-between"
-                className={classes.actionsContainer}
-            >
-                <Button
-                    label="Previous"
-                    variant="contained"
-                    color="primary"
-                    disabled={stepIndex_ === 0}
-                    onClick={() => setStepIndex((value) => value - 1)}
-                />
-                <Button
-                    label="Save"
-                    variant="contained"
-                    color="primary"
-                    disabled={steps_.some((step) => step.error)}
-                    onClick={handleSave}
-                />
-                <Button
-                    label="Next"
-                    variant="contained"
-                    color="primary"
-                    disabled={stepIndex_ === steps_.length - 1}
-                    onClick={() => setStepIndex((value) => value + 1)}
-                />
-            </Box>
         </FullScreenDialog>
     );
 }

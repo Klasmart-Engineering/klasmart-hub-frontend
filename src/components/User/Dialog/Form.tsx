@@ -1,7 +1,10 @@
 import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
 import { useGetSchools } from "@/api/schools";
 import { currentMembershipVar } from "@/cache";
-import { OrganizationMembership } from "@/types/graphQL";
+import {
+    OrganizationMembership,
+    Status,
+} from "@/types/graphQL";
 import { roleNameTranslations } from "@/utils/userRoles";
 import {
     emailAddressRegex,
@@ -73,10 +76,12 @@ export default function UserDialogForm (props: Props) {
             organization_id,
         },
     });
-    const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
-    const allRoles = organizationData?.organization?.roles?.filter((role) => role.status === `active`) ?? [];
+    const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === Status.ACTIVE) ?? [];
+    const allRoles = organizationData?.organization?.roles?.filter((role) => role.status === Status.ACTIVE) ?? [];
     const [ givenName, setGivenName ] = useState(value.user?.given_name ?? ``);
+    const [ givenNameValid, setGivenNameValid ] = useState(true);
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
+    const [ familyNameValid, setFamilyNameValid ] = useState(true);
     const [ schools, setSchools ] = useState(value.schoolMemberships ?? []);
     const [ roles, setRoles ] = useState(value.roles ?? []);
     const [ roleIdsValid, setRoleIdsValid ] = useState(false);
@@ -84,8 +89,18 @@ export default function UserDialogForm (props: Props) {
     const { required } = useValidations();
 
     useEffect(() => {
-        onValidation(roleIdsValid && !getContactInfoHelperText(contactInfo));
-    }, [ roleIdsValid, contactInfo ]);
+        onValidation([
+            givenNameValid,
+            familyNameValid,
+            roleIdsValid,
+            !getContactInfoHelperText(contactInfo),
+        ].every((valid) => valid));
+    }, [
+        givenNameValid,
+        familyNameValid,
+        roleIdsValid,
+        contactInfo,
+    ]);
 
     useEffect(() => {
         const userId = value.user?.user_id ?? ``;
@@ -130,6 +145,7 @@ export default function UserDialogForm (props: Props) {
                 autoFocus={!value?.user?.user_id}
                 validations={[ required() ]}
                 onChange={setGivenName}
+                onValidate={setGivenNameValid}
             />
             <TextField
                 fullWidth
@@ -141,6 +157,7 @@ export default function UserDialogForm (props: Props) {
                 type="text"
                 validations={[ required() ]}
                 onChange={setFamilyName}
+                onValidate={setFamilyNameValid}
             />
             <Select
                 multiple

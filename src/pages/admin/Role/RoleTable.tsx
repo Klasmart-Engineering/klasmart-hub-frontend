@@ -12,6 +12,7 @@ import CreateAndEditRoleDialog, {
 } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
 import ViewRoleDetailsDialog from "@/pages/admin/Role/ViewRoleDetailsDialog";
+import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
@@ -136,7 +137,7 @@ export default function RoleTable () {
     useEffect(() => {
         if (roles.length) {
             const rows: RoleRow[] = roles
-                .filter((role) => role.status === `active`)
+                .filter((role) => role.status === Status.ACTIVE)
                 .map((role) => ({
                     id: role.role_id,
                     role: checkRoleMatch(role.role_name)

@@ -10,6 +10,7 @@ import ViewClassDialog from "@/components/Class/Dialog/View";
 import globalCss from "@/globalCss";
 import {
     Class,
+    Status,
     Subject,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
@@ -103,13 +104,20 @@ interface ClassRow {
     students: string[];
 }
 
-interface Props {}
+interface Props {
+    disabled?: boolean;
+    selectedIds?: string[];
+    classItems?: Class[] | null;
+    onSelected?: (ids: string[]) => void;
+}
 
-/**
- * Returns function to show Classes Table in "Classes" section
- * @param  props {Object} intl - The object has a function (formatMessage) that support multiple languages
- */
 export default function ClassesTable (props: Props) {
+    const {
+        disabled,
+        selectedIds,
+        classItems,
+        onSelected,
+    } = props;
     const classes = useStyles();
     const prompt = usePrompt();
     const intl = useIntl();
@@ -143,49 +151,27 @@ export default function ClassesTable (props: Props) {
     const schoolClasses = data?.organization?.classes;
 
     useEffect(() => {
-        const rows = schoolClasses?.map((c) => {
-            const programSubjects: ProgramSubject[] = [];
-
-            c.programs?.forEach((program) => {
-                programSubjects.push({
-                    programName: program.name ?? ``,
-                    subjects: program?.subjects ?? [],
-                });
-            });
-
-            return {
-                id: c.class_id,
-                name: c.class_name ?? ``,
-                schoolNames: c.schools?.map((school) => school.school_name ?? ``) ?? [],
-                programs: c.programs?.map((program) => program.name ?? ``) ?? [],
-                subjects: c.subjects?.map((subject) => subject.name ?? ``) ?? [],
-                grades: c.grades?.map((grade) => grade.name ?? ``) ?? [],
-                ageRanges:
-                    c.age_ranges
-                        ?.filter((ageRange, index, ageRanges) => ageRanges.indexOf(ageRange) === index)
-                        .map((ageRange) => {
-                            const ageRangeProps = {
-                                id: ageRange.id,
-                                from: ageRange.low_value,
-                                fromUnit: ageRange.low_value_unit,
-                                to: ageRange.high_value,
-                                toUnit: ageRange.high_value_unit,
-                            };
-
-                            return buildAgeRangeLabel(ageRangeProps) ?? ``;
-                        }) ?? [],
-                students: c.students?.map((student) => student?.given_name ?? ``) ?? [],
-                teachers: c.teachers?.map((teacher) => teacher?.given_name ?? ``) ?? [],
-                status: c.status ?? ``,
-                programSubjects,
-            };
-        });
-
-        if (canView) {
-            setRows(rows ?? []);
-        } else {
+        if (!canView) {
             setRows([]);
+            return;
         }
+        const rows = (classItems ?? schoolClasses)?.map((classItem) => ({
+            id: classItem.class_id,
+            name: classItem.class_name ?? ``,
+            schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
+            programs: classItem.programs?.map((program) => program.name ?? ``) ?? [],
+            subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
+            grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
+            ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
+            students: classItem.students?.map((student) => student?.given_name ?? ``) ?? [],
+            teachers: classItem.teachers?.map((teacher) => teacher?.given_name ?? ``) ?? [],
+            status: classItem.status ?? ``,
+            programSubjects: classItem.programs?.map((program) => ({
+                programName: program.name ?? ``,
+                subjects: program?.subjects ?? [],
+            })) ?? [],
+        })) ?? [];
+        setRows(rows);
     }, [ schoolClasses, canView ]);
 
     const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
@@ -269,7 +255,17 @@ export default function ClassesTable (props: Props) {
         },
         {
             id: `ageRanges`,
-            label: `Age Range`,
+            label: `Age Ranges`,
+            render: (row) => (
+                <>
+                    {row.ageRanges.map((ageRange, i) => (
+                        <Chip
+                            key={`ageRange-${i}`}
+                            label={ageRange}
+                            className={classes.chip} />
+                    ))}
+                </>
+            ),
         },
         {
             id: `grades`,
@@ -323,8 +319,8 @@ export default function ClassesTable (props: Props) {
             render: (row) => (
                 <span
                     className={clsx(classes.statusText, {
-                        [classes.activeColor]: row.status === `active`,
-                        [classes.inactiveColor]: row.status === `inactive`,
+                        [classes.activeColor]: row.status === Status.ACTIVE,
+                        [classes.inactiveColor]: row.status === Status.INACTIVE,
                     })}
                 >
                     {row.status}
@@ -337,20 +333,22 @@ export default function ClassesTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
+                    showCheckboxes={!disabled}
+                    selectedRows={selectedIds}
                     columns={columns}
                     rows={rows}
                     loading={loading}
                     idField="id"
                     orderBy="name"
-                    primaryAction={{
+                    primaryAction={!disabled ? {
                         label: intl.formatMessage({
                             id: `classes_createClassLabel`,
                         }),
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: () => setCreateDialogOpen(true),
-                    }}
-                    rowActions={(row) => [
+                    } : undefined}
+                    rowActions={!disabled ? (row) => [
                         {
                             label: `View class details`,
                             icon: ViewIcon,
@@ -361,7 +359,6 @@ export default function ClassesTable (props: Props) {
                                     teachers: row.teachers,
                                     students: row.students,
                                 });
-
                                 setViewDialogOpen(true);
                             },
                         },
@@ -370,7 +367,7 @@ export default function ClassesTable (props: Props) {
                                 id: `classes_editRowTooltip`,
                             }),
                             icon: EditIcon,
-                            disabled: !(row.status === `active` && canEdit),
+                            disabled: !(row.status === Status.ACTIVE && canEdit),
                             onClick: editSelectedRow,
                         },
                         {
@@ -378,10 +375,10 @@ export default function ClassesTable (props: Props) {
                                 id: `classes_deleteRowTooltip`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !(row.status === `active` && canDelete),
+                            disabled: !(row.status === Status.ACTIVE && canDelete),
                             onClick: deleteSelectedRow,
                         },
-                    ]}
+                    ] : undefined}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
@@ -399,6 +396,7 @@ export default function ClassesTable (props: Props) {
                             }),
                         },
                     })}
+                    onSelected={onSelected}
                 />
             </Paper>
 

@@ -12,6 +12,7 @@ import {
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { Status } from "@/types/graphQL";
 import { alphanumeric } from "@/utils/validations";
 import {
     createStyles,
@@ -217,7 +218,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
 
         if (alphanumeric(name)) return <FormattedMessage id="rolesInfoCard_alphaNumeric" /> as unknown as string;
 
-        if (roles.find((role) => role.role_name === name && role.status === `active` && name !== row.role)) {
+        if (roles.find((role) => role.role_name === name && role.status === Status.ACTIVE && name !== row.role)) {
             return <FormattedMessage id="rolesInfoCard_nameTaken" /> as unknown as string;
         }
 

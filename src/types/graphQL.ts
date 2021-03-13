@@ -13,7 +13,7 @@ export const orderedSystemRoleNames = [
     `Student`,
 ] as const;
 
-export const NON_SPECIFIED = `Non specified`;
+export const NON_SPECIFIED = `None Specified`;
 
 export enum Status {
     ACTIVE = `active`,
@@ -161,6 +161,7 @@ export interface School {
     classes?: Class[] | null;
     programs?: Program[] | null;
     status?: Status | null;
+    system?: boolean | null;
     memberships?: SchoolMembership[] | null;
 }
 
@@ -183,7 +184,6 @@ export interface Permission {
 }
 
 export interface AgeRange extends BaseEntity {
-    id: string;
     from?: number | null;
     fromUnit?: string | null;
     to?: number | null;

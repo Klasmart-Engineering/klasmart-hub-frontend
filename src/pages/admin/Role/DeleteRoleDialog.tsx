@@ -8,6 +8,7 @@ import { currentMembershipVar } from "@/cache";
 import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
 import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import {
     ApolloQueryResult,
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     }));
 
-const motion = React.forwardRef(function Transition(props: TransitionProps & { children?: React.ReactElement },
+const motion = React.forwardRef(function Transition (props: TransitionProps & { children?: React.ReactElement },
     ref: React.Ref<unknown>) {
     return (
         <Grow
@@ -115,7 +116,7 @@ interface Props {
     refetch: (variables?: Partial<{ organization_id: string }> | undefined) => Promise<ApolloQueryResult<any>>;
 }
 
-export default function DeleteRoleDialog(props: Props) {
+export default function DeleteRoleDialog (props: Props) {
     const {
         open,
         handleClose,
@@ -146,11 +147,11 @@ export default function DeleteRoleDialog(props: Props) {
         if (open && roles.length && memberships.length && schools.length) {
             const users: UserRow[] = [];
             const defaultRole = roles.find((role) => role.role_name === `Student` && role.system_role);
-            const organizationRoles = roles.filter((role) => role.role_id !== row.id && role.status === `active`) ?? [];
+            const organizationRoles = roles.filter((role) => role.role_id !== row.id && role.status === Status.ACTIVE) ?? [];
             memberships?.forEach((membership) => {
                 const role = membership.roles?.find((role) => role.role_id === row.id);
 
-                if (role && membership.status === `active`) {
+                if (role && membership.status === Status.ACTIVE) {
                     users.push({
                         id: membership.user?.user_id ?? ``,
                         name: membership.user?.full_name ?? ``,
@@ -165,7 +166,7 @@ export default function DeleteRoleDialog(props: Props) {
             schools?.forEach((school) => {
                 school.memberships?.forEach((schoolMembership) => {
                     const role = schoolMembership.roles?.find((role) => role.role_id === row.id);
-                    if (role && schoolMembership.status === `active`) {
+                    if (role && schoolMembership.status === Status.ACTIVE) {
                         if (!users.find((user) => user.id === schoolMembership.user?.user_id)) {
                             users.push({
                                 id: schoolMembership.user?.user_id ?? ``,

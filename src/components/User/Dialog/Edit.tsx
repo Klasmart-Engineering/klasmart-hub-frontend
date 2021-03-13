@@ -83,11 +83,10 @@ export default function EditUserDialog (props: Props) {
     const handleDelete = async () => {
         const userName = `${value?.user?.given_name} ${value?.user?.family_name}`;
         if (!confirm(intl.formatMessage({
-                id: `editDialog_deleteConfirm`,
-            }, {
-                userName,
-            }
-        ))) return;
+            id: `editDialog_deleteConfirm`,
+        }, {
+            userName,
+        }))) return;
 
         const {
             organization_id,

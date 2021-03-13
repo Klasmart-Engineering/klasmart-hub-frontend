@@ -6,7 +6,10 @@ import { useGetAllRoles } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import EditUserDialog from "@/components/User/Dialog/Edit";
-import { OrganizationMembership } from "@/types/graphQL";
+import {
+    OrganizationMembership,
+    Status,
+} from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import {
@@ -119,11 +122,11 @@ export default function UserTable (props: Props) {
         const rows = memberships?.map((membership) => {
             const roleNames =
                 membership.roles
-                    ?.filter((role) => role.status === `active`)
+                    ?.filter((role) => role.status === Status.ACTIVE)
                     .map((role) => role.role_name)
                     .filter((roleName): roleName is string => !!roleName) ?? [];
             roleNames.sort(sortRoleNames);
-            const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === `active`).map((s) => s?.school_name ?? ``) ?? [];
+            const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === Status.ACTIVE).map((s) => s?.school_name ?? ``) ?? [];
             schoolNames?.sort(sortSchoolNames);
             return {
                 id: membership?.user?.user_id ?? ``,
@@ -140,7 +143,7 @@ export default function UserTable (props: Props) {
     }, [ memberships ]);
 
     const roles = dataRoles?.organization?.roles
-        ?.filter((role) => role.status === `active`)
+        ?.filter((role) => role.status === Status.ACTIVE)
         .map((role) => role.role_name)
         .filter((roleName): roleName is string => !!roleName)
         .sort(sortRoleNames)
@@ -234,8 +237,8 @@ export default function UserTable (props: Props) {
             groupText: (value: string) => startCase(value),
             render: (row) => <span
                 className={clsx(classes.statusText, {
-                    [classes.activeColor]: row.status === `active`,
-                    [classes.inactiveColor]: row.status === `inactive`,
+                    [classes.activeColor]: row.status === Status.ACTIVE,
+                    [classes.inactiveColor]: row.status === Status.INACTIVE,
                 })}
             >
                 {intl.formatMessage({
@@ -309,7 +312,7 @@ export default function UserTable (props: Props) {
                             id: `users_editButton`,
                         }),
                         icon: EditIcon,
-                        disabled: !(row.status === `active` && canEdit),
+                        disabled: !(row.status === Status.ACTIVE && canEdit),
                         onClick: editSelectedRow,
                     },
                     {
@@ -317,7 +320,7 @@ export default function UserTable (props: Props) {
                             id: `users_deleteButton`,
                         }),
                         icon: DeleteIcon,
-                        disabled: !(row.status === `active` && canDelete),
+                        disabled: !(row.status === Status.ACTIVE && canDelete),
                         onClick: deleteSelectedRow,
                     },
                 ]}

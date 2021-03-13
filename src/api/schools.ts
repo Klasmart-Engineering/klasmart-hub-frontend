@@ -1,8 +1,13 @@
-import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import { DELETE_SCHOOL } from "@/operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "@/operations/mutations/editSchool";
+import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms";
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
-import { Organization } from "@/types/graphQL";
+import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
+import {
+    Organization,
+    Program,
+    School,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -13,10 +18,13 @@ import {
 interface CreateSchoolRequest {
     organization_id: string;
     school_name: string;
+    shortcode?: string;
 }
 
 interface CreateSchoolResponse {
-    organization: Organization;
+    organization: {
+        createSchool: School;
+    };
 }
 
 export const useCreateSchool = (options?: MutationHookOptions<CreateSchoolResponse, CreateSchoolRequest>) => {
@@ -26,15 +34,33 @@ export const useCreateSchool = (options?: MutationHookOptions<CreateSchoolRespon
 interface UpdateSchoolRequest {
     school_id: string;
     school_name: string;
+    shortcode?: string;
 }
 
 interface UpdateSchoolResponse {
-    organization: Organization;
+    school: {
+        school_id: string;
+        set: School[];
+    };
 }
 
 export const useUpdateSchool = (options?: MutationHookOptions<UpdateSchoolResponse, UpdateSchoolRequest>) => {
     return useMutation<UpdateSchoolResponse, UpdateSchoolRequest>(EDIT_SCHOOL, options);
 };
+
+interface EditSchoolProgramsRequest {
+    school_id: string;
+    program_ids: string[];
+}
+
+interface EditSchoolProgramsResponse {
+    editPrograms: Program[];
+}
+
+export const useEditSchoolPrograms = (options?: MutationHookOptions<EditSchoolProgramsResponse, EditSchoolProgramsRequest>) => {
+    return useMutation<EditSchoolProgramsResponse, EditSchoolProgramsRequest>(EDIT_SCHOOL_PROGRAMS, options);
+};
+
 interface DeleteSchoolRequest {
     school_id: string;
 }

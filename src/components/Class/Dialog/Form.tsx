@@ -5,6 +5,7 @@ import {
     Class,
     Grade,
     Program,
+    Status,
     Subject,
 } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
@@ -61,9 +62,9 @@ export default function ClassDialogForm (props: Props) {
         },
     });
 
-    const allSchools = data?.organization?.schools?.filter((s) => s.status === `active`) ?? [];
+    const allSchools = data?.organization?.schools?.filter((s) => s.status === Status.ACTIVE) ?? [];
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
-    const [ programsIds, setProgramsIds ] = useState<string[]>(value.programs?.map((program) => program.id) ?? []);
+    const [ programsIds, setProgramsIds ] = useState<string[]>(value.programs?.map((program) => program.id ?? ``) ?? []);
     const [ allGrades, setAllGrades ] = useState<Grade[]>([]);
     const [ gradesIds, setGradesIds ] = useState<string[]>(value.grades?.map((grade) => grade.id ?? ``) ?? []);
     const [ allSubjects, setAllSubjects ] = useState<Subject[]>([]);
@@ -106,13 +107,11 @@ export default function ClassDialogForm (props: Props) {
                                 grades.push(grade);
                             }
                         });
-
                         program?.subjects?.forEach((subject) => {
                             if (!subjects.find((selectedSubject) => selectedSubject.id === subject.id)) {
                                 subjects.push(subject);
                             }
                         });
-
                         program?.age_ranges?.forEach((ageRange) => {
                             if (!ageRanges.find((selectedAgeRange) => selectedAgeRange.id === ageRange.id)) {
                                 ageRanges.push(ageRange);
@@ -152,8 +151,8 @@ export default function ClassDialogForm (props: Props) {
             class_name: className,
             schools: allSchools.filter((school) => schoolIds.includes(school.school_id)),
             programs: allPrograms.filter((program) => programsIds.includes(program.id)),
-            grades: allGrades.filter((grades) => gradesIds.includes(grades.id)),
-            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id)),
+            grades: allGrades.filter((grades) => gradesIds.includes(grades.id ?? ``)),
+            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id ?? ``)),
             age_ranges: allAgeRanges.filter((ageRange) => ageRangesIds.includes(ageRange.id)),
         };
 
@@ -200,7 +199,7 @@ export default function ClassDialogForm (props: Props) {
                 value={schoolIds}
                 disabled={!canEditSchool}
                 itemText={(school) => school.school_name ?? ``}
-                itemValue={(school) => school.school_id}
+                itemId={(school) => school.school_id}
                 onChange={(values) => {
                     setSchoolIds(values);
                 }}
@@ -212,7 +211,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allPrograms}
                 value={programsIds}
                 itemText={(program) => program.name ?? ``}
-                itemValue={(program) => program.id}
+                itemId={(program) => program.id}
                 onChange={(values) => setProgramsIds(values)}
             />
             <Select
@@ -222,7 +221,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allGrades}
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
-                itemValue={(grade) => grade.id}
+                itemId={(grade) => grade.id ?? ``}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -232,7 +231,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allAgeRanges}
                 value={ageRangesIds}
                 itemText={(ageRange) => ageRange.name ?? ``}
-                itemValue={(ageRange) => ageRange.id}
+                itemId={(ageRange) => ageRange.id}
                 onChange={(values) => setAgeRangesIds(values)}
             />
             <Select
@@ -242,7 +241,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allSubjects}
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}
-                itemValue={(subject) => subject.id}
+                itemId={(subject) => subject.id ?? ``}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>

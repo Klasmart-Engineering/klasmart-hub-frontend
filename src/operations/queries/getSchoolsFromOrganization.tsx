@@ -22,7 +22,14 @@ export const GET_SCHOOLS_FROM_ORGANIZATION = gql`
                     age_ranges {
                         id
                         name
+                        low_value
+                        low_value_unit
+                        high_value
+                        high_value_unit
+                        system
+                        status
                     }
+                    status
                 }
             }
         }

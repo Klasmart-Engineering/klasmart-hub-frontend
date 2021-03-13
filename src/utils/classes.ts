@@ -1,11 +1,14 @@
 import { ClassDetails } from "@/components/Class/Table";
-import { Class } from "@/types/graphQL";
+import {
+    Class,
+    Status,
+} from "@/types/graphQL";
 
 export const buildEmptyClass = (): Class => ({
     class_id: ``,
     class_name: ``,
     schools: [],
-    status: ``,
+    status: Status.ACTIVE,
     programs: [],
     subjects: [],
     grades: [],

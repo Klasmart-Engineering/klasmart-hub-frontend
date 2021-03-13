@@ -2,7 +2,10 @@ import ClassesStep from "./Steps/Classes";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
 import SummaryStep from "./Steps/Summary";
-import { useCreateSchool } from "@/api/schools";
+import {
+    useCreateSchool,
+    useEditSchoolPrograms,
+} from "@/api/schools";
 import { currentMembershipVar } from "@/cache";
 import { School } from "@/types/graphQL";
 import { buildEmptySchool } from "@/utils/schools";
@@ -12,6 +15,7 @@ import {
     Box,
     createStyles,
     makeStyles,
+    Toolbar,
 } from "@material-ui/core";
 import {
     Button,
@@ -30,11 +34,8 @@ import React,
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
-    paper: {
-        padding: theme.spacing(3),
-    },
     actionsContainer: {
-        margin: theme.spacing(2, 0),
+        backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));
 
@@ -54,8 +55,8 @@ export default function CreateSchoolDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ createSchool ] = useCreateSchool();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const [ editSchoolPrograms ] = useEditSchoolPrograms();
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const {
         required,
         alphanumeric,
@@ -93,8 +94,8 @@ export default function CreateSchoolDialog (props: Props) {
                 error: [
                     required()(newSchool?.school_name),
                     alphanumeric()(newSchool?.school_name),
-                    max(10)(newSchool?.short_code?.length),
-                    alphanumeric()(newSchool?.short_code),
+                    max(10)(newSchool?.shortcode?.length),
+                    alphanumeric()(newSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -105,14 +106,14 @@ export default function CreateSchoolDialog (props: Props) {
                 />,
                 error: [ required()(newSchool?.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
-            {
-                label: `Classes`,
-                content: <ClassesStep
-                    value={newSchool}
-                    onChange={handleChange}
-                />,
-                error: [ required()(newSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
-            },
+            // {
+            //     label: `Classes`,
+            //     content: <ClassesStep
+            //         value={newSchool}
+            //         onChange={handleChange}
+            //     />,
+            //     error: [ required()(newSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
+            // },
             {
                 label: `Summary`,
                 content: <SummaryStep
@@ -125,12 +126,25 @@ export default function CreateSchoolDialog (props: Props) {
     }, [ newSchool ]);
 
     const handleCreate = async () => {
-        const { school_name } = newSchool;
+        const {
+            school_name,
+            programs,
+            shortcode,
+        } = newSchool;
         try {
-            await createSchool({
+            const createdSchoolResp = await createSchool({
                 variables: {
                     organization_id,
                     school_name: school_name ?? ``,
+                    shortcode: shortcode ?? undefined,
+                },
+            });
+            const schoolId = createdSchoolResp.data?.organization.createSchool.school_id;
+            if (!schoolId) throw Error(`invalid-school-id`);
+            await editSchoolPrograms({
+                variables: {
+                    school_id: schoolId,
+                    program_ids: programs?.map((program) => program.id).filter((id): id is string => !!id) ?? [],
                 },
             });
             onClose(newSchool);
@@ -154,13 +168,6 @@ export default function CreateSchoolDialog (props: Props) {
             title={intl.formatMessage({
                 id: `schools_createTitle`,
             })}
-            action={{
-                label: intl.formatMessage({
-                    id: `schools_createLabel`,
-                }),
-                disabled: stepIndex_ !== steps_.length - 1 || steps_.some((step) => step.error),
-                onClick: handleCreate,
-            }}
             header={
                 <Stepper
                     step={stepIndex_}
@@ -168,38 +175,44 @@ export default function CreateSchoolDialog (props: Props) {
                     onChange={setStepIndex}
                 />
             }
+            footer={
+                <Toolbar className={classes.actionsContainer}>
+                    <Box
+                        display="flex"
+                        flex="1"
+                        justifyContent="space-between"
+                    >
+                        <Button
+                            label="Previous"
+                            variant="contained"
+                            color="primary"
+                            disabled={stepIndex_ === 0}
+                            onClick={() => setStepIndex((value) => value - 1)}
+                        />
+                        {stepIndex_ === steps_.length - 1 && (
+                            <Button
+                                label={intl.formatMessage({
+                                    id: `schools_createLabel`,
+                                })}
+                                variant="contained"
+                                color="primary"
+                                disabled={steps_.some((step) => step.error)}
+                                onClick={handleCreate}
+                            />
+                        )}
+                        <Button
+                            label="Next"
+                            variant="contained"
+                            color="primary"
+                            disabled={stepIndex_ === steps_.length - 1 || !!steps_[stepIndex_]?.error}
+                            onClick={() => setStepIndex((value) => value + 1)}
+                        />
+                    </Box>
+                </Toolbar>
+            }
             onClose={() => onClose()}
         >
             {StepComponent && StepComponent}
-            <Box
-                display="flex"
-                justifyContent="space-between"
-                className={classes.actionsContainer}
-            >
-                <Button
-                    label="Previous"
-                    variant="contained"
-                    color="primary"
-                    disabled={stepIndex_ === 0}
-                    onClick={() => setStepIndex((value) => value - 1)}
-                />
-                {stepIndex_ === steps_.length - 1 && (
-                    <Button
-                        label="Create"
-                        variant="contained"
-                        color="primary"
-                        disabled={steps_.some((step) => step.error)}
-                        onClick={handleCreate}
-                    />
-                )}
-                <Button
-                    label="Next"
-                    variant="contained"
-                    color="primary"
-                    disabled={stepIndex_ === steps_.length - 1 || !!steps_[stepIndex_]?.error}
-                    onClick={() => setStepIndex((value) => value + 1)}
-                />
-            </Box>
         </FullScreenDialog>
     );
 }

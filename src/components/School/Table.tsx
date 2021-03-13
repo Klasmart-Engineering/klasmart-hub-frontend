@@ -5,7 +5,10 @@ import {
 import { currentMembershipVar } from "@/cache";
 import CreateSchoolDialog from "@/components/School/Dialog/Create";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
-import { School } from "@/types/graphQL";
+import {
+    School,
+    Status,
+} from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -21,7 +24,6 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@material-ui/icons";
-import clsx from "clsx";
 import {
     PageTable,
     usePrompt,
@@ -57,6 +59,7 @@ interface SchoolRow {
     name: string;
     shortCode: string;
     status: string;
+    system: string;
 }
 
 interface Props {}
@@ -87,7 +90,6 @@ export default function SchoolTable (props: Props) {
         refetch,
         loading,
     } = useGetSchools({
-        fetchPolicy: `network-only`,
         variables: {
             organization_id,
         },
@@ -96,23 +98,20 @@ export default function SchoolTable (props: Props) {
     const schools = data?.organization?.schools;
 
     useEffect(() => {
-        const rows: SchoolRow[] =
-            schools
-                ?.filter((school) => school.status === `active`)
-                .map((school) => ({
-                    id: school.school_id,
-                    name: school.school_name ?? ``,
-                    shortCode: school.shortcode ?? ``,
-                    status: school.status ?? ``,
-                })) ?? [];
-
-        if (canView) {
-            setRows(rows ?? []);
-        } else {
+        if (!canView) {
             setRows([]);
         }
-
-    }, [ data ]);
+        const rows: SchoolRow[] = schools
+            ?.filter((school) => school.status === Status.ACTIVE)
+            .map((school) => ({
+                id: school.school_id,
+                name: school.school_name ?? ``,
+                shortCode: school.shortcode ?? ``,
+                system: school.system ? `System Value` : `Custom Value`,
+                status: school.status ?? ``,
+            })) ?? [];
+        setRows(rows);
+    }, [ data, canView ]);
 
     const columns: TableColumn<SchoolRow>[] = [
         {
@@ -131,20 +130,8 @@ export default function SchoolTable (props: Props) {
             label: `Short Code`,
         },
         {
-            id: `status`,
-            label: intl.formatMessage({
-                id: `classes_statusTitle`,
-            }),
-            render: (row) => (
-                <span
-                    className={clsx({
-                        [classes.statusActive]: row.status === `active`,
-                        [classes.statusInactive]: row.status === `inactive`,
-                    })}
-                >
-                    {row.status}
-                </span>
-            ),
+            id: `system`,
+            label: `Type`,
         },
     ];
 
@@ -224,7 +211,7 @@ export default function SchoolTable (props: Props) {
                                 id: `schools_editButton`,
                             }),
                             icon: EditIcon,
-                            disabled: !(row.status === `active` && canEdit),
+                            disabled: !(row.status === Status.ACTIVE && canEdit),
                             onClick: editSelectedRow,
                         },
                         {
@@ -232,7 +219,7 @@ export default function SchoolTable (props: Props) {
                                 id: `schools_deleteButton`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !(row.status === `active` && canDelete),
+                            disabled: !(row.status === Status.ACTIVE && canDelete),
                             onClick: deleteSelectedRow,
                         },
                     ]}

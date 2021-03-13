@@ -5,8 +5,11 @@ import {
 import { currentMembershipVar } from "@/cache";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
-import { Grade } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import {
+    Grade,
+    NON_SPECIFIED,
+    Status,
+} from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -84,11 +87,11 @@ export default function (props: Props) {
 
     useEffect(() => {
         if (data) {
-            const rows = data.organization.grades.filter(grade => grade.status === `active`).map((grade) => ({
+            const rows = data.organization.grades.filter(grade => grade.status === Status.ACTIVE).map((grade) => ({
                 id: grade.id ?? ``,
                 name: grade.name ?? ``,
-                progressFrom: grade.progress_from_grade?.name ?? `Not specified`,
-                progressTo: grade.progress_to_grade?.name ?? `Not specified`,
+                progressFrom: grade.progress_from_grade?.name ?? NON_SPECIFIED,
+                progressTo: grade.progress_to_grade?.name ?? NON_SPECIFIED,
             })) ?? [];
             setRows(rows);
             setGrades(data?.organization.grades);

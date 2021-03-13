@@ -27,7 +27,7 @@ export default function ClassesStep (props: TabContent) {
     const classes = useStyles();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const { required } = useValidations();
-    const [ selectedClassesIds, setSelectedIds ] = useState<string[]>(value.classes?.map((classItem) => classItem.class_id) ?? []);
+    const [ selectedClassesIds, setSelectedIds ] = useState(value.classes?.map((classItem) => classItem.class_id) ?? []);
 
     const { data: classesData } = useGetAllClasses({
         variables: {
@@ -41,7 +41,7 @@ export default function ClassesStep (props: TabContent) {
         onChange?.({
             ...value,
             classes: selectedClassesIds
-                .map((classesId) => classesData?.me?.membership?.organization?.classes?.find((classItem) => classItem.class_id === classesId))
+                .map((classesId) => classesData?.organization?.classes?.find((classItem) => classItem.class_id === classesId))
                 .filter((classItem): classItem is Class => !!classItem),
         });
     }, [ selectedClassesIds ]);
@@ -51,7 +51,7 @@ export default function ClassesStep (props: TabContent) {
             <ClassesTable
                 disabled={disabled}
                 selectedIds={disabled ? undefined : selectedClassesIds}
-                classesItems={disabled ? value.classes : undefined}
+                classItems={disabled ? value.classes : undefined}
                 onSelected={setSelectedIds}
             />
             {!disabled && <FormHelperText error>{selectedClassessError === true ? ` ` : selectedClassessError}</FormHelperText>}

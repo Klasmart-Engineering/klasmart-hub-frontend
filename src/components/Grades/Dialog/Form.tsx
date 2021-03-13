@@ -1,6 +1,9 @@
 import { useGetAllGrades } from "@/api/grades";
 import { currentMembershipVar } from "@/cache";
-import { Grade } from "@/types/graphQL";
+import {
+    Grade,
+    Status,
+} from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client/react";
 import {
@@ -78,7 +81,7 @@ export default function GradeDialogForm (props: Props) {
 
     useEffect(() => {
         if (data) {
-            const rows = data.organization.grades.filter(grade => grade.status === `active`).map((grade) => ({
+            const rows = data.organization.grades.filter(grade => grade.status === Status.ACTIVE).map((grade) => ({
                 id: grade.id ?? ``,
                 name: grade.name ?? ``,
             })) ?? [];
@@ -116,7 +119,7 @@ export default function GradeDialogForm (props: Props) {
                 label="Progress From"
                 value={progressFromId}
                 items={gradeItems}
-                itemValue={({ id }) => id ?? ``}
+                itemId={({ id }) => id ?? ``}
                 itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
@@ -126,7 +129,7 @@ export default function GradeDialogForm (props: Props) {
                 label="Progress To"
                 value={progressToId}
                 items={gradeItems}
-                itemValue={({ id }) => id ?? ``}
+                itemId={({ id }) => id ?? ``}
                 itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}

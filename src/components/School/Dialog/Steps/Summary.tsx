@@ -1,4 +1,4 @@
-import ClassesStep from "./Classes";
+// import ClassesStep from "./Classes";
 import ProgramsStep from "./Programs";
 import SchoolInfoStep from "./SchoolInfo";
 import { TabContent } from "./shared";
@@ -24,10 +24,10 @@ export default function SummaryStep (props: TabContent) {
                 disabled
                 value={value}
             />
-            <ClassesStep
+            {/* <ClassesStep
                 disabled
                 value={value}
-            />
+            /> */}
         </>
     );
 }
