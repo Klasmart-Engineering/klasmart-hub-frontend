@@ -44,6 +44,7 @@ export default function ClassDialogForm (props: Props) {
     const {
         value,
         onChange,
+        onValidation,
     } = props;
     const classes = useStyles();
     const {
@@ -64,13 +65,14 @@ export default function ClassDialogForm (props: Props) {
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
     const [ programsIds, setProgramsIds ] = useState<string[]>(value.programs?.map((program) => program.id) ?? []);
     const [ allGrades, setAllGrades ] = useState<Grade[]>([]);
-    const [ gradesIds, setGradesIds ] = useState<string[]>(value.grades?.map((grade) => grade.id) ?? []);
+    const [ gradesIds, setGradesIds ] = useState<string[]>(value.grades?.map((grade) => grade.id ?? ``) ?? []);
     const [ allSubjects, setAllSubjects ] = useState<Subject[]>([]);
-    const [ subjectsIds, setSubjectsIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id) ?? []);
+    const [ subjectsIds, setSubjectsIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
     const [ allAgeRanges, setAllAgeRanges ] = useState<AgeRange[]>([]);
     const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>(value.age_ranges?.map((ageRange) => ageRange.id) ?? []);
     const [ className, setClassName ] = useState(value.class_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((school) => school.school_id) ?? []);
+    const [ classNameValid, setClassNameValid ] = useState(true);
 
     const programsHandler = () => {
         const programs: Program[] = [];
@@ -169,6 +171,10 @@ export default function ClassDialogForm (props: Props) {
         ageRangesIds,
     ]);
 
+    useEffect(() => {
+        onValidation([ classNameValid ].every((value) => value));
+    }, [ classNameValid ]);
+
     return (
         <div className={classes.root}>
             <TextField
@@ -179,11 +185,12 @@ export default function ClassDialogForm (props: Props) {
                 type="text"
                 autoFocus={!value.class_id}
                 validations={[
-                    required(),
+                    required(`The class name is required`),
                     alphanumeric(),
-                    max(35),
+                    max(35, `Max length of 35 characters`),
                 ]}
                 onChange={(value) => setClassName(value)}
+                onValidate={setClassNameValid}
             />
             <Select
                 fullWidth

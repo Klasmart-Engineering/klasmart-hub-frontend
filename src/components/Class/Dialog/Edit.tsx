@@ -93,14 +93,14 @@ export default function EditClassDialog (props: Props) {
             await editSubjects({
                 variables: {
                     class_id: classId,
-                    subject_ids: subjects?.map((subject) => subject.id) ?? [],
+                    subject_ids: subjects?.map((subject) => subject.id ?? ``) ?? [],
                 },
             });
 
             await editGrades({
                 variables: {
                     class_id: classId,
-                    grade_ids: grades?.map((grade) => grade.id) ?? [],
+                    grade_ids: grades?.map((grade) => grade.id ?? ``) ?? [],
                 },
             });
 

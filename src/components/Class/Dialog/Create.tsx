@@ -82,14 +82,14 @@ export default function CreateClassDialog (props: Props) {
             await createSubjects({
                 variables: {
                     class_id: classId,
-                    subject_ids: subjects?.map((subject) => subject.id) ?? [],
+                    subject_ids: subjects?.map((subject) => subject.id ?? ``) ?? [],
                 },
             });
 
             await createGrades({
                 variables: {
                     class_id: classId,
-                    grade_ids: grades?.map((grade) => grade.id) ?? [],
+                    grade_ids: grades?.map((grade) => grade.id ?? ``) ?? [],
                 },
             });
 
