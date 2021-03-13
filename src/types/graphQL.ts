@@ -1,3 +1,9 @@
+import {
+    Dispatch,
+    SetStateAction,
+    useEffect,
+} from "react";
+
 export const orderedSystemRoleNames = [
     `Super Admin`,
     `Organization Admin`,
@@ -12,6 +18,44 @@ export const NON_SPECIFIED = `Non specified`;
 export enum Status {
     ACTIVE = `active`,
     INACTIVE = `inactive`,
+}
+
+export const isNonSpecified = (entity: BaseEntity) => {
+    return entity?.name === NON_SPECIFIED && !!entity?.system;
+};
+
+export const isOtherSystemValue = (entity: BaseEntity) => {
+    return entity?.name !== NON_SPECIFIED && !!entity?.system;
+};
+
+export const isSystemValue = (entity: BaseEntity) => {
+    return !!entity?.system;
+};
+
+export const isCustomValue = (entity: BaseEntity) => {
+    return !entity?.system;
+};
+
+export const isActive = (entity: BaseEntity) => {
+    return entity?.status === Status.ACTIVE;
+};
+
+export const sortEntitiesByName = (a: BaseEntity, b: BaseEntity) => a.name?.localeCompare(b.name ?? ``) ?? 0;
+
+export const useHandleUpdateNonSpecified = (items: BaseEntity[], setItems: Dispatch<SetStateAction<AgeRange[]>>) => {
+    useEffect(() => {
+        if (!Array.isArray(items) || !items.find(isNonSpecified) || items.length <= 1) return;
+        setItems((items) => isNonSpecified(items[0]) ? items.slice(1) : items.slice(items.length - 1, items.length));
+    }, [ items ]);
+};
+
+// onSelected?: (selectedIds: string[]) => void;
+
+export interface BaseEntity {
+    id?: string;
+    name?: string | null;
+    status?: Status | null;
+    system?: boolean | null;
 }
 
 export interface User {
@@ -138,60 +182,38 @@ export interface Permission {
     permission_description: string;
 }
 
-export interface AgeRange {
+export interface AgeRange extends BaseEntity {
     id: string;
     from?: number | null;
     fromUnit?: string | null;
     to?: number | null;
     toUnit?: string | null;
-    name?: string | null;
     high_value?: number | null;
     high_value_unit?: string | null;
     low_value?: number | null;
     low_value_unit?: string | null;
-    system?: boolean;
-    status?: string;
 }
 
-export interface Grade {
-    id?: string;
-    name?: string | null;
+export interface Grade extends BaseEntity {
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
     progress_from_grade_id?: string | null;
     progress_to_grade_id?: string | null;
-    system?: boolean | null;
-    status?: string | null;
 }
 
-export interface Subject {
-    id?: string | null;
-    name?: string | null;
+export interface Subject extends BaseEntity {
     subcategories?: Subcategory[] | null;
     categories?: Category[] | null;
-    system?: boolean | null;
-    status?: Status | null;
 }
 
-export interface Program {
-    id: string;
-    name?: string | null;
+export interface Program extends BaseEntity {
     age_ranges?: AgeRange[] | null;
     grades?: Grade[] | null;
     subjects?: Subject[] | null;
 }
 
-export interface Category {
-    id?: string;
-    name?: string | null;
+export interface Category extends BaseEntity {
     subcategories?: Subcategory[] | null;
-    system?: boolean | null;
-    status?: Status | null;
 }
 
-export interface Subcategory {
-    id?: string;
-    name?: string | null;
-    system?: boolean | null;
-    status?: Status | null;
-}
+export type Subcategory = BaseEntity

@@ -58,6 +58,7 @@ interface SubjectRow {
 
 interface Props {
     disabled?: boolean;
+    showCheckboxes?: boolean;
     selectedIds?: string[];
     subjects?: Subject[] | null;
     onSelected?: (selectedIds: string[]) => void;
@@ -66,6 +67,7 @@ interface Props {
 export default function SubjectsTable (props: Props) {
     const {
         disabled,
+        showCheckboxes,
         selectedIds,
         subjects,
         onSelected,
@@ -200,7 +202,7 @@ export default function SubjectsTable (props: Props) {
             <Paper className={classes.root}>
                 <PageTable
                     loading={loading}
-                    showCheckboxes={disabled === false}
+                    showCheckboxes={showCheckboxes}
                     idField="id"
                     rows={rows_}
                     columns={columns}

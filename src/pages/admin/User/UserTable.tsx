@@ -127,7 +127,7 @@ export default function UserTable (props: Props) {
             schoolNames?.sort(sortSchoolNames);
             return {
                 id: membership?.user?.user_id ?? ``,
-                name: `${membership?.user?.given_name} ${membership?.user?.family_name}`,
+                name: `${membership?.user?.given_name || `?`} ${membership?.user?.family_name || `?`}`,
                 avatar: membership?.user?.avatar ?? ``,
                 contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
                 roleNames,

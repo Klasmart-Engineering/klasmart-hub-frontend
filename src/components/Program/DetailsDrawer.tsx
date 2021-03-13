@@ -41,14 +41,14 @@ export default function ViewProgramDetailsDrawer (props: Props) {
     return (
         <Drawer
             open={open}
-            title={value?.program_name ?? ``}
+            title={value?.name ?? ``}
             sections={[
                 {
                     header: `Age Ranges`,
                     content: (
                         <Box px={1.5}>{value?.age_ranges?.map((ageRange) => (
                             <Chip
-                                key={ageRange.age_range_id}
+                                key={ageRange.id}
                                 className={classes.chip}
                                 label={buildAgeRangeLabel(ageRange)}
                             />
@@ -60,9 +60,9 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                     content: (
                         <Box px={1.5}>{value?.grades?.map((grade) => (
                             <Chip
-                                key={grade.grade_id}
+                                key={grade.id}
                                 className={classes.chip}
-                                label={grade.grade_name}
+                                label={grade.name}
                             />
                         ))}</Box>
                     ),
@@ -72,9 +72,9 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                     content: (
                         <Box px={1.5}>{value?.subjects?.map((subject) => (
                             <Chip
-                                key={subject.subject_id}
+                                key={subject.id}
                                 className={classes.chip}
-                                label={subject.subject_name}
+                                label={subject.name}
                             />
                         ))}</Box>
                     ),

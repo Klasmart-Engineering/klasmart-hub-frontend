@@ -1,11 +1,20 @@
 import ViewProgramDetailsDrawer from "./DetailsDrawer";
+import {
+    useDeleteProgram,
+    useGetAllPrograms,
+} from "@/api/programs";
+import { currentMembershipVar } from "@/cache";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
-import { Program } from "@/types/graphQL";
+import {
+    isActive,
+    Program,
+} from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -46,6 +55,7 @@ interface ProgramRow {
     grades: string[];
     ageRanges: string[];
     subjects: string[];
+    system: boolean;
 }
 
 interface Props {
@@ -66,6 +76,7 @@ export default function ProgramTable (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ rows, setRows ] = useState<ProgramRow[]>([]);
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
@@ -76,81 +87,30 @@ export default function ProgramTable (props: Props) {
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
     const { required, equals } = useValidations();
-    const dataPrograms: Program[] = [
-        {
-            id: `1`,
-            grades: [
-                {
-                    id: `1`,
-                    name: `Grade 1`,
-                },
-            ],
-            age_ranges: [
-                {
-                    id: `1`,
-                    from: 0,
-                    fromUnit: `year`,
-                    to: 1,
-                    toUnit: `year`,
-                },
-            ],
-            name: `Hello`,
-            subjects: [
-                {
-                    id: `1`,
-                    name: `General`,
-                    categories: [
-                        {
-                            id: `1`,
-                            name: `Some Category 1`,
-                            subcategories: [
-                                {
-                                    id: `1`,
-                                    name: `Subcategory 1`,
-                                },
-                                {
-                                    id: `3`,
-                                    name: `Subcategory 1`,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id: `2`,
-                    name: `Toodles`,
-                    categories: [
-                        {
-                            id: `2`,
-                            name: `Some Category 2`,
-                            subcategories: [
-                                {
-                                    id: `2`,
-                                    name: `Subcategory 2`,
-                                },
-                                {
-                                    id: `4`,
-                                    name: `Subcategory 4`,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
+    const { data, refetch } = useGetAllPrograms({
+        variables: {
+            organization_id,
         },
-    ];
+    });
+    const [ deleteProgram ] = useDeleteProgram();
+
+    const dataPrograms = data?.organization.programs ?? [];
 
     useEffect(() => {
-        const rows = (programs ?? dataPrograms)?.map((program) => ({
-            id: program.id,
+        if (!canView) {
+            setRows([]);
+            return;
+        }
+        const rows = (programs ?? dataPrograms)?.filter(isActive).map((program, i) => ({
+            id: program.id ?? `row-${i}`,
             name: program.name ?? ``,
             grades: program.grades?.map((grade) => grade.name ?? ``) ?? [],
             ageRanges: program.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
             subjects: program.subjects?.map((subject) => subject.name ?? ``) ?? [],
+            system: program.system ?? false,
         })) ?? [];
         setRows(rows);
-    }, []);
-    // }, [ dataPrograms ]);
+    }, [ data, canView ]);
 
     const columns: TableColumn<ProgramRow>[] = [
         {
@@ -221,7 +181,6 @@ export default function ProgramTable (props: Props) {
     const handleEditRowClick = async (row: ProgramRow) => {
         const selectedProgram = findProgram(row);
         if (!selectedProgram) return;
-        console.log(`selectedProgram`, selectedProgram);
         setSelectedProgram(selectedProgram);
         setOpenEditDialog(true);
     };
@@ -230,7 +189,8 @@ export default function ProgramTable (props: Props) {
         const selectedProgram = findProgram(row);
         if (!selectedProgram) return;
         setSelectedProgram(selectedProgram);
-        const { name } = selectedProgram;
+        const { id, name } = selectedProgram;
+        if (!id) throw Error(`invalid-program-id`);
         if (!await prompt({
             variant: `error`,
             title: `Delete Program`,
@@ -241,6 +201,12 @@ export default function ProgramTable (props: Props) {
             </>,
             validations: [ required(), equals(name) ],
         })) return;
+        await deleteProgram({
+            variables: {
+                id,
+            },
+        });
+        await refetch();
         try {
             enqueueSnackbar(`Program successfully deleted`, {
                 variant: `success`,
@@ -256,7 +222,7 @@ export default function ProgramTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
+                    showCheckboxes={disabled === false}
                     idField="id"
                     rows={rows}
                     columns={columns}
@@ -277,13 +243,13 @@ export default function ProgramTable (props: Props) {
                         {
                             label: `Edit`,
                             icon: EditIcon,
-                            disabled: !canEdit,
+                            disabled: !canEdit || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
                             label: `Delete`,
                             icon: DeleteIcon,
-                            disabled: !canDelete,
+                            disabled: !canDelete || row.system,
                             onClick: handleDeleteRowClick,
                         },
                     ] : undefined}
@@ -306,6 +272,7 @@ export default function ProgramTable (props: Props) {
             <CreateProgramDialog
                 open={openCreateDialog}
                 onClose={(program) => {
+                    if (program) refetch();
                     setOpenCreateDialog(false);
                 }}
             />
@@ -313,6 +280,7 @@ export default function ProgramTable (props: Props) {
                 open={openEditDialog}
                 value={selectedProgram}
                 onClose={(program) => {
+                    if (program) refetch();
                     setSelectedProgram(undefined);
                     setOpenEditDialog(false);
                 }}

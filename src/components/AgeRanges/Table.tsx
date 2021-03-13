@@ -157,17 +157,17 @@ export default function (props: Props) {
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
-                    rowActions={() => [
+                    rowActions={(row) => [
                         {
                             label: `Edit`,
                             icon: EditIcon,
-                            disabled: !canEdit,
+                            disabled: !canEdit || !!row.system,
                             onClick: handleEditRowClick,
                         },
                         {
                             label: `Delete`,
                             icon: DeleteIcon,
-                            disabled: !canDelete,
+                            disabled: !canDelete || !!row.system,
                             onClick: handleDeleteRowClick,
                         },
                     ]}

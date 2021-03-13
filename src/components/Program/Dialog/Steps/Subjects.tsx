@@ -1,8 +1,10 @@
 import { TabContent } from "./shared";
+import { useGetAllSubjects } from "@/api/subjects";
+import { currentMembershipVar } from "@/cache";
 import SubjectsTable from "@/components/Subject/Table";
 import { Subject } from "@/types/graphQL";
-import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     FormHelperText,
@@ -24,26 +26,22 @@ export default function SubjectStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const { required } = useValidations();
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ selectedSubjectIds, setSelectedIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
-    const [ selectedSubjectIdsError, setSelectedIdsError ] = useState(!value.subjects?.length ? `At least one subject is required` : ` `);
-    const subjectsData: Subject[] = [
-        buildEmptySubject({
-            id: `1`,
-            name: `General`,
-        }),
-        buildEmptySubject({
-            id: `2`,
-            name: `Toodles`,
-        }),
-    ];
+    const { data: subjectsData } = useGetAllSubjects({
+        variables: {
+            organization_id,
+        },
+    });
 
+    const allSubjects = subjectsData?.organization.subjects ?? [];
     const selectedSubjectsError = required()(value.subjects);
 
     useEffect(() => {
         onChange?.({
             ...value,
             subjects: selectedSubjectIds
-                .map((subjectId) => subjectsData.find((subject) => subject.id === subjectId))
+                .map((subjectId) => allSubjects.find((subject) => subject.id === subjectId))
                 .filter((subject): subject is Subject => !!subject),
         });
     }, [ selectedSubjectIds ]);
@@ -52,6 +50,7 @@ export default function SubjectStep (props: TabContent) {
         <>
             <SubjectsTable
                 disabled={disabled}
+                showCheckboxes={!disabled}
                 selectedIds={disabled ? undefined : selectedSubjectIds}
                 subjects={disabled ? value.subjects : undefined}
                 onSelected={setSelectedIds}

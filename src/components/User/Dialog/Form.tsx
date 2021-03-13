@@ -12,10 +12,13 @@ import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
-    TextField,
+    TextField as TempTextField,
     Theme,
 } from "@material-ui/core";
-import { Select } from "kidsloop-px";
+import {
+    Select,
+    TextField,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
@@ -74,8 +77,8 @@ export default function UserDialogForm (props: Props) {
     const allRoles = organizationData?.organization?.roles?.filter((role) => role.status === `active`) ?? [];
     const [ givenName, setGivenName ] = useState(value.user?.given_name ?? ``);
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schoolMemberships?.map((s) => s.school_id) ?? []);
-    const [ roleIds, setRoleIds ] = useState<string[]>(value.roles?.filter((role) => role.status === `active`).map((role) => role.role_id) ?? []);
+    const [ schools, setSchools ] = useState(value.schoolMemberships ?? []);
+    const [ roles, setRoles ] = useState(value.roles ?? []);
     const [ roleIdsValid, setRoleIdsValid ] = useState(false);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
     const { required } = useValidations();
@@ -98,8 +101,8 @@ export default function UserDialogForm (props: Props) {
                 email,
                 phone,
             },
-            roles: allRoles.filter((r) => roleIds.includes(r.role_id)),
-            schoolMemberships: allSchools.filter((s) => schoolIds.includes(s.school_id)).map((s) => ({
+            roles: allRoles.filter((role) => !!roles.find((r) => r.role_id === role.role_id)),
+            schoolMemberships: allSchools.filter((school) => !!schools.find((s) => s.school_id === school.school_id)).map((s) => ({
                 user_id: userId,
                 school_id: s.school_id,
             })),
@@ -109,8 +112,8 @@ export default function UserDialogForm (props: Props) {
     }, [
         givenName,
         familyName,
-        schoolIds,
-        roleIds,
+        schools,
+        roles,
         contactInfo,
     ]);
 
@@ -118,7 +121,6 @@ export default function UserDialogForm (props: Props) {
         <div className={classes.root}>
             <TextField
                 fullWidth
-                helperText=" "
                 value={givenName}
                 label={intl.formatMessage({
                     id: `createUser_givenNameLabel`,
@@ -126,18 +128,19 @@ export default function UserDialogForm (props: Props) {
                 variant="outlined"
                 type="text"
                 autoFocus={!value?.user?.user_id}
-                onChange={(e) => setGivenName(e.currentTarget.value)}
+                validations={[ required() ]}
+                onChange={setGivenName}
             />
             <TextField
                 fullWidth
-                helperText=" "
                 value={familyName}
                 label={intl.formatMessage({
                     id: `createUser_familyNameLabel`,
                 })}
                 variant="outlined"
                 type="text"
-                onChange={(e) => setFamilyName(e.currentTarget.value)}
+                validations={[ required() ]}
+                onChange={setFamilyName}
             />
             <Select
                 multiple
@@ -146,16 +149,16 @@ export default function UserDialogForm (props: Props) {
                     id: `createUser_rolesLabel`,
                 })}
                 items={allRoles}
-                value={roleIds}
+                value={roles}
                 validations={[ required() ]}
                 itemText={(role) => role.role_name && roleNameTranslations[role.role_name] ? intl.formatMessage({
                     id: roleNameTranslations[role.role_name],
                 }) : role.role_name ?? ``}
-                itemValue={(role) => role.role_id}
+                itemId={(role) => role.role_id}
                 selectAllLabel={intl.formatMessage({
                     id: `users_selectAll`,
                 })}
-                onChange={(values) => setRoleIds(values)}
+                onChange={(values) => setRoles(values)}
                 onValidate={setRoleIdsValid}
             />
             <Select
@@ -165,15 +168,15 @@ export default function UserDialogForm (props: Props) {
                     id: `createUser_schoolsLabel`,
                 })}
                 items={allSchools}
-                value={schoolIds}
+                value={schools}
                 itemText={(school) => school.school_name ?? ``}
-                itemValue={(school) => school.school_id}
+                itemId={(school) => school.school_id}
                 selectAllLabel={intl.formatMessage({
                     id: `users_selectAll`,
                 })}
-                onChange={(values) => setSchoolIds(values)}
+                onChange={(values) => setSchools(values)}
             />
-            <TextField
+            <TempTextField
                 fullWidth
                 disabled={!!value?.user?.user_id}
                 value={contactInfo}
