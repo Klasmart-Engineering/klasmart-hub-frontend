@@ -45,7 +45,7 @@ export default function ProgramInfoStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const { required, alphanumeric } = useValidations();
+    const { required, letternumeric } = useValidations();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ programName, setProgramName ] = useState(value.name ?? ``);
     const [ gradeIds, setGradeIds ] = useState(value.grades?.map((grade) => grade.id ?? ``) ?? []);
@@ -110,7 +110,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     autoFocus={!value.id}
-                    validations={[ required(), alphanumeric() ]}
+                    validations={[ required(), letternumeric() ]}
                     onChange={setProgramName}
                 />
             </Paper>

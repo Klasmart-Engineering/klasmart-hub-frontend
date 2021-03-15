@@ -60,6 +60,7 @@ export default function CreateSchoolDialog (props: Props) {
     const {
         required,
         alphanumeric,
+        letternumeric,
         max,
     } = useValidations();
     const [ newSchool, setNewSchool ] = useState(buildEmptySchool());
@@ -93,7 +94,7 @@ export default function CreateSchoolDialog (props: Props) {
                 />,
                 error: [
                     required()(newSchool?.school_name),
-                    alphanumeric()(newSchool?.school_name),
+                    letternumeric()(newSchool?.school_name),
                     max(10)(newSchool?.shortcode?.length),
                     alphanumeric()(newSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),

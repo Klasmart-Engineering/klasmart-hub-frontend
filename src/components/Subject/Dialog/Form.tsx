@@ -78,7 +78,7 @@ export default function SubjectDialogForm (props: Props) {
     const {
         required,
         equals,
-        alphanumeric,
+        letternumeric,
     } = useValidations();
     const prompt = usePrompt();
     const intl = useIntl();
@@ -128,7 +128,7 @@ export default function SubjectDialogForm (props: Props) {
         const categoryInputs = [
             required()(subjectCategories),
             ...subjectCategories.map((category) => required()(category.name)),
-            ...subjectCategories.map((category) => alphanumeric()(category.name)),
+            ...subjectCategories.map((category) => letternumeric()(category.name)),
             ...subjectCategories.map((category) => required()(category.subcategories)),
         ].filter((error): error is string => error !== true);
         onValidation([ subjectNameValid, categoryInputs.every((error) => !error) ].every((validation) => validation));
@@ -234,7 +234,7 @@ export default function SubjectDialogForm (props: Props) {
                 label="Subject name"
                 type="text"
                 autoFocus={!value.id}
-                validations={[ required() ]}
+                validations={[ required(), letternumeric() ]}
                 onChange={setSubjectName}
                 onValidate={setSubjectNameValid}
             />
@@ -270,7 +270,7 @@ export default function SubjectDialogForm (props: Props) {
                             <CategoryComboBox
                                 value={category}
                                 items={[ category, ...allAvailableCategories ?? [] ].filter((subcategory) => subcategory.status === Status.ACTIVE)}
-                                validations={[ required(), alphanumeric() ]}
+                                validations={[ required(), letternumeric() ]}
                                 menuItemActions={(category) => [
                                     {
                                         icon: category.system ? Lock : Delete,

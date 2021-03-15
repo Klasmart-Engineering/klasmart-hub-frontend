@@ -56,7 +56,7 @@ export default function CreateProgramDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { organization_id } = useReactiveVar(currentMembershipVar);
-    const { required, alphanumeric } = useValidations();
+    const { required, letternumeric } = useValidations();
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
@@ -91,7 +91,7 @@ export default function CreateProgramDialog (props: Props) {
                 />,
                 error: [
                     required()(value_?.name),
-                    alphanumeric()(value_?.name),
+                    letternumeric()(value_?.name),
                     required()(value_?.grades),
                     required()(value_?.age_ranges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),

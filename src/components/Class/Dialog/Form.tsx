@@ -52,7 +52,7 @@ export default function ClassDialogForm (props: Props) {
     const intl = useIntl();
     const {
         required,
-        alphanumeric,
+        letternumeric,
         max,
     } = useValidations();
     const organization = useReactiveVar(currentMembershipVar);
@@ -189,7 +189,7 @@ export default function ClassDialogForm (props: Props) {
                 autoFocus={!value.class_id}
                 validations={[
                     required(`The class name is required`),
-                    alphanumeric(),
+                    letternumeric(),
                     max(35, `Max length of 35 characters`),
                 ]}
                 onChange={(value) => setClassName(value)}

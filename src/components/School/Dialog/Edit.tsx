@@ -54,6 +54,7 @@ export default function EditSchoolDialog (props: Props) {
     const {
         required,
         alphanumeric,
+        letternumeric,
         max,
     } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
@@ -90,7 +91,7 @@ export default function EditSchoolDialog (props: Props) {
                 />,
                 error: [
                     required()(editedSchool?.school_name),
-                    alphanumeric()(editedSchool?.school_name),
+                    letternumeric()(editedSchool?.school_name),
                     max(10)(editedSchool?.shortcode?.length),
                     alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),

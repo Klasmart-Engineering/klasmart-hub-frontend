@@ -29,6 +29,7 @@ export default function SchoolInfoStep (props: TabContent) {
     const {
         required,
         alphanumeric,
+        letternumeric,
         max,
     } = useValidations();
     const [ schoolName, setSchoolName ] = useState(value.school_name ?? ``);
@@ -61,7 +62,7 @@ export default function SchoolInfoStep (props: TabContent) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     autoFocus={!value.school_id}
-                    validations={[ required(), alphanumeric() ]}
+                    validations={[ required(), letternumeric() ]}
                     onChange={setSchoolName}
                 />
             </Paper>
