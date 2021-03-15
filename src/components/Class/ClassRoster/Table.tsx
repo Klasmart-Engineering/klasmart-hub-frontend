@@ -90,7 +90,7 @@ export default function ClassRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `username`,
+            id: `full_name`,
             label: `User name`,
             persistent: true,
         },
