@@ -65,7 +65,7 @@ export default function SchoolInfoStep (props: TabContent) {
                     validations={[
                         required(),
                         letternumeric(),
-                        max(35),
+                        max(35, `Max length 35 of characters`),
                     ]}
                     onChange={setSchoolName}
                 />

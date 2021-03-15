@@ -121,7 +121,6 @@ export default function CreateProgramDialog (props: Props) {
 
     const createProgram = async () => {
         const {
-            id,
             name,
             age_ranges,
             grades,
@@ -133,9 +132,8 @@ export default function CreateProgramDialog (props: Props) {
                     organization_id,
                     programs: [
                         {
-                            id,
                             name: name ?? ``,
-                            age_ranges: age_ranges?.map(({ id }) => id) ?? [],
+                            age_ranges: age_ranges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                         },
