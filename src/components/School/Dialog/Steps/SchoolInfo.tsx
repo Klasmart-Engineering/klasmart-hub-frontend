@@ -62,7 +62,11 @@ export default function SchoolInfoStep (props: TabContent) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     autoFocus={!value.school_id}
-                    validations={[ required(), letternumeric() ]}
+                    validations={[
+                        required(),
+                        letternumeric(),
+                        max(35),
+                    ]}
                     onChange={setSchoolName}
                 />
             </Paper>
