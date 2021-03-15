@@ -134,7 +134,6 @@ export default function ClassesTable (props: Props) {
 
     const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
-    const [ classRosterId, setClassRosterId ] = useState<string | null>(null);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
     const [ rows, setRows ] = useState<ClassRow[]>([]);
     const { required, equals } = useValidations();
@@ -156,7 +155,7 @@ export default function ClassesTable (props: Props) {
             setRows([]);
             return;
         }
-        const rows = (classItems ?? schoolClasses)?.map((classItem) => ({
+        const rows = (classItems ?? schoolClasses)?.filter((classItem) => classItem.status === Status.ACTIVE).map((classItem) => ({
             id: classItem.class_id,
             name: classItem.class_name ?? ``,
             schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
@@ -251,7 +250,9 @@ export default function ClassesTable (props: Props) {
                     href={undefined}
                     className={classes.clickable}
                     onClick={() => {
-                        setClassRosterId(row.id);
+                        const selectedClass = findClass(row);
+                        if (!selectedClass) return;
+                        setSelectedClass(selectedClass);
                         setClassRosterDialogOpen(true);
                     }}
                 >
@@ -354,6 +355,7 @@ export default function ClassesTable (props: Props) {
                     loading={loading}
                     idField="id"
                     orderBy="name"
+                    order="asc"
                     primaryAction={!disabled ? {
                         label: intl.formatMessage({
                             id: `classes_createClassLabel`,
@@ -443,15 +445,15 @@ export default function ClassesTable (props: Props) {
                 }}
             />
 
-            {classRosterId &&
-                <ClassRoster
-                    organizationId={organization_id}
-                    classId={classRosterId}
-                    onClose={() => {
-                        setClassRosterId(null);
-                    }}
-                />
-            }
+            {selectedClass && <ClassRoster
+                open={classRosterDialogOpen}
+                organizationId={organization_id}
+                classItem={selectedClass}
+                onClose={() => {
+                    setSelectedClass(undefined);
+                    setClassRosterDialogOpen(false);
+                }}
+            />}
         </>
     );
 }

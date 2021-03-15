@@ -19,6 +19,7 @@ export const GET_ALL_CLASSES = gql`
                     low_value
                     low_value_unit
                     status
+                    system
                 }
                 programs {
                     id

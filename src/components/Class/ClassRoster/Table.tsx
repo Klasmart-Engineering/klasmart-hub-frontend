@@ -5,9 +5,11 @@ import {
     useGetClassRoster,
 } from "@/api/classRoster";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
+import { Class } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    Box,
     createStyles,
     DialogContentText,
     makeStyles,
@@ -21,29 +23,34 @@ import {
     FullScreenDialog,
     PageTable,
     usePrompt,
+    UserAvatar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        root: {
-            width: `100%`,
-        },
-    }));
+const useStyles = makeStyles((theme) => createStyles({
+    root: {
+        width: `100%`,
+    },
+    userName: {
+        marginLeft: theme.spacing(2),
+    },
+}));
 
 interface Props {
+    open: boolean;
     onClose: () => void;
-    classId: string;
+    classItem: Class;
     organizationId: string;
 }
 
 export default function ClassRoster (props: Props) {
     const {
+        open,
         onClose,
-        classId,
+        classItem,
         organizationId,
     } = props;
 
@@ -59,7 +66,7 @@ export default function ClassRoster (props: Props) {
         refetch,
     } = useGetClassRoster({
         variables: {
-            class_id: classId,
+            class_id: classItem.class_id,
         },
     });
 
@@ -71,11 +78,13 @@ export default function ClassRoster (props: Props) {
     classInfo = {
         students: classInfo.students.map((user: ClassUser) => ({
             ...user,
+            name: `${user.given_name} ${user.family_name}`,
             role: `Student`,
             user_id: `${user.user_id}-student`,
         })),
         teachers: classInfo.teachers.map((user: ClassUser) => ({
             ...user,
+            name: `${user.given_name} ${user.family_name}`,
             role: `Teacher`,
             user_id: `${user.user_id}-teacher`,
         })),
@@ -92,11 +101,24 @@ export default function ClassRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `username`,
+            id: `name`,
             label: intl.formatMessage({
-                id: `class_usernameLabel`,
+                id: `class_nameLabel`,
             }),
             persistent: true,
+            render: (row) => (
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                >
+                    <UserAvatar
+                        name={row.name ?? ``}
+                        size="small"
+                    />
+                    <span className={classes.userName}>{row.name}</span>
+                </Box>
+            ),
         },
         {
             id: `role`,
@@ -128,7 +150,7 @@ export default function ClassRoster (props: Props) {
         const selectedUser = findClass(row);
         if (!selectedUser) return;
 
-        const { username, email } = selectedUser;
+        const { name, email } = selectedUser;
 
         if (
             !(await prompt({
@@ -142,21 +164,21 @@ export default function ClassRoster (props: Props) {
                 content: (
                     <>
                         <DialogContentText>
-                            Are you sure you want to remove {`"${username || email}"`} from the class?
+                            Are you sure you want to remove {`"${name || email}"`} from the class?
                         </DialogContentText>
                         <DialogContentText>
-                            Type <strong>{username}</strong> to confirm removing.
+                            Type <strong>{name}</strong> to confirm removing.
                         </DialogContentText>
                     </>
                 ),
-                validations: [ required(), equals(username || email) ],
+                validations: [ required(), equals(name || email) ],
             }))
         )
             return;
 
         const deleteProps = {
             variables: {
-                class_id: classId,
+                class_id: classItem.class_id,
                 user_id: selectedUser.user_id.replace(`-student`, ``).replace(`-teacher`, ``),
             },
         };
@@ -172,7 +194,7 @@ export default function ClassRoster (props: Props) {
 
     return (
         <FullScreenDialog
-            open={true}
+            open={open}
             title={intl.formatMessage({
                 id: `class_classRosterLabel`,
             })}
@@ -185,6 +207,8 @@ export default function ClassRoster (props: Props) {
                     columns={columns}
                     rows={rows}
                     idField="user_id"
+                    orderBy="name"
+                    order="asc"
                     groupBy="role"
                     primaryAction={{
                         label: `Add User`,
@@ -203,7 +227,7 @@ export default function ClassRoster (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Actual Class Name`,
+                            title: classItem.class_name ?? ``,
                         },
                         search: {
                             placeholder: intl.formatMessage({
@@ -219,11 +243,11 @@ export default function ClassRoster (props: Props) {
                 />
             </Paper>
 
-            {classId &&
+            {classItem &&
                 <SchoolRoster
                     open={schoolRosterDialogOpen}
                     refetchClassRoster={refetch}
-                    classId={classId}
+                    classId={classItem.class_id}
                     existingStudents={classInfo.students.map((user: ClassUser) => user.user_id)}
                     existingTeachers={classInfo.teachers.map((user: ClassUser) => user.user_id)}
                     organizationId={organizationId}

@@ -278,7 +278,7 @@ export default function UserTable (props: Props) {
                 },
             });
             await refetch();
-            enqueueSnackbar(`User has been deleted succesfully`, {
+            enqueueSnackbar(`User has been deleted successfully`, {
                 variant: `success`,
             });
         } catch (error) {

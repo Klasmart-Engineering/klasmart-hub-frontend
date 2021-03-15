@@ -17,7 +17,7 @@ export const useValidations = () => {
     const intl = useIntl();
     return {
         alphanumeric: (errorMessage?: string) => validations.alphanumeric(errorMessage ?? intl.formatMessage({
-            id: `The value is not alphanumeric`,
+            id: `genericValidations_alphanumeric`,
         })),
         equals: (value: any, errorMessage?: string) => validations.equals(value, errorMessage ?? intl.formatMessage({
             id: `genericValidations_equals`,

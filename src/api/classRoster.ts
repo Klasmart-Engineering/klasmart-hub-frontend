@@ -22,7 +22,7 @@ export interface ClassUser {
     given_name: string;
     phone: string | null;
     user_id: string;
-    username: string | null;
+    name: string | null;
     role?: string;
     school_memberships?: string[];
     user_name?: string;

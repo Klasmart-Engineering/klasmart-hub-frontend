@@ -146,7 +146,7 @@ export default function EditSchoolDialog (props: Props) {
                 },
             });
             onClose(editedSchool);
-            enqueueSnackbar(`School has been saved succesfully`, {
+            enqueueSnackbar(`School has been saved successfully`, {
                 variant: `success`,
             });
         } catch (error) {
