@@ -82,8 +82,8 @@ export default function UserDialogForm (props: Props) {
     const [ givenNameValid, setGivenNameValid ] = useState(true);
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
     const [ familyNameValid, setFamilyNameValid ] = useState(true);
-    const [ schoolIds, setSchoolIds ] = useState(value.schoolMemberships?.map((schoolMembership) => schoolMembership.school_id) ?? []);
-    const [ roleIds, setRoleIds ] = useState(value.roles?.map((role) => role.role_id) ?? []);
+    const [ schoolIds, setSchoolIds ] = useState(value.schoolMemberships?.filter((membership) => membership.school?.status === Status.ACTIVE).map((schoolMembership) => schoolMembership.school_id) ?? []);
+    const [ roleIds, setRoleIds ] = useState(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
     const [ roleIdsValid, setRoleIdsValid ] = useState(false);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
     const { required } = useValidations();
