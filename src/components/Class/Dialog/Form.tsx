@@ -205,7 +205,7 @@ export default function ClassDialogForm (props: Props) {
                 value={schoolIds}
                 disabled={!canEditSchool}
                 itemText={(school) => school.school_name ?? ``}
-                itemId={(school) => school.school_id}
+                itemValue={(school) => school.school_id}
                 onChange={(values) => {
                     setSchoolIds(values);
                 }}
@@ -219,7 +219,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allPrograms}
                 value={programsIds}
                 itemText={(program) => program.name ?? ``}
-                itemId={(program) => program.id}
+                itemValue={(program) => program.id}
                 onChange={(values) => setProgramsIds(values)}
             />
             <Select
@@ -231,7 +231,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allGrades}
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
-                itemId={(grade) => grade.id ?? ``}
+                itemValue={(grade) => grade.id ?? ``}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -243,7 +243,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allAgeRanges}
                 value={ageRangesIds}
                 itemText={(ageRange) => ageRange.name ?? ``}
-                itemId={(ageRange) => ageRange.id}
+                itemValue={(ageRange) => ageRange.id}
                 onChange={(values) => setAgeRangesIds(values)}
             />
             <Select
@@ -255,7 +255,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allSubjects}
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}
-                itemId={(subject) => subject.id ?? ``}
+                itemValue={(subject) => subject.id ?? ``}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>

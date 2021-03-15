@@ -42,11 +42,16 @@ export const isActive = (entity: BaseEntity) => {
 
 export const sortEntitiesByName = (a: BaseEntity, b: BaseEntity) => a.name?.localeCompare(b.name ?? ``) ?? 0;
 
-export const useHandleUpdateNonSpecified = (items: BaseEntity[], setItems: Dispatch<SetStateAction<AgeRange[]>>) => {
+export const useHandleUpdateNonSpecified = (values: string[], setValues: Dispatch<SetStateAction<string[]>>, items: BaseEntity[]) => {
+    console.log(`values`, values);
+
     useEffect(() => {
-        if (!Array.isArray(items) || !items.find(isNonSpecified) || items.length <= 1) return;
-        setItems((items) => isNonSpecified(items[0]) ? items.slice(1) : items.slice(items.length - 1, items.length));
-    }, [ items ]);
+        if (!values.find((value) => items.find(isNonSpecified)?.id === value) || values.length <= 1) return;
+        setValues((values) => {
+            const item = items.find((item) => item.id === values[0]);
+            return (item && isNonSpecified(item)) ? values.slice(1) : values.slice(values.length - 1, values.length);
+        });
+    }, [ values ]);
 };
 
 // onSelected?: (selectedIds: string[]) => void;
@@ -197,8 +202,6 @@ export interface AgeRange extends BaseEntity {
 export interface Grade extends BaseEntity {
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
-    progress_from_grade_id?: string | null;
-    progress_to_grade_id?: string | null;
 }
 
 export interface Subject extends BaseEntity {

@@ -48,8 +48,8 @@ export default function ProgramInfoStep (props: TabContent) {
     const { required, alphanumeric } = useValidations();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ programName, setProgramName ] = useState(value.name ?? ``);
-    const [ grades, setGrades ] = useState<Grade[]>(value.grades ?? []);
-    const [ ageRanges, setAgeRanges ] = useState<AgeRange[]>(value.age_ranges ?? []);
+    const [ gradeIds, setGradeIds ] = useState(value.grades?.map((grade) => grade.id ?? ``) ?? []);
+    const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
     const { data: ageRangesData } = useGetAllAgeRanges({
         variables: {
             organization_id,
@@ -78,25 +78,25 @@ export default function ProgramInfoStep (props: TabContent) {
             age_ranges,
         } = value;
         setProgramName(name ?? ``);
-        setGrades(grades ?? []);
-        setAgeRanges(age_ranges ?? []);
+        setGradeIds(grades?.map((grade) => grade.id ?? ``) ?? []);
+        setAgeRanges(age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
     }, [ value ]);
 
     useEffect(() => {
         onChange?.({
             ...value,
             name: programName,
-            grades: grades,
-            age_ranges: ageRanges,
+            grades: gradeIds.map((id) => allGrades.find((grade) => grade.id === id)).filter((grade): grade is Grade => !!grade),
+            age_ranges: ageRanges.map((id) => allAgeRanges.find((ageRange) => ageRange.id === id)).filter((ageRange): ageRange is AgeRange => !!ageRange),
         });
     }, [
         programName,
-        grades,
+        gradeIds,
         ageRanges,
     ]);
 
-    useHandleUpdateNonSpecified(grades, setGrades);
-    useHandleUpdateNonSpecified(ageRanges, setAgeRanges);
+    useHandleUpdateNonSpecified(gradeIds, setGradeIds, allGrades);
+    useHandleUpdateNonSpecified(ageRanges, setAgeRanges, allAgeRanges);
 
     return (
         <>
@@ -121,7 +121,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     label={intl.formatMessage({
                         id: `programs_grades`,
                     })}
-                    value={grades}
+                    value={gradeIds}
                     items={customGrades.sort((sortEntitiesByName))}
                     sections={[
                         ...nonSpecifiedGrade ? [
@@ -136,11 +136,11 @@ export default function ProgramInfoStep (props: TabContent) {
                         },
                     ]}
                     itemText={(grade) => grade.name ?? ``}
-                    itemId={(grade) => grade.id ?? ``}
+                    itemValue={(grade) => grade.id ?? ``}
                     disabled={disabled}
                     hideHelperText={disabled}
                     validations={[ required() ]}
-                    onChange={setGrades}
+                    onChange={setGradeIds}
                 />
             </Paper>
             <Paper className={classes.paper}>
@@ -165,7 +165,7 @@ export default function ProgramInfoStep (props: TabContent) {
                         },
                     ]}
                     itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
-                    itemId={(ageRange) => ageRange.id}
+                    itemValue={(ageRange) => ageRange.id ?? ``}
                     disabled={disabled}
                     hideHelperText={disabled}
                     validations={[ required() ]}

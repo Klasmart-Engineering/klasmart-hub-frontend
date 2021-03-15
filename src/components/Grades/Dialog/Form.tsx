@@ -125,7 +125,7 @@ export default function GradeDialogForm (props: Props) {
                 })}
                 value={progressFromId}
                 items={gradeItems}
-                itemId={({ id }) => id ?? ``}
+                itemValue={({ id }) => id ?? ``}
                 itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
@@ -137,7 +137,7 @@ export default function GradeDialogForm (props: Props) {
                 })}
                 value={progressToId}
                 items={gradeItems}
-                itemId={({ id }) => id ?? ``}
+                itemValue={({ id }) => id ?? ``}
                 itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}
