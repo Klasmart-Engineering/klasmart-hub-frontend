@@ -197,6 +197,7 @@ export default function SchoolTable (props: Props) {
                     columns={columns}
                     rows={rows}
                     orderBy="name"
+                    order="asc"
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `schools_createSchoolLabel`,

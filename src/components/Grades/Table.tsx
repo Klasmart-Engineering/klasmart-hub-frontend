@@ -193,6 +193,8 @@ export default function (props: Props) {
                     idField="id"
                     rows={rows}
                     columns={columns}
+                    orderBy="name"
+                    order="asc"
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `grades_createGradeLabel`,
