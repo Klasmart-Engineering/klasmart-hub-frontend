@@ -86,29 +86,39 @@ export default function ClassRoster (props: Props) {
     const columns: TableColumn<ClassUser>[] = [
         {
             id: `user_id`,
-            label: `Id`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
         },
         {
-            id: `full_name`,
-            label: `User name`,
+            id: `username`,
+            label: intl.formatMessage({
+                id: `class_usernameLabel`,
+            }),
             persistent: true,
         },
         {
             id: `role`,
-            label: `Role`,
+            label: intl.formatMessage({
+                id: `class_roleLabel`,
+            }),
             groups: roles.map((role) => ({
                 text: role,
             })),
         },
         {
             id: `email`,
-            label: `Email`,
+            label: intl.formatMessage({
+                id: `class_emailLabel`,
+            }),
             disableSort: true,
         },
         {
             id: `phone`,
-            label: `Phone number`,
+            label: intl.formatMessage({
+                id: `class_phoneLabel`,
+            }),
         },
     ];
 
@@ -123,8 +133,12 @@ export default function ClassRoster (props: Props) {
         if (
             !(await prompt({
                 variant: `error`,
-                title: `Remove User`,
-                okLabel: `Remove`,
+                title: intl.formatMessage({
+                    id: `class_removeUserLabel`,
+                }),
+                okLabel: intl.formatMessage({
+                    id: `class_removeConfirm`,
+                }),
                 content: (
                     <>
                         <DialogContentText>
@@ -159,7 +173,9 @@ export default function ClassRoster (props: Props) {
     return (
         <FullScreenDialog
             open={true}
-            title="Class Roster"
+            title={intl.formatMessage({
+                id: `class_classRosterLabel`,
+            })}
             onClose={() => {
                 onClose();
             }}
@@ -178,7 +194,9 @@ export default function ClassRoster (props: Props) {
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Remove User`,
+                            label: intl.formatMessage({
+                                id: `class_removeUserLabel`,
+                            }),
                             icon: DeleteIcon,
                             onClick: () => handleRemoveUser(row),
                         },
@@ -188,7 +206,9 @@ export default function ClassRoster (props: Props) {
                             title: `Actual Class Name`,
                         },
                         search: {
-                            placeholder: `Search for students by their  names,  address, email and phone number`,
+                            placeholder: intl.formatMessage({
+                                id: `class_searchPlaceholder`,
+                            }),
                         },
                         body: {
                             noData: intl.formatMessage({

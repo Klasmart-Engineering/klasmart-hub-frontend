@@ -91,29 +91,39 @@ export default function SchoolRoster (props: Props) {
     const columns: TableColumn<ClassRosterRow>[] = [
         {
             id: `id`,
-            label: `Id`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
         },
         {
             id: `username`,
-            label: `User name`,
+            label: intl.formatMessage({
+                id: `schools_userNameLabel`,
+            }),
             persistent: true,
         },
         {
             id: `role`,
-            label: `Role`,
+            label: intl.formatMessage({
+                id: `schools_roleLabel`,
+            }),
             groups: roles.map((role) => ({
                 text: role,
             })),
         },
         {
             id: `email`,
-            label: `Email`,
+            label: intl.formatMessage({
+                id: `schools_emailLabel`,
+            }),
             disableSort: true,
         },
         {
             id: `phoneNumber`,
-            label: `Phone number`,
+            label: intl.formatMessage({
+                id: `schools_phoneLabel`,
+            }),
         },
     ];
 
@@ -143,9 +153,13 @@ export default function SchoolRoster (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title="Add User"
+            title={intl.formatMessage({
+                id: `schools_addUserTitle`,
+            })}
             action={{
-                label: `Add`,
+                label: intl.formatMessage({
+                    id: `schools_addLabel`,
+                }),
                 onClick: addUsers,
             }
             }
@@ -162,10 +176,14 @@ export default function SchoolRoster (props: Props) {
                     showCheckboxes={true}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `School Roster`,
+                            title: intl.formatMessage({
+                                id: `schools_schoolRosterLabel`,
+                            }),
                         },
                         search: {
-                            placeholder: `Search for students by their  names,  address, email and phone number`,
+                            placeholder: intl.formatMessage({
+                                id: `schools_searchPlaceholder`,
+                            }),
                         },
                         body: {
                             noData: intl.formatMessage({

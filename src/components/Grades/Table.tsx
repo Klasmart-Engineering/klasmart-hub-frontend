@@ -101,21 +101,29 @@ export default function (props: Props) {
     const columns: TableColumn<GradeRow>[] = [
         {
             id: `id`,
-            label: `ID`,
+            label: intl.formatMessage({
+                id: `grades_idLabel`,
+            }),
             hidden: true,
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({
+                id: `grades_nameLabel`,
+            }),
             persistent: true,
         },
         {
             id: `progressFrom`,
-            label: `Progress From`,
+            label: intl.formatMessage({
+                id: `grades_progressFromLabel`,
+            }),
         },
         {
             id: `progressTo`,
-            label: `Progress To`,
+            label: intl.formatMessage({
+                id: `grades_progressToLabel`,
+            }),
         },
     ];
 
@@ -135,11 +143,25 @@ export default function (props: Props) {
         const { name } = selectedGrade;
         if (!await prompt({
             variant: `error`,
-            title: `Delete Grade`,
-            okLabel: `Delete`,
+            title: intl.formatMessage({
+                id: `grades_deleteGradePrompt`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `grades_deleteConfirmButton`,
+            }),
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_confirmDelete`,
+                }, {
+                    value: name,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeText`,
+                }, {
+                    value: name,
+                })} <strong>{name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],
         })) return;
@@ -150,11 +172,15 @@ export default function (props: Props) {
                 },
             });
             refetch();
-            enqueueSnackbar(`Grade successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `grades_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `grades_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -168,20 +194,26 @@ export default function (props: Props) {
                     rows={rows}
                     columns={columns}
                     primaryAction={{
-                        label: `Create Grade`,
+                        label: intl.formatMessage({
+                            id: `grades_createGradeLabel`,
+                        }),
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `grades_editLabel`,
+                            }),
                             icon: EditIcon,
                             disabled: !canEdit,
                             onClick: handleEditRowClick,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `grades_deleteLabel`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !canDelete,
                             onClick: handleDeleteRowClick,
@@ -189,7 +221,9 @@ export default function (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Grades`,
+                            title: intl.formatMessage({
+                                id: `grades_title`,
+                            }),
                         },
                     })}
                 />

@@ -14,6 +14,10 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -40,6 +44,7 @@ export default function ClassDialogForm (props: Props) {
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const {
         required,
         min,
@@ -57,11 +62,15 @@ export default function ClassDialogForm (props: Props) {
     const units = [
         {
             value: `month`,
-            text: `Month(s)`,
+            text: intl.formatMessage({
+                id: `ageRanges_formMonths`,
+            }),
         },
         {
             value: `year`,
-            text: `Year(s)`,
+            text: intl.formatMessage({
+                id: `ageRanges_formYears`,
+            }),
         },
     ];
 
@@ -103,7 +112,7 @@ export default function ClassDialogForm (props: Props) {
                         variant="caption"
                         color="textSecondary"
                     >
-                        Age Range
+                        <FormattedMessage id="ageRanges_ageRangeLabel"></FormattedMessage>
                     </Typography>
                 </Box>
                 <Box
@@ -114,7 +123,9 @@ export default function ClassDialogForm (props: Props) {
                     <TextField
                         fullWidth
                         value={from}
-                        label="From"
+                        label={intl.formatMessage({
+                            id: `ageRanges_formFrom`,
+                        })}
                         type="number"
                         autoFocus={!value.id}
                         validations={[
@@ -127,7 +138,9 @@ export default function ClassDialogForm (props: Props) {
                     />
                     <Select
                         value={fromUnit}
-                        label="From Unit"
+                        label={intl.formatMessage({
+                            id: `ageRanges_formFromUnit`,
+                        })}
                         className={classes.unitSelect}
                         items={units}
                         validations={[ required() ]}
@@ -140,7 +153,9 @@ export default function ClassDialogForm (props: Props) {
                     <TextField
                         fullWidth
                         value={to}
-                        label="To"
+                        label={intl.formatMessage({
+                            id: `ageRanges_formTo`,
+                        })}
                         type="number"
                         validations={[
                             required(),
@@ -152,7 +167,9 @@ export default function ClassDialogForm (props: Props) {
                     />
                     <Select
                         value={toUnit}
-                        label="To Unit"
+                        label={intl.formatMessage({
+                            id: `ageRanges_formToUnit`,
+                        })}
                         items={units}
                         className={classes.unitSelect}
                         validations={[ required() ]}

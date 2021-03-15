@@ -129,16 +129,22 @@ export default function EditClassDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Edit class"
+            title={intl.formatMessage({
+                id: `class_editTitle`,
+            })}
             actions={[
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `class_cancelLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Edit`,
+                    label: intl.formatMessage({
+                        id: `class_editLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,

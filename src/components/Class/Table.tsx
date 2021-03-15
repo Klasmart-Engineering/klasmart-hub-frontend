@@ -235,7 +235,9 @@ export default function ClassesTable (props: Props) {
     const columns: TableColumn<ClassRow>[] = [
         {
             id: `id`,
-            label: `Id`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
         },
         {
@@ -259,7 +261,9 @@ export default function ClassesTable (props: Props) {
         },
         {
             id: `ageRanges`,
-            label: `Age Ranges`,
+            label: intl.formatMessage({
+                id: `schools_ageRangesLabel`,
+            }),
             render: (row) => (
                 <>
                     {row.ageRanges.map((ageRange, i) => (
@@ -273,7 +277,9 @@ export default function ClassesTable (props: Props) {
         },
         {
             id: `grades`,
-            label: `Grades`,
+            label: intl.formatMessage({
+                id: `schools_gradesLabel`,
+            }),
             render: (row) => (
                 <>
                     {row.grades.map((grade, i) => (
@@ -287,7 +293,9 @@ export default function ClassesTable (props: Props) {
         },
         {
             id: `programs`,
-            label: `Programs`,
+            label: intl.formatMessage({
+                id: `schools_programsLabel`,
+            }),
             disableSort: true,
             render: (row) => (
                 <>
@@ -302,7 +310,9 @@ export default function ClassesTable (props: Props) {
         },
         {
             id: `subjects`,
-            label: `Subjects`,
+            label: intl.formatMessage({
+                id: `schools_subjectsLabel`,
+            }),
             disableSort: true,
             render: (row) => (
                 <>
@@ -354,7 +364,9 @@ export default function ClassesTable (props: Props) {
                     } : undefined}
                     rowActions={!disabled ? (row) => [
                         {
-                            label: `View class details`,
+                            label: intl.formatMessage({
+                                id: `schools_viewDetailsLabel`,
+                            }),
                             icon: ViewIcon,
                             onClick: (row) => {
                                 setClassDetails({

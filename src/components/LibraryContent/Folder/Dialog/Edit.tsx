@@ -18,6 +18,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -34,6 +35,7 @@ export default function EditFolderDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
     const restApi = useRestAPI();
@@ -57,11 +59,15 @@ export default function EditFolderDialog (props: Props) {
                 org_id: organization_id,
             });
             onClose(editedLibraryContent);
-            enqueueSnackbar(`Folder has been saved succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `library_editSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -70,7 +76,9 @@ export default function EditFolderDialog (props: Props) {
     const handleDelete = async () => {
         if (!value) return;
         const input = await prompt({
-            title: `Delete Content`,
+            title: intl.formatMessage({
+                id: `library_deleteContentedLabel`,
+            }),
             content: <>
                 <p>Are you sure you want to delete {`"${value.name}"`}?</p>
                 <p>Type <strong>{value.name}</strong> to confirm deletion.</p>
@@ -85,11 +93,15 @@ export default function EditFolderDialog (props: Props) {
                 folder_id: id,
             });
             onClose(editedLibraryContent);
-            enqueueSnackbar(`Folder has been deleted succesfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `library_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -98,22 +110,30 @@ export default function EditFolderDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Edit folder"
+            title={intl.formatMessage({
+                id: `library_editTitle`,
+            })}
             actions={[
                 {
-                    label: `Delete`,
+                    label: intl.formatMessage({
+                        id: `library_deleteLabel`,
+                    }),
                     color: `error`,
                     align: `left`,
                     onClick: handleDelete,
                 },
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `library_cancelLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Save`,
+                    label: intl.formatMessage({
+                        id: `generic_saveLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,

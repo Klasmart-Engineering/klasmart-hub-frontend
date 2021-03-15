@@ -37,6 +37,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 export interface Folder {
     details?: PublishedContentItem;
@@ -110,6 +111,7 @@ export default function MoveContentDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const restApi = useRestAPI();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
@@ -173,7 +175,9 @@ export default function MoveContentDialog (props: Props) {
                 <Box flex="1" />
                 {isParentFolder && <Typography className={clsx(classes.currentFolder, classes.disabledText)}>Current folder</Typography>}
                 {isDisabled && !isParentFolder &&
-                    <Tooltip title="Folder being moved">
+                    <Tooltip title={intl.formatMessage({
+                        id: `library_moveTooltip`,
+                    })}>
                         <OpenWithIcon
                             color="disabled"
                             style={{
@@ -185,7 +189,9 @@ export default function MoveContentDialog (props: Props) {
                     </Tooltip>
                 }
                 {isSelected &&
-                    <Tooltip title="Destination">
+                    <Tooltip title={intl.formatMessage({
+                        id: `library_destinationTooltip`,
+                    })}>
                         <CheckIcon color="primary" />
                     </Tooltip>
                 }
@@ -240,11 +246,15 @@ export default function MoveContentDialog (props: Props) {
                 folder_info: folderInfo,
             });
             onClose(true);
-            enqueueSnackbar(`Successfully moved the file(s)`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `library_moveSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar(`An error occured while moving the file(s), please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `library_moveError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -268,12 +278,16 @@ export default function MoveContentDialog (props: Props) {
                 title={title}
                 actions={[
                     {
-                        label: `Cancel`,
+                        label: intl.formatMessage({
+                            id: `library_cancelLabel`,
+                        }),
                         color: `primary`,
                         onClick: () => onClose(),
                     },
                     {
-                        label: `Move`,
+                        label: intl.formatMessage({
+                            id: `library_moveLabel`,
+                        }),
                         color: `primary`,
                         disabled: !selectedNodeId,
                         onClick: handleMoveContent,

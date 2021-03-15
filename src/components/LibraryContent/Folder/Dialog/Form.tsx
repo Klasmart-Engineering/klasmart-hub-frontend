@@ -10,11 +10,17 @@ import React,
     useEffect,
     useState,
 } from "react";
+import {
+    IntlShape,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}));
 
-const getFolderNameHelperText = (name: string | undefined) => {
-    if (!name?.length) return `Required`;
+const getFolderNameHelperText = (name: string | undefined, intl: IntlShape) => {
+    if (!name?.length) return intl.formatMessage({
+        id: `genericValidations_required`,
+    });
 };
 
 interface Props {
@@ -23,17 +29,18 @@ interface Props {
     onValidation: (valid: boolean) => void;
 }
 
-export default function SchoolDialogForm(props: Props) {
+export default function SchoolDialogForm (props: Props) {
     const {
         value,
         onChange,
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const [ folderName, setFolderName ] = useState(value.name ?? ``);
 
     useEffect(() => {
-        onValidation(!getFolderNameHelperText(folderName));
+        onValidation(!getFolderNameHelperText(folderName, intl));
     }, [ folderName ]);
 
     useEffect(() => {
@@ -48,10 +55,12 @@ export default function SchoolDialogForm(props: Props) {
         <>
             <TextField
                 fullWidth
-                helperText={getFolderNameHelperText(folderName) ?? ` `}
-                error={!!getFolderNameHelperText(folderName)}
+                helperText={getFolderNameHelperText(folderName, intl) ?? ` `}
+                error={!!getFolderNameHelperText(folderName, intl)}
                 value={folderName}
-                label="Folder name"
+                label={intl.formatMessage({
+                    id: `library_folderNameLabel`,
+                })}
                 variant="outlined"
                 type="text"
                 autoFocus={!value?.id}

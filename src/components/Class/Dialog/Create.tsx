@@ -118,15 +118,21 @@ export default function CreateClassDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Create class"
+            title={intl.formatMessage({
+                id: `class_createClassTitle`,
+            })}
             actions={[
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `class_cancelLabel`,
+                    }),
                     color: `primary`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Create`,
+                    label: intl.formatMessage({
+                        id: `class_createLabel`,
+                    }),
                     color: `primary`,
                     disabled: !valid,
                     onClick: handleCreate,

@@ -28,6 +28,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     paper: {
@@ -43,6 +44,7 @@ export default function ProgramInfoStep (props: TabContent) {
         onChange,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const { required, alphanumeric } = useValidations();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ programName, setProgramName ] = useState(value.name ?? ``);
@@ -101,7 +103,9 @@ export default function ProgramInfoStep (props: TabContent) {
             <Paper className={classes.paper}>
                 <TextField
                     fullWidth
-                    label="Program Name"
+                    label={intl.formatMessage({
+                        id: `programs_programNameLabel`,
+                    })}
                     value={programName}
                     disabled={disabled}
                     hideHelperText={disabled}
@@ -114,7 +118,9 @@ export default function ProgramInfoStep (props: TabContent) {
                 <Select
                     multiple
                     fullWidth
-                    label="Grades"
+                    label={intl.formatMessage({
+                        id: `programs_grades`,
+                    })}
                     value={grades}
                     items={customGrades.sort((sortEntitiesByName))}
                     sections={[
@@ -141,7 +147,9 @@ export default function ProgramInfoStep (props: TabContent) {
                 <Select
                     multiple
                     fullWidth
-                    label="Age Ranges"
+                    label={intl.formatMessage({
+                        id: `programs_ageRanges`,
+                    })}
                     value={ageRanges}
                     items={customAgeRanges}
                     sections={[

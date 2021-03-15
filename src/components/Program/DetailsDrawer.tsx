@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { Drawer } from "kidsloop-px";
 import React from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     chip: {
@@ -37,6 +38,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
 
     return (
         <Drawer

@@ -18,6 +18,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -44,6 +45,7 @@ export default function GradeDialogForm (props: Props) {
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const { required } = useValidations();
     const [ gradeName, setGradeName ] = useState(value.name ?? ``);
     const [ gradeNameValid, setGradeNameValid ] = useState(true);
@@ -108,7 +110,9 @@ export default function GradeDialogForm (props: Props) {
             <TextField
                 fullWidth
                 autoFocus={!value.id}
-                label="Grade Name"
+                label={intl.formatMessage({
+                    id: `grades_gradeNameLabel`,
+                })}
                 value={gradeName}
                 validations={[ required() ]}
                 onChange={setGradeName}
@@ -116,7 +120,9 @@ export default function GradeDialogForm (props: Props) {
             />
             <Select
                 fullWidth
-                label="Progress From"
+                label={intl.formatMessage({
+                    id: `grades_progressFromLabel`,
+                })}
                 value={progressFromId}
                 items={gradeItems}
                 itemId={({ id }) => id ?? ``}
@@ -126,7 +132,9 @@ export default function GradeDialogForm (props: Props) {
             />
             <Select
                 fullWidth
-                label="Progress To"
+                label={intl.formatMessage({
+                    id: `grades_progressToLabel`,
+                })}
                 value={progressToId}
                 items={gradeItems}
                 itemId={({ id }) => id ?? ``}

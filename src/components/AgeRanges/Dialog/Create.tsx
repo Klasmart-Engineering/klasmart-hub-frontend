@@ -59,11 +59,15 @@ export default function (props: Props) {
             });
 
             refetch();
-            enqueueSnackbar(`Age range successfully created`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_createSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -72,16 +76,22 @@ export default function (props: Props) {
     return (
         <>
             <Dialog
-                title="Create Age Range"
+                title={intl.formatMessage({
+                    id: `ageRanges_createAgeRangeLabel`,
+                })}
                 open={open}
                 actions={[
                     {
-                        label: `Cancel`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_cancelButton`,
+                        }),
                         color: `primary`,
                         onClick: () => onClose(),
                     },
                     {
-                        label: `Create`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_createButton`,
+                        }),
                         color: `primary`,
                         onClick: handleCreate,
                         disabled: !valid,

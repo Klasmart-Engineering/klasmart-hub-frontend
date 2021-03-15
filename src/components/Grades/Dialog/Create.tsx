@@ -52,11 +52,15 @@ export default function (props: Props) {
                 },
             });
             onClose(newGrade);
-            enqueueSnackbar(`Grade successfully created`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `grades_createSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -65,16 +69,22 @@ export default function (props: Props) {
     return (
         <>
             <Dialog
-                title="Create Grade"
+                title={intl.formatMessage({
+                    id: `grades_createGradeTitle`,
+                })}
                 open={open}
                 actions={[
                     {
-                        label: `Cancel`,
+                        label: intl.formatMessage({
+                            id: `grades_cancelLabel`,
+                        }),
                         color: `primary`,
                         onClick: () => onClose(),
                     },
                     {
-                        label: `Create`,
+                        label: intl.formatMessage({
+                            id: `grades_createLabel`,
+                        }),
                         color: `primary`,
                         onClick: handleCreate,
                         disabled: !valid,

@@ -25,6 +25,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,6 +49,7 @@ export default function ClassDialogForm (props: Props) {
         onValidation,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const {
         required,
         alphanumeric,
@@ -179,7 +181,9 @@ export default function ClassDialogForm (props: Props) {
             <TextField
                 fullWidth
                 value={className}
-                label="Class name"
+                label={intl.formatMessage({
+                    id: `class_classNameLabel`,
+                })}
                 variant="outlined"
                 type="text"
                 autoFocus={!value.class_id}
@@ -194,7 +198,9 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple
-                label="Schools (optional)"
+                label={intl.formatMessage({
+                    id: `class_schoolsLabel`,
+                })}
                 items={allSchools}
                 value={schoolIds}
                 disabled={!canEditSchool}
@@ -207,7 +213,9 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple={schoolIds.length > 0}
-                label="Program (optional)"
+                label={intl.formatMessage({
+                    id: `class_programLabel`,
+                })}
                 items={allPrograms}
                 value={programsIds}
                 itemText={(program) => program.name ?? ``}
@@ -217,7 +225,9 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple={programsIds.length > 0}
-                label="Grade (optional)"
+                label={intl.formatMessage({
+                    id: `class_gradeLabel`,
+                })}
                 items={allGrades}
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
@@ -227,7 +237,9 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple={programsIds.length > 0}
-                label="Age range (optional)"
+                label={intl.formatMessage({
+                    id: `class_ageRangeLabel`,
+                })}
                 items={allAgeRanges}
                 value={ageRangesIds}
                 itemText={(ageRange) => ageRange.name ?? ``}
@@ -237,7 +249,9 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple={programsIds.length > 0}
-                label="Subjects (optional)"
+                label={intl.formatMessage({
+                    id: `class_subjectsLabel`,
+                })}
                 items={allSubjects}
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}

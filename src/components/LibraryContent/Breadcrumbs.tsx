@@ -106,8 +106,7 @@ export default function TableBreadcrumbs (props: Props) {
                         className={classes.link}
                     >
                         <Typography>{pathNames.get(path) ?? `...`}</Typography>
-                    </Link>,
-                )}
+                    </Link>)}
                 {(paths?.length ?? 0) > 0 &&
                     <Typography>{pathNames.get(paths[paths.length - 1]) ?? `...`}</Typography>
                 }

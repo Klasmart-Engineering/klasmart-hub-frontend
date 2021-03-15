@@ -61,11 +61,15 @@ export default function (props: Props) {
                 },
             });
             onClose(updatedGrade);
-            enqueueSnackbar(`Grade successfully saved`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `grades_editSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -75,8 +79,12 @@ export default function (props: Props) {
         try {
             if (!await prompt({
                 variant: `error`,
-                title: `Delete Grade`,
-                okLabel: `Delete`,
+                title: intl.formatMessage({
+                    id: `grades_deleteGradePromptTitle`,
+                }),
+                okLabel: intl.formatMessage({
+                    id: `grades_deleteLabel`,
+                }),
                 content: <>
                     <DialogContentText>Are you sure you want to delete {`"${value?.name}"`}?</DialogContentText>
                     <DialogContentText>Type <strong>{value?.name}</strong> to confirm deletion.</DialogContentText>
@@ -90,11 +98,15 @@ export default function (props: Props) {
                 },
             });
             onClose(updatedGrade);
-            enqueueSnackbar(`Grade successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `grades_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -103,23 +115,31 @@ export default function (props: Props) {
     return (
         <>
             <Dialog
-                title="Edit Grade"
+                title={intl.formatMessage({
+                    id: `grades_editTitle`,
+                })}
                 open={open}
                 actions={[
                     {
-                        label: `Delete`,
+                        label: intl.formatMessage({
+                            id: `grades_deleteLabel`,
+                        }),
                         color: `error`,
                         align: `left`,
                         onClick: handleDelete,
                     },
                     {
-                        label: `Cancel`,
+                        label: intl.formatMessage({
+                            id: `grades_cancelLabel`,
+                        }),
                         color: `primary`,
                         align: `right`,
                         onClick: () => onClose(),
                     },
                     {
-                        label: `Save`,
+                        label: intl.formatMessage({
+                            id: `generic_saveLabel`,
+                        }),
                         color: `primary`,
                         align: `right`,
                         onClick: handleSave,

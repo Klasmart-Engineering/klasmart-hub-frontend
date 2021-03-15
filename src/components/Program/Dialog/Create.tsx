@@ -82,7 +82,9 @@ export default function CreateProgramDialog (props: Props) {
     useEffect(() => {
         const steps: Step[] = [
             {
-                label: `Project Info`,
+                label: intl.formatMessage({
+                    id: `programs_programsInfoLabel`,
+                }),
                 content: <ProgramInfoStep
                     value={value_}
                     onChange={handleValue}
@@ -95,7 +97,9 @@ export default function CreateProgramDialog (props: Props) {
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Subjects`,
+                label: intl.formatMessage({
+                    id: `programs_subjects`,
+                }),
                 content: <SubjectsStep
                     value={value_}
                     onChange={handleValue}
@@ -103,7 +107,9 @@ export default function CreateProgramDialog (props: Props) {
                 error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Summary`,
+                label: intl.formatMessage({
+                    id: `programs_summaryLabel`,
+                }),
                 content: <SummaryStep
                     value={value_}
                     onChange={handleValue}
@@ -154,7 +160,9 @@ export default function CreateProgramDialog (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title="Create Program"
+            title={intl.formatMessage({
+                id: `programs_createProgramLabel`,
+            })}
             header={
                 <Stepper
                     step={stepIndex_}
@@ -170,7 +178,9 @@ export default function CreateProgramDialog (props: Props) {
                         justifyContent="space-between"
                     >
                         <Button
-                            label="Previous"
+                            label={intl.formatMessage({
+                                id: `programs_previousLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === 0}
@@ -178,7 +188,9 @@ export default function CreateProgramDialog (props: Props) {
                         />
                         {stepIndex_ === steps_.length - 1 && (
                             <Button
-                                label="Create"
+                                label={intl.formatMessage({
+                                    id: `programs_createLabel`,
+                                })}
                                 variant="contained"
                                 color="primary"
                                 disabled={!steps_.every((step) => !step.error)}
@@ -186,7 +198,9 @@ export default function CreateProgramDialog (props: Props) {
                             />
                         )}
                         <Button
-                            label="Next"
+                            label={intl.formatMessage({
+                                id: `programs_nextLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === steps_.length - 1 || !!steps_[stepIndex_]?.error}

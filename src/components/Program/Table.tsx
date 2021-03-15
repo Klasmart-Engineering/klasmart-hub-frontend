@@ -119,19 +119,25 @@ export default function ProgramTable (props: Props) {
     const columns: TableColumn<ProgramRow>[] = [
         {
             id: `id`,
-            label: `ID`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
             disableSearch: disabled,
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({
+                id: `programs_name`,
+            }),
             persistent: true,
             disableSearch: disabled,
         },
         {
             id: `grades`,
-            label: `Grades`,
+            label: intl.formatMessage({
+                id: `programs_grades`,
+            }),
             disableSearch: disabled,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
@@ -145,7 +151,9 @@ export default function ProgramTable (props: Props) {
         },
         {
             id: `ageRanges`,
-            label: `Age Ranges`,
+            label: intl.formatMessage({
+                id: `programs_ageRanges`,
+            }),
             disableSearch: disabled,
             render: (row) => <>
                 {row.ageRanges.map((ageRange, i) => (
@@ -159,7 +167,9 @@ export default function ProgramTable (props: Props) {
         },
         {
             id: `subjects`,
-            label: `Subjects`,
+            label: intl.formatMessage({
+                id: `programs_subjects`,
+            }),
             disableSearch: disabled,
             render: (row) => <>
                 {row.subjects.map((subject, i) => (
@@ -197,8 +207,12 @@ export default function ProgramTable (props: Props) {
         if (!id) throw Error(`invalid-program-id`);
         if (!await prompt({
             variant: `error`,
-            title: `Delete Program`,
-            okLabel: `Delete`,
+            title: intl.formatMessage({
+                id: `programs_deleteProgramLabel`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `programs_deleteLabel`,
+            }),
             content: <>
                 <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
                 <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
@@ -212,11 +226,15 @@ export default function ProgramTable (props: Props) {
         });
         await refetch();
         try {
-            enqueueSnackbar(`Program successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `programs_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -232,26 +250,34 @@ export default function ProgramTable (props: Props) {
                     columns={columns}
                     selectedRows={selectedIds}
                     primaryAction={!disabled ? {
-                        label: `Create Program`,
+                        label: intl.formatMessage({
+                            id: `programs_createProgramLabel`,
+                        }),
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     } : undefined}
                     rowActions={!disabled ? (row) => [
                         {
-                            label: `View Details`,
+                            label: intl.formatMessage({
+                                id: `programs_viewDetailsLabel`,
+                            }),
                             icon: ViewListIcon,
                             disabled: !canView,
                             onClick: handleViewDetailsRowClick,
                         },
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `programs_editLabel`,
+                            }),
                             icon: EditIcon,
                             disabled: !canEdit || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `programs_deleteLabel`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !canDelete || row.system,
                             onClick: handleDeleteRowClick,
@@ -259,7 +285,9 @@ export default function ProgramTable (props: Props) {
                     ] : undefined}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Programs`,
+                            title: intl.formatMessage({
+                                id: `programs_title`,
+                            }),
                         },
                     })}
                     onSelected={onSelected}

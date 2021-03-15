@@ -32,6 +32,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     paperRoot: {
@@ -86,6 +87,7 @@ export default function (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const restApi = useRestAPI();
     const { enqueueSnackbar } = useSnackbar();
     const organization = useReactiveVar(currentMembershipVar);
@@ -113,7 +115,9 @@ export default function (props: Props) {
             setDistributeStatus(isDistributeStatusPreset ? DistributeStatus.PRESET : DistributeStatus.SELECTED);
             if (!initSelectedOrganizationIds) setInitSelectedOrganizationIds(organizationsIds);
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -127,12 +131,16 @@ export default function (props: Props) {
                 org_id: organization_id,
                 org_ids: finalOrganizationIds,
             });
-            enqueueSnackbar(`Distribute settings successfully updated`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `library_distributeEditSuccess`,
+            }), {
                 variant: `success`,
             });
             onClose();
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -186,12 +194,16 @@ export default function (props: Props) {
     const columns: TableColumn<OrganizationRow>[] = [
         {
             id: `id`,
-            label: `ID`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({
+                id: `library_nameLabel`,
+            }),
             render: (row) => (
                 <Box
                     display="flex"
@@ -213,7 +225,9 @@ export default function (props: Props) {
         },
         {
             id: `phone`,
-            label: `Phone`,
+            label: intl.formatMessage({
+                id: `library_phoneLabel`,
+            }),
         },
     ];
 
@@ -245,7 +259,9 @@ export default function (props: Props) {
                     />
                     <Tooltip
                         arrow
-                        title="Choosing this option will make the selected content available to current and future organizations."
+                        title={intl.formatMessage({
+                            id: `library_distributeTooltip`,
+                        })}
                         placement="right"
                     >
                         <InfoIcon
@@ -260,7 +276,9 @@ export default function (props: Props) {
                     <FormControlLabel
                         value={DistributeStatus.SELECTED}
                         control={<Radio />}
-                        label="Select Organizations"
+                        label={intl.formatMessage({
+                            id: `library_selectOrganizations`,
+                        })}
                     />
                 </Toolbar>
                 {distributeStatus === DistributeStatus.SELECTED && <>

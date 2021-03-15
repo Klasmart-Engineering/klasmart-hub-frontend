@@ -23,6 +23,7 @@ import {
     utils,
 } from "kidsloop-px";
 import React from "react";
+import { useIntl } from "react-intl";
 
 const Accordion = withStyles({
     root: {
@@ -106,6 +107,7 @@ export default function ViewClassDialog (props: Props) {
     } = classDetails;
 
     const classes = useStyles();
+    const intl = useIntl();
 
     return (
         <Drawer
@@ -113,7 +115,9 @@ export default function ViewClassDialog (props: Props) {
             title={className}
             sections={[
                 {
-                    header: `Programs`,
+                    header: intl.formatMessage({
+                        id: `class_programsHeader`,
+                    }),
                     content: (
                         <>
                             {programSubjects.map((program, i) => (
@@ -128,7 +132,9 @@ export default function ViewClassDialog (props: Props) {
                                     <Typography
                                         variant="caption"
                                         className={classes.subjectHeader}>
-                                        Subjects
+                                        {intl.formatMessage({
+                                            id: `class_tableSubjectsLabel`,
+                                        })}
                                     </Typography>
                                     <Divider />
                                     <AccordionDetails className={classes.accordionDetails}>
@@ -146,7 +152,9 @@ export default function ViewClassDialog (props: Props) {
                     ),
                 },
                 {
-                    header: `Class Roster`,
+                    header: intl.formatMessage({
+                        id: `class_classRosterHeader`,
+                    }),
                     content: (
                         <>
                             <Accordion>
@@ -156,7 +164,11 @@ export default function ViewClassDialog (props: Props) {
                                     id="panel1a-header"
                                 >
                                     <Typography className={classes.heading}>
-                                        Teachers ({teachers.length})
+                                        {intl.formatMessage({
+                                            id: `class_tableTeachers`,
+                                        }, {
+                                            length: teachers.length,
+                                        })}
                                     </Typography>
                                 </AccordionSummary>
 
@@ -196,7 +208,11 @@ export default function ViewClassDialog (props: Props) {
                                     id="panel1a-header"
                                 >
                                     <Typography className={classes.heading}>
-                                        Students ({students.length})
+                                        {intl.formatMessage({
+                                            id: `class_tableStudents`,
+                                        }, {
+                                            length: teachers.length,
+                                        })}
                                     </Typography>
                                 </AccordionSummary>
                                 <AccordionDetails className={classes.accordionDetails}>

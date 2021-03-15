@@ -85,12 +85,16 @@ export default function (props: Props) {
     const columns: TableColumn<AgeRangeRow>[] = [
         {
             id: `id`,
-            label: `ID`,
+            label: intl.formatMessage({
+                id: `ageRanges_idLabel`,
+            }),
             hidden: true,
         },
         {
             id: `ageRange`,
-            label: `Age Range`,
+            label: intl.formatMessage({
+                id: `ageRanges_ageRangeLabel`,
+            }),
             persistent: true,
         },
     ];
@@ -119,11 +123,23 @@ export default function (props: Props) {
 
         if (!await prompt({
             variant: `error`,
-            title: `Delete Age Range`,
+            title: intl.formatMessage({
+                id: `ageRanges_deleteAgeRangeTitle`,
+            }),
             okLabel: `Delete`,
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${ageRangeName}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{ageRangeName}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `class_confirmDelete`,
+                }, {
+                    ageRangeName,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `ageRanges_typeText`,
+                }, {
+                    ageRangeName,
+                })} <strong>{ageRangeName}</strong> {intl.formatMessage({
+                    id: `ageRanges_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(ageRangeName) ],
         })) return;
@@ -136,11 +152,15 @@ export default function (props: Props) {
             });
 
             refetch();
-            enqueueSnackbar(`Age range successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -154,20 +174,26 @@ export default function (props: Props) {
                     rows={rows}
                     columns={columns}
                     primaryAction={{
-                        label: `Create Age Range`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_createAgeRangeLabel`,
+                        }),
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
                     rowActions={(row) => [
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `ageRanges_editLabel`,
+                            }),
                             icon: EditIcon,
                             disabled: !canEdit || !!row.system,
                             onClick: handleEditRowClick,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `ageRanges_deleteLabel`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !canDelete || !!row.system,
                             onClick: handleDeleteRowClick,
@@ -175,7 +201,9 @@ export default function (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Age Ranges`,
+                            title: intl.formatMessage({
+                                id: `ageRanges_title`,
+                            }),
                         },
                     })}
                 />

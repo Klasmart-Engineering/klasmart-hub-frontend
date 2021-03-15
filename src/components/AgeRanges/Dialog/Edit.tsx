@@ -75,11 +75,15 @@ export default function (props: Props) {
 
             refetch();
 
-            enqueueSnackbar(`Age range successfully saved`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_editSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -90,11 +94,23 @@ export default function (props: Props) {
         try {
             if (!await prompt({
                 variant: `error`,
-                title: `Delete Age Range`,
+                title: intl.formatMessage({
+                    id: `ageRanges_deleteAgeRangeTitle`,
+                }),
                 okLabel: `Delete`,
                 content: <>
-                    <DialogContentText>Are you sure you want to delete {`"${ageRangeName}"`}?</DialogContentText>
-                    <DialogContentText>Type <strong>{ageRangeName}</strong> to confirm deletion.</DialogContentText>
+                    <DialogContentText>{intl.formatMessage({
+                        id: `ageRanges_confirmDelete`,
+                    }, {
+                        ageRangeName,
+                    })}</DialogContentText>
+                    <DialogContentText>{intl.formatMessage({
+                        id: `ageRanges_typeText`,
+                    }, {
+                        ageRangeName,
+                    })} <strong>{ageRangeName}</strong> {intl.formatMessage({
+                        id: `ageRanges_typeEndText`,
+                    })}</DialogContentText>
                 </>,
                 validations: [ required(), equals(ageRangeName) ],
             })) return;
@@ -106,11 +122,15 @@ export default function (props: Props) {
             });
             onClose(updatedAgeRange);
             refetch();
-            enqueueSnackbar(`Age range successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `ageRanges_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -119,23 +139,31 @@ export default function (props: Props) {
     return (
         <>
             <Dialog
-                title="Edit Age Range"
+                title={intl.formatMessage({
+                    id: `ageRanges_formEditTitle`,
+                })}
                 open={open}
                 actions={[
                     {
-                        label: `Delete`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_deleteLabel`,
+                        }),
                         color: `error`,
                         align: `left`,
                         onClick: handleDelete,
                     },
                     {
-                        label: `Cancel`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_cancelButton`,
+                        }),
                         color: `primary`,
                         align: `right`,
                         onClick: () => onClose(),
                     },
                     {
-                        label: `Save`,
+                        label: intl.formatMessage({
+                            id: `ageRanges_saveButton`,
+                        }),
                         color: `primary`,
                         align: `right`,
                         onClick: handleSave,

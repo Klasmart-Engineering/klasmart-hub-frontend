@@ -79,7 +79,9 @@ export default function CreateProgramDialog (props: Props) {
     useEffect(() => {
         const steps: Step[] = [
             {
-                label: `Project Info`,
+                label: intl.formatMessage({
+                    id: `programs_projectInfoLabel`,
+                }),
                 content: <ProgramInfoStep
                     value={value_}
                     onChange={handleValue}
@@ -92,7 +94,9 @@ export default function CreateProgramDialog (props: Props) {
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Subjects`,
+                label: intl.formatMessage({
+                    id: `programs_subjects`,
+                }),
                 content: <SubjectsStep
                     value={value_}
                     onChange={handleValue}
@@ -100,7 +104,9 @@ export default function CreateProgramDialog (props: Props) {
                 error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Summary`,
+                label: intl.formatMessage({
+                    id: `programs_summaryLabel`,
+                }),
                 content: <SummaryStep
                     value={value_}
                     onChange={handleValue}
@@ -151,7 +157,9 @@ export default function CreateProgramDialog (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title="Edit Program"
+            title={intl.formatMessage({
+                id: `programs_editProgramLabel`,
+            })}
             header={
                 <Stepper
                     editable
@@ -168,21 +176,27 @@ export default function CreateProgramDialog (props: Props) {
                         flex="1"
                     >
                         <Button
-                            label="Previous"
+                            label={intl.formatMessage({
+                                id: `programs_previousLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === 0}
                             onClick={() => setStepIndex((value) => value - 1)}
                         />
                         <Button
-                            label="Save"
+                            label={intl.formatMessage({
+                                id: `programs_saveLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={!steps_.every((step) => !step.error)}
                             onClick={updateProgram}
                         />
                         <Button
-                            label="Next"
+                            label={intl.formatMessage({
+                                id: `programs_nextLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === steps_.length - 1}
