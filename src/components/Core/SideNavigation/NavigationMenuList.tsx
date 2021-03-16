@@ -138,17 +138,19 @@ export default function NavigationMenuList (props: Props) {
                 ],
             },
         ] : [],
-        {
-            items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_contentLibraryTitle`,
-                    }),
-                    icon: Inbox,
-                    link: `/library`,
-                },
-            ],
-        },
+        ...usePermission(`library_200`) ? [
+            {
+                items: [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_contentLibraryTitle`,
+                        }),
+                        icon: Inbox,
+                        link: `/library`,
+                    },
+                ],
+            },
+        ] : [],
         {
             items: [
                 {
@@ -163,34 +165,42 @@ export default function NavigationMenuList (props: Props) {
         {
             header: `Manage`,
             items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_organizationTitle`,
-                    }),
-                    icon: Business,
-                    link: `/admin/organizations`,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_usersTitle`,
-                    }),
-                    icon: Group,
-                    link: `/admin/users`,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_groupsTitle`,
-                    }),
-                    icon: AssignmentInd,
-                    link: `/admin/roles`,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_schoolsTitle`,
-                    }),
-                    icon: School,
-                    link: `/admin/schools`,
-                },
+                ...usePermission(`organizational_profile_10100`) ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_organizationTitle`,
+                        }),
+                        icon: Business,
+                        link: `/admin/organizations`,
+                    },
+                ] : [],
+                ...usePermission(`view_user_page_40101`) ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_usersTitle`,
+                        }),
+                        icon: Group,
+                        link: `/admin/users`,
+                    },
+                ] : [],
+                ...usePermission(`view_groups_30110`) ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_groupsTitle`,
+                        }),
+                        icon: AssignmentInd,
+                        link: `/admin/roles`,
+                    },
+                ] : [],
+                ...usePermission(`view_school_20110`) ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_schoolsTitle`,
+                        }),
+                        icon: School,
+                        link: `/admin/schools`,
+                    },
+                ] : [],
                 ...usePermission(`define_program_page_20105`) ? [
                     {
                         text: intl.formatMessage({
