@@ -103,13 +103,13 @@ export default function CreateSubjectDialog (props: Props) {
 
             onClose(newSubject);
             enqueueSnackbar(intl.formatMessage({
-                id: `subjects_subjectSavedMessage`,
+                id: `subjects_subjectCreateMessage`,
             }), {
                 variant: `success`,
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `subjects_subjectSaveError`,
+                id: `subjects_subjectCreateError`,
             }), {
                 variant: `error`,
             });

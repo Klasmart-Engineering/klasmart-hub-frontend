@@ -34,7 +34,7 @@ interface Props {
     onClose: (value?: Subject) => void;
 }
 
-export default function CreateSubjectDialog (props: Props) {
+export default function EditSubjectDialog (props: Props) {
     const {
         value,
         open,
@@ -112,7 +112,7 @@ export default function CreateSubjectDialog (props: Props) {
 
             onClose(updatedSubject);
             enqueueSnackbar(intl.formatMessage({
-                id: `subjects_subjectSavedMessage`,
+                id: `subjects_subjectSaveMessage`,
             }), {
                 variant: `success`,
             });
@@ -143,11 +143,15 @@ export default function CreateSubjectDialog (props: Props) {
                 },
             });
             onClose(updatedSubject);
-            enqueueSnackbar(`Subject successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `subjects_subjectDeleteMessage`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `subjects_subjectDeleteError`,
+            }), {
                 variant: `error`,
             });
         }

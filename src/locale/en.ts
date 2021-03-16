@@ -856,5 +856,12 @@ const messages: Record<string, string> = {
     schools_subjectsLabel: `Subjects`,
     schools_statusLabel: `Status`,
     schools_viewDetailsLabel: `View class details`,
+
+    subjects_subjectCreateMessage: `Subject has been successfully created`,
+    subjects_subjectCreateError: `Sorry, something went wrong, please try again`,
+    subjects_subjectSaveMessage: `Subject has been successfully saved`,
+    subjects_subjectSaveError: `Sorry, something went wrong, please try again`,
+    subjects_subjectDeleteMessage: `Subject has been successfully deleted`,
+    subjects_subjectDeleteError: `Sorry, something went wrong, please try again`,
 };
 export default messages;

@@ -20,7 +20,6 @@ import {
     DialogContentText,
     makeStyles,
     Paper,
-    Typography,
 } from "@material-ui/core";
 import {
     Add as AddIcon,
@@ -180,18 +179,22 @@ export default function SubjectsTable (props: Props) {
             </>,
             validations: [ required(), equals(name) ],
         })) return;
-        await deleteSubject({
-            variables: {
-                id: id ?? ``,
-            },
-        });
-        refetch();
         try {
-            enqueueSnackbar(`Subject successfully deleted`, {
+            await deleteSubject({
+                variables: {
+                    id: id ?? ``,
+                },
+            });
+            refetch();
+            enqueueSnackbar(intl.formatMessage({
+                id: `subjects_subjectDeleteMessage`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `subjects_subjectDeleteError`,
+            }), {
                 variant: `error`,
             });
         }
