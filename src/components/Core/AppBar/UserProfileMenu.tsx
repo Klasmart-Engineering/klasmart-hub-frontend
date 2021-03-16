@@ -1,5 +1,6 @@
 import CreateOrganizationDialog from "../../styled/navbar/settings/createOrganization";
 import UserProfileSwitcher from "./UserProfileSwitcher";
+import { NO_ORGANIZATION } from "@/app";
 import { currentMembershipVar } from "@/cache";
 import StyledButton from "@/components/styled/button";
 import {
@@ -70,22 +71,13 @@ const StyledMenu = withStyles({
 
 interface Props {
     user?: User | null;
-    loading: boolean;
-    error?: ApolloError;
 }
 
 export default function UserProfileMenu (props: Props) {
-    const {
-        user,
-        loading,
-        error,
-    } = props;
+    const { user } = props;
     const classes = useStyles();
 
-    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
-    const selectedMembershipOrganization = user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
-    const otherAvailableOrganizations = user?.memberships?.filter((membership) => membership.organization_id !== selectedMembershipOrganization?.organization_id);
-    const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
+    const { organization_id } = useReactiveVar(currentMembershipVar);
 
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const [ userName, setUserName ] = useState<string>(``);
@@ -172,11 +164,11 @@ export default function UserProfileMenu (props: Props) {
                         {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
-                {!loading && !error && isEmptyMembership === `` &&
+                {organization_id === NO_ORGANIZATION && (
                     <ListItem>
                         <CreateOrganizationDialog />
                     </ListItem>
-                }
+                )}
                 {/* <UserProfileSwitcher /> */}
                 <Divider />
                 <List>

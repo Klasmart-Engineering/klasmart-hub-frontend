@@ -1,12 +1,12 @@
 import CreateOrganizationDialog from "../../styled/navbar/settings/createOrganization";
 import UserProfileMenu from "./UserProfileMenu";
 import { useGetUser } from "@/api/users";
+import { NO_ORGANIZATION } from "@/app";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import {
     currentMembershipVar,
     userIdVar,
 } from "@/cache";
-import { usePermission } from "@/utils/checkAllowed";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     AppBar,
@@ -42,9 +42,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             backgroundColor: theme.palette.grey[300],
         },
     },
-    avatar: {
-        margin: theme.spacing(0, 1),
-    },
     menuButton: {
         marginLeft: theme.spacing(-1),
         marginRight: theme.spacing(2),
@@ -54,10 +51,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         paddingLeft: `env(safe-area-inset-left)`,
         paddingRight: `env(safe-area-inset-right)`,
         zIndex: theme.zIndex.drawer + 1,
-    },
-    title: {
-        flex: 1,
-        marginLeft: theme.spacing(2),
     },
     tabs: {
         padding: theme.spacing(0, 2),
@@ -89,7 +82,7 @@ export default function Toolbar (props: Props) {
     const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
 
-    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
+    const { organization_id } = useReactiveVar(currentMembershipVar);
     const userId = useReactiveVar(userIdVar);
     const {
         data: userData,
@@ -100,16 +93,6 @@ export default function Toolbar (props: Props) {
             user_id: userId,
         },
     });
-
-    const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
-    const showMenuToRoles = [
-        `Super Admin`,
-        `Organization Admin`,
-        `School Admin`,
-        `Teacher`,
-    ];
-    const showNavMenu = selectedMembershipOrganization?.roles?.map((role) => role.role_name).some((roleName) => showMenuToRoles.includes(roleName ?? ``));
-    const isEmptyMembership = Object.values(selectedOrganizationMeta).reduce((str, element) => str + element);
 
     const contentTabs: Tab[] = [
         {
@@ -126,7 +109,6 @@ export default function Toolbar (props: Props) {
 
     const getTabs = (path: string): Tab[] => {
         return findTabs(contentTabs, path)
-        // ?? findTabs(adminTabs, path)
         ?? [];
     };
 
@@ -181,26 +163,23 @@ export default function Toolbar (props: Props) {
                     </Box>
                     <Box
                         display="flex"
-                        order={2}>
-                        {!loading && !error && isEmptyMembership === `` &&
-                                <CreateOrganizationDialog />
-                        }
-                        <UserProfileMenu
-                            user={userData?.user}
-                            loading={loading}
-                            error={error}
-                        />
+                        order={2}
+                    >
+                        {organization_id === NO_ORGANIZATION && (
+                            <CreateOrganizationDialog />
+                        )}
+                        <UserProfileMenu user={userData?.user} />
                     </Box>
                 </Grid>
             </AppToolbar>
-            {tabs.length > 0 &&
-                    <Tabs
-                        valuesAsPaths
-                        className={classes.tabs}
-                        tabs={tabs}
-                        value={location.pathname}
-                    />
-            }
+            {tabs.length > 0 && (
+                <Tabs
+                    valuesAsPaths
+                    className={classes.tabs}
+                    tabs={tabs}
+                    value={location.pathname}
+                />
+            )}
         </AppBar>
     );
 }

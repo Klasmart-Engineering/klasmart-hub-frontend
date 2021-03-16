@@ -19,6 +19,9 @@ import {
 } from "react-device-detect";
 import { useStore } from "react-redux";
 
+export const NO_ORGANIZATION = `no-organization`;
+export const ERROR_ORGANIZATION = `error-organization`;
+
 interface Props {
 }
 
@@ -46,22 +49,57 @@ export default function App (props: Props) {
         },
     });
     const [ organizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
-    const { data: organizationData } = useGetOrganization({
+    const {
+        data: organizationData,
+        loading: organizationLoading,
+        error: organizationError,
+    } = useGetOrganization({
         variables: {
             organization_id: organizationIdStack?.[0],
         },
     });
 
     useEffect(() => {
-        if (!organizationData?.organization) return;
-        const organization = organizationData.organization;
-
+        if (organizationLoading) {
+            currentMembershipVar({
+                organization_name: ``,
+                organization_id: ``,
+                organization_email: ``,
+            });
+            return;
+        }
+        if (!userData?.user.user_id && organizationError) {
+            currentMembershipVar({
+                organization_name: ``,
+                organization_id: ERROR_ORGANIZATION,
+                organization_email: ``,
+            });
+            return;
+        }
+        if (!organizationData?.organization) {
+            currentMembershipVar({
+                organization_name: ``,
+                organization_id: NO_ORGANIZATION,
+                organization_email: ``,
+            });
+            return;
+        }
+        const {
+            organization_id,
+            organization_name,
+            owner,
+        } = organizationData.organization;
         currentMembershipVar({
-            organization_name: organization.organization_name ?? ``,
-            organization_id: organization.organization_id,
-            organization_email: organization.owner?.email ?? ``,
+            organization_id,
+            organization_name: organization_name ?? ``,
+            organization_email: owner?.email ?? ``,
         });
-    }, [ organizationData ]);
+    }, [
+        userData,
+        organizationData,
+        organizationLoading,
+        organizationError,
+    ]);
 
     return (
         <Layout />
