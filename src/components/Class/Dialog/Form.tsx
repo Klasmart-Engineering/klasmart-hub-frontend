@@ -8,6 +8,7 @@ import {
     Status,
     Subject,
 } from "@/types/graphQL";
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
@@ -153,8 +154,8 @@ export default function ClassDialogForm (props: Props) {
             class_name: className,
             schools: allSchools.filter((school) => schoolIds.includes(school.school_id)),
             programs: allPrograms.filter((program) => programsIds.includes(program.id)),
-            grades: allGrades.filter((grades) => gradesIds.includes(grades.id ?? ``)),
-            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id ?? ``)),
+            grades: allGrades.filter((grades) => gradesIds.includes(grades.id)),
+            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id)),
             age_ranges: allAgeRanges.filter((ageRange) => ageRangesIds.includes(ageRange.id)),
         };
 
@@ -231,7 +232,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allGrades}
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
-                itemValue={(grade) => grade.id ?? ``}
+                itemValue={(grade) => grade.id}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -242,7 +243,7 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={allAgeRanges}
                 value={ageRangesIds}
-                itemText={(ageRange) => ageRange.name ?? ``}
+                itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
                 itemValue={(ageRange) => ageRange.id}
                 onChange={(values) => setAgeRangesIds(values)}
             />
@@ -255,7 +256,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allSubjects}
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}
-                itemValue={(subject) => subject.id ?? ``}
+                itemValue={(subject) => subject.id}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>
