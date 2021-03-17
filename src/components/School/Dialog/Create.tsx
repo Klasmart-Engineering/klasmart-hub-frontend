@@ -93,8 +93,9 @@ export default function CreateSchoolDialog (props: Props) {
                     onChange={handleChange}
                 />,
                 error: [
-                    required()(newSchool?.school_name),
+                    required(`The school name is required`)(newSchool?.school_name),
                     letternumeric()(newSchool?.school_name),
+                    max(35, `Max length 35 of characters`)(newSchool.school_name),
                     max(10)(newSchool?.shortcode?.length),
                     alphanumeric()(newSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
