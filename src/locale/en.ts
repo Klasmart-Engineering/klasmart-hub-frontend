@@ -431,11 +431,6 @@ const messages: Record<string, string> = {
     navMenu_securityDescription: `Configure security settings`,
     navMenu_schoolsTitle: `Schools`,
     navMenu_schoolsDescription: `Manage schools`,
-    navMenu_programsTitle: `Programs`,
-    navMenu_classesTitle: `Classes`,
-    navMenu_subjectsTitle: `Subjects`,
-    navMenu_gradesTitle: `Grades`,
-    navMenu_ageRangesTitle: `Age Ranges`,
     navMenu_scheduleTitle: `Schedule`,
     navMenu_scheduleDescription: `Manage your schedules and join upcoming classes`,
     navMenu_supportTitle: `Support`,
@@ -863,5 +858,11 @@ const messages: Record<string, string> = {
     subjects_subjectSaveError: `Sorry, something went wrong, please try again`,
     subjects_subjectDeleteMessage: `Subject has been successfully deleted`,
     subjects_subjectDeleteError: `Sorry, something went wrong, please try again`,
+
+    navMenu_programsTitle: `Programs`,
+    navMenu_classesTitle: `Classes`,
+    navMenu_subjectsTitle: `Subjects`,
+    navMenu_gradesTitle: `Grades`,
+    navMenu_ageRangesTitle: `Age Ranges`,
 };
 export default messages;
