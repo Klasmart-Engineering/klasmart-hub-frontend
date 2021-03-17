@@ -1,12 +1,7 @@
 import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary";
-import {
-    useCreateOrUpdatePrograms,
-    useEditProgramAgeRanges,
-    useEditProgramGrades,
-    useEditProgramSubjects,
-} from "@/api/programs";
+import { useCreateOrUpdatePrograms } from "@/api/programs";
 import { currentMembershipVar } from "@/cache";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
@@ -56,7 +51,11 @@ export default function CreateProgramDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { organization_id } = useReactiveVar(currentMembershipVar);
-    const { required, letternumeric } = useValidations();
+    const {
+        required,
+        letternumeric,
+        max,
+    } = useValidations();
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
@@ -69,7 +68,6 @@ export default function CreateProgramDialog (props: Props) {
     };
 
     useEffect(() => {
-        if (!open) return;
         setStepIndex(INITIAL_STEP_INDEX);
         setValue(buildEmptyProgram());
     }, [ open ]);
@@ -92,6 +90,7 @@ export default function CreateProgramDialog (props: Props) {
                 error: [
                     required()(value_?.name),
                     letternumeric()(value_?.name),
+                    max(35)(value_?.name),
                     required()(value_?.grades),
                     required()(value_?.age_ranges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),

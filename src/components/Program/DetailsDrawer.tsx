@@ -1,4 +1,7 @@
-import { Program } from "@/types/graphQL";
+import {
+    isActive,
+    Program,
+} from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import {
     Box,
@@ -48,7 +51,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                 {
                     header: `Age Ranges`,
                     content: (
-                        <Box px={1.5}>{value?.age_ranges?.map((ageRange) => (
+                        <Box px={1.5}>{value?.age_ranges?.filter(isActive).map((ageRange) => (
                             <Chip
                                 key={ageRange.id}
                                 className={classes.chip}
@@ -60,7 +63,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                 {
                     header: `Grades`,
                     content: (
-                        <Box px={1.5}>{value?.grades?.map((grade) => (
+                        <Box px={1.5}>{value?.grades?.filter(isActive).map((grade) => (
                             <Chip
                                 key={grade.id}
                                 className={classes.chip}
@@ -72,7 +75,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                 {
                     header: `Subjects`,
                     content: (
-                        <Box px={1.5}>{value?.subjects?.map((subject) => (
+                        <Box px={1.5}>{value?.subjects?.filter(isActive).map((subject) => (
                             <Chip
                                 key={subject.id}
                                 className={classes.chip}

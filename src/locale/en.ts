@@ -800,6 +800,10 @@ const messages: Record<string, string> = {
     programs_editProgramLabel: `Edit Program`,
     programs_saveLabel: `Save`,
     programs_programNameLabel: `Program Name`,
+    programs_programCreateMessage: `Program has been successfully created`,
+    programs_programCreateError: `Sorry, something went wrong, please try again`,
+    programs_programSaveMessage: `Program has been successfully saved`,
+    programs_programSaveError: `Sorry, something went wrong, please try again`,
 
     //
 

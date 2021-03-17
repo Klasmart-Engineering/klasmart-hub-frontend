@@ -5,10 +5,12 @@ import { currentMembershipVar } from "@/cache";
 import {
     AgeRange,
     Grade,
+    isActive,
     isCustomValue,
     isNonSpecified,
     isOtherSystemValue,
     sortEntitiesByName,
+    Status,
     useHandleUpdateNonSpecified,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
@@ -45,11 +47,15 @@ export default function ProgramInfoStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const { required, letternumeric } = useValidations();
+    const {
+        required,
+        letternumeric,
+        max,
+    } = useValidations();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ programName, setProgramName ] = useState(value.name ?? ``);
-    const [ gradeIds, setGradeIds ] = useState(value.grades?.map((grade) => grade.id ?? ``) ?? []);
-    const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
+    const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
+    const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
     const { data: ageRangesData } = useGetAllAgeRanges({
         variables: {
             organization_id,
@@ -61,12 +67,12 @@ export default function ProgramInfoStep (props: TabContent) {
         },
     });
 
-    const allAgeRanges = ageRangesData?.organization.ageRanges ?? [];
+    const allAgeRanges = ageRangesData?.organization.ageRanges.filter(isActive) ?? [];
     const nonSpecifiedAgeRange = allAgeRanges.find(isNonSpecified);
     const systemAgeRanges = allAgeRanges.filter(isOtherSystemValue);
     const customAgeRanges = allAgeRanges.filter(isCustomValue);
 
-    const allGrades = gradesData?.organization.grades ?? [];
+    const allGrades = gradesData?.organization.grades.filter(isActive) ?? [];
     const nonSpecifiedGrade = allGrades.find(isNonSpecified);
     const systemGrades = allGrades.filter(isOtherSystemValue);
     const customGrades = allGrades.filter(isCustomValue);
@@ -78,8 +84,8 @@ export default function ProgramInfoStep (props: TabContent) {
             age_ranges,
         } = value;
         setProgramName(name ?? ``);
-        setGradeIds(grades?.map((grade) => grade.id ?? ``) ?? []);
-        setAgeRanges(age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
+        setGradeIds(grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
+        setAgeRanges(age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
     }, [ value ]);
 
     useEffect(() => {
@@ -110,7 +116,11 @@ export default function ProgramInfoStep (props: TabContent) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     autoFocus={!value.id}
-                    validations={[ required(), letternumeric() ]}
+                    validations={[
+                        required(`The program name is required.`),
+                        letternumeric(),
+                        max(35, `Program Name has a max length of 35 characters.`),
+                    ]}
                     onChange={setProgramName}
                 />
             </Paper>
@@ -139,7 +149,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     itemValue={(grade) => grade.id ?? ``}
                     disabled={disabled}
                     hideHelperText={disabled}
-                    validations={[ required() ]}
+                    validations={[ required(`The Grade is required.`) ]}
                     onChange={setGradeIds}
                 />
             </Paper>
@@ -168,7 +178,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     itemValue={(ageRange) => ageRange.id ?? ``}
                     disabled={disabled}
                     hideHelperText={disabled}
-                    validations={[ required() ]}
+                    validations={[ required(`The Age Range is required.`) ]}
                     onChange={setAgeRanges}
                 />
             </Paper>

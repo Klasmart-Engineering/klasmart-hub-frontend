@@ -43,8 +43,6 @@ export const isActive = (entity: BaseEntity) => {
 export const sortEntitiesByName = (a: BaseEntity, b: BaseEntity) => a.name?.localeCompare(b.name ?? ``) ?? 0;
 
 export const useHandleUpdateNonSpecified = (values: string[], setValues: Dispatch<SetStateAction<string[]>>, items: BaseEntity[]) => {
-    console.log(`values`, values);
-
     useEffect(() => {
         if (!values.find((value) => items.find(isNonSpecified)?.id === value) || values.length <= 1) return;
         setValues((values) => {

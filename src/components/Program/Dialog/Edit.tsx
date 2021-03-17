@@ -52,7 +52,11 @@ export default function CreateProgramDialog (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { required, letternumeric } = useValidations();
+    const {
+        required,
+        letternumeric,
+        max,
+    } = useValidations();
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ createOrUpdatePrograms ] = useCreateOrUpdatePrograms();
     const [ steps_, setSteps ] = useState<Step[]>([]);
@@ -89,6 +93,7 @@ export default function CreateProgramDialog (props: Props) {
                 error: [
                     required()(value_?.name),
                     letternumeric()(value_?.name),
+                    max(35)(value_?.name),
                     required()(value_?.grades),
                     required()(value_?.age_ranges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
@@ -132,7 +137,7 @@ export default function CreateProgramDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            age_ranges: age_ranges?.map(({ id }) => id) ?? [],
+                            age_ranges: age_ranges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                         },

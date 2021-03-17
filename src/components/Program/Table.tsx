@@ -94,19 +94,19 @@ export default function ProgramTable (props: Props) {
     });
     const [ deleteProgram ] = useDeleteProgram();
 
-    const dataPrograms = data?.organization.programs ?? [];
+    const allPrograms = (programs ?? data?.organization.programs ?? []).filter(isActive);
 
     useEffect(() => {
         if (!canView) {
             setRows([]);
             return;
         }
-        const rows = (programs ?? dataPrograms)?.filter(isActive).map((program, i) => ({
+        const rows = allPrograms.map((program, i) => ({
             id: program.id ?? `row-${i}`,
             name: program.name ?? ``,
-            grades: program.grades?.map((grade) => grade.name ?? ``) ?? [],
-            ageRanges: program.age_ranges?.map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-            subjects: program.subjects?.map((subject) => subject.name ?? ``) ?? [],
+            grades: program.grades?.filter(isActive).map((grade) => grade.name ?? ``) ?? [],
+            ageRanges: program.age_ranges?.filter(isActive).map(buildAgeRangeLabel) ?? [],
+            subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
             system: program.system ?? false,
         })) ?? [];
         setRows(rows);
@@ -183,7 +183,7 @@ export default function ProgramTable (props: Props) {
         },
     ];
 
-    const findProgram = (row: ProgramRow) => dataPrograms.find((program) => program.id === row.id);
+    const findProgram = (row: ProgramRow) => allPrograms.find((program) => program.id === row.id);
 
     const handleViewDetailsRowClick = (row: ProgramRow) => {
         const selectedProgram = findProgram(row);
@@ -246,6 +246,8 @@ export default function ProgramTable (props: Props) {
                 <PageTable
                     showCheckboxes={!disabled}
                     idField="id"
+                    orderBy="name"
+                    order="asc"
                     rows={rows}
                     columns={columns}
                     selectedRows={selectedIds}
