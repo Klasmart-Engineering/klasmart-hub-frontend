@@ -823,6 +823,7 @@ const messages: Record<string, string> = {
     class_createLabel: `Create`,
     class_editLabel: `Edit`,
     class_editTitle: `Edit class`,
+    class_viewDetailsLabel: `View Details`,
 
     class_classNameLabel: `Class name`,
     class_schoolsLabel: `Schools (optional)`,
@@ -834,8 +835,8 @@ const messages: Record<string, string> = {
     class_programsHeader: `Programs`,
     class_classRosterHeader: `Class Roster`,
     class_tableSubjectsLabel: `Subjects`,
-    class_tableTeachers: `Teachers ( {length} )`,
-    class_tableStudents: `Students ( {length} )`,
+    class_tableTeachers: `Teachers ({length})`,
+    class_tableStudents: `Students ({length})`,
 
     schools_userNameLabel: `User name`,
     schools_roleLabel: `Role`,
@@ -855,7 +856,6 @@ const messages: Record<string, string> = {
     schools_programsLabel: `Programs`,
     schools_subjectsLabel: `Subjects`,
     schools_statusLabel: `Status`,
-    schools_viewDetailsLabel: `View class details`,
 
     subjects_subjectCreateMessage: `Subject has been successfully created`,
     subjects_subjectCreateError: `Sorry, something went wrong, please try again`,

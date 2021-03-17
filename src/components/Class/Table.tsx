@@ -4,9 +4,9 @@ import {
 } from "@/api/classes";
 import { currentMembershipVar } from "@/cache";
 import ClassRoster from "@/components/Class/ClassRoster/Table";
+import ClassDetailsDrawer from "@/components/Class/DetailsDrawer";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
-import ViewClassDialog from "@/components/Class/Dialog/View";
 import globalCss from "@/globalCss";
 import {
     Class,
@@ -31,7 +31,7 @@ import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-    Pageview as ViewIcon,
+    ViewList as ViewListIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
@@ -130,7 +130,7 @@ export default function ClassesTable (props: Props) {
     const canView = usePermission(`view_classes_20114`);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
-    const [ viewDialogOpen, setViewDialogOpen ] = useState(false);
+    const [ detailsDrawerOpen, setDetailsDrawerOpen ] = useState(false);
 
     const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
@@ -367,9 +367,9 @@ export default function ClassesTable (props: Props) {
                     rowActions={!disabled ? (row) => [
                         {
                             label: intl.formatMessage({
-                                id: `schools_viewDetailsLabel`,
+                                id: `class_viewDetailsLabel`,
                             }),
-                            icon: ViewIcon,
+                            icon: ViewListIcon,
                             onClick: (row) => {
                                 setClassDetails({
                                     className: row.name,
@@ -377,7 +377,7 @@ export default function ClassesTable (props: Props) {
                                     teachers: row.teachers,
                                     students: row.students,
                                 });
-                                setViewDialogOpen(true);
+                                setDetailsDrawerOpen(true);
                             },
                         },
                         {
@@ -436,11 +436,11 @@ export default function ClassesTable (props: Props) {
                 }}
             />
 
-            <ViewClassDialog
-                open={viewDialogOpen}
+            <ClassDetailsDrawer
+                open={detailsDrawerOpen}
                 classDetails={classDetails}
                 onClose={() => {
-                    setViewDialogOpen(false);
+                    setDetailsDrawerOpen(false);
                     setClassDetails(buildEmptyClassDetails());
                 }}
             />

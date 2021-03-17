@@ -1,9 +1,7 @@
 import { ClassDetails } from "@/components/Class/Table";
 import {
-    Avatar,
     Box,
     createStyles,
-    Divider,
     List,
     ListItem,
     ListItemText,
@@ -14,24 +12,17 @@ import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import { withStyles } from "@material-ui/core/styles";
-import {
-    ExpandMore as ExpandMoreIcon,
-    Person as PersonIcon,
-} from "@material-ui/icons";
+import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
 import {
     Drawer,
-    utils,
+    UserAvatar,
 } from "kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";
 
 const Accordion = withStyles({
     root: {
-        border: `1px solid rgba(0, 0, 0, .125)`,
         boxShadow: `none`,
-        "&:not(:last-child)": {
-            borderBottom: 0,
-        },
         "&:before": {
             display: `none`,
         },
@@ -45,9 +36,9 @@ const Accordion = withStyles({
 const AccordionSummary = withStyles({
     root: {
         marginBottom: -1,
-        minHeight: 56,
+        minHeight: 48,
         "&$expanded": {
-            minHeight: 56,
+            minHeight: 48,
         },
     },
     content: {
@@ -64,27 +55,28 @@ const AccordionDetails = withStyles((theme) => ({
     },
 }))(MuiAccordionDetails);
 
-const useStyles = makeStyles((theme) =>
-    createStyles({
-        heading: {
-            fontSize: theme.typography.pxToRem(15),
-            fontWeight: theme.typography.fontWeightRegular,
+const useStyles = makeStyles((theme) => createStyles({
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
+    },
+    avatar: {
+        marginRight: theme.spacing(2),
+    },
+    subjectHeader: {
+        fontSize: `0.8em`,
+        padding: theme.spacing(0, 2),
+        textTransform: `uppercase`,
+        color: theme.palette.grey[600],
+    },
+    accordionDetails: {
+        padding: 0,
+        color: theme.palette.common.black,
+        "& .MuiList-padding": {
+            paddingTop: 0,
         },
-        avatar: {
-            width: theme.spacing(3),
-            height: theme.spacing(3),
-            color: `white`,
-            marginRight: 16,
-            fontSize: 10,
-        },
-        subjectHeader: {
-            padding: theme.spacing(0, 2),
-            textTransform: `uppercase`,
-        },
-        accordionDetails: {
-            padding: 0,
-        },
-    }));
+    },
+}));
 
 interface Props {
     open: boolean;
@@ -92,7 +84,7 @@ interface Props {
     classDetails: ClassDetails;
 }
 
-export default function ViewClassDialog (props: Props) {
+export default function ClassDetailsDrawer (props: Props) {
     const {
         open,
         onClose,
@@ -124,24 +116,24 @@ export default function ViewClassDialog (props: Props) {
                                 <Accordion key={`program-${i}`}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
+                                        aria-controls="panel-content"
                                     >
                                         <Typography className={classes.heading}>{program.programName}</Typography>
                                     </AccordionSummary>
                                     <Typography
                                         variant="caption"
-                                        className={classes.subjectHeader}>
+                                        className={classes.subjectHeader}
+                                        component="div"
+                                    >
                                         {intl.formatMessage({
                                             id: `class_tableSubjectsLabel`,
                                         })}
                                     </Typography>
-                                    <Divider />
                                     <AccordionDetails className={classes.accordionDetails}>
-                                        <List>
+                                        <List dense>
                                             {program.subjects.map((subject, i) => (
                                                 <ListItem key={`subject-${i}`}>
-                                                    <ListItemText secondary={subject.name} />
+                                                    <ListItemText primary={`- ${subject.name}`} />
                                                 </ListItem>
                                             ))}
                                         </List>
@@ -160,10 +152,12 @@ export default function ViewClassDialog (props: Props) {
                             <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1a-content"
-                                    id="panel1a-header"
+                                    aria-controls="panel-content"
                                 >
-                                    <Typography className={classes.heading}>
+                                    <Typography
+                                        className={classes.heading}
+                                        component="div"
+                                    >
                                         {intl.formatMessage({
                                             id: `class_tableTeachers`,
                                         }, {
@@ -179,20 +173,13 @@ export default function ViewClassDialog (props: Props) {
                                                 <Box
                                                     display="flex"
                                                     flexDirection="row"
-                                                    alignItems="center">
-                                                    <Avatar
-                                                        src={``}
+                                                    alignItems="center"
+                                                >
+                                                    <UserAvatar
+                                                        name={teacher}
                                                         className={classes.avatar}
-                                                        style={{
-                                                            backgroundColor: utils.stringToColor(`row.name`),
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            noWrap
-                                                            variant="inherit">
-                                                            {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                        </Typography>
-                                                    </Avatar>
+                                                        size="small"
+                                                    />
                                                     <span>{teacher}</span>
                                                 </Box>
                                             </ListItem>
@@ -204,14 +191,16 @@ export default function ViewClassDialog (props: Props) {
                             <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1a-content"
-                                    id="panel1a-header"
+                                    aria-controls="panel-content"
                                 >
-                                    <Typography className={classes.heading}>
+                                    <Typography
+                                        className={classes.heading}
+                                        component="div"
+                                    >
                                         {intl.formatMessage({
                                             id: `class_tableStudents`,
                                         }, {
-                                            length: teachers.length,
+                                            length: students.length,
                                         })}
                                     </Typography>
                                 </AccordionSummary>
@@ -222,20 +211,13 @@ export default function ViewClassDialog (props: Props) {
                                                 <Box
                                                     display="flex"
                                                     flexDirection="row"
-                                                    alignItems="center">
-                                                    <Avatar
-                                                        src={``}
+                                                    alignItems="center"
+                                                >
+                                                    <UserAvatar
+                                                        name={student}
                                                         className={classes.avatar}
-                                                        style={{
-                                                            backgroundColor: utils.stringToColor(`row.name`),
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            noWrap
-                                                            variant="inherit">
-                                                            {utils.nameToInitials(`row.name`, 3) || <PersonIcon />}
-                                                        </Typography>
-                                                    </Avatar>
+                                                        size="small"
+                                                    />
                                                     <span>{student}</span>
                                                 </Box>
                                             </ListItem>
