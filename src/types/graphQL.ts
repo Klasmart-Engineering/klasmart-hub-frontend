@@ -136,12 +136,14 @@ export interface Student {
     user_id: string;
     user?: User | null;
     given_name?: string | null;
+    membership?: OrganizationMembership | null;
 }
 
 export interface Teacher {
     user_id: string;
     user?: User | null;
     given_name?: string | null;
+    membership?: OrganizationMembership | null;
 }
 
 export interface Class {

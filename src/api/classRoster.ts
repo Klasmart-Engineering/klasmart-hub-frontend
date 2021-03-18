@@ -3,6 +3,7 @@ import { DELETE_CLASS_STUDENT } from "@/operations/mutations/deleteClassStudent"
 import { DELETE_CLASS_TEACHER } from "@/operations/mutations/deleteClassTeacher";
 import { GET_CLASS_ROSTER } from "@/operations/queries/getClassRoster";
 import { GET_ELIGIBLE_USERS } from "@/operations/queries/getEligibleClassUsers";
+import { OrganizationMembership } from "@/types/graphQL";
 import {
     QueryHookOptions,
     useMutation,
@@ -11,6 +12,7 @@ import {
 
 interface GetClassRosterRequest {
     class_id: string;
+    organization_id: string;
 }
 
 export interface ClassUser {
@@ -26,6 +28,7 @@ export interface ClassUser {
     role?: string;
     school_memberships?: string[];
     user_name?: string;
+    membership: OrganizationMembership;
 }
 
 interface GetClassRosterRespone {

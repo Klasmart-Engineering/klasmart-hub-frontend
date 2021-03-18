@@ -44,10 +44,16 @@ export const GET_ALL_CLASSES = gql`
                 students {
                     user_id
                     given_name
+                    membership(organization_id: $organization_id) {
+                        status
+                    }
                 }
                 teachers {
                     user_id
                     given_name
+                    membership(organization_id: $organization_id) {
+                        status
+                    }
                 }
             }
         }

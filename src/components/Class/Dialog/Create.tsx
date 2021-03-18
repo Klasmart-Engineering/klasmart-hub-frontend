@@ -75,7 +75,7 @@ export default function CreateClassDialog (props: Props) {
             await createPrograms({
                 variables: {
                     class_id: classId,
-                    program_ids: programs?.map((program) => program.id) ?? [],
+                    program_ids: programs?.map((program) => program.id ?? ``) ?? [],
                 },
             });
 
@@ -96,7 +96,7 @@ export default function CreateClassDialog (props: Props) {
             await createAgeRanges({
                 variables: {
                     class_id: classId,
-                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id) ?? [],
+                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? [],
                 },
             });
 

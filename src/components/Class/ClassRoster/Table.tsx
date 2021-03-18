@@ -4,10 +4,15 @@ import {
     useDeleteClassTeacher,
     useGetClassRoster,
 } from "@/api/classRoster";
+import { currentMembershipVar } from "@/cache";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
-import { Class } from "@/types/graphQL";
+import {
+    Class,
+    Status,
+} from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client/react";
 import {
     Box,
     createStyles,
@@ -58,6 +63,8 @@ export default function ClassRoster (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
+    const organization = useReactiveVar(currentMembershipVar);
+    const { organization_id } = organization;
     const { required, equals } = useValidations();
     const [ deleteStudent ] = useDeleteClassStudent();
     const [ deleteTeacher ] = useDeleteClassTeacher();
@@ -67,6 +74,7 @@ export default function ClassRoster (props: Props) {
     } = useGetClassRoster({
         variables: {
             class_id: classItem.class_id,
+            organization_id,
         },
     });
 
@@ -76,18 +84,22 @@ export default function ClassRoster (props: Props) {
     };
 
     classInfo = {
-        students: classInfo.students.map((user: ClassUser) => ({
-            ...user,
-            name: `${user.given_name} ${user.family_name}`,
-            role: `Student`,
-            user_id: `${user.user_id}-student`,
-        })),
-        teachers: classInfo.teachers.map((user: ClassUser) => ({
-            ...user,
-            name: `${user.given_name} ${user.family_name}`,
-            role: `Teacher`,
-            user_id: `${user.user_id}-teacher`,
-        })),
+        students: classInfo.students
+            ?.filter((user) => user?.membership?.status === Status.ACTIVE)
+            .map((user: ClassUser) => ({
+                ...user,
+                name: `${user.given_name} ${user.family_name}`,
+                role: `Student`,
+                user_id: `${user.user_id}-student`,
+            })),
+        teachers: classInfo.teachers
+            ?.filter((user) => user?.membership?.status === Status.ACTIVE)
+            .map((user: ClassUser) => ({
+                ...user,
+                name: `${user.given_name} ${user.family_name}`,
+                role: `Teacher`,
+                user_id: `${user.user_id}-teacher`,
+            })),
     };
 
     const rows: ClassUser[] = [ ...classInfo.students, ...classInfo.teachers ];

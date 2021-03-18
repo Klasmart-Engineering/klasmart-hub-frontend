@@ -163,8 +163,14 @@ export default function ClassesTable (props: Props) {
             subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
             grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
             ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
-            students: classItem.students?.map((student) => student?.given_name ?? ``) ?? [],
-            teachers: classItem.teachers?.map((teacher) => teacher?.given_name ?? ``) ?? [],
+            students:
+                classItem.students
+                    ?.filter((student) => student?.membership?.status === Status.ACTIVE)
+                    .map((student) => student?.given_name ?? ``) ?? [],
+            teachers:
+                classItem.teachers
+                    ?.filter((teacher) => teacher?.membership?.status === Status.ACTIVE)
+                    .map((teacher) => teacher?.given_name ?? ``) ?? [],
             status: classItem.status ?? ``,
             programSubjects: classItem.programs?.map((program) => ({
                 programName: program.name ?? ``,

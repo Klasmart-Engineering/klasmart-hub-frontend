@@ -73,7 +73,7 @@ export default function ClassDialogForm (props: Props) {
     const [ allSubjects, setAllSubjects ] = useState<Subject[]>([]);
     const [ subjectsIds, setSubjectsIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
     const [ allAgeRanges, setAllAgeRanges ] = useState<AgeRange[]>([]);
-    const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>(value.age_ranges?.map((ageRange) => ageRange.id) ?? []);
+    const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
     const [ className, setClassName ] = useState(value.class_name ?? ``);
     const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((school) => school.school_id) ?? []);
     const [ classNameValid, setClassNameValid ] = useState(true);
@@ -104,7 +104,7 @@ export default function ClassDialogForm (props: Props) {
         allSchools.forEach((school) => {
             if (schoolIds.includes(school.school_id)) {
                 school?.programs?.forEach((program) => {
-                    if (programsIds.includes(program.id)) {
+                    if (programsIds.includes(program.id ?? ``)) {
                         program?.grades?.forEach((grade) => {
                             if (!grades.find((selectedGrade) => selectedGrade.id === grade.id)) {
                                 grades.push(grade);
@@ -153,10 +153,10 @@ export default function ClassDialogForm (props: Props) {
             class_id: value.class_id,
             class_name: className,
             schools: allSchools.filter((school) => schoolIds.includes(school.school_id)),
-            programs: allPrograms.filter((program) => programsIds.includes(program.id)),
-            grades: allGrades.filter((grades) => gradesIds.includes(grades.id)),
-            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id)),
-            age_ranges: allAgeRanges.filter((ageRange) => ageRangesIds.includes(ageRange.id)),
+            programs: allPrograms.filter((program) => programsIds.includes(program.id ?? ``)),
+            grades: allGrades.filter((grades) => gradesIds.includes(grades.id ?? ``)),
+            subjects: allSubjects.filter((subject) => subjectsIds.includes(subject.id ?? ``)),
+            age_ranges: allAgeRanges.filter((ageRange) => ageRangesIds.includes(ageRange.id ?? ``)),
         };
 
         onChange(updatedClass);
@@ -220,7 +220,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allPrograms}
                 value={programsIds}
                 itemText={(program) => program.name ?? ``}
-                itemValue={(program) => program.id}
+                itemValue={(program) => program.id ?? ``}
                 onChange={(values) => setProgramsIds(values)}
             />
             <Select
@@ -232,7 +232,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allGrades}
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
-                itemValue={(grade) => grade.id}
+                itemValue={(grade) => grade.id ?? ``}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -244,7 +244,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allAgeRanges}
                 value={ageRangesIds}
                 itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
-                itemValue={(ageRange) => ageRange.id}
+                itemValue={(ageRange) => ageRange.id ?? ``}
                 onChange={(values) => setAgeRangesIds(values)}
             />
             <Select
@@ -256,7 +256,7 @@ export default function ClassDialogForm (props: Props) {
                 items={allSubjects}
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}
-                itemValue={(subject) => subject.id}
+                itemValue={(subject) => subject.id ?? ``}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>

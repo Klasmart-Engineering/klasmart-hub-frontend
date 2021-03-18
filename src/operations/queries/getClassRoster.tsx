@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_CLASS_ROSTER = gql`
-    query class($class_id: ID!) {
+    query class($class_id: ID!, $organization_id: ID!) {
         class(class_id: $class_id) {
             students {
                 user_id
@@ -13,6 +13,9 @@ export const GET_CLASS_ROSTER = gql`
                 date_of_birth
                 avatar
                 username
+                membership(organization_id: $organization_id) {
+                    status
+                }
             }
             teachers {
                 user_id
@@ -24,6 +27,9 @@ export const GET_CLASS_ROSTER = gql`
                 date_of_birth
                 avatar
                 username
+                membership(organization_id: $organization_id) {
+                    status
+                }
             }
         }
     }

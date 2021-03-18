@@ -96,8 +96,9 @@ export default function MyOrganizationTable (props: Props) {
         setConfirmLeaveOrganizationDialogOpen(false);
     };
 
+    const organizationOwnerships = data?.me?.organization_ownerships ?? [];
+
     useEffect(() => {
-        const organizationOwnerships = data?.me?.organization_ownerships ?? [];
         if (!organizationOwnerships.length) {
             setRows([]);
             return;
@@ -109,9 +110,9 @@ export default function MyOrganizationTable (props: Props) {
             phone: organizationOwnership?.organization?.phone ?? ``,
             email: organizationOwnership?.user?.email ?? ``,
             roles:
-                    organizationOwnership?.organization?.roles
-                        ?.filter((role) => role.status === Status.ACTIVE)
-                        .map((role) => role.role_name ?? ``) ?? [],
+                organizationOwnership?.organization?.roles
+                    ?.filter((role) => role.status === Status.ACTIVE)
+                    .map((role) => role.role_name ?? ``) ?? [],
             status: organizationOwnership?.status ? intl.formatMessage({
                 id: `data_${organizationOwnership?.status}Status`,
             }) : ``,
@@ -215,6 +216,7 @@ export default function MyOrganizationTable (props: Props) {
                         }),
                         icon: AddIcon,
                         onClick: () => history.push(`/admin/organizations/create`),
+                        disabled: organizationOwnerships.length > 0,
                     }}
                     rowActions={(row) => [
                         {
@@ -266,7 +268,7 @@ export default function MyOrganizationTable (props: Props) {
                             id="allOrganization_deleteConfirmLabel"
                             values={{
                                 name: selectedOrganization?.name,
-                            }}></FormattedMessage>
+                            }}/>
                     </p>
                     {deleteLoading && (
                         <Grid
