@@ -2,6 +2,7 @@ import Toolbar from "./components/Core/AppBar/Toolbar";
 import SideNavigationDrawer,
 { DRAWER_WIDTH } from "./components/Core/SideNavigation/Drawer";
 import Router from "./router";
+import { useRect } from "./utils/useRect";
 import {
     createStyles,
     makeStyles,
@@ -31,8 +32,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 interface Props {
 }
 
+const ref = React.createRef<HTMLDivElement>();
 const Layout = (props: Props) => {
     const classes = useStyles();
+    const rect = useRect(ref);
     const [ navigationDrawerOpen, setNavigationDrawerOpen ] = useState<boolean>();
 
     return (
@@ -46,8 +49,11 @@ const Layout = (props: Props) => {
                     sideNavigationDrawerOpen={navigationDrawerOpen}
                     onMenuButtonClick={() => setNavigationDrawerOpen((open) => open === false ? true : false)}
                 />
-                <main className={classes.content}>
-                    <Router />
+                <main
+                    ref={ref}
+                    className={classes.content}
+                >
+                    <Router rect={rect} />
                 </main>
             </div>
         </div>

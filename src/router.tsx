@@ -15,8 +15,10 @@ import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
 import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
+import { BoundingRect } from "./utils/useRect";
 import AgeRanges from "@/pages/admin/age-ranges/index";
 import { useReactiveVar } from "@apollo/client/react";
+import { useTheme } from "@material-ui/core/styles";
 import React,
 { useEffect } from "react";
 import { isIE } from "react-device-detect";
@@ -28,7 +30,8 @@ import {
 
 const ENDPOINT = getCNEndpoint();
 
-export default function Router ()  {
+export default function Router ({ rect }: { rect: BoundingRect })  {
+    const theme = useTheme();
     const location = useLocation().pathname;
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
     const currentOrganization = useReactiveVar(currentMembershipVar);
@@ -41,65 +44,119 @@ export default function Router ()  {
                 render={() => <Home />} />
             <Route
                 path="/library"
-                render={() => <>
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
-                        allow="microphone"
-                        frameBorder="0"
+                render={() =>
+                    <div
                         style={{
-                            width: `100%`,
-                            height: `100%`,
+                            position: `fixed`,
+                            top: rect.top,
+                            left: rect.left,
+                            overflowX: `hidden`,
+                            overflowY: `scroll`,
                         }}
-                    />
-                </>} />
+                    >
+                        <iframe
+                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
+                            allow="microphone"
+                            frameBorder="0"
+                            style={{
+                                overflowX: `hidden`,
+                                width: rect.width - theme.spacing(1),
+                                height: rect.height,
+                            }}
+                        />
+                    </div>
+                } />
             <Route
                 path="/badanamu-content"
-                render={() => <>
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
-                        frameBorder="0"
+                render={() =>
+                    <div
                         style={{
-                            width: `100%`,
-                            height: `100%`,
+                            position: `fixed`,
+                            top: rect.top,
+                            left: rect.left,
+                            overflowX: `hidden`,
+                            overflowY: `scroll`,
                         }}
-                    />
-                </>} />
+                    >
+                        <iframe
+                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
+                            frameBorder="0"
+                            style={{
+                                overflowX: `hidden`,
+                                width: rect.width - theme.spacing(1),
+                                height: rect.height,
+                            }}
+                        />
+                    </div>
+                } />
             <Route
                 path="/schedule"
-                render={() => <>
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
-                        frameBorder="0"
+                render={() =>
+                    <div
                         style={{
-                            width: `100%`,
-                            height: `100%`,
+                            position: `fixed`,
+                            top: rect.top,
+                            left: rect.left,
+                            overflowX: `hidden`,
+                            overflowY: `scroll`,
                         }}
-                    />
-                </>} />
+                    >
+                        <iframe
+                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
+                            frameBorder="0"
+                            style={{
+                                overflowX: `hidden`,
+                                width: rect.width - theme.spacing(1),
+                                height: rect.height,
+                            }}
+                        />
+                    </div>
+                } />
             <Route
                 path="/assessments"
-                render={() => <>
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
-                        frameBorder="0"
+                render={() =>
+                    <div
                         style={{
-                            width: `100%`,
-                            height: `100%`,
+                            position: `fixed`,
+                            top: rect.top,
+                            left: rect.left,
+                            overflowX: `hidden`,
+                            overflowY: `scroll`,
                         }}
-                    />
-                </>} />
+                    >
+                        <iframe
+                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
+                            frameBorder="0"
+                            style={{
+                                overflowX: `hidden`,
+                                width: rect.width - theme.spacing(1),
+                                height: rect.height,
+                            }}
+                        />
+                    </div>
+                } />
             <Route
                 path="/reports"
-                render={() => <>
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
-                        frameBorder="0"
+                render={() =>
+                    <div
                         style={{
-                            width: `100%`,
-                            height: `100%`,
+                            position: `fixed`,
+                            top: rect.top,
+                            left: rect.left,
+                            overflowX: `hidden`,
+                            overflowY: `scroll`,
                         }}
-                    />
-                </>} />
+                    >
+                        <iframe
+                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
+                            frameBorder="0"
+                            style={{
+                                width: rect.width - theme.spacing(1),
+                                height: rect.height,
+                            }}
+                        />
+                    </div>
+                } />
             <Route
                 exact
                 path="/admin/organizations/:organizationId/edit">
