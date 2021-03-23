@@ -18,9 +18,6 @@ import React,
 export const DRAWER_WIDTH = 256;
 
 const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        display: `flex`,
-    },
     drawer: {
         width: DRAWER_WIDTH,
         flexShrink: 0,
@@ -42,15 +39,11 @@ const useStyles = makeStyles((theme) => createStyles({
             }),
         },
     },
-    logo: {
-        marginTop: theme.spacing(1),
-        alignSelf: `center`,
-        borderRadius: 12,
-        "&:hover": {
-            backgroundColor: theme.palette.grey[300],
-        },
+    menuContainer: {
+        display: `flex`,
+        flex: 0,
+        flexDirection: `column`,
     },
-
 }));
 
 interface Props {
@@ -82,10 +75,12 @@ export default function SideNavigationDrawer (props: Props) {
                 showOrganizations={showOrganizations}
                 onShowOrganizationsChange={setShowOrganizations}
             />
-            <div onClick={() => {
-                if (![ `xs`, `sm` ].includes(width)) return;
-                onClose(false);
-            }}>
+            <div
+                className={classes.menuContainer}
+                onClick={() => {
+                    if (![ `xs`, `sm` ].includes(width)) return;
+                    onClose(false);
+                }}>
                 {showOrganizations
                     ? <OrganizationMenuList onOrganizationChange={() => setShowOrganizations(false)} />
                     : <NavigationMenuList/>

@@ -1,6 +1,6 @@
 import { currentMembershipVar } from "@/cache";
-import { CHECK_ALLOWED } from "@/operations/queries/checkAllowedPermission";
-import { User } from "@/types/graphQL";
+import { GET_ALL_USER_PERMISSIONS } from "@/operations/queries/getAllUserPermissions";
+import { OrganizationMembership } from "@/types/graphQL";
 import { PermissionId } from "@/utils/permissions/permissionDetails";
 import {
     useQuery,
@@ -11,33 +11,27 @@ import {
     useState,
 } from "react";
 
-export interface CheckAllowedRequest {
-    organization_id: string;
-    permission_name: string;
+export interface GetAllUserPermissionsRequest {}
+
+export interface GetAllUserPermissionsResponse {
+    me: {
+        memberships: OrganizationMembership[];
+    };
 }
 
-export interface CheckAllowedResponse {
-    me: User;
-}
-
-export const checkAllowed = (organizationId: string, permissionName: string) => {
-    const { data } = useQuery<CheckAllowedResponse, CheckAllowedRequest>(CHECK_ALLOWED, {
-        variables: {
-            organization_id: organizationId,
-            permission_name: permissionName,
-        },
-    });
-
-    return data;
+export const checkAllowed = (organizationId: string, permissionId: string) => {
+    const { data } = useQuery<GetAllUserPermissionsResponse, GetAllUserPermissionsRequest>(GET_ALL_USER_PERMISSIONS);
+    return (data?.me.memberships ?? [])
+        .filter((membership) => membership.organization_id === organizationId)
+        .flatMap((membership) => (membership.roles ?? []).flatMap((role) => role.permissions.map((permission) => permission.permission_id)))
+        .includes(permissionId);
 };
 
 export const usePermission = (permissionId: PermissionId, defaultValue = false) => {
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
     const allowed = checkAllowed(organization_id, permissionId);
-    useEffect(() => {
-        setPermissionState(!!allowed?.me?.membership?.checkAllowed);
-    }, [ allowed ]);
+    useEffect(() => setPermissionState(allowed), [ allowed ]);
     const [ permissionState, setPermissionState ] = useState(defaultValue);
     return permissionState;
 };
