@@ -63,11 +63,11 @@ export default function SchoolRoster (props: Props) {
             class_id: classId,
             organization_id: organizationId,
         },
+        fetchPolicy: `network-only`,
     });
 
     const students = data?.class
-        ?.eligibleStudents?.filter((student: ClassUser) => student.school_memberships?.length)
-        .filter((student: ClassUser) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
+        ?.eligibleStudents?.filter((student: ClassUser) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
         .map((student: ClassUser) => ({
             id: `${student.user_id}-student`,
             username: student.user_name,
@@ -76,8 +76,7 @@ export default function SchoolRoster (props: Props) {
             phoneNumber: student.phone,
         }));
     const teachers = data?.class
-        ?.eligibleTeachers?.filter((teacher: ClassUser) => teacher.school_memberships?.length)
-        .filter((teacher: ClassUser) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
+        ?.eligibleTeachers?.filter((teacher: ClassUser) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
         .map((teacher: ClassUser) => ({
             id: `${teacher.user_id}-teacher`,
             username: teacher.user_name,
