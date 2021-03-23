@@ -155,11 +155,17 @@ export default function SchoolTable (props: Props) {
                 content: (
                     <>
                         <DialogContentText>
-                            Are you sure you want to delete {`"${selectedSchool.school_name}"`}?
+                            {intl.formatMessage({
+                                id: `editDialog_deleteConfirm`,
+                            }, {
+                                userName: selectedSchool.school_name,
+                            })}
                         </DialogContentText>
-                        <DialogContentText>
-                            Type <strong>{selectedSchool.school_name}</strong> to confirm deletion.
-                        </DialogContentText>
+                        <DialogContentText>{intl.formatMessage({
+                            id: `generic_typeText`,
+                        })} <strong>{selectedSchool.school_name}</strong> {intl.formatMessage({
+                            id: `generic_typeEndText`,
+                        })}</DialogContentText>
                     </>
                 ),
                 validations: [ required(), equals(selectedSchool.school_name) ],

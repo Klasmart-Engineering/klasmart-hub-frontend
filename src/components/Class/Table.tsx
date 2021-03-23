@@ -198,15 +198,27 @@ export default function ClassesTable (props: Props) {
         if (
             !(await prompt({
                 variant: `error`,
-                title: `Delete Class`,
-                okLabel: `Delete`,
+                title: intl.formatMessage({
+                    id: `class_deleteClassTitle`,
+                }),
+                okLabel: intl.formatMessage({
+                    id: `generic_deleteConfirm`,
+                }),
                 content: (
                     <>
                         <DialogContentText>
-                            Are you sure you want to delete {`"${class_name}"`} class?
+                            {intl.formatMessage({
+                                id: `classRoster_deletePrompt`,
+                            }, {
+                                value: class_name,
+                            })}
                         </DialogContentText>
                         <DialogContentText>
-                            Type <strong>{class_name}</strong> to confirm deletion.
+                            {intl.formatMessage({
+                                id: `generic_typeText`,
+                            })}<strong>{class_name}</strong> {intl.formatMessage({
+                                id: `generic_typeEndText`,
+                            })}
                         </DialogContentText>
                     </>
                 ),

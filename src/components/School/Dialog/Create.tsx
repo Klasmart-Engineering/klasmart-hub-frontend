@@ -87,7 +87,9 @@ export default function CreateSchoolDialog (props: Props) {
     useEffect(() => {
         const steps: Step[] = [
             {
-                label: `School Info`,
+                label: intl.formatMessage({
+                    id: `schools_schoolInfoLabel`,
+                }),
                 content: <SchoolInfoStep
                     value={newSchool}
                     onChange={handleChange}
@@ -101,7 +103,9 @@ export default function CreateSchoolDialog (props: Props) {
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Programs`,
+                label: intl.formatMessage({
+                    id: `schools_programsLabel`,
+                }),
                 content: <ProgramsStep
                     value={newSchool}
                     onChange={handleChange}
@@ -117,7 +121,9 @@ export default function CreateSchoolDialog (props: Props) {
             //     error: [ required()(newSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
             // },
             {
-                label: `Summary`,
+                label: intl.formatMessage({
+                    id: `schools_summaryLabel`,
+                }),
                 content: <SummaryStep
                     value={newSchool}
                     onChange={handleChange}
@@ -185,7 +191,9 @@ export default function CreateSchoolDialog (props: Props) {
                         justifyContent="space-between"
                     >
                         <Button
-                            label="Previous"
+                            label={intl.formatMessage({
+                                id: `generic_previousLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === 0}
@@ -203,7 +211,9 @@ export default function CreateSchoolDialog (props: Props) {
                             />
                         )}
                         <Button
-                            label="Next"
+                            label={intl.formatMessage({
+                                id: `generic_nextLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === steps_.length - 1 || !!steps_[stepIndex_]?.error}

@@ -29,6 +29,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     actionsContainer: {
@@ -51,6 +52,7 @@ export default function EditSchoolDialog (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const {
         required,
         alphanumeric,
@@ -84,7 +86,9 @@ export default function EditSchoolDialog (props: Props) {
     useEffect(() => {
         const steps: Step[] = [
             {
-                label: `School Info`,
+                label: intl.formatMessage({
+                    id: `schools_schoolInfoLabel`,
+                }),
                 content: <SchoolInfoStep
                     value={editedSchool}
                     onChange={handleChange}
@@ -98,7 +102,9 @@ export default function EditSchoolDialog (props: Props) {
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
-                label: `Programs`,
+                label: intl.formatMessage({
+                    id: `schools_programsLabel`,
+                }),
                 content: <ProgramsStep
                     value={editedSchool}
                     onChange={handleChange}
@@ -114,7 +120,9 @@ export default function EditSchoolDialog (props: Props) {
             //     error: [ required()(editedSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
             // },
             {
-                label: `Summary`,
+                label: intl.formatMessage({
+                    id: `schools_summaryLabel`,
+                }),
                 content: <SummaryStep
                     value={editedSchool}
                     onChange={handleChange}
@@ -147,11 +155,15 @@ export default function EditSchoolDialog (props: Props) {
                 },
             });
             onClose(editedSchool);
-            enqueueSnackbar(`School has been saved successfully`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `schools_editSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -160,7 +172,9 @@ export default function EditSchoolDialog (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title="Edit School"
+            title={intl.formatMessage({
+                id: `schools_editSchoolLabel`,
+            })}
             header={
                 <Stepper
                     step={stepIndex_}
@@ -176,21 +190,27 @@ export default function EditSchoolDialog (props: Props) {
                         flex="1"
                     >
                         <Button
-                            label="Previous"
+                            label={intl.formatMessage({
+                                id: `generic_previousLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === 0}
                             onClick={() => setStepIndex((value) => value - 1)}
                         />
                         <Button
-                            label="Save"
+                            label={intl.formatMessage({
+                                id: `generic_saveLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={steps_.some((step) => step.error)}
                             onClick={handleSave}
                         />
                         <Button
-                            label="Next"
+                            label={intl.formatMessage({
+                                id: `generic_nextLabel`,
+                            })}
                             variant="contained"
                             color="primary"
                             disabled={stepIndex_ === steps_.length - 1}

@@ -825,7 +825,6 @@ const messages: Record<string, string> = {
     class_viewDetailsLabel: `View Details`,
 
     class_classNameLabel: `Class name`,
-    class_schoolsLabel: `Schools (optional)`,
     class_programLabel: `Program (optional)`,
     class_gradeLabel: `Grade (optional)`,
     class_ageRangeLabel: `Age range (optional)`,
@@ -845,9 +844,8 @@ const messages: Record<string, string> = {
     schools_addUserTitle: `Add User`,
     schools_addLabel: `Add`,
     schools_schoolRosterLabel: `School Roster`,
-    schools_searchPlaceholder: `Search for students by their  names,  address, email and phone number`,
 
-    schools_shortCodeLabel: `Short Code`,
+    schools_shortCodeLabel: `Short Code (optional)`,
     schools_deleteTitleLabel: `Delete School`,
     schools_deleteConfrimLabel: `Delete`,
     schools_ageRangesLabel: `Age Ranges`,
@@ -868,5 +866,63 @@ const messages: Record<string, string> = {
     navMenu_subjectsTitle: `Subjects`,
     navMenu_gradesTitle: `Grades`,
     navMenu_ageRangesTitle: `Age Ranges`,
+    // Localizations created as of March 16
+    classRoster_deletePrompt: `Are you sure you want to remove "{value}" from the class?`,
+
+    class_nameRequiredValidation: `The class name is required`,
+    class_maxCharValidation: `Max length of 35 characters`,
+    class_deleteClassTitle: `Delete Class`,
+
+    class_deletePrompt: `Are you sure you want to delete "{value}" class?`,
+
+    generic_typeEndRemoveText: `to confirm removing.`,
+    generic_deleteConfirm: `Delete`,
+    generic_previousLabel: `Previous`,
+    generic_nextLabel: `Next`,
+    generic_cancelLabel: `Cancel`,
+
+    programs_subjectsList: `Subjects`,
+
+    schools_maxCharValidation: `Max length 35 of characters`,
+    schools_schoolNameLabel: `School Name`,
+    schools_schoolInfoLabel: `School Info`,
+    schools_summaryLabel: `Summary`,
+    schools_editSuccess: `School has been saved successfully`,
+    schools_editSchoolLabel: `Edit School`,
+
+    subjects_createSubjectLabel: `Create Subject`,
+    subjects_createLabel: `Create`,
+    subjects_deleteSubjectLabel: `Delete Subject`,
+    subjects_editSubjectLabel: `Edit Subject`,
+    subjects_deleteCategoryLabel: `Delete Category`,
+    subjects_deleteSubcategoryLabel: `Delete Subcategory`,
+    subjects_subjectNameLabel: `Subject Name`,
+    subjects_addMoreCategoriesLabel: `Add More Categories`,
+    subjects_categoryLabel: `Category`,
+    subjects_categoriesLabel: `Categories`,
+    subjects_subcategories: `Subcategories`,
+    subjects_nameLabel: `Name`,
+    subjects_systemLabel: `Type`,
+    subjects_viewDetailsLabel: `View Details`,
+    subjects_editLabel: `Edit`,
+    subjects_subjectsLabel: `Subjects`,
+
+    programs_systemValuesLabel: `System Values`,
+
+    navMenu_superAdminLabel: `Super Admin`,
+    navMenu_manageLabel: `Manage`,
+    navMenu_dataLabel: `Data`,
+    navMenu_generalLabel: `General`,
+
+    generic_tableFromOf: `{from}-{to} of {count}`,
+
+    schoolRoster_searchPlaceholder: `Search for students by their  names,  address, email and phone number`,
+
+    generic_typeToRemovePrompt: `Type {value} to confirm removing.`,
+    generic_totalResults: `Total {total, plural,
+        =0 {0 results}
+        one {1 result}
+        other {{total} results}
+    }`,
 };
 export default messages;

@@ -119,15 +119,21 @@ export default function CreateSubjectDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Create subject"
+            title={intl.formatMessage({
+                id: `subjects_createSubjectLabel`,
+            })}
             actions={[
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `generic_cancelLabel`,
+                    }),
                     color: `primary`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Create`,
+                    label: intl.formatMessage({
+                        id: `subjects_createLabel`,
+                    }),
                     color: `primary`,
                     disabled: !valid,
                     onClick: handleCreateOrUpdate,

@@ -33,7 +33,10 @@ import {
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
-import { useIntl } from "react-intl";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -176,10 +179,19 @@ export default function ClassRoster (props: Props) {
                 content: (
                     <>
                         <DialogContentText>
-                            Are you sure you want to remove {`"${name || email}"`} from the class?
+                            {intl.formatMessage({
+                                id: `classRoster_deletePrompt`,
+                            }, {
+                                value: name || email,
+                            })}
                         </DialogContentText>
                         <DialogContentText>
-                            Type <strong>{name}</strong> to confirm removing.
+                            <FormattedMessage
+                                id="generic_typeToRemovePrompt"
+                                values={{
+                                    value: <strong>{name}</strong>,
+                                }}
+                            />
                         </DialogContentText>
                     </>
                 ),

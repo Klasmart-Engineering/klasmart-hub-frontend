@@ -141,7 +141,9 @@ export default function ProgramInfoStep (props: TabContent) {
                             },
                         ] : [],
                         {
-                            header: `System Values`,
+                            header: intl.formatMessage({
+                                id: `programs_systemValuesLabel`,
+                            }),
                             items: systemGrades.sort((sortEntitiesByName)),
                         },
                     ]}
@@ -170,7 +172,9 @@ export default function ProgramInfoStep (props: TabContent) {
                             },
                         ] : [],
                         {
-                            header: `System Values`,
+                            header: intl.formatMessage({
+                                id: `programs_systemValuesLabel`,
+                            }),
                             items: systemAgeRanges,
                         },
                     ]}

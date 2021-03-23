@@ -116,19 +116,25 @@ export default function SubjectsTable (props: Props) {
     const columns: TableColumn<SubjectRow>[] = [
         {
             id: `id`,
-            label: `ID`,
+            label: intl.formatMessage({
+                id: `generic_idLabel`,
+            }),
             hidden: true,
             disableSearch: disabled,
         },
         {
             id: `name`,
-            label: `Name`,
+            label: intl.formatMessage({
+                id: `subjects_nameLabel`,
+            }),
             persistent: true,
             disableSearch: disabled,
         },
         {
             id: `categories`,
-            label: `Categories`,
+            label: intl.formatMessage({
+                id: `subjects_categoriesLabel`,
+            }),
             disableSearch: disabled,
             render: (row) => <>
                 {row.categories.map((category, i) => (
@@ -142,7 +148,9 @@ export default function SubjectsTable (props: Props) {
         },
         {
             id: `system`,
-            label: `Type`,
+            label: intl.formatMessage({
+                id: `subjects_systemLabel`,
+            }),
             disableSearch: disabled,
             render: (row) => row.system ? `System Value` : `Custom Value`,
         },
@@ -171,11 +179,23 @@ export default function SubjectsTable (props: Props) {
         const { id, name } = selectedSubject;
         if (!await prompt({
             variant: `error`,
-            title: `Delete Subject`,
-            okLabel: `Delete`,
+            title: intl.formatMessage({
+                id: `subjects_deleteSubjectLabel`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `generic_deleteConfirm`,
+            }),
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `editDialog_deleteConfirm`,
+                }, {
+                    userName: name,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeText`,
+                })} <strong>{name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],
         })) return;
@@ -213,26 +233,34 @@ export default function SubjectsTable (props: Props) {
                     order="asc"
                     selectedRows={selectedIds}
                     primaryAction={!disabled ? {
-                        label: `Create Subject`,
+                        label: intl.formatMessage({
+                            id: `subjects_createSubjectLabel`,
+                        }),
                         icon: AddIcon,
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     } : undefined}
                     rowActions={!disabled ? (row) => [
                         {
-                            label: `View Details`,
+                            label: intl.formatMessage({
+                                id: `subjects_viewDetailsLabel`,
+                            }),
                             icon: ViewListIcon,
                             disabled: !canView,
                             onClick: handleViewDetailsRowClick,
                         },
                         {
-                            label: `Edit`,
+                            label: intl.formatMessage({
+                                id: `subjects_editLabel`,
+                            }),
                             icon: EditIcon,
                             disabled: !canEdit || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
-                            label: `Delete`,
+                            label: intl.formatMessage({
+                                id: `generic_deleteLabel`,
+                            }),
                             icon: DeleteIcon,
                             disabled: !canDelete || row.system,
                             onClick: handleDeleteRowClick,
@@ -240,7 +268,9 @@ export default function SubjectsTable (props: Props) {
                     ] : undefined}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Subjects`,
+                            title: intl.formatMessage({
+                                id: `subjects_subjectsLabel`,
+                            }),
                         },
                     })}
                     onSelected={onSelected}

@@ -102,7 +102,9 @@ export default function NavigationMenuList (props: Props) {
         },
         ...isSuperAdmin ? [
             {
-                header: `Super Admin`,
+                header: intl.formatMessage({
+                    id: `navMenu_superAdminLabel`,
+                }),
                 items: [
                     {
                         text: intl.formatMessage({
@@ -163,7 +165,9 @@ export default function NavigationMenuList (props: Props) {
             ],
         },
         {
-            header: `Manage`,
+            header: intl.formatMessage({
+                id: `navMenu_manageLabel`,
+            }),
             items: [
                 ...usePermission(`organizational_profile_10100`) ? [
                     {
@@ -250,7 +254,9 @@ export default function NavigationMenuList (props: Props) {
             ],
         },
         {
-            header: `Data`,
+            header: intl.formatMessage({
+                id: `navMenu_dataLabel`,
+            }),
             items: [
                 {
                     text: intl.formatMessage({
@@ -269,7 +275,9 @@ export default function NavigationMenuList (props: Props) {
             ],
         },
         {
-            header: `General`,
+            header: intl.formatMessage({
+                id: `navMenu_generalLabel`,
+            }),
             items: [
                 {
                     text: intl.formatMessage({

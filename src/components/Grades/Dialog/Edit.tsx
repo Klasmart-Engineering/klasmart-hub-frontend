@@ -86,8 +86,18 @@ export default function (props: Props) {
                     id: `grades_deleteLabel`,
                 }),
                 content: <>
-                    <DialogContentText>Are you sure you want to delete {`"${value?.name}"`}?</DialogContentText>
-                    <DialogContentText>Type <strong>{value?.name}</strong> to confirm deletion.</DialogContentText>
+                    <DialogContentText>
+                        {intl.formatMessage({
+                            id: `editDialog_deleteConfirm`,
+                        }, {
+                            userName: value?.name,
+                        })}
+                    </DialogContentText>
+                    <DialogContentText>{intl.formatMessage({
+                        id: `generic_typeText`,
+                    })}<strong>{value?.name}</strong> {intl.formatMessage({
+                        id: `generic_typeEndText`,
+                    })}</DialogContentText>
                 </>,
                 validations: [ required(), equals(value?.name) ],
             })) return;

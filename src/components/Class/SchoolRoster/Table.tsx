@@ -182,7 +182,7 @@ export default function SchoolRoster (props: Props) {
                         },
                         search: {
                             placeholder: intl.formatMessage({
-                                id: `schools_searchPlaceholder`,
+                                id: `schoolRoster_searchPlaceholder`,
                             }),
                         },
                         body: {

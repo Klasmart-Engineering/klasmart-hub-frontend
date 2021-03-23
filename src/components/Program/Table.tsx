@@ -214,8 +214,18 @@ export default function ProgramTable (props: Props) {
                 id: `programs_deleteLabel`,
             }),
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>
+                    {intl.formatMessage({
+                        id: `editDialog_deleteConfirm`,
+                    }, {
+                        userName: name,
+                    })}
+                </DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeText`,
+                })} <strong>{name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],
         })) return;

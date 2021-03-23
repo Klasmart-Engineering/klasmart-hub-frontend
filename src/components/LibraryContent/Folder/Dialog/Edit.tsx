@@ -80,8 +80,18 @@ export default function EditFolderDialog (props: Props) {
                 id: `library_deleteContentedLabel`,
             }),
             content: <>
-                <p>Are you sure you want to delete {`"${value.name}"`}?</p>
-                <p>Type <strong>{value.name}</strong> to confirm deletion.</p>
+                <p>
+                    {intl.formatMessage({
+                        id: `editDialog_deleteConfirm`,
+                    }, {
+                        userName: value?.name,
+                    })}
+                </p>
+                <p>{intl.formatMessage({
+                    id: `generic_typeText`,
+                })}<strong>{value.name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</p>
             </>,
             variant: `error`,
         });

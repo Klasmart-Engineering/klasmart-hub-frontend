@@ -20,6 +20,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const Accordion = withStyles({
     root: {
@@ -96,6 +97,7 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
         onClose,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const [ expandedSubject, setExpandedSubject ] = useState<string | false>(false);
 
     const handleChangeSubject = (subjectId: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
@@ -113,7 +115,9 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
             title={value?.name ?? ``}
             sections={[
                 {
-                    header: `Categories`,
+                    header: intl.formatMessage({
+                        id: `subjects_categoriesLabel`,
+                    }),
                     content: (
                         <>
                             {value?.categories?.map((category) => (

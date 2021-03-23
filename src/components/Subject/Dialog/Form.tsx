@@ -159,11 +159,23 @@ export default function SubjectDialogForm (props: Props) {
     const deleteCategoryItem = async (category: Category) => {
         if (!await prompt({
             variant: `error`,
-            title: `Delete Category`,
-            okLabel: `Delete`,
+            title: intl.formatMessage({
+                id: `subjects_deleteCategoryLabel`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `generic_deleteLabel`,
+            }),
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${category.name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{category.name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `editDialog_deleteConfirm`,
+                }, {
+                    userName: category?.name,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeText`,
+                })} <strong>{category.name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(category.name) ],
         })) return;
@@ -194,11 +206,23 @@ export default function SubjectDialogForm (props: Props) {
     const deleteSubcategoryItem = async (subcategory: Subcategory) => {
         if (!await prompt({
             variant: `error`,
-            title: `Delete Subcategory`,
-            okLabel: `Delete`,
+            title: intl.formatMessage({
+                id: `subjects_deleteSubcategoryLabel`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `generic_deleteLabel`,
+            }),
             content: <>
-                <DialogContentText>Are you sure you want to delete {`"${subcategory.name}"`}?</DialogContentText>
-                <DialogContentText>Type <strong>{subcategory.name}</strong> to confirm deletion.</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `editDialog_deleteConfirm`,
+                }, {
+                    userName: subcategory?.name,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeText`,
+                })} <strong>{subcategory.name}</strong> {intl.formatMessage({
+                    id: `generic_typeEndText`,
+                })}</DialogContentText>
             </>,
             validations: [ required(), equals(subcategory.name) ],
         })) return;
@@ -231,7 +255,9 @@ export default function SubjectDialogForm (props: Props) {
             <TextField
                 fullWidth
                 value={subjectName}
-                label="Subject name"
+                label={intl.formatMessage({
+                    id: `subjects_subjectNameLabel`,
+                })}
                 type="text"
                 autoFocus={!value.id}
                 validations={[ required(), letternumeric() ]}
@@ -312,7 +338,9 @@ export default function SubjectDialogForm (props: Props) {
             <Box ml={subjectCategories.length > 1 ? 3 : 0}>
                 <Button
                     color="primary"
-                    label="Add More Categories"
+                    label={intl.formatMessage({
+                        id: `subjects_addMoreCategoriesLabel`,
+                    })}
                     variant="outlined"
                     icon={Add}
                     onClick={() => {

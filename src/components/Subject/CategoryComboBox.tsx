@@ -23,6 +23,7 @@ import React,
     useEffect,
     useState,
 } from 'react';
+import { useIntl } from 'react-intl';
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -68,6 +69,7 @@ export default function SubcategoryComboBox (props: Props) {
     } = props;
 
     const classes = useStyles();
+    const intl = useIntl();
     const [ value_, setValue ] = useState<Category>(value);
     const [ inputValue, setInputValue ] = useState(value.name ?? ``);
     const [ options, setOptions ] = useState(items);
@@ -154,7 +156,9 @@ export default function SubcategoryComboBox (props: Props) {
                     inputRef={ref}
                     error={!!error_}
                     helperText={error_ ?? ` `}
-                    label="Category"
+                    label={intl.formatMessage({
+                        id: `subjects_categoryLabel`,
+                    })}
                     variant="outlined"
                 />
             )}

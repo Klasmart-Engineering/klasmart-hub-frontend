@@ -189,9 +189,13 @@ export default function ClassDialogForm (props: Props) {
                 type="text"
                 autoFocus={!value.class_id}
                 validations={[
-                    required(`The class name is required`),
+                    required(intl.formatMessage({
+                        id: `class_nameRequiredValidation`,
+                    })),
                     letternumeric(),
-                    max(35, `Max length of 35 characters`),
+                    max(35, intl.formatMessage({
+                        id: `class_maxCharValidation`,
+                    })),
                 ]}
                 onChange={(value) => setClassName(value)}
                 onValidate={setClassNameValid}

@@ -129,11 +129,27 @@ export default function EditSubjectDialog (props: Props) {
         try {
             if (!await prompt({
                 variant: `error`,
-                title: `Delete Subject`,
-                okLabel: `Delete`,
+                title: intl.formatMessage({
+                    id: `subjects_deleteSubjectLabel`,
+                }),
+                okLabel: intl.formatMessage({
+                    id: `generic_deleteConfirm`,
+                }),
                 content: <>
-                    <DialogContentText>Are you sure you want to delete {`"${value?.name}"`}?</DialogContentText>
-                    <DialogContentText>Type <strong>{value?.name}</strong> to confirm deletion.</DialogContentText>
+                    <DialogContentText>
+                        {intl.formatMessage({
+                            id: `editDialog_deleteConfirm`,
+                        }, {
+                            userName: value?.name,
+                        })}
+                    </DialogContentText>
+                    <DialogContentText>
+                        {intl.formatMessage({
+                            id: `generic_typeText`,
+                        })} <strong>{value?.name}</strong> {intl.formatMessage({
+                            id: `generic_typeEndText`,
+                        })}
+                    </DialogContentText>
                 </>,
                 validations: [ required(), equals(value?.name) ],
             })) return;
@@ -160,23 +176,31 @@ export default function EditSubjectDialog (props: Props) {
     return (
         <Dialog
             open={open}
-            title="Edit Subject"
+            title={intl.formatMessage({
+                id: `subjects_editSubjectLabel`,
+            })}
             actions={[
                 {
-                    label: `Delete`,
+                    label: intl.formatMessage({
+                        id: `generic_deleteConfirm`,
+                    }),
                     color: `error`,
                     align: `left`,
                     disabled: !canDelete,
                     onClick: handleDelete,
                 },
                 {
-                    label: `Cancel`,
+                    label: intl.formatMessage({
+                        id: `generic_cancelLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     onClick: () => onClose(),
                 },
                 {
-                    label: `Save`,
+                    label: intl.formatMessage({
+                        id: `generic_saveLabel`,
+                    }),
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,

@@ -1,4 +1,4 @@
-import { TableLocalization } from "kidsloop-px/dist/types/components/Table/Base";
+import { TableLocalization } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 import { merge } from "lodash";
 import { IntlShape } from "react-intl";
 
@@ -73,14 +73,19 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
             id: `groups_lastTooltip`,
         }),
         rowsPerPage: intl.formatMessage({
-            id: `groups_rowsPerPage`
+            id: `groups_rowsPerPage`,
         }),
-        fromToMax: (from: number, to: number, max: number) => intl.formatMessage({
-            id: `groups_fromToMaxCount`
+        fromToTotal: (from: number, to: number, count: number) => intl.formatMessage({
+            id: `generic_tableFromOf`,
         }, {
             from,
             to,
-            max
+            count,
+        }),
+        total: (total) => intl.formatMessage({
+            id: `generic_tableTotal`,
+        }, {
+            total,
         }),
     },
 }, localization);

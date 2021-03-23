@@ -49,7 +49,9 @@ export default function ViewProgramDetailsDrawer (props: Props) {
             title={value?.name ?? ``}
             sections={[
                 {
-                    header: `Age Ranges`,
+                    header: intl.formatMessage({
+                        id: `programs_ageRanges`,
+                    }),
                     content: (
                         <Box px={1.5}>{value?.age_ranges?.filter(isActive).map((ageRange) => (
                             <Chip
@@ -61,7 +63,9 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                     ),
                 },
                 {
-                    header: `Grades`,
+                    header: intl.formatMessage({
+                        id: `programs_grades`,
+                    }),
                     content: (
                         <Box px={1.5}>{value?.grades?.filter(isActive).map((grade) => (
                             <Chip
@@ -73,7 +77,9 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                     ),
                 },
                 {
-                    header: `Subjects`,
+                    header: intl.formatMessage({
+                        id: `programs_subjectsList`,
+                    }),
                     content: (
                         <Box px={1.5}>{value?.subjects?.filter(isActive).map((subject) => (
                             <Chip

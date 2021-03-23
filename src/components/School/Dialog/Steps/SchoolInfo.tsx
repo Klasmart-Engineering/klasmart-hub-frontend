@@ -11,6 +11,7 @@ import React,
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     paper: {
@@ -26,6 +27,7 @@ export default function SchoolInfoStep (props: TabContent) {
         onChange,
     } = props;
     const classes = useStyles();
+    const intl = useIntl();
     const {
         required,
         alphanumeric,
@@ -57,7 +59,9 @@ export default function SchoolInfoStep (props: TabContent) {
             <Paper className={classes.paper}>
                 <TextField
                     fullWidth
-                    label="School Name"
+                    label={intl.formatMessage({
+                        id: `schools_schoolNameLabel`,
+                    })}
                     value={schoolName}
                     disabled={disabled}
                     hideHelperText={disabled}
@@ -65,7 +69,9 @@ export default function SchoolInfoStep (props: TabContent) {
                     validations={[
                         required(`The school name is required`),
                         letternumeric(),
-                        max(35, `Max length 35 of characters`),
+                        max(35, intl.formatMessage({
+                            id: `schools_maxCharValidation`,
+                        })),
                     ]}
                     onChange={setSchoolName}
                 />
@@ -73,7 +79,9 @@ export default function SchoolInfoStep (props: TabContent) {
             <Paper className={classes.paper}>
                 <TextField
                     fullWidth
-                    label="Short Code (optional)"
+                    label={intl.formatMessage({
+                        id: `schools_shortCodeLabel`,
+                    })}
                     value={shortCode}
                     disabled={disabled}
                     hideHelperText={disabled}
