@@ -5,7 +5,7 @@ export const GET_ELIGIBLE_USERS = gql`
         class(class_id: $class_id) {
             eligibleTeachers {
                 user_id
-                user_name
+                full_name
                 given_name
                 family_name
                 email
@@ -21,7 +21,7 @@ export const GET_ELIGIBLE_USERS = gql`
             }
             eligibleStudents {
                 user_id
-                user_name
+                full_name
                 given_name
                 family_name
                 email

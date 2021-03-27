@@ -841,5 +841,28 @@ const messages: Record<string, string> = {
     navMenu_subjectsTitle: `Subjects`,
     navMenu_gradesTitle: `Grades`,
     navMenu_ageRangesTitle: `Age Ranges`,
+
+    nextClass_title: `Your next live class is`,
+    nextClass_alreadyStarted: `Class already started`,
+    nextClass_startsSoon: `Class starts soon`,
+    nextClass_teachersTitle: `{count, plural, =0 {No teacher} one {Teacher} other {Teachers}}`,
+    nextClass_noClass: `You don't have any upcoming live class scheduled!`,
+    yourClasses_title: `Your classes`,
+    yourClasses_noClass: `You don't have any class yet`,
+    scheduleInfo_title: `Your schedule (14 days)`,
+    scheduleInfo_study: `Study`,
+    scheduleInfo_task: `Task`,
+    usageInfo_title: `Statistics`,
+    usageInfo_totalCountLive: `Total of {total} live classes`,
+    usageInfo_totalCountOffline: `Total of {total} offline classes`,
+    usageInfo_totalCountHomework: `Total of {total} homework`,
+    planSelection_title: `Try a lesson plan`,
+    assessment_viewAssessmentsLabel: `View Your Assessments`,
+    assessment_viewAsChart: `View as chart`,
+    assessment_viewAsList: `View as list`,
+    assessment_assessmentsRequireAttention: `You have {currentAmount} of {totalAmount} assessments that require
+  your attention.`,
+    assessment_chartInProgress: `in progress`,
+    assessment_chartCompleted: `completed`,
 };
 export default messages;

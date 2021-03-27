@@ -27,7 +27,6 @@ export interface ClassUser {
     name: string | null;
     role?: string;
     school_memberships?: string[];
-    user_name?: string;
     membership: OrganizationMembership;
 }
 

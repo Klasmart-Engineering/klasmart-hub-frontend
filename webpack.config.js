@@ -19,7 +19,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: [ `style-loader`, `css-loader` ],
+                use: [`style-loader`, `css-loader`],
                 // use: [
                 //     {
                 //         loader: "style-loader",
@@ -49,7 +49,7 @@ module.exports = {
                             //     enabled: false,
                             // },
                             pngquant: {
-                                quality: [ 0.65, 0.90 ],
+                                quality: [0.65, 0.90],
                                 speed: 4,
                             },
                         },
@@ -58,7 +58,7 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [ `file-loader` ],
+                use: [`file-loader`],
             },
             {
                 test: /\.mp4$/,
@@ -96,9 +96,9 @@ module.exports = {
         }),
         new UnusedWebpackPlugin({
             // Source directories
-            directories: [ path.join(__dirname, `src`) ],
+            directories: [path.join(__dirname, `src`)],
             // Exclude patterns
-            exclude: [ `/assets/*` ],
+            exclude: [`/assets/*`],
             // Root directory (optional)
             root: __dirname,
         }),

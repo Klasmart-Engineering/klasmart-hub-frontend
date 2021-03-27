@@ -157,6 +157,7 @@ export interface Class {
     students?: Student[] | null;
     teachers?: Teacher[] | null;
     status?: Status | null;
+    organization?: Organization[] | null;
 }
 
 export interface School {

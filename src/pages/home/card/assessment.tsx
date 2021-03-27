@@ -1,14 +1,12 @@
-
 import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar } from "../../../cache";
-import CenterAlignChildren from "../../../components/centerAlignChildren";
 import { AssessmentItem } from "../../../types/objectTypes";
 import { history } from "../../../utils/history";
 import { useReactiveVar } from "@apollo/client/react";
 import {
+    Button,
     Grid,
     IconButton,
-    Link,
     Tooltip,
     Typography,
     useTheme,
@@ -18,9 +16,11 @@ import {
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
+import DonutLargeIcon from "@material-ui/icons/DonutLarge";
+import ListIcon from "@material-ui/icons/List";
 import Alert from "@material-ui/lab/Alert";
-import { Loop as LoopIcon } from "@styled-icons/material/Loop";
-import React, {
+import React,
+{
     useEffect,
     useState,
 } from "react";
@@ -32,6 +32,32 @@ import { PieChart } from "react-minimal-pie-chart";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        cardHead: {
+            padding: theme.spacing(1, 4),
+            [theme.breakpoints.down(`sm`)]: {
+                padding: theme.spacing(1, 2),
+            },
+            borderBottom: `1px solid #e0e0e0`,
+        },
+        cardTitle: {
+            textTransform: `uppercase`,
+            fontWeight: `bold`,
+        },
+        cardBody: {
+            padding: theme.spacing(2, 4),
+            [theme.breakpoints.down(`sm`)]: {
+                padding: theme.spacing(2, 2),
+            },
+        },
+        cardButton: {
+            background: `transparent`,
+            color: theme.palette.primary.main,
+            boxShadow: `none`,
+            "&:hover, &:active": {
+                backgroundColor: theme.palette.grey[100],
+                boxShadow: `none`,
+            },
+        },
         button: {
             backgroundColor: `#fff`,
             color: `black`,
@@ -46,23 +72,24 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(2, 2),
             },
         },
-    }),
-);
+    }));
 
-export default function Assessments() {
+export default function Assessments () {
     const classes = useStyles();
     const restApi = useRestAPI();
     const theme = useTheme();
     const intl = useIntl();
 
-    const [ assessments, setAssessments ] = useState<AssessmentItem[] | undefined>(undefined);
+    const [ assessments, setAssessments ] = useState<
+        AssessmentItem[] | undefined
+    >(undefined);
     const [ inProgress, setInProgress ] = useState<AssessmentItem[] | undefined>(undefined);
     const [ total, setTotal ] = useState(0);
     const [ chart, setChart ] = useState(true);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
-    async function getAssessmentsList() {
+    async function getAssessmentsList () {
         try {
             const response = await restApi.assessments(currentOrganization.organization_id, 1, 1000);
             setAssessments(response);
@@ -74,129 +101,184 @@ export default function Assessments() {
     }
 
     useEffect(() => {
-        if (currentOrganization.organization_id !== ``) {
+        if (currentOrganization?.organization_id !== ``) {
+            setAssessments(undefined);
+            setInProgress(undefined);
+            setTotal(0);
+
             getAssessmentsList();
         }
+
     }, [ currentOrganization ]);
 
     return (
-        <Grid
-            container
-            direction="column"
-            justify="flex-start"
-            alignItems="stretch"
-            className={classes.infoContainer}
-        >
+        <Grid container>
             <Grid
                 container
-                spacing={2}>
+                justify="space-between"
+                alignItems="center"
+                className={classes.cardHead}
+            >
                 <Grid item>
-                    <CenterAlignChildren>
-                        <Typography
-                            variant="h6"
-                            style={{
-                                padding: theme.spacing(1, 0),
-                            }}>
-                            <FormattedMessage id="assessment_assessmentsTitle"></FormattedMessage>
-                        </Typography>
+                    <Typography className={classes.cardTitle}>
+                        <FormattedMessage id="assessment_assessmentsTitle" />
                         <Tooltip
-                            title={`View as ${chart ? `list` : `chart`}`}
-                            placement="right">
+                            title={
+                                chart
+                                    ? intl.formatMessage({
+                                        id: `assessment_viewAsList`,
+                                    })
+                                    : intl.formatMessage({
+                                        id: `assessment_viewAsChart`,
+                                    })
+                            }
+                            placement="right"
+                        >
                             <IconButton
                                 aria-label="switch view"
-                                onClick={() => setChart(!chart)}>
-                                <LoopIcon size="1em" />
+                                style={{
+                                    padding: 8,
+                                    marginLeft: 10,
+                                }}
+                                onClick={() => setChart(!chart)}
+                            >
+                                {chart ? (
+                                    <ListIcon fontSize="small" />
+                                ) : (
+                                    <DonutLargeIcon fontSize="small" />
+                                )}
                             </IconButton>
                         </Tooltip>
-                    </CenterAlignChildren>
+                    </Typography>
                 </Grid>
+                <Grid item>
+                    <Button
+                        variant="contained"
+                        className={classes.cardButton}
+                        onClick={(e: React.MouseEvent) => {
+                            history.push(`/assessments`);
+                            e.preventDefault();
+                        }}
+                    >
+                        <FormattedMessage id="assessment_viewAssessmentsLabel" />
+                    </Button>
+                </Grid>
+            </Grid>
+            <Grid
+                container
+                className={classes.cardBody}>
                 <Grid
                     item
-                    xs={12}>
-                    {inProgress && inProgress.length !== 0 ?
+                    xs={12}
+                    style={{
+                        maxHeight: 300,
+                        overflowY: `auto`,
+                    }}
+                >
+                    {inProgress && inProgress.length !== 0 ? (
                         <>
                             <Typography variant="body2">
-                                You have {inProgress.length} of {total} assessments that require your attention.
+                                <FormattedMessage
+                                    values={{
+                                        currentAmount: inProgress.length,
+                                        totalAmount: total,
+                                    }}
+                                    id="assessment_assessmentsRequireAttention"
+                                />
                             </Typography>
-                            <Typography
-                                gutterBottom
-                                variant="body2">
-                                <Link
-                                    href="#"
-                                    onClick={(e: React.MouseEvent) => { history.push(`/assessments`); e.preventDefault(); }}>View Assessments &gt;</Link>
-                            </Typography>
-                        </> :
+                        </>
+                    ) : (
                         <Typography
                             gutterBottom
                             variant="body2">
-                            <FormattedMessage id="assessment_noNewUpdatesLabel"></FormattedMessage>
+                            <FormattedMessage id="assessment_noNewUpdatesLabel" />
                         </Typography>
-                    }
+                    )}
                 </Grid>
                 <Grid
                     item
-                    xs={12}>
+                    xs={12}
+                    style={{
+                        maxHeight: 300,
+                        overflowY: `auto`,
+                    }}
+                >
                     <Grid
                         container
                         direction="column"
                         alignContent="stretch">
-                        {assessments && inProgress &&
-                            (chart ?
+                        {assessments &&
+                            inProgress &&
+                            (chart ? (
                                 <Grid
                                     item
                                     style={{
-                                        width: `80%`,
+                                        width: `30%`,
                                         margin: `0 auto`,
-                                    }}>
+                                        marginTop: 20,
+                                    }}
+                                >
                                     <PieChart
                                         rounded
                                         data={[
                                             {
-                                                title: `in progress`,
+                                                title: intl.formatMessage({
+                                                    id: `assessment_chartInProgress`,
+                                                }),
                                                 value: inProgress.length,
-                                                color: `#94AD6C`,
+                                                color: theme.palette.primary.light,
                                             },
                                             {
-                                                title: `completed`,
-                                                value: total - inProgress.length,
-                                                color: `#6C86AD`,
+                                                title: intl.formatMessage({
+                                                    id: `assessment_chartCompleted`,
+                                                }),
+                                                value:
+                                                    total - inProgress.length,
+                                                color: theme.palette.primary.main,
                                             },
                                         ]}
                                         lineWidth={20}
                                         paddingAngle={18}
-                                        label={({ dataEntry }) => `${dataEntry.value} ${dataEntry.title}`}
+                                        label={({ dataEntry }) =>
+                                            `${dataEntry.value} ${dataEntry.title}`
+                                        }
                                         labelStyle={() => ({
                                             fontFamily: `Circular Std, sans-serif`,
-                                            fontSize: `0.25em`,
+                                            fontSize: `0.45em`,
+                                            background: `white`,
+                                            padding: 5,
                                         })}
-                                        labelPosition={40}
+                                        labelPosition={75}
                                     />
-                                </Grid> :
+                                </Grid>
+                            ) : (
                                 <Grid
                                     item
                                     style={{
                                         maxHeight: 460,
                                         overflowY: `auto`,
-                                    }}>
-                                    {inProgress.map((item) =>
+                                    }}
+                                >
+                                    {inProgress.map((item) => (
                                         <Grid
                                             key={item.id}
                                             item
                                             style={{
                                                 paddingBottom: 4,
-                                            }}>
+                                            }}
+                                        >
                                             <Alert
                                                 color="warning"
                                                 style={{
                                                     padding: `0 8px`,
-                                                }}>
+                                                }}
+                                            >
                                                 {item.title}
                                             </Alert>
-                                        </Grid>,
-                                    )}
+                                        </Grid>
+                                    ))}
                                 </Grid>
-                            )
-                        }
+                            ))}
                     </Grid>
                 </Grid>
             </Grid>

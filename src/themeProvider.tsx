@@ -137,6 +137,14 @@ export function themeProvider () {
         primary: {
             contrastText: `#FFF`,
             main: organizationColor,
+            light: utils.stringToColor(organization_name, {
+                saturation: 50,
+                light: 95,
+            }),
+            dark: utils.stringToColor(organization_name, {
+                saturation: 50,
+                light: 25,
+            }),
         },
         secondary: {
             main: organizationColor,

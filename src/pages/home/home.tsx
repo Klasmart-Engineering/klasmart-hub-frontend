@@ -1,156 +1,255 @@
-import { useQuery, useReactiveVar } from "@apollo/client/react";
-import { IconButton, Tooltip, useMediaQuery } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { FormattedDate, FormattedMessage, FormattedTime, useIntl } from "react-intl";
-
-import { useRestAPI } from "../../api/restapi";
-import { currentMembershipVar, userIdVar } from "../../cache";
-import { User } from "../../models/Membership";
-import { GET_USER } from "../../operations/queries/getUser";
-import { SchedulePayload } from "../../types/objectTypes";
-import { history } from "../../utils/history";
 import Assessment from "./card/assessment";
+import NextClass from "./card/nextClass";
 import { schedulePayload } from "./card/payload";
 import PlanSelection from "./card/planSelection";
-import ScheduleInfo from "./card/scheduleInfo";
+import ScheduleInfoShort from "./card/scheduleInfoShort";
 import UsageInfo from "./card/usageInfo";
+import WelcomeMessage from "./card/welcomeMessage";
+import YourClasses from "./card/yourClasses";
+import YourTeachers from "./card/yourTeachers";
 import ContentLayout from "./featuredContent/contentLayout";
-
-import { CalendarToday as CalendarIcon } from "@styled-icons/material/CalendarToday";
+import { useRestAPI } from "@/api/restapi";
+import {
+    ERROR_ORGANIZATION,
+    NO_ORGANIZATION,
+} from "@/app";
+import {
+    currentMembershipVar,
+    userIdVar,
+} from "@/cache";
+import { GET_USER } from "@/operations/queries/getUser";
+import { User } from "@/types/graphQL";
+import { SchedulePayload } from "@/types/objectTypes";
+import { usePermission } from "@/utils/checkAllowed";
+import {
+    useQuery,
+    useReactiveVar,
+} from "@apollo/client/react";
+import {
+    Backdrop,
+    Box,
+    CircularProgress,
+    Container,
+    Grid,
+    Paper,
+} from "@material-ui/core";
+import {
+    createStyles,
+    makeStyles,
+    Theme,
+    useTheme,
+} from "@material-ui/core/styles";
+import * as React from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
+import { useIntl } from "react-intl";
 
 const payload = schedulePayload;
 
 const now = new Date();
-const todayTimeStamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+const todayTimeStamp =
+    new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+const nextWeekTimeStamp =
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7).getTime() /
+    1000;
+const nextNextWeekTimeStamp =
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14).getTime() /
+    1000;
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        backdrop: {
+            zIndex: theme.zIndex.drawer - 1,
+            color: theme.palette.common.white,
+        },
         paperContainer: {
             borderRadius: 12,
-            boxShadow: theme.palette.type === "dark" ? "0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)" : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
-            height: "100%",
+            border: `1px solid ${theme.palette.grey[300]}`,
+            height: `100%`,
+            boxShadow:
+                theme.palette.type === `dark`
+                    ? `0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)`
+                    : `0px 4px 8px 0px rgba(0, 0, 0, 0.1)`,
+        },
+        gridRightColumn: {
+            display: `flex`,
         },
         root: {
-            backgroundColor: "#eef7fd",
-            height: "100%",
+            height: `100%`,
             paddingBottom: theme.spacing(2),
             paddingTop: theme.spacing(2),
         },
-    }),
-);
+    }));
 
-function Card({ children }: { children: React.ReactNode }) {
+function Card ({ children }: { children: React.ReactNode }) {
     const classes = useStyles();
 
-    return (
-        <Paper elevation={4} className={classes.paperContainer}>
-            { children}
-        </Paper>
-    );
+    return <Paper className={classes.paperContainer}>{children}</Paper>;
 }
 
-export default function Home() {
+export default function Home () {
     const classes = useStyles();
     const restApi = useRestAPI();
     const theme = useTheme();
-    const intl = useIntl();
 
-    const isMdDown = useMediaQuery(theme.breakpoints.down("md"));
+    const [ loading, setLoading ] = useState(true);
+    const [ time, setTime ] = useState(Date.now());
+    const [ schedule, setSchedule ] = useState<SchedulePayload[] | undefined>(undefined);
 
-    const [time, setTime] = useState(Date.now());
-    const [schedule, setSchedule] = useState<SchedulePayload[] | undefined>(undefined);
+    const [ userInfo, setUserInfo ] = useState<User>();
+    const [ userRoles, setUserRoles ] = useState<any | undefined>(``);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
-    const user_id = useReactiveVar(userIdVar);
-    const { data, loading, error } = useQuery(GET_USER, {
-        fetchPolicy: "network-only",
+
+    const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
+
+    const userId = useReactiveVar(userIdVar);
+    const {
+        data,
+        loading: userDataLoading,
+        error,
+    } = useQuery(GET_USER, {
+        fetchPolicy: `network-only`,
         variables: {
-            user_id,
+            user_id: userId,
         },
     });
-    const user: User = data?.user;
 
-    async function getScheduleList() {
+    useEffect(() => {
+        if (data) {
+            const user: User = data?.user;
+            user.memberships?.forEach((membership) => {
+                membership.roles?.forEach((role) => {
+                    setUserRoles([ ...userRoles, role.role_name ]);
+                });
+            });
+            setUserInfo(user);
+        }
+    }, [ data ]);
+
+    async function getScheduleListNextTwoWeeks () {
         try {
-            const response = await restApi.schedule(currentOrganization.organization_id, "month", todayTimeStamp, timeZoneOffset);
-            setSchedule(response);
+            const responseNextNextWeek = await restApi.schedule(currentOrganization.organization_id, `week`, nextNextWeekTimeStamp, timeZoneOffset);
+            const responseCurrentWeek = await restApi.schedule(currentOrganization.organization_id, `week`, todayTimeStamp, timeZoneOffset);
+            const responseNextWeek = await restApi.schedule(currentOrganization.organization_id, `week`, nextWeekTimeStamp, timeZoneOffset);
+
+            setSchedule(responseCurrentWeek.concat(responseNextWeek).concat(responseNextNextWeek));
         } catch (e) {
             console.error(e);
         }
     }
 
     useEffect(() => {
-        if (window.location.host === "fe.kidsloop.net") {
+        if (window.location.host === `fe.kidsloop.net`) {
             setSchedule(payload);
         }
         const interval = setInterval(() => setTime(Date.now()), 1000);
-        return () => { clearInterval(interval); };
+        return () => {
+            clearInterval(interval);
+        };
     }, []);
 
     useEffect(() => {
-        if (currentOrganization.organization_id !== "") {
-            getScheduleList();
-        }
-    }, [currentOrganization]);
+        if (![
+            ``,
+            NO_ORGANIZATION,
+            ERROR_ORGANIZATION,
+        ].includes(currentOrganization.organization_id)) getScheduleListNextTwoWeeks();
+    }, [ currentOrganization ]);
+
+    useEffect(() => {
+        if ((data && currentOrganization && schedule) || data?.user.memberships.length === 0) setLoading(false);
+    }, [
+        data,
+        currentOrganization,
+        schedule,
+    ]);
 
     return (
         <Container
-            maxWidth={"xl"}
-            className={classes.root}
-        >
+            maxWidth={`xl`}
+            className={classes.root}>
+            <Backdrop
+                className={classes.backdrop}
+                open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
+            {userInfo && <WelcomeMessage user={userInfo} />}
+
+            <Box mb={4}>
+                <NextClass schedule={schedule} />
+            </Box>
+
             <Grid
                 container
-                alignContent="stretch"
-                spacing={2}
-            >
-                <Grid item xs={12} md={12} lg={4}>
+                spacing={4} >
+                <Grid
+                    item
+                    xs={12}
+                    md={6}>
+                    <Card>
+                        <ScheduleInfoShort schedule={schedule} />
+                    </Card>
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    className={classes.gridRightColumn}>
                     <Grid
                         container
-                        direction="row"
-                        justify="space-around"
-                        alignContent="center"
-                        style={{ minHeight: "40vw", height: "100%" }}
-                        spacing={2}
+                        direction="column"
                     >
-                        <Grid item xs={12} style={{ padding: theme.spacing(isMdDown ? 4 : 2, 0) }}>
-                            <Typography variant="h4" align="center">
-                                <FormattedTime value={time} hour="2-digit" minute="2-digit" />{" • "}
-                                <FormattedDate value={time} month="short" day="numeric" weekday="short" />
-
-                                <Tooltip title="View Your Schedule" placement="right">
-                                    <IconButton aria-label="switch view" onClick={() => history.push("/schedule")}>
-                                        <CalendarIcon size="0.8em" color="#0E78D5" />
-                                    </IconButton>
-                                </Tooltip>
-                            </Typography>
-                            <Typography variant="h4" align="center">
-                                👋 {user && user.given_name !== null && <FormattedMessage id="home_welcomeLabel" values={{ userName: user.given_name }}></FormattedMessage>}
-                            </Typography>
+                        {permissionAttendLiveAsTeacher && (
+                            <Grid
+                                item
+                                style={{
+                                    marginBottom: theme.spacing(4),
+                                }}>
+                                <Card>
+                                    <PlanSelection />
+                                </Card>
+                            </Grid>
+                        )}
+                        <Grid
+                            item
+                            xs
+                            style={{
+                                marginBottom: theme.spacing(4),
+                            }}>
+                            <Card>
+                                <Assessment />
+                            </Card>
                         </Grid>
-                        <UsageInfo schedule={schedule} />
-                        <PlanSelection />
+
+                        <Grid item>
+                            <Card>
+                                <UsageInfo schedule={schedule} />
+                            </Card>
+                        </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                    <Card>
-                        <ScheduleInfo schedule={schedule} />
-                    </Card>
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                    <Card>
-                        <Assessment />
-                    </Card>
-                </Grid>
-                <ContentLayout />
             </Grid>
+
+            {(userRoles?.includes(`Student`) ||
+                userRoles?.includes(`Teacher`)) && (
+                <Box mt={4}>
+                    <YourClasses />
+                </Box>
+            )}
+
+            {/* TODO : Find a way to display : "As a student, show my Teachers."" (priority low)
+            <Box mt={4}>
+                <YourTeachers />
+            </Box>*/}
+
+            <Box mt={4}>
+                <ContentLayout />
+            </Box>
         </Container>
     );
 }

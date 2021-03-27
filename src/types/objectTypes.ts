@@ -27,13 +27,13 @@ export interface PublishedContentItem {
 
 export interface SchedulePayload {
     class_id: string;
-    class_type: string;
+    class_type: EventClassType;
     end_at: number;
     id: string;
     is_repeat: boolean;
     lesson_plan_id: string;
     start_at: number;
-    status: string;
+    status: EventStatus;
     title: string;
 }
 
@@ -175,3 +175,7 @@ export interface IframeMessageUnauthorized {
 }
 
 export type IframeMessage = IframeMessageChangeLocale | IframeMessageChangeOrganization | IframeMessageUnauthorized;
+
+export type EventStatus = `NotStart` | `Started` | `Closed`
+
+export type EventClassType = `OnlineClass` | `OfflineClass` | `Homework` | `Task`
