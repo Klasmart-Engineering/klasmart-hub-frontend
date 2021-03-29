@@ -6,6 +6,7 @@ import {
     Status,
 } from "@/types/graphQL";
 import { roleNameTranslations } from "@/utils/userRoles";
+import { UserGenders } from "@/utils/users";
 import {
     emailAddressRegex,
     phoneNumberRegex,
@@ -18,6 +19,16 @@ import {
     TextField as TempTextField,
     Theme,
 } from "@material-ui/core";
+import MuiAccordion from "@material-ui/core/Accordion";
+import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
+import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormLabel from "@material-ui/core/FormLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import { withStyles } from "@material-ui/core/styles";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
     Select,
     TextField,
@@ -32,22 +43,94 @@ import {
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-    root: {
-        "& > *": {
-            marginBottom: theme.spacing(2),
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            "& > *": {
+                marginBottom: theme.spacing(2),
+            },
         },
-    },
-}));
+        heading: {
+            display: `grid`,
+            gridColumnGap: `10px`,
+        },
+        shortCode: {
+            gridColumn: `1 / span 2`,
+        },
+        genderContainer: {
+            width: `100%`,
+            border: `1px solid rgba(0, 0, 0, .125)`,
+            borderRadius: `5px`,
+            padding: `10px`,
+        },
+        accordionContainer: {
+            width: theme.breakpoints.values.lg,
+            display: `grid`,
+        },
+    }));
 
-const getContactInfoHelperText = (contactInfo: string) => {
-    if (contactInfo.length === 0) return <FormattedMessage id="createUser_emailPhoneRequired" />;
-    const validEmail = emailAddressRegex.test(contactInfo);
-    const validPhone = phoneNumberRegex.test(contactInfo);
-    if (!validEmail && !validPhone) {
+const Accordion = withStyles({
+    root: {
+        border: `1px solid rgba(0, 0, 0, .125)`,
+        borderRadius: `5px`,
+        boxShadow: `none`,
+    },
+    expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+    expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({}))(MuiAccordionDetails);
+
+const alternativeEmailHelperText = (email: string) => {
+    if (email.length === 0) return false;
+    const validEmail = emailAddressRegex.test(email);
+    if (!validEmail) {
         if (!validEmail) return <FormattedMessage id="createUser_invalidEmail" />;
+    }
+};
+
+const alternativePhoneHelperText = (phone: string) => {
+    if (phone.length === 0) return false;
+    const validPhone = phoneNumberRegex.test(phone);
+    if (!validPhone) {
         if (!validPhone) return <FormattedMessage id="createUser_invalidPhone" />;
     }
+};
+
+const formatDateOfBirth = (date: string): string => {
+    if (date) {
+        const mmYYYY = date.split(`-`);
+        const [ month, year ] = mmYYYY;
+        return `${year}-${month}`;
+    }
+
+    return ``;
+};
+
+const genderHandler = (gender: string) => {
+    switch (gender) {
+    case UserGenders.MALE:
+        return gender;
+    case UserGenders.FEMALE:
+        return gender;
+    case UserGenders.NOT_SPECIFIED:
+        return gender;
+    case ``:
+        return UserGenders.FEMALE;
+    default:
+        return UserGenders.OTHER;
+    }
+};
+
+const accordionExpansionHandler = (email: string, phone: string) => {
+    if (email || phone) {
+        return `panel`;
+    }
+
+    return false;
 };
 
 interface Props {
@@ -82,30 +165,59 @@ export default function UserDialogForm (props: Props) {
     const [ givenNameValid, setGivenNameValid ] = useState(true);
     const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
     const [ familyNameValid, setFamilyNameValid ] = useState(true);
-    const [ schoolIds, setSchoolIds ] = useState(value.schoolMemberships?.filter((membership) => membership.school?.status === Status.ACTIVE).map((schoolMembership) => schoolMembership.school_id) ?? []);
+    const [ schoolIds, setSchoolIds ] = useState(value.schoolMemberships
+        ?.filter((membership) => membership.school?.status === Status.ACTIVE)
+        .map((schoolMembership) => schoolMembership.school_id) ?? []);
     const [ roleIds, setRoleIds ] = useState(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
     const [ roleIdsValid, setRoleIdsValid ] = useState(false);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
-    const { required } = useValidations();
+    const [ contactInfoIsValid, setContactInfoIsValid ] = useState(true);
+    const [ shortcode, setShortcode ] = useState(value.shortcode ?? ``);
+    const [ shortcodeIsValid, setShortcodeIsValid ] = useState(true);
+    const [ alternativeEmail, setAlternativeEmail ] = useState(value.user?.alternate_email ?? ``);
+    const [ alternativePhone, setAlternativePhone ] = useState(value.user?.alternate_phone ?? ``);
+    const [ radioValue, setRadioValue ] = useState<
+        string | UserGenders.MALE | UserGenders.FEMALE | UserGenders.NOT_SPECIFIED | UserGenders.OTHER
+    >(genderHandler(value.user?.gender ?? ``));
+    const [ gender, setGender ] = useState(value.user?.gender ?? ``);
+    const [ genderIsValid, setGenderIsValid ] = useState(true);
+    const [ expanded, setExpanded ] = useState<string | false>(accordionExpansionHandler(value.user?.alternate_email ?? ``, value.user?.alternate_phone ?? ``));
+    const [ birthday, setBirthday ] = useState(formatDateOfBirth(value.user?.date_of_birth ?? ``));
+    const {
+        required,
+        alphanumeric,
+        max,
+        min,
+        emailOrPhone,
+    } = useValidations();
 
     useEffect(() => {
         onValidation([
             givenNameValid,
             familyNameValid,
             roleIdsValid,
-            !getContactInfoHelperText(contactInfo),
+            shortcodeIsValid,
+            genderIsValid,
+            !alternativeEmailHelperText(alternativeEmail),
+            !alternativePhoneHelperText(alternativePhone),
+            contactInfoIsValid,
         ].every((valid) => valid));
     }, [
         givenNameValid,
         familyNameValid,
         roleIdsValid,
-        contactInfo,
+        shortcodeIsValid,
+        genderIsValid,
+        alternativePhone,
+        alternativeEmail,
+        contactInfoIsValid,
     ]);
 
     useEffect(() => {
         const userId = value.user?.user_id ?? ``;
-        const email = (contactInfo && emailAddressRegex.test(contactInfo)) ? contactInfo : undefined;
-        const phone = (contactInfo && phoneNumberRegex.test(contactInfo)) ? contactInfo : undefined;
+        const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined;
+        const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined;
+        const selectedGender = radioValue === UserGenders.OTHER ? gender : radioValue;
         const updatedOrganizationMembership: OrganizationMembership = {
             organization_id: value.organization_id,
             user_id: userId,
@@ -115,50 +227,165 @@ export default function UserDialogForm (props: Props) {
                 family_name: familyName,
                 email,
                 phone,
+                date_of_birth: dateFormatMMYYYY(),
+                gender: selectedGender,
+                alternate_email: alternativeEmail,
+                alternate_phone: alternativePhone,
             },
             roles: allRoles.filter((role) => roleIds.includes(role.role_id)),
-            schoolMemberships: allSchools.filter((school) => schoolIds.includes(school.school_id)).map((s) => ({
-                user_id: userId,
-                school_id: s.school_id,
-            })),
+            schoolMemberships: allSchools
+                .filter((school) => schoolIds.includes(school.school_id))
+                .map((s) => ({
+                    user_id: userId,
+                    school_id: s.school_id,
+                })),
+            shortcode,
         };
         onChange(updatedOrganizationMembership);
-
     }, [
         givenName,
         familyName,
         schoolIds,
         roleIds,
         contactInfo,
+        gender,
+        radioValue,
+        genderIsValid,
+        birthday,
+        alternativeEmail,
+        alternativePhone,
+        shortcode,
     ]);
+
+    const handleAccordionChange = (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+        setExpanded(newExpanded ? panel : false);
+    };
+
+    const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const radioSelected = (event.target as HTMLInputElement).value;
+        setRadioValue(radioSelected);
+    };
+
+    const dateFormatMMYYYY = () => {
+        if (birthday) {
+            const yyyyMM = birthday.split(`-`);
+            const [ year, month ] = yyyyMM;
+            return `${month}-${year}`;
+        }
+
+        return ``;
+    };
+
+    useEffect(() => {
+        if (radioValue !== UserGenders.OTHER) {
+            setGenderIsValid(true);
+        }
+
+        if (radioValue === UserGenders.OTHER && !gender) {
+            setGender(``);
+        }
+
+        if (radioValue === UserGenders.OTHER && gender) {
+            if (gender === UserGenders.MALE || gender === UserGenders.FEMALE || gender === UserGenders.NOT_SPECIFIED) {
+                setGender(``);
+            }
+        }
+    }, [ radioValue, gender ]);
 
     return (
         <div className={classes.root}>
-            <TextField
-                fullWidth
-                value={givenName}
-                label={intl.formatMessage({
-                    id: `createUser_givenNameLabel`,
-                })}
-                variant="outlined"
-                type="text"
-                autoFocus={!value?.user?.user_id}
-                validations={[ required() ]}
-                onChange={setGivenName}
-                onValidate={setGivenNameValid}
-            />
-            <TextField
-                fullWidth
-                value={familyName}
-                label={intl.formatMessage({
-                    id: `createUser_familyNameLabel`,
-                })}
-                variant="outlined"
-                type="text"
-                validations={[ required() ]}
-                onChange={setFamilyName}
-                onValidate={setFamilyNameValid}
-            />
+            <div className={classes.heading}>
+                <TextField
+                    value={givenName}
+                    label={intl.formatMessage({
+                        id: `createUser_givenNameLabel`,
+                    })}
+                    variant="outlined"
+                    type="text"
+                    autoFocus={!value?.user?.user_id}
+                    validations={[ required() ]}
+                    onChange={setGivenName}
+                    onValidate={setGivenNameValid}
+                />
+                <TextField
+                    value={familyName}
+                    label={intl.formatMessage({
+                        id: `createUser_familyNameLabel`,
+                    })}
+                    variant="outlined"
+                    type="text"
+                    validations={[ required() ]}
+                    onChange={setFamilyName}
+                    onValidate={setFamilyNameValid}
+                />
+                <TextField
+                    value={contactInfo}
+                    variant="outlined"
+                    label={intl.formatMessage({
+                        id: `createUser_contactInfoLabel`,
+                    })}
+                    type="text"
+                    validations={[ required(), emailOrPhone() ]}
+                    onChange={setContactInfo}
+                    onValidate={setContactInfoIsValid}
+                />
+                <TextField
+                    label="Birthday"
+                    type="month"
+                    value={birthday}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={setBirthday}
+                />
+                <TextField
+                    className={classes.shortCode}
+                    value={shortcode}
+                    label="Short Code"
+                    variant="outlined"
+                    type="text"
+                    validations={[ alphanumeric(), max(16) ]}
+                    onChange={setShortcode}
+                    onValidate={setShortcodeIsValid}
+                />
+            </div>
+            <FormControl className={classes.genderContainer}>
+                <FormLabel>Gender</FormLabel>
+                <RadioGroup
+                    aria-label="gender"
+                    name="gender"
+                    value={radioValue}
+                    onChange={handleGenderChange}>
+                    <FormControlLabel
+                        value={UserGenders.FEMALE}
+                        control={<Radio />}
+                        label="Female" />
+                    <FormControlLabel
+                        value={UserGenders.MALE}
+                        control={<Radio />}
+                        label="Male" />
+                    <FormControlLabel
+                        value={UserGenders.NOT_SPECIFIED}
+                        control={<Radio />}
+                        label="I prefer not to say"
+                    />
+                    <FormControlLabel
+                        value={UserGenders.OTHER}
+                        control={<Radio />}
+                        label="Other" />
+                </RadioGroup>
+                {radioValue === UserGenders.OTHER && (
+                    <TextField
+                        value={gender}
+                        label="Please specify gender"
+                        variant="outlined"
+                        type="text"
+                        validations={[ min(3), max(16) ]}
+                        onChange={setGender}
+                        onValidate={setGenderIsValid}
+                    />
+                )}
+            </FormControl>
             <Select
                 multiple
                 fullWidth
@@ -168,9 +395,13 @@ export default function UserDialogForm (props: Props) {
                 items={allRoles}
                 value={roleIds}
                 validations={[ required() ]}
-                itemText={(role) => role.role_name && roleNameTranslations[role.role_name] ? intl.formatMessage({
-                    id: roleNameTranslations[role.role_name],
-                }) : role.role_name ?? ``}
+                itemText={(role) =>
+                    role.role_name && roleNameTranslations[role.role_name]
+                        ? intl.formatMessage({
+                            id: roleNameTranslations[role.role_name],
+                        })
+                        : role.role_name ?? ``
+                }
                 itemValue={(role) => role.role_id}
                 selectAllLabel={intl.formatMessage({
                     id: `users_selectAll`,
@@ -193,19 +424,44 @@ export default function UserDialogForm (props: Props) {
                 })}
                 onChange={setSchoolIds}
             />
-            <TempTextField
-                fullWidth
-                disabled={!!value?.user?.user_id}
-                value={contactInfo}
-                variant="outlined"
-                label={intl.formatMessage({
-                    id: `createUser_contactInfoLabel`,
-                })}
-                type="text"
-                error={!!getContactInfoHelperText(contactInfo)}
-                helperText={getContactInfoHelperText(contactInfo) ?? ` `}
-                onChange={(e) => setContactInfo(e.currentTarget.value)}
-            />
+            <Accordion
+                square
+                expanded={expanded === `panel`}
+                onChange={handleAccordionChange(`panel`)}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    id="panel1d-header">
+                    <FormLabel>Alternative Contact Info</FormLabel>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <div className={classes.accordionContainer}>
+                        <TempTextField
+                            fullWidth
+                            value={alternativeEmail}
+                            label="Alternative Email"
+                            variant="outlined"
+                            type="text"
+                            error={!!alternativeEmailHelperText(alternativeEmail)}
+                            helperText={alternativeEmailHelperText(alternativeEmail) ?? ` `}
+                            onChange={(e) => setAlternativeEmail(e.currentTarget.value)}
+                        />
+                    </div>
+                </AccordionDetails>
+                <AccordionDetails>
+                    <div className={classes.accordionContainer}>
+                        <TempTextField
+                            fullWidth
+                            value={alternativePhone}
+                            label="Alternative Phone"
+                            variant="outlined"
+                            type="text"
+                            error={!!alternativePhoneHelperText(alternativePhone)}
+                            helperText={alternativePhoneHelperText(alternativePhone) ?? ` `}
+                            onChange={(e) => setAlternativePhone(e.currentTarget.value)}
+                        />
+                    </div>
+                </AccordionDetails>
+            </Accordion>
         </div>
     );
 }

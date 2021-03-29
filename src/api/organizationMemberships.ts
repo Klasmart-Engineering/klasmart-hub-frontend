@@ -18,6 +18,11 @@ interface UpdateOrganizationMembershipRequest {
     family_name?: string | null;
     organization_role_ids: string[];
     school_ids: string[];
+    date_of_birth: string;
+    alternate_email: string;
+    alternate_phone: string;
+    gender: string;
+    shortcode: string;
 }
 
 interface UpdateOrganizationMembershipResponse {
@@ -47,6 +52,11 @@ interface CreateOrganizationMembershipRequest {
     family_name?: string | null;
     organization_role_ids: string[];
     school_ids: string[];
+    date_of_birth: string;
+    alternate_email: string;
+    alternate_phone: string;
+    gender: string;
+    shortcode: string;
 }
 
 interface CreateOrganizationMembershipResponse {

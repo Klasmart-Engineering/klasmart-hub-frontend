@@ -46,13 +46,14 @@ export default function EditUserDialog (props: Props) {
         setEditedOrganizationMembership(value ?? buildEmptyOrganizationMembership());
     }, [ value ]);
 
-    const handleSave = async () => {
+    const handleEdit = async () => {
         try {
             const {
                 organization_id,
                 user,
                 roles,
                 schoolMemberships,
+                shortcode,
             } = editedOrganizationMembership;
             await updateOrganizationMembership({
                 variables: {
@@ -63,6 +64,11 @@ export default function EditUserDialog (props: Props) {
                     family_name: user?.family_name,
                     email: user?.email,
                     phone: user?.phone,
+                    date_of_birth: user?.date_of_birth ?? ``,
+                    alternate_email: user?.alternate_email ?? ``,
+                    alternate_phone: user?.alternate_phone ?? ``,
+                    gender: user?.gender ?? ``,
+                    shortcode: shortcode ?? ``,
                 },
             });
             onClose(editedOrganizationMembership);
@@ -142,7 +148,7 @@ export default function EditUserDialog (props: Props) {
                     color: `primary`,
                     align: `right`,
                     disabled: !valid,
-                    onClick: handleSave,
+                    onClick: handleEdit,
                 },
             ]}
             onClose={() => onClose()}

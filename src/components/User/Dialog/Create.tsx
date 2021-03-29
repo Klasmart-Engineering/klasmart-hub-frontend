@@ -50,6 +50,7 @@ export default function CreateUserDialog (props: Props) {
                 roles,
                 schoolMemberships,
                 user,
+                shortcode,
             } = newOrganizationMembership;
             const { organization_id } = organization;
             await createOrganizationMembership({
@@ -61,8 +62,14 @@ export default function CreateUserDialog (props: Props) {
                     family_name: user?.family_name,
                     email: user?.email,
                     phone: user?.phone,
+                    date_of_birth: user?.date_of_birth ?? ``,
+                    alternate_email: user?.alternate_email ?? ``,
+                    alternate_phone: user?.alternate_phone ?? ``,
+                    gender: user?.gender ?? ``,
+                    shortcode: shortcode ?? ``,
                 },
             });
+
             onClose(newOrganizationMembership);
             enqueueSnackbar(intl.formatMessage({
                 id: `createUser_createSuccess`,

@@ -30,6 +30,7 @@ export const GET_ORGANIZATION_USERS = gql`
                 user_id
                 join_timestamp
                 status
+                shortcode
                 schoolMemberships {
                     school {
                         school_id
@@ -50,6 +51,10 @@ export const GET_ORGANIZATION_USERS = gql`
                     phone
                     avatar
                     full_name
+                    gender
+                    alternate_email
+                    date_of_birth
+                    alternate_phone
                 }
                 roles {
                     role_id

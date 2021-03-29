@@ -42,5 +42,8 @@ export const useValidations = () => {
         required: (errorMessage?: string) => validations.required(errorMessage ?? intl.formatMessage({
             id: `genericValidations_required`,
         })),
+        emailOrPhone: (errorMessage?: string) => validations.emailOrPhone(errorMessage ?? intl.formatMessage({
+            id: `genericValidations_emailInvalid`,
+        })),
     };
 };

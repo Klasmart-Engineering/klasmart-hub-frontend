@@ -77,6 +77,9 @@ export interface User {
     role?: string | null;
     address?: string | null;
     date_of_birth?: string | null;
+    gender?: string | null;
+    alternate_email?: string | null;
+    alternate_phone?: string | null;
 }
 
 export interface OrganizationOwnership {
@@ -97,6 +100,7 @@ export interface OrganizationMembership {
     checkAllowed?: boolean | null;
     status?: Status | null;
     schoolMemberships?: SchoolMembership[] | null;
+    shortcode?: string | null;
 }
 
 export interface Organization {

@@ -137,6 +137,11 @@ export default function UserTable (props: Props) {
                 schoolNames,
                 status: membership?.status ?? ``,
                 joinDate: new Date(membership.join_timestamp ?? ``),
+                gender: membership?.user?.gender ?? ``,
+                alternate_email: membership?.user?.alternate_email ?? ``,
+                alternate_phone: membership?.user?.alternate_phone ?? ``,
+                date_of_birth: membership?.user?.date_of_birth ?? ``,
+                shortcode: membership?.shortcode,
             };
         });
         setRows(rows ?? []);
