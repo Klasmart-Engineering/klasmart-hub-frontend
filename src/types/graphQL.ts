@@ -207,6 +207,8 @@ export interface AgeRange extends BaseEntity {
 export interface Grade extends BaseEntity {
     progress_from_grade?: Grade | null;
     progress_to_grade?: Grade | null;
+    progress_from_grade_id?: string | null;
+    progress_to_grade_id?: string| null;
 }
 
 export interface Subject extends BaseEntity {

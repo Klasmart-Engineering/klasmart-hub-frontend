@@ -69,6 +69,11 @@ export default function GradeDialogForm (props: Props) {
         },
     });
 
+    const getNonSpecified = (items: Grade[]) => {
+        const grade = items.find((item: Grade) => item.name === `None Specified`);
+        return grade?.id ?? ``;
+    };
+
     useEffect(() => {
         onValidation([
             gradeNameValid,
@@ -88,6 +93,10 @@ export default function GradeDialogForm (props: Props) {
                 name: grade.name ?? ``,
             })) ?? [];
             setGradeItems(rows);
+
+            const noneSpecified = getNonSpecified(rows) ?? ``;
+            setProgressFromId(noneSpecified);
+            setProgressToId(noneSpecified);
         }
     }, [ data ]);
 
