@@ -82,6 +82,8 @@ export default function ProgramTable (props: Props) {
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedProgram, setSelectedProgram ] = useState<Program>();
+    const [ tableSelectedIds, setTableSelectedIds ] = useState<string[]>(selectedIds || []);
+    const [ nonSpecifiedId, setNonSpecifiedId ] = useState<string>();
     const canCreate = usePermission(`create_program_20221`);
     const canView = usePermission(`view_program_20111`);
     const canEdit = usePermission(`edit_program_20331`);
@@ -109,12 +111,41 @@ export default function ProgramTable (props: Props) {
             subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
             system: program.system ?? false,
         })) ?? [];
+
+        setNonSpecifiedId(allPrograms.find(program => program.name === `None Specified` && program.system)?.id ?? ``);
         setRows(rows);
     }, [
         data,
         canView,
         programs,
     ]);
+
+    const selectIds = (ids: string[]) => {
+        if (!ids.length) {
+            setTableSelectedIds([]);
+            return;
+        }
+
+        const last = ids[ids.length - 1];
+
+        if (ids.length > 1 && last === nonSpecifiedId) {
+            ids.splice(0, ids.length -1);
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
+        if (ids.length > 1 && ids[0] === nonSpecifiedId) {
+            ids.shift();
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
+        setTableSelectedIds(ids);
+    };
+
+    useEffect(() => {
+        onSelected?.(tableSelectedIds);
+    }, [ tableSelectedIds ]);
 
     const columns: TableColumn<ProgramRow>[] = [
         {
@@ -260,7 +291,7 @@ export default function ProgramTable (props: Props) {
                     order="asc"
                     rows={rows}
                     columns={columns}
-                    selectedRows={selectedIds}
+                    selectedRows={tableSelectedIds}
                     primaryAction={!disabled ? {
                         label: intl.formatMessage({
                             id: `programs_createProgramLabel`,
@@ -302,7 +333,7 @@ export default function ProgramTable (props: Props) {
                             }),
                         },
                     })}
-                    onSelected={onSelected}
+                    onSelected={selectIds}
                 />
             </Paper>
             <ViewProgramDetailsDrawer
