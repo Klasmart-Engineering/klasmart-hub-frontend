@@ -232,9 +232,21 @@ export default function CreateAndEditRoleDialog (props: Props) {
         return ``;
     };
 
+    const roleNameValidations = (name: string): boolean => {
+        return !(!name.length ||
+            name.length < 2 ||
+            name.length > 20 ||
+            alphanumeric(name) ||
+            roles.find((role) => role.role_name === name && role.status === Status.ACTIVE && name !== row.role));
+    };
+
+    const roleDescriptionValidations = (name: string): boolean => {
+        return !(name.length > 30 || alphanumeric(name));
+    };
+
     const roleInfoStepIsValid = (): boolean => {
         return (
-            roleNameTextHelper(roleInfo.name).length > 0 || roleDescriptionTextHelper(roleInfo.description).length > 0
+            roleNameValidations(roleInfo.name) && roleDescriptionValidations(roleInfo.description)
         );
     };
 

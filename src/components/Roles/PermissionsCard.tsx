@@ -20,7 +20,8 @@ import {
 import { ArrowDropDown } from "@material-ui/icons";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { TableSearch } from "kidsloop-px";
-import React, {
+import React,
+{
     Dispatch,
     SetStateAction,
     useEffect,
@@ -75,8 +76,7 @@ const useStyles = makeStyles((theme) =>
         category: {
             marginLeft: `19px`,
         },
-    }),
-);
+    }));
 
 interface Props {
     category: string;
@@ -85,7 +85,7 @@ interface Props {
     permissionCategories: PermissionsCategory[];
 }
 
-export default function PermissionsCard(props: Props) {
+export default function PermissionsCard (props: Props) {
     const {
         category,
         groups,
@@ -94,6 +94,7 @@ export default function PermissionsCard(props: Props) {
     } = props;
     const classes = useStyles();
     const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(groups);
+    const [ searchString, setSearchString ] = React.useState(``);
 
     const handleOpenAccordion = (index: number) => {
         const newPermissions = [ ...cardPermissions ];
@@ -150,14 +151,45 @@ export default function PermissionsCard(props: Props) {
     useEffect(() => {
         const hasPermissions = permissionCategories.some((permissionCategory) =>
             permissionCategory.groups.some((group) =>
-                group.permissionDetails.some((permissionDetail) => permissionDetail.checked),
-            ),
-        );
+                group.permissionDetails.some((permissionDetail) => permissionDetail.checked)));
 
         setPermissionsStepIsValid(hasPermissions);
     }, [ permissionCategories, cardPermissions ]);
 
-    const onChange = () => {
+    const searchFilter = (permissionDescription: string, permissionName: string, levels: string[]): boolean => {
+        const description = permissionDescription
+            .toLowerCase()
+            .split(` `)
+            .filter((word) => word.length !== 0);
+
+        const name = formatPermissionName(permissionName)
+            .toLowerCase()
+            .split(` `)
+            .filter((word) => word.length !== 0);
+
+        const [ firstRole ] = levels;
+        const roleLevel = [];
+
+        if (firstRole) {
+            const roles = firstRole.toLowerCase().split(` `);
+
+            for (const role of roles) {
+                roleLevel.push(role);
+            }
+        }
+
+        const words = description.concat(name, roleLevel);
+        const userString = searchString
+            .toLowerCase()
+            .split(` `)
+            .filter((word) => word.length !== 0);
+
+        return userString.every((word) => words.includes(word));
+    };
+
+    const onChange = (string: string) => {
+        setSearchString(string.toLowerCase());
+
         return ``;
     };
 
@@ -216,37 +248,45 @@ export default function PermissionsCard(props: Props) {
                         </AccordionSummary>
                         <AccordionDetails key={`AccordionDetails${groupElement.group}`}>
                             <div className={classes.accordionContainer}>
-                                {groupElement.permissionDetails.map((permissionDetail) => (
-                                    <React.Fragment
-                                        key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
-                                    >
-                                        <div className={classes.accountItem}>
-                                            <div>
-                                                <Checkbox
-                                                    checked={permissionDetail.checked}
-                                                    id={permissionDetail.permissionName}
-                                                    tabIndex={groupIndex}
-                                                    onChange={handlePermissionCheck}
-                                                />
-                                                {formatPermissionName(permissionDetail.permissionName)}
+                                {groupElement.permissionDetails
+                                    .filter((permissionDetail) => {
+                                        if (searchString.length === 0) {
+                                            return true;
+                                        }
+
+                                        return searchFilter(permissionDetail.permissionDescription, permissionDetail.permissionName, permissionDetail.levels ?? []);
+                                    })
+                                    .map((permissionDetail) => (
+                                        <React.Fragment
+                                            key={`React.Fragment${permissionDetail.permissionName}${permissionDetail.permissionDescription}`}
+                                        >
+                                            <div className={classes.accountItem}>
+                                                <div>
+                                                    <Checkbox
+                                                        checked={permissionDetail.checked}
+                                                        id={permissionDetail.permissionName}
+                                                        tabIndex={groupIndex}
+                                                        onChange={handlePermissionCheck}
+                                                    />
+                                                    {formatPermissionName(permissionDetail.permissionName)}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className={classes.accountItem}>
-                                            {permissionDetail.permissionDescription}
-                                        </div>
-                                        <div className={classes.accountItem}>
-                                            <div className={classes.tagContainer}>
-                                                {permissionDetail.levels?.map((level) => (
-                                                    <div
-                                                        key={level}
-                                                        className={classes.tagText}>
-                                                        {level}
-                                                    </div>
-                                                ))}
+                                            <div className={classes.accountItem}>
+                                                {permissionDetail.permissionDescription}
                                             </div>
-                                        </div>
-                                    </React.Fragment>
-                                ))}
+                                            <div className={classes.accountItem}>
+                                                <div className={classes.tagContainer}>
+                                                    {permissionDetail.levels?.map((level) => (
+                                                        <div
+                                                            key={level}
+                                                            className={classes.tagText}>
+                                                            {level}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                    ))}
                             </div>
                         </AccordionDetails>
                     </Accordion>

@@ -45,7 +45,7 @@ export default function RoleStepperButtons (props: Props) {
 
     const disabledHandler = () => {
         if (activeStep === 0) {
-            return roleInfoStepIsValid;
+            return !roleInfoStepIsValid;
         }
 
         if (activeStep === 1) {
