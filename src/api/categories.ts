@@ -47,7 +47,9 @@ interface GetAllCategoriesRequest {
 }
 
 interface GetAllCategoriesResponse {
-    organization: Organization;
+    organization: {
+        categories: Category[];
+    };
 }
 
 export const useGetAllCategories = (options?: QueryHookOptions<GetAllCategoriesResponse, GetAllCategoriesRequest>) => {

@@ -60,7 +60,9 @@ interface GetAllSubjectsRequest {
 }
 
 interface GetAllSubjectsResponse {
-    organization: Organization;
+    organization: {
+        subjects: Subject[];
+    };
 }
 
 export const useGetAllSubjects = (options?: QueryHookOptions<GetAllSubjectsResponse, GetAllSubjectsRequest>) => {

@@ -285,7 +285,7 @@ export default function ProgramTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
+                    showSelectables={!disabled}
                     idField="id"
                     orderBy="name"
                     order="asc"

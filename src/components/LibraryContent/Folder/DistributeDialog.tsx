@@ -284,7 +284,7 @@ export default function (props: Props) {
                 {distributeStatus === DistributeStatus.SELECTED && <>
                     <Divider />
                     <PageTable
-                        showCheckboxes
+                        showSelectables
                         idField="id"
                         orderBy="name"
                         loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}

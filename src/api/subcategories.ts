@@ -1,10 +1,7 @@
 import { CREATE_OR_UPDATE_SUBCATEGORIES } from "@/operations/mutations/createOrUpdateSubcategories";
 import { DELETE_SUBCATEGORY } from "@/operations/mutations/deleteSubcategory";
 import { GET_ALL_SUBCATEGORIES } from "@/operations/queries/getAllSubcategories";
-import {
-    Organization,
-    Subcategory,
-} from "@/types/graphQL";
+import { Subcategory } from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -46,7 +43,9 @@ interface GetAllSubcategoriesRequest {
 }
 
 interface GetAllSubcategoriesResponse {
-    organization: Organization;
+    organization: {
+        subcategories: Subcategory[];
+    };
 }
 
 export const useGetAllSubcategories = (options?: QueryHookOptions<GetAllSubcategoriesResponse, GetAllSubcategoriesRequest>) => {

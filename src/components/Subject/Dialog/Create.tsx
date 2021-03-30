@@ -1,10 +1,17 @@
 import SubjectDialogForm from "./Form";
-import { useCreateOrUpdateCategories } from "@/api/categories";
-import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
+import {
+    useCreateOrUpdateCategories,
+    useGetAllCategories,
+} from "@/api/categories";
+import {
+    useCreateOrUpdateSubcategories,
+    useGetAllSubcategories,
+} from "@/api/subcategories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { currentMembershipVar } from "@/cache";
 import {
     isCustomValue,
+    isNonSpecified,
     isSystemValue,
     Subject,
 } from "@/types/graphQL";
@@ -41,13 +48,19 @@ export default function CreateSubjectDialog (props: Props) {
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
+    const { data: categoriesData } = useGetAllCategories({
+        variables: {
+            organization_id,
+        },
+    });
 
     useEffect(() => {
         if (!open) return;
+        const noneSpecifiedCategory = categoriesData?.organization.categories.find(isNonSpecified);
         setNewSubject(buildEmptySubject({
-            categories: [ buildEmptyCategory() ],
+            categories: [ noneSpecifiedCategory ?? buildEmptyCategory() ],
         }));
-    }, [ open ]);
+    }, [ open, categoriesData ]);
 
     const handleCreateOrUpdate = async () => {
         try {

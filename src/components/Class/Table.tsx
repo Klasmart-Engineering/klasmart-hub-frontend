@@ -202,7 +202,7 @@ export default function ClassesTable (props: Props) {
                     id: `class_deleteClassTitle`,
                 }),
                 okLabel: intl.formatMessage({
-                    id: `generic_deleteConfirm`,
+                    id: `generic_deleteLabel`,
                 }),
                 content: (
                     <>
@@ -366,7 +366,7 @@ export default function ClassesTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
-                    showCheckboxes={!disabled}
+                    showSelectables={!disabled}
                     selectedRows={selectedIds}
                     columns={columns}
                     rows={rows}

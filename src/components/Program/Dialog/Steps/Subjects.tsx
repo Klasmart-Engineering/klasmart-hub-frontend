@@ -53,7 +53,7 @@ export default function SubjectStep (props: TabContent) {
         <>
             <SubjectsTable
                 disabled={disabled}
-                showCheckboxes={!disabled}
+                showSelectables={!disabled}
                 selectedIds={disabled ? undefined : selectedSubjectIds}
                 subjects={disabled ? value.subjects : undefined}
                 onSelected={setSelectedIds}

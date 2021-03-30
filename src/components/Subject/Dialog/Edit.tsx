@@ -133,7 +133,7 @@ export default function EditSubjectDialog (props: Props) {
                     id: `subjects_deleteSubjectLabel`,
                 }),
                 okLabel: intl.formatMessage({
-                    id: `generic_deleteConfirm`,
+                    id: `generic_deleteLabel`,
                 }),
                 content: <>
                     <DialogContentText>
@@ -182,7 +182,7 @@ export default function EditSubjectDialog (props: Props) {
             actions={[
                 {
                     label: intl.formatMessage({
-                        id: `generic_deleteConfirm`,
+                        id: `generic_deleteLabel`,
                     }),
                     color: `error`,
                     align: `left`,

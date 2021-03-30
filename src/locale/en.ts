@@ -876,7 +876,7 @@ const messages: Record<string, string> = {
     class_deletePrompt: `Are you sure you want to delete "{value}" class?`,
 
     generic_typeEndRemoveText: `to confirm removing.`,
-    generic_deleteConfirm: `Delete`,
+    generic_deleteLabel: `Delete`,
     generic_previousLabel: `Previous`,
     generic_nextLabel: `Next`,
     generic_cancelLabel: `Cancel`,

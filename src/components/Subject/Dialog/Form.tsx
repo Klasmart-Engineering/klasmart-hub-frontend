@@ -1,47 +1,32 @@
-import {
-    useCreateOrUpdateCategories,
-    useDeleteCategory,
-    useGetAllCategories,
-} from "@/api/categories";
-import {
-    useDeleteSubcategory,
-    useGetAllSubcategories,
-} from "@/api/subcategories";
-import { useGetAllSubjects } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
-import CategoryComboBox from "@/components/Subject/CategoryComboBox";
-import SubcategoryComboBox from "@/components/Subject/SubcategoryComboBox";
+import CategorySelectDialog from "./CategorySelect";
+import SubcategoriesSelectDialog from "./SubcategoriesSelect";
 import {
     Category,
-    NON_SPECIFIED,
-    Status,
+    isActive,
     Subcategory,
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
+    Chip,
     createStyles,
-    DialogContentText,
     makeStyles,
     Theme,
     Typography,
 } from "@material-ui/core";
 import {
     Add,
+    ArrowDropDown,
     Delete,
-    Lock,
 } from "@material-ui/icons";
+import clsx from "clsx";
 import {
     Button,
     IconButton,
     TextField,
-    usePrompt,
-    useSnackbar,
 } from "kidsloop-px";
-import { uniqBy } from "lodash";
 import React, {
     Fragment,
     useEffect,
@@ -55,8 +40,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             marginBottom: theme.spacing(2),
         },
     },
-    categoryInput: {
-        marginBottom: theme.spacing(2),
+    selectButton: {
+        marginBottom: theme.spacing(1),
+    },
+    selectButtonError: {
+        borderColor: theme.palette.error.light,
+    },
+    chip: {
+        margin: theme.spacing(0.25),
     },
 }));
 
@@ -73,56 +64,25 @@ export default function SubjectDialogForm (props: Props) {
         onValidation,
     } = props;
     const classes = useStyles();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { enqueueSnackbar } = useSnackbar();
     const {
         required,
-        equals,
         letternumeric,
     } = useValidations();
-    const prompt = usePrompt();
     const intl = useIntl();
-    const { organization_id } = organization;
     const [ subjectName, setSubjectName ] = useState(value.name ?? ``);
     const [ subjectNameValid, setSubjectNameValid ] = useState(true);
     const [ subjectCategories, setSubjectCategories ] = useState(value.categories ?? []);
+    const [ selectedCategoryIndex, setSelectedCategoryIndex ] = useState<number>();
+    const [ selectedSubcategoriesIndex, setSelectedSubcategoriesIndex ] = useState<number>();
 
-    const { data: subjectsData, refetch: refetchSubjects } = useGetAllSubjects({
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id,
-        },
-    });
-    const { data: categoriesData, refetch: refetchCategories } = useGetAllCategories({
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id,
-        },
-    });
-    const { data: subcategoriesData, refetch: refetchSubcategories } = useGetAllSubcategories({
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id,
-        },
-    });
-    const [ deleteCategory ] = useDeleteCategory();
-    const [ deleteSubcategory ] = useDeleteSubcategory();
-
-    const subjects = subjectsData?.organization.subjects ?? [];
-    const categories = categoriesData?.organization.categories ?? [];
-    const subcategories = subcategoriesData?.organization.subcategories ?? [];
-
-    const categoryIds = subjects.flatMap((subject) => subject.categories?.filter((category) => category.status === Status.ACTIVE).map((category) => category.id));
-
-    const subcategoryIds = categories.flatMap((category) => category.subcategories?.filter((category) => category?.status === Status.ACTIVE).map((subcategory) => subcategory.id) ?? []);
-
-    const allAvailableCategories = uniqBy(categories
-        .filter((category) => category.status === Status.ACTIVE)
-        .filter((category) => !categoryIds.includes(category.id) || !!category.system), `id`);
-
-    const allAvailableSubcategories = uniqBy(subcategories
-        .filter((subcategory) => subcategory.status === Status.ACTIVE)
-        .filter((subcategory) => !subcategoryIds.includes(subcategory.id) || !!subcategory.system), `id`);
+    const removeSubcategory = (category: Category, subcategory: Subcategory) => {
+        setSubjectCategories((categories) => categories.map((c) => c.id === category.id
+            ? {
+                ...c,
+                subcategories: c.subcategories?.filter((sc) => sc.id !== subcategory.id) ?? [],
+            }
+            : c));
+    };
 
     useEffect(() => {
         const categoryInputs = [
@@ -142,113 +102,6 @@ export default function SubjectDialogForm (props: Props) {
         };
         onChange(updatedSubject);
     }, [ subjectName, subjectCategories ]);
-
-    const handleChangeCategories = (changedCategory: Category, index: number) => {
-        setSubjectCategories((categories) => categories.map((category, i) => i === index ? changedCategory : category));
-    };
-
-    const handleChangeSubcategories = (subcategories: Subcategory[], index: number) => {
-        // const nonSpecifiedItemIndex = subcategories.findIndex((subcategory) => subcategory.name === NON_SPECIFIED && !!subcategory.system);
-        // const updatedSubcategories = nonSpecifiedItemIndex !== -1 ? (nonSpecifiedItemIndex === 0 ? subcategories.slice(1) : subcategories.slice(nonSpecifiedItemIndex, nonSpecifiedItemIndex + 1)) : subcategories;
-        setSubjectCategories((categories) => categories.map((category, i) => ({
-            ...category,
-            subcategories: i === index ? subcategories : category.subcategories,
-        })));
-    };
-
-    const deleteCategoryItem = async (category: Category) => {
-        if (!await prompt({
-            variant: `error`,
-            title: intl.formatMessage({
-                id: `subjects_deleteCategoryLabel`,
-            }),
-            okLabel: intl.formatMessage({
-                id: `generic_deleteLabel`,
-            }),
-            content: <>
-                <DialogContentText>{intl.formatMessage({
-                    id: `editDialog_deleteConfirm`,
-                }, {
-                    userName: category?.name,
-                })}</DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeText`,
-                })} <strong>{category.name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
-                })}</DialogContentText>
-            </>,
-            validations: [ required(), equals(category.name) ],
-        })) return;
-        if (!category.id) return;
-        try {
-            await deleteCategory({
-                variables: {
-                    id: category.id,
-                },
-            });
-            await refetchSubjects();
-            await refetchCategories();
-            await refetchSubcategories();
-            enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoriesDeletedMessage`,
-            }), {
-                variant: `success`,
-            });
-        } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoriesDeletedError`,
-            }), {
-                variant: `error`,
-            });
-        }
-    };
-
-    const deleteSubcategoryItem = async (subcategory: Subcategory) => {
-        if (!await prompt({
-            variant: `error`,
-            title: intl.formatMessage({
-                id: `subjects_deleteSubcategoryLabel`,
-            }),
-            okLabel: intl.formatMessage({
-                id: `generic_deleteLabel`,
-            }),
-            content: <>
-                <DialogContentText>{intl.formatMessage({
-                    id: `editDialog_deleteConfirm`,
-                }, {
-                    userName: subcategory?.name,
-                })}</DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeText`,
-                })} <strong>{subcategory.name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
-                })}</DialogContentText>
-            </>,
-            validations: [ required(), equals(subcategory.name) ],
-        })) return;
-        try {
-            await refetchSubjects();
-            await refetchCategories();
-            await refetchSubcategories();
-            if (!subcategory.id) return;
-            await deleteSubcategory({
-                variables: {
-                    id: subcategory.id,
-                },
-            });
-            enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoriesDeletedMessage`,
-            }), {
-                variant: `success`,
-            });
-        } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoriesDeletedError`,
-            }), {
-                variant: `error`,
-            });
-        }
-    };
 
     return (
         <div className={classes.root}>
@@ -277,6 +130,7 @@ export default function SubjectDialogForm (props: Props) {
                             justifyContent="center"
                             flexDirection="row"
                             mr={2}
+                            mt={1}
                             style={{
                                 height: 56,
                             }}
@@ -293,46 +147,94 @@ export default function SubjectDialogForm (props: Props) {
                             flexDirection="column"
                             flex="1"
                         >
-                            <CategoryComboBox
-                                value={category}
-                                items={[ category, ...allAvailableCategories ?? [] ].filter((subcategory) => subcategory.status === Status.ACTIVE)}
-                                validations={[ required(), letternumeric() ]}
-                                menuItemActions={(category) => [
-                                    {
-                                        icon: category.system ? Lock : Delete,
-                                        disabled: !!category.system,
-                                        onClick: (category) => deleteCategoryItem(category),
-                                    },
-                                ]}
-                                onChange={(value) => handleChangeCategories(value, i)}
+                            <Typography
+                                variant="caption"
+                                color="textSecondary"
+                            >
+                                Category
+                            </Typography>
+                            <Button
+                                fullWidth
+                                size="large"
+                                className={clsx(classes.selectButton, {
+                                    [classes.selectButtonError]: !category.name,
+                                })}
+                                variant="outlined"
+                                icon={ArrowDropDown}
+                                label={category.name}
+                                onClick={() => setSelectedCategoryIndex(i)}
                             />
-                            <SubcategoryComboBox
-                                value={(category.subcategories ?? []).filter((subcategory) => subcategory.status === Status.ACTIVE)}
-                                items={[ ...category.subcategories ?? [], ...allAvailableSubcategories ?? [] ].filter((subcategory) => subcategory.status === Status.ACTIVE)}
+                            <Typography
+                                variant="caption"
+                                color="textSecondary"
+                            >
+                                Subcategories
+                            </Typography>
+                            <Button
+                                fullWidth
+                                size="large"
+                                className={clsx(classes.selectButton, {
+                                    [classes.selectButtonError]: !category.subcategories?.length,
+                                })}
+                                variant="outlined"
+                                icon={ArrowDropDown}
                                 disabled={!!category.system}
-                                validations={[ required() ]}
-                                menuItemActions={(subcategory) => [
-                                    {
-                                        icon: subcategory.system ? Lock : Delete,
-                                        disabled: !!subcategory.system,
-                                        onClick: (subcategory) => deleteSubcategoryItem(subcategory),
-                                    },
-                                ]}
-                                onChange={(value) => handleChangeSubcategories(value, i)}
+                                label={category.subcategories
+                                    ? <Box
+                                        flexWrap="wrap"
+                                        display="flex"
+                                        flexDirection="row"
+                                    >
+                                        {category.subcategories?.filter(isActive).map((subcategory) => (
+                                            <Chip
+                                                key={subcategory.id ?? ``}
+                                                disabled={!!category.system}
+                                                label={subcategory.name}
+                                                className={classes.chip}
+                                                onDelete={() => removeSubcategory(category, subcategory)}
+                                            />
+                                        ))}
+                                    </Box>
+                                    : ``
+                                }
+                                onClick={() => setSelectedSubcategoriesIndex(i)}
                             />
                         </Box>
                         {subjectCategories.length > 1 && <Box
                             flex="0"
                             m={0.5}
+                            pt={1}
                         >
                             <IconButton
                                 icon={Delete}
+                                tooltip="Remove"
                                 onClick={() => {
-                                    setSubjectCategories([ ...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length) ]);
+                                    setSubjectCategories((subjectCategories) => [ ...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length) ]);
                                 }}
                             />
                         </Box>}
                     </Box>
+                    <CategorySelectDialog
+                        value={category}
+                        open={selectedCategoryIndex === i}
+                        onClose={(value) => {
+                            setSelectedCategoryIndex(undefined);
+                            if (!value) return;
+                            setSubjectCategories((categories) => categories.map((category, index) => index === i ? value : category));
+                        }}
+                    />
+                    <SubcategoriesSelectDialog
+                        value={category.subcategories ?? []}
+                        open={selectedSubcategoriesIndex === i}
+                        onClose={(value) => {
+                            setSelectedSubcategoriesIndex(undefined);
+                            if (!value) return;
+                            setSubjectCategories((categories) => categories.map((category, index) => index === i ? {
+                                ...category,
+                                subcategories: value ?? [],
+                            } : category));
+                        }}
+                    />
                 </Fragment>
             ))}
             <Box ml={subjectCategories.length > 1 ? 3 : 0}>

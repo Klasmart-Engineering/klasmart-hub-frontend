@@ -21,12 +21,18 @@ export const GET_ALL_PROGRAMS = gql`
                 subjects {
                     id
                     name
+                    status
+                    system
                     categories {
                         id
                         name
+                        status
+                        subcategories {
+                            id
+                            name
+                            status
+                        }
                     }
-                    status
-                    system
                 }
                 grades {
                     id

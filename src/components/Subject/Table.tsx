@@ -57,7 +57,7 @@ interface SubjectRow {
 
 interface Props {
     disabled?: boolean;
-    showCheckboxes?: boolean;
+    showSelectables?: boolean;
     selectedIds?: string[];
     subjects?: Subject[] | null;
     onSelected?: (selectedIds: string[]) => void;
@@ -66,7 +66,7 @@ interface Props {
 export default function SubjectsTable (props: Props) {
     const {
         disabled,
-        showCheckboxes,
+        showSelectables,
         selectedIds,
         subjects,
         onSelected,
@@ -183,7 +183,7 @@ export default function SubjectsTable (props: Props) {
                 id: `subjects_deleteSubjectLabel`,
             }),
             okLabel: intl.formatMessage({
-                id: `generic_deleteConfirm`,
+                id: `generic_deleteLabel`,
             }),
             content: <>
                 <DialogContentText>{intl.formatMessage({
@@ -225,7 +225,7 @@ export default function SubjectsTable (props: Props) {
             <Paper className={classes.root}>
                 <PageTable
                     loading={loading}
-                    showCheckboxes={showCheckboxes}
+                    showSelectables={showSelectables}
                     idField="id"
                     rows={rows_}
                     columns={columns}

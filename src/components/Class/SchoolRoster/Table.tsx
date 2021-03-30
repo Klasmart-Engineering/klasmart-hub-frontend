@@ -172,7 +172,7 @@ export default function SchoolRoster (props: Props) {
                     rows={rows}
                     idField="id"
                     groupBy="role"
-                    showCheckboxes={true}
+                    showSelectables={true}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
