@@ -95,8 +95,14 @@ export default function GradeDialogForm (props: Props) {
             setGradeItems(rows);
 
             const noneSpecified = getNonSpecified(rows) ?? ``;
-            setProgressFromId(noneSpecified);
-            setProgressToId(noneSpecified);
+
+            if (!progressFromId) {
+                setProgressFromId(noneSpecified);
+            }
+
+            if (!progressToId) {
+                setProgressToId(noneSpecified);
+            }
         }
     }, [ data ]);
 
