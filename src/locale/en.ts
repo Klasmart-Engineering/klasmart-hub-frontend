@@ -943,8 +943,7 @@ const messages: Record<string, string> = {
     assessment_viewAssessmentsLabel: `View Your Assessments`,
     assessment_viewAsChart: `View as chart`,
     assessment_viewAsList: `View as list`,
-    assessment_assessmentsRequireAttention: `You have {currentAmount} of {totalAmount} assessments that require
-  your attention.`,
+    assessment_assessmentsRequireAttention: `You have {currentAmount} of {totalAmount} assessments that require your attention.`,
     assessment_chartInProgress: `in progress`,
     assessment_chartCompleted: `completed`,
 };
