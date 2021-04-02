@@ -947,5 +947,15 @@ const messages: Record<string, string> = {
     assessment_assessmentsRequireAttention: `You have {currentAmount} of {totalAmount} assessments that require your attention.`,
     assessment_chartInProgress: `in progress`,
     assessment_chartCompleted: `completed`,
+
+    categories_categoryCreateMessage: `Category has been successfully created`,
+    categories_categoryCreateError: `Sorry, something went wrong, please try again`,
+    categories_categoryDeleteMessage: `Category has been successfully deleted`,
+    categories_categoryDeleteError: `Sorry, something went wrong, please try again`,
+
+    subcategories_subcategoryCreateMessage: `Subcategory has been successfully created`,
+    subcategories_subcategoryCreateError: `Sorry, something went wrong, please try again`,
+    subcategories_subcategoryDeleteMessage: `Subcategory has been successfully deleted`,
+    subcategories_subcategoryDeleteError: `Sorry, something went wrong, please try again`,
 };
 export default messages;

@@ -71,7 +71,12 @@ export default function SubcategoriesSelectDialog (props: Props) {
     const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { letternumeric, required } = useValidations();
+    const {
+        equals,
+        letternumeric,
+        max,
+        required,
+    } = useValidations();
     const [ updatedSubcategories, setUpdatedSubcategories ] = useState(value);
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
@@ -112,9 +117,14 @@ export default function SubcategoriesSelectDialog (props: Props) {
         const name = await prompt({
             title: `Create Subcategory`,
             okLabel: `Create`,
-            validations: [ required(), letternumeric() ],
+            validations: [
+                required(`The Subcategory name is required.`),
+                letternumeric(),
+                max(35, `Subategory Name has a max length of 35 characters.`),
+            ],
             label: `Name`,
         });
+        if (!name) return;
         try {
             await createOrUpdateSubcategories({
                 variables: {
@@ -128,7 +138,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
             });
             await refetchSubcategories();
             enqueueSnackbar(intl.formatMessage({
-                id: `subcategories_subcategoriesCreateMessage`,
+                id: `subcategories_subcategoryCreateMessage`,
             }), {
                 variant: `success`,
             });
@@ -151,16 +161,16 @@ export default function SubcategoriesSelectDialog (props: Props) {
                 <>
                     <DialogContentText>
                         {intl.formatMessage({
-                            id: `generic_typeToRemovePrompt`,
+                            id: `generic_deleteText`,
                         }, {
                             value: row.name,
                         })}
                     </DialogContentText>
                     <DialogContentText>
                         {intl.formatMessage({
-                            id: `generic_typeText`,
-                        })}<strong>{row.name}</strong> {intl.formatMessage({
-                            id: `generic_typeEndText`,
+                            id: `generic_typeToRemovePrompt`,
+                        }, {
+                            value: <strong>{row.name}</strong>,
                         })}
                     </DialogContentText>
                 </>
@@ -168,6 +178,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
             okLabel: intl.formatMessage({
                 id: `generic_deleteLabel`,
             }),
+            validations: [ equals(row.name) ],
         })) return;
         try {
             await deleteSubcategoryReq({
@@ -177,13 +188,15 @@ export default function SubcategoriesSelectDialog (props: Props) {
             });
             await refetchSubcategories();
             setUpdatedSubcategories((subcategories) => subcategories?.filter((subcategory) => subcategory.id !== row.id));
-            enqueueSnackbar(`Category successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `subcategories_subcategoryDeleteMessage`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar({
+            enqueueSnackbar(intl.formatMessage({
                 id: `generic_createError`,
-            }, {
+            }), {
                 variant: `error`,
             });
         }

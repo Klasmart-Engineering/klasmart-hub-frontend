@@ -69,7 +69,12 @@ export default function CategorySelectDialog (props: Props) {
     const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { letternumeric, required } = useValidations();
+    const {
+        equals,
+        letternumeric,
+        max,
+        required,
+    } = useValidations();
     const [ updatedCategory, setUpdatedCategory ] = useState(value);
     const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
@@ -104,9 +109,14 @@ export default function CategorySelectDialog (props: Props) {
         const name = await prompt({
             title: `Create Category`,
             okLabel: `Create`,
-            validations: [ required(), letternumeric() ],
+            validations: [
+                required(`The Category name is required.`),
+                letternumeric(),
+                max(35, `Category Name has a max length of 35 characters.`),
+            ],
             label: `Name`,
         });
+        if (!name) return;
         try {
             await createOrUpdateCategories({
                 variables: {
@@ -121,7 +131,7 @@ export default function CategorySelectDialog (props: Props) {
             });
             await refetchCategories();
             enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoriesCreateMessage`,
+                id: `categories_categoryCreateMessage`,
             }), {
                 variant: `success`,
             });
@@ -144,16 +154,16 @@ export default function CategorySelectDialog (props: Props) {
                 <>
                     <DialogContentText>
                         {intl.formatMessage({
-                            id: `generic_typeToRemovePrompt`,
+                            id: `generic_deleteText`,
                         }, {
                             value: row.name,
                         })}
                     </DialogContentText>
                     <DialogContentText>
                         {intl.formatMessage({
-                            id: `generic_typeText`,
-                        })}<strong>{row.name}</strong> {intl.formatMessage({
-                            id: `generic_typeEndText`,
+                            id: `generic_typeToRemovePrompt`,
+                        }, {
+                            value: <strong>{row.name}</strong>,
                         })}
                     </DialogContentText>
                 </>
@@ -161,6 +171,7 @@ export default function CategorySelectDialog (props: Props) {
             okLabel: intl.formatMessage({
                 id: `generic_deleteLabel`,
             }),
+            validations: [ equals(row.name) ],
         })) return;
         try {
             await deleteCategoryReq({
@@ -170,13 +181,15 @@ export default function CategorySelectDialog (props: Props) {
             });
             await refetchCategories();
             if (updatedCategory?.id === row.id) setUpdatedCategory((category) => category?.id === row.id ? category : undefined);
-            enqueueSnackbar(`Category successfully deleted`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `categories_categoryCreateError`,
+            }), {
                 variant: `success`,
             });
         } catch (err) {
-            enqueueSnackbar({
+            enqueueSnackbar(intl.formatMessage({
                 id: `generic_createError`,
-            }, {
+            }), {
                 variant: `error`,
             });
         }

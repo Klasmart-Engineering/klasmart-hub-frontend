@@ -3,10 +3,7 @@ import {
     useCreateOrUpdateCategories,
     useGetAllCategories,
 } from "@/api/categories";
-import {
-    useCreateOrUpdateSubcategories,
-    useGetAllSubcategories,
-} from "@/api/subcategories";
+import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { currentMembershipVar } from "@/cache";
 import {

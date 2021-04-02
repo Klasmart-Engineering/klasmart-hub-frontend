@@ -12,6 +12,7 @@ import {
     Box,
     Chip,
     createStyles,
+    FormHelperText,
     makeStyles,
     Theme,
     Typography,
@@ -40,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             marginBottom: theme.spacing(2),
         },
     },
-    selectButton: {
-        marginBottom: theme.spacing(1),
+    selectButtonErrorMessage: {
+        marginBottom: theme.spacing(0),
     },
     selectButtonError: {
         borderColor: theme.palette.error.light,
@@ -65,8 +66,10 @@ export default function SubjectDialogForm (props: Props) {
     } = props;
     const classes = useStyles();
     const {
-        required,
         letternumeric,
+        max,
+        min,
+        required,
     } = useValidations();
     const intl = useIntl();
     const [ subjectName, setSubjectName ] = useState(value.name ?? ``);
@@ -87,10 +90,11 @@ export default function SubjectDialogForm (props: Props) {
     useEffect(() => {
         const categoryInputs = [
             required()(subjectCategories),
-            ...subjectCategories.map((category) => required()(category.name)),
-            ...subjectCategories.map((category) => letternumeric()(category.name)),
-            ...subjectCategories.map((category) => required()(category.subcategories)),
-        ].filter((error): error is string => error !== true);
+            ...subjectCategories.map((category) => getCategoryError(category)),
+            ...subjectCategories.flatMap((category) => getSubcategoriesError(category.subcategories ?? [])),
+        ]
+            .filter((error) => error)
+            .filter((error): error is string => error !== true);
         onValidation([ subjectNameValid, categoryInputs.every((error) => !error) ].every((validation) => validation));
     }, [ subjectNameValid, subjectCategories ]);
 
@@ -103,6 +107,19 @@ export default function SubjectDialogForm (props: Props) {
         onChange(updatedSubject);
     }, [ subjectName, subjectCategories ]);
 
+    const getCategoryError = (category: Category) => {
+        return [
+            required(`The Category name is required.`)(category.name),
+            letternumeric()(category.name),
+            max(35, `Category Name has a max length of 35 characters.`)(category.name),
+        ].find((error): error is string => error !== true);
+    };
+
+    const getSubcategoriesError = (subcategories: Subcategory[]) => {
+        const error = min(1, `Minimum 1 subcategory is required.`)(subcategories);
+        return error === true ? undefined : error;
+    };
+
     return (
         <div className={classes.root}>
             <TextField
@@ -113,7 +130,11 @@ export default function SubjectDialogForm (props: Props) {
                 })}
                 type="text"
                 autoFocus={!value.id}
-                validations={[ required(), letternumeric() ]}
+                validations={[
+                    required(`The subject name is required.`),
+                    letternumeric(),
+                    max(35, `Subject Name has a max length of 35 characters.`),
+                ]}
                 onChange={setSubjectName}
                 onValidate={setSubjectNameValid}
             />
@@ -156,14 +177,20 @@ export default function SubjectDialogForm (props: Props) {
                             <Button
                                 fullWidth
                                 size="large"
-                                className={clsx(classes.selectButton, {
-                                    [classes.selectButtonError]: !category.name,
+                                className={clsx({
+                                    [classes.selectButtonError]: getCategoryError(category),
                                 })}
                                 variant="outlined"
                                 icon={ArrowDropDown}
                                 label={category.name}
                                 onClick={() => setSelectedCategoryIndex(i)}
                             />
+                            <FormHelperText
+                                error
+                                className={classes.selectButtonErrorMessage}
+                            >
+                                {getCategoryError(category) ?? ` `}
+                            </FormHelperText>
                             <Typography
                                 variant="caption"
                                 color="textSecondary"
@@ -173,8 +200,8 @@ export default function SubjectDialogForm (props: Props) {
                             <Button
                                 fullWidth
                                 size="large"
-                                className={clsx(classes.selectButton, {
-                                    [classes.selectButtonError]: !category.subcategories?.length,
+                                className={clsx({
+                                    [classes.selectButtonError]: getSubcategoriesError(category.subcategories ?? []),
                                 })}
                                 variant="outlined"
                                 icon={ArrowDropDown}
@@ -184,6 +211,7 @@ export default function SubjectDialogForm (props: Props) {
                                         flexWrap="wrap"
                                         display="flex"
                                         flexDirection="row"
+                                        justifyContent="center"
                                     >
                                         {category.subcategories?.filter(isActive).map((subcategory) => (
                                             <Chip
@@ -199,6 +227,12 @@ export default function SubjectDialogForm (props: Props) {
                                 }
                                 onClick={() => setSelectedSubcategoriesIndex(i)}
                             />
+                            <FormHelperText
+                                error
+                                className={classes.selectButtonErrorMessage}
+                            >
+                                {getSubcategoriesError(category.subcategories ?? []) ?? ` `}
+                            </FormHelperText>
                         </Box>
                         {subjectCategories.length > 1 && <Box
                             flex="0"
