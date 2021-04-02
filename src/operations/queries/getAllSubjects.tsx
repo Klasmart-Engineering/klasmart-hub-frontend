@@ -21,6 +21,14 @@ export const GET_ALL_SUBJECTS = gql`
                     }
                 }
             }
+            programs {
+                id
+                name
+                status
+                subjects {
+                  id
+                }
+            }
         }
     }
 `;

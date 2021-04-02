@@ -7,6 +7,7 @@ import { currentMembershipVar } from "@/cache";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
 import {
+    Program,
     Status,
     Subject,
 } from "@/types/graphQL";
@@ -52,6 +53,7 @@ interface SubjectRow {
     id: string;
     name: string;
     categories: string[];
+    programs: string[];
     system: boolean;
 }
 
@@ -99,6 +101,13 @@ export default function SubjectsTable (props: Props) {
 
     const subjects_ = data?.organization.subjects ?? [];
 
+    const mapPrograms = (subjectId: string, programs: Program[]): string[] => (
+        programs.filter((program: Program) => (
+            program.status === Status.ACTIVE && program.subjects?.find((sub) => sub.id === subjectId)
+        ))
+            .map((program: Program) => program.name ?? ``)
+    );
+
     useEffect(() => {
         if (!canView) {
             setRows([]);
@@ -109,7 +118,9 @@ export default function SubjectsTable (props: Props) {
             name: subject.name ?? ``,
             categories: subject.categories?.map((category) => category.name ?? ``) ?? [],
             system: subject.system ?? false,
+            programs: subject.id ? mapPrograms(subject.id, data?.organization.programs ?? []) : [],
         })) ?? [];
+
         setRows(rows);
     }, [ data, canView ]);
 
@@ -141,6 +152,22 @@ export default function SubjectsTable (props: Props) {
                     <Chip
                         key={`category-${i}`}
                         label={category}
+                        className={classes.chip}
+                    />
+                ))}
+            </>,
+        },
+        {
+            id: `programs`,
+            label: intl.formatMessage({
+                id: `programs_title`,
+            }),
+            disableSearch: disabled,
+            render: (row) => <>
+                {row.programs.map((program, i) => (
+                    <Chip
+                        key={`program-${i}`}
+                        label={program}
                         className={classes.chip}
                     />
                 ))}
