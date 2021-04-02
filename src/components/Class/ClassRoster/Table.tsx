@@ -15,6 +15,7 @@ import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     Box,
+    Chip,
     createStyles,
     DialogContentText,
     makeStyles,
@@ -44,6 +45,9 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     userName: {
         marginLeft: theme.spacing(2),
+    },
+    chip: {
+        margin: theme.spacing(0.25),
     },
 }));
 
@@ -75,6 +79,7 @@ export default function ClassRoster (props: Props) {
         data,
         refetch,
     } = useGetClassRoster({
+        fetchPolicy: `network-only`,
         variables: {
             class_id: classItem.class_id,
             organization_id,
@@ -94,6 +99,8 @@ export default function ClassRoster (props: Props) {
                 name: `${user.given_name} ${user.family_name}`,
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
+                subjectsTeaching: user.subjectsTeaching,
+                alternate_phone: user.alternate_phone,
             })),
         teachers: classInfo.teachers
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
@@ -102,6 +109,8 @@ export default function ClassRoster (props: Props) {
                 name: `${user.given_name} ${user.family_name}`,
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
+                subjectsTeaching: user.subjectsTeaching,
+                alternate_phone: user.alternate_phone,
             })),
     };
 
@@ -152,10 +161,24 @@ export default function ClassRoster (props: Props) {
             disableSort: true,
         },
         {
-            id: `phone`,
+            id: `alternate_phone`,
             label: intl.formatMessage({
                 id: `class_phoneLabel`,
             }),
+        },
+        {
+            id: `subjectsTeaching`,
+            label: `Subjects`,
+            render: (row) => (
+                <>
+                    {row.subjectsTeaching.map((subject, i) => (
+                        <Chip
+                            key={`subject-${i}`}
+                            label={subject.name}
+                            className={classes.chip} />
+                    ))}
+                </>
+            ),
         },
     ];
 

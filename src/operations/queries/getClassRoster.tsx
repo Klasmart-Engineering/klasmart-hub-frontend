@@ -13,8 +13,13 @@ export const GET_CLASS_ROSTER = gql`
                 date_of_birth
                 avatar
                 username
+                alternate_phone
                 membership(organization_id: $organization_id) {
                     status
+                }
+                subjectsTeaching {
+                    id
+                    name
                 }
             }
             teachers {
@@ -27,8 +32,13 @@ export const GET_CLASS_ROSTER = gql`
                 date_of_birth
                 avatar
                 username
+                alternate_phone
                 membership(organization_id: $organization_id) {
                     status
+                }
+                subjectsTeaching {
+                    id
+                    name
                 }
             }
         }

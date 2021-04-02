@@ -20,26 +20,18 @@ const userProfileInitialValue: User = {
     avatar: ``,
     email: ``,
     user_id: ``,
-    user_name: ``,
+    username: ``,
 };
 
 const organizationIdInitialValue = ``;
 
-export const currentMembershipVar: ReactiveVar<CurrentMembership> = makeVar<CurrentMembership>(
-    currentMembershipInitialValue,
-);
+export const currentMembershipVar: ReactiveVar<CurrentMembership> = makeVar<CurrentMembership>(currentMembershipInitialValue);
 
-export const userIdVar: ReactiveVar<string> = makeVar<string>(
-    userIdInitialValue,
-);
+export const userIdVar: ReactiveVar<string> = makeVar<string>(userIdInitialValue);
 
-export const userProfileVar: ReactiveVar<User> = makeVar<User>(
-    userProfileInitialValue,
-);
+export const userProfileVar: ReactiveVar<User> = makeVar<User>(userProfileInitialValue);
 
-export const organizationIdVar: ReactiveVar<string> = makeVar<string>(
-    organizationIdInitialValue,
-);
+export const organizationIdVar: ReactiveVar<string> = makeVar<string>(organizationIdInitialValue);
 
 export const cache: InMemoryCache = new InMemoryCache({
     typePolicies: {
@@ -49,7 +41,7 @@ export const cache: InMemoryCache = new InMemoryCache({
                     merge: true,
                 },
                 currentMembership: {
-                    read() {
+                    read () {
                         return currentMembershipVar();
                     },
                 },
@@ -60,7 +52,7 @@ export const cache: InMemoryCache = new InMemoryCache({
                     merge: true,
                 },
                 organizationId: {
-                    read() {
+                    read () {
                         return organizationIdVar();
                     },
                 },
@@ -68,14 +60,24 @@ export const cache: InMemoryCache = new InMemoryCache({
                     merge: true,
                 },
                 userId: {
-                    read() {
+                    read () {
                         return userIdVar();
                     },
                 },
                 userProfile: {
-                    read() {
+                    read () {
                         return userProfileVar();
                     },
+                },
+            },
+        },
+        Mutation: {
+            fields: {
+                organization: {
+                    merge: true,
+                },
+                user: {
+                    merge: true,
                 },
             },
         },

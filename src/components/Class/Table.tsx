@@ -142,6 +142,7 @@ export default function ClassesTable (props: Props) {
         refetch,
         loading,
     } = useGetAllClasses({
+        fetchPolicy: `network-only`,
         variables: {
             organization_id,
         },

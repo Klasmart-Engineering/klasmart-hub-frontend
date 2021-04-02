@@ -103,7 +103,7 @@ export default function UserTable (props: Props) {
         refetch,
         loading: loadingOrganizationMemberships,
     } = useGetOrganizationMemberships({
-        fetchPolicy: `network-only`,
+        fetchPolicy: `cache-and-network`,
         variables: {
             organization_id,
         },
