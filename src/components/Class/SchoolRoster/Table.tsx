@@ -70,7 +70,7 @@ export default function SchoolRoster (props: Props) {
         ?.eligibleStudents?.filter((student: ClassUser) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
         .map((student: ClassUser) => ({
             id: `${student.user_id}-student`,
-            username: student.user_name,
+            username: student.family_name ? `${student.given_name} ${student.family_name}` : ``,
             role: `Student`,
             email: student.email,
             phoneNumber: student.phone,
@@ -79,7 +79,7 @@ export default function SchoolRoster (props: Props) {
         ?.eligibleTeachers?.filter((teacher: ClassUser) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
         .map((teacher: ClassUser) => ({
             id: `${teacher.user_id}-teacher`,
-            username: teacher.user_name,
+            username: teacher.family_name ? `${teacher.given_name} ${teacher.family_name}` : ``,
             role: `Teacher`,
             email: teacher.email,
             phoneNumber: teacher.phone,
@@ -168,6 +168,7 @@ export default function SchoolRoster (props: Props) {
         >
             <Paper className={classes.root}>
                 <PageTable
+                    selectedRows={selectedIds}
                     columns={columns}
                     rows={rows}
                     idField="id"
