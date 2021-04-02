@@ -140,6 +140,15 @@ export default function ProgramTable (props: Props) {
             return;
         }
 
+        const nonSpecifiedIndex = ids.findIndex((id) => id === nonSpecifiedId);
+
+        // This is in case user checks on select all.
+        if (ids.length > 1 && nonSpecifiedIndex !== -1) {
+            ids.splice(nonSpecifiedIndex, 1);
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
         setTableSelectedIds(ids);
     };
 
