@@ -16,7 +16,6 @@ import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
-    TextField as TempTextField,
     Theme,
 } from "@material-ui/core";
 import MuiAccordion from "@material-ui/core/Accordion";
@@ -38,10 +37,7 @@ import React,
     useEffect,
     useState,
 } from "react";
-import {
-    FormattedMessage,
-    useIntl,
-} from "react-intl";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -83,22 +79,6 @@ const AccordionSummary = withStyles({
 })(MuiAccordionSummary);
 
 const AccordionDetails = withStyles((theme) => ({}))(MuiAccordionDetails);
-
-const alternativeEmailHelperText = (email: string) => {
-    if (email.length === 0) return false;
-    const validEmail = emailAddressRegex.test(email);
-    if (!validEmail) {
-        if (!validEmail) return <FormattedMessage id="createUser_invalidEmail" />;
-    }
-};
-
-const alternativePhoneHelperText = (phone: string) => {
-    if (phone.length === 0) return false;
-    const validPhone = phoneNumberRegex.test(phone);
-    if (!validPhone) {
-        if (!validPhone) return <FormattedMessage id="createUser_invalidPhone" />;
-    }
-};
 
 const formatDateOfBirth = (date: string): string => {
     if (date) {
@@ -175,7 +155,9 @@ export default function UserDialogForm (props: Props) {
     const [ shortcode, setShortcode ] = useState(value.shortcode ?? ``);
     const [ shortcodeIsValid, setShortcodeIsValid ] = useState(true);
     const [ alternativeEmail, setAlternativeEmail ] = useState(value.user?.alternate_email ?? ``);
+    const [ alternativeEmailIsValid, setAlternativeEmailIsValid ] = useState(true);
     const [ alternativePhone, setAlternativePhone ] = useState(value.user?.alternate_phone ?? ``);
+    const [ alternativePhoneIsValid, setAlternativePhoneIsValid ] = useState(true);
     const [ radioValue, setRadioValue ] = useState<
         string | UserGenders.MALE | UserGenders.FEMALE | UserGenders.NOT_SPECIFIED | UserGenders.OTHER
     >(genderHandler(value.user?.gender ?? ``));
@@ -189,6 +171,8 @@ export default function UserDialogForm (props: Props) {
         max,
         min,
         emailOrPhone,
+        email,
+        phone,
     } = useValidations();
 
     useEffect(() => {
@@ -198,8 +182,8 @@ export default function UserDialogForm (props: Props) {
             roleIdsValid,
             shortcodeIsValid,
             genderIsValid,
-            !alternativeEmailHelperText(alternativeEmail),
-            !alternativePhoneHelperText(alternativePhone),
+            alternativeEmailIsValid,
+            alternativePhoneIsValid,
             contactInfoIsValid,
         ].every((valid) => valid));
     }, [
@@ -208,8 +192,8 @@ export default function UserDialogForm (props: Props) {
         roleIdsValid,
         shortcodeIsValid,
         genderIsValid,
-        alternativePhone,
-        alternativeEmail,
+        alternativeEmailIsValid,
+        alternativePhoneIsValid,
         contactInfoIsValid,
     ]);
 
@@ -435,29 +419,27 @@ export default function UserDialogForm (props: Props) {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
-                        <TempTextField
-                            fullWidth
+                        <TextField
                             value={alternativeEmail}
-                            label="Alternative Email"
                             variant="outlined"
+                            label="Alternative Email"
                             type="text"
-                            error={!!alternativeEmailHelperText(alternativeEmail)}
-                            helperText={alternativeEmailHelperText(alternativeEmail) ?? ` `}
-                            onChange={(e) => setAlternativeEmail(e.currentTarget.value)}
+                            validations={[ email() ]}
+                            onChange={setAlternativeEmail}
+                            onValidate={setAlternativeEmailIsValid}
                         />
                     </div>
                 </AccordionDetails>
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
-                        <TempTextField
-                            fullWidth
+                        <TextField
                             value={alternativePhone}
-                            label="Alternative Phone"
                             variant="outlined"
+                            label="Alternative Phone"
                             type="text"
-                            error={!!alternativePhoneHelperText(alternativePhone)}
-                            helperText={alternativePhoneHelperText(alternativePhone) ?? ` `}
-                            onChange={(e) => setAlternativePhone(e.currentTarget.value)}
+                            validations={[ phone() ]}
+                            onChange={setAlternativePhone}
+                            onValidate={setAlternativePhoneIsValid}
                         />
                     </div>
                 </AccordionDetails>
