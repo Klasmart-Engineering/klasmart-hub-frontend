@@ -1,13 +1,15 @@
 import GradeForm from "./Form";
-import { useCreateUpdateGrade } from "@/api/grades";
+import {
+    useCreateUpdateGrade,
+    useGetAllGrades,
+} from "@/api/grades";
 import { currentMembershipVar } from "@/cache";
-import { Grade } from "@/types/graphQL";
+import {
+    Grade,
+    isNonSpecified,
+} from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
 import { useReactiveVar } from "@apollo/client";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
 import {
     Dialog,
     useSnackbar,
@@ -29,26 +31,34 @@ export default function (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ newGrade, setNewGrade ] = useState(buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
-
     const [ createGrade ] = useCreateUpdateGrade();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const { data: gradesData } = useGetAllGrades({
+        variables: {
+            organization_id,
+        },
+    });
+    const nonSpecifiedGrade = gradesData?.organization.grades.find(isNonSpecified);
 
     useEffect(() => {
-        setNewGrade(buildEmptyGrade());
+        setNewGrade(buildEmptyGrade({
+            progress_from_grade: nonSpecifiedGrade,
+            progress_to_grade: nonSpecifiedGrade,
+        }));
     }, [ open ]);
 
     const handleCreate = async () => {
         try {
-            const grade: Grade = {
-                name: newGrade.name,
-                progress_from_grade_id: newGrade.progress_from_grade_id ?? null,
-                progress_to_grade_id: newGrade.progress_to_grade_id ?? null,
-            };
-            const response = await createGrade({
+            await createGrade({
                 variables: {
                     organization_id,
-                    grades: [ grade ],
+                    grades: [
+                        {
+                            name: newGrade.name ?? ``,
+                            progress_from_grade_id: newGrade.progress_from_grade?.id ?? ``,
+                            progress_to_grade_id: newGrade.progress_to_grade?.id ?? ``,
+                        },
+                    ],
                 },
             });
             onClose(newGrade);

@@ -8,11 +8,7 @@ import { Grade } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
-import {
-    createStyles,
-    DialogContentText,
-    makeStyles,
-} from "@material-ui/core";
+import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
     usePrompt,
@@ -54,10 +50,17 @@ export default function (props: Props) {
 
     const handleSave = async () => {
         try {
-            const response = await updateGrade({
+            await updateGrade({
                 variables: {
                     organization_id,
-                    grades: [ updatedGrade ],
+                    grades: [
+                        {
+                            id: updatedGrade.id,
+                            name: updatedGrade.name ?? ``,
+                            progress_from_grade_id: updatedGrade.progress_from_grade?.id ?? ``,
+                            progress_to_grade_id: updatedGrade.progress_to_grade?.id ?? ``,
+                        },
+                    ],
                 },
             });
             onClose(updatedGrade);
@@ -102,7 +105,7 @@ export default function (props: Props) {
                 validations: [ required(), equals(value?.name) ],
             })) return;
 
-            const response = await deleteGrade({
+            await deleteGrade({
                 variables: {
                     id: value?.id ?? ``,
                 },

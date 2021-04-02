@@ -11,7 +11,12 @@ import {
 
 interface CreateUpdateGradeRequest {
     organization_id: string;
-    grades: Grade[];
+    grades: ({
+        id?: string;
+        name: string;
+        progress_from_grade_id: string;
+        progress_to_grade_id: string;
+    })[];
 }
 
 interface CreateUpdateGradeResponse {

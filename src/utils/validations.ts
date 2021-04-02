@@ -25,7 +25,7 @@ export const useValidations = () => {
         email: (errorMessage?: string) => validations.email(errorMessage ?? intl.formatMessage({
             id: `genericValidations_emailInvalid`,
         })),
-        letternumeric: (errorMessage?: string) => validations.letternumeric(errorMessage ?? `The value contains invalid characters`),
+        letternumeric: (errorMessage?: string) => validations.letternumeric(errorMessage ?? `Only letters and numbers are allowed.`),
         max: (max: number, errorMessage?: string) => validations.max(max, errorMessage ?? intl.formatMessage({
             id: `genericValidations_maxChar`,
         }, {

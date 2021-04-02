@@ -2,7 +2,10 @@ import { useGetAllGrades } from "@/api/grades";
 import { currentMembershipVar } from "@/cache";
 import {
     Grade,
-    Status,
+    isActive,
+    isCustomValue,
+    isNonSpecified,
+    isOtherSystemValue,
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client/react";
@@ -46,33 +49,32 @@ export default function GradeDialogForm (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const { required } = useValidations();
+    const {
+        required,
+        letternumeric,
+        min,
+        max,
+    } = useValidations();
     const [ gradeName, setGradeName ] = useState(value.name ?? ``);
     const [ gradeNameValid, setGradeNameValid ] = useState(true);
     const [ progressFromId, setProgressFromId ] = useState(value.progress_from_grade?.id ?? ``);
     const [ progressFromIdValid, setProgressFromIdValid ] = useState(true);
     const [ progressToId, setProgressToId ] = useState(value.progress_to_grade?.id ?? ``);
     const [ progressToIdValid, setProgressToIdValid ] = useState(true);
-    const [ gradeItems, setGradeItems ] = useState<Grade[]>([]);
 
     const organization = useReactiveVar(currentMembershipVar);
     const { organization_id } = organization;
 
-    const {
-        loading,
-        data,
-        refetch,
-    } = useGetAllGrades({
-        fetchPolicy: `network-only`,
+    const { data: gradesData } = useGetAllGrades({
         variables: {
             organization_id,
         },
     });
 
-    const getNonSpecified = (items: Grade[]) => {
-        const grade = items.find((item: Grade) => item.name === `None Specified`);
-        return grade?.id ?? ``;
-    };
+    const allGrades = gradesData?.organization.grades.filter(isActive) ?? [];
+    const nonSpecifiedGrade = allGrades.find(isNonSpecified);
+    const systemGrades = allGrades.filter(isOtherSystemValue);
+    const customGrades = allGrades.filter(isCustomValue);
 
     useEffect(() => {
         onValidation([
@@ -87,31 +89,15 @@ export default function GradeDialogForm (props: Props) {
     ]);
 
     useEffect(() => {
-        if (data) {
-            const rows = data.organization.grades.filter(grade => grade.status === Status.ACTIVE).map((grade) => ({
-                id: grade.id ?? ``,
-                name: grade.name ?? ``,
-            })) ?? [];
-            setGradeItems(rows);
-
-            const noneSpecified = getNonSpecified(rows) ?? ``;
-
-            if (!progressFromId) {
-                setProgressFromId(noneSpecified);
-            }
-
-            if (!progressToId) {
-                setProgressToId(noneSpecified);
-            }
-        }
-    }, [ data ]);
-
-    useEffect(() => {
         const updatedGrade: Grade = {
             id: value.id,
             name: gradeName,
-            progress_from_grade_id: progressFromId,
-            progress_to_grade_id: progressToId,
+            progress_from_grade: {
+                id: progressFromId,
+            },
+            progress_to_grade: {
+                id: progressToId,
+            },
         };
         onChange(updatedGrade);
     }, [
@@ -129,7 +115,12 @@ export default function GradeDialogForm (props: Props) {
                     id: `grades_gradeNameLabel`,
                 })}
                 value={gradeName}
-                validations={[ required() ]}
+                validations={[
+                    required(),
+                    letternumeric(),
+                    min(3, `Min length 3 of characters.`),
+                    max(15, `Max length 15 of characters.`),
+                ]}
                 onChange={setGradeName}
                 onValidate={setGradeNameValid}
             />
@@ -139,9 +130,19 @@ export default function GradeDialogForm (props: Props) {
                     id: `grades_progressFromLabel`,
                 })}
                 value={progressFromId}
-                items={gradeItems}
-                itemValue={({ id }) => id ?? ``}
-                itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
+                sections={[
+                    {
+                        items: [ nonSpecifiedGrade ],
+                    },
+                    {
+                        header: `System Values`,
+                        items: systemGrades,
+                    },
+                ]}
+                items={customGrades}
+                itemValue={(grade) => grade?.id ?? ``}
+                itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
+                validations={[ required() ]}
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
             />
@@ -151,9 +152,19 @@ export default function GradeDialogForm (props: Props) {
                     id: `grades_progressToLabel`,
                 })}
                 value={progressToId}
-                items={gradeItems}
-                itemValue={({ id }) => id ?? ``}
-                itemText={({ id, name }) => `${name} (${id?.split(`-`)[0]})`}
+                sections={[
+                    {
+                        items: [ nonSpecifiedGrade ],
+                    },
+                    {
+                        header: `System Values`,
+                        items: systemGrades,
+                    },
+                ]}
+                items={customGrades}
+                itemValue={(grade) => grade?.id ?? ``}
+                itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
+                validations={[ required() ]}
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}
             />
