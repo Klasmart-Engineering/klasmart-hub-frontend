@@ -10,7 +10,6 @@ import {
     ListItemText,
     ListSubheader,
     makeStyles,
-    Typography,
 } from "@material-ui/core";
 import {
     Assessment,
@@ -72,6 +71,7 @@ interface MenuItem {
     icon: SvgIconComponent;
     text: string;
     link?: string;
+    exact?: boolean;
 }
 
 interface MenuSection {
@@ -97,6 +97,7 @@ export default function NavigationMenuList (props: Props) {
                     }),
                     icon: Home,
                     link: `/`,
+                    exact: true,
                 },
             ],
         },
@@ -312,6 +313,13 @@ export default function NavigationMenuList (props: Props) {
             ],
         },
     ];
+
+    function isLinkSelected (item: MenuItem) {
+        if (item.exact) return item.link === location.pathname;
+        if (!item.link) return false;
+        return location.pathname.startsWith(item.link);
+    }
+
     return <>
         {menuSections.map((section, i) => (
             <Fragment key={`section-${i}`}>
@@ -331,7 +339,7 @@ export default function NavigationMenuList (props: Props) {
                             component={Link}
                             to={item.link ?? ``}
                             className={clsx(classes.defaultLink, {
-                                [classes.selectedLink]: item.link === location.pathname,
+                                [classes.selectedLink]: isLinkSelected(item),
                             })}
                         >
                             <ListItemIcon><item.icon /></ListItemIcon>

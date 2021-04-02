@@ -572,6 +572,7 @@ const messages: Record<string, string> = {
     navbar_ClassesTab: `Classes`,
     navbar_BadanamuContentTab: `Badanamu Content`,
     navbar_OrganizationContentTab: `Organization Content`,
+    navbar_MoreFeaturedContentTab: `More Featured Content`,
 
     roles_roleDescription: `Role Description`,
     roles_type: `Type`,

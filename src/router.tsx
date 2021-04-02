@@ -15,23 +15,36 @@ import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
 import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
-import { BoundingRect } from "./utils/useRect";
 import AgeRanges from "@/pages/admin/age-ranges/index";
 import { useReactiveVar } from "@apollo/client/react";
-import { useTheme } from "@material-ui/core/styles";
+import {
+    createStyles,
+    makeStyles,
+} from "@material-ui/core";
 import React,
 { useEffect } from "react";
 import { isIE } from "react-device-detect";
 import {
+    Redirect,
     Route,
     Switch,
     useLocation,
 } from "react-router-dom";
 
+const useStyles = makeStyles((theme) => createStyles({
+    iframeContainer: {
+        width: `100%`,
+        height: `100%`,
+    },
+}));
+
 const ENDPOINT = getCNEndpoint();
 
-export default function Router ({ rect }: { rect: BoundingRect })  {
-    const theme = useTheme();
+interface Props {
+}
+
+export default function Router (props: Props)  {
+    const classes = useStyles();
     const location = useLocation().pathname;
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
     const currentOrganization = useReactiveVar(currentMembershipVar);
@@ -41,125 +54,79 @@ export default function Router ({ rect }: { rect: BoundingRect })  {
             <Route
                 exact
                 path="/"
-                render={() => <Home />} />
-            <Route
-                path="/library"
-                render={() =>
-                    <div
-                        style={{
-                            position: `fixed`,
-                            top: rect.top,
-                            left: rect.left,
-                            overflowX: `hidden`,
-                            overflowY: `scroll`,
-                        }}
-                    >
-                        <iframe
-                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
-                            allow="microphone"
-                            frameBorder="0"
-                            style={{
-                                overflowX: `hidden`,
-                                width: rect.width - theme.spacing(1),
-                                height: rect.height,
-                            }}
-                        />
-                    </div>
-                } />
-            <Route
-                path="/badanamu-content"
-                render={() =>
-                    <div
-                        style={{
-                            position: `fixed`,
-                            top: rect.top,
-                            left: rect.left,
-                            overflowX: `hidden`,
-                            overflowY: `scroll`,
-                        }}
-                    >
-                        <iframe
-                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
-                            frameBorder="0"
-                            style={{
-                                overflowX: `hidden`,
-                                width: rect.width - theme.spacing(1),
-                                height: rect.height,
-                            }}
-                        />
-                    </div>
-                } />
-            <Route
-                path="/schedule"
-                render={() =>
-                    <div
-                        style={{
-                            position: `fixed`,
-                            top: rect.top,
-                            left: rect.left,
-                            overflowX: `hidden`,
-                            overflowY: `scroll`,
-                        }}
-                    >
-                        <iframe
-                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
-                            frameBorder="0"
-                            style={{
-                                overflowX: `hidden`,
-                                width: rect.width - theme.spacing(1),
-                                height: rect.height,
-                            }}
-                        />
-                    </div>
-                } />
-            <Route
-                path="/assessments"
-                render={() =>
-                    <div
-                        style={{
-                            position: `fixed`,
-                            top: rect.top,
-                            left: rect.left,
-                            overflowX: `hidden`,
-                            overflowY: `scroll`,
-                        }}
-                    >
-                        <iframe
-                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
-                            frameBorder="0"
-                            style={{
-                                overflowX: `hidden`,
-                                width: rect.width - theme.spacing(1),
-                                height: rect.height,
-                            }}
-                        />
-                    </div>
-                } />
-            <Route
-                path="/reports"
-                render={() =>
-                    <div
-                        style={{
-                            position: `fixed`,
-                            top: rect.top,
-                            left: rect.left,
-                            overflowX: `hidden`,
-                            overflowY: `scroll`,
-                        }}
-                    >
-                        <iframe
-                            src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
-                            frameBorder="0"
-                            style={{
-                                width: rect.width - theme.spacing(1),
-                                height: rect.height,
-                            }}
-                        />
-                    </div>
-                } />
+                render={() => <Home />}
+            />
             <Route
                 exact
-                path="/admin/organizations/:organizationId/edit">
+                path="/library"
+            >
+                <Redirect to="/library/organization-content" />
+            </Route>
+            <Route
+                path="/library/organization-content"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
+                        allow="microphone"
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                path="/library/badanamu-content"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                path="/library/more-featured-content"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=More Featured Content&order_by=-update_at&page=1`}
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                path="/schedule"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                path="/assessments"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                path="/reports"
+                render={() => (
+                    <iframe
+                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
+                        frameBorder="0"
+                        className={classes.iframeContainer}
+                    />
+                )}
+            />
+            <Route
+                exact
+                path="/admin/organizations/:organizationId/edit"
+            >
                 <Layout>
                     <EditOrganization />
                 </Layout>

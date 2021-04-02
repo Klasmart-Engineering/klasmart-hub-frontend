@@ -1,14 +1,11 @@
 import Toolbar from "./components/Core/AppBar/Toolbar";
-import SideNavigationDrawer,
-{ DRAWER_WIDTH } from "./components/Core/SideNavigation/Drawer";
+import SideNavigationDrawer from "./components/Core/SideNavigation/Drawer";
 import Router from "./router";
-import { useRect } from "./utils/useRect";
 import {
     createStyles,
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
-import clsx from "clsx";
 import React,
 { useState } from "react";
 import { withOrientationChange } from "react-device-detect";
@@ -18,7 +15,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: `flex`,
     },
     content: {
-        flexGrow: 1,
+        flex: 1,
+        overflow: `hidden`,
     },
     navMainContainer: {
         display: `flex`,
@@ -35,7 +33,6 @@ interface Props {
 const ref = React.createRef<HTMLDivElement>();
 const Layout = (props: Props) => {
     const classes = useStyles();
-    const rect = useRect(ref);
     const [ navigationDrawerOpen, setNavigationDrawerOpen ] = useState<boolean>();
 
     return (
@@ -53,7 +50,7 @@ const Layout = (props: Props) => {
                     ref={ref}
                     className={classes.content}
                 >
-                    <Router rect={rect} />
+                    <Router />
                 </main>
             </div>
         </div>

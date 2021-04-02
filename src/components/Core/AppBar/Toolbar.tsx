@@ -97,11 +97,15 @@ export default function Toolbar (props: Props) {
     const contentTabs: Tab[] = [
         {
             text: `Organization Content`,
-            value: `/library`,
+            value: `/library/organization-content`,
         },
         {
             text: `Badanamu Content`,
-            value: `/badanamu-content`,
+            value: `/library/badanamu-content`,
+        },
+        {
+            text: `More Featured Content`,
+            value: `/library/more-featured-content`,
         },
     ];
 
