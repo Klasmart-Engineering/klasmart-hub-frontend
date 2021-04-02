@@ -356,7 +356,9 @@ export default function ClassesTable (props: Props) {
                         [classes.inactiveColor]: row.status === Status.INACTIVE,
                     })}
                 >
-                    {row.status}
+                    {intl.formatMessage({
+                        id: `data_${row.status}Status`,
+                    })}
                 </span>
             ),
         },

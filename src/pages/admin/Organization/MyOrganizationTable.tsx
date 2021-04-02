@@ -113,9 +113,7 @@ export default function MyOrganizationTable (props: Props) {
                 organizationOwnership?.organization?.roles
                     ?.filter((role) => role.status === Status.ACTIVE)
                     .map((role) => role.role_name ?? ``) ?? [],
-            status: organizationOwnership?.status ? intl.formatMessage({
-                id: `data_${organizationOwnership?.status}Status`,
-            }) : ``,
+            status: organizationOwnership?.status ?? ``,
         }));
 
         setRows(rows);
@@ -197,7 +195,9 @@ export default function MyOrganizationTable (props: Props) {
                         [classes.inactiveColor]: row.status === Status.INACTIVE,
                     })}
                 >
-                    {row.status}
+                    {intl.formatMessage({
+                        id: `data_${row.status}Status`,
+                    })}
                 </span>,
         },
     ];
