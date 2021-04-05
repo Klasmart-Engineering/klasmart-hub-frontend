@@ -2,6 +2,7 @@ import { useRestAPI } from "../../../api/restapi";
 import { currentMembershipVar } from "../../../cache";
 import { AssessmentItem } from "../../../types/objectTypes";
 import { history } from "../../../utils/history";
+import { usePermission } from "@/utils/checkAllowed";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     Button,
@@ -89,6 +90,8 @@ export default function Assessments () {
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
 
+    const permissionAccessAssessments = usePermission(`assessments_400`);
+
     async function getAssessmentsList () {
         try {
             const response = await restApi.assessments(currentOrganization.organization_id, 1, 1000);
@@ -151,7 +154,8 @@ export default function Assessments () {
                         </Tooltip>
                     </Typography>
                 </Grid>
-                <Grid item>
+
+                {permissionAccessAssessments && <Grid item>
                     <Button
                         variant="contained"
                         className={classes.cardButton}
@@ -162,7 +166,8 @@ export default function Assessments () {
                     >
                         <FormattedMessage id="assessment_viewAssessmentsLabel" />
                     </Button>
-                </Grid>
+                </Grid>}
+
             </Grid>
             <Grid
                 container

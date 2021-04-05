@@ -11,6 +11,7 @@ import {
     PublishedContentItem,
     SchedulePayload,
 } from "@/types/objectTypes";
+import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
 import { useReactiveVar } from "@apollo/client/react";
 import { Button } from "@material-ui/core";
@@ -87,6 +88,10 @@ const useStyles = makeStyles((theme: Theme) =>
         select: {
             display: `block`,
         },
+        input:{
+            top: `auto`,
+            bottom : `70%`,
+        },
     }));
 
 export default function PlanSelection () {
@@ -104,6 +109,8 @@ export default function PlanSelection () {
     const [ openShareLink, setOpenShareLink ] = useState(false);
 
     const currentOrganization = useReactiveVar(currentMembershipVar);
+
+    const permissionAccessLibrary = usePermission(`library_200`);
 
     async function getPublishedLessonPlans () {
         try {
@@ -153,9 +160,11 @@ export default function PlanSelection () {
                 if (json && json.token) {
                     setLiveToken(json.token);
 
+                    /*
+                    NOTE : Share room is not supported anymore
                     const token: LivePreviewJWT = jwtDecode(json.token);
                     console.log(token);
-                    setShareLink(token?.roomid);
+                    setShareLink(token?.roomid);*/
                 } else {
                     setLiveToken(``);
                 }
@@ -185,7 +194,7 @@ export default function PlanSelection () {
                             <FormattedMessage id="planSelection_title" />
                         </Typography>
                     </Grid>
-                    <Grid item>
+                    {permissionAccessLibrary && <Grid item>
                         <Button
                             variant="contained"
                             className={classes.cardButton}
@@ -198,7 +207,7 @@ export default function PlanSelection () {
                                 id: `planSelection_viewLibraryLabel`,
                             })}
                         </Button>
-                    </Grid>
+                    </Grid>}
                 </Grid>
                 <Grid
                     container
@@ -227,22 +236,24 @@ export default function PlanSelection () {
                             <FormattedMessage id="live_liveButton" />
                         </StyledFAB>
                         {shareLink !== `` && (
-                            <StyledFAB
-                                flat
-                                style={{
-                                    marginLeft: theme.spacing(1),
-                                    minWidth: 0,
-                                }}
-                                size="small"
-                                onClick={() => setOpenShareLink(!openShareLink)}
-                            >
-                                <ShareIcon size="1rem" />
-                            </StyledFAB>
-                        )}
+                            <>
+                                <StyledFAB
+                                    flat
+                                    style={{
+                                        marginLeft: theme.spacing(1),
+                                        minWidth: 0,
+                                    }}
+                                    size="small"
+                                    onClick={() => setOpenShareLink(!openShareLink)}
+                                >
+                                    <ShareIcon size="1rem" />
+                                </StyledFAB>
 
-                        <Collapse in={openShareLink}>
-                            <InviteButton url={`${getLiveEndpoint()}?roomId=${shareLink}`} />
-                        </Collapse>
+                                <Collapse in={openShareLink}>
+                                    <InviteButton url={`${getLiveEndpoint()}?roomId=${shareLink}`} />
+                                </Collapse>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>
@@ -263,6 +274,7 @@ function LessonPlanSelect ({
 }) {
     const [ inputValue, setInputValue ] = useState(``);
     const intl = useIntl();
+    const classes = useStyles();
 
     return (
         <Autocomplete
@@ -290,6 +302,9 @@ function LessonPlanSelect ({
                                 id: `planSelection_planNotAvailableLabel`,
                             })
                     }
+                    InputLabelProps={{
+                        className: classes.input,
+                    }}
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: `new-password`, // disable autocomplete and autofill
