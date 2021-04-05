@@ -296,7 +296,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                     rows={rows}
                     columns={columns}
                     primaryAction={{
-                        label: `Create Category`,
+                        label: `Create Subcategory`,
                         icon: AddIcon,
                         onClick: createSubcategory,
                     }}
