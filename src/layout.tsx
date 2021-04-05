@@ -13,6 +13,7 @@ import { withOrientationChange } from "react-device-detect";
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: `flex`,
+        overflowY: `auto`,
     },
     content: {
         flex: 1,
