@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     content: {
         flex: 1,
-        overflow: `hidden`,
     },
     navMainContainer: {
         display: `flex`,
