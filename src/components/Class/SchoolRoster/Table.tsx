@@ -3,6 +3,7 @@ import {
     useAddUsersToClass,
     useGetClassRosterEligibleUsers,
 } from "@/api/classRoster";
+import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import {
     createStyles,
@@ -67,8 +68,9 @@ export default function SchoolRoster (props: Props) {
     });
 
     const students = data?.class
-        ?.eligibleStudents?.filter((student: ClassUser) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
-        .map((student: ClassUser) => ({
+        ?.eligibleStudents?.filter((student) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
+        .filter((student) => student.membership?.status === Status.ACTIVE)
+        .map((student) => ({
             id: `${student.user_id}-student`,
             username: student.family_name ? `${student.given_name} ${student.family_name}` : ``,
             role: `Student`,
@@ -76,8 +78,9 @@ export default function SchoolRoster (props: Props) {
             phoneNumber: student.phone,
         }));
     const teachers = data?.class
-        ?.eligibleTeachers?.filter((teacher: ClassUser) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
-        .map((teacher: ClassUser) => ({
+        ?.eligibleTeachers?.filter((teacher) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
+        .filter((teacher) => teacher.membership?.status === Status.ACTIVE)
+        .map((teacher) => ({
             id: `${teacher.user_id}-teacher`,
             username: teacher.family_name ? `${teacher.given_name} ${teacher.family_name}` : ``,
             role: `Teacher`,

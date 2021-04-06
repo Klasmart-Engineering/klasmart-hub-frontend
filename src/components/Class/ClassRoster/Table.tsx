@@ -242,9 +242,7 @@ export default function ClassRoster (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title={intl.formatMessage({
-                id: `class_classRosterLabel`,
-            })}
+            title={classItem.class_name ?? ``}
             onClose={() => {
                 onClose();
             }}
@@ -274,7 +272,9 @@ export default function ClassRoster (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: classItem.class_name ?? ``,
+                            title: intl.formatMessage({
+                                id: `class_classRosterLabel`,
+                            }),
                         },
                         search: {
                             placeholder: intl.formatMessage({

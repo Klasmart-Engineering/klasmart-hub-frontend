@@ -103,6 +103,16 @@ export interface OrganizationMembership {
     shortcode?: string | null;
 }
 
+export interface SchoolMembership {
+    user_id: string;
+    school_id: string;
+    join_timestamp?: string | null;
+    status?: Status | null;
+    user?: User | null;
+    school?: School | null;
+    roles?: Role[] | null;
+}
+
 export interface Organization {
     organization_id: string;
     organization_name?: string | null;

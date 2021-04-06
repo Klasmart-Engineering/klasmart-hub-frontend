@@ -5,6 +5,7 @@ import { GET_CLASS_ROSTER } from "@/operations/queries/getClassRoster";
 import { GET_ELIGIBLE_USERS } from "@/operations/queries/getEligibleClassUsers";
 import {
     OrganizationMembership,
+    SchoolMembership,
     Subject,
 } from "@/types/graphQL";
 import {
@@ -29,7 +30,7 @@ export interface ClassUser {
     user_id: string;
     name: string | null;
     role?: string;
-    school_memberships?: string[];
+    school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
     subjectsTeaching: Subject[];
     alternate_phone: string;
