@@ -1,10 +1,10 @@
-import { SWITCH_USER } from "@/operations/mutations/switchUser";
+import { getAuthEndpoint } from "@/config";
 import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
 import { GET_USER } from "@/operations/queries/getUser";
 import { User } from "@/types/graphQL";
+import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import {
     QueryHookOptions,
-    useMutation,
     useQuery,
 } from "@apollo/client";
 
@@ -33,17 +33,26 @@ export const myUsersSampleResponse = {
     },
 };
 
-interface SwitchUserRequest {
-    user_id: string;
+export async function switchUser (userId: string, retry = true): Promise<boolean> {
+    try {
+        const headers = new Headers();
+        headers.append(`Accept`, `application/json`);
+        headers.append(`Content-Type`, `application/json`);
+        const response = await fetch(`${getAuthEndpoint()}switch`, {
+            body: JSON.stringify({
+                user_id: userId,
+            }),
+            headers,
+            method: `POST`,
+        });
+        await response.text();
+        return response.ok;
+    } catch(e) {
+        if(!retry) { return false; }
+        await refreshToken();
+        return switchUser(userId, false);
+    }
 }
-
-interface SwitchUserResponse {
-    user: User;
-}
-
-export const setSwitchUser = () => {
-    return useMutation<SwitchUserResponse, SwitchUserRequest>(SWITCH_USER);
-};
 
 interface GetMyUsersRequest {}
 

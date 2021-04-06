@@ -1,6 +1,6 @@
 import {
     myUsersSampleResponse,
-    setSwitchUser,
+    switchUser,
     useGetMyUsers,
 } from "@/api/users";
 import { userIdVar } from "@/cache";
@@ -38,7 +38,6 @@ export default function UserProfileSwitcher (props: Props) {
     const { loading, data } = useGetMyUsers();
 
     const [ users, setUsers ] = useState<User[]>([]);
-    const [ switchUser ] = setSwitchUser();
 
     const url = useMemo(() => {
         const url = new URL(window.location.href);
@@ -53,11 +52,7 @@ export default function UserProfileSwitcher (props: Props) {
 
     const switchUsers = async (userId: string) => {
         try {
-            const response = await switchUser({
-                variables: {
-                    user_id: userId,
-                },
-            });
+            const response = await switchUser(userId);
             return response;
         } catch (error) {
             console.log(`Error switching user: `, error);
