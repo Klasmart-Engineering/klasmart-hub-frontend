@@ -91,6 +91,7 @@ const useStyles = makeStyles((theme: Theme) =>
         input:{
             top: `auto`,
             bottom : `70%`,
+            paddingRight: 22,
         },
     }));
 

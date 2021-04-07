@@ -10,7 +10,7 @@ import CreateContentFolderDialog from "@/components/LibraryContent/Folder/Dialog
 import EditContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/Edit";
 import DistributeContentFolderDialog from "@/components/LibraryContent/Folder/DistributeDialog";
 import MoveContentDialog from "@/components/LibraryContent/MoveDialog";
-import globalCss from "@/globalCss";
+import globalStyles from "@/globalStyles";
 import {
     ContentItemDetails,
     PublishedContentItem,
@@ -50,7 +50,10 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 import {
     useLocation,
     useRouteMatch,
@@ -64,7 +67,7 @@ const useStyles = makeStyles((theme) => {
         successColor,
         warningColor,
         statusText,
-    } = globalCss(theme);
+    } = globalStyles(theme);
     return createStyles({
         disabledColor,
         errorColor,
@@ -176,7 +179,9 @@ export default function LibraryTable (props: Props) {
             });
             setData(resp);
         } catch (e) {
-            enqueueSnackbar(intl.formatMessage({ id: `superAdmin_contentFolderError` }), {
+            enqueueSnackbar(intl.formatMessage({
+                id: `superAdmin_contentFolderError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -220,7 +225,9 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `name`,
-            label: intl.formatMessage({ id: `superAdmin_nameLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_nameLabel`,
+            }),
             render: (row) => {
                 if (row.contentType === ContentType.FOLDER) return <Link
                     className={clsx({
@@ -267,11 +274,15 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `authorName`,
-            label: intl.formatMessage({ id: `superAdmin_authorNameLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_authorNameLabel`,
+            }),
         },
         {
             id: `contentType`,
-            label: intl.formatMessage({ id: `superAdmin_contentTypeLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_contentTypeLabel`,
+            }),
             groupText: (rowValue) => {
                 switch (rowValue) {
                 case ContentType.FOLDER: return ContentGroup.FOLDER;
@@ -297,16 +308,22 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `authorId`,
-            label: intl.formatMessage({ id: `superAdmin_authorIdLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_authorIdLabel`,
+            }),
             hidden: true,
         },
         {
             id: `description`,
-            label: intl.formatMessage({ id: `superAdmin_descriptionLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_descriptionLabel`,
+            }),
         },
         {
             id: `keywords`,
-            label: intl.formatMessage({ id: `superAdmin_keywordsLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_keywordsLabel`,
+            }),
             render: (row) => row.keywords.map((keyword, i) => <Chip
                 key={`keyword-${i}`}
                 label={keyword}
@@ -315,7 +332,9 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `publishStatus`,
-            label: intl.formatMessage({ id: `superAdmin_publishStatusLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_publishStatusLabel`,
+            }),
             render: (row) => <span
                 className={clsx(classes.statusText, getPublishStatusColor(row.publishStatus, classes))}
             >
@@ -324,12 +343,16 @@ export default function LibraryTable (props: Props) {
         },
         {
             id: `createdAt`,
-            label: intl.formatMessage({ id: `superAdmin_createdLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_createdLabel`,
+            }),
             render: (row) => <span>{intl.formatDate(row.createdAt)}</span>,
         },
         {
             id: `updatedAt`,
-            label: intl.formatMessage({ id: `superAdmin_lastModifiedLabel` }),
+            label: intl.formatMessage({
+                id: `superAdmin_lastModifiedLabel`,
+            }),
             render: (row) => <span>{intl.formatDate(row.updatedAt)}</span>,
         },
     ];
@@ -354,7 +377,9 @@ export default function LibraryTable (props: Props) {
         const selectedContent = findContentByRow(row);
         if (!selectedContent) return;
         const input = await prompt({
-            title: intl.formatMessage({ id: `superAdmin_deleteContentTitle` }),
+            title: intl.formatMessage({
+                id: `superAdmin_deleteContentTitle`,
+            }),
             content: <>
                 <DialogContentText>Are you sure you want to delete {`"${selectedContent.name}"`}?</DialogContentText>
                 <DialogContentText><FormattedMessage id="superAdmin_type" /> <strong>{selectedContent.name}</strong> <FormattedMessage id="superAdmin_confirmDeletion" /></DialogContentText>
@@ -377,11 +402,15 @@ export default function LibraryTable (props: Props) {
                 });
             else throw Error(`unknown-type`);
             getContentsFolders();
-            enqueueSnackbar(intl.formatMessage({ id: 'superAdmin_deleteSuccess'}), {
+            enqueueSnackbar(intl.formatMessage({
+                id: `superAdmin_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({ id: 'superAdmin_deleteError'}), {
+            enqueueSnackbar(intl.formatMessage({
+                id: `superAdmin_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -417,48 +446,64 @@ export default function LibraryTable (props: Props) {
                     groupBy="contentType"
                     secondaryActions={[
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_createFolderLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_createFolderLabel`,
+                            }),
                             icon: CreateNewFolderIcon,
                             onClick: () => setOpenCreateDialog(true),
                         },
                     ]}
                     selectActions={[
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_moveSelectedLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_moveSelectedLabel`,
+                            }),
                             icon: ExitToAppIcon,
                             onClick: (rowIds: string[]) => moveSelectedBulk(rowIds),
                         },
                     ]}
                     rowActions={(row) =>[
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_distributeLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_distributeLabel`,
+                            }),
                             icon: ShareIcon,
                             disabled: row.contentType !== ContentType.FOLDER || paths.length > 0,
                             onClick: (row) => distributeSelectedRow(row),
                         },
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_moveLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_moveLabel`,
+                            }),
                             icon: ExitToAppIcon,
                             onClick: () => moveSelectedRow(row),
                         },
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_editLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_editLabel`,
+                            }),
                             icon: EditIcon,
                             disabled: row.contentType !== ContentType.FOLDER,
                             onClick: (row) => editSelectedRow(row),
                         },
                         {
-                            label: intl.formatMessage({ id: 'superAdmin_deleteLabel'}),
+                            label: intl.formatMessage({
+                                id: `superAdmin_deleteLabel`,
+                            }),
                             icon: DeleteIcon,
                             onClick: (row) => deleteSelectedRow(row),
                         },
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: intl.formatMessage({ id: 'superAdmin_libraryLabel'}),
+                            title: intl.formatMessage({
+                                id: `superAdmin_libraryLabel`,
+                            }),
                         },
                         search: {
-                            placeholder: intl.formatMessage({ id: 'superAdmin_searchPlaceholder'}),
+                            placeholder: intl.formatMessage({
+                                id: `superAdmin_searchPlaceholder`,
+                            }),
                         },
                     })}
                 />

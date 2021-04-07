@@ -7,7 +7,7 @@ import ClassRoster from "@/components/Class/ClassRoster/Table";
 import ClassDetailsDrawer from "@/components/Class/DetailsDrawer";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
-import globalCss from "@/globalCss";
+import globalStyles from "@/globalStyles";
 import {
     Class,
     Status,
@@ -48,7 +48,7 @@ import React,
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
-    const { clickable } = globalCss(theme);
+    const { clickable } = globalStyles(theme);
     return createStyles({
         clickable,
         root: {

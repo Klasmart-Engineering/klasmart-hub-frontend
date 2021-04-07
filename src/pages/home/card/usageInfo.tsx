@@ -132,7 +132,7 @@ export default function UsageInfo ({ schedule }: {
 }) {
     const classes = useStyles();
     const theme = useTheme();
-    const classType = [
+    const classTypes = [
         `OnlineClass`,
         `OfflineClass`,
         `Homework`,
@@ -143,7 +143,7 @@ export default function UsageInfo ({ schedule }: {
 
     useEffect(() => {
         const tempUsageInfoData: UsageInfoData[] = [];
-        classType.forEach((item) => {
+        classTypes.forEach((item) => {
             const events = schedule?.filter((event) => event.class_type === item);
             const total = events ? events.length : 0;
             const attended = events

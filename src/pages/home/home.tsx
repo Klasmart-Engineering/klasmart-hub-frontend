@@ -136,7 +136,20 @@ export default function Home () {
             const responseCurrentWeek = await restApi.schedule(currentOrganization.organization_id, `week`, todayTimeStamp, timeZoneOffset);
             const responseNextWeek = await restApi.schedule(currentOrganization.organization_id, `week`, nextWeekTimeStamp, timeZoneOffset);
 
-            setSchedule(responseCurrentWeek.concat(responseNextWeek).concat(responseNextNextWeek));
+            const responseSchedule = [
+                ...new Set([
+                    ...responseNextNextWeek,
+                    ...responseCurrentWeek,
+                    ...responseNextWeek,
+                ]),
+            ];
+            responseSchedule.sort((a, b) => {
+                const startDiff = a.start_at - b.start_at;
+                if (startDiff === 0) return a.title.localeCompare(b.title);
+                return startDiff;
+            });
+
+            setSchedule(responseSchedule);
         } catch (e) {
             console.error(e);
         }
@@ -236,7 +249,8 @@ export default function Home () {
             </Grid>
 
             {(userRoles?.includes(`Student`) ||
-                userRoles?.includes(`Teacher`)) && (
+                userRoles?.includes(`Teacher`) ||
+                userRoles?.includes(`Parent`)) && (
                 <Box mt={4}>
                     <YourClasses />
                 </Box>

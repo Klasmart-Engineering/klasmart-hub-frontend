@@ -5,7 +5,7 @@ import {
     useGetRolePermissions,
 } from "@/api/roles";
 import { currentMembershipVar } from "@/cache";
-import globalCss from "@/globalCss";
+import globalStyles from "@/globalStyles";
 import CreateAndEditRoleDialog, {
     NewRole,
     Role,
@@ -43,7 +43,7 @@ import React, {
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
-    const { clickable } = globalCss(theme);
+    const { clickable } = globalStyles(theme);
     return createStyles({
         clickable,
         root: {

@@ -957,5 +957,7 @@ const messages: Record<string, string> = {
     subcategories_subcategoryCreateError: `Sorry, something went wrong, please try again`,
     subcategories_subcategoryDeleteMessage: `Subcategory has been successfully deleted`,
     subcategories_subcategoryDeleteError: `Sorry, something went wrong, please try again`,
+
+    scheduleInfo_class: `Class`,
 };
 export default messages;

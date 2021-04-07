@@ -1,4 +1,8 @@
-import { SchedulePayload } from "@/types/objectTypes";
+import globalStyles from "@/globalStyles";
+import {
+    EventClassType,
+    SchedulePayload,
+} from "@/types/objectTypes";
 import { history } from "@/utils/history";
 import {
     Box,
@@ -11,6 +15,7 @@ import {
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
+import clsx from "clsx";
 import React from "react";
 import {
     FormattedDate,
@@ -19,8 +24,11 @@ import {
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
+const useStyles = makeStyles((theme: Theme) => {
+    const { fontWeightBold } = globalStyles(theme);
+
+    return createStyles({
+        fontWeightBold,
         cardHead: {
             padding: theme.spacing(1, 4),
             [theme.breakpoints.down(`sm`)]: {
@@ -32,13 +40,11 @@ const useStyles = makeStyles((theme: Theme) =>
             textTransform: `uppercase`,
             fontWeight: `bold`,
         },
-        cardBody: {
+        cardBodyInner: {
             padding: theme.spacing(2, 4),
             [theme.breakpoints.down(`sm`)]: {
                 padding: theme.spacing(2, 2),
             },
-        },
-        cardBodyInner: {
             [theme.breakpoints.up(`md`)]: {
                 maxHeight: 660,
                 overflowY: `auto`,
@@ -61,30 +67,24 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: `transparent`,
             border: `3px solid ${theme.palette.primary.light}`,
             color: theme.palette.primary.main,
-            "& .classLabel": {
-                color: theme.palette.primary.main,
-                backgroundColor: `transparent`,
-            },
         },
-        classItemTask: {},
         classItemLive: {
             backgroundColor: theme.palette.primary.light,
             color: theme.palette.primary.main,
-            "& .classLabel": {
-                color: `white`,
-                backgroundColor: theme.palette.primary.main,
-            },
         },
-        classItemStudy: {},
-        classLabel: {
+        classTypeChip: {
             padding: `2px 6px`,
             borderRadius: 20,
-            color: `#fff`,
+            color: theme.palette.primary.main,
             backgroundColor: `transparent`,
             border: `2px solid ${theme.palette.primary.main}`,
             fontWeight: `bold`,
             marginRight: theme.spacing(2),
             fontSize: `0.9em`,
+        },
+        classTypeChipLive: {
+            color: `white`,
+            backgroundColor: theme.palette.primary.main,
         },
         dayGroup: {
             marginTop: 20,
@@ -99,7 +99,26 @@ const useStyles = makeStyles((theme: Theme) =>
             fontSize: `0.9em`,
             fontWeight: `bold`,
         },
-    }));
+        duration:{
+            fontWeight: `bold`,
+            fontSize: `1em`,
+        },
+    });
+
+});
+
+const classTypeTranslationKey = (type: EventClassType) => {
+    switch (type) {
+    case `Homework`:
+        return `scheduleInfo_study`;
+    case `Task`:
+        return `scheduleInfo_task`;
+    case `OnlineClass`:
+        return `scheduleInfo_live`;
+    case `OfflineClass`:
+        return `scheduleInfo_class`;
+    }
+};
 
 export default function ScheduleInfoShort ({ schedule }: {
     schedule?: SchedulePayload[];
@@ -182,31 +201,13 @@ export default function ScheduleInfoShort ({ schedule }: {
                                         {scheduledClass
                                             .filter((classItem) => classItem.start_at_date === dayWithClass)
                                             .map((item) => {
-                                                let classLabel = `class`;
-                                                let classClass = ``;
-
-                                                switch (item.class_type) {
-                                                case `Task`:
-                                                    classLabel = `scheduleInfo_task`;
-                                                    classClass = classes.classItemTask;
-                                                    break;
-                                                case `OnlineClass`:
-                                                    classLabel = `scheduleInfo_live`;
-                                                    classClass = classes.classItemLive;
-                                                    break;
-                                                case `OfflineClass`:
-                                                    classLabel = `scheduleInfo_study`;
-                                                    classClass = classes.classItemStudy;
-                                                    break;
-                                                default:
-                                                    break;
-                                                }
-
                                                 return (
                                                     <Grid
                                                         key={item.id}
                                                         container
-                                                        className={`${classes.classItem} ${classClass}`}
+                                                        className={clsx(classes.classItem, {
+                                                            [classes.classItemLive]: item.class_type === `OnlineClass`,
+                                                        })}
                                                         alignItems="center"
                                                         justify="space-between"
                                                     >
@@ -215,13 +216,13 @@ export default function ScheduleInfoShort ({ schedule }: {
                                                                 container
                                                                 alignItems="center">
                                                                 <div
-                                                                    className={`classLabel ${classes.classLabel}`}
+                                                                    className={clsx(classes.classTypeChip, {
+                                                                        [classes.classTypeChipLive]: item.class_type === `OnlineClass`,
+                                                                    })}
                                                                 >
-                                                                    <FormattedMessage id={classLabel} />
+                                                                    <FormattedMessage id={classTypeTranslationKey(item.class_type)} />
                                                                 </div>
-                                                                <div style={{
-                                                                    fontWeight: `bold`,
-                                                                }}>
+                                                                <div className={classes.fontWeightBold}>
                                                                     {item.title}
                                                                 </div>
                                                             </Grid>
@@ -238,11 +239,8 @@ export default function ScheduleInfoShort ({ schedule }: {
                                                                 minute="2-digit"
                                                             />
                                                             <Typography
-                                                                style={{
-                                                                    fontSize: `1em`,
-                                                                    fontWeight: `bold`,
-                                                                }}
-                                                            >
+                                                                variant="body2"
+                                                                className={classes.duration}>
                                                                 <FormattedDuration
                                                                     seconds={item?.end_at - item?.start_at}
                                                                     format="{hours} {minutes}"
