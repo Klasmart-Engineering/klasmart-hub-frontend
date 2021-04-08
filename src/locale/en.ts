@@ -884,7 +884,7 @@ const messages: Record<string, string> = {
 
     programs_subjectsList: `Subjects`,
 
-    schools_maxCharValidation: `Max length 35 of characters`,
+    schools_maxCharValidation: `Max length of {value} characters.`,
     schools_schoolNameLabel: `School Name`,
     schools_schoolInfoLabel: `School Info`,
     schools_summaryLabel: `Summary`,

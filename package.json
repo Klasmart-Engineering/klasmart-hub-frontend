@@ -104,7 +104,7 @@
     "inter-ui": "^3.15.1",
     "interpolate-html-plugin": "^4.0.0",
     "jwt-decode": "^3.1.2",
-    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#970b3962e50ea42f78314798de0a855ebf41f0d2",
+    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#1.0.9",
     "lodash": "^4.17.21",
     "logrocket": "^1.0.14",
     "moment": "^2.29.1",

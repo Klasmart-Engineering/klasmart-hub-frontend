@@ -67,10 +67,12 @@ export default function SchoolInfoStep (props: TabContent) {
                     hideHelperText={disabled}
                     autoFocus={!value.school_id}
                     validations={[
-                        required(`The school name is required`),
+                        required(`The school name is required.`),
                         letternumeric(),
-                        max(35, intl.formatMessage({
+                        max(120, intl.formatMessage({
                             id: `schools_maxCharValidation`,
+                        }, {
+                            value: 120
                         })),
                     ]}
                     onChange={setSchoolName}
