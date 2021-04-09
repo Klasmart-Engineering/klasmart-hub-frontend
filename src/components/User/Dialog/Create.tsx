@@ -70,13 +70,13 @@ export default function CreateUserDialog (props: Props) {
 
             onClose(newOrganizationMembership);
             enqueueSnackbar(intl.formatMessage({
-                id: `createUser_createSuccess`,
+                id: `createUser_success`,
             }), {
                 variant: `success`,
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `createUser_createError`,
+                id: `createUser_error`,
             }), {
                 variant: `error`,
             });
