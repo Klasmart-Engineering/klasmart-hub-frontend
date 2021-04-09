@@ -1,5 +1,5 @@
 import { useGetAllGrades } from "@/api/grades";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Grade,
     isActive,
@@ -8,7 +8,6 @@ import {
     isOtherSystemValue,
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client/react";
 import {
     createStyles,
     makeStyles,
@@ -61,13 +60,11 @@ export default function GradeDialogForm (props: Props) {
     const [ progressFromIdValid, setProgressFromIdValid ] = useState(true);
     const [ progressToId, setProgressToId ] = useState(value.progress_to_grade?.id ?? ``);
     const [ progressToIdValid, setProgressToIdValid ] = useState(true);
-
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
 
     const { data: gradesData } = useGetAllGrades({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

@@ -1,10 +1,9 @@
 import { TabContent } from "./shared";
 import { useGetAllClasses } from "@/api/classes";
-import { currentMembershipVar } from "@/cache";
 import ClassesTable from "@/components/Class/Table";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Class } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     FormHelperText,
@@ -25,13 +24,13 @@ export default function ClassesStep (props: TabContent) {
         onChange,
     } = props;
     const classes = useStyles();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const { required } = useValidations();
     const [ selectedClassesIds, setSelectedIds ] = useState(value.classes?.map((classItem) => classItem.class_id) ?? []);
 
     const { data: classesData } = useGetAllClasses({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

@@ -1,7 +1,7 @@
 import { TabContent } from "./shared";
 import { useGetAllAgeRanges } from "@/api/age_ranges";
 import { useGetAllGrades } from "@/api/grades";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AgeRange,
     Grade,
@@ -10,12 +10,10 @@ import {
     isNonSpecified,
     isOtherSystemValue,
     sortEntitiesByName,
-    Status,
     useHandleUpdateNonSpecified,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -52,18 +50,18 @@ export default function ProgramInfoStep (props: TabContent) {
         letternumeric,
         max,
     } = useValidations();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ programName, setProgramName ] = useState(value.name ?? ``);
     const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
     const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
     const { data: ageRangesData } = useGetAllAgeRanges({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
     const { data: gradesData } = useGetAllGrades({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

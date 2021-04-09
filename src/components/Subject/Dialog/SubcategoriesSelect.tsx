@@ -6,14 +6,13 @@ import {
     useGetAllSubcategories,
 } from "@/api/subcategories";
 import { useGetAllSubjects } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
     isSystemValue,
     Subcategory,
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -78,28 +77,29 @@ export default function SubcategoriesSelectDialog (props: Props) {
         required,
     } = useValidations();
     const [ updatedSubcategories, setUpdatedSubcategories ] = useState(value);
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ deleteSubcategoryReq ] = useDeleteSubcategory();
     const { data: programsData } = useGetAllPrograms({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: subjectsData } = useGetAllSubjects({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: categoriesData } = useGetAllCategories({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: subcategoriesData, refetch: refetchSubcategories } = useGetAllSubcategories({
         nextFetchPolicy: `network-only`,
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
 
@@ -128,7 +128,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
         try {
             await createOrUpdateSubcategories({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     subcategories: [
                         {
                             name,

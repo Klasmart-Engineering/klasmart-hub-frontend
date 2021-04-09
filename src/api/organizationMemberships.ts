@@ -1,8 +1,12 @@
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
+import { GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS } from "@/operations/queries/getAllUserPermissions";
 import { GET_ORGANIZATION_USERS } from "@/operations/queries/getOrganizationUsers";
-import { Organization } from "@/types/graphQL";
+import {
+    Organization,
+    OrganizationMembership,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -76,4 +80,17 @@ interface GetOrganizationMembershipsResponse {
 
 export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationMembershipsResponse, GetOrganizationMembershipsRequest>) => {
     return useQuery<GetOrganizationMembershipsResponse, GetOrganizationMembershipsRequest>(GET_ORGANIZATION_USERS, options);
+};
+
+interface GetOrganizationMembershipsPermissionsRequest {
+}
+
+interface GetOrganizationMembershipsPermissionsResponse {
+    me: {
+        memberships: OrganizationMembership[];
+    };
+}
+
+export const useGetOrganizationMembershipsPermissions = (options?: QueryHookOptions<GetOrganizationMembershipsPermissionsResponse, GetOrganizationMembershipsPermissionsRequest>) => {
+    return useQuery<GetOrganizationMembershipsPermissionsResponse, GetOrganizationMembershipsPermissionsRequest>(GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS, options);
 };

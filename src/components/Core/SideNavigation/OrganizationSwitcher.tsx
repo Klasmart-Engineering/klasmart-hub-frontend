@@ -1,15 +1,9 @@
-import { useGetUser } from "@/api/users";
-import {
-    currentMembershipVar,
-    userIdVar,
-} from "@/cache";
+import { useOrganizationStack } from "@/store/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
-import { useLocalStorage } from "@/utils/localStorage";
 import {
     getHighestRole,
     roleNameTranslations,
 } from "@/utils/userRoles";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
     ButtonBase,
@@ -78,23 +72,17 @@ export default function OrganizationSwitcher (props: Props) {
     const { showOrganizations, onShowOrganizationsChange } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
-    const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-    });
-
-    const [ organizationIdStack, setOrganizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
+    const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ showOrganizations_, setShowOrganizations ] = useState(showOrganizations);
-    const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
 
-    const memberships = userData?.user?.memberships?.slice() ?? [];
-    const organizationName = selectedOrganizationMembership?.organization?.organization_name ?? ``;
+    const memberships = organizationMembershipStack.slice();
+    const currentOrganizationMembership = memberships[0];
+    const organizationName = currentOrganizationMembership?.organization?.organization_name ?? ``;
 
     memberships.sort((a, b) => {
-        return organizationIdStack.indexOf(a.organization_id) - organizationIdStack.indexOf(b.organization_id);
+        const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
+        const bIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === b.organization_id);
+        return aIndex - bIndex;
     });
 
     const handleShowOrganizationsChange = (status: boolean) => {
@@ -105,26 +93,15 @@ export default function OrganizationSwitcher (props: Props) {
         setShowOrganizations(showOrganizations);
     }, [ showOrganizations ]);
 
-    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization_id !== organization_id);
-
-    useEffect(() => {
-        const selectedMembership = memberships.find((membership) => membership.organization_id === organization_id);
-        setSelectedOrganizationMembership(selectedMembership);
-    }, [ organization_id, userData ]);
+    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization_id !== currentOrganizationMembership?.organization_id);
 
     const handleSelectOrganization = (membership: OrganizationMembership) => {
-        const ids = organizationIdStack.splice(0);
-        const membershipIndex = ids.indexOf(membership.organization_id);
-        if (membershipIndex !== -1) ids.splice(membershipIndex, 1);
-        setOrganizationIdStack([ membership.organization_id, ...ids ]);
-        currentMembershipVar({
-            organization_name: membership?.organization?.organization_name ?? ``,
-            organization_id: membership.organization_id,
-            organization_email: membership?.organization?.owner?.email ?? ``,
-        });
+        if (!membership || membership.organization_id === currentOrganizationMembership?.organization_id) return;
+        const otherOrganizations = organizationMembershipStack.filter((organization) => organization.organization_id !== membership.organization_id);
+        setOrganizationMembershipStack([ membership, ...otherOrganizations ]);
     };
 
-    const sortedRoleNames = selectedOrganizationMembership?.roles
+    const sortedRoleNames = currentOrganizationMembership?.roles
         ?.map((r) => r.role_name)
         .filter((roleName): roleName is string => !!roleName);
     const highestRole = getHighestRole(sortedRoleNames ?? []);

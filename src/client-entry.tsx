@@ -37,6 +37,7 @@ import {
     useSelector,
 } from "react-redux";
 import { Router } from "react-router-dom";
+import { RecoilRoot } from 'recoil';
 import { PersistGate } from "redux-persist/integration/react";
 
 LogRocket.init(`8qowji/badanamu-learning-pass`);
@@ -102,13 +103,15 @@ async function main () {
 
     const div = document.getElementById(`app`);
     ReactDOM.render(<Router history={history}>
-        <Provider store={store}>
-            <PersistGate
-                loading={null}
-                persistor={persistor}>
-                <ClientSide />
-            </PersistGate>
-        </Provider>
+        <RecoilRoot>
+            <Provider store={store}>
+                <PersistGate
+                    loading={null}
+                    persistor={persistor}>
+                    <ClientSide />
+                </PersistGate>
+            </Provider>
+        </RecoilRoot>
     </Router>, div);
 }
 

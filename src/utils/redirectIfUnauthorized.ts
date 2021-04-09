@@ -8,7 +8,6 @@ import {
 } from "../config";
 import { IUserProfile } from "../models/UserProfile";
 import { ME } from "../operations/queries/me";
-import { useLocalStorage } from "./localStorage";
 import { print } from "graphql";
 import queryString from "querystring";
 

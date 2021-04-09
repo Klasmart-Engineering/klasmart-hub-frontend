@@ -1,10 +1,10 @@
 import { useGetUser } from "@/api/users";
+import { userIdVar } from "@/cache";
 import {
-    currentMembershipVar,
-    userIdVar,
-} from "@/cache";
+    useCurrentOrganizationMembership,
+    useOrganizationStack,
+} from "@/store/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
-import { useLocalStorage } from "@/utils/localStorage";
 import {
     getHighestRole,
     roleNameTranslations,
@@ -49,31 +49,21 @@ export default function OrganizationMenuList (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const userId = useReactiveVar(userIdVar);
-    const { organization_id } = useReactiveVar(currentMembershipVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-    });
-    const [ organizationIdStack, setOrganizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
+    const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
+
+    const currentOrganizationMembership = organizationMembershipStack[0];
+    const organizationMemberships = organizationMembershipStack.slice().sort((a, b) => a.organization?.organization_name?.localeCompare(b.organization?.organization_name ?? ``) ?? 0);
 
     const handleSelectOrganization = (membership: OrganizationMembership) => {
+        if (!membership.organization || membership.organization_id === currentOrganizationMembership?.organization_id) return;
         onOrganizationChange(membership);
-        if (membership.organization_id === organization_id) return;
-        const ids = organizationIdStack.splice(0);
-        const membershipIndex = ids.indexOf(membership.organization_id);
-        if (membershipIndex !== -1) ids.splice(membershipIndex, 1);
-        setOrganizationIdStack([ membership.organization_id, ...ids ]);
-        currentMembershipVar({
-            organization_name: membership?.organization?.organization_name ?? ``,
-            organization_id: membership.organization_id,
-            organization_email: membership?.organization?.owner?.email ?? ``,
-        });
+        const otherMemberships = organizationMembershipStack.filter((organization) => organization.organization_id !== membership.organization_id);
+        setOrganizationMembershipStack([ membership, ...otherMemberships ]);
     };
 
     return (
         <List dense>
-            {userData?.user?.memberships?.map((membership) => {
+            {organizationMemberships?.map((membership) => {
                 const sortedRoleNames = membership?.roles
                     ?.map((r) => r.role_name)
                     .filter((roleName): roleName is string => !!roleName);
@@ -90,7 +80,7 @@ export default function OrganizationMenuList (props: Props) {
                     button
                     color="primary"
                     className={clsx({
-                        [classes.selectedOrganization]: membership.organization_id === organization_id,
+                        [classes.selectedOrganization]: membership.organization_id === currentOrganizationMembership?.organization_id,
                     })}
                     onClick={() => handleSelectOrganization(membership)}
                 >

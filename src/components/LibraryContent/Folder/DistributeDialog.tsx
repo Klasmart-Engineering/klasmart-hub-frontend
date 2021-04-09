@@ -1,9 +1,8 @@
 import { useGetAllOrganizations } from "@/api/organizations";
 import { useRestAPI } from "@/api/restapi";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { ContentItemDetails } from "@/types/objectTypes";
-import { useReactiveVar } from "@apollo/client";
 import {
     Avatar,
     Box,
@@ -90,8 +89,7 @@ export default function (props: Props) {
     const intl = useIntl();
     const restApi = useRestAPI();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ initSelectedOrganizationIds, setInitSelectedOrganizationIds ] = useState<string[]>();
     const [ selectedOrganizationIds, setSelectedOrganizationIds ] = useState<string[]>([]);
     const [ finalOrganizationIds, setFinalOrganizationIds ] = useState<string[]>([]);
@@ -100,13 +98,15 @@ export default function (props: Props) {
     const [ distributeStatus, setDistributeStatus ] = useState<DistributeStatus>(DistributeStatus.PRESET);
     const [ rows, setRows ] = useState<OrganizationRow[]>([]);
 
+    const organizationId = currentOrganization?.organization_id ?? ``;
+
     const getFolderDistributeStatus = async () => {
         setLoadingGetFolderDistributeStatus(true);
         try {
             const folderDistributeStatus = await restApi.getFoldersShare({
                 folder_ids: value?.id ?? ``,
                 metaLoading: true,
-                org_id: organization_id,
+                org_id: organizationId,
             });
             const organizationsIds = folderDistributeStatus.data?.flatMap((d) => d.orgs.map((org) => org.id)) ?? [];
             organizationsIds.sort((a, b) => a.localeCompare(b));
@@ -128,7 +128,7 @@ export default function (props: Props) {
         try {
             await restApi.putFoldersShare({
                 folder_ids: [ value?.id ?? `` ],
-                org_id: organization_id,
+                org_id: organizationId,
                 org_ids: finalOrganizationIds,
             });
             enqueueSnackbar(intl.formatMessage({
@@ -156,24 +156,24 @@ export default function (props: Props) {
     };
 
     useEffect(() => {
-        if (!open || !value || !organization_id) return;
+        if (!open || !value || !currentOrganization) return;
         getFolderDistributeStatus();
     }, [
         open,
         value,
-        organization_id,
+        currentOrganization,
     ]);
 
     useEffect(() => {
         const rows: OrganizationRow[] = dataOrganizations?.organizations
-            ?.filter((organization) => organization.status === Status.ACTIVE && organization?.organization_id !== organization_id)
+            ?.filter((organization) => organization.status === Status.ACTIVE && organization?.organization_id !== organizationId)
             .map((organization) => ({
                 id: organization?.organization_id ?? ``,
                 name: organization?.organization_name ?? ``,
                 phone: organization?.phone ?? ``,
             })) ?? [];
         setRows(rows);
-    }, [ dataOrganizations, organization_id ]);
+    }, [ dataOrganizations, currentOrganization ]);
 
     useEffect(() => {
         setSelectedOrganizationIds([]);

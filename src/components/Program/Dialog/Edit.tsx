@@ -2,11 +2,10 @@ import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary";
 import { useCreateOrUpdatePrograms } from "@/api/programs";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
     createStyles,
@@ -57,7 +56,7 @@ export default function CreateProgramDialog (props: Props) {
         letternumeric,
         max,
     } = useValidations();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ createOrUpdatePrograms ] = useCreateOrUpdatePrograms();
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
@@ -132,7 +131,7 @@ export default function CreateProgramDialog (props: Props) {
         try {
             await createOrUpdatePrograms({
                 variables: {
-                    organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     programs: [
                         {
                             id,

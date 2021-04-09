@@ -1,9 +1,8 @@
 import UserDialogForm from "./Form";
 import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -35,7 +34,7 @@ export default function CreateUserDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
-    const organization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ createOrganizationMembership ] = useCreateOrganizationMembership();
 
@@ -52,10 +51,9 @@ export default function CreateUserDialog (props: Props) {
                 user,
                 shortcode,
             } = newOrganizationMembership;
-            const { organization_id } = organization;
             await createOrganizationMembership({
                 variables: {
-                    organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     organization_role_ids: roles?.map((r) => r.role_id) ?? [],
                     school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
                     given_name: user?.given_name,

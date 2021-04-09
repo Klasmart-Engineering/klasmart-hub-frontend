@@ -1,5 +1,5 @@
 import { useGetSchools } from "@/api/schools";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AgeRange,
     Class,
@@ -11,7 +11,6 @@ import {
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -56,12 +55,11 @@ export default function ClassDialogForm (props: Props) {
         letternumeric,
         max,
     } = useValidations();
-    const organization = useReactiveVar(currentMembershipVar);
     const canEditSchool = usePermission(`edit_school_20330`);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const { data } = useGetSchools({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

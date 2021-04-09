@@ -1,16 +1,14 @@
 import { TabContent } from "./shared";
 import { useGetAllPrograms } from "@/api/programs";
-import { currentMembershipVar } from "@/cache";
 import ProgramsTable from "@/components/Program/Table";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     FormHelperText,
     makeStyles,
 } from "@material-ui/core";
-import { isEqual } from "lodash";
 import React,
 {
     useEffect,
@@ -26,12 +24,12 @@ export default function ProgramsStep (props: TabContent) {
         onChange,
     } = props;
     const classes = useStyles();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
     const { required } = useValidations();
+    const currentOrganization = useCurrentOrganization();
     const [ selectedProgramIds, setSelectedIds ] = useState(value.programs?.map((program) => program.id).filter((id): id is string => !!id) ?? []);
     const { data: programsData } = useGetAllPrograms({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

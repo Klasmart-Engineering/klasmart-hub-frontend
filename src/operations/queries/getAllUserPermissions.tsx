@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_ALL_USER_PERMISSIONS = gql`
+export const GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS = gql`
 query {
     me {
         memberships {

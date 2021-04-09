@@ -4,13 +4,13 @@ import {
     useRestAPI,
 } from "@/api/restapi";
 import FolderIcon from "@/assets/img/folder.svg";
-import { currentMembershipVar } from "@/cache";
 import Breadcrumbs from "@/components/LibraryContent/Breadcrumbs";
 import CreateContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/Create";
 import EditContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/Edit";
 import DistributeContentFolderDialog from "@/components/LibraryContent/Folder/DistributeDialog";
 import MoveContentDialog from "@/components/LibraryContent/MoveDialog";
 import globalStyles from "@/globalStyles";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     ContentItemDetails,
     PublishedContentItem,
@@ -19,7 +19,6 @@ import {
 } from "@/types/objectTypes";
 import { handleError } from "@/utils/images";
 import { getTableLocalization } from "@/utils/table";
-import { useReactiveVar } from "@apollo/client";
 import {
     Badge,
     Box,
@@ -148,8 +147,7 @@ export default function LibraryTable (props: Props) {
     const restApi = useRestAPI();
     const location = useLocation();
     const route = useRouteMatch();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ selectedContent, setSelectedContent ] = useState<ContentItemDetails>();
     const [ selectedContentBulk, setSelectedContentBulk ] = useState<PublishedContentItem[]>();
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
@@ -161,13 +159,14 @@ export default function LibraryTable (props: Props) {
     const [ data, setData ] = useState<PublishedContentPayload>();
     const paths = location.pathname.replace(route.path, ``).split(`/`).filter((path) => !!path);
     const folderId = paths[paths.length - 1];
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const getContentsFolders = async () => {
         setLoadingGet(true);
         try {
             const path = location.pathname.replace(route.path, ``);
             const resp = await restApi.getContentFolders({
-                org_id: organization_id,
+                org_id: organizationId,
                 page: 1,
                 page_size: -1,
                 path,
@@ -189,9 +188,9 @@ export default function LibraryTable (props: Props) {
     };
 
     useEffect(() => {
-        if (!organization_id) return;
+        if (!currentOrganization) return;
         getContentsFolders();
-    }, [ organization_id, location ]);
+    }, [ currentOrganization, location ]);
 
     useEffect(() => {
         const rows: ContentRow[] = data?.list.map((item) => ({
@@ -392,12 +391,12 @@ export default function LibraryTable (props: Props) {
         try {
             if (content_type === ContentType.FOLDER)
                 await restApi.deleteFoldersItemsById({
-                    org_id: organization_id,
+                    org_id: organizationId,
                     folder_id: id,
                 });
             else if ([ ContentType.MATERIAL, ContentType.PLAN ].includes(content_type))
                 await restApi.deleteContentsItemsById({
-                    org_id: organization_id,
+                    org_id: organizationId,
                     content_id: id,
                 });
             else throw Error(`unknown-type`);

@@ -1,6 +1,5 @@
 import { useRestAPI } from "@/api/restapi";
-import { currentMembershipVar } from "@/cache";
-import { useReactiveVar } from "@apollo/client";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Breadcrumbs,
     createStyles,
@@ -58,8 +57,7 @@ export default function TableBreadcrumbs (props: Props) {
     const location = useLocation();
     const restApi = useRestAPI();
     const breakpoint = useWidth();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const root = route.path;
     const paths = location.pathname.replace(root, ``).split(`/`).filter((path) => !!path);
     const [ pathNames, setPathNames ] = useState(new Map<string, string | undefined>());
@@ -71,7 +69,7 @@ export default function TableBreadcrumbs (props: Props) {
             if (pathName) return;
             const pathDetails = await restApi.getFolderItemsDetailsById({
                 folder_id: path,
-                org_id: organization_id,
+                org_id: currentOrganization?.organization_id ?? ``,
             });
             updatedPathNames.set(path, pathDetails.name);
         }));
@@ -80,9 +78,9 @@ export default function TableBreadcrumbs (props: Props) {
 
     useEffect(() => {
         const paths = location.pathname.replace(root, ``).split(`/`).filter((path) => !!path);
-        if (!organization_id || !paths.length) return;
+        if (!currentOrganization || !paths.length) return;
         fetchPathNames(paths);
-    }, [ organization_id, location ]);
+    }, [ currentOrganization, location ]);
 
     return (
         <>

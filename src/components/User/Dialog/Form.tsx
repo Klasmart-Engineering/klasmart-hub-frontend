@@ -1,6 +1,6 @@
 import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
 import { useGetSchools } from "@/api/schools";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     OrganizationMembership,
     Status,
@@ -12,7 +12,6 @@ import {
     phoneNumberRegex,
     useValidations,
 } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -127,16 +126,16 @@ export default function UserDialogForm (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const { data: schoolsData } = useGetSchools({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: organizationData } = useGetOrganizationMemberships({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === Status.ACTIVE) ?? [];

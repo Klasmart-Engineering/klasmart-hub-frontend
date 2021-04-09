@@ -6,10 +6,9 @@ import {
     useEditClassPrograms,
     useEditClassSubjects,
 } from "@/api/classes";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Class } from "@/types/graphQL";
 import { buildEmptyClass } from "@/utils/classes";
-import { useReactiveVar } from "@apollo/client";
 import {
     Dialog,
     useSnackbar,
@@ -30,8 +29,7 @@ export default function CreateClassDialog (props: Props) {
     const { open, onClose } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
     const [ newClass, setNewClass ] = useState(buildEmptyClass());
     const [ createClass ] = useCreateClass();
@@ -57,7 +55,7 @@ export default function CreateClassDialog (props: Props) {
             } = newClass;
 
             const variables = {
-                organization_id,
+                organization_id: currentOrganization?.organization_id ?? ``,
                 class_name: class_name ?? ``,
                 school_ids: schools?.map((school) => school.school_id) ?? [],
             };

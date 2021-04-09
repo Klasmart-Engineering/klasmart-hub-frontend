@@ -2,20 +2,18 @@ import {
     ClassUser,
     useGetClassRoster,
 } from "@/api/classRoster";
-import { currentMembershipVar } from "@/cache";
 import StyledFAB from "@/components/styled/fabButton";
 import {
     getCNEndpoint,
     getLiveEndpoint,
 } from "@/config";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import {
     LivePreviewJWT,
     SchedulePayload,
 } from "@/types/objectTypes";
-import { useReactiveVar } from "@apollo/client/react";
 import {
-    Avatar,
     Box,
     Grid,
     Tooltip,
@@ -28,10 +26,7 @@ import {
     useTheme,
 } from "@material-ui/core/styles";
 import jwtDecode from "jwt-decode";
-import {
-    UserAvatar,
-    utils,
-} from "kidsloop-px";
+import { UserAvatar } from "kidsloop-px";
 import React,
 {
     useEffect,
@@ -120,14 +115,15 @@ export default function NextClass ({ schedule }: {
     const [ shareLink, setShareLink ] = useState(``);
     const [ openShareLink, setOpenShareLink ] = useState(false);
 
-    const currentOrganization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
 
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
     const [ nextClassRoster, setNextClassRoster ] = useState<{
         students: ClassUser[];
         teachers: ClassUser[];
     }>();
-    const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_VALUE);
+    const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const now = new Date().getTime() / 1000;
     const secondsBeforeClassCanStart = 900;
@@ -139,7 +135,7 @@ export default function NextClass ({ schedule }: {
     } = useGetClassRoster({
         variables: {
             class_id: nextClass?.class_id ?? ``,
-            organization_id: currentOrganization.organization_id,
+            organization_id: organizationId,
         },
     });
 
@@ -147,8 +143,7 @@ export default function NextClass ({ schedule }: {
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
-        const response = await fetch(`${getCNEndpoint()}v1/schedules/${classId}/live/token?live_token_type=live&org_id=${currentOrganization.organization_id
-        }`, {
+        const response = await fetch(`${getCNEndpoint()}v1/schedules/${classId}/live/token?live_token_type=live&org_id=${organizationId}`, {
             headers,
             credentials: `include`,
             method: `GET`,
@@ -229,12 +224,12 @@ export default function NextClass ({ schedule }: {
                             {timeBeforeClass < secondsBeforeClassCanStart && (
                                 <>
                                     {` `}
-                  (
+                                    (
                                     <FormattedRelativeTime
                                         value={timeBeforeClass}
                                         updateIntervalInSeconds={1}
                                     />
-                  )
+                                    )
                                 </>
                             )}
                         </Typography>

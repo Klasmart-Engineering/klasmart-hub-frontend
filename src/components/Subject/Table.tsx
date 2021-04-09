@@ -3,9 +3,9 @@ import {
     useDeleteSubject,
     useGetAllSubjects,
 } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Program,
     Status,
@@ -14,7 +14,6 @@ import {
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -77,8 +76,8 @@ export default function SubjectsTable (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ rows_, setRows ] = useState<SubjectRow[]>([]);
+    const currentOrganization = useCurrentOrganization();
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
@@ -90,7 +89,7 @@ export default function SubjectsTable (props: Props) {
         loading,
     } = useGetAllSubjects({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
     const canCreate = usePermission(`create_subjects_20227`);

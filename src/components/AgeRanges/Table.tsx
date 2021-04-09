@@ -2,9 +2,9 @@ import {
     useDeleteAgeRange,
     useGetAllAgeRanges,
 } from "@/api/age_ranges";
-import { currentMembershipVar } from "@/cache";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AgeRange,
     Status,
@@ -13,7 +13,6 @@ import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -63,12 +62,11 @@ export default function (props: Props) {
     const canCreate = usePermission(`create_age_range_20222`);
     const canEdit = usePermission(`edit_age_range_20332`);
     const canDelete = usePermission(`delete_age_range_20442`);
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ deleteAgeRange ] = useDeleteAgeRange();
     const { data, refetch } = useGetAllAgeRanges({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

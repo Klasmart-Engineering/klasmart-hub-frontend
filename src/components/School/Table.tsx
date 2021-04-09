@@ -2,9 +2,9 @@ import {
     useDeleteSchool,
     useGetSchools,
 } from "@/api/schools";
-import { currentMembershipVar } from "@/cache";
 import CreateSchoolDialog from "@/components/School/Dialog/Create";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     School,
     Status,
@@ -12,7 +12,6 @@ import {
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -77,9 +76,8 @@ export default function SchoolTable (props: Props) {
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedSchool, setSelectedSchool ] = useState<School>();
-    const organization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ deleteSchool ] = useDeleteSchool();
-    const { organization_id } = organization;
     const canEdit = usePermission(`edit_school_20330`);
     const canDelete = usePermission(`delete_school_20440`);
     const canCreate = usePermission(`create_school_20220`);
@@ -91,7 +89,7 @@ export default function SchoolTable (props: Props) {
         loading,
     } = useGetSchools({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

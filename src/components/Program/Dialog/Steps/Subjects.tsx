@@ -1,13 +1,12 @@
 import { TabContent } from "./shared";
 import { useGetAllSubjects } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
 import SubjectsTable from "@/components/Subject/Table";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
     Subject,
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     FormHelperText,
@@ -29,11 +28,11 @@ export default function SubjectStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const { required } = useValidations();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ selectedSubjectIds, setSelectedIds ] = useState(value.subjects?.filter(isActive).map((subject) => subject.id ?? ``) ?? []);
     const { data: subjectsData } = useGetAllSubjects({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

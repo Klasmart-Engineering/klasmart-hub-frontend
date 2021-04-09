@@ -3,12 +3,15 @@ import {
     useCreateUpdateGrade,
     useDeleteGrade,
 } from "@/api/grades";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Grade } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
-import { DialogContentText } from "@material-ui/core";
+import {
+    createStyles,
+    DialogContentText,
+    makeStyles,
+} from "@material-ui/core";
 import {
     Dialog,
     usePrompt,
@@ -38,11 +41,9 @@ export default function (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ updatedGrade, setUpdatedGrade ] = useState(value ?? buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
-
+    const currentOrganization = useCurrentOrganization();
     const [ updateGrade ] = useCreateUpdateGrade();
     const [ deleteGrade ] = useDeleteGrade();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
 
     useEffect(() => {
         setUpdatedGrade(value ?? buildEmptyGrade());
@@ -52,7 +53,7 @@ export default function (props: Props) {
         try {
             await updateGrade({
                 variables: {
-                    organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     grades: [
                         {
                             id: updatedGrade.id,

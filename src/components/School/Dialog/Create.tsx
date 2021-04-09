@@ -1,4 +1,3 @@
-import ClassesStep from "./Steps/Classes";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
 import SummaryStep from "./Steps/Summary";
@@ -6,11 +5,10 @@ import {
     useCreateSchool,
     useEditSchoolPrograms,
 } from "@/api/schools";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { School } from "@/types/graphQL";
 import { buildEmptySchool } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
     createStyles,
@@ -56,7 +54,7 @@ export default function CreateSchoolDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ createSchool ] = useCreateSchool();
     const [ editSchoolPrograms ] = useEditSchoolPrograms();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const {
         required,
         alphanumeric,
@@ -142,7 +140,7 @@ export default function CreateSchoolDialog (props: Props) {
         try {
             const createdSchoolResp = await createSchool({
                 variables: {
-                    organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     school_name: school_name ?? ``,
                     shortcode: shortcode ?? undefined,
                 },

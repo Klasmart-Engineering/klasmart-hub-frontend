@@ -1,9 +1,8 @@
-import { useRestAPI } from "../../../api/restapi";
-import { currentMembershipVar } from "../../../cache";
-import { AssessmentItem } from "../../../types/objectTypes";
-import { history } from "../../../utils/history";
+import { useRestAPI } from "@/api/restapi";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { AssessmentItem } from "@/types/objectTypes";
 import { usePermission } from "@/utils/checkAllowed";
-import { useReactiveVar } from "@apollo/client/react";
+import { history } from "@/utils/history";
 import {
     Button,
     Grid,
@@ -88,13 +87,14 @@ export default function Assessments () {
     const [ total, setTotal ] = useState(0);
     const [ chart, setChart ] = useState(true);
 
-    const currentOrganization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const permissionAccessAssessments = usePermission(`assessments_400`);
 
     async function getAssessmentsList () {
         try {
-            const response = await restApi.assessments(currentOrganization.organization_id, 1, 1000);
+            const response = await restApi.assessments(organizationId, 1, 1000);
             setAssessments(response);
             setInProgress(response.filter((assessment) => assessment.status === `in_progress`));
             setTotal(response.length);
@@ -104,14 +104,11 @@ export default function Assessments () {
     }
 
     useEffect(() => {
-        if (currentOrganization?.organization_id !== ``) {
-            setAssessments(undefined);
-            setInProgress(undefined);
-            setTotal(0);
-
-            getAssessmentsList();
-        }
-
+        if (!currentOrganization) return;
+        setAssessments(undefined);
+        setInProgress(undefined);
+        setTotal(0);
+        getAssessmentsList();
     }, [ currentOrganization ]);
 
     return (

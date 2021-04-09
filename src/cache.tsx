@@ -23,15 +23,11 @@ const userProfileInitialValue: User = {
     username: ``,
 };
 
-const organizationIdInitialValue = ``;
-
 export const currentMembershipVar: ReactiveVar<CurrentMembership> = makeVar<CurrentMembership>(currentMembershipInitialValue);
 
 export const userIdVar: ReactiveVar<string> = makeVar<string>(userIdInitialValue);
 
 export const userProfileVar: ReactiveVar<User> = makeVar<User>(userProfileInitialValue);
-
-export const organizationIdVar: ReactiveVar<string> = makeVar<string>(organizationIdInitialValue);
 
 export const cache: InMemoryCache = new InMemoryCache({
     typePolicies: {
@@ -50,11 +46,6 @@ export const cache: InMemoryCache = new InMemoryCache({
                 },
                 organization: {
                     merge: true,
-                },
-                organizationId: {
-                    read () {
-                        return organizationIdVar();
-                    },
                 },
                 user: {
                     merge: true,

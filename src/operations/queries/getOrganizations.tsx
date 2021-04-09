@@ -1,10 +1,12 @@
 import { gql } from "@apollo/client";
 
-export const GET_ORGANIZATIONS = gql`
+export const GET_ORGANIZATION_MEMBERSHIPS = gql`
     query {
         me {
             email
             memberships {
+                organization_id
+                user_id
                 status
                 organization {
                     organization_id
@@ -13,6 +15,7 @@ export const GET_ORGANIZATIONS = gql`
                     owner {
                         email
                     }
+                    status
                 }
                 roles {
                     role_id

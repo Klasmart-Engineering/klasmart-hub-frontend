@@ -5,14 +5,13 @@ import {
 } from "@/api/categories";
 import { useGetAllPrograms } from "@/api/programs";
 import { useGetAllSubjects } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Category,
     isActive,
     isSystemValue,
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -76,23 +75,24 @@ export default function CategorySelectDialog (props: Props) {
         required,
     } = useValidations();
     const [ updatedCategory, setUpdatedCategory ] = useState(value);
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ deleteCategoryReq ] = useDeleteCategory();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const { data: programsData } = useGetAllPrograms({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: subjectsData } = useGetAllSubjects({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const { data: categoriesData, refetch: refetchCategories } = useGetAllCategories({
         nextFetchPolicy: `network-only`,
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
 
@@ -120,7 +120,7 @@ export default function CategorySelectDialog (props: Props) {
         try {
             await createOrUpdateCategories({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     categories: [
                         {
                             name,

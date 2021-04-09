@@ -3,9 +3,9 @@ import {
     useDeleteProgram,
     useGetAllPrograms,
 } from "@/api/programs";
-import { currentMembershipVar } from "@/cache";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
     Program,
@@ -14,7 +14,6 @@ import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -76,7 +75,7 @@ export default function ProgramTable (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ rows, setRows ] = useState<ProgramRow[]>([]);
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
@@ -91,7 +90,7 @@ export default function ProgramTable (props: Props) {
     const { required, equals } = useValidations();
     const { data, refetch } = useGetAllPrograms({
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
     const [ deleteProgram ] = useDeleteProgram();

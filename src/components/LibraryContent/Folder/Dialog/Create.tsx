@@ -1,9 +1,8 @@
 import LibraryFolderDialogForm from "./Form";
 import { useRestAPI } from "@/api/restapi";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { ContentItemDetails } from "@/types/objectTypes";
 import { newLibraryContent } from "@/utils/libraryContents";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -39,8 +38,7 @@ export default function CreateFolderDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
     const [ newFolder, setNewFolder ] = useState(newLibraryContent());
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
 
     useEffect(() => {
         if (!open) return;
@@ -57,7 +55,7 @@ export default function CreateFolderDialog (props: Props) {
                 name,
                 parent_id: parentId,
                 partition,
-                org_id: organization_id,
+                org_id: currentOrganization?.organization_id ?? ``,
             });
             onClose(newFolder);
             enqueueSnackbar(intl.formatMessage({

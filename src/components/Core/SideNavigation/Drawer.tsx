@@ -15,7 +15,7 @@ import React,
     useState,
 } from "react";
 
-export const DRAWER_WIDTH = 256;
+const DRAWER_WIDTH = 256;
 
 const useStyles = makeStyles((theme) => createStyles({
     drawer: {

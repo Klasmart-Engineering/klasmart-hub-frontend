@@ -3,14 +3,13 @@ import {
     useDeleteAgeRange,
     useEditAgeRange,
 } from "@/api/age_ranges";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AgeRange } from "@/types/graphQL";
 import {
     buildAgeRangeLabel,
     buildEmptyAgeRange,
 } from "@/utils/ageRanges";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -51,8 +50,8 @@ export default function (props: Props) {
     const [ editAgeRange ] = useEditAgeRange();
     const [ deleteAgeRange ] = useDeleteAgeRange();
     const [ updatedAgeRange, setUpdatedAgeRange ] = useState(value ?? buildEmptyAgeRange());
-    const { organization_id } = useReactiveVar(currentMembershipVar);
     const [ valid, setValid ] = useState(true);
+    const currentOrganization = useCurrentOrganization();
 
     useEffect(() => {
         setUpdatedAgeRange(value ?? buildEmptyAgeRange());
@@ -63,7 +62,7 @@ export default function (props: Props) {
             onClose(updatedAgeRange);
             await editAgeRange({
                 variables: {
-                    organization_id: organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     id: updatedAgeRange.id,
                     name: `${updatedAgeRange.low_value}-${updatedAgeRange.high_value}`,
                     low_value: updatedAgeRange.low_value,

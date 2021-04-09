@@ -5,7 +5,7 @@ import {
     useCreateOrUpdateSubjects,
     useDeleteSubject,
 } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isCustomValue,
     isSystemValue,
@@ -15,7 +15,6 @@ import { buildEmptyCategory } from "@/utils/categories";
 import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
@@ -45,13 +44,14 @@ export default function EditSubjectDialog (props: Props) {
     const { required, equals } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const canDelete = usePermission(`delete_subjects_20447`);
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
     const [ updatedSubject, setUpdatedSubject ] = useState(value ?? buildEmptySubject());
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const [ deleteSubject ] = useDeleteSubject();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     useEffect(() => {
         if (!open) return;
@@ -71,7 +71,7 @@ export default function EditSubjectDialog (props: Props) {
                 const systemSubcategories = category?.subcategories?.filter(isSystemValue) ?? [];
                 const subcategoriesResp = await createOrUpdateSubcategories({
                     variables: {
-                        organization_id,
+                        organization_id: organizationId,
                         subcategories: customSubcategories.map((subcategory) => ({
                             id: subcategory.id,
                             name: subcategory.name ?? ``,
@@ -88,7 +88,7 @@ export default function EditSubjectDialog (props: Props) {
             const systemCategories = updatedCategories.filter(isSystemValue);
             const updatedCategoriesResp = await createOrUpdateCategories({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     categories: customCategories.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
@@ -99,7 +99,7 @@ export default function EditSubjectDialog (props: Props) {
 
             await createOrUpdateSubjects({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     subjects: [
                         {
                             id,

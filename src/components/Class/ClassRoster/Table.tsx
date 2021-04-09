@@ -4,15 +4,14 @@ import {
     useDeleteClassTeacher,
     useGetClassRoster,
 } from "@/api/classRoster";
-import { currentMembershipVar } from "@/cache";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Class,
     Status,
 } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client/react";
 import {
     Box,
     Chip,
@@ -70,8 +69,7 @@ export default function ClassRoster (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const { required, equals } = useValidations();
     const [ deleteStudent ] = useDeleteClassStudent();
     const [ deleteTeacher ] = useDeleteClassTeacher();
@@ -82,7 +80,7 @@ export default function ClassRoster (props: Props) {
         fetchPolicy: `network-only`,
         variables: {
             class_id: classItem.class_id,
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

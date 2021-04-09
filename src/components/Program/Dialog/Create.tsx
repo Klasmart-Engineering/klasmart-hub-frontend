@@ -2,11 +2,10 @@ import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary";
 import { useCreateOrUpdatePrograms } from "@/api/programs";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
     createStyles,
@@ -50,7 +49,7 @@ export default function CreateProgramDialog (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const {
         required,
         letternumeric,
@@ -128,7 +127,7 @@ export default function CreateProgramDialog (props: Props) {
         try {
             await createOrUpdatePrograms({
                 variables: {
-                    organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     programs: [
                         {
                             name: name ?? ``,

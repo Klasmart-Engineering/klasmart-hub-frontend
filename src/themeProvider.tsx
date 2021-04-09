@@ -1,11 +1,9 @@
 import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "inter-ui";
-import { useGetOrganization } from "./api/organizations";
-import { currentMembershipVar } from "./cache";
+import { useCurrentOrganization } from "./store/organizationMemberships";
 import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
-import { useReactiveVar } from "@apollo/client";
 import {
     blue,
     green,
@@ -26,8 +24,9 @@ export function themeProvider () {
     const themeMode = useSelector((state: State) => state.ui.darkMode);
     const languageCode = useSelector((state: State) => state.ui.locale || ``);
     const [ cookies ] = useCookies([ `locale` ]);
+    const currentOrganization = useCurrentOrganization();
 
-    const { organization_name } = useReactiveVar(currentMembershipVar);
+    const organizationName = currentOrganization?.organization_name ?? ``;
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 
     function setTypography () {
@@ -80,7 +79,7 @@ export function themeProvider () {
         fontWeightRegular: localeTypography.localeWeightRegular,
     } as any;
 
-    const organizationToolbarColor = utils.stringToColor(organization_name, {
+    const organizationToolbarColor = utils.stringToColor(organizationName, {
         saturation: 50,
         light: 90,
     });
@@ -127,7 +126,7 @@ export function themeProvider () {
         },
     };
 
-    const organizationColor = utils.stringToColor(organization_name);
+    const organizationColor = utils.stringToColor(organizationName);
 
     const palette: PaletteOptions = {
         background: {
@@ -137,11 +136,11 @@ export function themeProvider () {
         primary: {
             contrastText: `#FFF`,
             main: organizationColor,
-            light: utils.stringToColor(organization_name, {
+            light: utils.stringToColor(organizationName, {
                 saturation: 50,
                 light: 95,
             }),
-            dark: utils.stringToColor(organization_name, {
+            dark: utils.stringToColor(organizationName, {
                 saturation: 50,
                 light: 25,
             }),

@@ -4,6 +4,7 @@ import { GET_ALL_SUBJECTS } from "@/operations/queries/getAllSubjects";
 import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
     Organization,
+    Program,
     Subject,
 } from "@/types/graphQL";
 import {
@@ -62,6 +63,7 @@ interface GetAllSubjectsRequest {
 interface GetAllSubjectsResponse {
     organization: {
         subjects: Subject[];
+        programs: Program[];
     };
 }
 

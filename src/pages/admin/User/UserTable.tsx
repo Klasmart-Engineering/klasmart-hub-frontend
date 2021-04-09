@@ -3,9 +3,9 @@ import {
     useGetOrganizationMemberships,
 } from "@/api/organizationMemberships";
 import { useGetAllRoles } from "@/api/roles";
-import { currentMembershipVar } from "@/cache";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import EditUserDialog from "@/components/User/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     OrganizationMembership,
     Status,
@@ -17,7 +17,6 @@ import {
     roleNameTranslations,
     sortRoleNames,
 } from "@/utils/userRoles";
-import { useReactiveVar } from "@apollo/client/react";
 import {
     Avatar,
     Box,
@@ -92,12 +91,12 @@ export default function UserTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const {
         data: dataOrganizationMemberships,
         refetch,
@@ -105,13 +104,13 @@ export default function UserTable (props: Props) {
     } = useGetOrganizationMemberships({
         fetchPolicy: `cache-and-network`,
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const {
         data: dataRoles,
         loading: loadingRoles,
-    } = useGetAllRoles(organization_id);
+    } = useGetAllRoles(organizationId);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
     const canCreate = usePermission(`create_users_40220`);
     const canEdit = usePermission(`edit_users_40330`);

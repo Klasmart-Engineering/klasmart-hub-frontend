@@ -4,16 +4,13 @@ import {
 } from "@/api/organizationMemberships";
 import { useDeleteRole } from "@/api/roles";
 import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
-import { currentMembershipVar } from "@/cache";
 import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
 import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
-import {
-    ApolloQueryResult,
-    useReactiveVar,
-} from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import {
     Avatar,
     Box,
@@ -130,12 +127,13 @@ export default function DeleteRoleDialog (props: Props) {
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
     const [ roleId, setRoleId ] = useState(``);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const [ rows, setRows ] = useState<UserRow[]>([]);
-    const membership = useReactiveVar(currentMembershipVar);
     const { data: organizationMemberships, loading: organizationMembershipsLoading } = useGetOrganizationMemberships({
         fetchPolicy: `network-only`,
         variables: {
-            organization_id: membership.organization_id,
+            organization_id: organizationId,
         },
     });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
@@ -173,7 +171,7 @@ export default function DeleteRoleDialog (props: Props) {
                                 name: schoolMembership.user?.full_name ?? ``,
                                 email: schoolMembership.user?.email ?? ``,
                                 organizationRoles: organizationRoles,
-                                avatar: membership.user?.avatar ?? ``,
+                                avatar: schoolMembership?.user?.avatar ?? ``,
                                 newRoleId: defaultRole?.role_id ?? ``,
                             });
                         }
@@ -249,7 +247,7 @@ export default function DeleteRoleDialog (props: Props) {
 
                 await updateOrganizationMembership({
                     variables: {
-                        organization_id: membership.organization_id,
+                        organization_id: organizationId,
                         organization_role_ids: organizationRoleIdsHandler(),
                         school_ids: userMembership?.schoolMemberships?.map((school) => school.school_id) ?? [],
                         email: userMembership?.user?.email,

@@ -1,18 +1,16 @@
 import CreateOrganizationDialog from "../../styled/navbar/settings/createOrganization";
 import UserProfileSwitcher from "./UserProfileSwitcher";
-import { NO_ORGANIZATION } from "@/app";
-import { currentMembershipVar } from "@/cache";
 import StyledButton from "@/components/styled/button";
 import {
     getAuthEndpoint,
     getCookieDomain,
 } from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import { User } from "@/types/graphQL";
 import {
-    ApolloError,
-    useReactiveVar,
-} from "@apollo/client";
+    useCurrentOrganization,
+    useOrganizationStack,
+} from "@/store/organizationMemberships";
+import { User } from "@/types/graphQL";
 import {
     Box,
     ButtonBase,
@@ -77,7 +75,8 @@ export default function UserProfileMenu (props: Props) {
     const { user } = props;
     const classes = useStyles();
 
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const [ , setOrganizationStack ] = useOrganizationStack();
 
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const [ userName, setUserName ] = useState<string>(``);
@@ -104,17 +103,16 @@ export default function UserProfileMenu (props: Props) {
             const headers = new Headers();
             headers.append(`Accept`, `application/json`);
             headers.append(`Content-Type`, `application/json`);
+            setOrganizationStack([]);
             await fetch(`${getAuthEndpoint()}signout`, {
                 credentials: `include`,
                 headers,
                 method: `GET`,
-            })
-                .then(() => {
-                    const stringifiedQuery = queryString.stringify({
-                        continue: window.location.href,
-                    });
-                    window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
-                });
+            });
+            const stringifiedQuery = queryString.stringify({
+                continue: window.location.href,
+            });
+            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
         } catch (e) {
             console.error(e);
         }
@@ -164,7 +162,7 @@ export default function UserProfileMenu (props: Props) {
                         {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
-                {organization_id === NO_ORGANIZATION && (
+                {!currentOrganization && (
                     <ListItem>
                         <CreateOrganizationDialog />
                     </ListItem>

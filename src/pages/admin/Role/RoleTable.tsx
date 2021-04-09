@@ -12,11 +12,11 @@ import CreateAndEditRoleDialog, {
 } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
 import ViewRoleDetailsDialog from "@/pages/admin/Role/ViewRoleDetailsDialog";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { systemRoles } from "@/utils/permissions/systemRoles";
 import { getTableLocalization } from "@/utils/table";
-import { useReactiveVar } from "@apollo/client";
 import {
     Link,
     Paper,
@@ -112,12 +112,12 @@ export default function RoleTable () {
         permission_names: [],
     });
 
-    const membership = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const {
         data,
         loading: getAllRolesLoading,
         refetch,
-    } = useGetOrganizationRolesPermissions(membership.organization_id);
+    } = useGetOrganizationRolesPermissions(currentOrganization?.organization_id ?? ``);
     const roles: Role[] = data?.organization?.roles ?? [];
     const {
         data: rolePermissions,
@@ -248,7 +248,7 @@ export default function RoleTable () {
 
             const response = await createRole({
                 variables: {
-                    organization_id: membership.organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     role_name: newRole.role_name,
                     role_description: newRole.role_description,
                     permission_names: newRole.permission_names,

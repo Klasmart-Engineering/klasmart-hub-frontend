@@ -1,9 +1,8 @@
 import LibraryFolderDialogForm from "./Form";
 import { useRestAPI } from "@/api/restapi";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { ContentItemDetails } from "@/types/objectTypes";
 import { newLibraryContent } from "@/utils/libraryContents";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -41,8 +40,9 @@ export default function EditFolderDialog (props: Props) {
     const restApi = useRestAPI();
     const [ editedLibraryContent, setEditedLibraryContent ] = useState(newLibraryContent());
     const [ valid, setValid ] = useState(true);
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
+
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     useEffect(() => {
         setEditedLibraryContent(value ?? newLibraryContent());
@@ -56,7 +56,7 @@ export default function EditFolderDialog (props: Props) {
             await restApi.updateFolderItemsDetailsById({
                 folder_id: id,
                 name,
-                org_id: organization_id,
+                org_id: organizationId,
             });
             onClose(editedLibraryContent);
             enqueueSnackbar(intl.formatMessage({
@@ -99,7 +99,7 @@ export default function EditFolderDialog (props: Props) {
         const { id } = value;
         try {
             await restApi.deleteFoldersItemsById({
-                org_id: organization_id,
+                org_id: organizationId,
                 folder_id: id,
             });
             onClose(editedLibraryContent);

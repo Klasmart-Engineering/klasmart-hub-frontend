@@ -1,19 +1,17 @@
 import { useRestAPI } from "@/api/restapi";
-import { currentMembershipVar } from "@/cache";
 import InviteButton from "@/components/invite";
 import StyledFAB from "@/components/styled/fabButton";
 import {
     getCNEndpoint,
     getLiveEndpoint,
 } from "@/config";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     LivePreviewJWT,
     PublishedContentItem,
-    SchedulePayload,
 } from "@/types/objectTypes";
 import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
-import { useReactiveVar } from "@apollo/client/react";
 import { Button } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import Grid from "@material-ui/core/Grid";
@@ -102,20 +100,18 @@ export default function PlanSelection () {
     const intl = useIntl();
 
     const [ lessonPlan, setLessonPlan ] = useState<PublishedContentItem | null>(null);
-    const [ lessonPlans, setLessonPlans ] = useState<
-    PublishedContentItem[] | undefined
-  >(undefined);
+    const [ lessonPlans, setLessonPlans ] = useState<PublishedContentItem[] | undefined>(undefined);
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
     const [ openShareLink, setOpenShareLink ] = useState(false);
-
-    const currentOrganization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const permissionAccessLibrary = usePermission(`library_200`);
 
     async function getPublishedLessonPlans () {
         try {
-            const response = await restApi.getContentsFolders(currentOrganization.organization_id);
+            const response = await restApi.getContentsFolders(organizationId);
             console.log(response);
             setLessonPlans(response);
         } catch (e) {
@@ -127,9 +123,7 @@ export default function PlanSelection () {
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
-        const response = await fetch(`${getCNEndpoint()}v1/contents/${lessonPlanId}/live/token?org_id=${
-            currentOrganization.organization_id
-        }`, {
+        const response = await fetch(`${getCNEndpoint()}v1/contents/${lessonPlanId}/live/token?org_id=${organizationId}`, {
             headers,
             credentials: `include`,
             method: `GET`,
@@ -140,9 +134,8 @@ export default function PlanSelection () {
     }
 
     useEffect(() => {
-        if (currentOrganization.organization_id !== ``) {
-            getPublishedLessonPlans();
-        }
+        if (!currentOrganization) return;
+        getPublishedLessonPlans();
     }, [ currentOrganization ]);
 
     useEffect(() => {
@@ -267,11 +260,11 @@ function LessonPlanSelect ({
     lessonPlan,
     setLessonPlan,
 }: {
-  lessonPlans?: PublishedContentItem[];
-  lessonPlan?: PublishedContentItem | null;
-  setLessonPlan: React.Dispatch<
-    React.SetStateAction<PublishedContentItem | null>
-  >;
+    lessonPlans?: PublishedContentItem[];
+    lessonPlan?: PublishedContentItem | null;
+    setLessonPlan: React.Dispatch<
+        React.SetStateAction<PublishedContentItem | null>
+    >;
 }) {
     const [ inputValue, setInputValue ] = useState(``);
     const intl = useIntl();

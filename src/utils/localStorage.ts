@@ -3,7 +3,7 @@ import {
     useState,
 } from 'react';
 
-export function useLocalStorage<T> (key: string, initialValue: T) {
+function useLocalStorage<T> (key: string, initialValue: T) {
     const getValue = (key: string, initialValue: T): T => {
         try {
             const item = localStorage.getItem(key);

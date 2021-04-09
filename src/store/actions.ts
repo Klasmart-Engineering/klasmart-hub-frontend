@@ -4,6 +4,7 @@ import {
     LiveSessionData,
     UserAgent,
 } from "../types/objectTypes";
+import { Organization } from "@/types/graphQL";
 
 export interface Action<T extends ActionTypes, P> {
     type: T;
@@ -84,7 +85,9 @@ export type FinishLiveData = Action<ActionTypes.FINISH_LIVE_DATA, LiveSessionDat
 
 export type SelectedLessonPlan = Action<ActionTypes.SELECTED_LESSON_PLAN, string>;
 
-export type SelectedOrganization = Action<ActionTypes.SELECTED_ORG_ID, string>;
+export type SelectedOrganization = Action<ActionTypes.SELECTED_ORGANIZATION, Organization | null>;
+
+export type OrganizationIdStack = Action<ActionTypes.ORGANIZATION_ID_STACK, string[]>;
 
 export type SetOpenSideNavigation = Action<ActionTypes.OPEN_SIDE_NAVIGATION, boolean | undefined>;
 
@@ -118,7 +121,8 @@ export enum ActionTypes {
     ACTIVITIES,
     FINISH_LIVE_DATA,
     SELECTED_LESSON_PLAN,
-    SELECTED_ORG_ID,
+    SELECTED_ORGANIZATION,
+    ORGANIZATION_ID_STACK,
     OPEN_SIDE_NAVIGATION,
     // Testing
     FAKE_NONCE,
@@ -155,6 +159,7 @@ export type Actions =
     | FinishLiveData
     | SelectedLessonPlan
     | SelectedOrganization
+    | OrganizationIdStack
     | SetOpenSideNavigation
     // Testing
     | SetFakeNonce

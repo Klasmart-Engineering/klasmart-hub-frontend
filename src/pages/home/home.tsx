@@ -9,15 +9,9 @@ import YourClasses from "./card/yourClasses";
 import YourTeachers from "./card/yourTeachers";
 import ContentLayout from "./featuredContent/contentLayout";
 import { useRestAPI } from "@/api/restapi";
-import {
-    ERROR_ORGANIZATION,
-    NO_ORGANIZATION,
-} from "@/app";
-import {
-    currentMembershipVar,
-    userIdVar,
-} from "@/cache";
+import { userIdVar } from "@/cache";
 import { GET_USER } from "@/operations/queries/getUser";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { User } from "@/types/graphQL";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/checkAllowed";
@@ -102,7 +96,8 @@ export default function Home () {
     const [ userInfo, setUserInfo ] = useState<User>();
     const [ userRoles, setUserRoles ] = useState<any | undefined>(``);
 
-    const currentOrganization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
 
@@ -132,9 +127,9 @@ export default function Home () {
 
     async function getScheduleListNextTwoWeeks () {
         try {
-            const responseNextNextWeek = await restApi.schedule(currentOrganization.organization_id, `week`, nextNextWeekTimeStamp, timeZoneOffset);
-            const responseCurrentWeek = await restApi.schedule(currentOrganization.organization_id, `week`, todayTimeStamp, timeZoneOffset);
-            const responseNextWeek = await restApi.schedule(currentOrganization.organization_id, `week`, nextWeekTimeStamp, timeZoneOffset);
+            const responseNextNextWeek = await restApi.schedule(organizationId, `week`, nextNextWeekTimeStamp, timeZoneOffset);
+            const responseCurrentWeek = await restApi.schedule(organizationId, `week`, todayTimeStamp, timeZoneOffset);
+            const responseNextWeek = await restApi.schedule(organizationId, `week`, nextWeekTimeStamp, timeZoneOffset);
 
             const responseSchedule = [
                 ...new Set([
@@ -166,11 +161,8 @@ export default function Home () {
     }, []);
 
     useEffect(() => {
-        if (![
-            ``,
-            NO_ORGANIZATION,
-            ERROR_ORGANIZATION,
-        ].includes(currentOrganization.organization_id)) getScheduleListNextTwoWeeks();
+        if (!currentOrganization) return;
+        getScheduleListNextTwoWeeks();
     }, [ currentOrganization ]);
 
     useEffect(() => {

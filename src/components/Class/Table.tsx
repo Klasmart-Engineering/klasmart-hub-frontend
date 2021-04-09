@@ -2,12 +2,12 @@ import {
     useDeleteClass,
     useGetAllClasses,
 } from "@/api/classes";
-import { currentMembershipVar } from "@/cache";
 import ClassRoster from "@/components/Class/ClassRoster/Table";
 import ClassDetailsDrawer from "@/components/Class/DetailsDrawer";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
 import globalStyles from "@/globalStyles";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Class,
     Status,
@@ -18,7 +18,6 @@ import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptyClassDetails } from "@/utils/classes";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     Chip,
     createStyles,
@@ -122,8 +121,6 @@ export default function ClassesTable (props: Props) {
     const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
     const canCreate = usePermission(`create_class_20224`);
     const canEdit = usePermission(`edit_class_20334`);
     const canDelete = usePermission(`delete_class_20444`);
@@ -131,7 +128,7 @@ export default function ClassesTable (props: Props) {
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ detailsDrawerOpen, setDetailsDrawerOpen ] = useState(false);
-
+    const currentOrganization = useCurrentOrganization();
     const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
@@ -144,7 +141,7 @@ export default function ClassesTable (props: Props) {
     } = useGetAllClasses({
         fetchPolicy: `network-only`,
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
     const [ deleteClass ] = useDeleteClass();
@@ -468,7 +465,7 @@ export default function ClassesTable (props: Props) {
 
             {selectedClass && <ClassRoster
                 open={classRosterDialogOpen}
-                organizationId={organization_id}
+                organizationId={currentOrganization?.organization_id ?? ``}
                 classItem={selectedClass}
                 onClose={() => {
                     setSelectedClass(undefined);

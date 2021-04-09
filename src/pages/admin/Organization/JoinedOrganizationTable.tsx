@@ -1,5 +1,5 @@
 import {
-    useGetOrganizations,
+    useGetOrganizationMemberships,
     useLeaveMembership,
 } from "@/api/organizations";
 import { userIdVar } from "@/cache";
@@ -61,7 +61,7 @@ export default function JoinedOrganizationTable (props: Props) {
         data,
         loading,
         refetch,
-    } = useGetOrganizations();
+    } = useGetOrganizationMemberships();
     const [ leaveMembership, { loading: leaveLoading } ] = useLeaveMembership();
 
     useEffect(() => {

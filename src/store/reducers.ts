@@ -4,6 +4,7 @@ import {
     Actions,
     ActionTypes,
 } from "./actions";
+import { Organization } from "@/types/graphQL";
 import { combineReducers } from "redux";
 
 export function postAuthorizationRoute (state = null, action: Actions) {
@@ -389,9 +390,18 @@ export function selectedLessonPlan (state = ``, action: Actions) {
     }
 }
 
-export function selectedOrganizationId (state = ``, action: Actions) {
+export function selectedOrganization (state: Organization | null = null, action: Actions) {
     switch (action.type) {
-    case ActionTypes.SELECTED_ORG_ID:
+    case ActionTypes.SELECTED_ORGANIZATION:
+        return action.payload;
+    default:
+        return state;
+    }
+}
+
+export function organizationIdStack (state: string[] = [], action: Actions) {
+    switch (action.type) {
+    case ActionTypes.ORGANIZATION_ID_STACK:
         return action.payload;
     default:
         return state;
@@ -424,7 +434,8 @@ export const account = combineReducers({
     suitableAges,
     activities,
     selectedLessonPlan,
-    selectedOrganizationId,
+    selectedOrganization,
+    organizationIdStack,
     pass,
     passes,
     productId,

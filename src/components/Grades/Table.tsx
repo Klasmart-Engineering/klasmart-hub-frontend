@@ -2,9 +2,9 @@ import {
     useDeleteGrade,
     useGetAllGrades,
 } from "@/api/grades";
-import { currentMembershipVar } from "@/cache";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Grade,
     NON_SPECIFIED,
@@ -13,7 +13,6 @@ import {
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -64,10 +63,7 @@ export default function (props: Props) {
     const [ grades, setGrades ] = useState<Grade[]>([]);
     const [ selectedGrade, setSelectedGrade ] = useState<Grade>();
     const { equals, required } = useValidations();
-
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
-
+    const currentOrganization = useCurrentOrganization();
     const canCreate = usePermission(`create_grade_20223`);
     const canEdit = usePermission(`edit_grade_20333`);
     const canDelete = usePermission(`delete_grade_20443`);
@@ -79,7 +75,7 @@ export default function (props: Props) {
     } = useGetAllGrades({
         fetchPolicy: `network-only`,
         variables: {
-            organization_id,
+            organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 

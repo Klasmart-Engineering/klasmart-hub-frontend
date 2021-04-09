@@ -1,9 +1,8 @@
 import AgeRangeForm from "./Form";
 import { useCreateAgeRange } from "@/api/age_ranges";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AgeRange } from "@/types/graphQL";
 import { buildEmptyAgeRange } from "@/utils/ageRanges";
-import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -38,7 +37,7 @@ export default function (props: Props) {
     const [ newAgeRange, setNewAgeRange ] = useState(buildEmptyAgeRange());
     const [ valid, setValid ] = useState(true);
     const [ addAgeRange ] = useCreateAgeRange();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
 
     useEffect(() => {
         setNewAgeRange(buildEmptyAgeRange());
@@ -49,7 +48,7 @@ export default function (props: Props) {
             onClose(newAgeRange);
             await addAgeRange({
                 variables: {
-                    organization_id: organization_id,
+                    organization_id: currentOrganization?.organization_id ?? ``,
                     name: `${newAgeRange.low_value}-${newAgeRange.high_value}`,
                     low_value: newAgeRange.low_value,
                     low_value_unit: newAgeRange.low_value_unit,

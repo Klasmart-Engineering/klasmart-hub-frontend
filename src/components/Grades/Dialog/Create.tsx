@@ -3,13 +3,12 @@ import {
     useCreateUpdateGrade,
     useGetAllGrades,
 } from "@/api/grades";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Grade,
     isNonSpecified,
 } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
-import { useReactiveVar } from "@apollo/client";
 import {
     Dialog,
     useSnackbar,
@@ -32,10 +31,11 @@ export default function (props: Props) {
     const [ newGrade, setNewGrade ] = useState(buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
     const [ createGrade ] = useCreateUpdateGrade();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const { data: gradesData } = useGetAllGrades({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
     const nonSpecifiedGrade = gradesData?.organization.grades.find(isNonSpecified);
@@ -51,7 +51,7 @@ export default function (props: Props) {
         try {
             await createGrade({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     grades: [
                         {
                             name: newGrade.name ?? ``,

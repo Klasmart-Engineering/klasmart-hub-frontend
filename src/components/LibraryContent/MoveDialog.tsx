@@ -4,9 +4,8 @@ import {
     useRestAPI,
 } from "@/api/restapi";
 import FolderIcon from "@/assets/img/folder.svg";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
-import { useReactiveVar } from "@apollo/client";
 import {
     Badge,
     Box,
@@ -114,10 +113,10 @@ export default function MoveContentDialog (props: Props) {
     const intl = useIntl();
     const restApi = useRestAPI();
     const { enqueueSnackbar } = useSnackbar();
-    const organization = useReactiveVar(currentMembershipVar);
-    const { organization_id } = organization;
+    const currentOrganization = useCurrentOrganization();
     const [ selectedNodeId, setSelectedNodeId ] = useState<string>();
     const [ folderStructure, setFolderStructure ] = useState<Folder>();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     const title = value ? (value?.length === 1 ? `Move "${value?.[0].name }"` : `Move ${value?.length} items`) : `Move`;
 
@@ -218,7 +217,7 @@ export default function MoveContentDialog (props: Props) {
         };
         if (!open) return;
         const content = await restApi.getFolderStructure({
-            org_id: organization_id,
+            org_id: organizationId,
         });
 
         // Sorting (to have items closer to the root last, deeper first)
@@ -242,7 +241,7 @@ export default function MoveContentDialog (props: Props) {
             })) ?? [];
             await restApi.putFoldersItemsBulkMove({
                 dist: (selectedNodeId !== ROOT ? selectedNodeId : `/`) ?? ``,
-                org_id: organization_id,
+                org_id: organizationId,
                 folder_info: folderInfo,
             });
             onClose(true);

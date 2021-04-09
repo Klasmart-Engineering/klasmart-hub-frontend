@@ -1,4 +1,3 @@
-import { currentMembershipVar } from "./cache";
 import { getCNEndpoint } from "./config";
 import ClassesPage from "./pages/admin/classes";
 import Grades from "./pages/admin/grades";
@@ -14,9 +13,9 @@ import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
 import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
+import { useCurrentOrganization } from "./store/organizationMemberships";
 import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
 import AgeRanges from "@/pages/admin/age-ranges/index";
-import { useReactiveVar } from "@apollo/client/react";
 import {
     createStyles,
     makeStyles,
@@ -47,7 +46,8 @@ export default function Router (props: Props)  {
     const classes = useStyles();
     const location = useLocation().pathname;
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
-    const currentOrganization = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
 
     return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
         <Switch>
@@ -66,7 +66,7 @@ export default function Router (props: Props)  {
                 path="/library/organization-content"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/library`}
                         allow="microphone"
                         frameBorder="0"
                         className={classes.iframeContainer}
@@ -77,7 +77,7 @@ export default function Router (props: Props)  {
                 path="/library/badanamu-content"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
                         frameBorder="0"
                         className={classes.iframeContainer}
                     />
@@ -87,7 +87,7 @@ export default function Router (props: Props)  {
                 path="/library/more-featured-content"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/library/my-content-list?program_group=More Featured Content&order_by=-update_at&page=1`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/library/my-content-list?program_group=More Featured Content&order_by=-update_at&page=1`}
                         frameBorder="0"
                         className={classes.iframeContainer}
                     />
@@ -97,7 +97,7 @@ export default function Router (props: Props)  {
                 path="/schedule"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/schedule/calendar`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/schedule/calendar`}
                         frameBorder="0"
                         className={classes.iframeContainer}
                     />
@@ -107,7 +107,7 @@ export default function Router (props: Props)  {
                 path="/assessments"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/assessments/assessment-list`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/assessments/assessment-list`}
                         frameBorder="0"
                         className={classes.iframeContainer}
                     />
@@ -117,7 +117,7 @@ export default function Router (props: Props)  {
                 path="/reports"
                 render={() => (
                     <iframe
-                        src={`${ENDPOINT}?org_id=${currentOrganization.organization_id}#/report/achievement-list`}
+                        src={`${ENDPOINT}?org_id=${organizationId}#/report/achievement-list`}
                         frameBorder="0"
                         className={classes.iframeContainer}
                     />

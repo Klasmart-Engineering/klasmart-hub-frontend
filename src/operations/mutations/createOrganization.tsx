@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const NEW_ORGANIZATION = gql`
+export const CREATE_ORGANIZATION = gql`
     mutation user(
         $user_id: ID!
         $organization_name: String

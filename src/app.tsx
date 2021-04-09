@@ -1,13 +1,14 @@
-import { useGetOrganization } from "./api/organizations";
-import { useGetUser } from "./api/users";
-import {
-    currentMembershipVar,
-    userIdVar,
-} from "./cache";
-import { ActionTypes } from "./store/actions";
-import { useLocalStorage } from "./utils/localStorage";
+import { useGetOrganizationMemberships } from "@/api/organizations";
 import Layout from "@/layout";
-import { useReactiveVar } from "@apollo/client";
+import { ActionTypes } from "@/store/actions";
+import { useOrganizationStack } from "@/store/organizationMemberships";
+import { Store } from "@/store/store";
+import {
+    isActive,
+    Organization,
+    OrganizationMembership,
+} from "@/types/graphQL";
+import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
 import {
@@ -19,14 +20,13 @@ import {
 } from "react-device-detect";
 import { useStore } from "react-redux";
 
-export const NO_ORGANIZATION = `no-organization`;
-export const ERROR_ORGANIZATION = `error-organization`;
-
 interface Props {
 }
 
 export default function App (props: Props) {
-    const store = useStore();
+    const [ , setOrganizationMembershipStack ] = useOrganizationStack();
+
+    const store = useStore<Store>();
     useEffect(() => {
         const userInformation = {
             isEdge,
@@ -42,64 +42,32 @@ export default function App (props: Props) {
         });
     }, []);
 
-    const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-    });
-    const [ organizationIdStack ] = useLocalStorage<string[]>(`organizationIdStack-${userData?.user.user_id}`, userData?.user?.memberships?.map((membership) => membership.organization_id) ?? []);
     const {
-        data: organizationData,
-        loading: organizationLoading,
-        error: organizationError,
-    } = useGetOrganization({
-        variables: {
-            organization_id: organizationIdStack?.[0],
-        },
-    });
+        data: organizationsData,
+        loading: organizationsLoading,
+    } = useGetOrganizationMemberships();
 
     useEffect(() => {
-        if (organizationLoading) {
-            currentMembershipVar({
-                organization_name: ``,
-                organization_id: ``,
-                organization_email: ``,
-            });
-            return;
-        }
-        if (!userData?.user.user_id && organizationError) {
-            currentMembershipVar({
-                organization_name: ``,
-                organization_id: ERROR_ORGANIZATION,
-                organization_email: ``,
-            });
-            return;
-        }
-        if (!organizationData?.organization) {
-            currentMembershipVar({
-                organization_name: ``,
-                organization_id: NO_ORGANIZATION,
-                organization_email: ``,
-            });
-            return;
-        }
-        const {
-            organization_id,
-            organization_name,
-            owner,
-        } = organizationData.organization;
-        currentMembershipVar({
-            organization_id,
-            organization_name: organization_name ?? ``,
-            organization_email: owner?.email ?? ``,
+        if (organizationsLoading) return;
+        const memberships = organizationsData?.me.memberships?.filter((membership): membership is OrganizationMembership => !!membership);
+        setOrganizationMembershipStack((membershipStack) => {
+            const updatedMemberships = memberships
+                ?.sort((a, b) => {
+                    const aIndex = membershipStack.findIndex((membership) => membership.organization_id === a.organization_id);
+                    const bIndex = membershipStack.findIndex((membership) => membership.organization_id === b.organization_id);
+                    if (aIndex === bIndex && a.organization?.organization_name && b.organization?.organization_name) return a.organization.organization_name.localeCompare(b.organization.organization_name);
+                    return aIndex - bIndex;
+                })
+                .filter(isActive) ?? [];
+            const updatedMembershipIds = updatedMemberships
+                .map((membership) => membership.organization_id)
+                .filter((id): id is string => !!id);
+            const oldMembershipIds = membershipStack
+                .map((membership) => membership.organization_id)
+                .filter((id): id is string => !!id);
+            return isEqual(updatedMembershipIds, oldMembershipIds) ? membershipStack : updatedMemberships;
         });
-    }, [
-        userData,
-        organizationData,
-        organizationLoading,
-        organizationError,
-    ]);
+    }, [ organizationsData, organizationsLoading ]);
 
     return (
         <Layout />

@@ -1,5 +1,8 @@
+import {
+    getAPIEndpoint,
+    getAuthEndpoint,
+} from "../config";
 import queryString from "query-string";
-import { getAPIEndpoint, getAuthEndpoint } from "../config";
 
 interface User {
     avatar: string;
@@ -8,7 +11,7 @@ interface User {
     user_name: string;
 }
 
-export async function redirectIfUnauthorized(continueParam?: string) {
+export async function redirectIfUnauthorized (continueParam?: string) {
     const GET_SELF = `query {
         me {
             avatar
@@ -19,13 +22,15 @@ export async function redirectIfUnauthorized(continueParam?: string) {
     }`;
 
     const headers = new Headers();
-    headers.append("Accept", "application/json");
-    headers.append("Content-Type", "application/json");
+    headers.append(`Accept`, `application/json`);
+    headers.append(`Content-Type`, `application/json`);
     const response = await fetch(`${getAPIEndpoint()}user/`, {
-        body: JSON.stringify({ query: GET_SELF }),
-        credentials: "include",
+        body: JSON.stringify({
+            query: GET_SELF,
+        }),
+        credentials: `include`,
         headers,
-        method: "POST",
+        method: `POST`,
     })
         .then((r) => r.json())
         .then((data) => {
@@ -35,10 +40,12 @@ export async function redirectIfUnauthorized(continueParam?: string) {
             // console.log(me);
             if (me === null) {
                 if (window.location.origin === getAuthEndpoint()) { return; }
-                const stringifiedQuery = queryString.stringify({ continue: continueParam ? continueParam : window.location.href });
+                const stringifiedQuery = queryString.stringify({
+                    continue: continueParam ? continueParam : window.location.href,
+                });
                 window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
+
             }
             return;
         });
 }
-

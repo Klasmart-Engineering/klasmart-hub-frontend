@@ -1,8 +1,6 @@
 import { useGetUser } from "@/api/users";
-import {
-    currentMembershipVar,
-    userIdVar,
-} from "@/cache";
+import { userIdVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { orderedSystemRoleNames } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
 
@@ -36,7 +34,7 @@ export const useIsSuperAdmin = () => {
             user_id: userId,
         },
     });
-    const selectedOrganizationMeta = useReactiveVar(currentMembershipVar);
-    const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === selectedOrganizationMeta.organization_id);
+    const currentOrganization = useCurrentOrganization();
+    const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === currentOrganization?.organization_id);
     return!!selectedMembershipOrganization?.roles?.find((role) => role.role_name === `Super Admin`);
 };

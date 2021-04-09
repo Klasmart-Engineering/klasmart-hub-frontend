@@ -1,14 +1,19 @@
+import { ADD_USER_TO_ORGANIZATION } from "@/operations/mutations/addUserToOrganization";
+import { CREATE_ORGANIZATION } from "@/operations/mutations/createOrganization";
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
-import { GET_ORGANIZATIONS } from "@/operations/queries/getOrganizations";
+import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import {
     Organization,
+    OrganizationMembership,
     User,
 } from "@/types/graphQL";
 import {
+    ApolloError,
+    MutationHookOptions,
     QueryHookOptions,
     useMutation,
     useQuery,
@@ -32,8 +37,8 @@ interface GetOrganizationsResponse {
     me: User;
 }
 
-export const useGetOrganizations = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {
-    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(GET_ORGANIZATIONS, options);
+export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {
+    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(GET_ORGANIZATION_MEMBERSHIPS, options);
 };
 
 interface GetAllOrganizationsRequest {}
@@ -86,4 +91,36 @@ interface DeleteOrganizationResponse {
 
 export const useDeleteOrganizationOwnership = () => {
     return useMutation<DeleteOrganizationResponse, DeleteOrganizationRequest>(DELETE_ORGANIZATION);
+};
+
+interface CreateOrganizationRequest {
+
+}
+
+interface CreateOrganizationResponse {
+    user: {
+        createOrganization: {
+            organization_id: string;
+            organization_name: string;
+        } | null;
+        errors?: ApolloError[];
+    };
+}
+
+export const useCreateOrganization = (options?: MutationHookOptions<CreateOrganizationResponse, CreateOrganizationRequest>) => {
+    return useMutation<CreateOrganizationResponse, CreateOrganizationRequest>(CREATE_ORGANIZATION, options);
+};
+
+interface AddUserToOrganizationRequest {
+
+}
+
+interface AddUserToOrganizationResponse {
+    organization: {
+        addUser: OrganizationMembership;
+    };
+}
+
+export const useAddUserToOrganization = (options?: MutationHookOptions<AddUserToOrganizationResponse, AddUserToOrganizationRequest>) => {
+    return useMutation<AddUserToOrganizationResponse, AddUserToOrganizationRequest>(ADD_USER_TO_ORGANIZATION, options);
 };

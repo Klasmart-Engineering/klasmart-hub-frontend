@@ -5,7 +5,7 @@ import {
 } from "@/api/categories";
 import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
-import { currentMembershipVar } from "@/cache";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isCustomValue,
     isNonSpecified,
@@ -14,7 +14,6 @@ import {
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
 import { buildEmptySubject } from "@/utils/subjects";
-import { useReactiveVar } from "@apollo/client";
 import {
     Dialog,
     useSnackbar,
@@ -37,7 +36,7 @@ export default function CreateSubjectDialog (props: Props) {
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { organization_id } = useReactiveVar(currentMembershipVar);
+    const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
     const [ newSubject, setNewSubject ] = useState(buildEmptySubject({
         categories: [ buildEmptyCategory() ],
@@ -45,9 +44,10 @@ export default function CreateSubjectDialog (props: Props) {
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const { data: categoriesData } = useGetAllCategories({
         variables: {
-            organization_id,
+            organization_id: organizationId,
         },
     });
 
@@ -72,7 +72,7 @@ export default function CreateSubjectDialog (props: Props) {
                 const systemSubcategories = category?.subcategories?.filter(isSystemValue) ?? [];
                 const subcategoriesResp = await createOrUpdateSubcategories({
                     variables: {
-                        organization_id,
+                        organization_id: organizationId,
                         subcategories: customSubcategories.map((subcategory) => ({
                             id: subcategory.id,
                             name: subcategory.name ?? ``,
@@ -89,7 +89,7 @@ export default function CreateSubjectDialog (props: Props) {
             const systemCategories = updatedCategories.filter(isSystemValue);
             const updatedCategoriesResp = await createOrUpdateCategories({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     categories: customCategories.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
@@ -100,7 +100,7 @@ export default function CreateSubjectDialog (props: Props) {
 
             await createOrUpdateSubjects({
                 variables: {
-                    organization_id,
+                    organization_id: organizationId,
                     subjects: [
                         {
                             id,
