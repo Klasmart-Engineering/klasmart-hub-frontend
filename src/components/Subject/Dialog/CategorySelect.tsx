@@ -107,12 +107,16 @@ export default function CategorySelectDialog (props: Props) {
 
     const createCategory = async () => {
         const name = await prompt({
-            title: `Create Category`,
+            title: intl.formatMessage({
+                id: `categories_categoryNameLabel`,
+            }),
             okLabel: `Create`,
             validations: [
                 required(`The Category name is required.`),
-                letternumeric(),
-                max(35, `Category Name has a max length of 35 characters.`),
+                letternumeric(intl.formatMessage({
+                    id: `categoryNameValidations_letternumeric`,
+                })),
+                max(35, `The category name has a max length of 35 characters.`),
             ],
             label: `Name`,
         });

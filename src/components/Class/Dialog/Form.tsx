@@ -190,7 +190,9 @@ export default function ClassDialogForm (props: Props) {
                     required(intl.formatMessage({
                         id: `class_nameRequiredValidation`,
                     })),
-                    letternumeric(),
+                    letternumeric(intl.formatMessage({
+                        id: `subcategoryNameValidations_letternumeric`,
+                    })),
                     max(35, intl.formatMessage({
                         id: `class_maxCharValidation`,
                     })),

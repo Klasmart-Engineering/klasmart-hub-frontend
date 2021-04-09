@@ -871,7 +871,7 @@ const messages: Record<string, string> = {
     classRoster_deletePrompt: `Are you sure you want to remove "{value}" from the class?`,
 
     class_nameRequiredValidation: `The class name is required`,
-    class_maxCharValidation: `Max length of 35 characters`,
+    class_maxCharValidation: `The class name has a max length of 35 characters`,
     class_deleteClassTitle: `Delete Class`,
 
     class_deletePrompt: `Are you sure you want to delete "{value}" class?`,
@@ -959,5 +959,15 @@ const messages: Record<string, string> = {
     subcategories_subcategoryDeleteError: `Sorry, something went wrong, please try again`,
 
     scheduleInfo_class: `Class`,
+    genericValidations_letternumeric: `The input can only contain letters, numbers, space and & / , -.`,
+    subcategoryNameValidations_letternumeric: `The subcategory name can only contain letters, numbers, space and & / , -.`,
+    categoryNameValidations_letternumeric: `The category name can only contain letters, numbers, space and & / , -.`,
+    classNameValidations_letternumeric: `The class name can only contain letters, numbers, space and & / , -.`,
+    programNameValidations_letternumeric: `The program name can only contain letters, numbers, space and & / , -.`,
+    schoolNameValidations_letternumeric: `The school name can only contain letters, numbers, space and & / , -.`,
+    gradeNameValidations_letternumeric: `The grade name can only contain letters, numbers, space and & / , -.`,
+    subjectNameValidations_letternumeric: `The subject name can only contain letters, numbers, space and & / , -.`,
+    categories_categoryNameLabel: `Category Name`,
+    subcategories_subcategoryNameLabel: `Subcategory Name`,
 };
 export default messages;

@@ -111,7 +111,7 @@ export default function SubjectDialogForm (props: Props) {
         return [
             required(`The Category name is required.`)(category.name),
             letternumeric()(category.name),
-            max(35, `Category Name has a max length of 35 characters.`)(category.name),
+            max(35, `The category name has a max length of 35 characters.`)(category.name),
         ].find((error): error is string => error !== true);
     };
 
@@ -132,8 +132,10 @@ export default function SubjectDialogForm (props: Props) {
                 autoFocus={!value.id}
                 validations={[
                     required(`The subject name is required.`),
-                    letternumeric(),
-                    max(35, `Subject Name has a max length of 35 characters.`),
+                    letternumeric(intl.formatMessage({
+                        id: `subjectNameValidations_letternumeric`,
+                    })),
+                    max(35, `The subject name has a max length of 35 characters.`),
                 ]}
                 onChange={setSubjectName}
                 onValidate={setSubjectNameValid}

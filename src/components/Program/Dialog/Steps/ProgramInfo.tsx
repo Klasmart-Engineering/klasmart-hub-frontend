@@ -116,8 +116,10 @@ export default function ProgramInfoStep (props: TabContent) {
                     autoFocus={!value.id}
                     validations={[
                         required(`The program name is required.`),
-                        letternumeric(),
-                        max(35, `Program Name has a max length of 35 characters.`),
+                        letternumeric(intl.formatMessage({
+                            id: `subcategoryNameValidations_letternumeric`,
+                        })),
+                        max(35, `The program name has a max length of 35 characters.`),
                     ]}
                     onChange={setProgramName}
                 />

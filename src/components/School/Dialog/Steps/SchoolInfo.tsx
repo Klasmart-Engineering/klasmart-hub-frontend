@@ -68,7 +68,9 @@ export default function SchoolInfoStep (props: TabContent) {
                     autoFocus={!value.school_id}
                     validations={[
                         required(`The school name is required.`),
-                        letternumeric(),
+                        letternumeric(intl.formatMessage({
+                            id: `schoolNameValidations_letternumeric`,
+                        })),
                         max(120, intl.formatMessage({
                             id: `schools_maxCharValidation`,
                         }, {

@@ -115,12 +115,16 @@ export default function SubcategoriesSelectDialog (props: Props) {
 
     const createSubcategory = async () => {
         const name = await prompt({
-            title: `Create Subcategory`,
+            title: intl.formatMessage({
+                id: `subcategories_subcategoryNameLabel`,
+            }),
             okLabel: `Create`,
             validations: [
                 required(`The Subcategory name is required.`),
-                letternumeric(),
-                max(35, `Subategory Name has a max length of 35 characters.`),
+                letternumeric(intl.formatMessage({
+                    id: `subcategoryNameValidations_letternumeric`,
+                })),
+                max(35, `The subategory name has a max length of 35 characters.`),
             ],
             label: `Name`,
         });

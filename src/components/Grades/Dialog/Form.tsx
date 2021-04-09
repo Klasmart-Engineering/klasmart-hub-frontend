@@ -114,7 +114,9 @@ export default function GradeDialogForm (props: Props) {
                 value={gradeName}
                 validations={[
                     required(),
-                    letternumeric(),
+                    letternumeric(intl.formatMessage({
+                        id: `subcategoryNameValidations_letternumeric`,
+                    })),
                     min(3, `Min length 3 of characters.`),
                     max(15, `Max length 15 of characters.`),
                 ]}
