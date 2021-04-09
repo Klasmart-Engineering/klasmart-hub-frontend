@@ -162,11 +162,11 @@ export default function UserProfileMenu (props: Props) {
                         {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
-                {!currentOrganization && (
+                {/* {!currentOrganization && (
                     <ListItem>
                         <CreateOrganizationDialog />
                     </ListItem>
-                )}
+                )} */}
                 <UserProfileSwitcher />
                 <Divider />
                 <List>

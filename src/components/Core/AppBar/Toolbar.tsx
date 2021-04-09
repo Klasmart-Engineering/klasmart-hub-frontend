@@ -165,7 +165,7 @@ export default function Toolbar (props: Props) {
                         display="flex"
                         order={2}
                     >
-                        {!currentOrganization && <CreateOrganizationDialog />}
+                        {/* {!currentOrganization && <CreateOrganizationDialog />} */}
                         <UserProfileMenu user={userData?.user} />
                     </Box>
                 </Grid>
