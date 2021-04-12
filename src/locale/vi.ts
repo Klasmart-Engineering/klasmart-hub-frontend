@@ -467,6 +467,7 @@ const messages: Record<string, string> = {
     classRoster_firstTooltip: `Trang Đầu`,
     classRoster_lastTooltip: `Trang Cuối`,
     home_welcomeLabel: `Chào mừng {userName}!`,
+    home_welcomeGenericLabel: `Chào mừng!`,
     usageInfo_onlineClasses: `Những lớp học trực tuyến`,
     usageInfo_offlineClasses: `Những lớp học trực tiếp`,
     usageInfo_homework: `Bài tập về nhà`,

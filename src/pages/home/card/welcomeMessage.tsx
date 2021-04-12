@@ -56,7 +56,7 @@ export default function WelcomeMessage (props: Props) {
                 variant="h4"
                 className={classes.welcomeTitle} >
                 👋{` `}
-                {user && user.given_name !== null && (
+                { (user && user.given_name !== null) ? (
                     <FormattedMessage
                         id="home_welcomeLabel"
                         values={{
@@ -68,6 +68,10 @@ export default function WelcomeMessage (props: Props) {
                                 </span>
                             ),
                         }}
+                    />
+                ) : (
+                    <FormattedMessage
+                        id="home_welcomeGenericLabel"
                     />
                 )}
             </Typography>

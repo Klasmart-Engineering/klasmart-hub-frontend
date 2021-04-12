@@ -467,6 +467,7 @@ const messages: Record<string, string> = {
     classRoster_firstTooltip: `Halaman Pertama`,
     classRoster_lastTooltip: `Halaman Terakhir`,
     home_welcomeLabel: `Selamat datang, {userName}!`,
+    home_welcomeGenericLabel: `Selamat datang!`,
     usageInfo_onlineClasses: `kelas live`,
     usageInfo_offlineClasses: `kelas offline`,
     usageInfo_homework: `pekerjaan rumah`,

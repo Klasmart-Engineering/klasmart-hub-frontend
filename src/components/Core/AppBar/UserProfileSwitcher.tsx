@@ -16,7 +16,10 @@ import {
     ListItemText,
     makeStyles,
 } from "@material-ui/core";
-import { UserAvatar } from "kidsloop-px";
+import {
+    UserAvatar,
+    useSnackbar,
+} from "kidsloop-px";
 import React,
 {
     useEffect,
@@ -34,6 +37,7 @@ interface Props {
 export default function UserProfileSwitcher (props: Props) {
     // const { users } = props;
     const history = useHistory();
+    const { enqueueSnackbar } = useSnackbar();
     const selectedUserId = useReactiveVar(userIdVar);
     const { loading, data } = useGetMyUsers();
 
@@ -61,8 +65,16 @@ export default function UserProfileSwitcher (props: Props) {
 
     function handleClick (userId: string) {
         switchUsers(userId).then((response) => {
-            userIdVar(userId);
-            history.push(`/`);
+            console.log(`switchUser response: `, response);
+            console.log(`update switchUser: `, userId);
+            if (response) {
+                userIdVar(userId);
+                history.push(`/`);
+            } else {
+                enqueueSnackbar(`Error switching users. Please try again later.`, {
+                    variant: `error`,
+                });
+            }
         });
     }
 

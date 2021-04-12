@@ -467,6 +467,7 @@ const messages: Record<string, string> = {
     classRoster_firstTooltip: `第一页`,
     classRoster_lastTooltip: `最后一页`,
     home_welcomeLabel: `欢迎，{userName}!`,
+    home_welcomeGenericLabel: `欢迎!`,
     usageInfo_onlineClasses: `在线课堂`,
     usageInfo_offlineClasses: `线下课堂`,
     usageInfo_homework: `家庭作业`,
