@@ -1,12 +1,31 @@
-const path = require(`path`);
-const HtmlWebpackPlugin = require(`html-webpack-plugin`);
-const webpack = require(`webpack`);
-const UnusedWebpackPlugin = require(`unused-webpack-plugin`);
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import 'webpack-dev-server';
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import Dotenv from "dotenv-webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import path from "path";
+import UnusedWebpackPlugin from "unused-webpack-plugin";
+import {
+    Configuration,
+    EnvironmentPlugin,
+} from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
-module.exports = {
-    mode: `development`,
+const modes = [
+    `development`,
+    `production`,
+    `none`,
+] as const;
+type Mode = typeof modes[number]
+
+const dirtyNodeEnv = process.env.NODE_ENV as Mode;
+const nodeEnv = (modes.includes(dirtyNodeEnv) ? dirtyNodeEnv : undefined) ?? `production`;
+const isDev = nodeEnv === `development`;
+
+const config: Configuration = {
+    mode: nodeEnv,
     entry: {
-        ui: `./src/client-entry.tsx`,
+        hubui: `./src/client-entry.tsx`,
     },
     module: {
         rules: [
@@ -19,19 +38,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: [`style-loader`, `css-loader`],
-                // use: [
-                //     {
-                //         loader: "style-loader",
-                //     },
-                //     "css-modules-typescript-loader",
-                //     {
-                //         loader: "css-loader",
-                //         options: {
-                //             modules: true
-                //         }
-                //     }
-                // ],
+                use: [ `style-loader`, `css-loader` ],
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
@@ -40,16 +47,8 @@ module.exports = {
                     {
                         loader: `image-webpack-loader`,
                         options: {
-                            // mozjpeg: {
-                            //     progressive: true,
-                            //     quality: 65
-                            // },
-                            // // optipng.enabled: false will disable optipng
-                            // optipng: {
-                            //     enabled: false,
-                            // },
                             pngquant: {
-                                quality: [0.65, 0.90],
+                                quality: [ 0.65, 0.90 ],
                                 speed: 4,
                             },
                         },
@@ -58,7 +57,7 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [`file-loader`],
+                use: [ `file-loader` ],
             },
             {
                 test: /\.mp4$/,
@@ -83,27 +82,36 @@ module.exports = {
         path: path.resolve(__dirname, `dist`),
     },
     plugins: [
+        // @ts-ignore
+        // new BundleAnalyzerPlugin(),
+        // @ts-ignore
+        new CleanWebpackPlugin(),
+        // @ts-ignore
+        process.env.ENV_PATH
+            ? new Dotenv({
+                path: process.env.ENV_PATH,
+            })
+            : new EnvironmentPlugin({
+                CN_CMS_ENDPOINT: process.env.CN_CMS_ENDPOINT,
+                API_ENDPOINT: process.env.API_ENDPOINT,
+                AUTH_ENDPOINT: process.env.AUTH_ENDPOINT,
+                LIVE_ENDPOINT: process.env.LIVE_ENDPOINT,
+                COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
+            }),
         new HtmlWebpackPlugin({
-            template: `src/index.html`,
+            template: isDev ? `src/index.html` : `src/index_prod.html`,
         }),
-        new webpack.EnvironmentPlugin({
-            STAGE: `dev`,
-            CN_CMS_ENDPOINT: `https://kl2-test.kidsloop.net/`,
-            API_ENDPOINT: `https://api.kidsloop.net/`,
-            AUTH_ENDPOINT: `https://auth.kidsloop.net/`,
-            LIVE_ENDPOINT: `https://live.kidsloop.net/class-live/`,
-            COOKIE_DOMAIN: `kidsloop.net`,
-        }),
+        // @ts-ignore
         new UnusedWebpackPlugin({
             // Source directories
-            directories: [path.join(__dirname, `src`)],
+            directories: [ path.join(__dirname, `src`) ],
             // Exclude patterns
-            exclude: [`/assets/*`],
+            exclude: [ `/assets/*` ],
             // Root directory (optional)
             root: __dirname,
         }),
     ],
-    devServer: {
+    devServer: isDev ? {
         host: `fe.kidsloop.net`,
         port: 8080,
         https: true,
@@ -119,5 +127,7 @@ module.exports = {
                 changeOrigin: true,
             },
         },
-    },
+    } : undefined,
 };
+
+export default config;

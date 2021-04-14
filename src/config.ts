@@ -1,19 +1,9 @@
-export function getCNEndpoint() {
-    return "" + process.env.CN_CMS_ENDPOINT;
-}
+export const getCNEndpoint = () => process.env.CN_CMS_ENDPOINT ?? ``;
 
-export function getAuthEndpoint() {
-    return "" + process.env.AUTH_ENDPOINT;
-}
+export const getAuthEndpoint = () => process.env.AUTH_ENDPOINT ?? ``;
 
-export function getAPIEndpoint() {
-    return "" + process.env.API_ENDPOINT;
-}
+export const getAPIEndpoint = () => process.env.API_ENDPOINT ?? ``;
 
-export function getLiveEndpoint() {
-    return "" + process.env.LIVE_ENDPOINT;
-}
+export const getLiveEndpoint = () => process.env.LIVE_ENDPOINT ?? ``;
 
-export function getCookieDomain() {
-    return "" + process.env.COOKIE_DOMAIN;
-}
+export const getCookieDomain = () => process.env.COOKIE_DOMAIN ?? ``;
