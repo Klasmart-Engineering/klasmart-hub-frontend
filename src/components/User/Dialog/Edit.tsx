@@ -49,6 +49,7 @@ export default function EditUserDialog (props: Props) {
     const handleEdit = async () => {
         try {
             const {
+                user_id,
                 organization_id,
                 user,
                 roles,
@@ -57,6 +58,7 @@ export default function EditUserDialog (props: Props) {
             } = editedOrganizationMembership;
             await updateOrganizationMembership({
                 variables: {
+                    user_id,
                     organization_id,
                     organization_role_ids: roles?.map((r) => r.role_id) ?? [],
                     school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],

@@ -247,6 +247,7 @@ export default function DeleteRoleDialog (props: Props) {
 
                 await updateOrganizationMembership({
                     variables: {
+                        user_id: user.id,
                         organization_id: organizationId,
                         organization_role_ids: organizationRoleIdsHandler(),
                         school_ids: userMembership?.schoolMemberships?.map((school) => school.school_id) ?? [],
