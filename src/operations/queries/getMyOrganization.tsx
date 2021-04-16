@@ -6,6 +6,7 @@ export const GET_ORGANIZATION_OWNERSHIPS = gql`
             user_id
             user_name
             organization_ownerships {
+                organization_id
                 status
                 organization {
                     organization_id

@@ -5,6 +5,7 @@ import {
     useOrganizationStack,
 } from "@/store/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
+import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     getHighestRole,
     roleNameTranslations,
@@ -57,8 +58,7 @@ export default function OrganizationMenuList (props: Props) {
     const handleSelectOrganization = (membership: OrganizationMembership) => {
         if (!membership.organization || membership.organization_id === currentOrganizationMembership?.organization_id) return;
         onOrganizationChange(membership);
-        const otherMemberships = organizationMembershipStack.filter((organization) => organization.organization_id !== membership.organization_id);
-        setOrganizationMembershipStack([ membership, ...otherMemberships ]);
+        selectOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
     };
 
     return (

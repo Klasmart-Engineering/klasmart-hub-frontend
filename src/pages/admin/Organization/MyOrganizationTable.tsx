@@ -2,21 +2,19 @@ import {
     useDeleteOrganizationOwnership,
     useGetOrganizationOwnerships,
 } from "@/api/organizations";
+import globalStyles from "@/globalStyles";
+import { useOrganizationStack } from "@/store/organizationMemberships";
 import {
     OrganizationOwnership,
     Status,
 } from "@/types/graphQL";
 import { history } from "@/utils/history";
+import { removeOrganizationMembership } from "@/utils/organizationMemberships";
 import { getTableLocalization } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import {
-    Button,
-    CircularProgress,
     createStyles,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
+    DialogContentText,
     makeStyles,
     Paper,
     Typography,
@@ -29,6 +27,7 @@ import {
 import clsx from "clsx";
 import {
     PageTable,
+    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
@@ -37,26 +36,23 @@ import React,
     useEffect,
     useState,
 } from "react";
-import {
-    FormattedMessage,
-    useIntl,
-} from "react-intl";
+import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
-    activeColor: {
-        color: `#2BA600`,
-        fontWeight: `bold`,
-        textTransform: `capitalize`,
-    },
-    inactiveColor: {
-        color: `#FF0000`,
-        fontWeight: `bold`,
-        textTransform: `capitalize`,
-    },
-    root: {
-        width: `100%`,
-    },
-}));
+const useStyles = makeStyles((theme) => {
+    const {
+        statusText,
+        successColor,
+        errorColor,
+    } = globalStyles(theme);
+    return createStyles({
+        statusText,
+        successColor,
+        errorColor,
+        root: {
+            width: `100%`,
+        },
+    });
+});
 
 interface MyOrganizationRow {
     id: string;
@@ -70,31 +66,20 @@ interface MyOrganizationRow {
 interface Props {
 }
 
-/**
- * Returns function to show My Organizations Table for "All Organizations" section
- */
 export default function MyOrganizationTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [ selectedOrganization, setSelectedOrganization ] = useState<MyOrganizationRow>();
+    const { equals, required } = useValidations();
+    const prompt = usePrompt();
     const {
         data,
         loading,
         refetch,
     } = useGetOrganizationOwnerships();
-    const [ deleteOrganization, { loading: deleteLoading } ] = useDeleteOrganizationOwnership();
+    const [ deleteOrganization ] = useDeleteOrganizationOwnership();
+    const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ rows, setRows ] = useState<MyOrganizationRow[]>([]);
-    const [ confirmLeaveOrganizationDialogOpen, setConfirmLeaveOrganizationDialogOpen ] = useState(false);
-
-    const showConfirmDeleteOrganization = (row: MyOrganizationRow) => {
-        setConfirmLeaveOrganizationDialogOpen(true);
-        setSelectedOrganization(row);
-    };
-
-    const closeConfirmDeleteOrganization = () => {
-        setConfirmLeaveOrganizationDialogOpen(false);
-    };
 
     const organizationOwnerships = data?.me?.organization_ownerships ?? [];
 
@@ -109,26 +94,52 @@ export default function MyOrganizationTable (props: Props) {
             name: organizationOwnership?.organization?.organization_name ?? ``,
             phone: organizationOwnership?.organization?.phone ?? ``,
             email: organizationOwnership?.user?.email ?? ``,
-            roles:
-                organizationOwnership?.organization?.roles
-                    ?.filter((role) => role.status === Status.ACTIVE)
-                    .map((role) => role.role_name ?? ``) ?? [],
+            roles: organizationOwnership?.organization?.roles
+                ?.filter((role) => role.status === Status.ACTIVE)
+                .map((role) => role.role_name ?? ``) ?? [],
             status: organizationOwnership?.status ?? ``,
         }));
 
         setRows(rows);
     }, [ data ]);
 
-    const deleteSelectedOrganization = async (): Promise<void> => {
-        if (!selectedOrganization?.id) return;
+    const handleDeleteSelectedOrganizationClick = async (row: MyOrganizationRow): Promise<void> => {
+        const membership = organizationOwnerships.find((membership) => membership.organization_id === row.id);
+        if (!membership) return;
+        const organizationName = membership.organization?.organization_name;
+        if (!await prompt({
+            variant: `error`,
+            title: intl.formatMessage({
+                id: `allOrganization_deleteButton`,
+            }),
+            content: <>
+                <DialogContentText>{intl.formatMessage({
+                    id: `allOrganization_deleteConfirmLabel`,
+                }, {
+                    name: <strong>{organizationName}</strong>,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeToDeletePrompt`,
+                }, {
+                    value: <strong>{organizationName}</strong>,
+                })}</DialogContentText>
+            </>,
+            okLabel: intl.formatMessage({
+                id: `allOrganization_okButton`,
+            }),
+            cancelLabel: intl.formatMessage({
+                id: `allOrganization_cancelButton`,
+            }),
+            validations: [ required(), equals(organizationName) ],
+        })) return;
         try {
             await deleteOrganization({
                 variables: {
-                    organization_id: selectedOrganization.id,
+                    organization_id: membership.organization_id,
                 },
             });
+            removeOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
             await refetch();
-            setConfirmLeaveOrganizationDialogOpen(false);
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_deleteSuccess`,
             }), {
@@ -148,31 +159,40 @@ export default function MyOrganizationTable (props: Props) {
             id: `id`,
             label: `Id`,
             hidden: true,
+            disableSearch: true,
+            disableSort: true,
         },
         {
             id: `name`,
+            disableSearch: true,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `allOrganization_organizationName`,
             }),
         },
         {
             id: `phone`,
+            disableSearch: true,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `allOrganization_phone`,
             }),
         },
         {
             id: `email`,
+            disableSearch: true,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `allOrganization_email`,
             }),
         },
         {
             id: `roles`,
+            disableSearch: true,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `allOrganization_roles`,
             }),
-            disableSort: true,
             render: (row) =>
                 row.roles?.map((role, i) => (
                     <Typography
@@ -184,15 +204,17 @@ export default function MyOrganizationTable (props: Props) {
                 )),
         },
         {
+            disableSearch: true,
+            disableSort: true,
             id: `status`,
             label: intl.formatMessage({
                 id: `organizations_statusLabel`,
             }),
             render: (row) =>
                 <span
-                    className={clsx({
-                        [classes.activeColor]: row.status === Status.ACTIVE,
-                        [classes.inactiveColor]: row.status === Status.INACTIVE,
+                    className={clsx(classes.statusText, {
+                        [classes.successColor]: row.status === Status.ACTIVE,
+                        [classes.errorColor]: row.status === Status.INACTIVE,
                     })}
                 >
                     {intl.formatMessage({
@@ -233,7 +255,7 @@ export default function MyOrganizationTable (props: Props) {
                             }),
                             icon: DeleteIcon,
                             disabled: row.status === Status.INACTIVE,
-                            onClick: (row) => showConfirmDeleteOrganization(row),
+                            onClick: handleDeleteSelectedOrganizationClick,
                         },
                     ]}
                     rowsPerPage={1}
@@ -257,46 +279,6 @@ export default function MyOrganizationTable (props: Props) {
                     })}
                 />
             </Paper>
-            <Dialog
-                open={confirmLeaveOrganizationDialogOpen}
-                onClose={closeConfirmDeleteOrganization}
-            >
-                <DialogTitle />
-                <DialogContent dividers>
-                    <p>
-                        <FormattedMessage
-                            id="allOrganization_deleteConfirmLabel"
-                            values={{
-                                name: selectedOrganization?.name,
-                            }}/>
-                    </p>
-                    {deleteLoading && (
-                        <Grid
-                            container
-                            justify="center">
-                            <CircularProgress />
-                        </Grid>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        color="primary"
-                        onClick={deleteSelectedOrganization}
-                    >
-                        {intl.formatMessage({
-                            id: `allOrganization_okButton`,
-                        })}
-                    </Button>
-                    <Button
-                        color="primary"
-                        onClick={closeConfirmDeleteOrganization}
-                    >
-                        {intl.formatMessage({
-                            id: `allOrganization_cancelButton`,
-                        })}
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 }

@@ -185,7 +185,7 @@ const messages: Record<string, string> = {
     allOrganization_groupRequiredValidation: `Role is required`,
     allOrganization_emailInvalidValidation: `Invalid email`,
     allOrganization_leaveOrganizationButton: `Leave Organization`,
-    allOrganization_leaveOrganizationConfirm: `Once you confirm the action, you will be unlinked from the organization. Do you want to continue?`,
+    allOrganization_leaveOrganizationConfirm: `You are about to leave the organization {name}. Do you want to continue?`,
     allOrganization_okButton: `Ok`,
     allOrganization_cancelButton: `Cancel`,
     allOrganization_userLabel: `User`,
@@ -615,7 +615,7 @@ const messages: Record<string, string> = {
     schools_deleteButton: `Delete`,
 
     allOrganization_leaveOrganizationLabel: `Leave selected organizations`,
-    allOrganization_leftOrganizationSuccess: `You have leave the organization successfully`,
+    allOrganization_leftOrganizationSuccess: `You have left the organization successfully`,
     allOrganization_leftOrganizationError: `An error occurred while leaving the organization`,
     allOrganization_editButton: `Edit`,
     allOrganization_deleteButton: `Delete`,
@@ -970,5 +970,6 @@ const messages: Record<string, string> = {
     subjectNameValidations_letternumeric: `The subject name can only contain letters, numbers, space and & / , -.`,
     categories_categoryNameLabel: `Category Name`,
     subcategories_subcategoryNameLabel: `Subcategory Name`,
+    generic_typeToDeletePrompt: `Type {value} to confirm deletion.`,
 };
 export default messages;
