@@ -12,6 +12,7 @@ import {
     Theme,
     useTheme,
 } from "@material-ui/core/styles";
+import { uniqBy } from "lodash";
 import React,
 {
     useEffect,
@@ -72,7 +73,8 @@ export default function YourClasses () {
             } = dataClasses.me;
             const userClassesStudying = classes.classesStudying;
             const userClassesTeaching = classes.classesTeaching;
-            setUserClasses(userClassesStudying.concat(userClassesTeaching));
+
+            setUserClasses(uniqBy(userClassesStudying.concat(userClassesTeaching), (userClass) => userClass.class_id));
         }
     }, [ dataClasses ]);
 
@@ -95,7 +97,7 @@ export default function YourClasses () {
                                 <Card>
                                     <Box>
                                         <Typography className={classes.blocSubTitle}>
-                                            {userClass.schools?.map((school) => school.school_name)}
+                                            {userClass.schools?.map((school) => school.school_name).join(`, `)}
                                         </Typography>
                                         <Typography
                                             variant="h5"
