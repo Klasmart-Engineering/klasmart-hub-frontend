@@ -8,9 +8,11 @@ import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
 import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
+import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
 import {
     Class,
     Organization,
+    User,
 } from "@/types/graphQL";
 import {
     MutationHookOptions,
@@ -156,4 +158,17 @@ interface GetMyClassesResponse {
 
 export const useGetMyClasses = (options?: QueryHookOptions<GetMyClassesResponse, GetMyClassesRequest>) => {
     return useQuery<GetMyClassesResponse, GetMyClassesRequest>(GET_MY_CLASSES, options);
+};
+
+interface GetUserSchoolMembershipsRequest {
+    user_id: string;
+    organization_id: string;
+}
+
+interface GetUserSchoolMembershipsResponse {
+    user: User;
+}
+
+export const useGetUserSchoolMemberships = (options?: QueryHookOptions<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>) => {
+    return useQuery<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>(GET_USER_SCHOOL_MEMBERSHIPS, options);
 };

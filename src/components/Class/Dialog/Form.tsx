@@ -1,4 +1,6 @@
+import { useGetUserSchoolMemberships } from "@/api/classes";
 import { useGetSchools } from "@/api/schools";
+import { userIdVar } from "@/cache";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AgeRange,
@@ -10,7 +12,9 @@ import {
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
+import { schoolAdminRole } from "@/utils/permissions/schoolAdmin";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -62,8 +66,31 @@ export default function ClassDialogForm (props: Props) {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
+    const userId = useReactiveVar(userIdVar);
+    const [ isSchoolAdmin, setIsSchoolAdmin ] = useState(false);
+    const { data: user } = useGetUserSchoolMemberships({
+        fetchPolicy: `network-only`,
+        variables: {
+            organization_id: currentOrganization?.organization_id ?? ``,
+            user_id: userId,
+        },
+    });
 
-    const allSchools = data?.organization?.schools?.filter((s) => s.status === Status.ACTIVE) ?? [];
+    const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_name) ?? [];
+
+    useEffect(() => {
+        if (!user) return;
+        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === schoolAdminRole.role_name && role.system_role);
+        setIsSchoolAdmin(isUserSchoolAdmin);
+    }, [ user ]);
+
+    const allSchools = data?.organization?.schools?.filter((s) => {
+        if (isSchoolAdmin) {
+            return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_name);
+        }
+
+        return s.status === Status.ACTIVE;
+    }) ?? [];
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
     const [ programsIds, setProgramsIds ] = useState<string[]>(value.programs?.map((program) => program.id ?? ``) ?? []);
     const [ allGrades, setAllGrades ] = useState<Grade[]>([]);
