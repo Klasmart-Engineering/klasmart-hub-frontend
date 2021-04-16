@@ -970,6 +970,11 @@ const messages: Record<string, string> = {
     subjectNameValidations_letternumeric: `The subject name can only contain letters, numbers, space and & / , -.`,
     categories_categoryNameLabel: `Category Name`,
     subcategories_subcategoryNameLabel: `Subcategory Name`,
+
     generic_typeToDeletePrompt: `Type {value} to confirm deletion.`,
+    createUser_userCsvUploadSuccess: `Users have been added successfully`,
+    createUser_uploadCsvTitle: `Upload Users CSV`,
+    csvDialog_addCsvFile: `Click or drag and drop CSV file here.`,
+    csvDialog_closeDialog: `Close`,
 };
 export default messages;

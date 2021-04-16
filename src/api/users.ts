@@ -1,10 +1,12 @@
 import { getAuthEndpoint } from "@/config";
+import { UPLOAD_USERS_CSV } from "@/operations/mutations/uploadUsersCsv";
 import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
 import { GET_USER } from "@/operations/queries/getUser";
 import { User } from "@/types/graphQL";
 import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import {
     QueryHookOptions,
+    useMutation,
     useQuery,
 } from "@apollo/client";
 
@@ -60,6 +62,16 @@ interface GetMyUsersResponse {
     my_users: User[];
 }
 
+interface UploadCsvResponse {
+    filename?: string;
+    minetype?: string;
+    encoding?: string;
+}
+
+interface UploadUserCsvRequest {
+    file: File;
+}
+
 export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {
     return useQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
 };
@@ -74,4 +86,8 @@ interface GetUserResponse {
 
 export const useGetUser = (options?: QueryHookOptions<GetUserResponse, GetUserRequest>) => {
     return useQuery<GetUserResponse, GetUserRequest>(GET_USER, options);
+};
+
+export const useUploadUserCsv = () => {
+    return useMutation<UploadCsvResponse, UploadUserCsvRequest>(UPLOAD_USERS_CSV);
 };
