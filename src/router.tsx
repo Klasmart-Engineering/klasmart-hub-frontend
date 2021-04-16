@@ -49,8 +49,9 @@ export default function Router (props: Props)  {
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
 
-    return ((isIE <= 11 && isIE !== false) ? <BrowserList /> :
-        <Switch>
+    return isIE
+        ? <BrowserList />
+        : <Switch>
             <Route
                 exact
                 path="/"
@@ -192,6 +193,5 @@ export default function Router (props: Props)  {
                 </Layout>
             </Route>
             <Route render={() => <Home />} />
-        </Switch>
-    );
+        </Switch>;
 }

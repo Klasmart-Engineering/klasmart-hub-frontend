@@ -1,6 +1,7 @@
 import NavigationMenuList from "./NavigationMenuList";
 import OrganizationMenuList from "./OrganizationMenuList";
 import OrganizationSwitcher from "./OrganizationSwitcher";
+import { MOBILE_WIDTHS } from "@/layout";
 import {
     createStyles,
     Drawer,
@@ -55,19 +56,17 @@ export default function SideNavigationDrawer (props: Props) {
     const { open, onClose } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const [ openDrawer, setOpenDrawer ] = useState<boolean | undefined>(open);
+    const [ drawerOpen, setDrawerOpen ] = useState(open);
     const [ showOrganizations, setShowOrganizations ] = useState(false);
     const width = useWidth();
 
+    const anchor = theme.direction === `rtl` ? `right` : `left`;
+
     const handleClose = () => {
-        const open = openDrawer === false ? true : false;
-        setOpenDrawer(open);
+        const open = !drawerOpen;
+        setDrawerOpen(open);
         onClose(open);
     };
-
-    useEffect(() => {
-        setOpenDrawer(open);
-    }, [ open ]);
 
     const drawer = (
         <>
@@ -78,7 +77,7 @@ export default function SideNavigationDrawer (props: Props) {
             <div
                 className={classes.menuContainer}
                 onClick={() => {
-                    if (![ `xs`, `sm` ].includes(width)) return;
+                    if (!MOBILE_WIDTHS.includes(width)) return;
                     onClose(false);
                 }}>
                 {showOrganizations
@@ -89,17 +88,21 @@ export default function SideNavigationDrawer (props: Props) {
         </>
     );
 
+    useEffect(() => {
+        setDrawerOpen(open);
+    }, [ open ]);
+
     return (
         <nav
             className={clsx(classes.drawer, {
-                [classes.drawerShift]: openDrawer !== false,
+                [classes.drawerShift]: drawerOpen,
             })}
         >
-            {[ `xs`, `sm` ].includes(width)
+            {MOBILE_WIDTHS.includes(width)
                 ? <Drawer
                     variant="temporary"
-                    anchor={theme.direction === `rtl` ? `right` : `left`}
-                    open={openDrawer !== false}
+                    open={drawerOpen}
+                    anchor={anchor}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
@@ -111,11 +114,12 @@ export default function SideNavigationDrawer (props: Props) {
                     {drawer}
                 </Drawer>
                 : <Drawer
-                    open={openDrawer !== false}
+                    variant="persistent"
+                    open={drawerOpen}
+                    anchor={anchor}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
-                    variant="persistent"
                 >
                     {drawer}
                 </Drawer>

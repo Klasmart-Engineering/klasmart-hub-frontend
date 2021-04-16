@@ -6,9 +6,12 @@ import {
     makeStyles,
     Theme,
 } from "@material-ui/core/styles";
+import { useWidth } from "kidsloop-px";
 import React,
-{ useState } from "react";
-import { withOrientationChange } from "react-device-detect";
+{
+    useEffect,
+    useState,
+} from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -27,13 +30,29 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
+export const MOBILE_WIDTHS = [ `xs`, `sm` ];
+
 interface Props {
 }
 
-const ref = React.createRef<HTMLDivElement>();
-const Layout = (props: Props) => {
+export default function Layout (props: Props) {
     const classes = useStyles();
     const [ navigationDrawerOpen, setNavigationDrawerOpen ] = useState<boolean>();
+    const width = useWidth();
+    const [ windowWidth, setWindowWidth ] = useState(width);
+
+    const handleMenuButtonClick = () => {
+        setNavigationDrawerOpen((open) => open === undefined ? MOBILE_WIDTHS.includes(width) : !open);
+    };
+
+    useEffect(() => {
+        if (MOBILE_WIDTHS.includes(width) === MOBILE_WIDTHS.includes(windowWidth)) {
+            setWindowWidth(width);
+            return;
+        }
+        setWindowWidth(width);
+        setNavigationDrawerOpen(!MOBILE_WIDTHS.includes(width));
+    }, [ width ]);
 
     return (
         <div className={classes.root}>
@@ -44,17 +63,12 @@ const Layout = (props: Props) => {
             <div className={classes.navMainContainer}>
                 <Toolbar
                     sideNavigationDrawerOpen={navigationDrawerOpen}
-                    onMenuButtonClick={() => setNavigationDrawerOpen((open) => open === false ? true : false)}
+                    onMenuButtonClick={handleMenuButtonClick}
                 />
-                <main
-                    ref={ref}
-                    className={classes.content}
-                >
+                <main className={classes.content}>
                     <Router />
                 </main>
             </div>
         </div>
     );
-};
-
-export default withOrientationChange(Layout);
+}
