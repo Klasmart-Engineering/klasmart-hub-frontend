@@ -2,6 +2,7 @@ import { DELETE_SCHOOL } from "@/operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "@/operations/mutations/editSchool";
 import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms";
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
+import { UPLOAD_SCHOOLS_CSV } from "@/operations/mutations/uploadSchoolsCsv";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     Organization,
@@ -83,4 +84,18 @@ interface GetSchoolsResponse {
 
 export const useGetSchools = (options?: QueryHookOptions<GetSchoolsResponse, GetSchoolsRequest>) => {
     return useQuery<GetSchoolsResponse, GetSchoolsRequest>(GET_SCHOOLS_FROM_ORGANIZATION, options);
+};
+
+interface UploadSchoolsCsvResponse {
+    filename?: string;
+    minetype?: string;
+    encoding?: string;
+}
+
+interface UploadSchoolsCsvRequest {
+    file: File;
+}
+
+export const useUploadSchoolsCsv = () => {
+    return useMutation<UploadSchoolsCsvResponse, UploadSchoolsCsvRequest>(UPLOAD_SCHOOLS_CSV);
 };

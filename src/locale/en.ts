@@ -976,5 +976,7 @@ const messages: Record<string, string> = {
     createUser_uploadCsvTitle: `Upload Users CSV`,
     csvDialog_addCsvFile: `Click or drag and drop CSV file here.`,
     csvDialog_closeDialog: `Close`,
+    createClass_uploadCsvTitle: `Upload Classes CSV`,
+    createSchools_uploadCsvTitle: `Upload Schools CSV`,
 };
 export default messages;

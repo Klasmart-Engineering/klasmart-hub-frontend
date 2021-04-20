@@ -1,7 +1,9 @@
 import {
     useDeleteSchool,
     useGetSchools,
+    useUploadSchoolsCsv,
 } from "@/api/schools";
+import { CsvUploadDialog } from "@/components/CsvUploadDialog/CsvUploadDialog";
 import CreateSchoolDialog from "@/components/School/Dialog/Create";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -20,6 +22,7 @@ import {
 } from "@material-ui/core";
 import {
     Add as AddIcon,
+    CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@material-ui/icons";
@@ -68,6 +71,8 @@ interface Props {}
  */
 export default function SchoolTable (props: Props) {
     const classes = useStyles();
+    const [ uploadCsv ] = useUploadSchoolsCsv();
+    const [ openSchoolsUpload, setOpenSchoolsUpload ] = useState<boolean>(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { required, equals } = useValidations();
@@ -192,6 +197,34 @@ export default function SchoolTable (props: Props) {
         }
     };
 
+    const submitCsv = async (csv: File) => {
+        if (!csv) return;
+
+        try {
+            await uploadCsv({
+                variables: {
+                    file: csv,
+                },
+            });
+
+            enqueueSnackbar(intl.formatMessage({
+                id: `schools_editSuccess`,
+            }), {
+                variant: `success`,
+            });
+
+            await refetch();
+        } catch (e) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classSaveError`,
+            }), {
+                variant: `error`,
+            });
+
+            throw e;
+        }
+    };
+
     return (
         <>
             <Paper className={classes.root}>
@@ -210,6 +243,16 @@ export default function SchoolTable (props: Props) {
                         disabled: !canCreate,
                         onClick: () => setOpenCreateDialog(true),
                     }}
+                    secondaryActions={[
+                        {
+                            label: `Upload CSV`,
+                            icon: CloudIcon,
+                            disabled: !canCreate,
+                            onClick: () => {
+                                setOpenSchoolsUpload(true);
+                            },
+                        },
+                    ]}
                     rowActions={(row) => [
                         {
                             label: intl.formatMessage({
@@ -262,6 +305,15 @@ export default function SchoolTable (props: Props) {
                     setOpenEditDialog(false);
                     if (value) refetch();
                 }}
+            />
+
+            <CsvUploadDialog
+                open={openSchoolsUpload}
+                setOpenCsvUpload={setOpenSchoolsUpload}
+                submitCsv={submitCsv}
+                title={intl.formatMessage({
+                    id: `createSchools_uploadCsvTitle`,
+                })}
             />
         </>
     );

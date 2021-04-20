@@ -6,6 +6,7 @@ import { EDIT_CLASS_PROGRAMS } from "@/operations/mutations/editClassPrograms";
 import { EDIT_CLASS_SUBJECTS } from "@/operations/mutations/editClassSubjects";
 import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
+import { UPLOAD_CLASSES_CSV } from "@/operations/mutations/uploadClassesCsv";
 import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
 import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
@@ -171,4 +172,18 @@ interface GetUserSchoolMembershipsResponse {
 
 export const useGetUserSchoolMemberships = (options?: QueryHookOptions<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>) => {
     return useQuery<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>(GET_USER_SCHOOL_MEMBERSHIPS, options);
+};
+
+interface UploadClassesCsvResponse {
+    filename?: string;
+    minetype?: string;
+    encoding?: string;
+}
+
+interface UploadClassesCsvRequest {
+    file: File;
+}
+
+export const useUploadClassesCsv = () => {
+    return useMutation<UploadClassesCsvResponse, UploadClassesCsvRequest>(UPLOAD_CLASSES_CSV);
 };
