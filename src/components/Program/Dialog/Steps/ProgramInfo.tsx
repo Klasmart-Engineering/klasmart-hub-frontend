@@ -54,17 +54,18 @@ export default function ProgramInfoStep (props: TabContent) {
     const [ programName, setProgramName ] = useState(value.name ?? ``);
     const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
     const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
-    const { data: ageRangesData } = useGetAllAgeRanges({
+    const { data: ageRangesData, loading: ageRangesLoading } = useGetAllAgeRanges({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
-    const { data: gradesData } = useGetAllGrades({
+    const { data: gradesData, loading: gradesLoading } = useGetAllGrades({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
     });
 
+    const [ loaded, setLoaded ] = useState<boolean>(false);
     const allAgeRanges = ageRangesData?.organization.ageRanges.filter(isActive) ?? [];
     const nonSpecifiedAgeRange = allAgeRanges.find(isNonSpecified);
     const systemAgeRanges = allAgeRanges.filter(isOtherSystemValue);
@@ -76,6 +77,9 @@ export default function ProgramInfoStep (props: TabContent) {
     const customGrades = allGrades.filter(isCustomValue);
 
     useEffect(() => {
+        // Removing this check will make the select values dance when updated (unstable)
+        if (ageRangesLoading || gradesLoading || loaded) return;
+
         const {
             name,
             grades,
@@ -84,7 +88,12 @@ export default function ProgramInfoStep (props: TabContent) {
         setProgramName(name ?? ``);
         setGradeIds(grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
         setAgeRanges(age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
-    }, [ value ]);
+        setLoaded(true);
+    }, [
+        value,
+        ageRangesLoading,
+        gradesLoading,
+    ]);
 
     useEffect(() => {
         onChange?.({
