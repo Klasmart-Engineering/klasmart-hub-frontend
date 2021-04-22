@@ -310,6 +310,22 @@ export default function ClassesTable (props: Props) {
             ),
         },
         {
+            id: `schoolNames`,
+            label: intl.formatMessage({
+                id: `classes_schoolsNameLabel`,
+            }),
+            disableSearch: disabled,
+            render: (row) => <>
+                {row.schoolNames.map((school, i) => (
+                    <Chip
+                        key={`school-${i}`}
+                        label={school}
+                        className={classes.chip}
+                    />
+                ))}
+            </>,
+        },
+        {
             id: `ageRanges`,
             label: intl.formatMessage({
                 id: `schools_ageRangesLabel`,
