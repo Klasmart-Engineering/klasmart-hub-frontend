@@ -41,7 +41,7 @@ import {
     utils,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { startCase } from "lodash";
+import { escapeRegExp } from "lodash";
 import React,
 {
     useEffect,
@@ -151,27 +151,46 @@ export default function UserTable (props: Props) {
         setRows(rows ?? []);
     }, [ memberships ]);
 
+    const statusTranslations: { [key: string]: string } = {
+        active: `users_activeStatus`,
+        inactive: `users_inactiveStatus`,
+    };
+
+    const getCustomRoleName = (roleName: string) => {
+        const translatedRoleName = roleNameTranslations[roleName];
+        if (!translatedRoleName) return roleName;
+        return intl.formatMessage({
+            id: translatedRoleName,
+        });
+    };
+
+    const getCustomStatus = (status: string) => {
+        const translatedStatus = statusTranslations[status];
+        if (!translatedStatus) return status;
+        return intl.formatMessage({
+            id: translatedStatus,
+        });
+    };
+
     const roles = dataRoles?.organization?.roles
         ?.filter((role) => role.status === Status.ACTIVE)
         .map((role) => role.role_name)
         .filter((roleName): roleName is string => !!roleName)
-        .sort(sortRoleNames)
-        .map((roleName) => roleNameTranslations[roleName] ? intl.formatMessage({
-            id: roleNameTranslations[roleName],
-        }) : roleName) ?? [];
+        .sort(sortRoleNames) ?? [];
 
     const columns: TableColumn<UserRow>[] = [
         {
             id: `id`,
             label: `ID`,
-            hidden: true,
+            secret: true,
         },
         {
             id: `name`,
+            persistent: true,
             label: intl.formatMessage({
                 id: `users_name`,
             }),
-            render: (row) =>
+            render: (row) => (
                 <Box
                     display="flex"
                     flexDirection="row"
@@ -191,7 +210,8 @@ export default function UserTable (props: Props) {
                         </Typography>
                     </Avatar>
                     <span>{row.name}</span>
-                </Box>,
+                </Box>
+            ),
         },
         {
             id: `roleNames`,
@@ -199,8 +219,17 @@ export default function UserTable (props: Props) {
                 id: `users_organizationRoles`,
             }),
             groups: roles.map((role) => ({
-                text: role,
+                text: getCustomRoleName(role),
+                value: role,
             })),
+            search: (row: string[], searchValue: string) => {
+                const values = Array.isArray(row) ? row : [ row ];
+                const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
+                return values.some((value) => {
+                    const result = getCustomRoleName(value).match(regexp);
+                    return !!result;
+                });
+            },
             sort: (a: string[], b: string[]) => {
                 const highestRoleA = getHighestRole(a);
                 const highestRoleB = getHighestRole(b);
@@ -214,7 +243,7 @@ export default function UserTable (props: Props) {
                     noWrap
                     variant="body2"
                 >
-                    {roleName}
+                    {getCustomRoleName(roleName)}
                 </Typography>),
         },
         {
@@ -222,7 +251,6 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_school`,
             }),
-            groupable: true,
             render: (row) => row.schoolNames?.map((schoolName, i) =>
                 <Typography
                     key={`school-${i}`}
@@ -243,7 +271,18 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            groupText: (value: string) => startCase(value),
+            groups: [ `active`, `inactive` ].map((status) => ({
+                text: getCustomStatus(status),
+                value: status,
+            })),
+            search: (row: string[], searchValue: string) => {
+                const values = Array.isArray(row) ? row : [ row ];
+                const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
+                return values.some((value) => {
+                    const result = getCustomStatus(value).match(regexp);
+                    return !!result;
+                });
+            },
             render: (row) => <span
                 className={clsx(classes.statusText, {
                     [classes.activeColor]: row.status === Status.ACTIVE,

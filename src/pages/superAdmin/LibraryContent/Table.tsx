@@ -115,12 +115,6 @@ const getPublishStatusColor = (status: PublishStatus, classes: Record<"disabledC
     }
 };
 
-enum ContentGroup {
-    FOLDER = `Folder`,
-    CONTENT = `Lesson Material / Plan`,
-    UNKNOWN = `Unknown`,
-}
-
 interface ContentRow {
     id: string;
     name: string;
@@ -201,7 +195,7 @@ export default function LibraryTable (props: Props) {
             publishStatus: item.publish_status,
             description: item.description,
             name: item.name,
-            keywords: item.keywords.split(`,`).filter((keyword) => !!keyword),
+            keywords: item.keywords.filter((keyword) => !!keyword),
             updatedAt: new Date(item.update_at * 1000),
             itemCount: item.items_count,
             contentType: item.content_type,
@@ -282,20 +276,24 @@ export default function LibraryTable (props: Props) {
             label: intl.formatMessage({
                 id: `superAdmin_contentTypeLabel`,
             }),
-            groupText: (rowValue) => {
-                switch (rowValue) {
-                case ContentType.FOLDER: return ContentGroup.FOLDER;
-                case ContentType.MATERIAL:
-                case ContentType.PLAN: return ContentGroup.CONTENT;
-                }
-                return ContentGroup.UNKNOWN;
-            },
             groups: [
                 {
-                    text: ContentGroup.FOLDER,
+                    text: intl.formatMessage({
+                        id: `superAdmin_libraryGroupsFolder`,
+                    }),
+                    value: ContentType.FOLDER,
                 },
                 {
-                    text: ContentGroup.CONTENT,
+                    text: intl.formatMessage({
+                        id: `superAdmin_libraryGroupsLessonPlan`,
+                    }),
+                    value: ContentType.PLAN,
+                },
+                {
+                    text: intl.formatMessage({
+                        id: `superAdmin_libraryGroupsLessonMaterial`,
+                    }),
+                    value: ContentType.MATERIAL,
                 },
             ],
             sort: (a: ContentType, b: ContentType) => {

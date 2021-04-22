@@ -12,7 +12,7 @@ export interface PublishedContentItem {
     name: string;
     content_type: number;
     description: string;
-    keywords: string;
+    keywords: string[];
     author: string;
     items_count: number;
     publish_status: PublishStatus;

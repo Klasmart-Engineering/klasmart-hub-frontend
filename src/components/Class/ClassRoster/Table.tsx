@@ -149,6 +149,7 @@ export default function ClassRoster (props: Props) {
             }),
             groups: roles.map((role) => ({
                 text: role,
+                value: role,
             })),
         },
         {

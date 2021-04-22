@@ -1,5 +1,4 @@
 import {
-    ClassUser,
     useAddUsersToClass,
     useGetClassRosterEligibleUsers,
 } from "@/api/classRoster";
@@ -112,6 +111,7 @@ export default function SchoolRoster (props: Props) {
             }),
             groups: roles.map((role) => ({
                 text: role,
+                value: role,
             })),
         },
         {

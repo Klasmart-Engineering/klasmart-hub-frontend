@@ -980,5 +980,9 @@ const messages: Record<string, string> = {
     createSchools_uploadCsvTitle: `Upload Schools CSV`,
 
     classes_schoolsNameLabel: `Schools`,
+
+    superAdmin_libraryGroupsFolder: `Folder`,
+    superAdmin_libraryGroupsLessonMaterial: `Lesson Material`,
+    superAdmin_libraryGroupsLessonPlan: `Lesson Plan`,
 };
 export default messages;

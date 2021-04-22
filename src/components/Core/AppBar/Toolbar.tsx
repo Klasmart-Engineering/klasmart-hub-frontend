@@ -112,7 +112,7 @@ export default function Toolbar (props: Props) {
         ?? [];
     };
 
-    const tabs = getTabs(location.pathname).map((tab: { text: string; value: string }) => ({
+    const tabs = getTabs(location.pathname).map((tab) => ({
         ...tab,
         text: intl.formatMessage({
             id: `navbar_${tab.text.split(` `).join(``)}Tab`,
