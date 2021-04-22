@@ -8,6 +8,7 @@ import {
     OrganizationOwnership,
     Status,
 } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
 import { removeOrganizationMembership } from "@/utils/organizationMemberships";
 import { getTableLocalization } from "@/utils/table";
@@ -80,7 +81,8 @@ export default function MyOrganizationTable (props: Props) {
     const [ deleteOrganization ] = useDeleteOrganizationOwnership();
     const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ rows, setRows ] = useState<MyOrganizationRow[]>([]);
-
+    const canCreate = usePermission(`create_own_organization_10220`);
+    const canCreateAdmin = usePermission(`create_an_organization_account_1`);
     const organizationOwnerships = data?.me?.organization_ownerships ?? [];
 
     useEffect(() => {
@@ -238,7 +240,7 @@ export default function MyOrganizationTable (props: Props) {
                         }),
                         icon: AddIcon,
                         onClick: () => history.push(`/admin/organizations/create`),
-                        disabled: organizationOwnerships.length > 0,
+                        disabled: organizationOwnerships.length > 0 || (!canCreate && !canCreateAdmin),
                     }}
                     rowActions={(row) => [
                         {
