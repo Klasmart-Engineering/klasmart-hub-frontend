@@ -47,5 +47,8 @@ export const useValidations = () => {
         emailOrPhone: (errorMessage?: string) => validations.emailOrPhone(errorMessage ?? intl.formatMessage({
             id: `genericValidations_emailInvalid`,
         })),
+        notEquals: (value: string, errorMessage?: string) => validations.notEquals(value, errorMessage ?? intl.formatMessage({
+            id: `genericValidations_notEquals`,
+        })),
     };
 };

@@ -172,7 +172,13 @@ export default function UserDialogForm (props: Props) {
         emailOrPhone,
         email,
         phone,
+        letternumeric,
+        notEquals,
     } = useValidations();
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
 
     useEffect(() => {
         onValidation([
@@ -319,6 +325,12 @@ export default function UserDialogForm (props: Props) {
                     InputLabelProps={{
                         shrink: true,
                     }}
+                    InputProps={{
+                        inputProps: {
+                            min: `${currentYear - 100}-${currentMonth}`,
+                            max: `${currentYear}-${currentMonth}`,
+                        },
+                    }}
                     onChange={setBirthday}
                 />
                 <TextField
@@ -363,7 +375,11 @@ export default function UserDialogForm (props: Props) {
                         label="Please specify gender"
                         variant="outlined"
                         type="text"
-                        validations={[ min(3), max(16) ]}
+                        validations={[
+                            min(3),
+                            max(16),
+                            letternumeric(),
+                        ]}
                         onChange={setGender}
                         onValidate={setGenderIsValid}
                     />
@@ -423,7 +439,16 @@ export default function UserDialogForm (props: Props) {
                             variant="outlined"
                             label="Alternative Email"
                             type="text"
-                            validations={[ email() ]}
+                            validations={[
+                                email(),
+                                ...(contactInfo
+                                    ? [
+                                        notEquals(contactInfo, intl.formatMessage({
+                                            id: `users_alternativeEmailValidation`,
+                                        })),
+                                    ]
+                                    : []),
+                            ]}
                             onChange={setAlternativeEmail}
                             onValidate={setAlternativeEmailIsValid}
                         />

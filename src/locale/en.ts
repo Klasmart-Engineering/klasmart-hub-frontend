@@ -994,5 +994,7 @@ const messages: Record<string, string> = {
     addOrganization_imageFormat: `This image file should be in JPG or PNG format.`,
     addOrganization_alternateTextLabel: `Alternate Text`,
     addOrganization_alternateText: `The alternate text will be displayed when your image fails to load.`,
+    users_alternativeEmailValidation: `Primary contact and Alternative Email should not be equals`,
+    genericValidations_notEquals: `The values should not be equals`,
 };
 export default messages;
