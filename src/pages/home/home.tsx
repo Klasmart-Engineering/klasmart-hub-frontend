@@ -10,6 +10,7 @@ import YourTeachers from "./card/yourTeachers";
 import ContentLayout from "./featuredContent/contentLayout";
 import { useRestAPI } from "@/api/restapi";
 import { userIdVar } from "@/cache";
+import Card  from '@/components/styled/card';
 import { GET_USER } from "@/operations/queries/getUser";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { User } from "@/types/graphQL";
@@ -25,7 +26,6 @@ import {
     CircularProgress,
     Container,
     Grid,
-    Paper,
 } from "@material-ui/core";
 import {
     createStyles,
@@ -77,12 +77,6 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingTop: theme.spacing(2),
         },
     }));
-
-function Card ({ children }: { children: React.ReactNode }) {
-    const classes = useStyles();
-
-    return <Paper className={classes.paperContainer}>{children}</Paper>;
-}
 
 export default function Home () {
     const classes = useStyles();

@@ -1,4 +1,3 @@
-import CreateOrganizationDialog from "../../styled/navbar/settings/createOrganization";
 import UserProfileSwitcher from "./UserProfileSwitcher";
 import StyledButton from "@/components/styled/button";
 import {
@@ -75,7 +74,6 @@ export default function UserProfileMenu (props: Props) {
     const { user } = props;
     const classes = useStyles();
 
-    const currentOrganization = useCurrentOrganization();
     const [ , setOrganizationStack ] = useOrganizationStack();
 
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
@@ -162,11 +160,6 @@ export default function UserProfileMenu (props: Props) {
                         {user?.email ?? user?.phone}
                     </Typography>
                 </Box>
-                {/* {!currentOrganization && (
-                    <ListItem>
-                        <CreateOrganizationDialog />
-                    </ListItem>
-                )} */}
                 <UserProfileSwitcher />
                 <Divider />
                 <List>

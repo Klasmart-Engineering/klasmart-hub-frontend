@@ -976,6 +976,7 @@ const messages: Record<string, string> = {
     createUser_uploadCsvTitle: `Upload Users CSV`,
     csvDialog_addCsvFile: `Click or drag and drop CSV file here.`,
     csvDialog_closeDialog: `Close`,
+
     createClass_uploadCsvTitle: `Upload Classes CSV`,
     createSchools_uploadCsvTitle: `Upload Schools CSV`,
 
@@ -984,5 +985,14 @@ const messages: Record<string, string> = {
     superAdmin_libraryGroupsFolder: `Folder`,
     superAdmin_libraryGroupsLessonMaterial: `Lesson Material`,
     superAdmin_libraryGroupsLessonPlan: `Lesson Plan`,
+    addOrganization_organizationInfo: `Organization Info`,
+    addOrganization_personalization: `Personalization`,
+    addOrganization_contactInfo: `Contact Info`,
+    addOrganization_addressLabel1: `Address Line 1`,
+    addOrganization_addressLabel2: `Address Line 2`,
+    addOrganization_logo: `Organization Logo`,
+    addOrganization_imageFormat: `This image file should be in JPG or PNG format.`,
+    addOrganization_alternateTextLabel: `Alternate Text`,
+    addOrganization_alternateText: `The alternate text will be displayed when your image fails to load.`,
 };
 export default messages;

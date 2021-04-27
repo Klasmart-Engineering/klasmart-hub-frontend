@@ -115,14 +115,15 @@ export interface SchoolMembership {
 
 export interface Organization {
     organization_id: string;
-    organization_name?: string | null;
+    organization_name: string;
     status?: Status | null;
     address1?: string | null;
+    address2?: string | null;
     shortCode?: string | null;
     phone?: string | null;
     roles?: Role[] | null;
     students?: Student[] | null;
-    owner?: User | null;
+    primary_contact?: User | null;
     classes?: Class[] | null;
     schools?: School[] | null;
     memberships?: OrganizationMembership[] | null;
@@ -134,6 +135,9 @@ export interface Organization {
     createClass?: Class | null;
     categories?: Category[] | null;
     subcategories?: Subcategory[] | null;
+    color?: string | null;
+    alternateText?: string | null;
+    organizationLogo?: File | null;
 }
 
 export interface Role {

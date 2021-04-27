@@ -1,9 +1,7 @@
-import CreateOrganizationDialog from "../../styled/navbar/settings/createOrganization";
 import UserProfileMenu from "./UserProfileMenu";
 import { useGetUser } from "@/api/users";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import { userIdVar } from "@/cache";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     AppBar,
@@ -78,7 +76,6 @@ export default function Toolbar (props: Props) {
     const location = useLocation();
     const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
-    const currentOrganization = useCurrentOrganization();
     const userId = useReactiveVar(userIdVar);
     const {
         data: userData,
@@ -165,7 +162,6 @@ export default function Toolbar (props: Props) {
                         display="flex"
                         order={2}
                     >
-                        {/* {!currentOrganization && <CreateOrganizationDialog />} */}
                         <UserProfileMenu user={userData?.user} />
                     </Box>
                 </Grid>

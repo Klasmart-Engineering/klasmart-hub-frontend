@@ -2,6 +2,7 @@ import { ADD_USER_TO_ORGANIZATION } from "@/operations/mutations/addUserToOrgani
 import { CREATE_ORGANIZATION } from "@/operations/mutations/createOrganization";
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
+import { SAVE_ORGANIZATION } from "@/operations/mutations/organization";
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
@@ -18,9 +19,10 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
+import { stringify } from "query-string";
 
 interface GetOrganizationRequest {
-    organization_id: string;
+    organization_id?: string;
 }
 
 interface GetOrganizationResponse {
@@ -123,4 +125,20 @@ interface AddUserToOrganizationResponse {
 
 export const useAddUserToOrganization = (options?: MutationHookOptions<AddUserToOrganizationResponse, AddUserToOrganizationRequest>) => {
     return useMutation<AddUserToOrganizationResponse, AddUserToOrganizationRequest>(ADD_USER_TO_ORGANIZATION, options);
+};
+interface SaveOrganizationRequest {
+    organization_id: string | undefined;
+    organization_name: string;
+    phone: string;
+    shortCode: string;
+    address1: string;
+    address2: string | null;
+}
+
+interface SaveOrganizationResponse {
+    organization: Organization;
+}
+
+export const useSaveOrganization = (options?: MutationHookOptions<SaveOrganizationResponse, SaveOrganizationRequest>) => {
+    return useMutation<SaveOrganizationResponse, SaveOrganizationRequest>(SAVE_ORGANIZATION, options);
 };

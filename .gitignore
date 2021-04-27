@@ -3,5 +3,6 @@
 **/webpack-stats.html
 .idea/
 **/.DS_Store
+.vscode
 
 .prettierrc

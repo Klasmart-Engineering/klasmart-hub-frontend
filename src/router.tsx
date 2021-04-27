@@ -2,9 +2,9 @@ import { getCNEndpoint } from "./config";
 import ClassesPage from "./pages/admin/classes";
 import Grades from "./pages/admin/grades";
 import Layout from "./pages/admin/Layout";
-import AllOrganization from "./pages/admin/Organization/AllOrganitation";
-import EditOrganization from "./pages/admin/Organization/EditOrganization";
-import Organization from "./pages/admin/Organization/Organization";
+import OrganizationsPage from "./pages/admin/organizations";
+import EditOrganizationPage from "./pages/admin/organizations/[id]/edit";
+import CreateOrganizationPage from "./pages/admin/organizations/create";
 import ProgramsPage from "./pages/admin/programs";
 import RoleTable from "./pages/admin/Role/RoleTable";
 import SchoolsPage from "./pages/admin/schools";
@@ -129,17 +129,17 @@ export default function Router (props: Props)  {
                 path="/admin/organizations/:organizationId/edit"
             >
                 <Layout>
-                    <EditOrganization />
+                    <EditOrganizationPage />
                 </Layout>
             </Route>
             <Route path="/admin/organizations/create">
                 <Layout>
-                    <Organization />
+                    <CreateOrganizationPage />
                 </Layout>
             </Route>
             <Route path="/admin/organizations">
                 <Layout>
-                    <AllOrganization />
+                    <OrganizationsPage />
                 </Layout>
             </Route>
             <Route path="/admin/users">
