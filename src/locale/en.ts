@@ -500,6 +500,7 @@ const messages: Record<string, string> = {
     roles_typeStudent: `Student`,
     roles_typeTeacher: `Teacher`,
     roles_rowsPerPageLabel: `Rows per page`,
+    roles_notEqualValidation: `That name is already been taken`,
     schools_createSchoolLabel: `Create School`,
     classes_createClassLabel: `Create Class`,
     organizations_createButton: `Create`,
@@ -719,6 +720,7 @@ const messages: Record<string, string> = {
     genericValidations_emailInvalid: `Invalid email address`,
     genericValidations_equals: `The values don't match`,
     genericValidations_alphanumeric: `The value is not alphanumeric`,
+    genericValidations_notEquals: `The values should not be equals`,
 
     grades_notSpecifiedLabel: `Not Specified`,
     grades_idLabel: `ID`,

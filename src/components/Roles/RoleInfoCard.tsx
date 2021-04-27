@@ -1,10 +1,15 @@
-import { RoleInfo } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import {
+    Role,
+    RoleInfo,
+} from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { Status } from "@/types/graphQL";
+import { useValidations } from "@/utils/validations";
 import {
     CardHeader,
     Divider,
     Grid,
     LinearProgress,
-    TextField,
 } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -13,9 +18,13 @@ import {
     makeStyles,
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import React, {
+import { TextField } from "kidsloop-px";
+import React,
+{
     Dispatch,
     SetStateAction,
+    useEffect,
+    useState,
 } from "react";
 import {
     FormattedMessage,
@@ -35,10 +44,11 @@ const useStyles = makeStyles(() =>
 
 interface Props {
     setRoleInfo: Dispatch<SetStateAction<RoleInfo>>;
+    setRoleInfoIsValid: Dispatch<SetStateAction<boolean>>;
     roleInfo: RoleInfo;
     loading: boolean;
-    nameTextHelper: (name: string) => string;
-    descriptionTextHelper: (description: string) => string;
+    roles: Role[];
+    row: RoleRow;
 }
 
 export default function RoleInfoCard (props: Props) {
@@ -46,20 +56,39 @@ export default function RoleInfoCard (props: Props) {
         roleInfo,
         setRoleInfo,
         loading,
-        nameTextHelper,
-        descriptionTextHelper,
+        setRoleInfoIsValid,
+        roles,
+        row,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
+    const [ roleNameIsValid, setRoleNameIsValid ] = useState(true);
+    const [ roleDescriptionIsValid, setRoleDescriptionIsValid ] = useState(true);
+    const {
+        required,
+        letternumeric,
+        min,
+        max,
+        notEquals,
+    } = useValidations();
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value, id } = event.target;
-
+    const handleRoleNameChange = (value: string) => {
         setRoleInfo((prevState) => ({
             ...prevState,
-            [id]: value,
+            name: value,
         }));
     };
+
+    const handleRoleDescriptionChange = (value: string) => {
+        setRoleInfo((prevState) => ({
+            ...prevState,
+            description: value,
+        }));
+    };
+
+    useEffect(() => {
+        setRoleInfoIsValid([ roleNameIsValid, roleDescriptionIsValid ].every((valid) => valid));
+    }, [ roleNameIsValid, roleDescriptionIsValid ]);
 
     return (
         <Card className={classes.root}>
@@ -81,9 +110,11 @@ export default function RoleInfoCard (props: Props) {
                 </CardContent>
             ) : (
                 <>
-                    <CardHeader title={intl.formatMessage({
-                        id: `rolesInfoCard_title`,
-                    })}/>
+                    <CardHeader
+                        title={intl.formatMessage({
+                            id: `rolesInfoCard_title`,
+                        })}
+                    />
                     <Divider />
                     <CardContent>
                         <form
@@ -94,35 +125,45 @@ export default function RoleInfoCard (props: Props) {
                                 xs={12}>
                                 <TextField
                                     fullWidth
-                                    error={nameTextHelper(roleInfo.name).length !== 0}
-                                    id="name"
-                                    value={roleInfo.name}
-                                    helperText={nameTextHelper(roleInfo.name)}
+                                    value={roleInfo.name ?? ``}
                                     label={intl.formatMessage({
                                         id: `rolesInfoCard_nameFieldLabel`,
                                     })}
-                                    defaultValue={roleInfo.name}
-                                    onChange={handleInputChange}
+                                    variant="standard"
+                                    type="text"
+                                    validations={[
+                                        required(),
+                                        min(2),
+                                        max(20),
+                                        letternumeric(),
+                                        ...roles
+                                            .filter((role) => role.status === Status.ACTIVE)
+                                            .filter((role) => role.role_name !== row.role)
+                                            .map((role) => notEquals(role.role_name, intl.formatMessage({
+                                                id: `roles_notEqualValidations`,
+                                            }))),
+                                    ]}
+                                    onChange={handleRoleNameChange}
+                                    onValidate={setRoleNameIsValid}
                                 />
                                 <TextField
                                     fullWidth
-                                    error={descriptionTextHelper(roleInfo.description).length !== 0}
-                                    id="description"
-                                    value={roleInfo.description}
-                                    helperText={descriptionTextHelper(roleInfo.description)}
+                                    value={roleInfo.description ?? ``}
                                     label={intl.formatMessage({
                                         id: `rolesInfoCard_descriptionFieldLabel`,
                                     })}
-                                    defaultValue={roleInfo.description}
-                                    onChange={handleInputChange}
+                                    variant="standard"
+                                    type="text"
+                                    validations={[ max(30), letternumeric() ]}
+                                    onChange={handleRoleDescriptionChange}
+                                    onValidate={setRoleDescriptionIsValid}
                                 />
                             </Grid>
                         </form>
                         <Typography
                             variant="body2"
                             color="textSecondary"
-                            component="div"
-                        >
+                            component="div">
                             <div className={classes.requiredField}>
                                 <FormattedMessage id="rolesInfoCard_requiredFieldLabel" />
                             </div>

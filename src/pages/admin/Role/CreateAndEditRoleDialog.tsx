@@ -12,8 +12,6 @@ import {
     uniquePermissions,
 } from "@/pages/admin/Role/permissionsHandler";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
-import { Status } from "@/types/graphQL";
-import { alphanumeric } from "@/utils/validations";
 import {
     createStyles,
     LinearProgress,
@@ -158,6 +156,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
         name: row.role,
         description: row.description,
     });
+    const [ roleInfoIsValid, setRoleInfoIsValid ] = useState(true);
     const [ permissionCategories, setPermissionCategories ] = useState<PermissionsCategory[]>([]);
     const [ roleId, setRoleId ] = useState(``);
     const [ roleInfoLoading, setRoleInfoLoading ] = useState(true);
@@ -208,47 +207,6 @@ export default function CreateAndEditRoleDialog (props: Props) {
     }, [ open ]);
 
     const reviewPermissions = permissionsCategoriesHandler(permissionCategories);
-
-    const roleNameTextHelper = (name: string): string => {
-        if (!name.length) return <FormattedMessage id="rolesInfoCard_roleEmpty" /> as unknown as string;
-
-        if (name.length < 2) return <FormattedMessage id="rolesInfoCard_minChar" /> as unknown as string;
-
-        if (name.length > 20) return <FormattedMessage id="rolesInfoCard_maxChar" /> as unknown as string;
-
-        if (alphanumeric(name)) return <FormattedMessage id="rolesInfoCard_alphaNumeric" /> as unknown as string;
-
-        if (roles.find((role) => role.role_name === name && role.status === Status.ACTIVE && name !== row.role)) {
-            return <FormattedMessage id="rolesInfoCard_nameTaken" /> as unknown as string;
-        }
-
-        return ``;
-    };
-
-    const roleDescriptionTextHelper = (name: string): string => {
-        if (name.length > 30) return <FormattedMessage id="rolesInfoCard_descriptionMaxChar" /> as unknown as string;
-
-        if (alphanumeric(name)) return <FormattedMessage id="rolesInfoCard_descriptionAlphanumeric" /> as unknown as string;
-        return ``;
-    };
-
-    const roleNameValidations = (name: string): boolean => {
-        return !(!name.length ||
-            name.length < 2 ||
-            name.length > 20 ||
-            alphanumeric(name) ||
-            roles.find((role) => role.role_name === name && role.status === Status.ACTIVE && name !== row.role));
-    };
-
-    const roleDescriptionValidations = (name: string): boolean => {
-        return !(name.length > 30 || alphanumeric(name));
-    };
-
-    const roleInfoStepIsValid = (): boolean => {
-        return (
-            roleNameValidations(roleInfo.name) && roleDescriptionValidations(roleInfo.description)
-        );
-    };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -322,9 +280,10 @@ export default function CreateAndEditRoleDialog (props: Props) {
                 <RoleInfoCard
                     roleInfo={roleInfo}
                     setRoleInfo={setRoleInfo}
+                    setRoleInfoIsValid={setRoleInfoIsValid}
+                    roles={roles}
+                    row={row}
                     loading={roleInfoLoading}
-                    nameTextHelper={roleNameTextHelper}
-                    descriptionTextHelper={roleDescriptionTextHelper}
                 />
             );
         case 1:
@@ -446,7 +405,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
                 handleBack={handleBack}
                 handleNext={handleNext}
                 handleReset={handleReset}
-                roleInfoStepIsValid={roleInfoStepIsValid()}
+                roleInfoStepIsValid={roleInfoIsValid}
                 permissionsStepIsValid={permissionsStepIsValid}
             />
             <div className={classes.stepper}>
