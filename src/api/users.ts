@@ -44,10 +44,12 @@ export async function switchUser (userId: string, retry = true): Promise<boolean
             body: JSON.stringify({
                 user_id: userId,
             }),
+            credentials: `include`,
             headers,
             method: `POST`,
         });
         await response.text();
+        window.location.reload(); // TODO: Dirty fix - remove and improve handling in the future
         return response.ok;
     } catch(e) {
         if(!retry) { return false; }
