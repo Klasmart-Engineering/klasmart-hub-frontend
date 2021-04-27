@@ -6,7 +6,6 @@ import {
 import {
     createStyles,
     makeStyles,
-    Theme,
     useTheme,
 } from "@material-ui/core/styles";
 import React,
@@ -16,20 +15,19 @@ import {
     FormattedMessage,
 } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        welcomeTitle: {
-            fontWeight: `bold`,
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(4),
-        },
-        welcomeSubTitle: {
-            color: theme.palette.grey[500],
-            fontSize: `1em`,
-            marginBottom: 0,
-            marginTop: theme.spacing(1),
-        },
-    }));
+const useStyles = makeStyles((theme) => createStyles({
+    welcomeTitle: {
+        fontWeight: `bold`,
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(4),
+    },
+    welcomeSubTitle: {
+        color: theme.palette.grey[500],
+        fontSize: `1em`,
+        marginBottom: 0,
+        marginTop: theme.spacing(1),
+    },
+}));
 
 interface Props {
     user?: User | null;

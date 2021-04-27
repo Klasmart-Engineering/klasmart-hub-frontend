@@ -1,5 +1,5 @@
-import CenterAlignChildren from "../../../components/centerAlignChildren";
-import StyledButtonGroup from "../../../components/styled/buttonGroup";
+import CenterAlignChildren from "../centerAlignChildren";
+import StyledButtonGroup from "../styled/buttonGroup";
 import { FeaturedContentData } from "./contentLayout";
 import { getLiveEndpoint } from "@/config";
 import Container from "@material-ui/core/Container";
@@ -8,87 +8,74 @@ import Hidden from "@material-ui/core/Hidden";
 import {
     createStyles,
     makeStyles,
-    Theme,
     useTheme,
-    withStyles,
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import React, {
-    useEffect,
-    useState,
-} from "react";
-import { FormattedMessage } from "react-intl";
+import React from "react";
 import { v4 as uuid } from "uuid";
 
 const classId = uuid().substr(0, 5);
 
-interface LessonPlanData {
-    id: string;
-    title: string;
-    data?: any;
-}
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        ageBox: {
-            border: `1px solid white`,
-            margin: theme.spacing(0, 1),
-            overflow: `hidden`,
-            padding: theme.spacing(0, 1),
-            textOverflow: `ellipsis`,
-        },
-        contentInfo: {
-            borderRadius: 12,
+const useStyles = makeStyles((theme) => createStyles({
+    ageBox: {
+        border: `1px solid white`,
+        margin: theme.spacing(0, 1),
+        overflow: `hidden`,
+        padding: theme.spacing(0, 1),
+        textOverflow: `ellipsis`,
+    },
+    contentInfo: {
+        borderRadius: 12,
+        color: `white`,
+        height: 350,
+        paddingBottom: theme.spacing(3),
+        // paddingLeft:  theme.spacing(5),
+        paddingTop: theme.spacing(3),
+        zIndex: 10,
+        [theme.breakpoints.down(`md`)]: {
+            backgroundImage: `linear-gradient(to bottom, #030D1C, rgba(3, 13, 28, 0.8), transparent)`,
             color: `white`,
-            height: 350,
-            paddingBottom: theme.spacing(3),
-            // paddingLeft:  theme.spacing(5),
-            paddingTop: theme.spacing(3),
-            zIndex: 10,
-            [theme.breakpoints.down(`md`)]: {
-                backgroundImage: `linear-gradient(to bottom, #030D1C, rgba(3, 13, 28, 0.8), transparent)`,
-                color: `white`,
-                height: 600,
-            },
-            [theme.breakpoints.down(`xs`)]: {
-                height: 600,
-            },
+            height: 600,
         },
-        headerView: {
-            backgroundPosition: `center 60%`,
-            backgroundRepeat: `no-repeat`,
-            backgroundSize: `cover`,
-            borderRadius: 12,
-            height: 350,
-            [theme.breakpoints.down(`md`)]: {
-                height: `100%`,
-                minHeight: 600,
-            },
+        [theme.breakpoints.down(`xs`)]: {
+            height: 600,
         },
-        headerWebBackground: {
-            backgroundPosition: `center center`,
-            backgroundRepeat: `no-repeat`,
-            backgroundSize: `cover`,
-            borderRadius: 12,
-            boxShadow: `inset 20px 0px 2em 1em #030D1C`,
+    },
+    headerView: {
+        backgroundPosition: `center 60%`,
+        backgroundRepeat: `no-repeat`,
+        backgroundSize: `cover`,
+        borderRadius: 12,
+        height: 350,
+        [theme.breakpoints.down(`md`)]: {
+            height: `100%`,
+            minHeight: 600,
         },
-        liveButton: {
-            backgroundColor: `#ff6961`,
-            color: `white`,
-            marginRight: theme.spacing(2),
-        },
-        liveTextWrapper: {
-            backgroundColor: `#ff6961`,
-            borderRadius: 20,
-            color: `white`,
-            fontSize: `0.6em`,
-            padding: theme.spacing(0.25, 0.75),
-        },
-        select: {
-            display: `block`,
-        },
-    }));
+    },
+    headerWebBackground: {
+        backgroundPosition: `center center`,
+        backgroundRepeat: `no-repeat`,
+        backgroundSize: `cover`,
+        borderRadius: 12,
+        boxShadow: `inset 20px 0px 2em 1em #030D1C`,
+    },
+    liveButton: {
+        backgroundColor: `#ff6961`,
+        color: `white`,
+        marginRight: theme.spacing(2),
+    },
+    liveTextWrapper: {
+        backgroundColor: `#ff6961`,
+        borderRadius: 20,
+        color: `white`,
+        fontSize: `0.6em`,
+        padding: theme.spacing(0.25, 0.75),
+    },
+    select: {
+        display: `block`,
+    },
+}));
 
 interface Props {
     featuredContent: FeaturedContentData;

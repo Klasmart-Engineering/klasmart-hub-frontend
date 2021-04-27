@@ -22,7 +22,6 @@ import {
 import {
     createStyles,
     makeStyles,
-    Theme,
     useTheme,
 } from "@material-ui/core/styles";
 import jwtDecode from "jwt-decode";
@@ -40,80 +39,81 @@ import {
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        nextClassCard: {
-            borderRadius: 12,
-            backgroundColor: theme.palette.primary.light,
-            padding: theme.spacing(3, 4),
+const useStyles = makeStyles((theme) => createStyles({
+    nextClassCard: {
+        borderRadius: 12,
+        backgroundColor: theme.palette.primary.light,
+        padding: theme.spacing(3, 4),
+    },
+    nextClassCardTitle: {
+        fontSize: `2em`,
+        fontWeight: `bold`,
+        color: theme.palette.primary.main,
+        marginTop: `5`,
+        lineHeight: `1.2`,
+        marginBottom: theme.spacing(2),
+    },
+    nextClassCardTitle2: {
+        fontSize: `1em`,
+        fontWeight: `bold`,
+        textTransform: `uppercase`,
+        marginTop: 0,
+        marginBottom: 5,
+    },
+    nextClassGridDetails: {
+        [theme.breakpoints.down(`md`)]: {
+            borderTop: `1px solid ${theme.palette.grey[300]}`,
+            paddingTop: theme.spacing(3),
+            marginTop: theme.spacing(3),
         },
-        nextClassCardTitle: {
-            fontSize: `2em`,
-            fontWeight: `bold`,
-            color: theme.palette.primary.main,
-            marginTop: `5`,
-            lineHeight: `1.2`,
-            marginBottom: theme.spacing(2),
+        [theme.breakpoints.up(`lg`)]: {
+            borderLeft: `1px solid ${theme.palette.grey[300]}`,
+            paddingLeft: theme.spacing(4),
+            marginLeft: theme.spacing(4),
         },
-        nextClassCardTitle2: {
-            fontSize: `1em`,
-            fontWeight: `bold`,
-            textTransform: `uppercase`,
-            marginTop: 0,
-            marginBottom: 5,
+    },
+    liveButton: {
+        backgroundColor: theme.palette.error.main,
+        color: `white`,
+        marginLeft: theme.spacing(1),
+    },
+    warningText: {
+        color: theme.palette.error.main,
+        fontWeight: `bold`,
+    },
+    teacher: {
+        "& .singleTeacher": {
+            borderRight: `1px solid ${theme.palette.grey[300]}`,
+            paddingRight: 10,
+            marginRight: 10,
+            marginBottom: 10,
         },
-        nextClassGridDetails: {
-            [theme.breakpoints.down(`md`)]: {
-                borderTop: `1px solid ${theme.palette.grey[300]}`,
-                paddingTop: theme.spacing(3),
-                marginTop: theme.spacing(3),
-            },
-            [theme.breakpoints.up(`lg`)]: {
-                borderLeft: `1px solid ${theme.palette.grey[300]}`,
-                paddingLeft: theme.spacing(4),
-                marginLeft: theme.spacing(4),
-            },
+        "&:last-of-type .singleTeacher": {
+            borderRight: 0,
+            paddingRight: 0,
+            marginRight: 0,
+            marginBottom: 0,
         },
-        liveButton: {
-            backgroundColor: `#ff6961`,
-            color: `white`,
-            marginLeft: theme.spacing(1),
-        },
-        warningText: {
-            color: `#ff6961`,
-            fontWeight: `bold`,
-        },
-        teacher: {
-            "& .singleTeacher": {
-                borderRight: `1px solid ${theme.palette.grey[300]}`,
-                paddingRight: 10,
-                marginRight: 10,
-                marginBottom: 10,
-            },
-            "&:last-of-type .singleTeacher": {
-                borderRight: 0,
-                paddingRight: 0,
-                marginRight: 0,
-                marginBottom: 0,
-            },
-        },
-        avatar: {
-            width: theme.spacing(3),
-            height: theme.spacing(3),
-            color: `white`,
-            marginRight: theme.spacing(1),
-            fontSize: 10,
-        },
-    }));
+    },
+    avatar: {
+        width: theme.spacing(3),
+        height: theme.spacing(3),
+        color: `white`,
+        marginRight: theme.spacing(1),
+        fontSize: 10,
+    },
+}));
 
-export default function NextClass ({ schedule }: {
+interface Props {
     schedule?: SchedulePayload[];
-}) {
+}
+
+export default function NextClass (props: Props) {
+    const { schedule } = props;
     const classes = useStyles();
     const theme = useTheme();
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
-    const [ openShareLink, setOpenShareLink ] = useState(false);
 
     const currentOrganization = useCurrentOrganization();
 
@@ -128,11 +128,7 @@ export default function NextClass ({ schedule }: {
     const now = new Date().getTime() / 1000;
     const secondsBeforeClassCanStart = 900;
 
-    const {
-        data: dataClassRoster,
-        refetch,
-        loading,
-    } = useGetClassRoster({
+    const { data: dataClassRoster } = useGetClassRoster({
         variables: {
             class_id: nextClass?.class_id ?? ``,
             organization_id: organizationId,

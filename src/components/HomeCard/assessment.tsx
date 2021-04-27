@@ -14,7 +14,6 @@ import {
 import {
     createStyles,
     makeStyles,
-    Theme,
 } from "@material-ui/core/styles";
 import DonutLargeIcon from "@material-ui/icons/DonutLarge";
 import ListIcon from "@material-ui/icons/List";
@@ -30,49 +29,48 @@ import {
 } from "react-intl";
 import { PieChart } from "react-minimal-pie-chart";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        cardHead: {
-            padding: theme.spacing(1, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(1, 2),
-            },
-            borderBottom: `1px solid #e0e0e0`,
+const useStyles = makeStyles((theme) => createStyles({
+    cardHead: {
+        padding: theme.spacing(1, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(1, 2),
         },
-        cardTitle: {
-            textTransform: `uppercase`,
-            fontWeight: `bold`,
+        borderBottom: `1px solid #e0e0e0`,
+    },
+    cardTitle: {
+        textTransform: `uppercase`,
+        fontWeight: `bold`,
+    },
+    cardBody: {
+        padding: theme.spacing(2, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(2, 2),
         },
-        cardBody: {
-            padding: theme.spacing(2, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 2),
-            },
-        },
-        cardButton: {
-            background: `transparent`,
-            color: theme.palette.primary.main,
+    },
+    cardButton: {
+        background: `transparent`,
+        color: theme.palette.primary.main,
+        boxShadow: `none`,
+        "&:hover, &:active": {
+            backgroundColor: theme.palette.grey[100],
             boxShadow: `none`,
-            "&:hover, &:active": {
-                backgroundColor: theme.palette.grey[100],
-                boxShadow: `none`,
-            },
         },
-        button: {
-            backgroundColor: `#fff`,
-            color: `black`,
-            "&:hover": {
-                color: `white`,
-            },
+    },
+    button: {
+        backgroundColor: `#fff`,
+        color: `black`,
+        "&:hover": {
+            color: `white`,
         },
-        infoContainer: {
-            borderRadius: 12,
-            padding: theme.spacing(4, 5),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 2),
-            },
+    },
+    infoContainer: {
+        borderRadius: 12,
+        padding: theme.spacing(4, 5),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(2, 2),
         },
-    }));
+    },
+}));
 
 export default function Assessments () {
     const classes = useStyles();

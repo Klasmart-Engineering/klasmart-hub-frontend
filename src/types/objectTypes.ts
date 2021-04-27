@@ -37,7 +37,7 @@ export interface SchedulePayload {
     title: string;
 }
 
-export type TimeView = "day" | "work_week" | "week" | "month";
+export type TimeView = `day` | `work_week` | `week` | `month` | `year` |  `full_view`;
 
 export interface AssessmentPayload {
     total: number;

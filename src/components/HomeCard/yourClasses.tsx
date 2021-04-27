@@ -3,15 +3,13 @@ import { Class } from "@/types/graphQL";
 import {
     Box,
     Grid,
-    Paper,
     Typography,
 } from "@material-ui/core";
 import {
     createStyles,
     makeStyles,
-    Theme,
-    useTheme,
 } from "@material-ui/core/styles";
+import { Card } from "kidsloop-px";
 import { uniqBy } from "lodash";
 import React,
 {
@@ -20,48 +18,37 @@ import React,
 } from "react";
 import { FormattedMessage } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        paperContainer: {
-            borderRadius: 12,
-            border: `1px solid ${theme.palette.grey[300]}`,
-            boxShadow:
-                theme.palette.type === `dark`
-                    ? `0px 2px 4px -1px rgba(255, 255, 255, 0.25), 0px 4px 5px 0px rgba(255, 255, 255, 0.2), 0px 1px 10px 0px rgba(255, 255, 255, 0.16)`
-                    : `0px 4px 8px 0px rgba(0, 0, 0, 0.1)`,
-            padding: theme.spacing(2, 4),
-        },
-        rowTitle: {
-            textTransform: `uppercase`,
-            fontWeight: `bold`,
-            padding: theme.spacing(2, 4),
-        },
-        blocTitle: {
-            fontWeight: `bold`,
-        },
-        blocSubTitle: {
-            color: theme.palette.grey[500],
-            fontSize: `0.8em`,
-            marginBottom: theme.spacing(1),
-        },
-        cardNoResult: {
-            padding: theme.spacing(2, 4),
-            margin: theme.spacing(2, 4),
-            borderRadius: 12,
-            backgroundColor: theme.palette.primary.light,
-        },
-    }));
+const useStyles = makeStyles((theme) => createStyles({
+    paperContainer: {
+        borderRadius: 12,
+        padding: theme.spacing(2, 4),
+    },
+    rowTitle: {
+        textTransform: `uppercase`,
+        fontWeight: `bold`,
+        padding: theme.spacing(2, 4),
+    },
+    blocTitle: {
+        fontWeight: `bold`,
+    },
+    blocSubTitle: {
+        color: theme.palette.grey[500],
+        fontSize: `0.8em`,
+        marginBottom: theme.spacing(1),
+    },
+    cardNoResult: {
+        padding: theme.spacing(2, 4),
+        margin: theme.spacing(2, 4),
+        borderRadius: 12,
+        backgroundColor: theme.palette.primary.light,
+    },
+}));
 
 export default function YourClasses () {
     const classes = useStyles();
-    const theme = useTheme();
     const [ userClasses, setUserClasses ] = useState<Class[]>();
 
-    const {
-        data: dataClasses,
-        refetch,
-        loading,
-    } = useGetMyClasses();
+    const { data: dataClasses } = useGetMyClasses();
 
     useEffect(() => {
         if (dataClasses) {
@@ -94,7 +81,7 @@ export default function YourClasses () {
                                 item
                                 xs={6}
                                 lg={3}>
-                                <Card>
+                                <Card className={classes.paperContainer}>
                                     <Box>
                                         <Typography className={classes.blocSubTitle}>
                                             {userClass.schools?.map((school) => school.school_name).join(`, `)}
@@ -122,10 +109,4 @@ export default function YourClasses () {
             </Box>
         </Box>
     );
-}
-
-function Card ({ children }: { children: React.ReactNode }) {
-    const classes = useStyles();
-
-    return <Paper className={classes.paperContainer}>{children}</Paper>;
 }

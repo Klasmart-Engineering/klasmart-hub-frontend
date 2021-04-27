@@ -6,10 +6,7 @@ import {
     getLiveEndpoint,
 } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    LivePreviewJWT,
-    PublishedContentItem,
-} from "@/types/objectTypes";
+import { PublishedContentItem } from "@/types/objectTypes";
 import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
 import { Button } from "@material-ui/core";
@@ -18,14 +15,12 @@ import Grid from "@material-ui/core/Grid";
 import {
     createStyles,
     makeStyles,
-    Theme,
     useTheme,
 } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Share as ShareIcon } from "@styled-icons/material/Share";
-import jwtDecode from "jwt-decode";
 import React,
 {
     useEffect,
@@ -36,62 +31,61 @@ import {
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        cardHead: {
-            padding: theme.spacing(1, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(1, 2),
-            },
-            borderBottom: `1px solid #e0e0e0`,
+const useStyles = makeStyles((theme) => createStyles({
+    cardHead: {
+        padding: theme.spacing(1, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(1, 2),
         },
-        cardTitle: {
-            textTransform: `uppercase`,
-            fontWeight: `bold`,
+        borderBottom: `1px solid #e0e0e0`,
+    },
+    cardTitle: {
+        textTransform: `uppercase`,
+        fontWeight: `bold`,
+    },
+    cardBody: {
+        padding: theme.spacing(2, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(2, 2),
         },
-        cardBody: {
-            padding: theme.spacing(2, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 2),
-            },
-        },
-        cardButton: {
-            background: `transparent`,
-            color: theme.palette.primary.main,
+    },
+    cardButton: {
+        background: `transparent`,
+        color: theme.palette.primary.main,
+        boxShadow: `none`,
+        "&:hover, &:active": {
+            backgroundColor: `#f3f3f3`,
             boxShadow: `none`,
-            "&:hover, &:active": {
-                backgroundColor: `#f3f3f3`,
-                boxShadow: `none`,
-            },
         },
-        infoCard: {
-            borderRadius: 12,
-            padding: theme.spacing(0, 2),
-        },
-        liveButton: {
-            backgroundColor: `#ff6961`,
-            color: `white`,
-            marginLeft: theme.spacing(1),
-        },
-        liveText: {
-            backgroundColor: `#eda6c5`,
-            borderRadius: 12,
-            color: `white`,
-            fontWeight: 600,
-            padding: theme.spacing(0, 1),
-        },
-        logo: {
-            marginBottom: theme.spacing(0.5),
-        },
-        select: {
-            display: `block`,
-        },
-        input:{
-            top: `auto`,
-            bottom : `70%`,
-            paddingRight: 22,
-        },
-    }));
+    },
+    infoCard: {
+        borderRadius: 12,
+        padding: theme.spacing(0, 2),
+    },
+    liveButton: {
+        backgroundColor: `#ff6961`,
+        color: `white`,
+        marginLeft: theme.spacing(1),
+    },
+    liveText: {
+        backgroundColor: `#eda6c5`,
+        borderRadius: 12,
+        color: `white`,
+        fontWeight: 600,
+        padding: theme.spacing(0, 1),
+    },
+    logo: {
+        marginBottom: theme.spacing(0.5),
+    },
+    select: {
+        display: `block`,
+    },
+    input:{
+        top: `auto`,
+        bottom : `70%`,
+        paddingRight: 22,
+    },
+}));
 
 export default function PlanSelection () {
     const classes = useStyles();

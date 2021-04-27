@@ -13,7 +13,6 @@ import {
 import {
     createStyles,
     makeStyles,
-    Theme,
 } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React from "react";
@@ -24,7 +23,7 @@ import {
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles((theme) => {
     const { fontWeightBold } = globalStyles(theme);
 
     return createStyles({
@@ -178,7 +177,7 @@ export default function ScheduleInfoShort ({ schedule }: {
             <Grid
                 container
                 justify="space-between"
-                className={classes.cardBody}>
+            >
                 <Grid
                     item
                     xs

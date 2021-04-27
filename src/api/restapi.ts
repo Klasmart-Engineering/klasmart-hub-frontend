@@ -137,15 +137,23 @@ interface PutFoldersItemsBulkMoveResponse {
     data: "";
 }
 
+interface GetSchedulesTimeViewRequest {
+    org_id: string;
+    view_type: TimeView;
+    start_at_ge: number;
+    end_at_le: number;
+    time_zone_offset: number;
+}
+
 export class RestAPI {
 
     private store: Store;
 
-    constructor(store: ReturnType<typeof useStore>) {
+    constructor (store: ReturnType<typeof useStore>) {
         this.store = store as any; // TODO: Fix types
     }
 
-    public async getContentsFolders(orgId: string, contentType = 2, page = 1, pageSize = 100, orderBy = `-create_at`, path = ``) {
+    public async getContentsFolders (orgId: string, contentType = 2, page = 1, pageSize = 100, orderBy = `-create_at`, path = ``) {
         const str = queryString.stringify({
             org_id: orgId,
             publish_status: `published`,
@@ -167,7 +175,7 @@ export class RestAPI {
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
     }
 
-    public async getContentFolders(request: GetLibraryRequest) {
+    public async getContentFolders (request: GetLibraryRequest) {
         const {
             org_id,
             publish_status,
@@ -191,7 +199,7 @@ export class RestAPI {
         return response?.json() as Promise<PublishedContentPayload>;
     }
 
-    public async getFoldersShare(request: GetFoldersShareRequest) {
+    public async getFoldersShare (request: GetFoldersShareRequest) {
         const {
             org_id,
             folder_ids,
@@ -206,7 +214,7 @@ export class RestAPI {
         return response?.json() as Promise<GetFoldersShareResponse>;
     }
 
-    public async putFoldersShare(request: PutFoldersShareRequest) {
+    public async putFoldersShare (request: PutFoldersShareRequest) {
         const {
             org_id,
             org_ids,
@@ -223,7 +231,7 @@ export class RestAPI {
         return response?.json() as Promise<PutFoldersShareResponse>;
     }
 
-    public async getFolderStructure(request: GetFolderStructureRequest) {
+    public async getFolderStructure (request: GetFolderStructureRequest) {
         const {
             path = ``,
             item_type = `1`,
@@ -240,7 +248,7 @@ export class RestAPI {
         return response?.json() as Promise<GetFolderStructureResponse>;
     }
 
-    public async putFoldersItemsBulkMove(request: PutFoldersItemsBulkMoveRequest) {
+    public async putFoldersItemsBulkMove (request: PutFoldersItemsBulkMoveRequest) {
         const {
             dist,
             folder_info,
@@ -348,12 +356,20 @@ export class RestAPI {
         return response?.json() as Promise<PublishedContentPayload>;
     }
 
-    public async schedule(orgId: string, viewType: TimeView, timeAt: number, timeZoneOffset: number) {
+    public async getSchedulesTimeView (request: GetSchedulesTimeViewRequest) {
+        const {
+            org_id,
+            view_type,
+            start_at_ge,
+            end_at_le,
+            time_zone_offset,
+        } = request;
         const str = queryString.stringify({
-            org_id: orgId,
-            view_type: viewType,
-            time_at: timeAt,
-            time_zone_offset: timeZoneOffset,
+            org_id,
+            view_type,
+            start_at_ge,
+            end_at_le,
+            time_zone_offset,
         });
 
         const response = await this.scheduleCall(`GET`, `v1/schedules_time_view?` + str);
@@ -365,7 +381,7 @@ export class RestAPI {
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
     }
 
-    public async assessments(orgId: string, page?: number, pageSize?: number) {
+    public async assessments (orgId: string, page?: number, pageSize?: number) {
         const str = queryString.stringify({
             org_id: orgId,
             page,
@@ -385,19 +401,19 @@ export class RestAPI {
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
     }
 
-    private contentCall(method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
+    private contentCall (method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
         return this.call(method, getCNEndpoint(), route, body);
     }
 
-    private scheduleCall(method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
+    private scheduleCall (method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
         return this.call(method, getCNEndpoint(), route, body);
     }
 
-    private assessmentCall(method: "POST" | "GET" | "PUT", route: string, body?: string) {
+    private assessmentCall (method: "POST" | "GET" | "PUT", route: string, body?: string) {
         return this.call(method, getCNEndpoint(), route, body);
     }
 
-    private async call(method: string, prefix: string, route: string, body: string | undefined) {
+    private async call (method: string, prefix: string, route: string, body: string | undefined) {
         // try {
         //     const response = await this.fetchRoute(method, prefix, route, body);
         //     return response;
@@ -407,7 +423,7 @@ export class RestAPI {
         return this.fetchRoute(method, prefix, route, body);
     }
 
-    private async fetchRoute(method: string, prefix: string, route: string, body?: string) {
+    private async fetchRoute (method: string, prefix: string, route: string, body?: string) {
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
@@ -435,7 +451,7 @@ export class RestAPI {
     }
 }
 
-export function useRestAPI() {
+export function useRestAPI () {
     const store = useStore();
     const api = new RestAPI(store);
     (window as any).api = api;

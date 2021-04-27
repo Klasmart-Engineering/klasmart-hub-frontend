@@ -1,4 +1,5 @@
 import { getCNEndpoint } from "./config";
+import AgeRangesPage from "./pages/admin/age-ranges";
 import ClassesPage from "./pages/admin/classes";
 import Grades from "./pages/admin/grades";
 import Layout from "./pages/admin/Layout";
@@ -11,11 +12,10 @@ import SchoolsPage from "./pages/admin/schools";
 import SubjectsPage from "./pages/admin/subjects";
 import User from "./pages/admin/User";
 import { BrowserList } from "./pages/browserList";
-import Home from "./pages/home/home";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
 import { useCurrentOrganization } from "./store/organizationMemberships";
-import { redirectIfUnauthorized } from "./utils/redirectIfUnauthorized";
-import AgeRanges from "@/pages/admin/age-ranges/index";
+import HomePage from "@/pages/index";
+import { redirectIfUnauthorized } from "@/utils/redirectIfUnauthorized";
 import {
     createStyles,
     makeStyles,
@@ -55,7 +55,7 @@ export default function Router (props: Props)  {
             <Route
                 exact
                 path="/"
-                render={() => <Home />}
+                render={() => <HomePage />}
             />
             <Route
                 exact
@@ -179,7 +179,7 @@ export default function Router (props: Props)  {
             </Route>
             <Route path="/admin/age-ranges">
                 <Layout>
-                    <AgeRanges />
+                    <AgeRangesPage />
                 </Layout>
             </Route>
             <Route path="/admin">
@@ -192,6 +192,6 @@ export default function Router (props: Props)  {
                     <SuperAdminContentLibraryTable />
                 </Layout>
             </Route>
-            <Route render={() => <Home />} />
+            <Route render={() => <HomePage />} />
         </Switch>;
 }

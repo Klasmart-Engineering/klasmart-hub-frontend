@@ -8,7 +8,6 @@ import {
 import {
     createStyles,
     makeStyles,
-    Theme,
 } from "@material-ui/core/styles";
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import AssignmentReturnedIcon from "@material-ui/icons/AssignmentReturned";
@@ -25,99 +24,98 @@ import {
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        cardHead: {
-            padding: theme.spacing(1, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(1, 2),
-            },
-            borderBottom: `1px solid ${theme.palette.grey[300]}`,
-            minHeight: 53,
+const useStyles = makeStyles((theme) => createStyles({
+    cardHead: {
+        padding: theme.spacing(1, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(1, 2),
         },
-        cardTitle: {
-            textTransform: `uppercase`,
-            fontWeight: `bold`,
+        borderBottom: `1px solid ${theme.palette.grey[300]}`,
+        minHeight: 53,
+    },
+    cardTitle: {
+        textTransform: `uppercase`,
+        fontWeight: `bold`,
+    },
+    cardBody: {
+        padding: theme.spacing(2, 4),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(2, 2),
         },
-        cardBody: {
-            padding: theme.spacing(2, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(2, 2),
-            },
-        },
-        cardButton: {
-            background: `transparent`,
-            color: theme.palette.primary.main,
+    },
+    cardButton: {
+        background: `transparent`,
+        color: theme.palette.primary.main,
+        boxShadow: `none`,
+        "&:hover, &:active": {
+            backgroundColor: theme.palette.grey[100],
             boxShadow: `none`,
-            "&:hover, &:active": {
-                backgroundColor: theme.palette.grey[100],
-                boxShadow: `none`,
-            },
         },
-        usageInfoCard: {
-            borderRadius: 12,
-            backgroundColor: theme.palette.primary.light,
-            padding: theme.spacing(3, 4),
-            marginTop: theme.spacing(4),
+    },
+    usageInfoCard: {
+        borderRadius: 12,
+        backgroundColor: theme.palette.primary.light,
+        padding: theme.spacing(3, 4),
+        marginTop: theme.spacing(4),
+    },
+    usageInfoItem: {
+        textAlign: `center`,
+    },
+    usageInfoTitle: {
+        fontSize: `1em`,
+        fontWeight: `bold`,
+        textTransform: `uppercase`,
+        marginTop: 0,
+        marginBottom: 20,
+    },
+    usageInfoValue: {
+        fontWeight: `bold`,
+    },
+    usageInfoTotal: {
+        color: theme.palette.grey[500],
+    },
+    infoCard: {
+        borderRadius: 12,
+        height: `100%`,
+        padding: theme.spacing(2),
+        [theme.breakpoints.down(`sm`)]: {
+            padding: theme.spacing(1),
         },
-        usageInfoItem: {
-            textAlign: `center`,
-        },
-        usageInfoTitle: {
-            fontSize: `1em`,
-            fontWeight: `bold`,
-            textTransform: `uppercase`,
-            marginTop: 0,
-            marginBottom: 20,
-        },
-        usageInfoValue: {
-            fontWeight: `bold`,
-        },
-        usageInfoTotal: {
-            color: theme.palette.grey[500],
-        },
-        infoCard: {
-            borderRadius: 12,
-            height: `100%`,
-            padding: theme.spacing(2),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(1),
-            },
-        },
-        completeBar: {
-            position: `relative`,
-            background: theme.palette.grey[100],
-            height: 6,
-            borderRadius: 20,
-            width: `60%`,
-            margin: `0 auto`,
-            marginBottom: 10,
-        },
-        completeBarIndicator: {
-            position: `absolute`,
-            left: 0,
-            top: 0,
-            height: 6,
-            width: 0,
-            borderRadius: 20,
-            backgroundColor: theme.palette.primary.main,
-            boxShadow: `0 0 0 4px white`,
-        },
-        completeBarIndicatorIcon: {
-            position: `absolute`,
-            right: -5,
-            top: -11,
-            zIndex: 9,
-            color: `white`,
-            backgroundColor: theme.palette.primary.main,
-            boxShadow: `0 0 0 4px white`,
-            width: 28,
-            height: 28,
-            padding: 4,
-            transform: `scale(0.7)`,
-            borderRadius: 20,
-        },
-    }));
+    },
+    completeBar: {
+        position: `relative`,
+        background: theme.palette.grey[100],
+        height: 6,
+        borderRadius: 20,
+        width: `60%`,
+        margin: `0 auto`,
+        marginBottom: 10,
+    },
+    completeBarIndicator: {
+        position: `absolute`,
+        left: 0,
+        top: 0,
+        height: 6,
+        width: 0,
+        borderRadius: 20,
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: `0 0 0 4px white`,
+    },
+    completeBarIndicatorIcon: {
+        position: `absolute`,
+        right: -5,
+        top: -11,
+        zIndex: 9,
+        color: `white`,
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: `0 0 0 4px white`,
+        width: 28,
+        height: 28,
+        padding: 4,
+        transform: `scale(0.7)`,
+        borderRadius: 20,
+    },
+}));
 
 interface UsageInfoData {
     type: string;
