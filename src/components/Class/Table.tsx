@@ -138,6 +138,7 @@ export default function ClassesTable (props: Props) {
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedClass, setSelectedClass ] = useState<Class>();
     const [ rows, setRows ] = useState<ClassRow[]>([]);
+    const [ selectedIds_, setSelectedIds ] = useState<string[]>(selectedIds ?? []);
     const { required, equals } = useValidations();
     const {
         data,
@@ -152,6 +153,11 @@ export default function ClassesTable (props: Props) {
     const [ deleteClass ] = useDeleteClass();
 
     const schoolClasses = data?.organization?.classes;
+
+    const setIds = (ids: string[]) => {
+        setSelectedIds(ids);
+        onSelected?.(ids);
+    };
 
     useEffect(() => {
         if (!canView) {
@@ -243,6 +249,8 @@ export default function ClassesTable (props: Props) {
             }), {
                 variant: `success`,
             });
+
+            setIds([]);
         } catch (err) {
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedError`,
@@ -416,7 +424,7 @@ export default function ClassesTable (props: Props) {
             <Paper className={classes.root}>
                 <PageTable
                     showSelectables={!disabled}
-                    selectedRows={selectedIds}
+                    selectedRows={selectedIds_}
                     columns={columns}
                     rows={rows}
                     loading={loading}
@@ -491,7 +499,7 @@ export default function ClassesTable (props: Props) {
                             }),
                         },
                     })}
-                    onSelected={onSelected}
+                    onSelected={setIds}
                 />
             </Paper>
 
