@@ -74,7 +74,7 @@ export default function SchoolInfoStep (props: TabContent) {
                         max(120, intl.formatMessage({
                             id: `schools_maxCharValidation`,
                         }, {
-                            value: 120
+                            value: 120,
                         })),
                     ]}
                     onChange={setSchoolName}

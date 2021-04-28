@@ -94,9 +94,9 @@ export default function EditSchoolDialog (props: Props) {
                     onChange={handleChange}
                 />,
                 error: [
-                    required(`The school name is required`)(editedSchool?.school_name),
+                    required()(editedSchool?.school_name),
                     letternumeric()(editedSchool?.school_name),
-                    max(35, `Max length 35 of characters`)(editedSchool.school_name),
+                    max(120)(editedSchool?.school_name),
                     max(10)(editedSchool?.shortcode?.length),
                     alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
