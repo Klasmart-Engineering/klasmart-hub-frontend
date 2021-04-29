@@ -6,6 +6,7 @@ export interface User {
     email?: string;
     role: string;
     class_name?: string;
+    memberships?: Membership[];
 }
 
 export interface Membership {

@@ -3,6 +3,8 @@ import {
     useGetSchools,
     useUploadSchoolsCsv,
 } from "@/api/schools";
+import { useGetUser } from "@/api/users";
+import { userIdVar } from "@/cache";
 import { CsvUploadDialog } from "@/components/CsvUploadDialog/CsvUploadDialog";
 import CreateSchoolDialog from "@/components/School/Dialog/Create";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
@@ -10,10 +12,12 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     School,
     Status,
+    User,
 } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { useReactiveVar } from "@apollo/client";
 import {
     createStyles,
     DialogContentText,
@@ -78,6 +82,7 @@ export default function SchoolTable (props: Props) {
     const { required, equals } = useValidations();
     const prompt = usePrompt();
     const [ rows, setRows ] = useState<SchoolRow[]>([]);
+    const [ canViewShortCode, setCanViewShortCode ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedSchool, setSelectedSchool ] = useState<School>();
@@ -87,6 +92,14 @@ export default function SchoolTable (props: Props) {
     const canDelete = usePermission(`delete_school_20440`);
     const canCreate = usePermission(`create_school_20220`);
     const canView = usePermission(`view_school_20110`);
+
+    const userId = useReactiveVar(userIdVar);
+    const { data: userData } = useGetUser({
+        fetchPolicy: `network-only`,
+        variables: {
+            user_id: userId,
+        },
+    });
 
     const {
         data,
@@ -116,6 +129,13 @@ export default function SchoolTable (props: Props) {
         setRows(rows);
     }, [ data, canView ]);
 
+    useEffect(() => {
+        const memberships = userData?.user?.memberships;
+        if (!memberships) return;
+        const isOrgAdmin = memberships.some((membership) => membership.roles?.find((role) => role.role_name === `Organization Admin`));
+        setCanViewShortCode(isOrgAdmin);
+    }, [ userData ]);
+
     const columns: TableColumn<SchoolRow>[] = [
         {
             id: `id`,
@@ -131,6 +151,7 @@ export default function SchoolTable (props: Props) {
         {
             id: `shortCode`,
             label: `Short Code`,
+            secret: !canViewShortCode,
         },
         {
             id: `system`,
