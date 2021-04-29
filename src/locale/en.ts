@@ -998,5 +998,9 @@ const messages: Record<string, string> = {
     addOrganization_alternateText: `The alternate text will be displayed when your image fails to load.`,
     users_alternativeEmailValidation: `Primary contact and Alternative Email should not be equals`,
     genericValidations_notEquals: `The values should not be equals`,
+    allOrganization_createSuccess: `The organization has been created successfully`,
+    allOrganization_createError: `An error occurred while deleting the organization`,
+    allOrganization_editSuccess: `The organization has been edited successfully`,
+    allOrganization_editError: `An error occurred while deleting the organization`,
 };
 export default messages;

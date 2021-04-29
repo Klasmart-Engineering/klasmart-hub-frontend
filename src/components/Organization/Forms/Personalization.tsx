@@ -96,7 +96,7 @@ export default function Personalization (props: Props) {
 
     useEffect(() => {
         if (!value) return;
-        setAlternateText(value.alternateText);
+        setAlternateText(value.alternateText ?? ``);
 
         if (!value.color) return;
         setColor(value.color);

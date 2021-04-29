@@ -140,6 +140,8 @@ export interface Organization {
     organizationLogo?: File | null;
 }
 
+export type OrganizationTab = `organizationInfo` | `personalization`
+
 export interface Role {
     role_id: string;
     role_name?: string | null;

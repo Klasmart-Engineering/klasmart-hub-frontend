@@ -72,10 +72,10 @@ export default function OrganizationInfo (props: Props) {
         if (!value) return;
 
         setOrganizationName(value.organization_name);
-        setShortCode(value.shortCode);
-        setPhone(value.phone);
-        setAddress1(value.address1);
-        setAddress2(value.address2);
+        setShortCode(value.shortCode ?? ``);
+        setPhone(value.phone ?? ``);
+        setAddress1(value.address1 ?? ``);
+        setAddress2(value.address2 ?? ``);
     }, [ value ]);
 
     useEffect(() => {
