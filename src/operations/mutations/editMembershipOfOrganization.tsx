@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const EDIT_MEMBERSHIP_OF_ORGANIZATION = gql`
-    mutation invite(
+    mutation organizationEditMembership(
         $user_id: ID!
         $organization_id: ID!
         $email: String
