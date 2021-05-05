@@ -23,11 +23,13 @@ pipelines:
         image: python:3.9-alpine
         script:
           - pip3 install -U awscli
+          - apk add git --no-cache
           - mv dist deploy/
           
           - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
           - export REPO=$DOCKER_REPO_URL/kidsloop-hub-frontend      # DOCKER_REPO_URL is workspace wide variable
           - export TAG=$BRANCH_TAG-$KIDSLOOP_REGION-$KIDSLOOP_ENV
+          - export COMMIT_TAG=$(git rev-parse --short HEAD)
 
           - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
           - docker build -t hub-frontend deploy/
@@ -35,9 +37,11 @@ pipelines:
           - docker tag hub-frontend:latest $REPO:$TAG
           - docker tag hub-frontend:latest $REPO:$TAG-latest
           - docker tag hub-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker tag hub-frontend:latest $REPO:$TAG-$COMMIT_TAG
           - docker push $REPO:$TAG
           - docker push $REPO:$TAG-latest
           - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker push $REPO:$TAG-$COMMIT_TAG
 
         services:
           - docker
