@@ -128,7 +128,7 @@ export default function OrganizationInfo (props: Props) {
                     sm={4}
                 >
                     <FormattedMessage
-                        id="addOrganization_organizationShortCodeLabel"
+                        id="addOrganization_shortCode"
                     />
                 </Grid>
                 <Grid
@@ -140,14 +140,19 @@ export default function OrganizationInfo (props: Props) {
                         fullWidth
                         variant="standard"
                         label={intl.formatMessage({
-                            id: `addOrganization_organizationShortCodeLabel`,
+                            id: `addOrganization_shortCode`,
                         })}
                         value={shortCode}
                         className={classes.formInput}
                         validations={[
-                            alphanumeric(),
                             required(),
-                            min(3, `Shortcode must have a minimum of 3 characters`),
+                            min(3, intl.formatMessage({
+                                id: `addOrganization_shortCodeMinError`,
+                            })),
+                            max(10, intl.formatMessage({
+                                id: `addOrganization_shortCodeMaxError`,
+                            })),
+                            alphanumeric(),
                         ]}
                         onChange={setShortCode}
                         onValidate={setShortCodeValid}
@@ -181,10 +186,14 @@ export default function OrganizationInfo (props: Props) {
                         value={organizationName}
                         className={classes.formInput}
                         validations={[
-                            letternumeric(),
                             required(),
-                            min(3, `The Organisation Name must have a minimum of 3 characters`),
-                            max(30, `The Organisation Name must have a maximum of 30 characters`),
+                            min(3, intl.formatMessage({
+                                id: `addOrganization_orgNameMinError`,
+                            })),
+                            max(30, intl.formatMessage({
+                                id: `addOrganization_orgNameMaxError`,
+                            })),
+                            letternumeric(),
                         ]}
                         onChange={setOrganizationName}
                         onValidate={setOrganizationNameValid}
@@ -234,10 +243,14 @@ export default function OrganizationInfo (props: Props) {
                         value={organizationPhone}
                         className={classes.formInput}
                         validations={[
-                            phone(),
                             required(),
-                            min(10, `The phone number must have a minimum of 10 characters`),
-                            max(15, `The phone number must have a maximum of 15 characters`),
+                            min(10, intl.formatMessage({
+                                id: `addOrganization_phoneMinError`,
+                            })),
+                            max(15, intl.formatMessage({
+                                id: `addOrganization_phoneMaxError`,
+                            })),
+                            phone(),
                         ]}
                         onChange={setPhone}
                         onValidate={setPhoneValid}
@@ -251,10 +264,14 @@ export default function OrganizationInfo (props: Props) {
                         value={address1}
                         className={classes.formInput}
                         validations={[
-                            letternumeric(),
                             required(),
-                            min(3, `The first address must have a minimum of 3 characters`),
-                            max(30, `The first address must have a maximum of 60 characters`),
+                            min(3, intl.formatMessage({
+                                id: `addOrganization_address1MinError`,
+                            })),
+                            max(60, intl.formatMessage({
+                                id: `addOrganization_address1MaxError`,
+                            })),
+                            letternumeric(),
                         ]}
                         onChange={setAddress1}
                         onValidate={setAddress1Valid}
@@ -268,10 +285,10 @@ export default function OrganizationInfo (props: Props) {
                         value={address2}
                         className={classes.formInput}
                         validations={[
+                            max(60, intl.formatMessage({
+                                id: `addOrganization_address2MaxError`,
+                            })),
                             letternumeric(),
-                            required(),
-                            min(3, `The second address must have a minimum of 3 characters`),
-                            max(30, `The second address must have a maximum of 60 characters`),
                         ]}
                         onChange={setAddress2}
                         onValidate={setAddress2Valid}
