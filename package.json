@@ -10,9 +10,7 @@
     "build:prod-cn": "cross-env ENV_PATH=.env.prod.cn webpack",
     "build:prod-uk": "cross-env ENV_PATH=.env.prod.uk webpack",
     "build:test": "cross-env ENV_PATH=.env.test webpack",
-    "start": "cross-env NODE_ENV=development ENV_PATH=.env.defaults webpack serve",
-    "start:beta": "cross-env NODE_ENV=development ENV_PATH=.env.beta webpack serve",
-    "start:test": "cross-env NODE_ENV=development ENV_PATH=.env.test webpack serve"
+    "start": "cross-env NODE_ENV=development ENV_PATH=.env.local webpack serve"
   },
   "typings": "./assets/typings.d.ts",
   "author": "",

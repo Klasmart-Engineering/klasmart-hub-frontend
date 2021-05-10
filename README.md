@@ -1,6 +1,6 @@
 # KidsLoop hub
 
-KidsLoop hub Frontend uses 3 differents branches for developing, testing and deploying (`master`, `beta` and `prod`).
+KidsLoop hub Frontend uses 3 different branches for developing, testing and deploying (`master`, `beta` and `prod`).
 
 To push changes from `master` to `beta`, simply, create a Pull-Request with Fast-Forward merge strategy to merge from master to beta. To push on prod, same idea with `beta` to `prod`.
 
@@ -15,20 +15,22 @@ Since the content of the `Assessment v3.pdf` is often out of date, if you have a
 ## Building and Deploying
 
 ### Prerequisites
+#### Installation
+- Install Node.js v14.x.x
+- Install Npm v6.x.x
+- Install the dependencies: `npm install`
 
-Install the dependencies: `npm install`
+#### Configuration
+- Map `fe.kidsloop.net` to `localhost` by [editing your hosts file](https://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/)
+- Configure environment variables
+    - Create `.env.local` (which is gitignored)
+    - Copy the contents of `.env.example` into `.env.local`, making changes as required
 
 ### Run locally
 
-Make sure to be on a local development branch based on `master`
-
-#### Use local server
-
-`npm run start`
-
-#### Use internal server
-
-`npm run start:internal`
+- Make sure to be on a local development branch based on `master`, e.g. `release/test`
+- Run `npm start` to start a local development server
+- If you want to target a local API server, follow instructions on [the user-service repo](https://bitbucket.org/calmisland/kidsloop-user-service/src) 
 
 ### Build for Beta
 
