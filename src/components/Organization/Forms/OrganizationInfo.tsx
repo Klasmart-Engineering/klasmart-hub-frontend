@@ -169,7 +169,7 @@ export default function OrganizationInfo (props: Props) {
                     sm={4}
                 >
                     <FormattedMessage
-                        id="addOrganization_nameOfOrganizationLabel"
+                        id="allOrganization_organizationName"
                     />
                 </Grid>
                 <Grid
@@ -180,7 +180,7 @@ export default function OrganizationInfo (props: Props) {
                     <TextField
                         fullWidth
                         label={intl.formatMessage({
-                            id: `addOrganization_nameOfOrganizationLabel`,
+                            id: `allOrganization_organizationName`,
                         })}
                         variant="standard"
                         value={organizationName}

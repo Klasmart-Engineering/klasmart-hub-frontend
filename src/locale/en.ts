@@ -200,7 +200,7 @@ const messages: Record<string, string> = {
     addOrganization_primaryContactLabel: `Primary Contact`,
     addOrganization_organizationShortCodeLabel: `Organization Short Code`,
     addOrganization_addOrganizationLogoLabel: `Add Organization Logo`,
-    addOrganization_organizationColorLabel: `Organization color`,
+    addOrganization_organizationColorLabel: `Organization Color`,
     addOrganization_saveButtonLabel: `Save`,
     addOrganization_cancelButtonLabel: `Cancel`,
     addOrganization_nameOfOrganizationPlaceholder: `Official Name of Your Organization`,

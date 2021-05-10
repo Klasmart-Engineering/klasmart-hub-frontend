@@ -10,7 +10,10 @@ import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
 import { useReactiveVar } from "@apollo/client";
-import { Grid } from "@material-ui/core";
+import {
+    Box,
+    Grid,
+} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
 import {
     createStyles,
@@ -175,9 +178,8 @@ export default function CreateOrganizationPage () {
                                 <Grid item>
                                     <Grid
                                         container
-                                        spacing={2}
                                     >
-                                        <Grid item>
+                                        <Box mr={2}>
                                             <Button
                                                 label={intl.formatMessage({
                                                     id: `addOrganization_cancelButtonLabel`,
@@ -186,8 +188,8 @@ export default function CreateOrganizationPage () {
                                                 color="primary"
                                                 onClick={handleCancel}
                                             />
-                                        </Grid>
-                                        <Grid item>
+                                        </Box>
+                                        <Box>
                                             <Button
                                                 label={intl.formatMessage({
                                                     id: `organizations_createButton`,
@@ -198,7 +200,7 @@ export default function CreateOrganizationPage () {
                                                 disabled={!isValid}
                                                 onClick={handleCreate}
                                             />
-                                        </Grid>
+                                        </Box>
                                     </Grid>
                                 </Grid>
                             </Grid>
