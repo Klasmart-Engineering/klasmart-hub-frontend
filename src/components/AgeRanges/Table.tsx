@@ -129,12 +129,12 @@ export default function (props: Props) {
                 <DialogContentText>{intl.formatMessage({
                     id: `class_confirmDelete`,
                 }, {
-                    ageRangeName,
+                    name: ageRangeName,
                 })}</DialogContentText>
                 <DialogContentText>{intl.formatMessage({
                     id: `ageRanges_typeText`,
                 }, {
-                    ageRangeName,
+                    name: ageRangeName,
                 })} <strong>{ageRangeName}</strong> {intl.formatMessage({
                     id: `ageRanges_typeEndText`,
                 })}</DialogContentText>
@@ -142,7 +142,6 @@ export default function (props: Props) {
             validations: [ required(), equals(ageRangeName) ],
         })) return;
         try {
-
             await deleteAgeRange({
                 variables: {
                     id: selectedAgeRange.id,
