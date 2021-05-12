@@ -292,7 +292,11 @@ export default function UserDialogForm (props: Props) {
                     variant="outlined"
                     type="text"
                     autoFocus={!value?.user?.user_id}
-                    validations={[ required(), letternumeric() ]}
+                    validations={[
+                        required(),
+                        letternumeric(),
+                        max(35),
+                    ]}
                     onChange={setGivenName}
                     onValidate={setGivenNameValid}
                 />
@@ -303,7 +307,11 @@ export default function UserDialogForm (props: Props) {
                     })}
                     variant="outlined"
                     type="text"
-                    validations={[ required(), letternumeric() ]}
+                    validations={[
+                        required(),
+                        letternumeric(),
+                        max(35),
+                    ]}
                     onChange={setFamilyName}
                     onValidate={setFamilyNameValid}
                 />
