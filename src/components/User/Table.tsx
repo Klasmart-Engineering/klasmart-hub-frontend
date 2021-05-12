@@ -3,9 +3,8 @@ import {
     useGetOrganizationMemberships,
 } from "@/api/organizationMemberships";
 import { useGetAllRoles } from "@/api/roles";
-import { useUploadUserCsv } from "@/api/users";
-import { CsvUploadDialog } from "@/components/CsvUploadDialog/CsvUploadDialog";
 import CreateUserDialog from "@/components/User/Dialog/Create";
+import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
@@ -92,8 +91,7 @@ interface Props {
 
 export default function UserTable (props: Props) {
     const classes = useStyles();
-    const [ uploadCsv ] = useUploadUserCsv();
-    const [ openUserUpload, setOpenUserUpload ] = useState<boolean>(false);
+    const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
@@ -336,36 +334,7 @@ export default function UserTable (props: Props) {
         }
     };
 
-    const submitCsv = async (csv: File) => {
-        if (!csv) return;
-
-        try {
-            await uploadCsv({
-                variables: {
-                    file: csv,
-                },
-            });
-
-            enqueueSnackbar(intl.formatMessage({
-                id: `createUser_userCsvUploadSuccess`,
-            }), {
-                variant: `success`,
-            });
-
-            await refetch();
-        } catch (e) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `createUser_error`,
-            }), {
-                variant: `error`,
-            });
-
-            throw e;
-        }
-    };
-
     return <>
-
         <Paper className={classes.root}>
             <PageTable
                 columns={columns}
@@ -388,9 +357,7 @@ export default function UserTable (props: Props) {
                         label: `Upload CSV`,
                         icon: CloudUpload,
                         disabled: !canCreate,
-                        onClick: () => {
-                            setOpenUserUpload(true);
-                        },
+                        onClick: () => setUploadCsvDialogOpen(true),
                     },
                 ]}
                 rowActions={(row) => [
@@ -446,14 +413,12 @@ export default function UserTable (props: Props) {
                 if (value) refetch();
             }}
         />
-
-        <CsvUploadDialog
-            open={openUserUpload}
-            setOpenCsvUpload={setOpenUserUpload}
-            submitCsv={submitCsv}
-            title={intl.formatMessage({
-                id: `createUser_uploadCsvTitle`,
-            })}
+        <UploadUserCsvDialog
+            open={uploadCsvDialogOpen}
+            onClose={(value) => {
+                setUploadCsvDialogOpen(false);
+                if (value) refetch();
+            }}
         />
     </>;
 }

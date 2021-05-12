@@ -10,7 +10,7 @@ import ProgramsPage from "./pages/admin/programs";
 import RoleTable from "./pages/admin/Role/RoleTable";
 import SchoolsPage from "./pages/admin/schools";
 import SubjectsPage from "./pages/admin/subjects";
-import User from "./pages/admin/User";
+import UsersPage from "./pages/admin/users";
 import { BrowserList } from "./pages/browserList";
 import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
 import { useCurrentOrganization } from "./store/organizationMemberships";
@@ -144,7 +144,7 @@ export default function Router (props: Props)  {
             </Route>
             <Route path="/admin/users">
                 <Layout>
-                    <User />
+                    <UsersPage />
                 </Layout>
             </Route>
             <Route path="/admin/roles">
@@ -184,7 +184,7 @@ export default function Router (props: Props)  {
             </Route>
             <Route path="/admin">
                 <Layout>
-                    <User />
+                    <UsersPage />
                 </Layout>
             </Route>
             <Route path="/super-admin/content-library">

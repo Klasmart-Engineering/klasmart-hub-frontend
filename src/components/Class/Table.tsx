@@ -1,13 +1,12 @@
 import {
     useDeleteClass,
     useGetAllClasses,
-    useUploadClassesCsv,
 } from "@/api/classes";
 import ClassRoster from "@/components/Class/ClassRoster/Table";
 import ClassDetailsDrawer from "@/components/Class/DetailsDrawer";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
+import UploadClassCsvDialog from "@/components/Class/Dialog/CsvUpload";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
-import { CsvUploadDialog } from "@/components/CsvUploadDialog/CsvUploadDialog";
 import globalStyles from "@/globalStyles";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
@@ -121,8 +120,7 @@ export default function ClassesTable (props: Props) {
         onSelected,
     } = props;
     const classes = useStyles();
-    const [ uploadCsv ] = useUploadClassesCsv();
-    const [ openClassesUpload, setOpenClassesUpload ] = useState<boolean>(false);
+    const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -257,34 +255,6 @@ export default function ClassesTable (props: Props) {
             }), {
                 variant: `error`,
             });
-        }
-    };
-
-    const submitCsv = async (csv: File) => {
-        if (!csv) return;
-
-        try {
-            await uploadCsv({
-                variables: {
-                    file: csv,
-                },
-            });
-
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSavedMessage`,
-            }), {
-                variant: `success`,
-            });
-
-            await refetch();
-        } catch (e) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSaveError`,
-            }), {
-                variant: `error`,
-            });
-
-            throw e;
         }
     };
 
@@ -445,7 +415,7 @@ export default function ClassesTable (props: Props) {
                             icon: CloudIcon,
                             disabled: !canCreate,
                             onClick: () => {
-                                setOpenClassesUpload(true);
+                                setUploadCsvDialogOpen(true);
                             },
                         },
                     ]}
@@ -540,13 +510,12 @@ export default function ClassesTable (props: Props) {
                 }}
             />}
 
-            <CsvUploadDialog
-                open={openClassesUpload}
-                setOpenCsvUpload={setOpenClassesUpload}
-                submitCsv={submitCsv}
-                title={intl.formatMessage({
-                    id: `createClass_uploadCsvTitle`,
-                })}
+            <UploadClassCsvDialog
+                open={uploadCsvDialogOpen}
+                onClose={(value) => {
+                    setUploadCsvDialogOpen(false);
+                    if (value) refetch();
+                }}
             />
         </>
     );

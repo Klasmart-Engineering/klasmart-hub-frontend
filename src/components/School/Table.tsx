@@ -1,18 +1,16 @@
 import {
     useDeleteSchool,
     useGetSchools,
-    useUploadSchoolsCsv,
 } from "@/api/schools";
 import { useGetUser } from "@/api/users";
 import { userIdVar } from "@/cache";
-import { CsvUploadDialog } from "@/components/CsvUploadDialog/CsvUploadDialog";
 import CreateSchoolDialog from "@/components/School/Dialog/Create";
+import UploadSchoolCsvDialog from "@/components/School/Dialog/CsvUpload";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     School,
     Status,
-    User,
 } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
@@ -75,8 +73,7 @@ interface Props {}
  */
 export default function SchoolTable (props: Props) {
     const classes = useStyles();
-    const [ uploadCsv ] = useUploadSchoolsCsv();
-    const [ openSchoolsUpload, setOpenSchoolsUpload ] = useState<boolean>(false);
+    const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { required, equals } = useValidations();
@@ -218,34 +215,6 @@ export default function SchoolTable (props: Props) {
         }
     };
 
-    const submitCsv = async (csv: File) => {
-        if (!csv) return;
-
-        try {
-            await uploadCsv({
-                variables: {
-                    file: csv,
-                },
-            });
-
-            enqueueSnackbar(intl.formatMessage({
-                id: `schools_editSuccess`,
-            }), {
-                variant: `success`,
-            });
-
-            await refetch();
-        } catch (e) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSaveError`,
-            }), {
-                variant: `error`,
-            });
-
-            throw e;
-        }
-    };
-
     return (
         <>
             <Paper className={classes.root}>
@@ -270,7 +239,7 @@ export default function SchoolTable (props: Props) {
                             icon: CloudIcon,
                             disabled: !canCreate,
                             onClick: () => {
-                                setOpenSchoolsUpload(true);
+                                setUploadCsvDialogOpen(true);
                             },
                         },
                     ]}
@@ -328,13 +297,12 @@ export default function SchoolTable (props: Props) {
                 }}
             />
 
-            <CsvUploadDialog
-                open={openSchoolsUpload}
-                setOpenCsvUpload={setOpenSchoolsUpload}
-                submitCsv={submitCsv}
-                title={intl.formatMessage({
-                    id: `createSchools_uploadCsvTitle`,
-                })}
+            <UploadSchoolCsvDialog
+                open={uploadCsvDialogOpen}
+                onClose={(value) => {
+                    setUploadCsvDialogOpen(false);
+                    if (value) refetch();
+                }}
             />
         </>
     );

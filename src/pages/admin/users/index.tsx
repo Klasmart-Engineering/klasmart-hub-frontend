@@ -1,9 +1,9 @@
+import UserTable from "@/components/User/Table";
 import React from "react";
-import UserTable from "./UserTable";
 
 /**
  * Returns function to show User page
  */
-export default function User() {
+export default function UsersPage () {
     return <UserTable />;
 }

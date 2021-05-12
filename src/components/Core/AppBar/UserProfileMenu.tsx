@@ -34,7 +34,10 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { FormattedMessage } from "react-intl";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -73,6 +76,7 @@ interface Props {
 export default function UserProfileMenu (props: Props) {
     const { user } = props;
     const classes = useStyles();
+    const intl = useIntl();
 
     const [ , setOrganizationStack ] = useOrganizationStack();
 
