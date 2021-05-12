@@ -146,13 +146,13 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
+                            alphanumeric(),
                             min(3, intl.formatMessage({
                                 id: `addOrganization_shortCodeMinError`,
                             })),
                             max(10, intl.formatMessage({
                                 id: `addOrganization_shortCodeMaxError`,
                             })),
-                            alphanumeric(),
                         ]}
                         onChange={setShortCode}
                         onValidate={setShortCodeValid}
@@ -187,13 +187,13 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
+                            letternumeric(),
                             min(3, intl.formatMessage({
                                 id: `addOrganization_orgNameMinError`,
                             })),
                             max(30, intl.formatMessage({
                                 id: `addOrganization_orgNameMaxError`,
                             })),
-                            letternumeric(),
                         ]}
                         onChange={setOrganizationName}
                         onValidate={setOrganizationNameValid}
@@ -244,13 +244,13 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
+                            phone(),
                             min(10, intl.formatMessage({
                                 id: `addOrganization_phoneMinError`,
                             })),
                             max(15, intl.formatMessage({
                                 id: `addOrganization_phoneMaxError`,
                             })),
-                            phone(),
                         ]}
                         onChange={setPhone}
                         onValidate={setPhoneValid}
@@ -265,13 +265,13 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
+                            letternumeric(),
                             min(3, intl.formatMessage({
                                 id: `addOrganization_address1MinError`,
                             })),
                             max(60, intl.formatMessage({
                                 id: `addOrganization_address1MaxError`,
                             })),
-                            letternumeric(),
                         ]}
                         onChange={setAddress1}
                         onValidate={setAddress1Valid}
@@ -285,10 +285,10 @@ export default function OrganizationInfo (props: Props) {
                         value={address2}
                         className={classes.formInput}
                         validations={[
+                            letternumeric(),
                             max(60, intl.formatMessage({
                                 id: `addOrganization_address2MaxError`,
                             })),
-                            letternumeric(),
                         ]}
                         onChange={setAddress2}
                         onValidate={setAddress2Valid}
