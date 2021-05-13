@@ -120,6 +120,7 @@ export default function GradeDialogForm (props: Props) {
                     min(3, `Min length 3 of characters.`),
                     max(15, `Max length 15 of characters.`),
                 ]}
+                id="gradeNameInput"
                 onChange={setGradeName}
                 onValidate={setGradeNameValid}
             />
@@ -142,6 +143,7 @@ export default function GradeDialogForm (props: Props) {
                 itemValue={(grade) => grade?.id ?? ``}
                 itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
                 validations={[ required() ]}
+                id="progressFromSelect"
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
             />
@@ -164,6 +166,7 @@ export default function GradeDialogForm (props: Props) {
                 itemValue={(grade) => grade?.id ?? ``}
                 itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
                 validations={[ required() ]}
+                id="progressToSelect"
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}
             />

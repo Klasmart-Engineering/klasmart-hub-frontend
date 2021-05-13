@@ -147,9 +147,9 @@ export default function (props: Props) {
             }),
             content: <>
                 <DialogContentText>{intl.formatMessage({
-                    id: `generic_confirmDelete`,
+                    id: `class_confirmDelete`,
                 }, {
-                    value: name,
+                    name,
                 })}</DialogContentText>
                 <DialogContentText>{intl.formatMessage({
                     id: `generic_typeText`,
