@@ -48,6 +48,17 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
+export const organizationProgram = (program: Program, i: number) => {
+    return {
+        id: program.id ?? `row-${i}`,
+        name: program.name ?? ``,
+        grades: program.grades?.filter(isActive).map((grade) => grade.name ?? ``) ?? [],
+        ageRanges: program.age_ranges?.filter(isActive).map(buildAgeRangeLabel) ?? [],
+        subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
+        system: program.system ?? false,
+    };
+};
+
 interface ProgramRow {
     id: string;
     name: string;
@@ -102,15 +113,7 @@ export default function ProgramTable (props: Props) {
             setRows([]);
             return;
         }
-        const rows = allPrograms.map((program, i) => ({
-            id: program.id ?? `row-${i}`,
-            name: program.name ?? ``,
-            grades: program.grades?.filter(isActive).map((grade) => grade.name ?? ``) ?? [],
-            ageRanges: program.age_ranges?.filter(isActive).map(buildAgeRangeLabel) ?? [],
-            subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
-            system: program.system ?? false,
-        })) ?? [];
-
+        const rows = allPrograms.map(organizationProgram) ?? [];
         setNonSpecifiedId(allPrograms.find(program => program.name === `None Specified` && program.system)?.id ?? ``);
         setRows(rows);
     }, [
