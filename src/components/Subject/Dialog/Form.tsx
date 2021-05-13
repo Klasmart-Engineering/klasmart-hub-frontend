@@ -137,6 +137,7 @@ export default function SubjectDialogForm (props: Props) {
                     })),
                     max(35, `The subject name has a max length of 35 characters.`),
                 ]}
+                id="subjectName"
                 onChange={setSubjectName}
                 onValidate={setSubjectNameValid}
             />

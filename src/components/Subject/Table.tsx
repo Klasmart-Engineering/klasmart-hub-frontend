@@ -298,6 +298,11 @@ export default function SubjectsTable (props: Props) {
                                 id: `subjects_subjectsLabel`,
                             }),
                         },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `classes_noRecords`,
+                            }),
+                        },
                     })}
                     onSelected={onSelected}
                 />
