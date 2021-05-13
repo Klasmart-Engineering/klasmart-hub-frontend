@@ -58,6 +58,16 @@ const useStyles = makeStyles((theme) =>
         },
     }));
 
+export const organizationSchool = (school: School) => {
+    return {
+        id: school.school_id,
+        name: school.school_name ?? ``,
+        shortCode: school.shortcode ?? ``,
+        system: school.system ? `System Value` : `Custom Value`,
+        status: school.status ?? ``,
+    };
+};
+
 interface SchoolRow {
     id: string;
     name: string;
@@ -116,13 +126,7 @@ export default function SchoolTable (props: Props) {
         }
         const rows: SchoolRow[] = schools
             ?.filter((school) => school.status === Status.ACTIVE)
-            .map((school) => ({
-                id: school.school_id,
-                name: school.school_name ?? ``,
-                shortCode: school.shortcode ?? ``,
-                system: school.system ? `System Value` : `Custom Value`,
-                status: school.status ?? ``,
-            })) ?? [];
+            .map(organizationSchool) ?? [];
         setRows(rows);
     }, [ data, canView ]);
 
