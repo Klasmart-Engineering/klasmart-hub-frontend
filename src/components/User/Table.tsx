@@ -73,6 +73,39 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
+export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
+
+export const userMembership = (membership: OrganizationMembership) => {
+    const roleNames =
+        membership.roles
+            ?.filter((role) => role.status === Status.ACTIVE)
+            .map((role) => role.role_name)
+            .filter((roleName): roleName is string => !!roleName) ?? [];
+    roleNames.sort(sortRoleNames);
+
+    const schoolNames =
+        membership.schoolMemberships
+            ?.map((sm) => sm.school)
+            .filter((sm) => sm?.status === Status.ACTIVE)
+            .map((s) => s?.school_name ?? ``) ?? [];
+    schoolNames?.sort(sortSchoolNames);
+    return {
+        id: membership?.user?.user_id ?? ``,
+        name: `${membership?.user?.given_name || `?`} ${membership?.user?.family_name || `?`}`,
+        avatar: membership?.user?.avatar ?? ``,
+        contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
+        roleNames,
+        schoolNames,
+        status: membership?.status ?? ``,
+        joinDate: new Date(membership.join_timestamp ?? ``),
+        gender: membership?.user?.gender ?? ``,
+        alternate_email: membership?.user?.alternate_email ?? ``,
+        alternate_phone: membership?.user?.alternate_phone ?? ``,
+        date_of_birth: membership?.user?.date_of_birth ?? ``,
+        shortcode: membership?.shortcode,
+    };
+};
+
 interface UserRow {
     id: string;
     name: string;
@@ -83,8 +116,6 @@ interface UserRow {
     status: string;
     joinDate: Date;
 }
-
-const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
 interface Props {
 }
@@ -121,31 +152,7 @@ export default function UserTable (props: Props) {
 
     const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {
-        const rows = memberships?.map((membership) => {
-            const roleNames =
-                membership.roles
-                    ?.filter((role) => role.status === Status.ACTIVE)
-                    .map((role) => role.role_name)
-                    .filter((roleName): roleName is string => !!roleName) ?? [];
-            roleNames.sort(sortRoleNames);
-            const schoolNames = membership.schoolMemberships?.map((sm) => sm.school).filter((sm) => sm?.status === Status.ACTIVE).map((s) => s?.school_name ?? ``) ?? [];
-            schoolNames?.sort(sortSchoolNames);
-            return {
-                id: membership?.user?.user_id ?? ``,
-                name: `${membership?.user?.given_name || `?`} ${membership?.user?.family_name || `?`}`,
-                avatar: membership?.user?.avatar ?? ``,
-                contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
-                roleNames,
-                schoolNames,
-                status: membership?.status ?? ``,
-                joinDate: new Date(membership.join_timestamp ?? ``),
-                gender: membership?.user?.gender ?? ``,
-                alternate_email: membership?.user?.alternate_email ?? ``,
-                alternate_phone: membership?.user?.alternate_phone ?? ``,
-                date_of_birth: membership?.user?.date_of_birth ?? ``,
-                shortcode: membership?.shortcode,
-            };
-        });
+        const rows = memberships?.map(userMembership);
         setRows(rows ?? []);
     }, [ memberships ]);
 
