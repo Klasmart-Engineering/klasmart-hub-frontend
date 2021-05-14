@@ -79,6 +79,34 @@ const useStyles = makeStyles((theme) => {
     });
 });
 
+export const isActive = (classItem: Class) => classItem.status === Status.ACTIVE;
+
+export const organizationClasses = (classItem: Class) => {
+    return {
+        id: classItem.class_id,
+        name: classItem.class_name ?? ``,
+        schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
+        programs: classItem.programs?.map((program) => program.name ?? ``) ?? [],
+        subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
+        grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
+        ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
+        students:
+            classItem.students
+                ?.filter((student) => student?.membership?.status === Status.ACTIVE)
+                .map((student) => student?.given_name ?? ``) ?? [],
+        teachers:
+            classItem.teachers
+                ?.filter((teacher) => teacher?.membership?.status === Status.ACTIVE)
+                .map((teacher) => teacher?.given_name ?? ``) ?? [],
+        status: classItem.status ?? ``,
+        programSubjects:
+            classItem.programs?.map((program) => ({
+                programName: program.name ?? ``,
+                subjects: program?.subjects ?? [],
+            })) ?? [],
+    };
+};
+
 interface ProgramSubject {
     programName: string;
     subjects: Subject[];
@@ -162,28 +190,7 @@ export default function ClassesTable (props: Props) {
             setRows([]);
             return;
         }
-        const rows = (classItems ?? schoolClasses)?.filter((classItem) => classItem.status === Status.ACTIVE).map((classItem) => ({
-            id: classItem.class_id,
-            name: classItem.class_name ?? ``,
-            schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
-            programs: classItem.programs?.map((program) => program.name ?? ``) ?? [],
-            subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
-            grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
-            ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
-            students:
-                classItem.students
-                    ?.filter((student) => student?.membership?.status === Status.ACTIVE)
-                    .map((student) => student?.given_name ?? ``) ?? [],
-            teachers:
-                classItem.teachers
-                    ?.filter((teacher) => teacher?.membership?.status === Status.ACTIVE)
-                    .map((teacher) => teacher?.given_name ?? ``) ?? [],
-            status: classItem.status ?? ``,
-            programSubjects: classItem.programs?.map((program) => ({
-                programName: program.name ?? ``,
-                subjects: program?.subjects ?? [],
-            })) ?? [],
-        })) ?? [];
+        const rows = (classItems ?? schoolClasses)?.filter(isActive).map(organizationClasses) ?? [];
         setRows(rows);
     }, [ schoolClasses, canView ]);
 

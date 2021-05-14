@@ -1,24 +1,22 @@
-import 'regenerator-runtime/runtime';
-import ClassTable from './Table';
-import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
-import { GET_ALL_CLASSES } from '@/operations/queries/getAllClasses';
-import { userMembership } from "@/pages/admin/User/UserTable";
+import "regenerator-runtime/runtime";
+import ClassTable from "./Table";
 import {
-    OrganizationMembership,
-    Role,
-    School,
-    SchoolMembership,
-} from "@/types/graphQL";
+    isActive,
+    organizationClasses,
+} from "@/components/Class/Table";
+import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
+import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
+import { Class } from "@/types/graphQL";
 import { getLanguage } from "@/utils/locale";
-import { MockedResponse } from '@apollo/client/testing';
+import { MockedResponse } from "@apollo/client/testing";
 import {
     act,
     screen,
     waitFor,
-} from '@testing-library/react';
-import qlRender from '@tests/utils';
-import { utils } from 'kidsloop-px';
-import React from 'react';
+} from "@testing-library/react";
+import qlRender from "@tests/utils";
+import { utils } from "kidsloop-px";
+import React from "react";
 
 const classIdA = `a19de3cc-aa01-47f5-9f87-850eb70ae073`;
 const classIdB = `b19de3cc-aa01-47f5-9f87-850eb70ae073`;
@@ -76,7 +74,7 @@ const mocks: MockedResponse[] = [
                         },
                     },
                 };
-            } else  {
+            } else {
                 return {
                     data: {
                         organization: {
@@ -173,242 +171,611 @@ test(`Classes table properly updates records after delete`, async () => {
     });
 });
 
-const studentRole: Role = {
-    role_id: `fd37310d-5ced-4dda-9968-c6cb084a542b`,
-    role_name: `Student`,
+const classA: Class = {
+    class_id: `fe8d14d5-2ef0-4dd2-bf72-8dc3cfce9ff8`,
+    class_name: `Class for Roberto`,
     status: `active`,
-};
-
-const orgAdminRole: Role = {
-    role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
-    role_name: `Organization Admin`,
-    status: `active`,
-};
-
-const teacherRole: Role = {
-    role_id: `893f28d2-69f1-4dc5-aa37-a04b9a8d90b9`,
-    role_name: `Teacher`,
-    status: `active`,
-};
-
-const customRoleA: Role = {
-    role_id: `abbc8e9b-9e4b-43bb-95fb-61302ba7f398`,
-    role_name: `Role 12`,
-    status: `active`,
-};
-
-const schoolA: SchoolMembership = {
-    school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
-    school_name: `BTS University`,
-    status: `active`,
-};
-
-const schoolB: School = {
-    school_id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
-    school_name: `San Javier University`,
-    status: `active`,
-};
-
-const userA: OrganizationMembership = {
-    organization_id: `bd07db26-340d-44f3-a98d-ab1435acdd3d`,
-    user_id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
-    join_timestamp: `2020-12-09T23:40:14.595Z`,
-    status: `active`,
-    shortcode: null,
-    schoolMemberships: [],
-    user: {
-        user_id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
-        given_name: `Andres 09`,
-        family_name: `09`,
-        email: `andresp+09@bluetrailsoft.com`,
-        phone: null,
-        avatar: null,
-        full_name: `Andres 09 09`,
-        gender: null,
-        alternate_email: null,
-        date_of_birth: null,
-        alternate_phone: null,
-    },
-    roles: [ studentRole, orgAdminRole ],
-};
-const userB: OrganizationMembership = {
-    organization_id: `bd07db26-340d-44f3-a98d-ab1435acdd3d`,
-    user_id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-    join_timestamp: `2020-12-10T19:03:14.417Z`,
-    status: `active`,
-    shortcode: `4AAXCY5C1584UKON`,
-    schoolMemberships: [
+    schools: [
         {
-            user_id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-            school: schoolA,
-            roles: [],
             school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
+            school_name: `BTS University`,
         },
         {
-            user_id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-            school: schoolB,
-            roles: [],
             school_id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
+            school_name: `San Javier University`,
+        },
+        {
+            school_id: `61e2e4d8-54ee-4499-8251-fb6795016da6`,
+            school_name: `School with code`,
+        },
+        {
+            school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
+            school_name: `School for CSV`,
+        },
+        {
+            school_id: `596cf57e-4365-40fd-94f8-6f080fc761dc`,
+            school_name: `School Unique`,
+        },
+        {
+            school_id: `44869cf9-4b27-4225-83a5-b119682a5ac7`,
+            school_name: `School Unique 2`,
+        },
+        {
+            school_id: `ef3f3132-16a2-411e-9b1b-9d71b252ddad`,
+            school_name: `School Unique 3`,
         },
     ],
-    user: {
-        user_id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-        given_name: `John`,
-        family_name: `Petrucci`,
-        email: `john@09.com`,
-        phone: null,
-        avatar: null,
-        full_name: `John Petrucci`,
-        gender: `female`,
-        alternate_email: null,
-        date_of_birth: null,
-        alternate_phone: `+52123488`,
-    },
-    roles: [ studentRole, customRoleA ],
-};
-const userC: OrganizationMembership = {
-    organization_id: `bd07db26-340d-44f3-a98d-ab1435acdd3d`,
-    user_id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-    join_timestamp: `2020-12-10T19:32:35.376Z`,
-    status: `inactive`,
-    shortcode: null,
-    schoolMemberships: [
+    age_ranges: [
         {
-            user_id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-            school: schoolA,
-            roles: [],
-            school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
+            id: `48ae4957-fd81-469c-a032-5f08459efcd6`,
+            name: `Age Range 1`,
+            high_value: 8,
+            high_value_unit: `month`,
+            low_value: 1,
+            low_value_unit: `month`,
+            status: `active`,
+            system: false,
         },
         {
-            user_id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-            school: schoolB,
-            roles: [],
+            id: `fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
+            name: `5 - 6 year(s)`,
+            high_value: 6,
+            high_value_unit: `year`,
+            low_value: 5,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+        {
+            id: `4cb0ad2f-2c4a-4120-a9d4-7c874bda717a`,
+            name: `Age Range 3`,
+            high_value: 10,
+            high_value_unit: `month`,
+            low_value: 2,
+            low_value_unit: `month`,
+            status: `active`,
+            system: false,
+        },
+        {
+            id: `7965d220-619d-400f-8cab-42bd98c7d23c`,
+            name: `3 - 4 year(s)`,
+            high_value: 4,
+            high_value_unit: `year`,
+            low_value: 3,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+        {
+            id: `bb7982cd-020f-4e1a-93fc-4a6874917f07`,
+            name: `4 - 5 year(s)`,
+            high_value: 5,
+            high_value_unit: `year`,
+            low_value: 4,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+    ],
+    programs: [
+        {
+            id: `0a54c6b4-b051-4503-a4fd-f7b8b4f88aa6`,
+            name: `My Second Program`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+                    name: `My second subject`,
+                    status: `active`,
+                },
+            ],
+        },
+        {
+            id: `c1887918-0cb6-46f7-a8a9-80d4324c1147`,
+            name: `My Third Program`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+                    name: `My third subject`,
+                    status: `active`,
+                },
+            ],
+        },
+        {
+            id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+            name: `Bada Genius`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                    name: `Language/Literacy`,
+                    status: `active`,
+                },
+            ],
+        },
+    ],
+    subjects: [
+        {
+            id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+            name: `My second subject`,
+            status: `active`,
+        },
+        {
+            id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+            name: `My third subject`,
+            status: `active`,
+        },
+        {
+            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+            name: `Language/Literacy`,
+            status: `active`,
+        },
+    ],
+    grades: [
+        {
+            id: `a2f468d0-dd09-426a-8d33-009aa5dc6674`,
+            name: `My second Grade`,
+            status: `active`,
+        },
+        {
+            id: `e81e245c-336a-4138-b57d-2bef03c3b1cb`,
+            name: `My third Grade`,
+            status: `active`,
+        },
+        {
+            id: `98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
+            name: `None Specified`,
+            status: `active`,
+        },
+    ],
+    students: [],
+    teachers: [
+        {
+            user_id: `5509ea94-ed32-537d-a8db-051d8fd5e897`,
+            given_name: `Custom Teacher`,
+            membership: {
+                status: `active`,
+            },
+        },
+    ],
+};
+const classB: Class = {
+    class_id: `e92b3f2e-7792-4039-b3ad-89077a9824ec`,
+    class_name: `Class Custom Teacher 2`,
+    status: `active`,
+    schools: [
+        {
+            school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
+            school_name: `BTS University`,
+        },
+        {
             school_id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
+            school_name: `San Javier University`,
         },
-    ],
-    user: {
-        user_id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-        given_name: `Mike`,
-        family_name: `Portnoy`,
-        email: `mike@09.com`,
-        phone: null,
-        avatar: null,
-        full_name: `Mike Portnoy`,
-        gender: null,
-        alternate_email: null,
-        date_of_birth: null,
-        alternate_phone: null,
-    },
-    roles: [ teacherRole, studentRole ],
-};
-const userD: OrganizationMembership = {
-    organization_id: `bd07db26-340d-44f3-a98d-ab1435acdd3d`,
-    user_id: `4b1503a1-1b0b-57ec-b05c-dddd8fe78bc9`,
-    join_timestamp: `2020-12-11T17:11:11.992Z`,
-    status: `inactive`,
-    shortcode: null,
-    schoolMemberships: [
         {
-            user_id: `4b1503a1-1b0b-57ec-b05c-dddd8fe78bc9`,
-            school: schoolA,
-            roles: [],
-            school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
+            school_id: `61e2e4d8-54ee-4499-8251-fb6795016da6`,
+            school_name: `School with code`,
+        },
+        {
+            school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
+            school_name: `School for CSV`,
+        },
+        {
+            school_id: `596cf57e-4365-40fd-94f8-6f080fc761dc`,
+            school_name: `School Unique`,
+        },
+        {
+            school_id: `44869cf9-4b27-4225-83a5-b119682a5ac7`,
+            school_name: `School Unique 2`,
+        },
+        {
+            school_id: `ef3f3132-16a2-411e-9b1b-9d71b252ddad`,
+            school_name: `School Unique 3`,
         },
     ],
-    user: {
-        user_id: `4b1503a1-1b0b-57ec-b05c-dddd8fe78bc9`,
-        given_name: `Stephen `,
-        family_name: `King`,
-        email: `stephen@09.com`,
-        phone: null,
-        avatar: null,
-        full_name: `Stephen  King`,
-        gender: null,
-        alternate_email: null,
-        date_of_birth: null,
-        alternate_phone: null,
-    },
-    roles: [ studentRole, teacherRole ],
+    age_ranges: [
+        {
+            id: `48ae4957-fd81-469c-a032-5f08459efcd6`,
+            name: `Age Range 1`,
+            high_value: 8,
+            high_value_unit: `month`,
+            low_value: 1,
+            low_value_unit: `month`,
+            status: `active`,
+            system: false,
+        },
+        {
+            id: `fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
+            name: `5 - 6 year(s)`,
+            high_value: 6,
+            high_value_unit: `year`,
+            low_value: 5,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+        {
+            id: `4cb0ad2f-2c4a-4120-a9d4-7c874bda717a`,
+            name: `Age Range 3`,
+            high_value: 10,
+            high_value_unit: `month`,
+            low_value: 2,
+            low_value_unit: `month`,
+            status: `active`,
+            system: false,
+        },
+        {
+            id: `7965d220-619d-400f-8cab-42bd98c7d23c`,
+            name: `3 - 4 year(s)`,
+            high_value: 4,
+            high_value_unit: `year`,
+            low_value: 3,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+        {
+            id: `bb7982cd-020f-4e1a-93fc-4a6874917f07`,
+            name: `4 - 5 year(s)`,
+            high_value: 5,
+            high_value_unit: `year`,
+            low_value: 4,
+            low_value_unit: `year`,
+            status: `active`,
+            system: true,
+        },
+    ],
+    programs: [
+        {
+            id: `0a54c6b4-b051-4503-a4fd-f7b8b4f88aa6`,
+            name: `My Second Program`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+                    name: `My second subject`,
+                    status: `active`,
+                },
+            ],
+        },
+        {
+            id: `c1887918-0cb6-46f7-a8a9-80d4324c1147`,
+            name: `My Third Program`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+                    name: `My third subject`,
+                    status: `active`,
+                },
+            ],
+        },
+        {
+            id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+            name: `Bada Genius`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                    name: `Language/Literacy`,
+                    status: `active`,
+                },
+            ],
+        },
+    ],
+    subjects: [
+        {
+            id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+            name: `My second subject`,
+            status: `active`,
+        },
+        {
+            id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+            name: `My third subject`,
+            status: `active`,
+        },
+        {
+            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+            name: `Language/Literacy`,
+            status: `active`,
+        },
+    ],
+    grades: [
+        {
+            id: `a2f468d0-dd09-426a-8d33-009aa5dc6674`,
+            name: `My second Grade`,
+            status: `active`,
+        },
+        {
+            id: `e81e245c-336a-4138-b57d-2bef03c3b1cb`,
+            name: `My third Grade`,
+            status: `active`,
+        },
+        {
+            id: `98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
+            name: `None Specified`,
+            status: `active`,
+        },
+    ],
+    students: [],
+    teachers: [
+        {
+            user_id: `437b864a-6662-5bcc-8403-182fab2317c8`,
+            given_name: `Custom Teacher`,
+            membership: {
+                status: `active`,
+            },
+        },
+    ],
+};
+const classC: Class = {
+    class_id: `a210ecae-11e7-4f7e-aed6-9217e834f419`,
+    class_name: `csv Class 3`,
+    status: `active`,
+    schools: [
+        {
+            school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
+            school_name: `School for CSV`,
+        },
+    ],
+    age_ranges: [],
+    programs: [
+        {
+            id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+            name: `Bada Genius`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                    name: `Language/Literacy`,
+                    status: `active`,
+                },
+            ],
+        },
+    ],
+    subjects: [],
+    grades: [],
+    students: [],
+    teachers: [],
 };
 
-const memberships: OrganizationMembership[] = [
-    userA,
-    userB,
-    userC,
-    userD,
+const classD: Class = {
+    class_id: `a8b802f6-e29e-4eb7-8dc7-798012d7b8e4`,
+    class_name: `csv Class 4`,
+    status: `active`,
+    schools: [
+        {
+            school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
+            school_name: `School for CSV`,
+        },
+    ],
+    age_ranges: [],
+    programs: [
+        {
+            id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+            name: `Bada Genius`,
+            status: `active`,
+            subjects: [
+                {
+                    id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                    name: `Language/Literacy`,
+                    status: `active`,
+                },
+            ],
+        },
+    ],
+    subjects: [],
+    grades: [],
+    students: [],
+    teachers: [],
+};
+
+const schoolClasses: Class[] = [
+    classA,
+    classB,
+    classC,
+    classD,
 ];
 
-test(`should create an array of objects that conforms the User Table UserRow interface`, () => {
-    const rows = memberships.map(userMembership);
+test(`should create an array of objects that conforms the Classes Table ClassRow interface`, () => {
+    const rows = schoolClasses.filter(isActive).map(organizationClasses);
 
     const final = [
         {
-            id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
-            name: `Andres 09 09`,
-            avatar: ``,
-            contactInfo: `andresp+09@bluetrailsoft.com`,
-            roleNames: [ `Organization Admin`, `Student` ],
-            schoolNames: [],
+            id: `fe8d14d5-2ef0-4dd2-bf72-8dc3cfce9ff8`,
+            name: `Class for Roberto`,
+            schoolNames: [
+                `BTS University`,
+                `San Javier University`,
+                `School with code`,
+                `School for CSV`,
+                `School Unique`,
+                `School Unique 2`,
+                `School Unique 3`,
+            ],
+            programs: [
+                `My Second Program`,
+                `My Third Program`,
+                `Bada Genius`,
+            ],
+            subjects: [
+                `My second subject`,
+                `My third subject`,
+                `Language/Literacy`,
+            ],
+            grades: [
+                `My second Grade`,
+                `My third Grade`,
+                `None Specified`,
+            ],
+            ageRanges: [
+                `1 - 8 Month(s)`,
+                `5 - 6 Year(s)`,
+                `2 - 10 Month(s)`,
+                `3 - 4 Year(s)`,
+                `4 - 5 Year(s)`,
+            ],
+            students: [],
+            teachers: [ `Custom Teacher` ],
             status: `active`,
-            joinDate: new Date(`2020-12-09T23:40:14.595Z`),
-            gender: ``,
-            alternate_email: ``,
-            alternate_phone: ``,
-            date_of_birth: ``,
-            shortcode: null,
+            programSubjects: [
+                {
+                    programName: `My Second Program`,
+                    subjects: [
+                        {
+                            id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+                            name: `My second subject`,
+                            status: `active`,
+                        },
+                    ],
+                },
+                {
+                    programName: `My Third Program`,
+                    subjects: [
+                        {
+                            id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+                            name: `My third subject`,
+                            status: `active`,
+                        },
+                    ],
+                },
+                {
+                    programName: `Bada Genius`,
+                    subjects: [
+                        {
+                            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                            name: `Language/Literacy`,
+                            status: `active`,
+                        },
+                    ],
+                },
+            ],
         },
         {
-            id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-            name: `John Petrucci`,
-            avatar: ``,
-            contactInfo: `john@09.com`,
-            roleNames: [ `Role 12`, `Student` ],
-            schoolNames: [ `BTS University`, `San Javier University` ],
+            id: `e92b3f2e-7792-4039-b3ad-89077a9824ec`,
+            name: `Class Custom Teacher 2`,
+            schoolNames: [
+                `BTS University`,
+                `San Javier University`,
+                `School with code`,
+                `School for CSV`,
+                `School Unique`,
+                `School Unique 2`,
+                `School Unique 3`,
+            ],
+            programs: [
+                `My Second Program`,
+                `My Third Program`,
+                `Bada Genius`,
+            ],
+            subjects: [
+                `My second subject`,
+                `My third subject`,
+                `Language/Literacy`,
+            ],
+            grades: [
+                `My second Grade`,
+                `My third Grade`,
+                `None Specified`,
+            ],
+            ageRanges: [
+                `1 - 8 Month(s)`,
+                `5 - 6 Year(s)`,
+                `2 - 10 Month(s)`,
+                `3 - 4 Year(s)`,
+                `4 - 5 Year(s)`,
+            ],
+            students: [],
+            teachers: [ `Custom Teacher` ],
             status: `active`,
-            joinDate: new Date(`2020-12-10T19:03:14.417Z`),
-            gender: `female`,
-            alternate_email: ``,
-            alternate_phone: `+52123488`,
-            date_of_birth: ``,
-            shortcode: `4AAXCY5C1584UKON`,
+            programSubjects: [
+                {
+                    programName: `My Second Program`,
+                    subjects: [
+                        {
+                            id: `69d0cfca-4e7d-408b-96cc-53814b7a45d2`,
+                            name: `My second subject`,
+                            status: `active`,
+                        },
+                    ],
+                },
+                {
+                    programName: `My Third Program`,
+                    subjects: [
+                        {
+                            id: `c85a80ab-0e57-48f1-8b2d-280c8f79c664`,
+                            name: `My third subject`,
+                            status: `active`,
+                        },
+                    ],
+                },
+                {
+                    programName: `Bada Genius`,
+                    subjects: [
+                        {
+                            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                            name: `Language/Literacy`,
+                            status: `active`,
+                        },
+                    ],
+                },
+            ],
         },
         {
-            id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-            name: `Mike Portnoy`,
-            avatar: ``,
-            contactInfo: `mike@09.com`,
-            roleNames: [ `Teacher`, `Student` ],
-            schoolNames: [ `BTS University`, `San Javier University` ],
-            status: `inactive`,
-            joinDate: new Date(`2020-12-10T19:32:35.376Z`),
-            gender: ``,
-            alternate_email: ``,
-            alternate_phone: ``,
-            date_of_birth: ``,
-            shortcode: null,
+            id: `a210ecae-11e7-4f7e-aed6-9217e834f419`,
+            name: `csv Class 3`,
+            schoolNames: [ `School for CSV` ],
+            programs: [ `Bada Genius` ],
+            subjects: [],
+            grades: [],
+            ageRanges: [],
+            students: [],
+            teachers: [],
+            status: `active`,
+            programSubjects: [
+                {
+                    programName: `Bada Genius`,
+                    subjects: [
+                        {
+                            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                            name: `Language/Literacy`,
+                            status: `active`,
+                        },
+                    ],
+                },
+            ],
         },
         {
-            id: `4b1503a1-1b0b-57ec-b05c-dddd8fe78bc9`,
-            name: `Stephen  King`,
-            avatar: ``,
-            contactInfo: `stephen@09.com`,
-            roleNames: [ `Teacher`, `Student` ],
-            schoolNames: [ `BTS University` ],
-            status: `inactive`,
-            joinDate: new Date(`2020-12-11T17:11:11.992Z`),
-            gender: ``,
-            alternate_email: ``,
-            alternate_phone: ``,
-            date_of_birth: ``,
-            shortcode: null,
+            id: `a8b802f6-e29e-4eb7-8dc7-798012d7b8e4`,
+            name: `csv Class 4`,
+            schoolNames: [ `School for CSV` ],
+            programs: [ `Bada Genius` ],
+            subjects: [],
+            grades: [],
+            ageRanges: [],
+            students: [],
+            teachers: [],
+            status: `active`,
+            programSubjects: [
+                {
+                    programName: `Bada Genius`,
+                    subjects: [
+                        {
+                            id: `66a453b0-d38f-472e-b055-7a94a94d66c4`,
+                            name: `Language/Literacy`,
+                            status: `active`,
+                        },
+                    ],
+                },
+            ],
         },
     ];
-
     expect(rows).toEqual(final);
 });
 
 test(`should return an empty array`, () => {
-    const rows = [].map(userMembership);
+    const rows = [].filter(isActive).map(organizationClasses);
 
     expect(rows).toEqual([]);
 });
