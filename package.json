@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "build": "webpack",
+    "build:bitbucket": "cross-env ENV_PATH=.env.bitbucket webpack",
     "build:alpha": "cross-env ENV_PATH=.env.alpha webpack",
     "build:prod": "cross-env ENV_PATH=.env.prod webpack",
     "build:prod-cn": "cross-env ENV_PATH=.env.prod.cn webpack",

@@ -11,8 +11,8 @@ pipelines:
         image: node:lts
         script:
           - npm i
-          - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.$KIDSLOOP_ENV
-          - npm run build:$KIDSLOOP_ENV
+          - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.bitbucket  
+          - npm run build:bitbucket
         caches:
           - nodemodules
         artifacts:
