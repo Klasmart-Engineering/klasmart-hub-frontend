@@ -47,6 +47,7 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -149,6 +150,7 @@ export default function UserTable (props: Props) {
     const canCreate = usePermission(`create_users_40220`);
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
+    const canView = usePermission(`view_users_40110`, true);
 
     const memberships = dataOrganizationMemberships?.organization?.memberships;
     useEffect(() => {
@@ -340,6 +342,10 @@ export default function UserTable (props: Props) {
             });
         }
     };
+
+    if (!canView && !loadingOrganizationMemberships) {
+        return <Redirect to="/" />;
+    }
 
     return <>
         <Paper className={classes.root}>
