@@ -4,7 +4,10 @@ import {
     useGetMyUsers,
 } from "@/api/users";
 import { userIdVar } from "@/cache";
-import { User } from "@/types/graphQL";
+import {
+    Status,
+    User,
+} from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
 import {
     Avatar,
@@ -50,7 +53,7 @@ export default function UserProfileSwitcher (props: Props) {
 
     useEffect(() => {
         if (data) {
-            setUsers(data.my_users);
+            setUsers(data.my_users.filter(user => user.memberships?.some(membership => membership.status === Status.ACTIVE)));
         }
     }, [ data ]);
 

@@ -12,6 +12,9 @@ export const GET_MY_USERS = gql`
             date_of_birth
             avatar
             username
+            memberships {
+                status
+            }
         }
     }
 `;
