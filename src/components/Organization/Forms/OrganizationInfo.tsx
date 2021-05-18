@@ -87,11 +87,11 @@ export default function OrganizationInfo (props: Props) {
             address2Valid,
         ].every((value) => value));
     }, [
-        organizationName,
-        shortCode,
-        organizationPhone,
-        address1,
-        address2,
+        organizationNameValid,
+        shortCodeValid,
+        organizationPhoneValid,
+        address1Valid,
+        address2Valid,
     ]);
 
     useEffect(() => {

@@ -62,7 +62,7 @@ export default function CreateOrganizationPage () {
     const userProfile = useReactiveVar(userProfileVar);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [ isValid, setValid ] = useState(true);
+    const [ isValid, setValid ] = useState(false);
     const [ organizationState, setOrganizationState ] = useState(buildEmptyOrganization);
     const [ createOrganization ] = useCreateOrganization();
     const [ addUserToOrg ] = useAddUserToOrganization();

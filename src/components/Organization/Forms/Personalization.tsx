@@ -70,9 +70,9 @@ export default function Personalization (props: Props) {
         letternumeric,
     } = useValidations();
     const [ alternateText, setAlternateText ] = useState(``);
-    const [ alternateTextValid, setAlternateTextValid ] = useState(true);
+    const [ alternateTextValid, setAlternateTextValid ] = useState(false);
     const [ color, setColor ] = useState(`#79d2bc`);
-    const [ colorValid, setColorValid ] = useState(true);
+    const [ colorValid, setColorValid ] = useState(false);
     const [ organizationLogo, setOrganizationLogo ] = useState<File>();
     const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState();
 
@@ -102,9 +102,9 @@ export default function Personalization (props: Props) {
         setColor(value.color);
     }, [ value ]);
 
-    useEffect(() => {
-        onValidation([ alternateTextValid, colorValid ].every((value) => value));
-    }, [ alternateTextValid, colorValid ]);
+    // useEffect(() => {
+    //     onValidation([ alternateTextValid, colorValid ].every((value) => value));
+    // }, [ alternateTextValid, colorValid ]);
 
     useEffect(() => {
         const updatedOrganizationState: Organization = {
