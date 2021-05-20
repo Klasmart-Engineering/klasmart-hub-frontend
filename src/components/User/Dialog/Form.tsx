@@ -104,14 +104,6 @@ const genderHandler = (gender: string) => {
     }
 };
 
-const accordionExpansionHandler = (email: string, phone: string) => {
-    if (email || phone) {
-        return `panel`;
-    }
-
-    return false;
-};
-
 interface Props {
     value: OrganizationMembership;
     onChange: (value: OrganizationMembership) => void;
@@ -148,7 +140,7 @@ export default function UserDialogForm (props: Props) {
         ?.filter((membership) => membership.school?.status === Status.ACTIVE)
         .map((schoolMembership) => schoolMembership.school_id) ?? []);
     const [ roleIds, setRoleIds ] = useState(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
-    const [ roleIdsValid, setRoleIdsValid ] = useState(false);
+    const [ roleIdsValid, setRoleIdsValid ] = useState(true);
     const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
     const [ contactInfoIsValid, setContactInfoIsValid ] = useState(true);
     const [ shortcode, setShortcode ] = useState(value.shortcode ?? ``);
@@ -157,12 +149,10 @@ export default function UserDialogForm (props: Props) {
     const [ alternativeEmailIsValid, setAlternativeEmailIsValid ] = useState(true);
     const [ alternativePhone, setAlternativePhone ] = useState(value.user?.alternate_phone ?? ``);
     const [ alternativePhoneIsValid, setAlternativePhoneIsValid ] = useState(true);
-    const [ radioValue, setRadioValue ] = useState<
-        string | UserGenders.MALE | UserGenders.FEMALE | UserGenders.NOT_SPECIFIED | UserGenders.OTHER
-    >(genderHandler(value.user?.gender ?? ``));
+    const [ radioValue, setRadioValue ] = useState<string | UserGenders>(genderHandler(value.user?.gender ?? ``));
     const [ gender, setGender ] = useState(value.user?.gender ?? ``);
     const [ genderIsValid, setGenderIsValid ] = useState(true);
-    const [ expanded, setExpanded ] = useState<string | false>(accordionExpansionHandler(value.user?.alternate_email ?? ``, value.user?.alternate_phone ?? ``));
+    const [ expanded, setExpanded ] = useState(!!(value.user?.alternate_email || value.user?.alternate_phone));
     const [ birthday, setBirthday ] = useState(formatDateOfBirth(value.user?.date_of_birth ?? ``));
     const {
         required,
@@ -246,8 +236,33 @@ export default function UserDialogForm (props: Props) {
         shortcode,
     ]);
 
-    const handleAccordionChange = (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
-        setExpanded(newExpanded ? panel : false);
+    useEffect(() => {
+        setGivenName(value.user?.given_name ?? ``);
+        setGivenNameValid(true);
+        setFamilyName(value.user?.family_name ?? ``);
+        setFamilyNameValid(true);
+        setSchoolIds(value.schoolMemberships
+            ?.filter((membership) => membership.school?.status === Status.ACTIVE)
+            .map((schoolMembership) => schoolMembership.school_id) ?? []);
+        setRoleIds(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
+        setRoleIdsValid(true);
+        setContactInfo(value.user?.email ?? value.user?.phone ?? ``);
+        setContactInfoIsValid(true);
+        setShortcode(value.shortcode ?? ``);
+        setShortcodeIsValid(true);
+        setAlternativeEmail(value.user?.alternate_email ?? ``);
+        setAlternativeEmailIsValid(true);
+        setAlternativePhone(value.user?.alternate_phone ?? ``);
+        setAlternativePhoneIsValid(true);
+        setRadioValue(genderHandler(value.user?.gender ?? ``));
+        setGender(value.user?.gender ?? ``);
+        setGenderIsValid(true);
+        setExpanded(!!(value.user?.alternate_email || value.user?.alternate_phone));
+        setBirthday(formatDateOfBirth(value.user?.date_of_birth ?? ``));
+    }, [ value ]);
+
+    const handleAccordionChange = (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+        setExpanded(newExpanded);
     };
 
     const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -433,8 +448,8 @@ export default function UserDialogForm (props: Props) {
             />
             <Accordion
                 square
-                expanded={expanded === `panel`}
-                onChange={handleAccordionChange(`panel`)}>
+                expanded={expanded}
+                onChange={handleAccordionChange}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     id="panel1d-header">

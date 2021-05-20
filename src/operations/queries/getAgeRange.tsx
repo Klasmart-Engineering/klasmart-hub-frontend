@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_AGE_RANGES = gql`
-    query organization($organization_id: ID!) {
+    query getOrganizationAgeRanges($organization_id: ID!) {
         organization(organization_id: $organization_id) {
             ageRanges {
                 id

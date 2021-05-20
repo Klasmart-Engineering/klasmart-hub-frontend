@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_CLASSES = gql`
-    query organization($organization_id: ID!) {
+    query getOrganizationClasses($organization_id: ID!) {
         organization(organization_id: $organization_id) {
             classes {
                 class_id

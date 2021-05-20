@@ -1,16 +1,14 @@
 import {
     useDeleteOrganizationMembership,
-    useGetOrganizationMemberships,
+    useGetPaginatedOrganizationMemberships,
+    UserEdge,
 } from "@/api/organizationMemberships";
 import { useGetAllRoles } from "@/api/roles";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    OrganizationMembership,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getTableLocalization } from "@/utils/table";
 import {
@@ -18,28 +16,35 @@ import {
     roleNameTranslations,
     sortRoleNames,
 } from "@/utils/userRoles";
+import { useValidations } from "@/utils/validations";
 import {
-    Avatar,
     Box,
     createStyles,
+    DialogContentText,
     makeStyles,
     Paper,
     Typography,
 } from "@material-ui/core";
 import {
-    CloudUpload,
+    CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-    Person as PersonIcon,
     PersonAdd as PersonAddIcon,
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    PageTable,
+    CursorTable,
+    usePrompt,
+    UserAvatar,
     useSnackbar,
     utils,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
 import { escapeRegExp } from "lodash";
 import React,
 {
@@ -76,38 +81,21 @@ const useStyles = makeStyles((theme) => createStyles({
 
 export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
-export const userMembership = (membership: OrganizationMembership) => {
-    const roleNames =
-        membership.roles
-            ?.filter((role) => role.status === Status.ACTIVE)
-            .map((role) => role.role_name)
-            .filter((roleName): roleName is string => !!roleName) ?? [];
-    roleNames.sort(sortRoleNames);
-
-    const schoolNames =
-        membership.schoolMemberships
-            ?.map((sm) => sm.school)
-            .filter((sm) => sm?.status === Status.ACTIVE)
-            .map((s) => s?.school_name ?? ``) ?? [];
-    schoolNames?.sort(sortSchoolNames);
+export const mapUserRow = (edge: UserEdge) => {
+    const user = edge.node;
     return {
-        id: membership?.user?.user_id ?? ``,
-        name: `${membership?.user?.given_name || `?`} ${membership?.user?.family_name || `?`}`,
-        avatar: membership?.user?.avatar ?? ``,
-        contactInfo: membership?.user?.email ?? membership?.user?.phone ?? ``,
-        roleNames,
-        schoolNames,
-        status: membership?.status ?? ``,
-        joinDate: new Date(membership.join_timestamp ?? ``),
-        gender: membership?.user?.gender ?? ``,
-        alternate_email: membership?.user?.alternate_email ?? ``,
-        alternate_phone: membership?.user?.alternate_phone ?? ``,
-        date_of_birth: membership?.user?.date_of_birth ?? ``,
-        shortcode: membership?.shortcode,
+        id: user.id,
+        name: `${user.givenName ?? `?`} ${user.familyName ?? `?`}`,
+        avatar: user.avatar ?? ``,
+        contactInfo: user.contactInfo.email ?? user.contactInfo.phone ?? ``,
+        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames),
+        schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
+        status: user.organizations?.[0].userStatus,
+        joinDate: new Date(user.organizations?.[0].joinDate),
     };
 };
 
-interface UserRow {
+export interface UserRow {
     id: string;
     name: string;
     avatar: string;
@@ -118,6 +106,8 @@ interface UserRow {
     joinDate: Date;
 }
 
+const ROWS_PER_PAGE = 10;
+
 interface Props {
 }
 
@@ -126,21 +116,30 @@ export default function UserTable (props: Props) {
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const prompt = usePrompt();
     const currentOrganization = useCurrentOrganization();
+    const { required, equals } = useValidations();
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
-    const [ selectedOrganizationMembership, setSelectedOrganizationMembership ] = useState<OrganizationMembership>();
+    const [ rowsPerPage, setRowsPerPage ] = useState(ROWS_PER_PAGE);
+    const [ search, setSearch ] = useState(``);
+    const [ cursor, setCursor ] = useState<string>();
+    const [ selectedUserId, setSelectedUserId ] = useState<string>();
     const organizationId = currentOrganization?.organization_id ?? ``;
     const {
-        data: dataOrganizationMemberships,
-        refetch,
+        data: usersData,
+        refetch: refetchUsers,
+        fetchMore: fetchMoreUsers,
         loading: loadingOrganizationMemberships,
-    } = useGetOrganizationMemberships({
-        fetchPolicy: `cache-and-network`,
+    } = useGetPaginatedOrganizationMemberships({
         variables: {
-            organization_id: organizationId,
+            direction: `FORWARD`,
+            count: rowsPerPage,
+            search: ``,
+            organizationId,
         },
+        notifyOnNetworkStatusChange: true,
     });
     const {
         data: dataRoles,
@@ -152,11 +151,13 @@ export default function UserTable (props: Props) {
     const canDelete = usePermission(`delete_users_40440`);
     const canView = usePermission(`view_users_40110`, true);
 
-    const memberships = dataOrganizationMemberships?.organization?.memberships;
+    const pageInfo = usersData?.usersConnection.pageInfo;
+    const users = usersData?.usersConnection.edges;
+
     useEffect(() => {
-        const rows = memberships?.map(userMembership);
+        const rows = users?.map(mapUserRow);
         setRows(rows ?? []);
-    }, [ memberships ]);
+    }, [ users ]);
 
     const statusTranslations: { [key: string]: string } = {
         active: `users_activeStatus`,
@@ -189,11 +190,13 @@ export default function UserTable (props: Props) {
         {
             id: `id`,
             label: `ID`,
+            disableSort: true,
             secret: true,
         },
         {
             id: `name`,
             persistent: true,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `users_name`,
             }),
@@ -203,32 +206,25 @@ export default function UserTable (props: Props) {
                     flexDirection="row"
                     alignItems="center"
                 >
-                    <Avatar
-                        src={row.avatar ?? ``}
+                    <UserAvatar
+                        name={row.name}
+                        size="small"
                         className={classes.avatar}
-                        style={{
-                            backgroundColor: row.avatar ? undefined : utils.stringToColor(row.name),
-                        }}>
-                        <Typography
-                            noWrap
-                            variant="inherit"
-                        >
-                            {utils.nameToInitials(row.name, 3) || <PersonIcon />}
-                        </Typography>
-                    </Avatar>
+                    />
                     <span>{row.name}</span>
                 </Box>
             ),
         },
         {
             id: `roleNames`,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            groups: roles.map((role) => ({
-                text: getCustomRoleName(role),
-                value: role,
-            })),
+            // groups: roles.map((role) => ({
+            //     text: getCustomRoleName(role),
+            //     value: role,
+            // })),
             search: (row: string[], searchValue: string) => {
                 const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
@@ -244,17 +240,19 @@ export default function UserTable (props: Props) {
                 if (!highestRoleB) return 1;
                 return roles.indexOf(highestRoleB) - roles.indexOf(highestRoleA);
             },
-            render: (row) => row.roleNames.map((roleName, i) =>
+            render: (row) => row.roleNames.map((roleName, i) => (
                 <Typography
                     key={`role-${i}`}
                     noWrap
                     variant="body2"
                 >
                     {getCustomRoleName(roleName)}
-                </Typography>),
+                </Typography>
+            )),
         },
         {
             id: `schoolNames`,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `users_school`,
             }),
@@ -269,6 +267,7 @@ export default function UserTable (props: Props) {
         },
         {
             id: `contactInfo`,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `users_contactInfo`,
             }),
@@ -278,10 +277,10 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            groups: [ `active`, `inactive` ].map((status) => ({
-                text: getCustomStatus(status),
-                value: status,
-            })),
+            // groups: [ `active`, `inactive` ].map((status) => ({
+            //     text: getCustomStatus(status),
+            //     value: status,
+            // })),
             search: (row: string[], searchValue: string) => {
                 const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
@@ -290,19 +289,22 @@ export default function UserTable (props: Props) {
                     return !!result;
                 });
             },
-            render: (row) => <span
-                className={clsx(classes.statusText, {
-                    [classes.activeColor]: row.status === Status.ACTIVE,
-                    [classes.inactiveColor]: row.status === Status.INACTIVE,
-                })}
-            >
-                {intl.formatMessage({
-                    id: `users_${row.status}Status`,
-                })}
-            </span>,
+            render: (row) => (
+                <span
+                    className={clsx(classes.statusText, {
+                        [classes.activeColor]: row.status === Status.ACTIVE,
+                        [classes.inactiveColor]: row.status === Status.INACTIVE,
+                    })}
+                >
+                    {intl.formatMessage({
+                        id: `users_${row.status}Status`,
+                    })}
+                </span>
+            ),
         },
         {
             id: `joinDate`,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `users_joinDate`,
             }),
@@ -310,34 +312,55 @@ export default function UserTable (props: Props) {
         },
     ];
 
-    const findOrganizationMembership = (row: UserRow) => memberships?.find((m) => m.user?.user_id === row.id);
-
     const editSelectedRow = (row: UserRow) => {
-        const selectedOrganizationMembership = findOrganizationMembership(row);
-        if (!selectedOrganizationMembership) return;
-        setSelectedOrganizationMembership(selectedOrganizationMembership);
+        setSelectedUserId(row.id);
         setEditDialogOpen(true);
     };
 
     const deleteSelectedRow = async (row: UserRow) => {
-        const selectedOrganizationMembership = findOrganizationMembership(row);
-        if (!selectedOrganizationMembership) return;
         const userName = row.name;
-        if (!confirm(`Are you sure you want to delete "${userName}"?`)) return;
-        const { organization_id, user_id } = selectedOrganizationMembership;
+        if (!await prompt({
+            variant: `error`,
+            title: intl.formatMessage({
+                id: `users_deleteButton`,
+            }),
+            content: <>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_deleteText`,
+                }, {
+                    value: userName,
+                })}</DialogContentText>
+                <DialogContentText>{intl.formatMessage({
+                    id: `generic_typeToDeletePrompt`,
+                }, {
+                    value: <strong>{userName}</strong>,
+                })}</DialogContentText>
+            </>,
+            okLabel: intl.formatMessage({
+                id: `generic_deleteLabel`,
+            }),
+            cancelLabel: intl.formatMessage({
+                id: `generic_cancelLabel`,
+            }),
+            validations: [ required(), equals(userName) ],
+        })) return;
         try {
             await deleteOrganizationMembership({
                 variables: {
-                    organization_id,
-                    user_id,
+                    organization_id: organizationId,
+                    user_id: row.id,
                 },
             });
-            await refetch();
-            enqueueSnackbar(`User has been deleted successfully`, {
+            await refetchUsers();
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteSuccess`,
+            }), {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(`Sorry, something went wrong, please try again`, {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteError`,
+            }), {
                 variant: `error`,
             });
         }
@@ -347,16 +370,54 @@ export default function UserTable (props: Props) {
         return <Redirect to="/" />;
     }
 
+    const handlePageChange = async (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => {
+        const pageInfo = utils.getCursorPageInfo(page, order, cursor, rowsPerPage);
+        setCursor(cursor);
+        fetchMoreUsers({
+            variables: {
+                ...pageInfo,
+                search,
+            },
+            updateQuery: (previous, { fetchMoreResult }) => fetchMoreResult,
+        });
+    };
+
+    const handleTableChange = async (tableData: CursorTableData<UserRow>) => {
+        setRowsPerPage(tableData.rowsPerPage);
+        setSearch(tableData.search);
+    };
+
+    useEffect(() => {
+        fetchMoreUsers({
+            variables: {
+                count: rowsPerPage,
+                direction: `FORWARD`,
+                cursor: null,
+                search: search ?? ``,
+            },
+            updateQuery: (previous, { fetchMoreResult }) => fetchMoreResult,
+        });
+    }, [ rowsPerPage, search ]);
+
     return <>
         <Paper className={classes.root}>
-            <PageTable
+            <CursorTable
                 columns={columns}
                 rows={rows}
                 loading={loadingOrganizationMemberships || loadingRoles}
                 idField="id"
-                orderBy="joinDate"
+                orderBy="id"
                 order="desc"
                 groupBy="roleNames"
+                search={search}
+                rowsPerPage={rowsPerPage}
+                hasNextPage={pageInfo?.hasNextPage}
+                hasPreviousPage={pageInfo?.hasPreviousPage}
+                startCursor={pageInfo?.startCursor}
+                endCursor={pageInfo?.endCursor}
+                total={usersData?.usersConnection.totalCount}
+                // noGroupTotal={usersData?.usersConnection.totalCount}
+                cursor={cursor}
                 primaryAction={{
                     label: intl.formatMessage({
                         id: `users_createUser`,
@@ -368,7 +429,7 @@ export default function UserTable (props: Props) {
                 secondaryActions={[
                     {
                         label: `Upload CSV`,
-                        icon: CloudUpload,
+                        icon: CloudUploadIcon,
                         disabled: !canCreate,
                         onClick: () => setUploadCsvDialogOpen(true),
                     },
@@ -408,29 +469,31 @@ export default function UserTable (props: Props) {
                         }),
                     },
                 })}
+                onPageChange={handlePageChange}
+                onChange={handleTableChange}
             />
         </Paper>
         <EditUserDialog
             open={editDialogOpen}
-            value={selectedOrganizationMembership}
+            userId={selectedUserId}
             onClose={(value) => {
-                setSelectedOrganizationMembership(undefined);
+                setSelectedUserId(undefined);
                 setEditDialogOpen(false);
-                if (value) refetch();
+                if (value) refetchUsers();
             }}
         />
         <CreateUserDialog
             open={createDialogOpen}
             onClose={(value) => {
                 setCreateDialogOpen(false);
-                if (value) refetch();
+                if (value) refetchUsers();
             }}
         />
         <UploadUserCsvDialog
             open={uploadCsvDialogOpen}
             onClose={(value) => {
                 setUploadCsvDialogOpen(false);
-                if (value) refetch();
+                if (value) refetchUsers();
             }}
         />
     </>;

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_ORGANIZATION_ROLES_PERMISSIONS = gql`
-    query organization($organization_id: ID!) {
+    query getOrganizationRoles($organization_id: ID!) {
         organization(organization_id: $organization_id) {
             roles {
                 role_id

@@ -83,7 +83,7 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
             count,
         }),
         total: (total) => intl.formatMessage({
-            id: `generic_tableTotal`,
+            id: `generic_totalResults`,
         }, {
             total,
         }),

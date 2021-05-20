@@ -1,9 +1,10 @@
 import UserDialogForm from "./Form";
 import {
     useDeleteOrganizationMembership,
+    useGetOrganizationMembership,
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
-import { OrganizationMembership } from "@/types/graphQL";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     createStyles,
@@ -24,27 +25,49 @@ const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
     open: boolean;
-    value?: OrganizationMembership;
-    onClose: (value?: OrganizationMembership) => void;
+    userId?: string;
+    onClose: (didEdit?: boolean) => void;
 }
 
 export default function EditUserDialog (props: Props) {
     const {
         open,
-        value,
+        userId,
         onClose,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const [ initOrganizationMembership, setInitOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
+    const organization = useCurrentOrganization();
+    const [ getOrganizationMembership, { data: organizationMembershipData } ] = useGetOrganizationMembership({
+        fetchPolicy: `cache-and-network`,
+        variables: {
+            organizationId: organization?.organization_id ?? ``,
+            userId: userId ?? ``,
+        },
+    });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
     useEffect(() => {
-        setEditedOrganizationMembership(value ?? buildEmptyOrganizationMembership());
-    }, [ value ]);
+        if (!open || !userId || !organization) return;
+        setInitOrganizationMembership(buildEmptyOrganizationMembership());
+        setEditedOrganizationMembership(buildEmptyOrganizationMembership());
+        getOrganizationMembership();
+    }, [
+        open,
+        userId,
+        organization,
+    ]);
+
+    useEffect(() => {
+        const organizationMembership = organizationMembershipData?.user.membership;
+        if (!organizationMembership) return;
+        setInitOrganizationMembership(organizationMembership);
+    }, [ organizationMembershipData ]);
 
     const handleEdit = async () => {
         try {
@@ -73,7 +96,7 @@ export default function EditUserDialog (props: Props) {
                     shortcode: shortcode ?? ``,
                 },
             });
-            onClose(editedOrganizationMembership);
+            onClose(true);
             enqueueSnackbar(intl.formatMessage({
                 id: `editDialog_savedSuccess`,
             }), {
@@ -89,7 +112,8 @@ export default function EditUserDialog (props: Props) {
     };
 
     const handleDelete = async () => {
-        const userName = `${value?.user?.given_name} ${value?.user?.family_name}`;
+        const { given_name, family_name } = organizationMembershipData?.user.membership.user ?? {};
+        const userName = `${given_name} ${family_name}`;
         if (!confirm(intl.formatMessage({
             id: `editDialog_deleteConfirm`,
         }, {
@@ -107,7 +131,7 @@ export default function EditUserDialog (props: Props) {
                     user_id,
                 },
             });
-            onClose(editedOrganizationMembership);
+            onClose(true);
             enqueueSnackbar(intl.formatMessage({
                 id: `editDialog_deleteSuccess`,
             }), {
@@ -156,8 +180,8 @@ export default function EditUserDialog (props: Props) {
             onClose={() => onClose()}
         >
             <UserDialogForm
-                value={editedOrganizationMembership}
-                onChange={(value) => setEditedOrganizationMembership(value)}
+                value={initOrganizationMembership}
+                onChange={setEditedOrganizationMembership}
                 onValidation={setValid}
             />
         </Dialog>

@@ -99,7 +99,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.14",
-    "@apollo/react-hooks": "^4.0.0",
     "@date-io/date-fns": "^2.10.8",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",

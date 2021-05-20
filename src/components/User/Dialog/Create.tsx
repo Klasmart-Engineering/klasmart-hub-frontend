@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
     open: boolean;
-    onClose: (value?: OrganizationMembership) => void;
+    onClose: (didCreate?: boolean) => void;
 }
 
 export default function CreateUserDialog (props: Props) {
@@ -67,8 +67,7 @@ export default function CreateUserDialog (props: Props) {
                     shortcode: shortcode ?? ``,
                 },
             });
-
-            onClose(newOrganizationMembership);
+            onClose(true);
             enqueueSnackbar(intl.formatMessage({
                 id: `createUser_success`,
             }), {

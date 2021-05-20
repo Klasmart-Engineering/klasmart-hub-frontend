@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_SUBJECTS = gql`
-    query organization($organization_id: ID!) {
+    query getOrganizationSubjects($organization_id: ID!) {
         organization(organization_id: $organization_id) {
             subjects {
                 id
@@ -26,7 +26,7 @@ export const GET_ALL_SUBJECTS = gql`
                 name
                 status
                 subjects {
-                  id
+                    id
                 }
             }
         }
