@@ -1,7 +1,4 @@
-import {
-    Group,
-    PermissionsCategory,
-} from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { Group } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { formatPermissionName } from "@/utils/validations";
 import {
     Accordion,
@@ -81,16 +78,16 @@ const useStyles = makeStyles((theme) =>
 interface Props {
     category: string;
     groups: Group[];
-    setPermissionsStepIsValid: Dispatch<SetStateAction<boolean>>;
-    permissionCategories: PermissionsCategory[];
+    checkedPermissions: string[];
+    setCheckedPermissions: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function PermissionsCard (props: Props) {
     const {
         category,
         groups,
-        setPermissionsStepIsValid,
-        permissionCategories,
+        checkedPermissions,
+        setCheckedPermissions,
     } = props;
     const classes = useStyles();
     const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(groups);
@@ -105,12 +102,18 @@ export default function PermissionsCard (props: Props) {
     const handlePermissionCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPermissions = [ ...cardPermissions ];
         const accordionDetails = newPermissions[event.target.tabIndex].permissionDetails.map((permissionDetail) => {
-            return permissionDetail.permissionName === event.target.id
-                ? {
+            if (permissionDetail.permissionName === event.target.id) {
+                event.target.checked && !checkedPermissions.includes(permissionDetail.permissionId)
+                    ? setCheckedPermissions((permissions) => [ ...permissions, permissionDetail.permissionId ])
+                    : setCheckedPermissions((permissions) =>
+                        permissions.filter((permissionId) => permissionId !== permissionDetail.permissionId));
+                return {
                     ...permissionDetail,
                     checked: event.target.checked,
-                }
-                : permissionDetail;
+                };
+            }
+
+            return permissionDetail;
         });
 
         newPermissions[event.target.tabIndex].permissionDetails = accordionDetails;
@@ -125,6 +128,15 @@ export default function PermissionsCard (props: Props) {
     const handleSelectAllPermissions = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPermissions = [ ...cardPermissions ];
         const accordionDetails = newPermissions[event.target.tabIndex].permissionDetails.map((permissionDetail) => {
+            if (event.target.checked && !checkedPermissions.includes(permissionDetail.permissionId)) {
+                setCheckedPermissions((permissions) => [ ...permissions, permissionDetail.permissionId ]);
+            }
+
+            if (!event.target.checked && checkedPermissions.includes(permissionDetail.permissionId)) {
+                setCheckedPermissions((permissions) =>
+                    permissions.filter((permissionId) => permissionId !== permissionDetail.permissionId));
+            }
+
             return {
                 ...permissionDetail,
                 checked: event.target.checked,
@@ -147,14 +159,6 @@ export default function PermissionsCard (props: Props) {
 
         setCardPermissions(newPermissions);
     }, []);
-
-    useEffect(() => {
-        const hasPermissions = permissionCategories.some((permissionCategory) =>
-            permissionCategory.groups.some((group) =>
-                group.permissionDetails.some((permissionDetail) => permissionDetail.checked)));
-
-        setPermissionsStepIsValid(hasPermissions);
-    }, [ permissionCategories, cardPermissions ]);
 
     const searchFilter = (permissionDescription: string, permissionName: string, levels: string[]): boolean => {
         const description = permissionDescription

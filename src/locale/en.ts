@@ -603,7 +603,7 @@ const messages: Record<string, string> = {
     rolesInfoCard_descriptionMaxChar: `Description can't be longer than 30 characters`,
     rolesInfoCard_descriptionAlphanumeric: `Only alphanumeric characters are valid`,
     rolesInfoCard_clearLabel: `Clear`,
-    rolesInfoCard_resetLabel: `Reset to Default`,
+    rolesInfoCard_resetLabel: `Reset`,
     rolesInfoCard_copyLabel: `Copy role from...`,
     rolesInfoCard_createNewRoleLabel: `Creating a new role`,
     rolesInfoCard_finishLabel: `You have finish the role creation process`,

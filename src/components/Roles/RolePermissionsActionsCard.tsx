@@ -1,6 +1,7 @@
 import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { Status } from "@/types/graphQL";
 import {
+    IconButton,
     MenuItem,
     TextField,
 } from "@material-ui/core";
@@ -13,6 +14,7 @@ import {
     Theme,
 } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import { Replay as ReplayIcon } from "@material-ui/icons";
 import React,
 { ChangeEvent } from "react";
 import { FormattedMessage } from "react-intl";
@@ -62,6 +64,8 @@ interface Props {
     onChange: ((event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void) | undefined;
     actions?: RolePermissionsAction[];
     textFieldLabel: string;
+    handleCopyFromRoleReset: () => void;
+    replayButtonIsVisible: boolean;
 }
 
 export default function RolePermissionsActionsCard (props: Props) {
@@ -71,6 +75,8 @@ export default function RolePermissionsActionsCard (props: Props) {
         actions,
         textFieldLabel,
         onChange,
+        handleCopyFromRoleReset,
+        replayButtonIsVisible,
     } = props;
     const classes = useStyles();
 
@@ -106,6 +112,13 @@ export default function RolePermissionsActionsCard (props: Props) {
                             label={textFieldLabel}
                             value={roleId}
                             variant="outlined"
+                            InputProps={{
+                                endAdornment: replayButtonIsVisible && (
+                                    <IconButton onClick={handleCopyFromRoleReset}>
+                                        <ReplayIcon />
+                                    </IconButton>
+                                ),
+                            }}
                             onChange={onChange}
                         >
                             {roles

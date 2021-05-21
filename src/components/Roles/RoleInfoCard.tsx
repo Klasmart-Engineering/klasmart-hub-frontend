@@ -140,7 +140,7 @@ export default function RoleInfoCard (props: Props) {
                                             .filter((role) => role.status === Status.ACTIVE)
                                             .filter((role) => role.role_name !== row.role)
                                             .map((role) => notEquals(role.role_name, intl.formatMessage({
-                                                id: `roles_notEqualValidations`,
+                                                id: `roles_notEqualValidation`,
                                             }))),
                                     ]}
                                     onChange={handleRoleNameChange}

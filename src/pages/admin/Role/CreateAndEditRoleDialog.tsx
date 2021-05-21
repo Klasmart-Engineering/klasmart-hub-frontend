@@ -27,10 +27,13 @@ import {
 } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
 import Typography from "@material-ui/core/Typography";
-import React, {
+import { xor } from "lodash";
+import React,
+{
     Dispatch,
     SetStateAction,
     useEffect,
+    useMemo,
     useState,
 } from "react";
 import {
@@ -160,23 +163,31 @@ export default function CreateAndEditRoleDialog (props: Props) {
     const [ permissionCategories, setPermissionCategories ] = useState<PermissionsCategory[]>([]);
     const [ roleId, setRoleId ] = useState(``);
     const [ roleInfoLoading, setRoleInfoLoading ] = useState(true);
-    const [ permissionsStepIsValid, setPermissionsStepIsValid ] = useState(false);
+    const [ editedRolePermissions, setEditedRolePermissions ] = useState<string[]>([]);
+    const [ checkedPermissions, setCheckedPermissions ] = useState<string[]>([]);
+    const [ copiedRolePermissions, setCopiedRolePermissions ] = useState<string[]>([]);
 
     useEffect(() => {
         if (open && roles.length) {
             const permissions = uniquePermissions(roles) ?? [];
             const data = sectionHandler(permissions) ?? [];
+            const permissionIds: string[] = [];
 
             if (rolePermissions?.role) {
                 data.forEach((permissionCategory) => {
                     permissionCategory.groups.forEach((group) => {
                         group.permissionDetails.forEach((permissionDetail) => {
                             permissionDetail.checked = rolePermissions?.role.permissions.some((permission) => permission.permission_id === permissionDetail.permissionId);
+                            if (permissionDetail.checked) {
+                                permissionIds.push(permissionDetail.permissionId);
+                            }
                         });
                     });
                 });
             }
 
+            setEditedRolePermissions(permissionIds);
+            setCheckedPermissions(permissionIds);
             setPermissionCategories(data);
         }
     }, [
@@ -203,6 +214,9 @@ export default function CreateAndEditRoleDialog (props: Props) {
             setRoleId(``);
             setPermissionCategories([]);
             setRoleInfoLoading(true);
+            setEditedRolePermissions([]);
+            setCheckedPermissions([]);
+            setCopiedRolePermissions([]);
         }
     }, [ open ]);
 
@@ -229,12 +243,17 @@ export default function CreateAndEditRoleDialog (props: Props) {
     };
 
     const newRolesAndPermissionsByRoleId = (roles: Role[], roleId: string) => {
-        const newPermissions = [ ...permissionCategories ];
+        const newPermissionCategories = [ ...permissionCategories ];
+        const permissionIds: string[] = [];
 
-        newPermissions.forEach((permissionCategory) => {
+        newPermissionCategories.forEach((permissionCategory) => {
             permissionCategory.groups.forEach((group) => {
                 group.permissionDetails.forEach((permissionDetail) => {
                     permissionDetail.checked = !!getPermissionIdsByRoleId(roles, roleId)?.includes(permissionDetail.permissionId);
+
+                    if (permissionDetail.checked) {
+                        permissionIds.push(permissionDetail.permissionId);
+                    }
                 });
 
                 group.open = group.permissionDetails.some((permissionDetail) => permissionDetail.checked);
@@ -243,8 +262,26 @@ export default function CreateAndEditRoleDialog (props: Props) {
             });
         });
 
-        setPermissionCategories(newPermissions);
+        setCheckedPermissions(permissionIds);
+        setCopiedRolePermissions(permissionIds);
+        setPermissionCategories(newPermissionCategories);
     };
+
+    const replayButtonIsVisible = useMemo(() => {
+        return roleId.length > 0 && xor(checkedPermissions, copiedRolePermissions).length !== 0;
+    }, [
+        roleId,
+        checkedPermissions,
+        copiedRolePermissions,
+    ]);
+
+    const resetToDefaultIsDisabled = useMemo(() => {
+        return !editedRolePermissions.length ? true : xor(editedRolePermissions, checkedPermissions).length === 0;
+    }, [ editedRolePermissions, checkedPermissions ]);
+
+    const permissionsStepIsValid = useMemo(() => {
+        return checkedPermissions.length > 0;
+    }, [ checkedPermissions ]);
 
     const copyRoleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRoleId(event.target.value);
@@ -266,11 +303,36 @@ export default function CreateAndEditRoleDialog (props: Props) {
             });
         });
 
+        setCheckedPermissions([]);
         setPermissionCategories(newPermissions);
     };
 
-    const handleResetDefault = () => {
+    const handleCopyFromRoleReset = () => {
         newRolesAndPermissionsByRoleId(roles, roleId);
+    };
+
+    const handleResetToDefault = () => {
+        const newPermissionCategories = [ ...permissionCategories ];
+        const permissionIds: string[] = [];
+        setRoleId(``);
+
+        newPermissionCategories.forEach((permissionCategory) => {
+            permissionCategory.groups.forEach((group) => {
+                group.permissionDetails.forEach((permissionDetail) => {
+                    permissionDetail.checked = !!getPermissionIdsByRoleId(roles, row.id)?.includes(permissionDetail.permissionId);
+                    if (permissionDetail.checked) {
+                        permissionIds.push(permissionDetail.permissionId);
+                    }
+                });
+
+                group.open = group.permissionDetails.some((permissionDetail) => permissionDetail.checked);
+
+                group.selectAll = group.permissionDetails.every((permissionDetail) => permissionDetail.checked);
+            });
+        });
+
+        setCheckedPermissions(permissionIds);
+        setPermissionCategories(newPermissionCategories);
     };
 
     function getStepContent (step: number) {
@@ -304,13 +366,15 @@ export default function CreateAndEditRoleDialog (props: Props) {
                                 text: intl.formatMessage({
                                     id: `rolesInfoCard_resetLabel`,
                                 }),
-                                disabled: roleId.length === 0,
-                                onClick: handleResetDefault,
+                                disabled: resetToDefaultIsDisabled,
+                                onClick: handleResetToDefault,
                             },
                         ]}
                         textFieldLabel={intl.formatMessage({
                             id: `rolesInfoCard_copyLabel`,
                         })}
+                        handleCopyFromRoleReset={handleCopyFromRoleReset}
+                        replayButtonIsVisible={replayButtonIsVisible}
                         onChange={copyRoleHandler}
                     />
                     {permissionCategories.map((permissionsCategory) => (
@@ -318,8 +382,8 @@ export default function CreateAndEditRoleDialog (props: Props) {
                             key={permissionsCategory.category}
                             category={permissionsCategory.category}
                             groups={permissionsCategory.groups}
-                            setPermissionsStepIsValid={setPermissionsStepIsValid}
-                            permissionCategories={permissionCategories}
+                            checkedPermissions={checkedPermissions}
+                            setCheckedPermissions={setCheckedPermissions}
                         />
                     ))}
                 </>
