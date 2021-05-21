@@ -1,7 +1,6 @@
 import UserDialogForm from "./Form";
 import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { OrganizationMembership } from "@/types/graphQL";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     createStyles,
@@ -35,11 +34,13 @@ export default function CreateUserDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
+    const [ initOrganizationMembership, setInitOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ createOrganizationMembership ] = useCreateOrganizationMembership();
 
     useEffect(() => {
         if (!open) return;
+        setInitOrganizationMembership(buildEmptyOrganizationMembership());
         setNewOrganizationMembership(buildEmptyOrganizationMembership());
     }, [ open ]);
 
@@ -108,8 +109,8 @@ export default function CreateUserDialog (props: Props) {
             onClose={() => onClose()}
         >
             <UserDialogForm
-                value={newOrganizationMembership}
-                onChange={(value) => setNewOrganizationMembership(value)}
+                value={initOrganizationMembership}
+                onChange={setNewOrganizationMembership}
                 onValidation={setValid}
             />
         </Dialog>
