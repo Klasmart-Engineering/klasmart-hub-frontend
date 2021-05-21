@@ -6,7 +6,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
             $count: Int
             $cursor: String
             $search: String
-            $organizationId: String
+            $organizationId: UUID!
         ) {
             usersConnection(
                 direction: $direction
@@ -14,7 +14,6 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                 filter: {
                     organizationId: { operator: eq, value: $organizationId }
                     OR: [
-                        { userId: { operator: eq, value: $search } }
                         {
                             givenName: {
                                 operator: contains
