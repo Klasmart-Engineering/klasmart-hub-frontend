@@ -366,10 +366,6 @@ export default function UserTable (props: Props) {
         }
     };
 
-    if (!canView && !loadingOrganizationMemberships) {
-        return <Redirect to="/" />;
-    }
-
     const handlePageChange = async (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => {
         const pageInfo = utils.getCursorPageInfo(page, order, cursor, rowsPerPage);
         setCursor(cursor);
@@ -398,6 +394,10 @@ export default function UserTable (props: Props) {
             updateQuery: (previous, { fetchMoreResult }) => fetchMoreResult,
         });
     }, [ rowsPerPage, search ]);
+
+    if (!canView && !loadingOrganizationMemberships) {
+        return <Redirect to="/" />;
+    }
 
     return <>
         <Paper className={classes.root}>
