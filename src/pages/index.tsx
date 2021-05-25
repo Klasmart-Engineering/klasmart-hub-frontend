@@ -200,9 +200,6 @@ export default function HomePage () {
             <Box mt={4}>
                 <YourTeachers />
             </Box>*/}
-            <Box mt={4}>
-                <ContentLayout />
-            </Box>
         </Container>
     );
 }

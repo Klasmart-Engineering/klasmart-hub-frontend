@@ -62,6 +62,24 @@ interface CreateContent {
     org_id: string;
 }
 
+interface GetLiveTokenByClassIdRequest {
+    classId: string;
+    organizationId: string;
+}
+
+interface GetLiveTokenByClassIdResponse {
+    token: string;
+}
+
+interface GetLiveTokenByLessonPlanIdRequest {
+    lessonPlanId: string;
+    organizationId: string;
+}
+
+interface GetLiveTokenByLessonPlanIdResponse {
+    token: string;
+}
+
 interface GetFolderItemsDetailsByIdRequest {
     folder_id: string;
     org_id: string;
@@ -280,6 +298,20 @@ export class RestAPI {
 
         const response = await this.contentCall(`GET`, `v1/folders/items/details/${folder_id}?${str}`);
         return response?.json() as Promise<ContentItemDetails>;
+    }
+
+    public async getLiveTokenByClassId (request: GetLiveTokenByClassIdRequest) {
+        const { classId, organizationId } = request;
+        const response = await this.scheduleCall(`GET`, `v1/schedules/${classId}/live/token?live_token_type=live&org_id=${organizationId}`);
+        if (response.status !== 200) throw Error(`No token found`);
+        return response.json() as Promise<GetLiveTokenByClassIdResponse>;
+    }
+
+    public async getLiveTokenByLessonPlanId (request: GetLiveTokenByLessonPlanIdRequest) {
+        const { lessonPlanId, organizationId } = request;
+        const response = await this.contentCall(`GET`, `v1/contents/${lessonPlanId}/live/token?org_id=${organizationId}`);
+        if (response.status !== 200) throw Error(`No token found`);
+        return response.json() as Promise<GetLiveTokenByLessonPlanIdResponse>;
     }
 
     public async createFoldersItems (request: CreateContent) {

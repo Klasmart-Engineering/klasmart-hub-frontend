@@ -1,6 +1,7 @@
 import CenterAlignChildren from "../centerAlignChildren";
 import StyledButtonGroup from "../styled/buttonGroup";
 import { FeaturedContentData } from "./contentLayout";
+import { useRestAPI } from "@/api/restapi";
 import { getLiveEndpoint } from "@/config";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -85,6 +86,7 @@ export default function ContentCard (props: Props) {
     const { featuredContent } = props;
     const classes = useStyles();
     const theme = useTheme();
+    const restApi = useRestAPI();
     const isMdDown = useMediaQuery(theme.breakpoints.down(`md`));
 
     // function goLive() {
@@ -94,7 +96,10 @@ export default function ContentCard (props: Props) {
     // }
 
     function destinationLink (live: boolean, link?: string) {
-        const liveLink = `${getLiveEndpoint()}/?teacher&roomId=${classId}&materials=${JSON.stringify(featuredContent.activities)}`;
+        const token = restApi.getLiveTokenByLessonPlanId({
+
+        })
+        const liveLink = `${getLiveEndpoint()}/?token=${token}}`;
 
         window.open(live ? liveLink : link, `_blank`);
     }

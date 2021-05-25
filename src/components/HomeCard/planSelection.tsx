@@ -113,20 +113,6 @@ export default function PlanSelection () {
         }
     }
 
-    async function getLiveToken (lessonPlanId: string) {
-        const headers = new Headers();
-        headers.append(`Accept`, `application/json`);
-        headers.append(`Content-Type`, `application/json`);
-        const response = await fetch(`${getCNEndpoint()}v1/contents/${lessonPlanId}/live/token?org_id=${organizationId}`, {
-            headers,
-            credentials: `include`,
-            method: `GET`,
-        });
-        if (response.status === 200) {
-            return response.json();
-        }
-    }
-
     useEffect(() => {
         if (!currentOrganization) return;
         getPublishedLessonPlans();
@@ -143,7 +129,10 @@ export default function PlanSelection () {
         }
         let prepared = true;
         (async () => {
-            const json = await getLiveToken(lessonPlan.id);
+            const json = await restApi.getLiveTokenByLessonPlanId({
+                lessonPlanId: lessonPlan.id,
+                organizationId,
+            });
             if (prepared) {
                 if (json && json.token) {
                     setLiveToken(json.token);

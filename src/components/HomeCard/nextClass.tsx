@@ -2,6 +2,7 @@ import {
     ClassUser,
     useGetClassRoster,
 } from "@/api/classRoster";
+import { useRestAPI } from "@/api/restapi";
 import StyledFAB from "@/components/styled/fabButton";
 import {
     getCNEndpoint,
@@ -112,6 +113,7 @@ export default function NextClass (props: Props) {
     const { schedule } = props;
     const classes = useStyles();
     const theme = useTheme();
+    const restApi = useRestAPI();
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
 
@@ -134,20 +136,6 @@ export default function NextClass (props: Props) {
             organization_id: organizationId,
         },
     });
-
-    async function getLiveToken (classId: string) {
-        const headers = new Headers();
-        headers.append(`Accept`, `application/json`);
-        headers.append(`Content-Type`, `application/json`);
-        const response = await fetch(`${getCNEndpoint()}v1/schedules/${classId}/live/token?live_token_type=live&org_id=${organizationId}`, {
-            headers,
-            credentials: `include`,
-            method: `GET`,
-        });
-        if (response.status === 200) {
-            return response.json();
-        }
-    }
 
     function goLive () {
         const liveLink = `${getLiveEndpoint()}?token=${liveToken}`;
@@ -182,7 +170,10 @@ export default function NextClass (props: Props) {
     useEffect(() => {
         if (timeBeforeClass < secondsBeforeClassCanStart && nextClass) {
             (async () => {
-                const json = await getLiveToken(nextClass.id);
+                const json = await restApi.getLiveTokenByClassId({
+                    classId: nextClass.id,
+                    organizationId,
+                });
                 if (!json || !json.token) {
                     setLiveToken(``);
                     return;
