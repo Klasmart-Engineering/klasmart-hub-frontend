@@ -67,7 +67,15 @@ export default function UploadUserCsvDialog (props: Props) {
             onClose={() => onClose(uploadSuccess)}
         >
             <SpreadsheetFileInput
-                accept="text/csv"
+                accept={[
+                    `text/csv`,
+                    `text/x-csv`,
+                    `application/x-csv`,
+                    `application/csv`,
+                    `text/x-comma-separated-values`,
+                    `text/comma-separated-values`,
+                    `.csv`,
+                ]}
                 maxSize={MAX_FILE_SIZE}
                 locales={intl.locale}
                 dropzoneLabel={intl.formatMessage({
