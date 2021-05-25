@@ -993,6 +993,7 @@ const messages: Record<string, string> = {
     addOrganization_personalization: `Personalization (coming soon)`,
     addOrganization_shortCode: `Shortcode`,
     addOrganization_contactInfo: `Contact Info`,
+    addOrganization_address: `Address`,
     addOrganization_addressLabel1: `Address Line 1`,
     addOrganization_addressLabel2: `Address Line 2`,
     addOrganization_logo: `Organization Logo`,

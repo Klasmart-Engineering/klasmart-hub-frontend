@@ -29,7 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
             marginBottom: `3em`,
         },
         formInput: {
-            margin: `1em 0`,
+            [theme.breakpoints.down(`xs`)]: {
+                margin: `1em 0`,
+            },
         },
     }));
 
@@ -244,10 +246,10 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
-                            phone(),
                             min(10, intl.formatMessage({
                                 id: `addOrganization_phoneMinError`,
                             })),
+                            phone(),
                             max(15, intl.formatMessage({
                                 id: `addOrganization_phoneMaxError`,
                             })),
@@ -255,6 +257,27 @@ export default function OrganizationInfo (props: Props) {
                         onChange={setPhone}
                         onValidate={setPhoneValid}
                     />
+                </Grid>
+            </Grid>
+            <Grid
+                container
+                className={classes.cardBodyRow}
+            >
+                <Grid
+                    item
+                    xs={12}
+                    sm={4}
+                >
+                    <FormattedMessage
+                        id="addOrganization_address"
+                    />
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    sm={4}
+                    direction="column"
+                >
                     <TextField
                         fullWidth
                         variant="standard"
