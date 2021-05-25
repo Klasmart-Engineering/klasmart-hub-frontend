@@ -1,4 +1,8 @@
 
+clone:
+  lfs: true
+  depth: 1
+
 pipelines:
   custom:
     deploy:
