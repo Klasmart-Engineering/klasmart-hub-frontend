@@ -133,7 +133,7 @@ export default function HomePage () {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            {userInfo && <WelcomeMessage user={userInfo} />}
+            <WelcomeMessage user={userInfo} />
             <Box mb={4}>
                 <NextClass schedule={schedule} />
             </Box>

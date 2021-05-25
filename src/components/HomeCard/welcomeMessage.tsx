@@ -37,7 +37,7 @@ export default function WelcomeMessage (props: Props) {
     const { user } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const [ time, setTime ] = useState(Date.now());
+    const time = Date.now();
 
     return (
         <Box>
@@ -52,26 +52,29 @@ export default function WelcomeMessage (props: Props) {
             </Typography>
             <Typography
                 variant="h4"
-                className={classes.welcomeTitle} >
-                👋{` `}
-                { (user && user.given_name !== null) ? (
-                    <FormattedMessage
-                        id="home_welcomeLabel"
-                        values={{
-                            userName: (
-                                <span style={{
-                                    color: theme.palette.primary.main,
-                                }}>
-                                    {user.given_name}
-                                </span>
-                            ),
-                        }}
-                    />
-                ) : (
-                    <FormattedMessage
-                        id="home_welcomeGenericLabel"
-                    />
-                )}
+                className={classes.welcomeTitle}
+            >
+                <span>👋 </span>
+                {(user?.username || user?.given_name)
+                    ? (
+                        <FormattedMessage
+                            id="home_welcomeLabel"
+                            values={{
+                                userName: (
+                                    <span style={{
+                                        color: theme.palette.primary.main,
+                                    }}>
+                                        {user?.username ?? user.given_name}
+                                    </span>
+                                ),
+                            }}
+                        />
+                    ) : (
+                        <FormattedMessage
+                            id="home_welcomeGenericLabel"
+                        />
+                    )
+                }
             </Typography>
         </Box>
     );
