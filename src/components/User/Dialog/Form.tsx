@@ -152,8 +152,9 @@ export default function UserDialogForm (props: Props) {
     const [ radioValue, setRadioValue ] = useState<string | UserGenders>(genderHandler(value.user?.gender ?? ``));
     const [ gender, setGender ] = useState(value.user?.gender ?? ``);
     const [ genderIsValid, setGenderIsValid ] = useState(true);
-    const [ expanded, setExpanded ] = useState(!!(value.user?.alternate_email || value.user?.alternate_phone));
     const [ birthday, setBirthday ] = useState(formatDateOfBirth(value.user?.date_of_birth ?? ``));
+    const [ birthdayIsValid, setBirthdayIsValid ] = useState(true);
+    const [ expanded, setExpanded ] = useState(!!(value.user?.alternate_email || value.user?.alternate_phone));
     const {
         required,
         alphanumeric,
@@ -180,6 +181,7 @@ export default function UserDialogForm (props: Props) {
             alternativeEmailIsValid,
             alternativePhoneIsValid,
             contactInfoIsValid,
+            birthdayIsValid,
         ].every((valid) => valid));
     }, [
         givenNameValid,
@@ -190,6 +192,7 @@ export default function UserDialogForm (props: Props) {
         alternativeEmailIsValid,
         alternativePhoneIsValid,
         contactInfoIsValid,
+        birthdayIsValid,
     ]);
 
     useEffect(() => {
@@ -234,29 +237,23 @@ export default function UserDialogForm (props: Props) {
         alternativeEmail,
         alternativePhone,
         shortcode,
+        schoolsData,
+        organizationData,
     ]);
 
     useEffect(() => {
         setGivenName(value.user?.given_name ?? ``);
-        setGivenNameValid(true);
         setFamilyName(value.user?.family_name ?? ``);
-        setFamilyNameValid(true);
         setSchoolIds(value.schoolMemberships
             ?.filter((membership) => membership.school?.status === Status.ACTIVE)
             .map((schoolMembership) => schoolMembership.school_id) ?? []);
         setRoleIds(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
-        setRoleIdsValid(true);
         setContactInfo(value.user?.email ?? value.user?.phone ?? ``);
-        setContactInfoIsValid(true);
         setShortcode(value.shortcode ?? ``);
-        setShortcodeIsValid(true);
         setAlternativeEmail(value.user?.alternate_email ?? ``);
-        setAlternativeEmailIsValid(true);
         setAlternativePhone(value.user?.alternate_phone ?? ``);
-        setAlternativePhoneIsValid(true);
         setRadioValue(genderHandler(value.user?.gender ?? ``));
         setGender(value.user?.gender ?? ``);
-        setGenderIsValid(true);
         setExpanded(!!(value.user?.alternate_email || value.user?.alternate_phone));
         setBirthday(formatDateOfBirth(value.user?.date_of_birth ?? ``));
     }, [ value ]);
@@ -354,6 +351,7 @@ export default function UserDialogForm (props: Props) {
                             max: `${currentYear}-${currentMonth}`,
                         },
                     }}
+                    onValidate={setBirthdayIsValid}
                     onChange={setBirthday}
                 />
                 <TextField

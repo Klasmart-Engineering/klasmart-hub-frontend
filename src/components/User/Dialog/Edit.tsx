@@ -42,21 +42,22 @@ export default function EditUserDialog (props: Props) {
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
     const organization = useCurrentOrganization();
-    const [ getOrganizationMembership, { data: organizationMembershipData } ] = useGetOrganizationMembership({
+    const [ getOrganizationMembership, { data: organizationMembershipData, loading: loadingMembershipData } ] = useGetOrganizationMembership({
         fetchPolicy: `cache-and-network`,
-        variables: {
-            organizationId: organization?.organization_id ?? ``,
-            userId: userId ?? ``,
-        },
     });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
     useEffect(() => {
         if (!open || !userId || !organization) return;
-        setInitOrganizationMembership(buildEmptyOrganizationMembership());
+        setInitOrganizationMembership(organizationMembershipData?.user.membership ?? buildEmptyOrganizationMembership());
         setEditedOrganizationMembership(buildEmptyOrganizationMembership());
-        getOrganizationMembership();
+        getOrganizationMembership({
+            variables: {
+                organizationId: organization?.organization_id ?? ``,
+                userId: userId ?? ``,
+            },
+        });
     }, [
         open,
         userId,
@@ -72,7 +73,6 @@ export default function EditUserDialog (props: Props) {
     const handleEdit = async () => {
         try {
             const {
-                user_id,
                 organization_id,
                 user,
                 roles,
@@ -81,7 +81,7 @@ export default function EditUserDialog (props: Props) {
             } = editedOrganizationMembership;
             await updateOrganizationMembership({
                 variables: {
-                    user_id,
+                    user_id: userId ?? ``,
                     organization_id,
                     organization_role_ids: roles?.map((r) => r.role_id) ?? [],
                     school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
@@ -173,7 +173,7 @@ export default function EditUserDialog (props: Props) {
                     }),
                     color: `primary`,
                     align: `right`,
-                    disabled: !valid,
+                    disabled: !valid || loadingMembershipData,
                     onClick: handleEdit,
                 },
             ]}
