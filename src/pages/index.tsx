@@ -60,6 +60,7 @@ export default function HomePage () {
 
     const [ loading, setLoading ] = useState(true);
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
+    const [ scheduleLoading, setScheduleLoading ] = useState(true);
 
     const [ userInfo, setUserInfo ] = useState<User>();
     const [ userRoles, setUserRoles ] = useState<any | undefined>(``);
@@ -69,7 +70,7 @@ export default function HomePage () {
     const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
 
     const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
+    const { data: userData, loading: userDataLoading } = useGetUser({
         variables: {
             user_id: userId,
         },
@@ -87,6 +88,7 @@ export default function HomePage () {
     }, [ userData ]);
 
     async function getScheduleListNextTwoWeeks () {
+        setScheduleLoading(true);
         try {
             const organizationId = currentOrganization?.organization_id ?? ``;
             const responseSchedule = await restApi.getSchedulesTimeView({
@@ -105,6 +107,7 @@ export default function HomePage () {
         } catch (e) {
             console.error(e);
         }
+        setScheduleLoading(false);
     }
 
     useEffect(() => {
@@ -113,8 +116,7 @@ export default function HomePage () {
     }, [ currentOrganization ]);
 
     useEffect(() => {
-        if (!userData || !currentOrganization || !schedule) return;
-        if (!userData?.user?.memberships?.length) return;
+        if (userDataLoading || scheduleLoading) return;
         setLoading(false);
     }, [
         userData,
