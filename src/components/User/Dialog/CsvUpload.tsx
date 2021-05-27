@@ -1,5 +1,9 @@
 import { useUploadUserCsv } from "@/api/users";
-import { handleFileUploadError } from "@/utils/csv";
+import {
+    addCsvTypeIfMissing,
+    CSV_ACCEPT_TYPES,
+    handleFileUploadError,
+} from "@/utils/csv";
 import {
     FullScreenDialog,
     SpreadsheetFileInput,
@@ -30,10 +34,11 @@ export default function UploadUserCsvDialog (props: Props) {
     const [ uploadSuccess, setUploadSuccess ] = useState<boolean>();
 
     const handleFileUpload = async (file: File) => {
+        const typedFile = addCsvTypeIfMissing(file);
         try {
             await uploadUserCsv({
                 variables: {
-                    file,
+                    file: typedFile,
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -67,15 +72,7 @@ export default function UploadUserCsvDialog (props: Props) {
             onClose={() => onClose(uploadSuccess)}
         >
             <SpreadsheetFileInput
-                accept={[
-                    `text/csv`,
-                    `text/x-csv`,
-                    `application/x-csv`,
-                    `application/csv`,
-                    `text/x-comma-separated-values`,
-                    `text/comma-separated-values`,
-                    `.csv`,
-                ]}
+                accept={CSV_ACCEPT_TYPES}
                 maxSize={MAX_FILE_SIZE}
                 locales={intl.locale}
                 dropzoneLabel={intl.formatMessage({

@@ -2,6 +2,16 @@ import { ApolloError } from "@apollo/client";
 import { SpreadsheetValidtionError } from "kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
 import { IntlShape } from "react-intl";
 
+export const CSV_ACCEPT_TYPES = [
+    `text/csv`,
+    `text/x-csv`,
+    `application/x-csv`,
+    `application/csv`,
+    `text/x-comma-separated-values`,
+    `text/comma-separated-values`,
+    `.csv`,
+];
+
 export enum CsvUploadErrorCode {
     ERR_CSV_BAD_INPUT = `ERR_CSV_BAD_INPUT`,
 }
@@ -288,4 +298,11 @@ export const handleFileUploadError = (intl: IntlShape) => (error: ApolloError): 
                 message: codeToTranslatedError(detailsError, intl),
             })) ?? [];
         }) ?? [];
+};
+
+export const addCsvTypeIfMissing = (file: File) => {
+    if (!file.name.endsWith(`.csv`)) return file;
+    return new File([ file ], file.name, {
+        type: file.type || `text/csv`,
+    });
 };
