@@ -12,6 +12,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                 direction: $direction
                 directionArgs: { count: $count, cursor: $cursor }
                 filter: {
+                    organizationUserStatus: { operator: eq, value: "active" }
                     organizationId: { operator: eq, value: $organizationId }
                     OR: [
                         {
