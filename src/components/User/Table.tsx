@@ -272,36 +272,36 @@ export default function UserTable (props: Props) {
                 id: `users_contactInfo`,
             }),
         },
-        // {
-        //     id: `status`,
-        //     label: intl.formatMessage({
-        //         id: `classes_statusTitle`,
-        //     }),
-        //     // groups: [ `active`, `inactive` ].map((status) => ({
-        //     //     text: getCustomStatus(status),
-        //     //     value: status,
-        //     // })),
-        //     search: (row: string[], searchValue: string) => {
-        //         const values = Array.isArray(row) ? row : [ row ];
-        //         const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
-        //         return values.some((value) => {
-        //             const result = getCustomStatus(value).match(regexp);
-        //             return !!result;
-        //         });
-        //     },
-        //     render: (row) => (
-        //         <span
-        //             className={clsx(classes.statusText, {
-        //                 [classes.activeColor]: row.status === Status.ACTIVE,
-        //                 [classes.inactiveColor]: row.status === Status.INACTIVE,
-        //             })}
-        //         >
-        //             {intl.formatMessage({
-        //                 id: `users_${row.status}Status`,
-        //             })}
-        //         </span>
-        //     ),
-        // },
+        {
+            id: `status`,
+            label: intl.formatMessage({
+                id: `classes_statusTitle`,
+            }),
+            // groups: [ `active`, `inactive` ].map((status) => ({
+            //     text: getCustomStatus(status),
+            //     value: status,
+            // })),
+            search: (row: string[], searchValue: string) => {
+                const values = Array.isArray(row) ? row : [ row ];
+                const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
+                return values.some((value) => {
+                    const result = getCustomStatus(value).match(regexp);
+                    return !!result;
+                });
+            },
+            render: (row) => (
+                <span
+                    className={clsx(classes.statusText, {
+                        [classes.activeColor]: row.status === Status.ACTIVE,
+                        [classes.inactiveColor]: row.status === Status.INACTIVE,
+                    })}
+                >
+                    {intl.formatMessage({
+                        id: `users_${row.status}Status`,
+                    })}
+                </span>
+            ),
+        },
         {
             id: `joinDate`,
             disableSort: true,
