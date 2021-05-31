@@ -179,6 +179,7 @@ export default function Personalization (props: Props) {
                         validations={altTextValidations}
                         value={alternateText}
                         className={classes.formInput}
+                        id="alternateTextLabel"
                         onChange={setAlternateText}
                         onValidate={setAlternateTextValid}
                     />
@@ -213,6 +214,7 @@ export default function Personalization (props: Props) {
                         variant="standard"
                         value={color}
                         className={classes.formInput}
+                        id="orgColor"
                         onChange={setColor}
                         onValidate={setColorValid}
                     />

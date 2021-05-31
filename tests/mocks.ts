@@ -14,4 +14,5 @@ jest.mock(`kidsloop-px`, () => ({
         enqueueSnackbar: jest.fn(),
     }),
     usePrompt: () => (async () => true),
+    useConfirm: () => (async () => true),
 }));

@@ -79,23 +79,17 @@ test(`Edit grade dialog renders correctly with correct data`, async () => {
     const locale = getLanguage(`en`);
 
     await act(async () => {
-        const { getByLabelText } = qlRender(mocks, locale, <EditGrade
+        const { queryByLabelText } = qlRender(mocks, locale, <EditGrade
             value={mockGrade}
             open={true}
             onClose={jest.fn()}/>);
 
-        await utils.sleep(100);
-        const name = await getByLabelText(`Grade Name`, {
-            selector: `input`,
-        });
-
-        const grade1Found = await screen.queryAllByText(/grade 1/gi);
-        const grade3Found = await screen.queryAllByText(/grade 3/gi);
-
         await waitFor(() => {
-            expect(name.value).toBe(`Grade 2`);
-            expect(grade1Found.length).toEqual(1);
-            expect(grade3Found.length).toEqual(1);
+            expect(queryByLabelText(`Grade Name`, {
+                selector: `input`,
+            })?.value).toBe(`Grade 2`);
+            expect(screen.queryAllByText(/grade 1/gi).length).toEqual(1);
+            expect(screen.queryAllByText(/grade 3/gi).length).toEqual(1);
         });
 
     });

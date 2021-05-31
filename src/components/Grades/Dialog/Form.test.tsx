@@ -112,8 +112,8 @@ test(`Grades form updates correctly`, async () => {
         });
 
         await fireEvent.mouseDown(pFrom);
-        await utils.sleep(10);
-        const foundFrom = await screen.queryByText(/Grade 1/i);
+        await utils.sleep(0);
+        const foundFrom = screen.queryByText(/Grade 1/i);
 
         await utils.sleep(0);
 
@@ -135,10 +135,8 @@ test(`Grades form updates correctly`, async () => {
         });
 
         await fireEvent.mouseDown(pTo);
-        await utils.sleep(10);
-        const foundTo = await screen.queryByText(/Grade 2/i);
-
         await utils.sleep(0);
+        const foundTo = screen.queryByText(/Grade 2/i);
 
         await waitFor(() => {
             expect(foundTo).toBeTruthy();

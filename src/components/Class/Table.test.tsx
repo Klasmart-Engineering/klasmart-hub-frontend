@@ -13,6 +13,7 @@ import {
     act,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from "@testing-library/react";
 import qlRender from "@tests/utils";
 import { utils } from "kidsloop-px";
@@ -162,7 +163,7 @@ test(`Classes table properly updates records after delete`, async () => {
             deleteSpan?.click();
         });
 
-        await utils.sleep(100);
+        await waitForElementToBeRemoved(() => queryByText(`English`));
         const rowsUpdate = await findAllByTitle(`More actions`);
 
         await waitFor(() => {

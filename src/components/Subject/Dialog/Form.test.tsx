@@ -126,11 +126,8 @@ test(`Subjects form updates correct and opens categories selector`, async () => 
             cancelable: true,
         }));
 
-        await utils.sleep(200);
-        const cancelButtonNone = await queryAllByText(/Cancel/gi);
-
         await waitFor(() => {
-            expect(cancelButtonNone.length).toBeFalsy();
+            expect(queryAllByText(/Cancel/gi).length).toBeFalsy();
         });
     });
 });

@@ -156,6 +156,7 @@ export default function OrganizationInfo (props: Props) {
                                 id: `addOrganization_shortCodeMaxError`,
                             })),
                         ]}
+                        id="shortCode"
                         onChange={setShortCode}
                         onValidate={setShortCodeValid}
                     />
@@ -197,6 +198,7 @@ export default function OrganizationInfo (props: Props) {
                                 id: `addOrganization_orgNameMaxError`,
                             })),
                         ]}
+                        id="orgName"
                         onChange={setOrganizationName}
                         onValidate={setOrganizationNameValid}
                     />
@@ -254,6 +256,7 @@ export default function OrganizationInfo (props: Props) {
                                 id: `addOrganization_phoneMaxError`,
                             })),
                         ]}
+                        id="phoneNumber"
                         onChange={setPhone}
                         onValidate={setPhoneValid}
                     />
@@ -296,6 +299,7 @@ export default function OrganizationInfo (props: Props) {
                                 id: `addOrganization_address1MaxError`,
                             })),
                         ]}
+                        id="addressOne"
                         onChange={setAddress1}
                         onValidate={setAddress1Valid}
                     />
@@ -313,6 +317,7 @@ export default function OrganizationInfo (props: Props) {
                                 id: `addOrganization_address2MaxError`,
                             })),
                         ]}
+                        id="addressTwo"
                         onChange={setAddress2}
                         onValidate={setAddress2Valid}
                     />

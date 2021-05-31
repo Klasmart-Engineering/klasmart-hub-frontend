@@ -11,6 +11,7 @@ import {
 } from '@testing-library/react';
 import {
     grade1,
+    grade1Name,
     grades,
     mockOrgId,
 } from '@tests/mockDataGrades';
@@ -119,7 +120,11 @@ test(`Grades page renders with correct data`, async () => {
 
 test(`Grades table properly updates records after delete`, async () => {
     const locale = getLanguage(`en`);
-    const { findAllByTitle, queryByText } = await qlRender(mocks, locale, <Grades />);
+    const {
+        findAllByTitle,
+        queryByText,
+        queryAllByText,
+    } = await qlRender(mocks, locale, <Grades />);
 
     await act(async () => {
         await utils.sleep(0);
@@ -136,11 +141,12 @@ test(`Grades table properly updates records after delete`, async () => {
 
         const deleteSpan = await queryByText(`Delete`);
 
+        deleteSpan?.click();
+
         await waitFor(() => {
-            deleteSpan?.click();
+            expect(queryAllByText(grade1Name).length).toBeLessThan(2);
         });
 
-        await utils.sleep(100);
         const rowsUpdate = await findAllByTitle(`More actions`);
 
         await waitFor(() => {

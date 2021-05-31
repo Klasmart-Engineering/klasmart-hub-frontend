@@ -106,7 +106,7 @@ const config: Configuration = {
             // Source directories
             directories: [ path.join(__dirname, `src`) ],
             // Exclude patterns
-            exclude: [ `/assets/*` ],
+            exclude: [ `/assets/*`, `*.test.*` ],
             // Root directory (optional)
             root: __dirname,
         }),

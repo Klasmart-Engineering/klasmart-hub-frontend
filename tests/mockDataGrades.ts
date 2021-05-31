@@ -8,11 +8,12 @@ export const grade1 = `p19de3cc-aa01-47f5-9f87-850eb70ae071`;
 export const grade2 = `p19de3cc-aa01-47f5-9f87-850eb70ae072`;
 export const grade3 = `p19de3cc-aa01-47f5-9f87-850eb70ae073`;
 export const grade4 = `p19de3cc-aa01-47f5-9f87-850eb70ae074`;
+export const grade1Name = `Grade 1`;
 
 export const grades: Grade[] = [
     {
         id: grade1,
-        name: `Grade 1`,
+        name: grade1Name,
         progress_from_grade: null,
         progress_to_grade: null,
         system: false,

@@ -8,6 +8,7 @@ import {
     act,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from '@testing-library/react';
 import qlRender from '@tests/utils';
 import { utils } from 'kidsloop-px';
@@ -132,7 +133,7 @@ test(`Age ranges page renders with correct data`, async () => {
 
         await utils.sleep(0);
 
-        const values = mocks[0].result?.data.organization.ageRanges;
+        const values = ageRanges;
         let i = 0;
         const l = values.length;
 
@@ -153,32 +154,36 @@ test(`Age ranges page renders with correct data`, async () => {
 
 test(`Age range table properly updates records after delete`, async () => {
     const locale = getLanguage(`en`);
-    const { findAllByTitle, queryByText } = await qlRender(mocks, locale, <AgeRanges />);
+    const {
+        findAllByTitle,
+        queryByText,
+        queryAllByTitle,
+    } = await qlRender(mocks, locale, <AgeRanges />);
 
     await act(async () => {
-        await utils.sleep(0);
+        const value = ageRanges[1];
+        const name = `${value.low_value} - ${value.high_value} Year(s)`;
         const rows = await findAllByTitle(`More actions`);
+        const toBeDeleted = queryByText(name);
 
         await waitFor(() => {
+            expect(toBeDeleted).toBeTruthy();
             expect(rows.length).toEqual(2);
             expect(queryByText(`Delete`)).toBeNull();
         });
 
         await waitFor(() => {
-            rows[0].click();
+            rows[1].click();
         });
 
         const deleteSpan = await queryByText(`Delete`);
 
-        await waitFor(() => {
-            deleteSpan?.click();
-        });
+        deleteSpan?.click();
 
-        await utils.sleep(100);
-        const rowsUpdate = await findAllByTitle(`More actions`);
+        await waitForElementToBeRemoved(() => queryByText(name));
 
         await waitFor(() => {
-            expect(rowsUpdate.length).toEqual(1);
+            expect(queryAllByTitle(`More actions`).length).toEqual(1);
         });
     });
 });

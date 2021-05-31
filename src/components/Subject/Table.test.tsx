@@ -136,7 +136,11 @@ test(`Subjects page renders data`, async () => {
 
 test(`Subjects table properly updates records after delete`, async () => {
     const locale = getLanguage(`en`);
-    const { findAllByTitle, queryByText } = await qlRender(mocks, locale, <SubjectTable />);
+    const {
+        findAllByTitle,
+        queryByText,
+        queryAllByTitle,
+    } = await qlRender(mocks, locale, <SubjectTable />);
 
     await act(async () => {
         await utils.sleep(0);
@@ -157,11 +161,8 @@ test(`Subjects table properly updates records after delete`, async () => {
             deleteSpan?.click();
         });
 
-        await utils.sleep(100);
-        const rowsUpdate = await findAllByTitle(`More actions`);
-
         await waitFor(() => {
-            expect(rowsUpdate.length).toEqual(1);
+            expect(queryAllByTitle(`More actions`).length).toEqual(1);
         });
     });
 });
