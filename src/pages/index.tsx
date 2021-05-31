@@ -58,7 +58,6 @@ export default function HomePage () {
     const restApi = useRestAPI();
     const theme = useTheme();
 
-    const [ loading, setLoading ] = useState(true);
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ scheduleLoading, setScheduleLoading ] = useState(true);
 
@@ -115,26 +114,11 @@ export default function HomePage () {
         getScheduleListNextTwoWeeks();
     }, [ currentOrganization ]);
 
-    useEffect(() => {
-        if (userDataLoading || scheduleLoading) return;
-        setLoading(false);
-    }, [
-        userData,
-        currentOrganization,
-        schedule,
-    ]);
-
     return (
         <Container
             maxWidth="xl"
             className={classes.root}
         >
-            <Backdrop
-                className={classes.backdrop}
-                open={loading}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
             <WelcomeMessage user={userInfo} />
             <Box mb={4}>
                 <NextClass schedule={schedule} />
