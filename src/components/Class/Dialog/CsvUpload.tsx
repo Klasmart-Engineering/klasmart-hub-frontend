@@ -42,7 +42,7 @@ export default function UploadClassCsvDialog (props: Props) {
                 },
             });
             enqueueSnackbar(intl.formatMessage({
-                id: `createSchools_schoolsCsvUploadSuccess`,
+                id: `createClass_classesCsvUploadSuccess`,
             }), {
                 variant: `success`,
             });

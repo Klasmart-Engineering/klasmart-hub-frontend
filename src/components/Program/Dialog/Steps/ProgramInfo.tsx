@@ -126,7 +126,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     validations={[
                         required(`The program name is required.`),
                         letternumeric(intl.formatMessage({
-                            id: `subcategoryNameValidations_letternumeric`,
+                            id: `programNameValidations_letternumeric`,
                         })),
                         max(35, `The program name has a max length of 35 characters.`),
                     ]}
