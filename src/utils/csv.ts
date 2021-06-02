@@ -303,6 +303,6 @@ export const handleFileUploadError = (intl: IntlShape) => (error: ApolloError): 
 export const addCsvTypeIfMissing = (file: File) => {
     if (!file.name.endsWith(`.csv`)) return file;
     return new File([ file ], file.name, {
-        type: file.type || `text/csv`,
+        type: `text/csv`,
     });
 };
