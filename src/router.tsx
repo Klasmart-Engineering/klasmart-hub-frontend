@@ -1,25 +1,25 @@
-import { getCNEndpoint } from "./config";
-import AgeRangesPage from "./pages/admin/age-ranges";
-import ClassesPage from "./pages/admin/classes";
-import Grades from "./pages/admin/grades";
-import Layout from "./pages/admin/Layout";
-import OrganizationsPage from "./pages/admin/organizations";
-import EditOrganizationPage from "./pages/admin/organizations/[id]/edit";
-import CreateOrganizationPage from "./pages/admin/organizations/create";
-import ProgramsPage from "./pages/admin/programs";
-import RoleTable from "./pages/admin/Role/RoleTable";
-import SchoolsPage from "./pages/admin/schools";
-import SubjectsPage from "./pages/admin/subjects";
-import UsersPage from "./pages/admin/users";
-import { BrowserList } from "./pages/browserList";
-import SuperAdminContentLibraryTable from "./pages/superAdmin/LibraryContent/Table";
-import { useCurrentOrganization } from "./store/organizationMemberships";
+import AgeRangesPage from "@/pages/admin/age-ranges";
+import ClassesPage from "@/pages/admin/classes";
+import Grades from "@/pages/admin/grades";
+import Layout from "@/pages/admin/Layout";
+import OrganizationsPage from "@/pages/admin/organizations";
+import EditOrganizationPage from "@/pages/admin/organizations/[id]/edit";
+import CreateOrganizationPage from "@/pages/admin/organizations/create";
+import ProgramsPage from "@/pages/admin/programs";
+import RoleTable from "@/pages/admin/Role/RoleTable";
+import SchoolsPage from "@/pages/admin/schools";
+import SubjectsPage from "@/pages/admin/subjects";
+import UsersPage from "@/pages/admin/users";
+import AssessmentsPage from "@/pages/assessments";
+import { BrowserList } from "@/pages/browserList";
 import HomePage from "@/pages/index";
+import BadanamuContentPage from "@/pages/library/badanamu-content";
+import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
+import OrganizationContentPage from "@/pages/library/organization-content";
+import ReportsPage from "@/pages/reports";
+import SchedulePage from "@/pages/schedule";
+import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
 import { redirectIfUnauthorized } from "@/utils/redirectIfUnauthorized";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
 import React,
 { useEffect } from "react";
 import { isIE } from "react-device-detect";
@@ -30,24 +30,12 @@ import {
     useLocation,
 } from "react-router-dom";
 
-const useStyles = makeStyles((theme) => createStyles({
-    iframeContainer: {
-        width: `100%`,
-        height: `100%`,
-    },
-}));
-
-const ENDPOINT = getCNEndpoint();
-
 interface Props {
 }
 
 export default function Router (props: Props)  {
-    const classes = useStyles();
     const location = useLocation().pathname;
     useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
-    const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
 
     return isIE
         ? <BrowserList />
@@ -55,75 +43,33 @@ export default function Router (props: Props)  {
             <Route
                 exact
                 path="/"
-                render={() => <HomePage />}
-            />
+            >
+                <HomePage />
+            </Route>
             <Route
                 exact
                 path="/library"
             >
                 <Redirect to="/library/organization-content" />
             </Route>
-            <Route
-                path="/library/organization-content"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/library`}
-                        allow="microphone"
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
-            <Route
-                path="/library/badanamu-content"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
-            <Route
-                path="/library/more-featured-content"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/library/my-content-list?program_group=More Featured Content&order_by=-update_at&page=1`}
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
-            <Route
-                path="/schedule"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/schedule/calendar`}
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
-            <Route
-                path="/assessments"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/assessments/assessment-list`}
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
-            <Route
-                path="/reports"
-                render={() => (
-                    <iframe
-                        src={`${ENDPOINT}?org_id=${organizationId}#/report/achievement-list`}
-                        frameBorder="0"
-                        className={classes.iframeContainer}
-                    />
-                )}
-            />
+            <Route path="/library/organization-content">
+                <OrganizationContentPage />
+            </Route>
+            <Route path="/library/badanamu-content">
+                <BadanamuContentPage />
+            </Route>
+            <Route path="/library/more-featured-content">
+                <MoreFeaturedContentPage />
+            </Route>
+            <Route path="/schedule">
+                <SchedulePage />
+            </Route>
+            <Route path="/assessments">
+                <AssessmentsPage />
+            </Route>
+            <Route path="/reports">
+                <ReportsPage />
+            </Route>
             <Route
                 exact
                 path="/admin/organizations/:organizationId/edit"
@@ -192,6 +138,8 @@ export default function Router (props: Props)  {
                     <SuperAdminContentLibraryTable />
                 </Layout>
             </Route>
-            <Route render={() => <HomePage />} />
+            <Route>
+                <HomePage />
+            </Route>
         </Switch>;
 }
