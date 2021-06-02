@@ -88,9 +88,9 @@ export default function EditFolderDialog (props: Props) {
                     })}
                 </p>
                 <p>{intl.formatMessage({
-                    id: `generic_typeText`,
-                })}<strong>{value.name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
+                    id: `generic_typeToRemovePrompt`,
+                }, {
+                    value: <strong>{value.name}</strong>,
                 })}</p>
             </>,
             variant: `error`,

@@ -229,9 +229,9 @@ export default function ClassesTable (props: Props) {
                         </DialogContentText>
                         <DialogContentText>
                             {intl.formatMessage({
-                                id: `generic_typeText`,
-                            })}<strong>{class_name}</strong> {intl.formatMessage({
-                                id: `generic_typeEndText`,
+                                id: `generic_typeToRemovePrompt`,
+                            }, {
+                                value: <strong>{class_name}</strong>,
                             })}
                         </DialogContentText>
                     </>

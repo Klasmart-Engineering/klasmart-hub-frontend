@@ -264,9 +264,9 @@ export default function ProgramTable (props: Props) {
                     })}
                 </DialogContentText>
                 <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeText`,
-                })} <strong>{name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
+                    id: `generic_typeToRemovePrompt`,
+                }, {
+                    value: <strong>{name}</strong>,
                 })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],

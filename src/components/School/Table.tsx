@@ -187,9 +187,9 @@ export default function SchoolTable (props: Props) {
                             })}
                         </DialogContentText>
                         <DialogContentText>{intl.formatMessage({
-                            id: `generic_typeText`,
-                        })} <strong>{selectedSchool.school_name}</strong> {intl.formatMessage({
-                            id: `generic_typeEndText`,
+                            id: `generic_typeToRemovePrompt`,
+                        }, {
+                            value: <strong>{selectedSchool.school_name}</strong>,
                         })}</DialogContentText>
                     </>
                 ),

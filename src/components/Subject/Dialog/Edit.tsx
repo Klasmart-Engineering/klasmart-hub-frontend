@@ -145,9 +145,9 @@ export default function EditSubjectDialog (props: Props) {
                     </DialogContentText>
                     <DialogContentText>
                         {intl.formatMessage({
-                            id: `generic_typeText`,
-                        })} <strong>{value?.name}</strong> {intl.formatMessage({
-                            id: `generic_typeEndText`,
+                            id: `generic_typeToRemovePrompt`,
+                        }, {
+                            value: <strong>{value?.name}</strong>,
                         })}
                     </DialogContentText>
                 </>,

@@ -152,11 +152,9 @@ export default function (props: Props) {
                     name,
                 })}</DialogContentText>
                 <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeText`,
+                    id: `generic_typeToRemovePrompt`,
                 }, {
-                    value: name,
-                })} <strong>{name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
+                    value: <strong>{name}</strong>,
                 })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],

@@ -218,9 +218,9 @@ export default function SubjectsTable (props: Props) {
                     userName: name,
                 })}</DialogContentText>
                 <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeText`,
-                })} <strong>{name}</strong> {intl.formatMessage({
-                    id: `generic_typeEndText`,
+                    id: `generic_typeToRemovePrompt`,
+                }, {
+                    value: <strong>{name}</strong>,
                 })}</DialogContentText>
             </>,
             validations: [ required(), equals(name) ],
