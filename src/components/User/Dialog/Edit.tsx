@@ -112,6 +112,7 @@ export default function EditUserDialog (props: Props) {
     };
 
     const handleDelete = async () => {
+        if (!userId) return;
         const { given_name, family_name } = organizationMembershipData?.user.membership.user ?? {};
         const userName = `${given_name} ${family_name}`;
         if (!confirm(intl.formatMessage({
@@ -120,15 +121,13 @@ export default function EditUserDialog (props: Props) {
             userName,
         }))) return;
 
-        const {
-            organization_id,
-            user_id,
-        } = editedOrganizationMembership;
+        const { organization_id } = editedOrganizationMembership;
+
         try {
             await deleteOrganizationMembership({
                 variables: {
                     organization_id,
-                    user_id,
+                    user_id: userId,
                 },
             });
             onClose(true);
