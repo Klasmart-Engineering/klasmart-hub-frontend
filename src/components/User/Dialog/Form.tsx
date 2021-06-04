@@ -165,11 +165,15 @@ export default function UserDialogForm (props: Props) {
         phone,
         letternumeric,
         notEquals,
+        afterDate,
+        beforeDate,
     } = useValidations();
 
     const today = new Date();
+    const minDateAllowed = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
+    minDateAllowed.setFullYear(currentYear - 100);
 
     useEffect(() => {
         onValidation([
@@ -351,6 +355,7 @@ export default function UserDialogForm (props: Props) {
                             max: `${currentYear}-${currentMonth}`,
                         },
                     }}
+                    validations={[ beforeDate(today), afterDate(minDateAllowed) ]}
                     onValidate={setBirthdayIsValid}
                     onChange={setBirthday}
                 />

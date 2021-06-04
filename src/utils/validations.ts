@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { validations } from "kidsloop-px";
 import { useIntl } from "react-intl";
 
@@ -49,6 +50,16 @@ export const useValidations = () => {
         })),
         notEquals: (value: string, errorMessage?: string) => validations.notEquals(value, errorMessage ?? intl.formatMessage({
             id: `genericValidations_notEquals`,
+        })),
+        afterDate: (min: Date, errorMessage?: string) => validations.afterDate(min, errorMessage ?? intl.formatMessage({
+            id: `genericValidations_afterDateError`,
+        }, {
+            value: format(min, `MMMM yyyy`),
+        })),
+        beforeDate: (max: Date, errorMessage?: string) => validations.beforeDate(max, errorMessage ?? intl.formatMessage({
+            id: `genericValidations_beforeDateError`,
+        }, {
+            value: format(max, `MMMM yyyy`),
         })),
     };
 };
