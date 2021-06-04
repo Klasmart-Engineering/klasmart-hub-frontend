@@ -1054,5 +1054,11 @@ const messages: Record<string, string> = {
     ERR_CSV_INVALID_MULTIPLE_EXIST: `"{name}" {entity} matches {count}, it should match one {entity}.`,
     ERR_CSV_INVALID_MULTIPLE_EXIST_CHILD: `"{name}" {entity} already exists more than once in "{parent_name}" {parent_entity}.`,
     ERR_CSV_INVALID_LENGTH: `{entity} {attribute} must not be greater than {max} characters.`,
+    assessmentStatus_complete: `Completed`,
+    assessmentStatus_inProgress: `In Progress`,
+    assessmentTable_id: `ID`,
+    assessmentTable_title: `Title`,
+    assessmentTable_status: `Status`,
+    assessmentTable_teachers: `Teachers`,
 };
 export default messages;

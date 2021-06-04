@@ -39,9 +39,9 @@ export interface SchedulePayload {
 
 export type TimeView = `day` | `work_week` | `week` | `month` | `year` |  `full_view`;
 
-export interface AssessmentPayload {
-    total: number;
-    items: AssessmentItem[];
+export enum AssessmentStatus {
+    COMPLETE = `complete`,
+    IN_PROGRESS = `in_progress`,
 }
 
 export interface AssessmentItem {
@@ -52,7 +52,7 @@ export interface AssessmentItem {
     teachers: Identity[];
     class_end_time: number;
     complete_time: number;
-    status: string;
+    status: AssessmentStatus;
 }
 
 export interface LivePreviewJWT {

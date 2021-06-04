@@ -2,7 +2,7 @@ import ContentLayout from "../components/FeaturedContent/contentLayout";
 import { useRestAPI } from "@/api/restapi";
 import { useGetUser } from "@/api/users";
 import { userIdVar } from "@/cache";
-import Assessment from "@/components/HomeCard/assessment";
+import Assessment from "@/components/HomeCard/Assessments";
 import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
 import ScheduleInfoShort from "@/components/HomeCard/scheduleInfo";
@@ -33,11 +33,6 @@ import React, {
     useState,
 } from "react";
 
-const now = new Date();
-const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
-const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
-
 const useStyles = makeStyles((theme: Theme) => createStyles({
     backdrop: {
         zIndex: theme.zIndex.drawer - 1,
@@ -51,7 +46,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         paddingBottom: theme.spacing(2),
         paddingTop: theme.spacing(2),
     },
+    assessmentCard: {
+        display: `flex`,
+        flexDirection: `column`,
+    },
 }));
+
+const now = new Date();
+const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
+const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 export default function HomePage () {
     const classes = useStyles();
@@ -163,7 +167,7 @@ export default function HomePage () {
                             style={{
                                 marginBottom: theme.spacing(4),
                             }}>
-                            <Card>
+                            <Card className={classes.assessmentCard}>
                                 <Assessment />
                             </Card>
                         </Grid>

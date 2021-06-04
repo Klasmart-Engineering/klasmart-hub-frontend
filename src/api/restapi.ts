@@ -1,7 +1,7 @@
 import { getCNEndpoint } from "../config";
 import { Store } from "../store/store";
 import {
-    AssessmentPayload,
+    AssessmentItem,
     ContentItemDetails,
     PublishedContentItem,
     PublishedContentPayload,
@@ -161,6 +161,35 @@ interface GetSchedulesTimeViewRequest {
     start_at_ge: number;
     end_at_le: number;
     time_zone_offset: number;
+}
+
+type AssessmentsOrder = `class_end_time` | `-class_end_time` | `complete_time` | `-complete_time`
+
+interface GetAssessmentsRequest {
+    org_id: string;
+    page?: number;
+    page_size?: number;
+    status?: string;
+    teacher_name?: string;
+    class_type?: string;
+    order_by?: AssessmentsOrder;
+}
+
+interface GetAssessmentsResponse {
+    items: AssessmentItem[];
+    total: number;
+}
+
+interface GetAssessmentsSummaryRequest {
+    org_id: string;
+    status?: string;
+    teacher_name?: string;
+    class_type?: string;
+}
+
+interface GetAssessmentsSummaryResponse {
+    items: AssessmentItem[];
+    total: number;
 }
 
 export class RestAPI {
@@ -413,24 +442,22 @@ export class RestAPI {
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
     }
 
-    public async assessments (orgId: string, page?: number, pageSize?: number) {
-        const str = queryString.stringify({
-            org_id: orgId,
-            page,
-            page_size: pageSize,
-        }, {
+    public async getAssessments (request: GetAssessmentsRequest): Promise<GetAssessmentsResponse | null> {
+        const str = queryString.stringify(request, {
             skipNull: true,
         });
-
         const response = await this.assessmentCall(`GET`, `v1/assessments?${str}`);
-        const body: AssessmentPayload = await response.json();
-        if (typeof body === `object`) {
-            const { items } = body;
-            if (typeof items === `object` && items instanceof Array) {
-                return items;
-            }
-        }
-        throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);
+        const body = await response.json() as GetAssessmentsResponse | null;
+        return body;
+    }
+
+    public async getAssessmentsSummary (request: GetAssessmentsSummaryRequest): Promise<GetAssessmentsSummaryResponse | null> {
+        const str = queryString.stringify(request, {
+            skipNull: true,
+        });
+        const response = await this.assessmentCall(`GET`, `v1/assessments_summary?${str}`);
+        const body = await response.json() as GetAssessmentsSummaryResponse | null;
+        return body;
     }
 
     private contentCall (method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
