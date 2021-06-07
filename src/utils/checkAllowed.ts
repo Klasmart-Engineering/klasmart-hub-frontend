@@ -1,6 +1,6 @@
 import { useGetOrganizationMembershipsPermissions } from "@/api/organizationMemberships";
 import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
-import { PermissionId } from "@/utils/permissions/permissionDetails";
+import { PermissionId } from "@/utils/permissions";
 import {
     useEffect,
     useState,

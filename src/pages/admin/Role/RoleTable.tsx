@@ -4,7 +4,6 @@ import {
     useGetOrganizationRolesPermissions,
     useGetRolePermissions,
 } from "@/api/roles";
-import { currentMembershipVar } from "@/cache";
 import globalStyles from "@/globalStyles";
 import CreateAndEditRoleDialog, {
     NewRole,
@@ -15,7 +14,7 @@ import ViewRoleDetailsDialog from "@/pages/admin/Role/ViewRoleDetailsDialog";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
-import { systemRoles } from "@/utils/permissions/systemRoles";
+import { systemRoles } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import {
     Link,
@@ -80,8 +79,8 @@ export default function RoleTable () {
     const intl = useIntl();
     const canView = usePermission(`view_role_permissions_30112`);
     const canCreate = usePermission(`create_role_with_permissions_30222`);
-    const canDelete = usePermission(`delete_groups_30440`);
-    const canEdit = usePermission(`edit_role_permissions_30332`);
+    const canDelete = usePermission(`delete_role_30440`);
+    const canEdit = usePermission(`edit_role_and_permissions_30332`);
     const [ rows, setRows ] = useState<RoleRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openDeleteDialog, setOpenDeleteDialog ] = useState(false);

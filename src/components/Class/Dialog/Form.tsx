@@ -12,7 +12,6 @@ import {
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
-import { schoolAdminRole } from "@/utils/permissions/schoolAdmin";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -80,7 +79,7 @@ export default function ClassDialogForm (props: Props) {
 
     useEffect(() => {
         if (!user) return;
-        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === schoolAdminRole.role_name && role.system_role);
+        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === `School Admin` && role.system_role);
         setIsSchoolAdmin(isUserSchoolAdmin);
     }, [ user ]);
 

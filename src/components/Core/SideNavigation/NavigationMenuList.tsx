@@ -188,7 +188,7 @@ export default function NavigationMenuList (props: Props) {
                         link: `/admin/users`,
                     },
                 ] : [],
-                ...usePermission(`view_groups_30110`) ? [
+                ...usePermission(`view_roles_and_permissions_30110`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_groupsTitle`,

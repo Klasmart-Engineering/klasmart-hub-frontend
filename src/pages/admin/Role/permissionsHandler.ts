@@ -4,7 +4,7 @@ import {
     PermissionsCategory,
     Role,
 } from "@/pages/admin/Role/CreateAndEditRoleDialog";
-import { systemRoles } from "@/utils/permissions/systemRoles";
+import { systemRoles } from "@/utils/permissions";
 
 /**
  * Takes a list of roles and permissions.
