@@ -12,7 +12,8 @@ import {
     Typography,
     useTheme,
 } from "@material-ui/core";
-import { Assessment } from '@material-ui/icons';
+import { Assessment as AssessmentIcon } from '@material-ui/icons';
+import { sumBy } from "lodash";
 import React,
 {
     useEffect,
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) => createStyles({
         alignItems: `center`,
         flexWrap: `wrap`,
         justifyContent: `center`,
+        padding: theme.spacing(2, 4),
     },
 }));
 
@@ -55,6 +57,8 @@ export default function AssessmentPieChart (props: Props) {
     const [ loading, setLoading ] = useState(false);
     const currentOrganization = useCurrentOrganization();
     const [ statusGroups, setStatusGroups ] = useState<DataEntry[]>([]);
+
+    const allStatusCount = sumBy(statusGroups, (group) => group.value);
 
     const fetchStatusGroups = async () => {
         setLoading(true);
@@ -80,27 +84,30 @@ export default function AssessmentPieChart (props: Props) {
     }, [ currentOrganization ]);
 
     return (
-        <>
-            <div className={classes.root}>
-                {loading ?
-                    <CircularProgress />
-                    :
-                    statusGroups ?
-                        <PieChart data={statusGroups}/>
-                        :
-                        <div className={classes.noNewUpdates}>
-                            <Assessment
-                                color="disabled"
-                                style={{
-                                    fontSize: 100,
-                                }}
-                            />
-                            <Typography>
-                                <FormattedMessage id="assessment_noNewUpdatesLabel" />
-                            </Typography>
-                        </div>
-                }
-            </div>
-        </>
+        <div className={classes.root}>
+            {loading
+                ? <CircularProgress />
+                : (
+                    allStatusCount > 0
+                        ? <PieChart data={statusGroups}/>
+                        : (
+                            <div className={classes.noNewUpdates}>
+                                <AssessmentIcon
+                                    color="disabled"
+                                    style={{
+                                        fontSize: 96,
+                                    }}
+                                />
+                                <Typography
+                                    color="textSecondary"
+                                    variant="body2"
+                                >
+                                    <FormattedMessage id="assessment_noNewUpdatesLabel" />
+                                </Typography>
+                            </div>
+                        )
+                )
+            }
+        </div>
     );
 }
