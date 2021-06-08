@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_ALL_GROUPS = gql`
+export const GET_ORGANIZATION_ROLES = gql`
     query getOrganizationRoles($organization_id: ID!) {
         organization(organization_id: $organization_id) {
             roles {

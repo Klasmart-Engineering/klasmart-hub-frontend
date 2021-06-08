@@ -3,7 +3,7 @@ import {
     useGetPaginatedOrganizationMemberships,
     UserEdge,
 } from "@/api/organizationMemberships";
-import { useGetAllRoles } from "@/api/roles";
+import { useGetOrganizationRoles } from "@/api/roles";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
@@ -144,7 +144,11 @@ export default function UserTable (props: Props) {
     const {
         data: dataRoles,
         loading: loadingRoles,
-    } = useGetAllRoles(organizationId);
+    } = useGetOrganizationRoles({
+        variables: {
+            organization_id: organizationId,
+        },
+    });
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
     const canCreate = usePermission(`create_users_40220`);
     const canEdit = usePermission(`edit_users_40330`);

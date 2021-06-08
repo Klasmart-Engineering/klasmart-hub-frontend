@@ -1,4 +1,5 @@
 import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
+import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetSchools } from "@/api/schools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
@@ -125,7 +126,7 @@ export default function UserDialogForm (props: Props) {
             organization_id: organizationId,
         },
     });
-    const { data: organizationData } = useGetOrganizationMemberships({
+    const { data: organizationData } = useGetOrganizationRoles({
         variables: {
             organization_id: organizationId,
         },

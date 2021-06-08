@@ -1,7 +1,7 @@
 import { CREATE_NEW_ROLE } from "@/operations/mutations/createNewRole";
 import { DELETE_ROLE } from "@/operations/mutations/deleteRole";
 import { EDIT_ROLE } from "@/operations/mutations/editRole";
-import { GET_ALL_GROUPS } from "@/operations/queries/getAllGroups";
+import { GET_ORGANIZATION_ROLES } from "@/operations/queries/getOrganizationRoles";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/types/graphQL";
 import {
     MutationHookOptions,
+    QueryHookOptions,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -19,16 +20,13 @@ interface GetAllRolesRequest {
 }
 
 interface GetAllRolesResponse {
-    organization: Organization;
+    organization: {
+        roles: Role[];
+    };
 }
 
-export const useGetAllRoles = (organizationId: string) => {
-    return useQuery<GetAllRolesResponse, GetAllRolesRequest>(GET_ALL_GROUPS, {
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id: organizationId,
-        },
-    });
+export const useGetOrganizationRoles = (options?: QueryHookOptions<GetAllRolesResponse, GetAllRolesRequest>) => {
+    return useQuery<GetAllRolesResponse, GetAllRolesRequest>(GET_ORGANIZATION_ROLES, options);
 };
 
 export const useGetOrganizationRolesPermissions = (organizationId: string) => {
