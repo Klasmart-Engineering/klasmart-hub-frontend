@@ -77,7 +77,7 @@ const checkRoleMatch = (role: string | undefined | null) => {
 export default function RoleTable () {
     const classes = useStyles();
     const intl = useIntl();
-    const canView = usePermission(`view_role_permissions_30112`);
+    const canView = usePermission(`view_roles_and_permissions_30110`);
     const canCreate = usePermission(`create_role_with_permissions_30222`);
     const canDelete = usePermission(`delete_role_30440`);
     const canEdit = usePermission(`edit_role_and_permissions_30332`);
