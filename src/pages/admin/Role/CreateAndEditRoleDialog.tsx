@@ -471,6 +471,11 @@ export default function CreateAndEditRoleDialog (props: Props) {
                 handleReset={handleReset}
                 roleInfoStepIsValid={roleInfoIsValid}
                 permissionsStepIsValid={permissionsStepIsValid}
+                createOrEditTitle={row.id ? intl.formatMessage({
+                    id: `rolesInfoCard_editTitle`,
+                }) : intl.formatMessage({
+                    id: `rolesInfoCard_createTitle`,
+                })}
             />
             <div className={classes.stepper}>
                 <RoleStepper

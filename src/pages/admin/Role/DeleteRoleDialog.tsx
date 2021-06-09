@@ -3,7 +3,6 @@ import {
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
 import { useDeleteRole } from "@/api/roles";
-import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
 import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
 import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
 import { RoleRow } from "@/pages/admin/Role/RoleTable";
@@ -49,7 +48,10 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import { useIntl } from "react-intl";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -363,15 +365,11 @@ export default function DeleteRoleDialog (props: Props) {
                         container
                         item
                         wrap="nowrap">
-                        <img
-                            alt="kidsloop logo"
-                            className={classes.title}
-                            src={KidsloopLogo}
-                            height={32} />
                         <Typography
                             id="nav-menu-title"
-                            variant="h6">
-                            for Organizations
+                            variant="h6"
+                        >
+                            <FormattedMessage id="rolesInfoCard_deleteTitle" />
                         </Typography>
                     </Grid>
                     <Grid

@@ -611,6 +611,9 @@ const messages: Record<string, string> = {
     rolesInfoCard_finishButton: `Finish`,
     rolesInfoCard_actionsTitle: `Actions`,
     rolesInfoCard_backButton: `Back`,
+    rolesInfoCard_createTitle: `Create Role`,
+    rolesInfoCard_editTitle: `Edit Role`,
+    rolesInfoCard_deleteTitle: `Delete Role`,
 
     schools_editButton: `Edit`,
     schools_deleteButton: `Delete`,

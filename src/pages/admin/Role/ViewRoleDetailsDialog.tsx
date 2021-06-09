@@ -55,13 +55,10 @@ const useStyles = makeStyles((theme: Theme) =>
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(1),
         },
-    }),
-);
+    }));
 
-const motion = React.forwardRef(function Transition(
-    props: TransitionProps & { children?: React.ReactElement },
-    ref: React.Ref<unknown>,
-) {
+const motion = React.forwardRef(function Transition (props: TransitionProps & { children?: React.ReactElement },
+    ref: React.Ref<unknown>) {
     return (
         <Grow
             ref={ref}
@@ -82,7 +79,7 @@ interface Props {
     rolePermissionsLoading: boolean;
 }
 
-export default function ViewRoleDetailsDialog(props: Props) {
+export default function ViewRoleDetailsDialog (props: Props) {
     const {
         open,
         row,
@@ -116,9 +113,7 @@ export default function ViewRoleDetailsDialog(props: Props) {
                 data.forEach((permissionCategory) => {
                     permissionCategory.groups.forEach((group) => {
                         group.permissionDetails.forEach((permissionDetail) => {
-                            permissionDetail.checked = rolePermissions?.role.permissions.some(
-                                (permission) => permission.permission_id === permissionDetail.permissionId,
-                            );
+                            permissionDetail.checked = rolePermissions?.role.permissions.some((permission) => permission.permission_id === permissionDetail.permissionId);
                         });
                     });
                 });

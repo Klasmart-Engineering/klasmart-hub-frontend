@@ -1,5 +1,4 @@
 import RoleStepperButtons from "../Roles/roleStepperButtons";
-import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,6 +12,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -23,8 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(1),
         },
-    }),
-);
+    }));
 
 interface Props {
     handleClose: () => void;
@@ -37,9 +36,10 @@ interface Props {
     displayHome?: boolean;
     roleInfoStepIsValid?: boolean;
     permissionsStepIsValid?: boolean;
+    createOrEditTitle: string;
 }
 
-export default function DialogAppBar(props: Props) {
+export default function DialogAppBar (props: Props) {
     const classes = useStyles();
     const theme = useTheme();
     const {
@@ -53,6 +53,7 @@ export default function DialogAppBar(props: Props) {
         displayHome,
         roleInfoStepIsValid,
         permissionsStepIsValid,
+        createOrEditTitle,
     } = props;
 
     return (
@@ -73,16 +74,11 @@ export default function DialogAppBar(props: Props) {
                         container
                         item
                         wrap="nowrap">
-                        <img
-                            alt="kidsloop logo"
-                            className={classes.title}
-                            src={KidsloopLogo}
-                            height={32}
-                        />
                         <Typography
                             id="nav-menu-title"
-                            variant="h6">
-                            for Organizations
+                            variant="h6"
+                        >
+                            {createOrEditTitle}
                         </Typography>
                     </Grid>
                     {toolbarBtn ? toolbarBtn : null}
