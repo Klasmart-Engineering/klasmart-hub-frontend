@@ -31,17 +31,17 @@ const mocks: MockedResponse[] = [];
 
 test(`Create grade dialog renders correctly and with empty fields.`, async () => {
     const locale = getLanguage(`en`);
-    const { getByLabelText, getByText } = qlRender(mocks, locale, <CreateGrade
+    const { queryByLabelText, queryByText } = qlRender(mocks, locale, <CreateGrade
         open={true}
         onClose={jest.fn()}/>);
 
     await act(async () => {
-        const title = await getByText(`Create Grade`);
-        const name = await getByLabelText(`Grade Name`);
-        const pFrom = await getByLabelText(`Progress From`);
-        const pTo = await getByLabelText(`Progress To`);
+        const title = queryByText(`Create Grade`);
+        const name = queryByLabelText(`Grade Name`);
+        const pFrom = queryByLabelText(`Progress From`);
+        const pTo = queryByLabelText(`Progress To`);
 
-        await waitFor(() => {
+        waitFor(() => {
             expect(title).toBeTruthy();
             expect(name).toBeTruthy();
             expect(pFrom).toBeTruthy();

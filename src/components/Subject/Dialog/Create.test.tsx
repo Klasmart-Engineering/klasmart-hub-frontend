@@ -30,24 +30,19 @@ jest.mock(`@/utils/checkAllowed`, () => {
 test(`Subject create dialog renders correctly`, async () => {
     const locale = getLanguage(`en`);
     const {
-        getByText,
-        getByLabelText,
+        queryByText,
+        queryByLabelText,
     } = qlRender([], locale, <CreateSubjectDialog
         open={true}
         onClose={jest.fn()}/>);
 
     await act(async () => {
-        const title = getByText(`Create Subject`);
-        const name = await getByLabelText(`Subject Name`);
-        const categoryLabels = await screen.findAllByText(/category/gi);
-        const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
-
         await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name).toBeTruthy();
-            expect(categoryLabels.length).toBeTruthy();
-            expect(subcategoryLabels.length).toBeTruthy();
-            expect(name.value).toBe(``);
+            expect(queryByText(`Create Subject`)).toBeTruthy();
+            expect(queryByLabelText(`Subject Name`)).toBeTruthy();
+            expect(screen.queryAllByText(/category/gi).length).toBeTruthy();
+            expect(screen.queryAllByText(/subcategories/gi).length).toBeTruthy();
+            expect(queryByLabelText(`Subject Name`)?.value).toBe(``);
         });
     });
 });
