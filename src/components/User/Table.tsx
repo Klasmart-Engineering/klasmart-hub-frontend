@@ -154,6 +154,7 @@ export default function UserTable (props: Props) {
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const canView = usePermission(`view_users_40110`, true);
+    const canViewSchoolUsers = usePermission(`view_my_school_users_40111`, true);
 
     const pageInfo = usersData?.usersConnection.pageInfo;
     const users = usersData?.usersConnection.edges;
@@ -399,7 +400,7 @@ export default function UserTable (props: Props) {
         });
     }, [ rowsPerPage, search ]);
 
-    if (!canView && !loadingOrganizationMemberships) {
+    if (!(canView || canViewSchoolUsers) && !loadingOrganizationMemberships) {
         return <Redirect to="/" />;
     }
 
