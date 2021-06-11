@@ -5,8 +5,6 @@ import {
 import { UserEdge } from "@/api/organizationMemberships";
 import { Status } from "@/types/graphQL";
 
-const organizationId = `bd07db26-340d-44f3-a98d-ab1435acdd3d`;
-
 const studentRole = {
     id: `fd37310d-5ced-4dda-9968-c6cb084a542b`,
     name: `Student`,
@@ -55,7 +53,6 @@ const userA: UserEdge = {
         familyName: `09`,
         organizations: [
             {
-                id: organizationId,
                 userStatus: Status.ACTIVE,
                 joinDate: `2020-12-09T23:40:14.595Z`,
             },
@@ -76,7 +73,6 @@ const userB: UserEdge = {
         familyName: `Petrucci`,
         organizations: [
             {
-                id: organizationId,
                 userStatus: Status.ACTIVE,
                 joinDate: `2020-12-10T19:03:14.417Z`,
             },
@@ -97,7 +93,6 @@ const userC: UserEdge = {
         familyName: `Portnoy`,
         organizations: [
             {
-                id: organizationId,
                 userStatus: Status.INACTIVE,
                 joinDate: `2020-12-10T19:32:35.376Z`,
             },
@@ -118,7 +113,6 @@ const userD: UserEdge = {
         familyName: `King`,
         organizations: [
             {
-                id: organizationId,
                 userStatus: Status.INACTIVE,
                 joinDate: `2020-12-11T17:11:11.992Z`,
             },

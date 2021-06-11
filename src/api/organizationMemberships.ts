@@ -120,7 +120,6 @@ export interface UserEdge {
         givenName: string | null;
         familyName: string | null;
         organizations: {
-            id: string;
             userStatus: string;
             joinDate: string;
         }[];

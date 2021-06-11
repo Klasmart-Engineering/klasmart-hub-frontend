@@ -31,6 +31,10 @@ export const userProfileVar: ReactiveVar<User> = makeVar<User>(userProfileInitia
 
 export const cache: InMemoryCache = new InMemoryCache({
     typePolicies: {
+        // Cache [Organization/School]SummaryNode on the parent UserConnectionNode
+        // to avoid invalid caching due to the non-unique `id` field
+        OrganizationSummaryNode: {keyFields: false},
+        SchoolSummaryNode: {keyFields: false},
         Query: {
             fields: {
                 class: {
