@@ -111,23 +111,29 @@ const config: Configuration = {
             root: __dirname,
         }),
     ],
-    devServer: isDev ? {
-        host: `fe.kidsloop.net`,
+    devServer: {
+        host: `fe.alpha.kidsloop.net`,
         port: 8080,
         https: true,
         historyApiFallback: true,
         proxy: {
             "/v1": {
-                target: `https://kl2-test.kidsloop.net/`,
+                target: `https://cms.alpha.kidsloop.net/`,
+                secure: true,
                 changeOrigin: true,
             },
             "/h5p": {
-                target: `https://kl2-test.kidsloop.net/`,
+                target: `https://cms.alpha.kidsloop.net/`,
+                secure: true,
+                changeOrigin: true,
+            },
+            "/user": {
+                target: `https://api.alpha.kidsloop.net/`,
                 secure: true,
                 changeOrigin: true,
             },
         },
-    } : undefined,
+    },
 };
 
 export default config;
