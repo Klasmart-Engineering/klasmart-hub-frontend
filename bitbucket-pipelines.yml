@@ -42,8 +42,8 @@ pipelines:
           - docker tag hub-frontend:latest $REPO:$TAG-latest
           - docker tag hub-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
           - docker tag hub-frontend:latest $REPO:$TAG-$COMMIT_TAG
-          - docker push $REPO:$TAG
-          - docker push $REPO:$TAG-latest
+          - if test -n "$BRANCH_TAG"; then docker push $REPO:$TAG; fi
+          - if test -n "$BRANCH_TAG"; then docker push $REPO:$TAG-latest; fi
           - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
           - docker push $REPO:$TAG-$COMMIT_TAG
 
