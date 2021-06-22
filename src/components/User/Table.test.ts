@@ -135,7 +135,8 @@ test(`should create an array of objects that conforms the User Table UserRow int
     const final: UserRow[] = [
         {
             id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
-            name: `Andres 09 09`,
+            givenName: `Andres 09`,
+            familyName: `09`,
             avatar: ``,
             contactInfo: `john@09.com`,
             roleNames: [ `Organization Admin`, `Student` ],
@@ -145,7 +146,8 @@ test(`should create an array of objects that conforms the User Table UserRow int
         },
         {
             id: `7f4d5778-f512-5253-b456-47c4e80f9cf6`,
-            name: `John Petrucci`,
+            givenName: `John`,
+            familyName: `Petrucci`,
             avatar: ``,
             contactInfo: `andresp+09@bluetrailsoft.com`,
             roleNames: [ `Role 12`, `Student` ],
@@ -155,7 +157,8 @@ test(`should create an array of objects that conforms the User Table UserRow int
         },
         {
             id: `7a9e443c-d986-5cb0-94e5-30ed3f597ed3`,
-            name: `Mike Portnoy`,
+            givenName: `Mike`,
+            familyName: `Portnoy`,
             avatar: ``,
             contactInfo: `mike@09.com`,
             roleNames: [ `Teacher`, `Student` ],
@@ -165,7 +168,8 @@ test(`should create an array of objects that conforms the User Table UserRow int
         },
         {
             id: `4b1503a1-1b0b-57ec-b05c-dddd8fe78bc9`,
-            name: `Stephen King`,
+            givenName: `Stephen`,
+            familyName: `King`,
             avatar: ``,
             contactInfo: `stephen@09.com`,
             roleNames: [ `Teacher`, `Student` ],

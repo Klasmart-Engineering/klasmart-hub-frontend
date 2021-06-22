@@ -66,12 +66,10 @@ const useStyles = makeStyles((theme) => createStyles({
         fontSize: 10,
     },
     activeColor: {
-        color: `#2BA600`,
-        fontWeight: `bold`,
+        color: theme.palette.success.main,
     },
     inactiveColor: {
-        color: `#FF0000`,
-        fontWeight: `bold`,
+        color: theme.palette.error.main,
     },
     statusText: {
         fontWeight: `bold`,
@@ -85,7 +83,8 @@ export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
     return {
         id: user.id,
-        name: `${user.givenName ?? `?`} ${user.familyName ?? `?`}`,
+        givenName: user.givenName ?? ``,
+        familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
         contactInfo: user.contactInfo.email ?? user.contactInfo.phone ?? ``,
         roleNames: user.roles.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames),
@@ -97,7 +96,8 @@ export const mapUserRow = (edge: UserEdge) => {
 
 export interface UserRow {
     id: string;
-    name: string;
+    givenName: string;
+    familyName: string;
     avatar: string;
     contactInfo: string;
     roleNames: string[];
@@ -199,11 +199,11 @@ export default function UserTable (props: Props) {
             secret: true,
         },
         {
-            id: `name`,
+            id: `givenName`,
             persistent: true,
             disableSort: true,
             label: intl.formatMessage({
-                id: `users_name`,
+                id: `users_firstName`,
             }),
             render: (row) => (
                 <Box
@@ -212,13 +212,21 @@ export default function UserTable (props: Props) {
                     alignItems="center"
                 >
                     <UserAvatar
-                        name={row.name}
+                        name={row.givenName}
                         size="small"
                         className={classes.avatar}
                     />
-                    <span>{row.name}</span>
+                    <span>{row.givenName}</span>
                 </Box>
             ),
+        },
+        {
+            id: `familyName`,
+            persistent: true,
+            disableSort: true,
+            label: intl.formatMessage({
+                id: `users_lastName`,
+            }),
         },
         {
             id: `roleNames`,
@@ -226,10 +234,6 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_organizationRoles`,
             }),
-            // groups: roles.map((role) => ({
-            //     text: getCustomRoleName(role),
-            //     value: role,
-            // })),
             search: (row: string[], searchValue: string) => {
                 const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
@@ -279,13 +283,10 @@ export default function UserTable (props: Props) {
         },
         {
             id: `status`,
+            disableSort: true,
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
-            // groups: [ `active`, `inactive` ].map((status) => ({
-            //     text: getCustomStatus(status),
-            //     value: status,
-            // })),
             search: (row: string[], searchValue: string) => {
                 const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
@@ -323,7 +324,7 @@ export default function UserTable (props: Props) {
     };
 
     const deleteSelectedRow = async (row: UserRow) => {
-        const userName = row.name;
+        const userName = `${row.givenName} ${row.familyName}`.trim();
         if (!await prompt({
             variant: `error`,
             title: intl.formatMessage({
