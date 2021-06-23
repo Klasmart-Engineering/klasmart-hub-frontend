@@ -16,6 +16,10 @@ export const GET_ORGANIZATION_MEMBERSHIPS = gql`
                         email
                     }
                     status
+                    branding {
+                        iconImageURL
+                        primaryColor
+                    }
                 }
                 roles {
                     role_id

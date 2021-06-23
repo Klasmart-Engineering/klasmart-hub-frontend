@@ -79,6 +79,7 @@ export default function OrganizationSwitcher (props: Props) {
     const memberships = organizationMembershipStack.slice();
     const currentOrganizationMembership = memberships[0];
     const organizationName = currentOrganizationMembership?.organization?.organization_name ?? ``;
+    const organizationLogo = currentOrganizationMembership?.organization?.branding?.iconImageURL ?? ``;
 
     memberships.sort((a, b) => {
         const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
@@ -134,6 +135,7 @@ export default function OrganizationSwitcher (props: Props) {
                 <OrganizationAvatar
                     name={organizationName}
                     size="large"
+                    src={organizationLogo}
                 />
                 <Box
                     display="flex"
@@ -145,7 +147,10 @@ export default function OrganizationSwitcher (props: Props) {
                             className={classes.organizationSelection}
                             onClick={() => handleSelectOrganization(membership)}
                         >
-                            <OrganizationAvatar name={membership.organization?.organization_name ?? ``} />
+                            <OrganizationAvatar
+                                name={membership.organization?.organization_name ?? ``}
+                                src={membership.organization?.branding?.iconImageURL ?? ``}
+                            />
                         </ButtonBase>
                     ))}
                 </Box>

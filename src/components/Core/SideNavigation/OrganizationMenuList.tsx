@@ -85,7 +85,10 @@ export default function OrganizationMenuList (props: Props) {
                     onClick={() => handleSelectOrganization(membership)}
                 >
                     <ListItemAvatar>
-                        <OrganizationAvatar name={membership.organization?.organization_name ?? ``} />
+                        <OrganizationAvatar
+                            name={membership.organization?.organization_name ?? ``}
+                            src={membership.organization?.branding?.iconImageURL?? ``}
+                        />
                     </ListItemAvatar>
                     <ListItemText
                         primary={membership.organization?.organization_name ?? `Organization Name Undefined`}
