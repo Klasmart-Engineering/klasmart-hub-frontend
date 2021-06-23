@@ -1,7 +1,10 @@
+import { useOrganizationStack } from "@/store/organizationMemberships";
 import { Organization } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import { Typography } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import {
+    FormHelperText,
+    Grid,
+} from "@material-ui/core";
 import {
     createStyles,
     makeStyles,
@@ -9,6 +12,9 @@ import {
 } from "@material-ui/core/styles";
 import {
     Button,
+    FileInputButton,
+    ImagePicker,
+    OrganizationAvatar,
     TextField,
 } from "kidsloop-px";
 import React,
@@ -34,18 +40,23 @@ const useStyles = makeStyles((theme: Theme) =>
             marginBottom: `3em`,
         },
         formInput: {
-            margin: `1em 0`,
+            margin: theme.spacing(1, 0),
+        },
+        logoPicker: {
+            display: `flex`,
+            flexDirection: `column`,
         },
         fileInput: {
             display: `none`,
             borderStyle: `dashed`,
         },
-        logoPreview: {
-            border: `1px dashed ${theme.palette.grey[300]}`,
-            width: `100%`,
-            minWidth: `100%`,
-            minHeight: `5em`,
-            margin: `1em 0`,
+        fileInputControls: {
+            display: `flex`,
+            alignItems: `center`,
+            margin: theme.spacing(1, 0),
+        },
+        imageSelectErrorMessage: {
+            height: `1em`,
         },
     }));
 
@@ -63,167 +74,200 @@ export default function Personalization (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const {
-        required,
-        min,
-        max,
-        letternumeric,
-    } = useValidations();
-    const [ alternateText, setAlternateText ] = useState(``);
-    const [ alternateTextValid, setAlternateTextValid ] = useState(false);
-    const [ color, setColor ] = useState(`#79d2bc`);
+    const [ color, setColor ] = useState(`79d2bc`);
     const [ colorValid, setColorValid ] = useState(false);
-    const [ organizationLogo, setOrganizationLogo ] = useState<File>();
-    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState();
+    const [ tempOrganizationLogo, setTempOrganizationLogo ] = useState(new File([ `` ], `emptyFile`));
+    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState(``);
+    const [ imageToBeCropped, setImageToBeCropped ] = useState(``);
+    const [ isCropperOpen, setIsCropperOpen ] = useState(false);
+    const [ imageSelectError, setImageSelectError ] = useState(` `);
 
-    const altTextValidations = organizationLogo ? [
-        letternumeric(),
-        required(organizationLogo),
-        min(3, `Alternate text must have a minimum of 3 characters`),
-        max(15, `Alternate text must have a maximum of 15 characters`),
-    ] : [];
+    const [ organizationMembershipStack ] = useOrganizationStack();
 
-    const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            setOrganizationLogo(event.target.files[0]);
+    const memberships = organizationMembershipStack.slice();
+    const currentOrganizationMembership = memberships[0];
+    const organizationName = currentOrganizationMembership?.organization?.organization_name ?? ``;
+
+    const onImageChange = (file: File) => {
+        if (file) {
             const reader = new FileReader();
             reader.onload = (e: any) => {
-                setOrganizationLogoPreview(e.target.result);
+                setImageToBeCropped(e.target?.result);
             };
-            reader.readAsDataURL(event.target.files[0]);
+            reader.readAsDataURL(file);
+            setIsCropperOpen(true);
+            setImageSelectError(``);
         }
     };
 
-    useEffect(() => {
-        if (!value) return;
-        setAlternateText(value.alternateText ?? ``);
+    const removeLogoPreview = () => {
+        setOrganizationLogoPreview(``);
+        setTempOrganizationLogo(new File([ `` ], `emptyFile`));
+        setImageToBeCropped(``);
+    };
 
+    const imageSelectErrorMessages = {
+        noFileError: intl.formatMessage({
+            id: `addOrganization_noFileFound`,
+        }),
+        fileSizeTooBigError: intl.formatMessage({
+            id: `addOrganization_imagePickerImageTooLargeError`,
+        }, {
+            fileSize: `2MB`,
+        }),
+        wrongFileTypeUploadError: intl.formatMessage({
+            id: `addOrganization_imagePickerWrongFormatError`,
+        }),
+    };
+
+    useEffect(() => {
         if (!value.color) return;
         setColor(value.color);
     }, [ value ]);
 
-    // useEffect(() => {
-    //     onValidation([ alternateTextValid, colorValid ].every((value) => value));
-    // }, [ alternateTextValid, colorValid ]);
-
     useEffect(() => {
         const updatedOrganizationState: Organization = {
             ...value,
-            alternateText,
             color,
-            organizationLogo,
+            organizationLogo: tempOrganizationLogo,
         };
         onChange(updatedOrganizationState);
-    }, [
-        alternateText,
-        color,
-        organizationLogo,
-    ]);
+    }, [ color, tempOrganizationLogo ]);
 
     return (
-        <Grid
-            container
-            justify="space-between"
-            className={classes.cardBody}
-        >
+        <>
             <Grid
-                container
-                className={classes.cardBodyRow}
+                item
+                xs={12}
+                justify="space-between"
+                className={classes.cardBody}
             >
                 <Grid
-                    item
-                    xs={12}
-                    sm={4}
+                    container
+                    className={classes.cardBodyRow}
                 >
-                    <FormattedMessage
-                        id="addOrganization_logo"
-                    />
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                    >
+                        <FormattedMessage
+                            id="addOrganization_logo"
+                        />
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={8}
+                    >
+                        <Grid
+                            container
+                            className={classes.logoPicker}
+                        >
+                            <OrganizationAvatar
+                                name={organizationName}
+                                size="large"
+                                src={organizationLogoPreview}
+                            />
+                            <div className={classes.fileInputControls}>
+                                {!organizationLogoPreview ? (
+                                    <FileInputButton
+                                        label={intl.formatMessage({
+                                            id: `addOrganization_selectImageLabel`,
+                                        })}
+                                        accept={[
+                                            `image/jpg`,
+                                            `image/jpeg`,
+                                            `image/png`,
+                                        ]}
+                                        errorMessages={imageSelectErrorMessages}
+                                        onFileChange={onImageChange}
+                                        onError={setImageSelectError}
+                                    />
+                                ) : (
+                                    <Button
+                                        label={intl.formatMessage({
+                                            id: `addOrganization_removeImageLabel`,
+                                        })}
+                                        variant="outlined"
+                                        color="error"
+                                        size="large"
+                                        onClick={removeLogoPreview}
+                                    />
+                                )}
+                            </div>
+                            <div className={classes.imageSelectErrorMessage}>
+                                <FormHelperText error>
+                                    {imageSelectError ?? ` `}
+                                </FormHelperText>
+                            </div>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid
-                    item
-                    xs={12}
-                    sm={4}
+                    container
+                    className={classes.cardBodyRow}
                 >
-                    <img
-                        src={organizationLogoPreview}
-                        className={classes.logoPreview}
-                    />
-                    <Typography variant="caption">
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                    >
                         <FormattedMessage
-                            id="addOrganization_imageFormat"
+                            id="addOrganization_organizationColorLabel"
                         />
-                    </Typography>
-                    {/* <input
-                        accept="image/gif, image/jpg, image/jpeg, image/png"
-                        className={classes.fileInput}
-                        id="logo"
-                        name="logo"
-                        type="file"
-                    /> */}
-                    <label htmlFor="logo">
-                        <Button
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                    >
+                        <TextField
+                            fullWidth
                             disabled
-                            label="SELECT FILE TO UPLOAD"
-                            variant="contained"
-                            color="primary"
-                            size="large"
+                            variant="standard"
+                            value={color}
+                            className={classes.formInput}
+                            id="orgColor"
+                            onChange={setColor}
+                            onValidate={setColorValid}
                         />
-                    </label>
-                    <TextField
-                        fullWidth
-                        disabled
-                        variant="standard"
-                        label={intl.formatMessage({
-                            id: `addOrganization_alternateTextLabel`,
-                        })}
-                        validations={altTextValidations}
-                        value={alternateText}
-                        className={classes.formInput}
-                        id="alternateTextLabel"
-                        onChange={setAlternateText}
-                        onValidate={setAlternateTextValid}
-                    />
-                    <Typography variant="caption">
-                        <FormattedMessage
-                            id="addOrganization_alternateText"
+                        <SliderPicker
+                            color={ color }
+                            onChange={(color) => setColor(color.hex)}
                         />
-                    </Typography>
+                    </Grid>
                 </Grid>
             </Grid>
-            <Grid
-                container
-                className={classes.cardBodyRow}
-            >
-                <Grid
-                    item
-                    xs={12}
-                    sm={4}
-                >
-                    <FormattedMessage
-                        id="addOrganization_organizationColorLabel"
-                    />
-                </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    sm={4}
-                >
-                    <TextField
-                        fullWidth
-                        disabled
-                        variant="standard"
-                        value={color}
-                        className={classes.formInput}
-                        id="orgColor"
-                        onChange={setColor}
-                        onValidate={setColorValid}
-                    />
-                    <SliderPicker
-                        color={ color }
-                        onChange={(color) => setColor(color.hex)}
-                    />
-                </Grid>
-            </Grid>
-        </Grid>
+            <ImagePicker
+                isZoomDisabled={false}
+                isRotationDisabled={false}
+                imageToBeCropped={imageToBeCropped}
+                dialogTitle={intl.formatMessage({
+                    id: `addOrganization_imagePickerDialogTitle`,
+                })}
+                isCropperOpen={isCropperOpen}
+                zoomLabel={intl.formatMessage({
+                    id: `addOrganization_imagePickerZoomLabel`,
+                })}
+                rotateLabel={intl.formatMessage({
+                    id: `addOrganization_imagePickerRotateLabel`,
+                })}
+                cancelLabel={intl.formatMessage({
+                    id: `addOrganization_imagePickerCancelLabel`,
+                })}
+                okLabel={intl.formatMessage({
+                    id: `addOrganization_imagePickerOkLabel`,
+                })}
+                aspect={4 / 4}
+                onCancelCrop={() => setIsCropperOpen(false)}
+                onImageCropComplete={image => {
+                    setOrganizationLogoPreview(image.base64);
+                    setTempOrganizationLogo(image.file);
+                    setIsCropperOpen(false);
+                }}
+                onError={setImageSelectError}
+            />
+        </>
     );
 }

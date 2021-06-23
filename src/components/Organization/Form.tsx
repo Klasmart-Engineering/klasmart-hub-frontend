@@ -17,8 +17,14 @@ const useStyles = makeStyles(() =>
         },
         showForm: {
             display: `block`,
+            width: `100%`
         },
     }));
+
+export enum OrganizationTabName {
+    ORGANIZATIONINFO = `organizationInfo`,
+    PERSONALIZATION = `personalization`
+}
 
 interface Props {
     value: Organization;
@@ -38,14 +44,14 @@ export default function OrganizationForm (props: Props) {
 
     return (
         <>
-            <div className={currentTab === `organizationInfo` ? classes.showForm : classes.hideForm}>
+            <div className={currentTab === OrganizationTabName.ORGANIZATIONINFO ? classes.showForm : classes.hideForm}>
                 <OrganizationInfo
                     value={value}
                     onChange={onChange}
                     onValidation={onValidation}
                 />
             </div>
-            <div className={currentTab === `personalization` ? classes.showForm : classes.hideForm}>
+            <div className={currentTab === OrganizationTabName.PERSONALIZATION ? classes.showForm : classes.hideForm}>
                 <Personalization
                     value={value}
                     onChange={onChange}

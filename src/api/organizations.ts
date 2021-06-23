@@ -133,6 +133,7 @@ interface SaveOrganizationRequest {
     shortCode: string;
     address1: string;
     address2: string | null;
+    organizationLogo: string | null;
 }
 
 interface SaveOrganizationResponse {

@@ -8,6 +8,8 @@ export const SAVE_ORGANIZATION = gql`
         $address2: String
         $phone: String
         $shortCode: String
+        $organizationLogo: Upload
+        $color: HexColor
     ) {
         organization(
             organization_id: $organization_id
@@ -19,6 +21,14 @@ export const SAVE_ORGANIZATION = gql`
         ) {
             organization_id
             organization_name
+        }
+        setBranding(
+            organizationId: $organization_id
+            iconImage: $organizationLogo
+            primaryColor: $color
+        ) {
+            iconImageURL
+            primaryColor
         }
     }
 `;

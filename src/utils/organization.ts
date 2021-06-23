@@ -7,6 +7,6 @@ export const buildEmptyOrganization = (): Organization => ({
     shortCode: ``,
     address1: ``,
     address2: ``,
-    alternateText: ``,
+    organizationLogo: ``,
     color: ``,
 });

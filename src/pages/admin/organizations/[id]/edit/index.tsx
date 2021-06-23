@@ -2,10 +2,12 @@ import {
     useGetOrganization,
     useSaveOrganization,
 } from "@/api/organizations";
-import OrganizationForm from '@/components/Organization/Form';
+import OrganizationForm, { OrganizationTabName } from '@/components/Organization/Form';
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import { buildEmptyOrganization } from "@/utils/organization";
+import {
+    buildEmptyOrganization,
+} from "@/utils/organization";
 import {
     Box,
     Grid,
@@ -68,7 +70,7 @@ export default function EditOrganizationPage () {
     const { enqueueSnackbar } = useSnackbar();
     const [ isValid, setValid ] = useState(true);
     const [ organizationState, setOrganizationState ] = useState(buildEmptyOrganization);
-    const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(`organizationInfo`);
+    const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
 
     const [ saveOrganization ] = useSaveOrganization();
     const { data: organization, loading } = useGetOrganization({
@@ -80,13 +82,13 @@ export default function EditOrganizationPage () {
 
     const tabs = [
         {
-            value: `organizationInfo`,
+            value: OrganizationTabName.ORGANIZATIONINFO,
             text: intl.formatMessage({
                 id: `addOrganization_organizationInfo`,
             }),
         },
         {
-            value: `personalization`,
+            value: OrganizationTabName.PERSONALIZATION,
             text: intl.formatMessage({
                 id: `addOrganization_personalization`,
             }),
@@ -150,7 +152,7 @@ export default function EditOrganizationPage () {
                                     <Tabs
                                         tabs={tabs}
                                         value={currentTab}
-                                        onChange={(newTab) => setCurrentTab(newTab)}
+                                        onChange={(newTab: OrganizationTab) => setCurrentTab(newTab)}
                                     />
                                 </Grid>
                             </Grid>

@@ -136,7 +136,6 @@ export interface Organization {
     categories?: Category[] | null;
     subcategories?: Subcategory[] | null;
     color?: string | null;
-    alternateText?: string | null;
     organizationLogo?: File | null;
 }
 

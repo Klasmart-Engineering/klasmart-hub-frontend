@@ -962,5 +962,15 @@
     "assessmentTable_id":"ID",
     "assessmentTable_title":"Title",
     "assessmentTable_status":"Status",
-    "assessmentTable_teachers":"Teachers"
+    "assessmentTable_teachers":"Teachers",
+    "addOrganization_selectImageLabel": "Select Image",
+    "addOrganization_imagePickerDialogTitle": "Adjust Image",
+    "addOrganization_imagePickerZoomLabel": "Zoom",
+    "addOrganization_imagePickerRotateLabel": "Rotate",
+    "addOrganization_imagePickerCancelLabel": "Cancel",
+    "addOrganization_imagePickerOkLabel": "OK",
+    "addOrganization_removeImageLabel": "Remove Image",
+    "addOrganization_imagePickerImageTooLargeError": "The maximum file size is 2MB. Please upload a smaller image",
+    "addOrganization_imagePickerWrongFormatError": "This image file must be in JPG or PNG format",
+    "addOrganization_noFileFound": "No file found"
 }

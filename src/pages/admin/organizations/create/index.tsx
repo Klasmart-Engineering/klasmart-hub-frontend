@@ -4,11 +4,13 @@ import {
     useCreateOrganization,
 } from "@/api/organizations";
 import { userProfileVar } from "@/cache";
-import OrganizationForm from "@/components/Organization/Form";
+import OrganizationForm, {OrganizationTabName} from "@/components/Organization/Form";
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import { buildEmptyOrganization } from "@/utils/organization";
+import {
+    buildEmptyOrganization,
+} from "@/utils/organization";
 import { useReactiveVar } from "@apollo/client";
 import {
     Box,
@@ -70,17 +72,17 @@ export default function CreateOrganizationPage () {
     const { refetch: refetchOrganizationMembershipsPermissions } = useGetOrganizationMembershipsPermissions({
         nextFetchPolicy: `network-only`,
     });
-    const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(`organizationInfo`);
+    const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
 
     const tabs = [
         {
-            value: `organizationInfo`,
+            value: OrganizationTabName.ORGANIZATIONINFO,
             text: intl.formatMessage({
                 id: `addOrganization_organizationInfo`,
             }),
         },
         {
-            value: `personalization`,
+            value: OrganizationTabName.PERSONALIZATION,
             text: intl.formatMessage({
                 id: `addOrganization_personalization`,
             }),
@@ -159,7 +161,7 @@ export default function CreateOrganizationPage () {
                                     <Tabs
                                         tabs={tabs}
                                         value={currentTab}
-                                        onChange={(newTab) => setCurrentTab(newTab)}
+                                        onChange={(newTab: OrganizationTab) => setCurrentTab(newTab)}
                                     />
                                 </Grid>
                             </Grid>
