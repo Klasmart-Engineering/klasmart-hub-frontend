@@ -2,6 +2,7 @@ import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
 import "typeface-nanum-square-round";
 import "inter-ui";
 import { useCurrentOrganization } from "./store/organizationMemberships";
+import { usePreviewOrganizationColor } from "./store/previewOrganizationColor";
 import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
 import {
@@ -12,6 +13,8 @@ import {
 } from "@material-ui/core/colors";
 import {
     createMuiTheme,
+    darken,
+    lighten,
     responsiveFontSizes,
     Theme,
 } from "@material-ui/core/styles";
@@ -25,8 +28,11 @@ export function themeProvider () {
     const languageCode = useSelector((state: State) => state.ui.locale || ``);
     const [ cookies ] = useCookies([ `locale` ]);
     const currentOrganization = useCurrentOrganization();
+    const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const organizationName = currentOrganization?.organization_name ?? ``;
+    const primaryColor = currentOrganization?.branding?.primaryColor;
+    const organizationPrimaryColor = !primaryColor?.startsWith(`#`) ? `#${primaryColor}` : primaryColor;
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 
     function setTypography () {
@@ -79,10 +85,8 @@ export function themeProvider () {
         fontWeightRegular: localeTypography.localeWeightRegular,
     } as any;
 
-    const organizationToolbarColor = utils.stringToColor(organizationName, {
-        saturation: 50,
-        light: 90,
-    });
+    const organizationColor = previewOrganizationColor ?? organizationPrimaryColor ?? utils.stringToColor(organizationName);
+    const organizationToolbarColor = lighten(organizationColor, 0.9);
 
     const overrides = {
         MuiAppBar: {
@@ -126,8 +130,6 @@ export function themeProvider () {
         },
     };
 
-    const organizationColor = utils.stringToColor(organizationName);
-
     const palette: PaletteOptions = {
         background: {
             default: themeMode === `light` ? `#fafafa` : `#030D1C`,
@@ -136,14 +138,8 @@ export function themeProvider () {
         primary: {
             contrastText: `#FFF`,
             main: organizationColor,
-            light: utils.stringToColor(organizationName, {
-                saturation: 50,
-                light: 95,
-            }),
-            dark: utils.stringToColor(organizationName, {
-                saturation: 50,
-                light: 25,
-            }),
+            light: lighten(organizationColor, 0.75),
+            dark: darken(organizationColor, 0.9),
         },
         secondary: {
             main: organizationColor,

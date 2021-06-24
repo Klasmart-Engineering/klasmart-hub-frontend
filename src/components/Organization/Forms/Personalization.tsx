@@ -1,6 +1,6 @@
 import { useOrganizationStack } from "@/store/organizationMemberships";
+import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
 import { Organization } from "@/types/graphQL";
-import { useValidations } from "@/utils/validations";
 import {
     FormHelperText,
     Grid,
@@ -12,21 +12,23 @@ import {
 } from "@material-ui/core/styles";
 import {
     Button,
+    ColorPicker,
     FileInputButton,
     ImagePicker,
     OrganizationAvatar,
-    TextField,
+    utils,
 } from "kidsloop-px";
 import React,
 {
     useEffect,
     useState,
 } from "react";
-import { SliderPicker } from 'react-color';
 import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
+
+const DEFAULT_COLOR = `#0094FF`;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -70,18 +72,16 @@ export default function Personalization (props: Props) {
     const {
         value,
         onChange,
-        onValidation,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const [ color, setColor ] = useState(`79d2bc`);
-    const [ colorValid, setColorValid ] = useState(false);
     const [ tempOrganizationLogo, setTempOrganizationLogo ] = useState(new File([ `` ], `emptyFile`));
-    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState(``);
+    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState<string>();
     const [ imageToBeCropped, setImageToBeCropped ] = useState(``);
     const [ isCropperOpen, setIsCropperOpen ] = useState(false);
-    const [ imageSelectError, setImageSelectError ] = useState(` `);
+    const [ imageSelectError, setImageSelectError ] = useState(``);
 
+    const [ previewOrganizationColor, setPreviewOrganizationColor ] = usePreviewOrganizationColor();
     const [ organizationMembershipStack ] = useOrganizationStack();
 
     const memberships = organizationMembershipStack.slice();
@@ -101,7 +101,7 @@ export default function Personalization (props: Props) {
     };
 
     const removeLogoPreview = () => {
-        setOrganizationLogoPreview(``);
+        setOrganizationLogoPreview(undefined);
         setTempOrganizationLogo(new File([ `` ], `emptyFile`));
         setImageToBeCropped(``);
     };
@@ -122,17 +122,32 @@ export default function Personalization (props: Props) {
 
     useEffect(() => {
         if (!value.color) return;
-        setColor(value.color);
+        setPreviewOrganizationColor(value.color);
     }, [ value ]);
+
+    useEffect(() => {
+        if (!value) return;
+        const color = value.color || utils.stringToColor(value.organization_name) || DEFAULT_COLOR;
+        setPreviewOrganizationColor(color);
+    }, [ value ]);
+
+    const handleColorChange = (color: string) => {
+        setPreviewOrganizationColor(color || DEFAULT_COLOR);
+    };
 
     useEffect(() => {
         const updatedOrganizationState: Organization = {
             ...value,
-            color,
+            color: previewOrganizationColor,
             organizationLogo: tempOrganizationLogo,
         };
         onChange(updatedOrganizationState);
-    }, [ color, tempOrganizationLogo ]);
+    }, [ previewOrganizationColor, tempOrganizationLogo ]);
+
+    useEffect(() => {
+        setPreviewOrganizationColor(utils.stringToColor(value.organization_name));
+        return () => setPreviewOrganizationColor(undefined);
+    }, []);
 
     return (
         <>
@@ -168,6 +183,7 @@ export default function Personalization (props: Props) {
                                 name={organizationName}
                                 size="large"
                                 src={organizationLogoPreview}
+                                color={previewOrganizationColor}
                             />
                             <div className={classes.fileInputControls}>
                                 {!organizationLogoPreview ? (
@@ -222,19 +238,15 @@ export default function Personalization (props: Props) {
                         xs={12}
                         sm={4}
                     >
-                        <TextField
+                        <ColorPicker
+                            hideHelperText
                             fullWidth
-                            disabled
+                            value={previewOrganizationColor}
+                            label="Color"
                             variant="standard"
-                            value={color}
-                            className={classes.formInput}
-                            id="orgColor"
-                            onChange={setColor}
-                            onValidate={setColorValid}
-                        />
-                        <SliderPicker
-                            color={ color }
-                            onChange={(color) => setColor(color.hex)}
+                            defaultButtonLabel="Default"
+                            defaultColor={DEFAULT_COLOR}
+                            onChange={handleColorChange}
                         />
                     </Grid>
                 </Grid>

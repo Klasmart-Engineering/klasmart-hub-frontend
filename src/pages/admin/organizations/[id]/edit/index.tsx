@@ -2,12 +2,11 @@ import {
     useGetOrganization,
     useSaveOrganization,
 } from "@/api/organizations";
-import OrganizationForm, { OrganizationTabName } from '@/components/Organization/Form';
+import OrganizationForm,
+{ OrganizationTabName } from '@/components/Organization/Form';
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import {
-    buildEmptyOrganization,
-} from "@/utils/organization";
+import { buildEmptyOrganization } from "@/utils/organization";
 import {
     Box,
     Grid,
@@ -59,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     }));
 
-interface Params {
+export interface Params {
     organizationId: string;
 }
 

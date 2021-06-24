@@ -1,4 +1,5 @@
 import { useOrganizationStack } from "@/store/organizationMemberships";
+import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
 import { OrganizationMembership } from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
@@ -9,6 +10,7 @@ import {
     Box,
     ButtonBase,
     createStyles,
+    darken,
     List,
     ListItem,
     ListItemSecondaryAction,
@@ -75,11 +77,13 @@ export default function OrganizationSwitcher (props: Props) {
     const intl = useIntl();
     const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ showOrganizations_, setShowOrganizations ] = useState(showOrganizations);
+    const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const memberships = organizationMembershipStack.slice();
-    const currentOrganizationMembership = memberships[0];
-    const organizationName = currentOrganizationMembership?.organization?.organization_name ?? ``;
-    const organizationLogo = currentOrganizationMembership?.organization?.branding?.iconImageURL ?? ``;
+    const currentOrganization = memberships[0]?.organization;
+    const currentOrganizationName = currentOrganization?.organization_name ?? ``;
+    const currentOrganizationLogo = currentOrganization?.branding?.iconImageURL ?? ``;
+    const currentOrganizationColor = !currentOrganization?.branding?.primaryColor.startsWith(`#`) ? `#${currentOrganization?.branding?.primaryColor}` : currentOrganization?.branding?.primaryColor;
 
     memberships.sort((a, b) => {
         const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
@@ -95,14 +99,14 @@ export default function OrganizationSwitcher (props: Props) {
         setShowOrganizations(showOrganizations);
     }, [ showOrganizations ]);
 
-    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization_id !== currentOrganizationMembership?.organization_id);
+    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization_id !== currentOrganization?.organization_id);
 
     const handleSelectOrganization = (membership: OrganizationMembership) => {
-        if (!membership || membership.organization_id === currentOrganizationMembership?.organization_id) return;
+        if (!membership || membership.organization_id === currentOrganization?.organization_id) return;
         selectOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
     };
 
-    const sortedRoleNames = currentOrganizationMembership?.roles
+    const sortedRoleNames = currentOrganization?.roles
         ?.map((r) => r.role_name)
         .filter((roleName): roleName is string => !!roleName);
     const highestRole = getHighestRole(sortedRoleNames ?? []);
@@ -114,14 +118,13 @@ export default function OrganizationSwitcher (props: Props) {
             : highestRole)
         : highestRole;
 
+    const selectedOrganizationColor = previewOrganizationColor ?? currentOrganizationColor;
+
     return (
         <div
             className={classes.root}
             style={{
-                backgroundColor: utils.stringToColor(organizationName, {
-                    saturation: 50,
-                    light: 25,
-                }),
+                backgroundColor: darken(selectedOrganizationColor ?? utils.stringToColor(currentOrganizationName), 0.5),
             }}
         >
             <Box
@@ -133,9 +136,10 @@ export default function OrganizationSwitcher (props: Props) {
                 p={2}
             >
                 <OrganizationAvatar
-                    name={organizationName}
+                    name={currentOrganizationName}
                     size="large"
-                    src={organizationLogo}
+                    src={currentOrganizationLogo}
+                    color={selectedOrganizationColor}
                 />
                 <Box
                     display="flex"
@@ -164,7 +168,7 @@ export default function OrganizationSwitcher (props: Props) {
                     onClick={() => handleShowOrganizationsChange(!showOrganizations_)}
                 >
                     <ListItemText
-                        primary={organizationName || `No Organizations Available`}
+                        primary={currentOrganizationName || `No Organizations Available`}
                         secondary={translatedRole ?? `No Roles Found`}
                     />
                     <ListItemSecondaryAction>
