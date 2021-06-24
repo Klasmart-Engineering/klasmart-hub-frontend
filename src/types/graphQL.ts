@@ -135,9 +135,11 @@ export interface Organization {
     createClass?: Class | null;
     categories?: Category[] | null;
     subcategories?: Subcategory[] | null;
-    color?: string | null;
-    organizationLogo?: File | null;
     branding?: Branding;
+    setBranding?: {
+        iconImage?: File | null;
+        primaryColor?: string | null;
+    };
 }
 
 export type OrganizationTab = `organizationInfo` | `personalization`
@@ -243,6 +245,6 @@ export interface Category extends BaseEntity {
 export type Subcategory = BaseEntity
 
 export interface Branding {
-    iconImageURL: string;
-    primaryColor: string;
+    iconImageURL: string | null;
+    primaryColor: string | null;
 }

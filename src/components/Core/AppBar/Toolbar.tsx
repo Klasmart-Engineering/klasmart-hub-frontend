@@ -1,7 +1,12 @@
 import UserProfileMenu from "./UserProfileMenu";
+import { useGetOrganizationMemberships } from "@/api/organizations";
 import { useGetUser } from "@/api/users";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import { userIdVar } from "@/cache";
+import {
+    useCurrentOrganization,
+    useOrganizationStack,
+} from "@/store/organizationMemberships";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     AppBar,
@@ -77,15 +82,15 @@ export default function Toolbar (props: Props) {
     const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
     const userId = useReactiveVar(userIdVar);
-    const {
-        data: userData,
-        loading,
-        error,
-    } = useGetUser({
+    const { data: userData } = useGetUser({
         variables: {
             user_id: userId,
         },
     });
+    const currentOrganization = useCurrentOrganization();
+    const organizationLogo = currentOrganization?.branding?.iconImageURL;
+
+    const showSiteLogo = !organizationLogo || !currentOrganization;
 
     const contentTabs: Tab[] = [
         {
@@ -146,7 +151,7 @@ export default function Toolbar (props: Props) {
                             icon={MenuIcon}
                             onClick={() => onMenuButtonClick()}
                         />
-                        <div>
+                        {showSiteLogo && (
                             <Button
                                 className={classes.logo}
                                 component={Link}
@@ -154,9 +159,10 @@ export default function Toolbar (props: Props) {
                             >
                                 <img
                                     src={KidsloopLogo}
-                                    height="40"/>
+                                    height="40"
+                                />
                             </Button>
-                        </div>
+                        )}
                     </Box>
                     <Box
                         display="flex"

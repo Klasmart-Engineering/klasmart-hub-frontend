@@ -2,15 +2,15 @@ import { useGetOrganizationMembershipsPermissions } from "@/api/organizationMemb
 import {
     useAddUserToOrganization,
     useCreateOrganization,
+    useSetOrganizationBranding,
 } from "@/api/organizations";
 import { userProfileVar } from "@/cache";
-import OrganizationForm, {OrganizationTabName} from "@/components/Organization/Form";
+import OrganizationForm,
+{ OrganizationTabName } from "@/components/Organization/Form";
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import {
-    buildEmptyOrganization,
-} from "@/utils/organization";
+import { buildEmptyOrganization } from "@/utils/organization";
 import { useReactiveVar } from "@apollo/client";
 import {
     Box,
@@ -68,6 +68,7 @@ export default function CreateOrganizationPage () {
     const [ organizationState, setOrganizationState ] = useState(buildEmptyOrganization);
     const [ createOrganization ] = useCreateOrganization();
     const [ addUserToOrg ] = useAddUserToOrganization();
+    const [ setOrganizationBranding ] = useSetOrganizationBranding();
     const [ , setOrganizationStack ] = useOrganizationStack();
     const { refetch: refetchOrganizationMembershipsPermissions } = useGetOrganizationMembershipsPermissions({
         nextFetchPolicy: `network-only`,
@@ -105,6 +106,16 @@ export default function CreateOrganizationPage () {
             const createdOrganization = createOrganizationResp.data?.user?.createOrganization;
 
             if (!createdOrganization) throw Error(`No organization created`);
+
+            const { organization_id, setBranding } = organizationState;
+
+            await setOrganizationBranding({
+                variables: {
+                    organizationId: organization_id,
+                    organizationLogo: setBranding?.iconImage ?? undefined,
+                    primaryColor: setBranding?.primaryColor ?? undefined,
+                },
+            });
 
             const organizationId = createdOrganization?.organization_id ?? ``;
             const organizationMembershipResp = await addUserToOrg({

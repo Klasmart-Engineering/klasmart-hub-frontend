@@ -1,6 +1,7 @@
 import {
     useGetOrganization,
     useSaveOrganization,
+    useSetOrganizationBranding,
 } from "@/api/organizations";
 import OrganizationForm,
 { OrganizationTabName } from '@/components/Organization/Form';
@@ -69,9 +70,11 @@ export default function EditOrganizationPage () {
     const { enqueueSnackbar } = useSnackbar();
     const [ isValid, setValid ] = useState(true);
     const [ organizationState, setOrganizationState ] = useState(buildEmptyOrganization);
+    const [ editedOrganizationState, setEditedOrganizationState ] = useState(buildEmptyOrganization);
     const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
 
     const [ saveOrganization ] = useSaveOrganization();
+    const [ setOrganizationBranding ] = useSetOrganizationBranding();
     const { data: organization, loading } = useGetOrganization({
         fetchPolicy: `network-only`,
         variables: {
@@ -99,13 +102,39 @@ export default function EditOrganizationPage () {
     };
 
     const handleSave = async () => {
+        const {
+            organization_name,
+            address1,
+            address2,
+            phone,
+            setBranding,
+            shortCode,
+        } = editedOrganizationState;
         try {
-            await saveOrganization({
-                variables: {
-                    ...organizationState,
-                    organization_id: organizationId,
-                },
-            });
+            const organizationLogo = setBranding?.iconImage;
+            const primaryColor = setBranding?.primaryColor;
+
+            await Promise.all([
+                saveOrganization({
+                    variables: {
+                        organization_id: organizationId,
+                        organization_name,
+                        address1: address1 ?? ``,
+                        address2: address2 ?? ``,
+                        phone: phone ?? ``,
+                        shortCode: shortCode ?? ``,
+                    },
+                }),
+                setOrganizationBranding({
+                    variables: {
+                        organizationId,
+                        organizationLogo: organizationLogo ?? undefined,
+                        primaryColor: primaryColor ?? undefined,
+                    },
+                }),
+                // ...organizationLogo === null ? [ //removeOrganizationIconImageURL ] : [  ],
+                // ...primaryColor === null ? [ removeOrganizationPrimaryColor ] : [  ],
+            ]);
 
             history.goBack();
 
@@ -158,7 +187,7 @@ export default function EditOrganizationPage () {
                             <OrganizationForm
                                 value={organizationState}
                                 currentTab={currentTab}
-                                onChange={setOrganizationState}
+                                onChange={setEditedOrganizationState}
                                 onValidation={setValid}
                             />
                             <Grid

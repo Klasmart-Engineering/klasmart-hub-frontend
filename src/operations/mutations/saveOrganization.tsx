@@ -1,15 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const SAVE_ORGANIZATION = gql`
-    mutation organization(
+    mutation saveOrganization(
         $organization_id: ID!
         $organization_name: String
         $address1: String
         $address2: String
         $phone: String
         $shortCode: String
-        $organizationLogo: Upload
-        $color: HexColor
     ) {
         organization(
             organization_id: $organization_id
@@ -21,14 +19,6 @@ export const SAVE_ORGANIZATION = gql`
         ) {
             organization_id
             organization_name
-        }
-        setBranding(
-            organizationId: $organization_id
-            iconImage: $organizationLogo
-            primaryColor: $color
-        ) {
-            iconImageURL
-            primaryColor
         }
     }
 `;

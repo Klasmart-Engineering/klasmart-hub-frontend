@@ -83,7 +83,7 @@ export default function OrganizationSwitcher (props: Props) {
     const currentOrganization = memberships[0]?.organization;
     const currentOrganizationName = currentOrganization?.organization_name ?? ``;
     const currentOrganizationLogo = currentOrganization?.branding?.iconImageURL ?? ``;
-    const currentOrganizationColor = !currentOrganization?.branding?.primaryColor.startsWith(`#`) ? `#${currentOrganization?.branding?.primaryColor}` : currentOrganization?.branding?.primaryColor;
+    const currentOrganizationColor = !currentOrganization?.branding?.primaryColor?.startsWith(`#`) ? `#${currentOrganization?.branding?.primaryColor}` : currentOrganization?.branding?.primaryColor;
 
     memberships.sort((a, b) => {
         const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
@@ -139,7 +139,7 @@ export default function OrganizationSwitcher (props: Props) {
                     name={currentOrganizationName}
                     size="large"
                     src={currentOrganizationLogo}
-                    color={selectedOrganizationColor}
+                    color={selectedOrganizationColor ?? undefined}
                 />
                 <Box
                     display="flex"

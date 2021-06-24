@@ -18,6 +18,7 @@ import {
     OrganizationAvatar,
     utils,
 } from "kidsloop-px";
+import { CroppedImage } from "kidsloop-px/dist/types/components/ImagePicker/ImagePicker";
 import React,
 {
     useEffect,
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
         logoPicker: {
             display: `flex`,
             flexDirection: `column`,
+            alignItems: `flex-start`,
         },
         fileInput: {
             display: `none`,
@@ -75,8 +77,8 @@ export default function Personalization (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const [ tempOrganizationLogo, setTempOrganizationLogo ] = useState(new File([ `` ], `emptyFile`));
-    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState<string>();
+    const [ tempOrganizationLogo, setTempOrganizationLogo ] = useState<CroppedImage>();
+    const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState<string | null>(null);
     const [ imageToBeCropped, setImageToBeCropped ] = useState(``);
     const [ isCropperOpen, setIsCropperOpen ] = useState(false);
     const [ imageSelectError, setImageSelectError ] = useState(``);
@@ -101,8 +103,8 @@ export default function Personalization (props: Props) {
     };
 
     const removeLogoPreview = () => {
-        setOrganizationLogoPreview(undefined);
-        setTempOrganizationLogo(new File([ `` ], `emptyFile`));
+        setOrganizationLogoPreview(null);
+        setTempOrganizationLogo(undefined);
         setImageToBeCropped(``);
     };
 
@@ -121,14 +123,14 @@ export default function Personalization (props: Props) {
     };
 
     useEffect(() => {
-        if (!value.color) return;
-        setPreviewOrganizationColor(value.color);
-    }, [ value ]);
+        setOrganizationLogoPreview(tempOrganizationLogo ? tempOrganizationLogo.base64 : null);
+    }, [ tempOrganizationLogo ]);
 
     useEffect(() => {
-        if (!value) return;
-        const color = value.color || utils.stringToColor(value.organization_name) || DEFAULT_COLOR;
-        setPreviewOrganizationColor(color);
+        setOrganizationLogoPreview(tempOrganizationLogo ? tempOrganizationLogo.base64 : (value.branding?.iconImageURL ?? ``));
+        const primaryColor = value?.branding?.primaryColor;
+        const organizationPrimaryColor = !primaryColor?.startsWith(`#`) ? `#${primaryColor}` : primaryColor;
+        setPreviewOrganizationColor(organizationPrimaryColor ?? DEFAULT_COLOR);
     }, [ value ]);
 
     const handleColorChange = (color: string) => {
@@ -138,8 +140,14 @@ export default function Personalization (props: Props) {
     useEffect(() => {
         const updatedOrganizationState: Organization = {
             ...value,
-            color: previewOrganizationColor,
-            organizationLogo: tempOrganizationLogo,
+            branding: {
+                iconImageURL: value.branding?.iconImageURL ?? ``,
+                primaryColor: previewOrganizationColor ?? ``,
+            },
+            setBranding: {
+                iconImage: tempOrganizationLogo?.file,
+                primaryColor: previewOrganizationColor,
+            },
         };
         onChange(updatedOrganizationState);
     }, [ previewOrganizationColor, tempOrganizationLogo ]);
@@ -182,8 +190,8 @@ export default function Personalization (props: Props) {
                             <OrganizationAvatar
                                 name={organizationName}
                                 size="large"
-                                src={organizationLogoPreview}
                                 color={previewOrganizationColor}
+                                src={organizationLogoPreview ?? undefined}
                             />
                             <div className={classes.fileInputControls}>
                                 {!organizationLogoPreview ? (
@@ -271,11 +279,11 @@ export default function Personalization (props: Props) {
                 okLabel={intl.formatMessage({
                     id: `addOrganization_imagePickerOkLabel`,
                 })}
-                aspect={4 / 4}
+                aspect={1 / 1}
                 onCancelCrop={() => setIsCropperOpen(false)}
-                onImageCropComplete={image => {
+                onImageCropComplete={(image) => {
                     setOrganizationLogoPreview(image.base64);
-                    setTempOrganizationLogo(image.file);
+                    setTempOrganizationLogo(image);
                     setIsCropperOpen(false);
                 }}
                 onError={setImageSelectError}

@@ -9,6 +9,10 @@ export const GET_ORGANIZATION = gql`
             address2
             phone
             shortCode
+            branding {
+                iconImageURL
+                primaryColor
+            }
         }
     }
 `;

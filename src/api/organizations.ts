@@ -2,7 +2,8 @@ import { ADD_USER_TO_ORGANIZATION } from "@/operations/mutations/addUserToOrgani
 import { CREATE_ORGANIZATION } from "@/operations/mutations/createOrganization";
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
-import { SAVE_ORGANIZATION } from "@/operations/mutations/organization";
+import { SAVE_ORGANIZATION } from "@/operations/mutations/saveOrganization";
+import { SET_ORGANIZATION_BRANDING } from "@/operations/mutations/setOrganizationBranding";
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
@@ -19,7 +20,6 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
-import { stringify } from "query-string";
 
 interface GetOrganizationRequest {
     organization_id?: string;
@@ -133,7 +133,6 @@ interface SaveOrganizationRequest {
     shortCode: string;
     address1: string;
     address2: string | null;
-    organizationLogo: string | null;
 }
 
 interface SaveOrganizationResponse {
@@ -142,4 +141,19 @@ interface SaveOrganizationResponse {
 
 export const useSaveOrganization = (options?: MutationHookOptions<SaveOrganizationResponse, SaveOrganizationRequest>) => {
     return useMutation<SaveOrganizationResponse, SaveOrganizationRequest>(SAVE_ORGANIZATION, options);
+};
+
+interface SetOrganizationBrandingRequest {
+    organizationId: string;
+    organizationLogo?: File;
+    primaryColor?: string;
+}
+
+interface SetOrganizationBrandingResponse {
+    iconImageURL: string | null;
+    primaryColor: string | null;
+}
+
+export const useSetOrganizationBranding = (options?: MutationHookOptions<SetOrganizationBrandingResponse, SetOrganizationBrandingRequest>) => {
+    return useMutation<SetOrganizationBrandingResponse, SetOrganizationBrandingRequest>(SET_ORGANIZATION_BRANDING, options);
 };

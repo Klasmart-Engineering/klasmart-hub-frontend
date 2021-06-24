@@ -11,17 +11,17 @@ export const CREATE_ORGANIZATION = gql`
         $shortCode: String
     ) {
         user(user_id: $user_id) {
-        createOrganization(
-            organization_name: $organization_name
-            email: $email
-            address1: $address1
-            address2: $address2
-            phone: $phone
-            shortCode: $shortCode
-        ) {
-            organization_id
-            organization_name
-        }
+            createOrganization(
+                organization_name: $organization_name
+                email: $email
+                address1: $address1
+                address2: $address2
+                phone: $phone
+                shortCode: $shortCode
+            ) {
+                organization_id
+                organization_name
+            }
         }
     }
 `;
