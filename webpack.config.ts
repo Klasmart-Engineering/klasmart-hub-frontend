@@ -21,6 +21,9 @@ type Mode = typeof modes[number]
 const dirtyNodeEnv = process.env.NODE_ENV as Mode;
 const nodeEnv = (modes.includes(dirtyNodeEnv) ? dirtyNodeEnv : undefined) ?? `production`;
 const isDev = nodeEnv === `development`;
+const { loadBrandingOptions } = require(`kidsloop-branding`);
+
+const brandingOptions = loadBrandingOptions(process.env.BRAND);
 
 const config: Configuration = {
     mode: nodeEnv,
@@ -75,6 +78,7 @@ const config: Configuration = {
         alias: {
             react: path.resolve(`./node_modules/react`),
             "@": path.resolve(__dirname, `src`),
+            ...brandingOptions.webpack.resolve.alias,
         },
     },
     output: {
@@ -100,6 +104,7 @@ const config: Configuration = {
             }),
         new HtmlWebpackPlugin({
             template: isDev ? `src/index.html` : `src/index_prod.html`,
+            ...brandingOptions.webpack.html,
         }),
         // @ts-ignore
         new UnusedWebpackPlugin({
