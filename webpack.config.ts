@@ -121,23 +121,6 @@ const config: Configuration = {
         port: 8080,
         https: true,
         historyApiFallback: true,
-        proxy: {
-            "/v1": {
-                target: `https://cms.alpha.kidsloop.net/`,
-                secure: true,
-                changeOrigin: true,
-            },
-            "/h5p": {
-                target: `https://cms.alpha.kidsloop.net/`,
-                secure: true,
-                changeOrigin: true,
-            },
-            "/user": {
-                target: `https://api.alpha.kidsloop.net/`,
-                secure: true,
-                changeOrigin: true,
-            },
-        },
     },
 };
 

@@ -106,7 +106,6 @@ export default function PlanSelection () {
     async function getPublishedLessonPlans () {
         try {
             const response = await restApi.getContentsFolders(organizationId);
-            console.log(response);
             setLessonPlans(response);
         } catch (e) {
             console.error(e);

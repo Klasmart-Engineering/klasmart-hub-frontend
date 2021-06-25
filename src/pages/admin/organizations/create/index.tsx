@@ -2,6 +2,7 @@ import { useGetOrganizationMembershipsPermissions } from "@/api/organizationMemb
 import {
     useAddUserToOrganization,
     useCreateOrganization,
+    useGetOrganizationMemberships,
     useSetOrganizationBranding,
 } from "@/api/organizations";
 import { userProfileVar } from "@/cache";
@@ -73,6 +74,9 @@ export default function CreateOrganizationPage () {
     const { refetch: refetchOrganizationMembershipsPermissions } = useGetOrganizationMembershipsPermissions({
         nextFetchPolicy: `network-only`,
     });
+    const { refetch: refetchOrganizationMemberships } = useGetOrganizationMemberships({
+        nextFetchPolicy: `network-only`,
+    });
     const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
 
     const tabs = [
@@ -129,7 +133,7 @@ export default function CreateOrganizationPage () {
 
             if (!organizationMembership) throw Error(`No organization joined`);
 
-            await refetchOrganizationMembershipsPermissions();
+            await Promise.all([ refetchOrganizationMemberships(), refetchOrganizationMembershipsPermissions() ]);
             setOrganizationStack([ organizationMembership ]);
 
             history.goBack();

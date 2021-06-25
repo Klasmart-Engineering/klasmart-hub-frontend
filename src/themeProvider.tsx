@@ -23,6 +23,8 @@ import { utils } from "kidsloop-px";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 
+export const PRIMARY_THEME_COLOR = `#0094FF`;
+
 export function themeProvider () {
     const themeMode = useSelector((state: State) => state.ui.darkMode);
     const languageCode = useSelector((state: State) => state.ui.locale || ``);
@@ -31,8 +33,7 @@ export function themeProvider () {
     const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const organizationName = currentOrganization?.organization_name ?? ``;
-    const primaryColor = currentOrganization?.branding?.primaryColor;
-    const organizationPrimaryColor = !primaryColor?.startsWith(`#`) ? `#${primaryColor}` : primaryColor;
+    const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 
     function setTypography () {
@@ -85,7 +86,7 @@ export function themeProvider () {
         fontWeightRegular: localeTypography.localeWeightRegular,
     } as any;
 
-    const organizationColor = previewOrganizationColor ?? organizationPrimaryColor ?? utils.stringToColor(organizationName);
+    const organizationColor = previewOrganizationColor ?? organizationPrimaryColor;
     const organizationToolbarColor = lighten(organizationColor, 0.9);
 
     const overrides = {
@@ -138,8 +139,8 @@ export function themeProvider () {
         primary: {
             contrastText: `#FFF`,
             main: organizationColor,
-            light: lighten(organizationColor, 0.75),
-            dark: darken(organizationColor, 0.9),
+            light: lighten(organizationColor, 0.9),
+            dark: darken(organizationColor, 0.75),
         },
         secondary: {
             main: organizationColor,

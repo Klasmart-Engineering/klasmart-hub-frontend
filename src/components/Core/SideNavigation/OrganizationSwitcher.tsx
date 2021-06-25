@@ -1,5 +1,6 @@
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
+import { PRIMARY_THEME_COLOR } from "@/themeProvider";
 import { OrganizationMembership } from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
@@ -80,10 +81,11 @@ export default function OrganizationSwitcher (props: Props) {
     const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const memberships = organizationMembershipStack.slice();
-    const currentOrganization = memberships[0]?.organization;
+    const currentOrganizationMembership = memberships[0];
+    const currentOrganization = currentOrganizationMembership?.organization;
     const currentOrganizationName = currentOrganization?.organization_name ?? ``;
     const currentOrganizationLogo = currentOrganization?.branding?.iconImageURL ?? ``;
-    const currentOrganizationColor = !currentOrganization?.branding?.primaryColor?.startsWith(`#`) ? `#${currentOrganization?.branding?.primaryColor}` : currentOrganization?.branding?.primaryColor;
+    const currentOrganizationColor = currentOrganization?.branding?.primaryColor;
 
     memberships.sort((a, b) => {
         const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
@@ -106,7 +108,7 @@ export default function OrganizationSwitcher (props: Props) {
         selectOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
     };
 
-    const sortedRoleNames = currentOrganization?.roles
+    const sortedRoleNames = currentOrganizationMembership?.roles
         ?.map((r) => r.role_name)
         .filter((roleName): roleName is string => !!roleName);
     const highestRole = getHighestRole(sortedRoleNames ?? []);
@@ -118,13 +120,13 @@ export default function OrganizationSwitcher (props: Props) {
             : highestRole)
         : highestRole;
 
-    const selectedOrganizationColor = previewOrganizationColor ?? currentOrganizationColor;
+    const organizationColor = previewOrganizationColor ?? currentOrganizationColor ?? (currentOrganizationName ? utils.stringToColor(currentOrganizationName) : PRIMARY_THEME_COLOR);
 
     return (
         <div
             className={classes.root}
             style={{
-                backgroundColor: darken(selectedOrganizationColor ?? utils.stringToColor(currentOrganizationName), 0.5),
+                backgroundColor: darken(organizationColor, 0.5),
             }}
         >
             <Box
@@ -139,7 +141,7 @@ export default function OrganizationSwitcher (props: Props) {
                     name={currentOrganizationName}
                     size="large"
                     src={currentOrganizationLogo}
-                    color={selectedOrganizationColor ?? undefined}
+                    color={organizationColor ?? undefined}
                 />
                 <Box
                     display="flex"

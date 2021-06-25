@@ -1,6 +1,8 @@
 import { ADD_USER_TO_ORGANIZATION } from "@/operations/mutations/addUserToOrganization";
 import { CREATE_ORGANIZATION } from "@/operations/mutations/createOrganization";
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
+import { DELETE_ORGANIZATION_BRANDING_IMAGE } from "@/operations/mutations/deleteOrganizationBrandingImage";
+import { DELETE_ORGANIZATION_BRANDING_PRIMARY_COLOR } from "@/operations/mutations/deleteOrganizationBrandingPrimaryColor";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { SAVE_ORGANIZATION } from "@/operations/mutations/saveOrganization";
 import { SET_ORGANIZATION_BRANDING } from "@/operations/mutations/setOrganizationBranding";
@@ -156,4 +158,24 @@ interface SetOrganizationBrandingResponse {
 
 export const useSetOrganizationBranding = (options?: MutationHookOptions<SetOrganizationBrandingResponse, SetOrganizationBrandingRequest>) => {
     return useMutation<SetOrganizationBrandingResponse, SetOrganizationBrandingRequest>(SET_ORGANIZATION_BRANDING, options);
+};
+
+interface DeleteOrganizationBrandingImageRequest {
+    organizationId: string;
+}
+
+type DeleteOrganizationBrandingImageResponse = boolean
+
+export const useDeleteOrganizationBrandingImage = (options?: MutationHookOptions<DeleteOrganizationBrandingImageResponse, DeleteOrganizationBrandingImageRequest>) => {
+    return useMutation<DeleteOrganizationBrandingImageResponse, DeleteOrganizationBrandingImageRequest>(DELETE_ORGANIZATION_BRANDING_IMAGE, options);
+};
+
+interface DeleteOrganizationBrandingPrimaryColorRequest {
+    organizationId: string;
+}
+
+type DeleteOrganizationBrandingPrimaryColorResponse = boolean
+
+export const useDeleteOrganizationBrandingPrimaryColor = (options?: MutationHookOptions<DeleteOrganizationBrandingPrimaryColorResponse, DeleteOrganizationBrandingPrimaryColorRequest>) => {
+    return useMutation<DeleteOrganizationBrandingPrimaryColorResponse, DeleteOrganizationBrandingPrimaryColorRequest>(DELETE_ORGANIZATION_BRANDING_PRIMARY_COLOR, options);
 };

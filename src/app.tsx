@@ -5,7 +5,6 @@ import { useOrganizationStack } from "@/store/organizationMemberships";
 import { Store } from "@/store/store";
 import {
     isActive,
-    Organization,
     OrganizationMembership,
 } from "@/types/graphQL";
 import { isEqual } from "lodash";
@@ -59,15 +58,9 @@ export default function App (props: Props) {
                     return aIndex - bIndex;
                 })
                 .filter(isActive) ?? [];
-            const updatedMembershipIds = updatedMemberships
-                .map((membership) => membership.organization_id)
-                .filter((id): id is string => !!id);
-            const oldMembershipIds = membershipStack
-                .map((membership) => membership.organization_id)
-                .filter((id): id is string => !!id);
-            return isEqual(updatedMembershipIds, oldMembershipIds) ? membershipStack : updatedMemberships;
+            return isEqual(updatedMemberships, membershipStack) ? membershipStack : updatedMemberships;
         });
-    }, [ organizationsData, organizationsLoading ]);
+    }, [ organizationsData ]);
 
     return (
         <Layout />

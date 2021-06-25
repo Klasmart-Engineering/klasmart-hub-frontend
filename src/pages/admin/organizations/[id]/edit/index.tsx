@@ -1,5 +1,8 @@
 import {
+    useDeleteOrganizationBrandingImage,
+    useDeleteOrganizationBrandingPrimaryColor,
     useGetOrganization,
+    useGetOrganizationMemberships,
     useSaveOrganization,
     useSetOrganizationBranding,
 } from "@/api/organizations";
@@ -75,11 +78,16 @@ export default function EditOrganizationPage () {
 
     const [ saveOrganization ] = useSaveOrganization();
     const [ setOrganizationBranding ] = useSetOrganizationBranding();
-    const { data: organization, loading } = useGetOrganization({
+    const [ deleteBrandingImage ] = useDeleteOrganizationBrandingImage();
+    const [ deleteBrandingPrimaryColor ] = useDeleteOrganizationBrandingPrimaryColor();
+    const { data: organizationData, loading } = useGetOrganization({
         fetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
         },
+    });
+    const { refetch: refetchMemberships } = useGetOrganizationMemberships({
+        nextFetchPolicy: `network-only`,
     });
 
     const tabs = [
@@ -132,12 +140,23 @@ export default function EditOrganizationPage () {
                         primaryColor: primaryColor ?? undefined,
                     },
                 }),
-                // ...organizationLogo === null ? [ //removeOrganizationIconImageURL ] : [  ],
-                // ...primaryColor === null ? [ removeOrganizationPrimaryColor ] : [  ],
+                ...organizationLogo === null ? [
+                    deleteBrandingImage({
+                        variables: {
+                            organizationId,
+                        },
+                    }),
+                ] : [] as Promise<any>[],
+                ...primaryColor === null ? [
+                    deleteBrandingPrimaryColor({
+                        variables: {
+                            organizationId,
+                        },
+                    }),
+                ] : [] as Promise<any>[],
             ]);
-
+            await refetchMemberships();
             history.goBack();
-
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_editSuccess`,
             }), {
@@ -153,9 +172,9 @@ export default function EditOrganizationPage () {
     };
 
     useEffect(() => {
-        if (!organization) return;
-        setOrganizationState(organization.organization);
-    }, [ loading, organization ]);
+        if (!organizationData) return;
+        setOrganizationState(organizationData.organization);
+    }, [ loading, organizationData ]);
 
     return (
         <Container

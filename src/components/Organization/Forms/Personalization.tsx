@@ -1,5 +1,6 @@
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
+import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/themeProvider";
 import { Organization } from "@/types/graphQL";
 import {
     FormHelperText,
@@ -28,8 +29,6 @@ import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
-
-const DEFAULT_COLOR = `#0094FF`;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -108,33 +107,17 @@ export default function Personalization (props: Props) {
         setImageToBeCropped(``);
     };
 
-    const imageSelectErrorMessages = {
-        noFileError: intl.formatMessage({
-            id: `addOrganization_noFileFound`,
-        }),
-        fileSizeTooBigError: intl.formatMessage({
-            id: `addOrganization_imagePickerImageTooLargeError`,
-        }, {
-            fileSize: `2MB`,
-        }),
-        wrongFileTypeUploadError: intl.formatMessage({
-            id: `addOrganization_imagePickerWrongFormatError`,
-        }),
-    };
-
     useEffect(() => {
         setOrganizationLogoPreview(tempOrganizationLogo ? tempOrganizationLogo.base64 : null);
     }, [ tempOrganizationLogo ]);
 
     useEffect(() => {
         setOrganizationLogoPreview(tempOrganizationLogo ? tempOrganizationLogo.base64 : (value.branding?.iconImageURL ?? ``));
-        const primaryColor = value?.branding?.primaryColor;
-        const organizationPrimaryColor = !primaryColor?.startsWith(`#`) ? `#${primaryColor}` : primaryColor;
-        setPreviewOrganizationColor(organizationPrimaryColor ?? DEFAULT_COLOR);
+        setPreviewOrganizationColor(value?.branding?.primaryColor || THEME_PRIMARY_COLOR);
     }, [ value ]);
 
     const handleColorChange = (color: string) => {
-        setPreviewOrganizationColor(color || DEFAULT_COLOR);
+        setPreviewOrganizationColor(color || THEME_PRIMARY_COLOR);
     };
 
     useEffect(() => {
@@ -145,15 +128,19 @@ export default function Personalization (props: Props) {
                 primaryColor: previewOrganizationColor ?? ``,
             },
             setBranding: {
-                iconImage: tempOrganizationLogo?.file,
+                iconImage: organizationLogoPreview === null ? null : tempOrganizationLogo?.file,
                 primaryColor: previewOrganizationColor,
             },
         };
         onChange(updatedOrganizationState);
-    }, [ previewOrganizationColor, tempOrganizationLogo ]);
+    }, [
+        previewOrganizationColor,
+        tempOrganizationLogo,
+        organizationLogoPreview,
+    ]);
 
     useEffect(() => {
-        setPreviewOrganizationColor(utils.stringToColor(value.organization_name));
+        setPreviewOrganizationColor(value.branding?.primaryColor ?? (value.organization_name ? utils.stringToColor(value.organization_name) : THEME_PRIMARY_COLOR));
         return () => setPreviewOrganizationColor(undefined);
     }, []);
 
@@ -204,7 +191,19 @@ export default function Personalization (props: Props) {
                                             `image/jpeg`,
                                             `image/png`,
                                         ]}
-                                        errorMessages={imageSelectErrorMessages}
+                                        errorMessages={{
+                                            noFileError: intl.formatMessage({
+                                                id: `addOrganization_noFileFound`,
+                                            }),
+                                            fileSizeTooBigError: intl.formatMessage({
+                                                id: `addOrganization_imagePickerImageTooLargeError`,
+                                            }, {
+                                                fileSize: `2MB`,
+                                            }),
+                                            wrongFileTypeUploadError: intl.formatMessage({
+                                                id: `addOrganization_imagePickerWrongFormatError`,
+                                            }),
+                                        }}
                                         onFileChange={onImageChange}
                                         onError={setImageSelectError}
                                     />
@@ -253,7 +252,7 @@ export default function Personalization (props: Props) {
                             label="Color"
                             variant="standard"
                             defaultButtonLabel="Default"
-                            defaultColor={DEFAULT_COLOR}
+                            defaultColor={THEME_PRIMARY_COLOR}
                             onChange={handleColorChange}
                         />
                     </Grid>

@@ -436,7 +436,6 @@ export class RestAPI {
         const response = await this.scheduleCall(`GET`, `v1/schedules_time_view?` + str);
         const body: SchedulePayload[] = await response?.json();
         if (body instanceof Array) {
-            console.log(body);
             return body;
         }
         throw new RestAPIError(RestAPIErrorType.UNKNOWN, body);

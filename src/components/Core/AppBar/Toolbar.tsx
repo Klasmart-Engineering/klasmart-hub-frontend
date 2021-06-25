@@ -90,7 +90,7 @@ export default function Toolbar (props: Props) {
     const currentOrganization = useCurrentOrganization();
     const organizationLogo = currentOrganization?.branding?.iconImageURL;
 
-    const showSiteLogo = !organizationLogo || !currentOrganization;
+    const showSiteLogo = !organizationLogo && currentOrganization;
 
     const contentTabs: Tab[] = [
         {
