@@ -12,7 +12,6 @@ import { themeProvider } from "./themeProvider";
 import { redirectIfUnauthorized } from "./utils/accountUtils";
 import { history } from "./utils/history";
 import { getLanguage } from "./utils/locale";
-import { trimStrings } from "./utils/objectCleaner";
 import {
     ApolloClient,
     ApolloLink,
@@ -26,6 +25,7 @@ import {
     ConfirmDialogProvider,
     PromptDialogProvider,
     SnackbarProvider,
+    utils,
 } from "kidsloop-px";
 import LogRocket from "logrocket";
 import React,
@@ -44,8 +44,8 @@ import { PersistGate } from "redux-persist/integration/react";
 LogRocket.init(`8qowji/badanamu-learning-pass`);
 
 const objectCleanerLink = new ApolloLink((operation, forward) => {
-    operation.variables = trimStrings(operation.variables); // clean request data
-    return forward(operation).map((value) => trimStrings(value)); // clean response data
+    operation.variables = utils.trimStrings(operation.variables); // clean request data
+    return forward(operation).map((value) => utils.trimStrings(value)); // clean response data
 });
 
 const uploadLink = createUploadLink({
