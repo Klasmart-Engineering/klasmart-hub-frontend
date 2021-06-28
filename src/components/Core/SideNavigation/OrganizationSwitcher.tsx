@@ -85,7 +85,7 @@ export default function OrganizationSwitcher (props: Props) {
     const currentOrganization = currentOrganizationMembership?.organization;
     const currentOrganizationName = currentOrganization?.organization_name ?? ``;
     const currentOrganizationLogo = currentOrganization?.branding?.iconImageURL ?? ``;
-    const currentOrganizationColor = currentOrganization?.branding?.primaryColor;
+    const currentOrganizationColor_ = currentOrganization?.branding?.primaryColor;
 
     memberships.sort((a, b) => {
         const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
@@ -120,13 +120,13 @@ export default function OrganizationSwitcher (props: Props) {
             : highestRole)
         : highestRole;
 
-    const organizationColor = previewOrganizationColor ?? currentOrganizationColor ?? (currentOrganizationName ? utils.stringToColor(currentOrganizationName) : PRIMARY_THEME_COLOR);
+    const currentOrganizationColor = previewOrganizationColor ?? currentOrganizationColor_ ?? (currentOrganizationName ? utils.stringToColor(currentOrganizationName) : PRIMARY_THEME_COLOR);
 
     return (
         <div
             className={classes.root}
             style={{
-                backgroundColor: darken(organizationColor, 0.5),
+                backgroundColor: darken(currentOrganizationColor, 0.5),
             }}
         >
             <Box
@@ -141,7 +141,7 @@ export default function OrganizationSwitcher (props: Props) {
                     name={currentOrganizationName}
                     size="large"
                     src={currentOrganizationLogo}
-                    color={organizationColor ?? undefined}
+                    color={currentOrganizationColor ?? undefined}
                 />
                 <Box
                     display="flex"

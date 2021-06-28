@@ -1,9 +1,5 @@
-import { useGetUser } from "@/api/users";
 import { userIdVar } from "@/cache";
-import {
-    useCurrentOrganizationMembership,
-    useOrganizationStack,
-} from "@/store/organizationMemberships";
+import { useOrganizationStack } from "@/store/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
@@ -75,6 +71,7 @@ export default function OrganizationMenuList (props: Props) {
                         })
                         : highestRole)
                     : highestRole;
+
                 return <ListItem
                     key={membership.organization_id}
                     button
@@ -88,6 +85,7 @@ export default function OrganizationMenuList (props: Props) {
                         <OrganizationAvatar
                             name={membership.organization?.organization_name ?? ``}
                             src={membership.organization?.branding?.iconImageURL?? ``}
+                            color={membership.organization?.branding?.primaryColor ?? undefined}
                         />
                     </ListItemAvatar>
                     <ListItemText
