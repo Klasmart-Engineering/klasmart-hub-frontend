@@ -29,7 +29,7 @@ export default function SubjectStep (props: TabContent) {
     const classes = useStyles();
     const { required } = useValidations();
     const currentOrganization = useCurrentOrganization();
-    const [ selectedSubjectIds, setSelectedIds ] = useState(value.subjects?.filter(isActive).map((subject) => subject.id ?? ``) ?? []);
+    const [ selectedSubjectIds, setSelectedIds ] = useState(value?.node?.subjects?.filter(isActive).map((subject) => subject.id ?? ``) ?? []);
     const { data: subjectsData } = useGetAllSubjects({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
@@ -37,14 +37,17 @@ export default function SubjectStep (props: TabContent) {
     });
 
     const allSubjects = subjectsData?.organization.subjects?.filter(isActive) ?? [];
-    const selectedSubjectsError = required()(value.subjects);
+    const selectedSubjectsError = required()(value?.node?.subjects);
 
     useEffect(() => {
         onChange?.({
             ...value,
-            subjects: selectedSubjectIds
-                .map((subjectId) => allSubjects.find((subject) => subject.id === subjectId))
-                .filter((subject): subject is Subject => !!subject),
+            node: {
+                ...value?.node,
+                subjects: selectedSubjectIds
+                    .map((subjectId) => allSubjects.find((subject) => subject.id === subjectId))
+                    .filter((subject): subject is Subject => !!subject),
+            },
         });
     }, [ selectedSubjectIds ]);
 
@@ -54,7 +57,7 @@ export default function SubjectStep (props: TabContent) {
                 disabled={disabled}
                 showSelectables={!disabled}
                 selectedIds={disabled ? undefined : selectedSubjectIds}
-                subjects={disabled ? value.subjects : undefined}
+                subjects={disabled ? value?.node?.subjects : undefined}
                 onSelected={setSelectedIds}
             />
             {!disabled && <FormHelperText error>{selectedSubjectsError === true ? ` ` : selectedSubjectsError}</FormHelperText>}

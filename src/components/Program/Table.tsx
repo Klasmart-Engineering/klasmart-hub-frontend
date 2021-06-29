@@ -1,5 +1,7 @@
 import ViewProgramDetailsDrawer from "./DetailsDrawer";
 import {
+    ProgramEdge,
+    ProgramFilter,
     useDeleteProgram,
     useGetAllPrograms,
 } from "@/api/programs";
@@ -7,11 +9,12 @@ import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
-    isActive,
     Program,
+    Status,
 } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import { buildAgeRangeLabelForPrograms } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
+import { isUUID } from "@/utils/pagination";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
@@ -28,12 +31,19 @@ import {
     ViewList as ViewListIcon,
 } from "@material-ui/icons";
 import {
-    PageTable,
+    CursorTable,
     usePrompt,
     useSnackbar,
+    utils,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import React, {
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import React,
+{
     useEffect,
     useState,
 } from "react";
@@ -48,16 +58,25 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export const organizationProgram = (program: Program, i: number) => {
+export const organizationProgram = (edge: ProgramEdge, i: number) => {
+    const program = edge.node;
     return {
         id: program.id ?? `row-${i}`,
         name: program.name ?? ``,
-        grades: program.grades?.filter(isActive).map((grade) => grade.name ?? ``) ?? [],
-        ageRanges: program.age_ranges?.filter(isActive).map(buildAgeRangeLabel) ?? [],
-        subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
+        grades: program.grades
+            ?.filter(grade => grade.status ===  Status.ACTIVE)
+            .map((grade) => grade.name ?? ``) ?? [],
+        ageRanges: program.ageRanges
+            ?.filter(ageRange => ageRange.status === Status.ACTIVE)
+            .map(buildAgeRangeLabelForPrograms) ?? [],
+        subjects: program.subjects
+            ?.filter(subject => subject.status === Status.ACTIVE)
+            .map((subject) => subject.name ?? ``) ?? [],
         system: program.system ?? false,
     };
 };
+
+const ROWS_PER_PAGE = 10;
 
 interface ProgramRow {
     id: string;
@@ -91,22 +110,52 @@ export default function ProgramTable (props: Props) {
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedProgram, setSelectedProgram ] = useState<Program>();
+    const [ selectedProgram, setSelectedProgram ] = useState<ProgramEdge>();
+    const [ rowsPerPage, setRowsPerPage ] = useState(ROWS_PER_PAGE);
+    const [ cursor, setCursor ] = useState<string>();
     const [ tableSelectedIds, setTableSelectedIds ] = useState<string[]>(selectedIds || []);
     const [ nonSpecifiedId, setNonSpecifiedId ] = useState<string>();
+    const [ search, setSearch ] = useState(``);
     const canCreate = usePermission(`create_program_20221`);
     const canView = usePermission(`view_program_20111`);
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
     const { required, equals } = useValidations();
-    const { data, refetch } = useGetAllPrograms({
+    const queryFilter: ProgramFilter = {
+        ...isUUID(search)
+            ? {
+                id: {
+                    operator: `eq`,
+                    value: search,
+                },
+            }
+            : {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
+                },
+            },
+    };
+    const {
+        data,
+        refetch,
+        fetchMore: fetchMorePrograms,
+        loading: loadingPrograms,
+    } = useGetAllPrograms({
         variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
+            direction: `FORWARD`,
+            count: rowsPerPage,
+            organizationId: currentOrganization?.organization_id ?? ``,
+            orderBy: `name`,
+            order: `ASC`,
+            filter: queryFilter,
         },
+        notifyOnNetworkStatusChange: true,
     });
     const [ deleteProgram ] = useDeleteProgram();
-
-    const allPrograms = (programs ?? data?.organization.programs ?? []).filter(isActive);
+    const allPrograms = (data?.programsConnection?.edges ?? []);
+    const pageInfo = data?.programsConnection?.pageInfo;
 
     useEffect(() => {
         if (!canView) {
@@ -114,7 +163,8 @@ export default function ProgramTable (props: Props) {
             return;
         }
         const rows = allPrograms.map(organizationProgram) ?? [];
-        setNonSpecifiedId(allPrograms.find(program => program.name === `None Specified` && program.system)?.id ?? ``);
+
+        setNonSpecifiedId(allPrograms.find(edge => edge.node.name === `None Specified` && edge.node.system)?.node.id ?? ``);
         setRows(rows);
     }, [
         data,
@@ -166,6 +216,7 @@ export default function ProgramTable (props: Props) {
             }),
             hidden: true,
             disableSearch: disabled,
+            disableSort: true,
         },
         {
             id: `name`,
@@ -174,6 +225,7 @@ export default function ProgramTable (props: Props) {
             }),
             persistent: true,
             disableSearch: disabled,
+            disableSort: true,
         },
         {
             id: `grades`,
@@ -181,6 +233,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_grades`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
                     <Chip
@@ -197,6 +250,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_ageRanges`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.ageRanges.map((ageRange, i) => (
                     <Chip
@@ -213,6 +267,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_subjects`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.subjects.map((subject, i) => (
                     <Chip
@@ -225,7 +280,7 @@ export default function ProgramTable (props: Props) {
         },
     ];
 
-    const findProgram = (row: ProgramRow) => allPrograms.find((program) => program.id === row.id);
+    const findProgram = (row: ProgramRow) => allPrograms.find((edge) => edge.node.id === row.id);
 
     const handleViewDetailsRowClick = (row: ProgramRow) => {
         const selectedProgram = findProgram(row);
@@ -245,7 +300,7 @@ export default function ProgramTable (props: Props) {
         const selectedProgram = findProgram(row);
         if (!selectedProgram) return;
         setSelectedProgram(selectedProgram);
-        const { id, name } = selectedProgram;
+        const { id, name } = selectedProgram?.node;
         if (!id) throw Error(`invalid-program-id`);
         if (!await prompt({
             variant: `error`,
@@ -292,16 +347,61 @@ export default function ProgramTable (props: Props) {
         }
     };
 
+    const handlePageChange = async (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => {
+        const rowsPerPage_ = page === `last`
+            ? ((data?.programsConnection?.totalCount ?? 0) % rowsPerPage) || rowsPerPage
+            : rowsPerPage;
+        const pageInfo = utils.getCursorPageInfo(page, order, cursor, rowsPerPage_);
+
+        await setCursor(cursor);
+        await fetchMorePrograms({
+            variables: {
+                ...pageInfo,
+                name: search,
+                filter: queryFilter,
+            },
+        });
+    };
+
+    const handleTableChange = async (tableData: CursorTableData<ProgramRow>) => {
+        setRowsPerPage(tableData.rowsPerPage);
+        setSearch(tableData.search);
+    };
+
+    const fetchMoreHandler = () => {
+        fetchMorePrograms({
+            variables: {
+                count: rowsPerPage,
+                direction: `FORWARD`,
+                cursor: null,
+                filter: queryFilter,
+            },
+        });
+    };
+
+    useEffect(() => {
+        fetchMoreHandler();
+    }, [ rowsPerPage, search ]);
+
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
-                    showSelectables={!disabled}
+                <CursorTable
+                    columns={columns}
+                    rows={rows}
+                    loading={loadingPrograms}
                     idField="id"
                     orderBy="name"
-                    order="asc"
-                    rows={rows}
-                    columns={columns}
+                    order="desc"
+                    rowsPerPage={rowsPerPage}
+                    hasNextPage={pageInfo?.hasNextPage}
+                    hasPreviousPage={pageInfo?.hasPreviousPage}
+                    startCursor={pageInfo?.startCursor}
+                    endCursor={pageInfo?.endCursor}
+                    total={data?.programsConnection?.totalCount}
+                    cursor={cursor}
+                    search={search}
+                    showSelectables={!disabled}
                     selectedRows={tableSelectedIds}
                     primaryAction={!disabled ? {
                         label: intl.formatMessage({
@@ -343,8 +443,15 @@ export default function ProgramTable (props: Props) {
                                 id: `programs_title`,
                             }),
                         },
+                        body: {
+                            noData: intl.formatMessage({
+                                id: `classes_noRecords`,
+                            }),
+                        },
                     })}
                     onSelected={selectIds}
+                    onPageChange={handlePageChange}
+                    onChange={handleTableChange}
                 />
             </Paper>
             <ViewProgramDetailsDrawer
@@ -358,7 +465,8 @@ export default function ProgramTable (props: Props) {
             <CreateProgramDialog
                 open={openCreateDialog}
                 onClose={(program) => {
-                    if (program) refetch();
+                    if (program) fetchMoreHandler();
+
                     setOpenCreateDialog(false);
                 }}
             />

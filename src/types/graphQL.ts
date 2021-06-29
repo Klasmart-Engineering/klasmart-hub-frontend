@@ -20,6 +20,8 @@ export enum Status {
     INACTIVE = `inactive`,
 }
 
+export type PaginationDirection = `FORWARD` | `BACKWARD`
+
 export const isNonSpecified = (entity: BaseEntity) => {
     return entity?.name === NON_SPECIFIED && !!entity?.system;
 };
