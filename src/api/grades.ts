@@ -1,7 +1,11 @@
 import { CREATE_UPDATE_GRADES } from "@/operations/mutations/createUpdateGrades";
 import { DELETE_GRADE } from "@/operations/mutations/deleteGrade";
 import { GET_GRADES } from "@/operations/queries/getGrades";
-import { Grade } from "@/types/graphQL";
+import { GET_PAGINATED_ORGANIZATION_GRADES } from "@/operations/queries/getOrganizationGrades";
+import {
+    Grade,
+    Status,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -21,6 +25,64 @@ interface CreateUpdateGradeRequest {
 
 interface CreateUpdateGradeResponse {
     grades: Grade[];
+}
+
+interface CursorFilter<T> {
+    AND?: T[];
+    OR?: T[];
+}
+
+interface ValueFilter {
+    operator: 'contains' | 'eq';
+    value: string;
+    caseInsensitive?: boolean;
+}
+
+export interface GradeFilter extends CursorFilter<GradeFilter[]> {
+    id?: ValueFilter;
+    name?: ValueFilter;
+}
+
+export interface GradeEdge {
+    node: {
+        id: string;
+        name: string;
+        fromGrade?: {
+            id: string;
+            name: string;
+            system: boolean;
+            status?: Status;
+        };
+        toGrade?: {
+            id: string;
+            name: string;
+            system: boolean;
+            status?: Status;
+        };
+        system: boolean;
+        status?: Status;
+    };
+}
+
+export interface GetOrganizationGradesResponsePaginated {
+    gradesConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: GradeEdge[];
+    };
+}
+
+export interface GetOrganizationGradesRequestPaginated {
+    organizationId: string;
+    direction?: `FORWARD` | `BACKWARD`;
+    cursor?: string;
+    count?: number;
+    filter?: GradeFilter;
 }
 
 export const useCreateUpdateGrade = (options?: MutationHookOptions<CreateUpdateGradeResponse, CreateUpdateGradeRequest>) => {
@@ -49,4 +111,8 @@ interface GetAllGradesResponse {
 
 export const useGetAllGrades = (options?: QueryHookOptions<GetAllGradesResponse, GetAllGradesRequest>) => {
     return useQuery<GetAllGradesResponse, GetAllGradesRequest>(GET_GRADES, options);
+};
+
+export const useGetPaginatedOrganizationGrades = (options?: QueryHookOptions<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>) => {
+    return useQuery<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>(GET_PAGINATED_ORGANIZATION_GRADES, options);
 };

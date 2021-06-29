@@ -1,6 +1,8 @@
 import {
+    GradeEdge,
+    GradeFilter,
     useDeleteGrade,
-    useGetAllGrades,
+    useGetPaginatedOrganizationGrades,
 } from "@/api/grades";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
@@ -8,9 +10,9 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Grade,
     NON_SPECIFIED,
-    Status,
 } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
+import { isUUID } from "@/utils/pagination";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
@@ -25,11 +27,17 @@ import {
     Edit as EditIcon,
 } from "@material-ui/icons";
 import {
-    PageTable,
+    CursorTable,
     usePrompt,
     useSnackbar,
+    utils,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from 'kidsloop-px/dist/types/components/Table/Cursor/Table';
 import React, {
     useEffect,
     useState,
@@ -58,39 +66,59 @@ export default function (props: Props) {
     const prompt = usePrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ rows, setRows ] = useState<GradeRow[]>([]);
+    const [ rowsPerPage, setRowsPerPage ] = useState(10);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ grades, setGrades ] = useState<Grade[]>([]);
+    const [ grades, setGrades ] = useState<GradeEdge[]>([]);
     const [ selectedGrade, setSelectedGrade ] = useState<Grade>();
     const { equals, required } = useValidations();
     const currentOrganization = useCurrentOrganization();
     const canCreate = usePermission(`create_grade_20223`);
     const canEdit = usePermission(`edit_grade_20333`);
     const canDelete = usePermission(`delete_grade_20443`);
+    const [ deleteGrade ] = useDeleteGrade();
+    const [ search, setSearch ] = useState(``);
+    const queryFilter: GradeFilter = {
+        ...isUUID(search)
+            ? {
+                id: {
+                    operator: `eq`,
+                    value: search,
+                },
+            } :
+            {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
+                },
+            },
+    };
 
     const {
         loading,
         data,
         refetch,
-    } = useGetAllGrades({
-        fetchPolicy: `network-only`,
+        fetchMore,
+    } = useGetPaginatedOrganizationGrades({
         variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
+            organizationId: currentOrganization?.organization_id ?? ``,
+            direction: `FORWARD`,
+            count: 10,
+            filter: queryFilter,
         },
     });
 
-    const [ deleteGrade ] = useDeleteGrade();
-
     useEffect(() => {
         if (data) {
-            const rows = data.organization.grades.filter(grade => grade.status === Status.ACTIVE).map((grade) => ({
-                id: grade.id ?? ``,
-                name: grade.name ?? ``,
-                progressFrom: grade.progress_from_grade?.name ?? NON_SPECIFIED,
-                progressTo: grade.progress_to_grade?.name ?? NON_SPECIFIED,
+            const rows = data.gradesConnection.edges?.map((edge) => ({
+                id: edge.node.id ?? ``,
+                name: edge.node.name ?? ``,
+                progressFrom: edge.node.fromGrade?.name ?? NON_SPECIFIED,
+                progressTo: edge.node.toGrade?.name ?? NON_SPECIFIED,
             })) ?? [];
             setRows(rows);
-            setGrades(data?.organization.grades);
+            setGrades(data?.gradesConnection.edges);
         }
     }, [ data ]);
 
@@ -123,20 +151,59 @@ export default function (props: Props) {
         },
     ];
 
-    const findGrade = (row: GradeRow) => grades?.find((grade) => grade.id === row.id);
+    const findGrade = (row: GradeRow) => grades?.find((grade) => grade.node.id === row.id);
+    const mapGrade = (grade: GradeEdge['node']): Grade => ({
+        id: grade.id,
+        name: grade.name,
+        status: grade.status,
+        system: grade.system,
+        progress_from_grade: grade.fromGrade ? mapGrade(grade.fromGrade) : null,
+        progress_to_grade: grade.toGrade ? mapGrade(grade.toGrade) : null,
+    });
 
     const handleEditRowClick = async (row: GradeRow) => {
         const selectedGrade = findGrade(row);
         if (!selectedGrade) return;
-        setSelectedGrade(selectedGrade);
+
+        setSelectedGrade(mapGrade(selectedGrade.node));
         setOpenEditDialog(true);
     };
+
+    const handlePageChange = async (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => {
+        const count = page === `last`
+            ? ((data?.gradesConnection?.totalCount ?? 0) % rowsPerPage) || rowsPerPage
+            : rowsPerPage;
+        const pageInfo = utils.getCursorPageInfo(page, order, cursor, count);
+
+        await fetchMore({
+            variables: {
+                ...pageInfo,
+            },
+        });
+    };
+
+    const handleTableChange = async (tableData: CursorTableData<GradeRow>) => {
+        setRowsPerPage(tableData.rowsPerPage);
+        setSearch(tableData.search);
+    };
+
+    const refetchHandler = () => {
+        refetch({
+            count: rowsPerPage,
+            filter: queryFilter,
+        });
+    };
+
+    useEffect(() => {
+        if (loading) return;
+        refetchHandler();
+    }, [ rowsPerPage, search ]);
 
     const handleDeleteRowClick = async (row: GradeRow) => {
         const selectedGrade = findGrade(row);
         if (!selectedGrade) return;
-        setSelectedGrade(selectedGrade);
-        const { name } = selectedGrade;
+        setSelectedGrade(mapGrade(selectedGrade.node));
+        const name = selectedGrade.node.name;
         if (!await prompt({
             variant: `error`,
             title: intl.formatMessage({
@@ -160,7 +227,7 @@ export default function (props: Props) {
             validations: [ required(), equals(name) ],
         })) return;
         try {
-            const response = await deleteGrade({
+            await deleteGrade({
                 variables: {
                     id: row.id,
                 },
@@ -183,12 +250,19 @@ export default function (props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
+                <CursorTable
                     idField="id"
+                    loading={loading}
+                    hasNextPage={data?.gradesConnection?.pageInfo.hasNextPage}
+                    hasPreviousPage={data?.gradesConnection?.pageInfo.hasPreviousPage}
+                    startCursor={data?.gradesConnection?.pageInfo.startCursor}
+                    endCursor={data?.gradesConnection?.pageInfo.endCursor}
                     rows={rows}
                     columns={columns}
-                    orderBy="name"
-                    order="asc"
+                    order={`desc`}
+                    orderBy={`name`}
+                    rowsPerPage={rowsPerPage}
+                    total={data?.gradesConnection?.totalCount}
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `grades_createGradeLabel`,
@@ -197,7 +271,7 @@ export default function (props: Props) {
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
-                    rowActions={(row) => [
+                    rowActions={() => [
                         {
                             label: intl.formatMessage({
                                 id: `grades_editLabel`,
@@ -222,12 +296,16 @@ export default function (props: Props) {
                             }),
                         },
                     })}
+                    onPageChange={handlePageChange}
+                    onChange={handleTableChange}
                 />
             </Paper>
             <CreateGradeDialog
                 open={openCreateDialog}
                 onClose={(grade) => {
-                    refetch();
+                    if (grade) {
+                        refetch();
+                    }
                     setOpenCreateDialog(false);
                 }}
             />

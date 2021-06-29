@@ -5,6 +5,7 @@ import {
     makeVar,
     ReactiveVar,
 } from "@apollo/client";
+import { relayStylePagination } from "@apollo/client/utilities";
 
 /**
  * Set initial values when we create cache variables.
@@ -33,8 +34,12 @@ export const cache: InMemoryCache = new InMemoryCache({
     typePolicies: {
         // Cache [Organization/School]SummaryNode on the parent UserConnectionNode
         // to avoid invalid caching due to the non-unique `id` field
-        OrganizationSummaryNode: {keyFields: false},
-        SchoolSummaryNode: {keyFields: false},
+        OrganizationSummaryNode: {
+            keyFields: false,
+        },
+        SchoolSummaryNode: {
+            keyFields: false,
+        },
         Query: {
             fields: {
                 class: {
@@ -64,6 +69,7 @@ export const cache: InMemoryCache = new InMemoryCache({
                         return userProfileVar();
                     },
                 },
+                gradesConnection: relayStylePagination(),
             },
         },
         Mutation: {
