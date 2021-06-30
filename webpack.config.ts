@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'webpack-dev-server';
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import { config } from "dotenv";
 import Dotenv from "dotenv-webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
@@ -10,6 +11,10 @@ import {
     EnvironmentPlugin,
 } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+
+config({
+    path: process.env.ENV_PATH,
+});
 
 const modes = [
     `development`,
@@ -25,7 +30,7 @@ const { loadBrandingOptions } = require(`kidsloop-branding`);
 
 const brandingOptions = loadBrandingOptions(process.env.BRAND);
 
-const config: Configuration = {
+const webpackConfig: Configuration = {
     mode: nodeEnv,
     entry: {
         hubui: `./src/client-entry.tsx`,
@@ -124,4 +129,4 @@ const config: Configuration = {
     },
 };
 
-export default config;
+export default webpackConfig;
