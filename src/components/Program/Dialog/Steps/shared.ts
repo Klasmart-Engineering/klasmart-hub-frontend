@@ -1,7 +1,7 @@
-import { ProgramEdge } from "@/api/programs";
+import { Program } from "@/types/graphQL";
 
 export interface TabContent {
-    value: ProgramEdge;
+    value: Program;
     disabled?: boolean;
-    onChange?: (value: ProgramEdge) => void;
+    onChange?: (value: Program) => void;
 }

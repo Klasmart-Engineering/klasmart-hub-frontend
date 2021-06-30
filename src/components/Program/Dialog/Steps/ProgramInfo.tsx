@@ -51,9 +51,9 @@ export default function ProgramInfoStep (props: TabContent) {
         max,
     } = useValidations();
     const currentOrganization = useCurrentOrganization();
-    const [ programName, setProgramName ] = useState(value?.node?.name ?? ``);
-    const [ gradeIds, setGradeIds ] = useState(value?.node?.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-    const [ ageRanges, setAgeRanges ] = useState(value?.node?.ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
+    const [ programName, setProgramName ] = useState(value.name ?? ``);
+    const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
+    const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
     const { data: ageRangesData, loading: ageRangesLoading } = useGetAllAgeRanges({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
@@ -83,11 +83,11 @@ export default function ProgramInfoStep (props: TabContent) {
         const {
             name,
             grades,
-            ageRanges,
-        } = value?.node;
+            age_ranges,
+        } = value;
         setProgramName(name ?? ``);
         setGradeIds(grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-        setAgeRanges(ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
+        setAgeRanges(age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
         setLoaded(true);
     }, [
         value,
@@ -98,12 +98,9 @@ export default function ProgramInfoStep (props: TabContent) {
     useEffect(() => {
         onChange?.({
             ...value,
-            node: {
-                ...value?.node,
-                name: programName,
-                grades: gradeIds.map((id) => allGrades.find((grade) => grade.id === id)).filter((grade): grade is Grade => !!grade),
-                ageRanges: ageRanges.map((id) => allAgeRanges.find((ageRange) => ageRange.id === id)).filter((ageRange): ageRange is AgeRange => !!ageRange),
-            },
+            name: programName,
+            grades: gradeIds.map((id) => allGrades.find((grade) => grade.id === id)).filter((grade): grade is Grade => !!grade),
+            age_ranges: ageRanges.map((id) => allAgeRanges.find((ageRange) => ageRange.id === id)).filter((ageRange): ageRange is AgeRange => !!ageRange),
         });
     }, [
         programName,
@@ -125,7 +122,7 @@ export default function ProgramInfoStep (props: TabContent) {
                     value={programName}
                     disabled={disabled}
                     hideHelperText={disabled}
-                    autoFocus={!value?.node?.id}
+                    autoFocus={!value.id}
                     validations={[
                         required(`The program name is required.`),
                         letternumeric(intl.formatMessage({

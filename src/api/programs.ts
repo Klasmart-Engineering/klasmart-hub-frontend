@@ -3,14 +3,8 @@ import { DELETE_PROGRAM } from "@/operations/mutations/deleteProgram";
 import { EDIT_PROGRAM_AGE_RANGES } from "@/operations/mutations/editProgramAgeRanges";
 import { EDIT_PROGRAM_GRADES } from "@/operations/mutations/editProgramGrades";
 import { EDIT_PROGRAM_SUBJECTS } from "@/operations/mutations/editProgramSubjects";
-import { GET_PAGINATED_ORGANIZATION_PROGRAMS } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import {
-    Grade,
-    PaginationDirection,
-    Program,
-    Status,
-    Subject,
-} from "@/types/graphQL";
+import { GET_ALL_PROGRAMS } from "@/operations/queries/getAllPrograms";
+import { Program } from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -89,68 +83,14 @@ export const useEditProgramSubjects = (options?: MutationHookOptions<EditProgram
     return useMutation<EditProgramSubjectsResponse, EditProgramSubjectsRequest>(EDIT_PROGRAM_SUBJECTS, options);
 };
 
-export interface BaseEntity {
-    id: string;
-    name: string;
-    status: Status;
-    system: boolean;
-}
-
-export interface ProgramEdgeAgeRange extends BaseEntity {
-    highValue?: number | null;
-    highValueUnit?: string | null;
-    lowValue?: number | null;
-    lowValueUnit?: string | null;
-}
-
-export interface ProgramEdge {
-    node: {
-        id?: string;
-        name?: string | null;
-        status?: string;
-        system?: boolean;
-        ageRanges?: ProgramEdgeAgeRange[];
-        subjects?: Subject[];
-        grades?: Grade[];
-    };
-}
-
-export interface ProgramFilter {
-    name?: {
-        operator: string;
-        value: string;
-        caseInsensitive: boolean;
-    };
-    id?: {
-        operator: string;
-        value: string;
-    };
-}
-
 interface GetAllProgramsRequest {
-    organizationId: string;
-    direction: PaginationDirection;
-    cursor?: string | null;
-    count?: number;
-    search?: string;
-    orderBy?: string;
-    order?: string;
-    filter?: ProgramFilter;
+    organization_id: string;
 }
 
 interface GetAllProgramsResponse {
-    programsConnection: {
-        totalCount: number;
-        pageInfo: {
-            hasNextPage: boolean;
-            hasPreviousPage: boolean;
-            startCursor: string;
-            endCursor: string;
-        };
-        edges: ProgramEdge[];
-    };
+    organization: { programs: Program[] };
 }
 
 export const useGetAllPrograms = (options?: QueryHookOptions<GetAllProgramsResponse, GetAllProgramsRequest>) => {
-    return useQuery<GetAllProgramsResponse, GetAllProgramsRequest>(GET_PAGINATED_ORGANIZATION_PROGRAMS, options);
+    return useQuery<GetAllProgramsResponse, GetAllProgramsRequest>(GET_ALL_PROGRAMS, options);
 };

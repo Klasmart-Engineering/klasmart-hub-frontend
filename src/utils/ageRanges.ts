@@ -1,4 +1,3 @@
-import { ProgramEdgeAgeRange } from "@/api/programs";
 import {
     AgeRange,
     NON_SPECIFIED,
@@ -20,12 +19,6 @@ export const buildAgeRangeLabel = (ageRange: AgeRange) => {
     if (ageRange.system && ageRange.name === NON_SPECIFIED) return NON_SPECIFIED;
     const showFromUnit = ageRange.low_value_unit !== ageRange.high_value_unit;
     return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
-};
-
-export const buildAgeRangeLabelForPrograms = (ageRange: ProgramEdgeAgeRange) => {
-    if (ageRange.system && ageRange.name === NON_SPECIFIED) return NON_SPECIFIED;
-    const showFromUnit = ageRange.lowValueUnit !== ageRange.highValueUnit;
-    return `${ageRange.lowValue}${showFromUnit ? ` ${buildUnit(ageRange.lowValueUnit ?? ``)}` : ``} - ${ageRange.highValue} ${buildUnit(ageRange.highValueUnit ?? ``)}`;
 };
 
 export const sortAgeRanges = (a: AgeRange, b: AgeRange) => buildAgeRangeLabel(a).localeCompare(buildAgeRangeLabel(b));

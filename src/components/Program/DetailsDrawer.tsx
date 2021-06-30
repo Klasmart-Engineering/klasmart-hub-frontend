@@ -1,6 +1,8 @@
-import { ProgramEdge } from "@/api/programs";
-import { isActive } from "@/types/graphQL";
-import { buildAgeRangeLabelForPrograms } from "@/utils/ageRanges";
+import {
+    isActive,
+    Program,
+} from "@/types/graphQL";
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import {
     Box,
     Chip,
@@ -27,7 +29,7 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    value?: ProgramEdge;
+    value?: Program;
     open: boolean;
     onClose: () => void;
 }
@@ -44,18 +46,18 @@ export default function ViewProgramDetailsDrawer (props: Props) {
     return (
         <Drawer
             open={open}
-            title={value?.node?.name ?? ``}
+            title={value?.name ?? ``}
             sections={[
                 {
                     header: intl.formatMessage({
                         id: `programs_ageRanges`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.node?.ageRanges?.filter(isActive).map((ageRange) => (
+                        <Box px={1.5}>{value?.age_ranges?.filter(isActive).map((ageRange) => (
                             <Chip
                                 key={ageRange.id}
                                 className={classes.chip}
-                                label={buildAgeRangeLabelForPrograms(ageRange)}
+                                label={buildAgeRangeLabel(ageRange)}
                             />
                         ))}</Box>
                     ),
@@ -65,7 +67,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                         id: `programs_grades`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.node?.grades?.filter(isActive).map((grade) => (
+                        <Box px={1.5}>{value?.grades?.filter(isActive).map((grade) => (
                             <Chip
                                 key={grade.id}
                                 className={classes.chip}
@@ -79,7 +81,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                         id: `programs_subjectsList`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.node?.subjects?.filter(isActive).map((subject) => (
+                        <Box px={1.5}>{value?.subjects?.filter(isActive).map((subject) => (
                             <Chip
                                 key={subject.id}
                                 className={classes.chip}

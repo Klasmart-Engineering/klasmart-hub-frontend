@@ -70,7 +70,6 @@ export const cache: InMemoryCache = new InMemoryCache({
                     },
                 },
                 gradesConnection: relayStylePagination(),
-                programsConnection: relayStylePagination(),
             },
         },
         Mutation: {

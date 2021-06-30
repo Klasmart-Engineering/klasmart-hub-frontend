@@ -1,11 +1,9 @@
 import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary";
-import {
-    ProgramEdge,
-    useCreateOrUpdatePrograms,
-} from "@/api/programs";
+import { useCreateOrUpdatePrograms } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
 import {
@@ -40,7 +38,7 @@ const INITIAL_STEP_INDEX = 0;
 
 interface Props {
     open: boolean;
-    onClose: (program?: ProgramEdge) => void;
+    onClose: (program?: Program) => void;
 }
 
 export default function CreateProgramDialog (props: Props) {
@@ -60,10 +58,10 @@ export default function CreateProgramDialog (props: Props) {
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
-    const [ value_, setValue ] = useState<ProgramEdge>(buildEmptyProgram());
+    const [ value_, setValue ] = useState<Program>(buildEmptyProgram());
     const [ createOrUpdatePrograms ] = useCreateOrUpdatePrograms();
 
-    const handleValue = (value: ProgramEdge) => {
+    const handleValue = (value: Program) => {
         if (isEqual(value, value_)) return;
         setValue(value);
     };
@@ -89,11 +87,11 @@ export default function CreateProgramDialog (props: Props) {
                     onChange={handleValue}
                 />,
                 error: [
-                    required()(value_?.node?.name),
-                    letternumeric()(value_?.node?.name),
-                    max(35)(value_?.node?.name),
-                    required()(value_?.node?.grades),
-                    required()(value_?.node?.ageRanges),
+                    required()(value_?.name),
+                    letternumeric()(value_?.name),
+                    max(35)(value_?.name),
+                    required()(value_?.grades),
+                    required()(value_?.age_ranges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -104,7 +102,7 @@ export default function CreateProgramDialog (props: Props) {
                     value={value_}
                     onChange={handleValue}
                 />,
-                error: [ required()(value_?.node?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -122,10 +120,10 @@ export default function CreateProgramDialog (props: Props) {
     const createProgram = async () => {
         const {
             name,
-            ageRanges,
+            age_ranges,
             grades,
             subjects,
-        } = value_?.node;
+        } = value_;
         try {
             await createOrUpdatePrograms({
                 variables: {
@@ -133,7 +131,7 @@ export default function CreateProgramDialog (props: Props) {
                     programs: [
                         {
                             name: name ?? ``,
-                            age_ranges: ageRanges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
+                            age_ranges: age_ranges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                         },
