@@ -845,7 +845,7 @@
     "nextClass_title": "Your next live class is",
     "nextClass_alreadyStarted": "Class already started",
     "nextClass_startsSoon": "Class starts soon",
-    "nextClass_teachersTitle": "{nextClass_teachersTitle, plural, one {Teacher} other {Teachers}}",
+    "nextClass_teachersTitle": "{count, plural, one {Teacher} other {Teachers}}",
     "nextClass_noClass": "You don't have any upcoming live class scheduled!",
     "yourClasses_title": "Your classes",
     "yourClasses_noClass": "You don't have any class yet",

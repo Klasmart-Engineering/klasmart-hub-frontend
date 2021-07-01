@@ -845,7 +845,7 @@
     "nextClass_title": "Lớp học trực tuyến kế tiếp của bạn là",
     "nextClass_alreadyStarted": "Lớp học đã bắt đầu",
     "nextClass_startsSoon": "Lớp học sẽ sớm bắt đầu",
-    "nextClass_teachersTitle": "{nextClass_teachersTitle, plural, other {Teachers}}",
+    "nextClass_teachersTitle": "{count, plural, other {Teachers}}",
     "nextClass_noClass": "Bạn không có lịch học trực tuyến sắp tới",
     "yourClasses_title": "Những lớp học của bạn",
     "yourClasses_noClass": "Bạn chưa có lớp học nào",

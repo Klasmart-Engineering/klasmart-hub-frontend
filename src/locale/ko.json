@@ -845,7 +845,7 @@
     "nextClass_title": "다음 라이브 수업은",
     "nextClass_alreadyStarted": "수업이 이미 시작되었습니다",
     "nextClass_startsSoon": "수업을 곧 시작합니다",
-    "nextClass_teachersTitle": "{nextClass_teachersTitle, plural, other {Teachers}}",
+    "nextClass_teachersTitle": "{count, plural, other {Teachers}}",
     "nextClass_noClass": "앞으로 스케줄된 라이브 수업이 없습니다!",
     "yourClasses_title": "나의 수업",
     "yourClasses_noClass": "아직 어떠한 수업도 없습니다",

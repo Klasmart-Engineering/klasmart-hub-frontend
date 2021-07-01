@@ -845,7 +845,7 @@
     "nextClass_title": "Kelas live berikutnya yaitu",
     "nextClass_alreadyStarted": "Kelas sudah dimulai",
     "nextClass_startsSoon": "Kelas segera dimulai",
-    "nextClass_teachersTitle": "{nextClass_teachersTitle, plural, other {Teachers}}",
+    "nextClass_teachersTitle": "{count, plural, other {Teachers}}",
     "nextClass_noClass": "Anda tidak memiliki jadwal kelas live.",
     "yourClasses_title": "Kelas Anda",
     "yourClasses_noClass": "Anda belum memiliki kelas",

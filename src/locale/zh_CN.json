@@ -845,7 +845,7 @@
     "nextClass_title": "您的下一个在线课程是",
     "nextClass_alreadyStarted": "课程已经开始",
     "nextClass_startsSoon": "课程即将开始",
-    "nextClass_teachersTitle": "{nextClass_teachersTitle, plural, other {Teachers}}",
+    "nextClass_teachersTitle": "{count, plural, other {Teachers}}",
     "nextClass_noClass": "您没有任何即将到来的直播课程安排!",
     "yourClasses_title": "您所在的班级",
     "yourClasses_noClass": "您目前还没有任何班级",
