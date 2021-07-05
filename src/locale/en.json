@@ -841,7 +841,7 @@
     "generic_tableFromOf": "{from}-{to} of {count}",
     "schoolRoster_searchPlaceholder": "Search for students by their names, address, email and phone number",
     "generic_typeToRemovePrompt": "Type {value} to confirm removing.",
-    "generic_totalResults": "{total, plural, one {Total {count} result} other {Total {total} results}}",
+    "generic_totalResults": "{total, plural, one {Total {total} result} other {Total {total} results}}",
     "nextClass_title": "Your next live class is",
     "nextClass_alreadyStarted": "Class already started",
     "nextClass_startsSoon": "Class starts soon",
