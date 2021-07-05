@@ -295,6 +295,11 @@ export default function (props: Props) {
                                 id: `grades_title`,
                             }),
                         },
+                        search: {
+                            placeholder: intl.formatMessage({
+                                id: `grades_searchPlaceholder`,
+                            }),
+                        },
                     })}
                     onPageChange={handlePageChange}
                     onChange={handleTableChange}

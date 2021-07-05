@@ -368,7 +368,7 @@
     "grades_exportTooltip": "Export",
     "grades_uploadTooltip": "Upload",
     "grades_addTooltip": "Add",
-    "grades_searchPlaceholder": "Search",
+    "grades_searchPlaceholder": "Search for grades by their ID or name",
     "grades_searchTooltip": "Search",
     "grades_exportCSVName": "Export as CSV",
     "grades_exportPDFName": "Export as PDF",
