@@ -5,8 +5,11 @@ const { pathsToModuleNameMapper } = require(`ts-jest/utils`);
 const { compilerOptions } = require(`./tsconfig`);
 
 const config: Config.InitialOptions = {
-    verbose: true,
+    verbose: false,
+    testEnvironment: `jsdom`,
+    testPathIgnorePatterns: [ `/node_modules/` ],
     setupFiles: [ `<rootDir>/tests/mocks.ts` ],
+    setupFilesAfterEnv: [ `<rootDir>/setupTests.ts` ],
     moduleFileExtensions: [
         ...defaults.moduleFileExtensions,
         `ts`,
@@ -15,7 +18,7 @@ const config: Config.InitialOptions = {
     moduleDirectories: [ `node_modules` ],
     moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
         prefix: `<rootDir>/`,
-    } ),
+    }),
 };
 
 export default config;

@@ -8,6 +8,7 @@ import { GET_PAGINATED_ORGANIZATION_USERS } from "@/operations/queries/getPagina
 import {
     Organization,
     OrganizationMembership,
+    SortOrder,
 } from "@/types/graphQL";
 import {
     MutationHookOptions,
@@ -107,6 +108,8 @@ interface GetOrganizationMembershipsRequest2 {
     count?: number;
     search?: string;
     organizationId: string;
+    order: SortOrder;
+    orderBy: string;
 }
 
 export interface UserEdge {

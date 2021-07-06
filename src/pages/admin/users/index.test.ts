@@ -1,8 +1,6 @@
-import {
-    mapUserRow,
-    UserRow,
-} from "./Table";
 import { UserEdge } from "@/api/organizationMemberships";
+import { UserItem } from "@/components/User/Table";
+import { mapUserRow } from "@/pages/admin/users";
 import { Status } from "@/types/graphQL";
 
 const studentRole = {
@@ -129,10 +127,10 @@ const userEdges: UserEdge[] = [
     userD,
 ];
 
-test(`should create an array of objects that conforms the User Table UserRow interface`, () => {
+test(`map server users to table users`, () => {
     const rows = userEdges.map(mapUserRow);
 
-    const final: UserRow[] = [
+    const final: UserItem[] = [
         {
             id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
             givenName: `Andres 09`,

@@ -1,6 +1,11 @@
+import { SortOrder } from "@/types/graphQL";
 import { TableLocalization } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { merge } from "lodash";
 import { IntlShape } from "react-intl";
+
+export const DEFAULT_ROWS_PER_PAGE = 10;
 
 export const getTableLocalization = (intl: IntlShape, localization: TableLocalization): TableLocalization => merge<TableLocalization, TableLocalization>({
     toolbar: {
@@ -89,3 +94,21 @@ export const getTableLocalization = (intl: IntlShape, localization: TableLocaliz
         }),
     },
 }, localization);
+
+export const serverToTableOrder = (order: SortOrder): Order => {
+    switch (order) {
+    case `ASC`: return `asc`;
+    case `DESC`: return `desc`;
+    }
+};
+
+export const tableToServerOrder = (order: Order): SortOrder => {
+    switch (order) {
+    case `asc`: return `ASC`;
+    case `desc`: return `DESC`;
+    }
+};
+
+export const pageChangeToDirection = (pageChange: PageChange) => {
+    return [ `first`, `next` ].includes(pageChange) ? `FORWARD` : `BACKWARD`;
+};

@@ -7,10 +7,16 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
             $cursor: String
             $search: String
             $organizationId: UUID!
+            $order: SortOrder!
+            $orderBy: UserSortBy!
         ) {
             usersConnection(
                 direction: $direction
                 directionArgs: { count: $count, cursor: $cursor }
+                sort: {
+                    field: [$orderBy],
+                    order: $order
+                }
                 filter: {
                     organizationId: { operator: eq, value: $organizationId }
                     OR: [

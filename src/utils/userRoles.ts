@@ -3,6 +3,7 @@ import { userIdVar } from "@/cache";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { orderedSystemRoleNames } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
+import { IntlShape } from "react-intl";
 
 export const roleNameTranslations: { [key: string]: string } = {
     'Super Admin': `users_superAdminRole`,
@@ -37,4 +38,12 @@ export const useIsSuperAdmin = () => {
     const currentOrganization = useCurrentOrganization();
     const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === currentOrganization?.organization_id);
     return!!selectedMembershipOrganization?.roles?.find((role) => role.role_name === `Super Admin`);
+};
+
+export const getCustomRoleName = (intl: IntlShape, roleName: string) => {
+    const translatedRoleName = roleNameTranslations[roleName];
+    if (!translatedRoleName) return roleName;
+    return intl.formatMessage({
+        id: translatedRoleName,
+    });
 };

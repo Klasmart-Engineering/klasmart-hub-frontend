@@ -9,3 +9,5 @@ export const buildEmptySchool = (school?: School): School => ({
     shortcode: school?.shortcode,
     status: school?.status,
 });
+
+export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);

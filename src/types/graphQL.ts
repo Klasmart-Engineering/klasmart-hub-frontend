@@ -20,6 +20,12 @@ export enum Status {
     INACTIVE = `inactive`,
 }
 
+export type Direction = `FORWARD` | `BACKWARD`;
+
+export const sortOrders = [ `ASC`, `DESC` ] as const;
+
+export type SortOrder = typeof sortOrders[number];
+
 export const isNonSpecified = (entity: BaseEntity) => {
     return entity?.name === NON_SPECIFIED && !!entity?.system;
 };
@@ -51,8 +57,6 @@ export const useHandleUpdateNonSpecified = (values: string[], setValues: Dispatc
         });
     }, [ values ]);
 };
-
-// onSelected?: (selectedIds: string[]) => void;
 
 export interface BaseEntity {
     id?: string;
