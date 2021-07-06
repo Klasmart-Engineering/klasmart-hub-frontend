@@ -1,4 +1,3 @@
-import ContentLayout from "../components/FeaturedContent/contentLayout";
 import { useRestAPI } from "@/api/restapi";
 import { useGetUser } from "@/api/users";
 import { userIdVar } from "@/cache";
