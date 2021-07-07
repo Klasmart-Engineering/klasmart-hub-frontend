@@ -22,6 +22,8 @@ const mocks: MockedResponse[] = [
                 organizationId: mockOrgId,
                 direction: `FORWARD`,
                 count: 10,
+                orderBy: `name`,
+                order: `ASC`,
                 filter: {
                     name: {
                         operator: `contains`,

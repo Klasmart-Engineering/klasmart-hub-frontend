@@ -4,6 +4,8 @@ import { GET_GRADES } from "@/operations/queries/getGrades";
 import { GET_PAGINATED_ORGANIZATION_GRADES } from "@/operations/queries/getOrganizationGrades";
 import {
     Grade,
+    Direction,
+    SortOrder,
     Status,
 } from "@/types/graphQL";
 import {
@@ -79,9 +81,11 @@ export interface GetOrganizationGradesResponsePaginated {
 
 export interface GetOrganizationGradesRequestPaginated {
     organizationId: string;
-    direction?: `FORWARD` | `BACKWARD`;
+    direction?: Direction;
     cursor?: string;
     count?: number;
+    order?: SortOrder;
+    orderBy?: string;
     filter?: GradeFilter;
 }
 

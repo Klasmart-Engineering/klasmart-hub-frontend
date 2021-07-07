@@ -6,11 +6,14 @@ query getOrganizationGrades(
     $direction: ConnectionDirection!
     $count: Int
     $cursor: String
+    $orderBy: [GradeSortBy!]!
+    $order: SortOrder!
     $filter: GradeFilter!
 ){
     gradesConnection(
         direction: $direction
         directionArgs: { count: $count, cursor: $cursor }
+        sort: { field: $orderBy, order: $order }
         filter: {
             status: {
                 operator: eq,

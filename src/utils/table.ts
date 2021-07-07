@@ -6,6 +6,13 @@ import { merge } from "lodash";
 import { IntlShape } from "react-intl";
 
 export const DEFAULT_ROWS_PER_PAGE = 10;
+export interface TableState {
+    search: string;
+    rowsPerPage: number;
+    order: SortOrder;
+    orderBy: string;
+    cursor?: string;
+}
 
 export const getTableLocalization = (intl: IntlShape, localization: TableLocalization): TableLocalization => merge<TableLocalization, TableLocalization>({
     toolbar: {

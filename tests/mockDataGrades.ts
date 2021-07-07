@@ -89,6 +89,16 @@ export const mockPaginatedGrades = {
         edges: [
             {
                 node: {
+                    id: grade2,
+                    name: `Grade 2`,
+                    status: `active`,
+                    system: false,
+                    toGrade: null,
+                    fromGrade: null,
+                },
+            },
+            {
+                node: {
                     id: grade3,
                     name: grade3Name,
                     status: `active`,
