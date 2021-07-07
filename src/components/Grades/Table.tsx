@@ -119,6 +119,7 @@ export default function (props: Props) {
             order: tableState.order,
             filter: queryFilter,
         },
+        notifyOnNetworkStatusChange: true,
     });
 
     useEffect(() => {
