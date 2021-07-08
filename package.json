@@ -51,7 +51,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-test-renderer": "^17.0.1",
     "@types/recharts": "^1.8.19",
-    "@types/recoil": "0.0.1",
+    "@types/recoil": "0.0.9",
     "@types/testing-library__jest-dom": "5.14.0",
     "@types/unused-webpack-plugin": "^2.4.1",
     "@types/uuid": "^8.3.0",
