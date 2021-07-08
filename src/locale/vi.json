@@ -988,5 +988,6 @@
     "addOrganization_removeImageLabel": "Xóa ảnh",
     "addOrganization_imagePickerImageTooLargeError": "Kích thước tệp tối đa là 2MB. Vui lòng tải lên một hình ảnh nhỏ hơn.",
     "addOrganization_imagePickerWrongFormatError": "Tệp hình ảnh này phải được định dạng JPG hoặc PNG",
-    "addOrganization_noFileFound": "Không tìm thấy tệp"
+    "addOrganization_noFileFound": "Không tìm thấy tệp",
+    "users_deleteTitle": "Delete User"
 }

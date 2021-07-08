@@ -988,5 +988,6 @@
     "addOrganization_removeImageLabel": "移除图片",
     "addOrganization_imagePickerImageTooLargeError": "最大文件大小为 2MB。请上传较小的图像",
     "addOrganization_imagePickerWrongFormatError": "图片仅支持JPG ，PNG格式",
-    "addOrganization_noFileFound": "没有数据"
+    "addOrganization_noFileFound": "没有数据",
+    "users_deleteTitle": "Delete User"
 }

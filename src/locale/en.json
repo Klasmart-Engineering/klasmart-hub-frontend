@@ -988,5 +988,6 @@
     "addOrganization_removeImageLabel": "Remove Image",
     "addOrganization_imagePickerImageTooLargeError": "The maximum file size is 2MB. Please upload a smaller image.",
     "addOrganization_imagePickerWrongFormatError": "This image file must be in JPG, JPEG, or PNG format.",
-    "addOrganization_noFileFound": "No file found"
+    "addOrganization_noFileFound": "No file found",
+    "users_deleteTitle": "Delete User"
 }

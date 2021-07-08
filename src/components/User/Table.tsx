@@ -138,7 +138,7 @@ export default function UserTable (props: Props) {
         if (!await prompt({
             variant: `error`,
             title: intl.formatMessage({
-                id: `users_deleteButton`,
+                id: `users_deleteTitle`,
             }),
             content: (
                 <>

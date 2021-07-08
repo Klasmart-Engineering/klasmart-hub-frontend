@@ -988,5 +988,6 @@
     "addOrganization_removeImageLabel": "Eliminar imagen",
     "addOrganization_imagePickerImageTooLargeError": "El tamaño máximo del archivo es de 2 MB. Suba una imagen más pequeña.",
     "addOrganization_imagePickerWrongFormatError": "Este archivo de imagen debe estar en formato JPG, JPEG o PNG.",
-    "addOrganization_noFileFound": "No se ha encontrado ningún archivo"
+    "addOrganization_noFileFound": "No se ha encontrado ningún archivo",
+    "users_deleteTitle": "Delete User"
 }
