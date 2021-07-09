@@ -17,7 +17,7 @@ const useStyles = makeStyles(() =>
         },
         showForm: {
             display: `block`,
-            width: `100%`
+            width: `100%`,
         },
     }));
 

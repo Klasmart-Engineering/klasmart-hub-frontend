@@ -8,7 +8,6 @@ import {
 import { userProfileVar } from "@/cache";
 import OrganizationForm,
 { OrganizationTabName } from "@/components/Organization/Form";
-import { useOrganizationStack } from "@/store/organizationMemberships";
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
@@ -70,7 +69,6 @@ export default function CreateOrganizationPage () {
     const [ createOrganization ] = useCreateOrganization();
     const [ addUserToOrg ] = useAddUserToOrganization();
     const [ setOrganizationBranding ] = useSetOrganizationBranding();
-    const [ , setOrganizationStack ] = useOrganizationStack();
     const { refetch: refetchOrganizationMembershipsPermissions } = useGetOrganizationMembershipsPermissions({
         nextFetchPolicy: `network-only`,
     });
@@ -106,13 +104,10 @@ export default function CreateOrganizationPage () {
                     ...organizationState,
                 },
             });
-
             const createdOrganization = createOrganizationResp.data?.user?.createOrganization;
-
             if (!createdOrganization) throw Error(`No organization created`);
-
-            const { organization_id, setBranding } = organizationState;
-
+            const { organization_id } = createdOrganization;
+            const { setBranding } = organizationState;
             await setOrganizationBranding({
                 variables: {
                     organizationId: organization_id,
@@ -120,24 +115,16 @@ export default function CreateOrganizationPage () {
                     primaryColor: setBranding?.primaryColor ?? undefined,
                 },
             });
-
-            const organizationId = createdOrganization?.organization_id ?? ``;
             const organizationMembershipResp = await addUserToOrg({
                 variables: {
                     user_id: userProfile.user_id,
-                    organization_id: organizationId,
+                    organization_id: organization_id,
                 },
             });
-
             const organizationMembership = organizationMembershipResp.data?.organization.addUser;
-
             if (!organizationMembership) throw Error(`No organization joined`);
-
             await Promise.all([ refetchOrganizationMemberships(), refetchOrganizationMembershipsPermissions() ]);
-            setOrganizationStack([ organizationMembership ]);
-
             history.goBack();
-
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_createSuccess`,
             }), {
@@ -150,7 +137,6 @@ export default function CreateOrganizationPage () {
                 variant: `error`,
             });
         }
-
     };
 
     return (
