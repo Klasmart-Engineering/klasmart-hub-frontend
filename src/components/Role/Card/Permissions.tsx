@@ -1,4 +1,4 @@
-import { Group } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { Group } from "@/components/Role/Dialog/CreateEdit";
 import { formatPermissionName } from "@/utils/validations";
 import {
     Accordion,

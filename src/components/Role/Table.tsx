@@ -4,13 +4,13 @@ import {
     useGetOrganizationRolesPermissions,
     useGetRolePermissions,
 } from "@/api/roles";
-import globalStyles from "@/globalStyles";
 import CreateAndEditRoleDialog, {
     NewRole,
     Role,
-} from "@/pages/admin/Role/CreateAndEditRoleDialog";
-import DeleteRoleDialog from "@/pages/admin/Role/DeleteRoleDialog";
-import ViewRoleDetailsDialog from "@/pages/admin/Role/ViewRoleDetailsDialog";
+} from "@/components/Role/Dialog/CreateEdit";
+import DeleteRoleDialog from "@/components/Role/Dialog/Delete";
+import ViewRoleDetailsDialog from "@/components/Role/Dialog/ViewDetails";
+import globalStyles from "@/globalStyles";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";

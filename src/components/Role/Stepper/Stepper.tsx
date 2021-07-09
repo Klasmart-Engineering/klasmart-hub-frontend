@@ -8,7 +8,7 @@ interface Props {
     steps: string[];
 }
 
-export default function RoleStepper({ activeStep, steps }: Props) {
+export default function RoleStepper ({ activeStep, steps }: Props) {
 
     return (
         <div>

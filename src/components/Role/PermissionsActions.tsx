@@ -1,4 +1,4 @@
-import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { Role } from "@/components/Role/Dialog/CreateEdit";
 import { Status } from "@/types/graphQL";
 import {
     IconButton,

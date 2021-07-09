@@ -1,18 +1,18 @@
 import { GetRolePermissionsResponse } from "@/api/roles";
 import KidsloopLogo from "@/assets/img/kidsloop_icon.svg";
-import RoleAndNameDescriptionCard from "@/components/Roles/RoleAndNameDescriptionCard";
-import RoleReviewCard from "@/components/Roles/RoleReviewCard";
+import RoleAndNameDescriptionCard from "@/components/Role/Card/ConfirmRoleInfo";
+import RoleReviewCard from "@/components/Role/Card/RoleReview";
 import {
     PermissionsCategory,
     Role,
     RoleInfo,
-} from "@/pages/admin/Role/CreateAndEditRoleDialog";
+} from "@/components/Role/Dialog/CreateEdit";
+import { RoleRow } from "@/components/Role/Table";
 import {
     permissionsCategoriesHandler,
     sectionHandler,
     uniquePermissions,
-} from "@/pages/admin/Role/permissionsHandler";
-import { RoleRow } from "@/pages/admin/Role/RoleTable";
+} from "@/utils/permissions";
 import {
     createStyles,
     LinearProgress,

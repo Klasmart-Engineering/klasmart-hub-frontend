@@ -3,9 +3,9 @@ import {
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
 import { useDeleteRole } from "@/api/roles";
-import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
-import { Role } from "@/pages/admin/Role/CreateAndEditRoleDialog";
-import { RoleRow } from "@/pages/admin/Role/RoleTable";
+import { Role } from "@/components/Role/Dialog/CreateEdit";
+import RolePermissionsActionsCard from "@/components/Role/PermissionsActions";
+import { RoleRow } from "@/components/Role/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";

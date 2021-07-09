@@ -1,4 +1,4 @@
-import { RoleInfo } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { RoleInfo } from "@/components/Role/Dialog/CreateEdit";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {
@@ -29,14 +29,13 @@ const useStyles = makeStyles(() =>
             color: `#808080`,
             fontSize: `14px`,
         },
-    }),
-);
+    }));
 
 interface Props {
     roleInfo: RoleInfo;
 }
 
-export default function RoleAndNameDescriptionCard(props: Props) {
+export default function RoleAndNameDescriptionCard (props: Props) {
     const { roleInfo } = props;
     const classes = useStyles();
 

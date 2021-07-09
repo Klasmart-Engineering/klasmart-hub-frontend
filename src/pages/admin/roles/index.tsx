@@ -1,4 +1,4 @@
-import SchoolTable from "@/components/School/Table";
+import RolesTable from "@/components/Role/Table";
 import {
     createStyles,
     makeStyles,
@@ -8,14 +8,13 @@ import React from "react";
 const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
-
 }
 
-export default function SchoolsPage (props: Props) {
+export default function RolesPage (props: Props) {
     const classes = useStyles();
 
     return (
-        <SchoolTable />
+        <RolesTable />
     );
 
 }

@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => createStyles({}));
 interface Props {
 }
 
-export default function (props: Props) {
+export default function ClassesPage (props: Props) {
     const classes = useStyles();
     return (
         <AgeRangesTable />

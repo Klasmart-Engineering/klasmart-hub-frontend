@@ -1,8 +1,8 @@
 import {
     Role,
     RoleInfo,
-} from "@/pages/admin/Role/CreateAndEditRoleDialog";
-import { RoleRow } from "@/pages/admin/Role/RoleTable";
+} from "@/components/Role/Dialog/CreateEdit";
+import { RoleRow } from "@/components/Role/Table";
 import { Status } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {

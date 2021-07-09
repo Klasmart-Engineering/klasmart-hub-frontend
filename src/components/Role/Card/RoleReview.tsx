@@ -1,4 +1,4 @@
-import { Group } from "@/pages/admin/Role/CreateAndEditRoleDialog";
+import { Group } from "@/components/Role/Dialog/CreateEdit";
 import { formatPermissionName } from "@/utils/validations";
 import {
     Accordion,
@@ -14,7 +14,8 @@ import {
 } from "@material-ui/core/styles";
 import { ArrowDropDown } from "@material-ui/icons";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import React, { useEffect } from "react";
+import React,
+{ useEffect } from "react";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -58,15 +59,14 @@ const useStyles = makeStyles((theme) =>
             color: `#FF6B00`,
             margin: `3px`,
         },
-    }),
-);
+    }));
 
 interface Props {
     category: string;
     groups: Group[];
 }
 
-export default function RoleReviewCard(props: Props) {
+export default function RoleReviewCard (props: Props) {
     const classes = useStyles();
     const { category, groups } = props;
     const [ cardPermissions, setCardPermissions ] = React.useState<Group[]>(groups);

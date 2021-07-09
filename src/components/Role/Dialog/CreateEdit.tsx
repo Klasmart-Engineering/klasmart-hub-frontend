@@ -1,17 +1,17 @@
 import { GetRolePermissionsResponse } from "@/api/roles";
-import PermissionsCard from "@/components/Roles/PermissionsCard";
-import RoleAndNameDescriptionCard from "@/components/Roles/RoleAndNameDescriptionCard";
-import RoleInfoCard from "@/components/Roles/RoleInfoCard";
-import RolePermissionsActionsCard from "@/components/Roles/RolePermissionsActionsCard";
-import RoleReviewCard from "@/components/Roles/RoleReviewCard";
-import RoleStepper from "@/components/Roles/RoleStepper";
+import RoleAndNameDescriptionCard from "@/components/Role/Card/ConfirmRoleInfo";
+import PermissionsCard from "@/components/Role/Card/Permissions";
+import RoleInfoCard from "@/components/Role/Card/RoleInfo";
+import RoleReviewCard from "@/components/Role/Card/RoleReview";
+import RolePermissionsActionsCard from "@/components/Role/PermissionsActions";
+import RoleStepper from "@/components/Role/Stepper/Stepper";
+import { RoleRow } from "@/components/Role/Table";
 import DialogAppBar from "@/components/styled/dialogAppBar";
 import {
     permissionsCategoriesHandler,
     sectionHandler,
     uniquePermissions,
-} from "@/pages/admin/Role/permissionsHandler";
-import { RoleRow } from "@/pages/admin/Role/RoleTable";
+} from "@/utils/permissions";
 import {
     createStyles,
     LinearProgress,
@@ -166,6 +166,8 @@ export default function CreateAndEditRoleDialog (props: Props) {
     const [ editedRolePermissions, setEditedRolePermissions ] = useState<string[]>([]);
     const [ checkedPermissions, setCheckedPermissions ] = useState<string[]>([]);
     const [ copiedRolePermissions, setCopiedRolePermissions ] = useState<string[]>([]);
+
+    const isEditing = !!row.id;
 
     useEffect(() => {
         if (open && roles.length) {
@@ -362,13 +364,15 @@ export default function CreateAndEditRoleDialog (props: Props) {
                                 disabled: false,
                                 onClick: handleClear,
                             },
-                            {
-                                text: intl.formatMessage({
-                                    id: `rolesInfoCard_resetLabel`,
-                                }),
-                                disabled: resetToDefaultIsDisabled,
-                                onClick: handleResetToDefault,
-                            },
+                            ...isEditing ? [
+                                {
+                                    text: intl.formatMessage({
+                                        id: `rolesInfoCard_resetLabel`,
+                                    }),
+                                    disabled: resetToDefaultIsDisabled,
+                                    onClick: handleResetToDefault,
+                                },
+                            ] : [],
                         ]}
                         textFieldLabel={intl.formatMessage({
                             id: `rolesInfoCard_copyLabel`,
@@ -405,7 +409,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
                                                 padding: `10px`,
                                             }}
                                         >
-                                            {row.id ? `Editing role` : <FormattedMessage id="rolesInfoCard_createNewRoleLabel" />}
+                                            {isEditing ? `Editing role` : <FormattedMessage id="rolesInfoCard_createNewRoleLabel" />}
                                         </div>
                                     </Typography>
                                 </div>
@@ -471,7 +475,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
                 handleReset={handleReset}
                 roleInfoStepIsValid={roleInfoIsValid}
                 permissionsStepIsValid={permissionsStepIsValid}
-                createOrEditTitle={row.id ? intl.formatMessage({
+                createOrEditTitle={isEditing ? intl.formatMessage({
                     id: `rolesInfoCard_editTitle`,
                 }) : intl.formatMessage({
                     id: `rolesInfoCard_createTitle`,

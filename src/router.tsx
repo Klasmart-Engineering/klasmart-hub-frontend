@@ -6,7 +6,7 @@ import OrganizationsPage from "@/pages/admin/organizations";
 import EditOrganizationPage from "@/pages/admin/organizations/[id]/edit";
 import CreateOrganizationPage from "@/pages/admin/organizations/create";
 import ProgramsPage from "@/pages/admin/programs";
-import RoleTable from "@/pages/admin/Role/RoleTable";
+import RolesPage from "@/pages/admin/roles";
 import SchoolsPage from "@/pages/admin/schools";
 import SubjectsPage from "@/pages/admin/subjects";
 import UsersPage from "@/pages/admin/users";
@@ -95,7 +95,7 @@ export default function Router (props: Props)  {
             </Route>
             <Route path="/admin/roles">
                 <Layout>
-                    <RoleTable />
+                    <RolesPage />
                 </Layout>
             </Route>
             <Route path="/admin/schools">
