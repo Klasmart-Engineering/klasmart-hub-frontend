@@ -5,7 +5,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
         $direction: ConnectionDirection!
             $count: Int
             $cursor: String
-            $search: String
+            $search: String!
             $organizationId: UUID!
             $order: SortOrder!
             $orderBy: UserSortBy!
