@@ -989,5 +989,5 @@
     "addOrganization_imagePickerImageTooLargeError": "Maksimum ukuran gambar adalah 2MB. Silakan unggah gambar yang lebih kecil.",
     "addOrganization_imagePickerWrongFormatError": "Gambar ini harus memiliki format JPG atau PNG",
     "addOrganization_noFileFound": "Berkas tidak ditemukan",
-    "users_deleteTitle": "Delete User"
+    "users_deleteTitle": "Hapus Pengguna"
 }

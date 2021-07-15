@@ -963,11 +963,11 @@
     "assessmentTable_status": "Trạng thái",
     "assessmentTable_teachers": "Giáo viên",
     "editOrganization_labelNameOfOrganization": "Tên Tổ Chức",
-    "editOrganization_placeholderNameOfOrganization": "Tên Chính Thức Của Tổ Chức",
-    "editOrganization_labelAddress": "Địa Chỉ",
+    "editOrganization_placeholderNameOfOrganization": "Tổ chức của tôi",
+    "editOrganization_labelAddress": "Địa chỉ của tổ chức",
     "editOrganization_placeholderAddress": "Địa Chỉ Của Tổ Chức",
     "editOrganization_labelPhoneNumber": "Số Điện Thoại",
-    "editOrganization_labelEmailAddress": "Địa Chỉ Email",
+    "editOrganization_labelEmailAddress": "Địa Chỉ Email của tổ chức",
     "editOrganization_placeholderEmail": "Email Của Tổ Chức",
     "editOrganization_labelOrganizationShortCode": "Mã Tổ Chức",
     "editOrganization_placeholderOrganizationShortCode": "Mã Tổ Chức",
@@ -989,5 +989,5 @@
     "addOrganization_imagePickerImageTooLargeError": "Kích thước tệp tối đa là 2MB. Vui lòng tải lên một hình ảnh nhỏ hơn.",
     "addOrganization_imagePickerWrongFormatError": "Tệp hình ảnh này phải được định dạng JPG hoặc PNG",
     "addOrganization_noFileFound": "Không tìm thấy tệp",
-    "users_deleteTitle": "Delete User"
+    "users_deleteTitle": "Xóa Người dùng"
 }
