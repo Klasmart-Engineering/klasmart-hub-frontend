@@ -818,7 +818,7 @@
     "schools_editSuccess": "학교가 성공적으로 저장되었습니다",
     "schools_editSchoolLabel": "학교 편집",
     "subjects_createSubjectLabel": "과목 생성하기",
-    "subjects_createLabel": "생서하기",
+    "subjects_createLabel": "생성하기",
     "subjects_deleteSubjectLabel": "과목 삭제하기",
     "subjects_editSubjectLabel": "과목 편집하기",
     "subjects_deleteCategoryLabel": "카테고리 삭제하기",
