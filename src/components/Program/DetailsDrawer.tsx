@@ -1,8 +1,10 @@
+import { useGetProgram } from "@/api/programs";
 import {
     isActive,
     Program,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import { buildEmptyProgram } from "@/utils/programs";
 import {
     Box,
     Chip,
@@ -10,7 +12,11 @@ import {
     makeStyles,
 } from "@material-ui/core";
 import { Drawer } from "kidsloop-px";
-import React from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -29,31 +35,47 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    value?: Program;
+    programId?: string;
     open: boolean;
     onClose: () => void;
 }
 
 export default function ViewProgramDetailsDrawer (props: Props) {
     const {
-        value,
+        programId,
         open,
         onClose,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
+    const { data: programData } = useGetProgram({
+        variables: {
+            id: programId ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !programId,
+    });
+    const [ program, setProgram ] = useState<Program>(buildEmptyProgram());
+
+    useEffect(() => {
+        if (!open) {
+            setProgram(buildEmptyProgram());
+            return;
+        }
+        setProgram(programData?.program ?? buildEmptyProgram());
+    }, [ open, programData ]);
 
     return (
         <Drawer
             open={open}
-            title={value?.name ?? ``}
+            title={program.name ?? ``}
             sections={[
                 {
                     header: intl.formatMessage({
                         id: `programs_ageRanges`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.age_ranges?.filter(isActive).map((ageRange) => (
+                        <Box px={1.5}>{program?.age_ranges?.filter(isActive).map((ageRange) => (
                             <Chip
                                 key={ageRange.id}
                                 className={classes.chip}
@@ -67,7 +89,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                         id: `programs_grades`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.grades?.filter(isActive).map((grade) => (
+                        <Box px={1.5}>{program?.grades?.filter(isActive).map((grade) => (
                             <Chip
                                 key={grade.id}
                                 className={classes.chip}
@@ -81,7 +103,7 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                         id: `programs_subjectsList`,
                     }),
                     content: (
-                        <Box px={1.5}>{value?.subjects?.filter(isActive).map((subject) => (
+                        <Box px={1.5}>{program?.subjects?.filter(isActive).map((subject) => (
                             <Chip
                                 key={subject.id}
                                 className={classes.chip}

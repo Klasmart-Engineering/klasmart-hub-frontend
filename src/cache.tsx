@@ -71,6 +71,7 @@ export const cache: InMemoryCache = new InMemoryCache({
                 },
                 gradesConnection: relayStylePagination(),
                 usersConnection: relayStylePagination(),
+                programsConnection: relayStylePagination(),
             },
         },
         Mutation: {

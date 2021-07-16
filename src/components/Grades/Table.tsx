@@ -89,7 +89,7 @@ export default function (props: Props) {
         orderBy: `name`,
     });
     const queryFilter: GradeFilter = {
-        ...isUUID(tableState.search)
+        ...isUUID(tableState.search ?? ``)
             ? {
                 id: {
                     operator: `eq`,

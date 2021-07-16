@@ -4,7 +4,21 @@ import { EDIT_PROGRAM_AGE_RANGES } from "@/operations/mutations/editProgramAgeRa
 import { EDIT_PROGRAM_GRADES } from "@/operations/mutations/editProgramGrades";
 import { EDIT_PROGRAM_SUBJECTS } from "@/operations/mutations/editProgramSubjects";
 import { GET_ALL_PROGRAMS } from "@/operations/queries/getAllPrograms";
-import { Program } from "@/types/graphQL";
+import { GET_PAGINATED_ORGANIZATION_PROGRAMS } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import { GET_PROGRAM } from "@/operations/queries/getProgram";
+import {
+    BaseEntity,
+    BooleanFilter,
+    Grade,
+    PageInfo,
+    PaginationDirection,
+    Program,
+    Status,
+    StatusFilter,
+    StringFilter,
+    Subject,
+    UuidFilter,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -83,6 +97,47 @@ export const useEditProgramSubjects = (options?: MutationHookOptions<EditProgram
     return useMutation<EditProgramSubjectsResponse, EditProgramSubjectsRequest>(EDIT_PROGRAM_SUBJECTS, options);
 };
 
+export interface AgeRangeEdge extends BaseEntity {
+    highValue?: number | null;
+    highValueUnit?: string | null;
+    lowValue?: number | null;
+    lowValueUnit?: string | null;
+}
+
+export interface ProgramEdge {
+    node: {
+        id?: string;
+        name?: string | null;
+        status?: Status | null;
+        system?: boolean | null;
+        ageRanges?: AgeRangeEdge[];
+        subjects?: Subject[] | null;
+        grades?: Grade[] | null;
+    };
+}
+
+export interface ProgramFilter {
+    name?: StringFilter;
+    id?: UuidFilter;
+    status?: StatusFilter;
+    organizationId?: UuidFilter;
+    system?: BooleanFilter;
+    OR?: ProgramFilter[];
+    AND?: ProgramFilter[];
+}
+
+interface GetProgramRequest {
+    id: string;
+}
+
+interface GetProgramResponse {
+    program: Program;
+}
+
+export const useGetProgram = (options?: QueryHookOptions<GetProgramResponse, GetProgramRequest>) => {
+    return useQuery<GetProgramResponse, GetProgramRequest>(GET_PROGRAM, options);
+};
+
 interface GetAllProgramsRequest {
     organization_id: string;
 }
@@ -93,4 +148,26 @@ interface GetAllProgramsResponse {
 
 export const useGetAllPrograms = (options?: QueryHookOptions<GetAllProgramsResponse, GetAllProgramsRequest>) => {
     return useQuery<GetAllProgramsResponse, GetAllProgramsRequest>(GET_ALL_PROGRAMS, options);
+};
+
+interface GetAllProgramsPaginatedRequest {
+    direction: PaginationDirection;
+    cursor?: string | null;
+    count?: number;
+    search?: string;
+    orderBy?: string;
+    order?: string;
+    filter?: ProgramFilter;
+}
+
+export interface GetAllProgramsPaginatedResponse {
+    programsConnection: {
+        totalCount: number;
+        pageInfo: PageInfo;
+        edges: ProgramEdge[];
+    };
+}
+
+export const useGetAllPaginatedPrograms = (options?: QueryHookOptions<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>) => {
+    return useQuery<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>(GET_PAGINATED_ORGANIZATION_PROGRAMS, options);
 };

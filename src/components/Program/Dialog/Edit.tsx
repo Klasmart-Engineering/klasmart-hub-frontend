@@ -1,7 +1,10 @@
 import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary";
-import { useCreateOrUpdatePrograms } from "@/api/programs";
+import {
+    useCreateOrUpdatePrograms,
+    useGetProgram,
+} from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
@@ -37,14 +40,14 @@ const useStyles = makeStyles((theme) => createStyles({
 const INITIAL_STEP_INDEX = 2;
 
 interface Props {
-    value?: Program;
+    programId?: string;
     open: boolean;
     onClose: (program?: Program) => void;
 }
 
 export default function CreateProgramDialog (props: Props) {
     const {
-        value,
+        programId,
         open,
         onClose,
     } = props;
@@ -57,22 +60,32 @@ export default function CreateProgramDialog (props: Props) {
         max,
     } = useValidations();
     const currentOrganization = useCurrentOrganization();
+    const { data: programData } = useGetProgram({
+        variables: {
+            id: programId ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !programId,
+    });
     const [ createOrUpdatePrograms ] = useCreateOrUpdatePrograms();
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
-    const [ value_, setValue ] = useState<Program>(value ?? buildEmptyProgram());
+    const [ updatedProgram, setUpdatedProgram ] = useState<Program>(buildEmptyProgram());
 
     const handleValue = (value: Program) => {
-        if (isEqual(value, value_)) return;
-        setValue(value);
+        if (isEqual(value, updatedProgram)) return;
+        setUpdatedProgram(value);
     };
 
     useEffect(() => {
-        if (!open) return;
+        if (!open) {
+            setUpdatedProgram(buildEmptyProgram());
+            return;
+        }
         setStepIndex(INITIAL_STEP_INDEX);
-        setValue(value ?? buildEmptyProgram());
-    }, [ open, value ]);
+        setUpdatedProgram(programData?.program ?? buildEmptyProgram());
+    }, [ open, programData ]);
 
     useEffect(() => {
         if (!steps_.length) return;
@@ -86,15 +99,15 @@ export default function CreateProgramDialog (props: Props) {
                     id: `programs_projectInfoLabel`,
                 }),
                 content: <ProgramInfoStep
-                    value={value_}
+                    value={updatedProgram}
                     onChange={handleValue}
                 />,
                 error: [
-                    required()(value_?.name),
-                    letternumeric()(value_?.name),
-                    max(35)(value_?.name),
-                    required()(value_?.grades),
-                    required()(value_?.age_ranges),
+                    required()(updatedProgram?.name),
+                    letternumeric()(updatedProgram?.name),
+                    max(35)(updatedProgram?.name),
+                    required()(updatedProgram?.grades),
+                    required()(updatedProgram?.age_ranges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -102,23 +115,23 @@ export default function CreateProgramDialog (props: Props) {
                     id: `programs_subjects`,
                 }),
                 content: <SubjectsStep
-                    value={value_}
+                    value={updatedProgram}
                     onChange={handleValue}
                 />,
-                error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(updatedProgram?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
                     id: `programs_summaryLabel`,
                 }),
                 content: <SummaryStep
-                    value={value_}
+                    value={updatedProgram}
                     onChange={handleValue}
                 />,
             },
         ];
         setSteps(steps);
-    }, [ value_ ]);
+    }, [ updatedProgram ]);
 
     const updateProgram = async () => {
         const {
@@ -127,7 +140,7 @@ export default function CreateProgramDialog (props: Props) {
             age_ranges,
             grades,
             subjects,
-        } = value_;
+        } = updatedProgram;
         try {
             await createOrUpdatePrograms({
                 variables: {
@@ -143,7 +156,7 @@ export default function CreateProgramDialog (props: Props) {
                     ],
                 },
             });
-            onClose(value_);
+            onClose(updatedProgram);
             enqueueSnackbar(intl.formatMessage({
                 id: `programs_programSaveMessage`,
             }), {

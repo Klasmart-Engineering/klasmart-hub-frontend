@@ -26,6 +26,15 @@ export const sortOrders = [ `ASC`, `DESC` ] as const;
 
 export type SortOrder = typeof sortOrders[number];
 
+export type PaginationDirection = `FORWARD` | `BACKWARD`
+
+export interface PageInfo {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string;
+    endCursor: string;
+}
+
 export const isNonSpecified = (entity: BaseEntity) => {
     return entity?.name === NON_SPECIFIED && !!entity?.system;
 };
@@ -197,6 +206,10 @@ export interface School {
     memberships?: SchoolMembership[] | null;
 }
 
+export interface SchoolState extends School {
+    programIds: string[];
+}
+
 export interface SchoolMembership {
     user_id: string;
     school_id: string;
@@ -251,4 +264,43 @@ export type Subcategory = BaseEntity
 export interface Branding {
     iconImageURL: string | null;
     primaryColor: string | null;
+}
+
+export type UuidOperator = `eq` | `neq`;
+
+export type StringOperator = `eq` | `neq` | `contains`;
+
+export type BooleanOperator = `eq`;
+
+export type NumberOperator = `eq` | `neq` | `gt` | `gte` | `lt` | `lte`;
+
+export interface UuidFilter {
+    operator: UuidOperator;
+    value: string;
+}
+
+export interface StringFilter {
+    operator: StringOperator;
+    value: string;
+    caseInsensitive?: boolean;
+}
+
+export interface BooleanFilter {
+    operator: BooleanOperator;
+    value: boolean;
+}
+
+export interface StatusFilter {
+    operator: BooleanOperator;
+    value: Status;
+}
+
+export interface DateFilter {
+    operator: NumberOperator;
+    value: string;
+}
+
+export interface NumberFilter {
+    operator: NumberOperator;
+    value: number;
 }

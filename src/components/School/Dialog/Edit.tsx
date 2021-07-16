@@ -1,12 +1,17 @@
 import ClassesStep from "./Steps/Classes";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
-import SummaryStep from "./Steps/Summary";
+import SummaryStep from "./Steps/Summary/Base";
 import {
     useEditSchoolPrograms,
     useUpdateSchool,
 } from "@/api/schools";
-import { School } from "@/types/graphQL";
+import {
+    School,
+    SchoolState,
+    Status,
+} from "@/types/graphQL";
+import { mapSelectedProgramIds } from "@/utils/programs";
 import { buildEmptySchool } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
@@ -62,19 +67,43 @@ export default function EditSchoolDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [ updateSchool ] = useUpdateSchool();
     const [ editSchoolPrograms ] = useEditSchoolPrograms();
-    const [ editedSchool, setEditedSchool ] = useState(value ?? buildEmptySchool());
+    const [ editedSchool, setEditedSchool ] = useState<SchoolState>({
+        ...value ? value : buildEmptySchool(),
+        programIds: mapSelectedProgramIds(value?.programs ?? []),
+    });
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
 
     const handleChange = (value: School) => {
-        if (isEqual(value, editedSchool)) return;
-        setEditedSchool(value);
+        if (isEqual({
+            ...value,
+            programIds: editedSchool.programIds,
+        }, editedSchool)) return;
+        setEditedSchool({
+            ...editedSchool,
+            ...value,
+        });
+    };
+
+    const setSelectedProgramIds = (programIds: string[], school?: School) => {
+        const schoolValue = school ? school : editedSchool;
+        if (isEqual({
+            ...schoolValue,
+            programIds,
+        }, editedSchool)) return;
+
+        setEditedSchool({
+            ...schoolValue,
+            programIds,
+        });
     };
 
     useEffect(() => {
         if (!open) return;
-        setEditedSchool(value ?? buildEmptySchool());
+        setSelectedProgramIds(value?.programs?.filter((program) => program.status === Status.ACTIVE && program.id)
+            .map((program) => program.id)
+            .filter((id): id is string => !!id) ?? [], value ? value : buildEmptySchool());
         setStepIndex(INITIAL_STEP_INDEX);
     }, [ open ]);
 
@@ -106,10 +135,10 @@ export default function EditSchoolDialog (props: Props) {
                     id: `schools_programsLabel`,
                 }),
                 content: <ProgramsStep
-                    value={editedSchool}
-                    onChange={handleChange}
+                    programIds={editedSchool.programIds}
+                    onProgramIdsChange={setSelectedProgramIds}
                 />,
-                error: [ required()(editedSchool?.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(editedSchool?.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             // {
             //     label: `Classes`,
@@ -125,10 +154,12 @@ export default function EditSchoolDialog (props: Props) {
                 }),
                 content: <SummaryStep
                     value={editedSchool}
+                    programIds={editedSchool.programIds}
                     onChange={handleChange}
                 />,
             },
         ];
+
         setSteps(steps);
     }, [ editedSchool ]);
 
@@ -137,7 +168,6 @@ export default function EditSchoolDialog (props: Props) {
         const {
             school_id,
             school_name,
-            programs,
             shortcode,
         } = editedSchool;
         try {
@@ -151,7 +181,7 @@ export default function EditSchoolDialog (props: Props) {
             await editSchoolPrograms({
                 variables: {
                     school_id,
-                    program_ids: programs?.map((program) => program.id).filter((id): id is string => !!id) ?? [],
+                    program_ids: editedSchool.programIds,
                 },
             });
             onClose(editedSchool);

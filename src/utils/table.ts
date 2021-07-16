@@ -7,7 +7,7 @@ import { IntlShape } from "react-intl";
 
 export const DEFAULT_ROWS_PER_PAGE = 10;
 export interface TableState {
-    search: string;
+    search?: string;
     rowsPerPage: number;
     order: SortOrder;
     orderBy: string;

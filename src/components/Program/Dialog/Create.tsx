@@ -138,6 +138,7 @@ export default function CreateProgramDialog (props: Props) {
                     ],
                 },
             });
+            setValue(buildEmptyProgram());
             onClose(value_);
             enqueueSnackbar(intl.formatMessage({
                 id: `programs_programCreateMessage`,

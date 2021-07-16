@@ -1,7 +1,7 @@
 // import ClassesStep from "./Classes";
-import ProgramsStep from "./Programs";
-import SchoolInfoStep from "./SchoolInfo";
-import { TabContent } from "./shared";
+import SchoolInfoStep from "../SchoolInfo";
+import { TabContent } from "../shared";
+import SelectedProgramsSummary from "./SelectedPrograms";
 import {
     createStyles,
     makeStyles,
@@ -20,14 +20,10 @@ export default function SummaryStep (props: TabContent) {
                 disabled
                 value={value}
             />
-            <ProgramsStep
+            <SelectedProgramsSummary
                 disabled
-                value={value}
+                programIds={value?.programIds}
             />
-            {/* <ClassesStep
-                disabled
-                value={value}
-            /> */}
         </>
     );
 }

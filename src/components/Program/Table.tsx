@@ -1,13 +1,9 @@
 import ViewProgramDetailsDrawer from "./DetailsDrawer";
-import {
-    useDeleteProgram,
-    useGetAllPrograms,
-} from "@/api/programs";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
+    PageInfo,
     Program,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
@@ -28,11 +24,15 @@ import {
     ViewList as ViewListIcon,
 } from "@material-ui/icons";
 import {
-    PageTable,
+    CursorTable,
     usePrompt,
-    useSnackbar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React, {
     useEffect,
     useState,
@@ -59,7 +59,7 @@ export const organizationProgram = (program: Program, i: number) => {
     };
 };
 
-interface ProgramRow {
+export interface ProgramRow {
     id: string;
     name: string;
     grades: string[];
@@ -72,7 +72,20 @@ interface Props {
     disabled?: boolean;
     selectedIds?: string[];
     programs?: Program[] | null;
+    loading?: boolean;
+    pageInfo?: PageInfo;
+    total?: number;
+    cursor?: string;
+    rowsPerPage?: number;
+    search?: string;
+    order?: Order;
+    orderBy?: string;
+    showSelectables?: boolean;
+    refetch?: () => void;
     onSelected?: (ids: string[]) => void;
+    onPageChange?: (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => Promise<void>;
+    onTableChange?: (tableData: CursorTableData<ProgramRow>) => Promise<void>;
+    onDeleteRow?: (id: string) => Promise<void>;
 }
 
 export default function ProgramTable (props: Props) {
@@ -81,17 +94,28 @@ export default function ProgramTable (props: Props) {
         programs,
         selectedIds,
         onSelected,
+        loading,
+        pageInfo,
+        total,
+        cursor,
+        onPageChange,
+        rowsPerPage,
+        onTableChange,
+        search,
+        refetch,
+        onDeleteRow,
+        showSelectables,
+        order,
+        orderBy,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
     const prompt = usePrompt();
-    const { enqueueSnackbar } = useSnackbar();
-    const currentOrganization = useCurrentOrganization();
     const [ rows, setRows ] = useState<ProgramRow[]>([]);
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedProgram, setSelectedProgram ] = useState<Program>();
+    const [ selectedProgramId, setSelectedProgramId ] = useState<string>();
     const [ tableSelectedIds, setTableSelectedIds ] = useState<string[]>(selectedIds || []);
     const [ nonSpecifiedId, setNonSpecifiedId ] = useState<string>();
     const canCreate = usePermission(`create_program_20221`);
@@ -99,14 +123,7 @@ export default function ProgramTable (props: Props) {
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
     const { required, equals } = useValidations();
-    const { data, refetch } = useGetAllPrograms({
-        variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-        },
-    });
-    const [ deleteProgram ] = useDeleteProgram();
-
-    const allPrograms = (programs ?? data?.organization.programs ?? []).filter(isActive);
+    const allPrograms = (programs ?? []).filter(isActive);
 
     useEffect(() => {
         if (!canView) {
@@ -116,11 +133,7 @@ export default function ProgramTable (props: Props) {
         const rows = allPrograms.map(organizationProgram) ?? [];
         setNonSpecifiedId(allPrograms.find(program => program.name === `None Specified` && program.system)?.id ?? ``);
         setRows(rows);
-    }, [
-        data,
-        canView,
-        programs,
-    ]);
+    }, [ canView, programs ]);
 
     const selectIds = (ids: string[]) => {
         if (!ids.length) {
@@ -181,6 +194,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_grades`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
                     <Chip
@@ -197,6 +211,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_ageRanges`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.ageRanges.map((ageRange, i) => (
                     <Chip
@@ -213,6 +228,7 @@ export default function ProgramTable (props: Props) {
                 id: `programs_subjects`,
             }),
             disableSearch: disabled,
+            disableSort: true,
             render: (row) => <>
                 {row.subjects.map((subject, i) => (
                     <Chip
@@ -225,28 +241,17 @@ export default function ProgramTable (props: Props) {
         },
     ];
 
-    const findProgram = (row: ProgramRow) => allPrograms.find((program) => program.id === row.id);
-
     const handleViewDetailsRowClick = (row: ProgramRow) => {
-        const selectedProgram = findProgram(row);
-        if (!selectedProgram) return;
-        setSelectedProgram(selectedProgram);
+        setSelectedProgramId(row.id);
         setOpenViewDetailsDrawer(true);
     };
 
     const handleEditRowClick = async (row: ProgramRow) => {
-        const selectedProgram = findProgram(row);
-        if (!selectedProgram) return;
-        setSelectedProgram(selectedProgram);
+        setSelectedProgramId(row.id);
         setOpenEditDialog(true);
     };
 
     const handleDeleteRowClick = async (row: ProgramRow) => {
-        const selectedProgram = findProgram(row);
-        if (!selectedProgram) return;
-        setSelectedProgram(selectedProgram);
-        const { id, name } = selectedProgram;
-        if (!id) throw Error(`invalid-program-id`);
         if (!await prompt({
             variant: `error`,
             title: intl.formatMessage({
@@ -260,114 +265,118 @@ export default function ProgramTable (props: Props) {
                     {intl.formatMessage({
                         id: `editDialog_deleteConfirm`,
                     }, {
-                        userName: name,
+                        userName: row.name,
                     })}
                 </DialogContentText>
                 <DialogContentText>{intl.formatMessage({
                     id: `generic_typeToRemovePrompt`,
                 }, {
-                    value: <strong>{name}</strong>,
+                    value: <strong>{row.name}</strong>,
                 })}</DialogContentText>
             </>,
-            validations: [ required(), equals(name) ],
+            validations: [ required(), equals(row.name) ],
         })) return;
-        await deleteProgram({
-            variables: {
-                id,
-            },
-        });
-        await refetch();
-        try {
-            enqueueSnackbar(intl.formatMessage({
-                id: `programs_deleteSuccess`,
-            }), {
-                variant: `success`,
-            });
-        } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `generic_createError`,
-            }), {
-                variant: `error`,
-            });
-        }
+        await onDeleteRow?.(row.id);
     };
+
+    const rowActions = (row: ProgramRow) => ([
+        {
+            label: intl.formatMessage({
+                id: `programs_viewDetailsLabel`,
+            }),
+            icon: ViewListIcon,
+            disabled: !canView,
+            onClick: handleViewDetailsRowClick,
+        },
+        {
+            label: intl.formatMessage({
+                id: `programs_editLabel`,
+            }),
+            icon: EditIcon,
+            disabled: !canEdit || row.system,
+            onClick: handleEditRowClick,
+        },
+        {
+            label: intl.formatMessage({
+                id: `programs_deleteLabel`,
+            }),
+            icon: DeleteIcon,
+            disabled: !canDelete || row.system,
+            onClick: handleDeleteRowClick,
+        },
+    ]);
+
+    const localization = getTableLocalization(intl, {
+        toolbar: {
+            title: intl.formatMessage({
+                id: `programs_title`,
+            }),
+        },
+        body: {
+            noData: intl.formatMessage({
+                id: `classes_noRecords`,
+            }),
+        },
+    });
+
+    const primaryAction = ({
+        label: intl.formatMessage({
+            id: `programs_createProgramLabel`,
+        }),
+        icon: AddIcon,
+        onClick: () => setOpenCreateDialog(true),
+        disabled: !canCreate,
+    });
 
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
-                    showSelectables={!disabled}
+                <CursorTable
+                    showSelectables={showSelectables}
                     idField="id"
-                    orderBy="name"
-                    order="asc"
+                    orderBy={orderBy}
+                    order={order}
                     rows={rows}
+                    rowsPerPage={rowsPerPage}
                     columns={columns}
                     selectedRows={tableSelectedIds}
-                    primaryAction={!disabled ? {
-                        label: intl.formatMessage({
-                            id: `programs_createProgramLabel`,
-                        }),
-                        icon: AddIcon,
-                        onClick: () => setOpenCreateDialog(true),
-                        disabled: !canCreate,
-                    } : undefined}
-                    rowActions={!disabled ? (row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `programs_viewDetailsLabel`,
-                            }),
-                            icon: ViewListIcon,
-                            disabled: !canView,
-                            onClick: handleViewDetailsRowClick,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `programs_editLabel`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !canEdit || row.system,
-                            onClick: handleEditRowClick,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `programs_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete || row.system,
-                            onClick: handleDeleteRowClick,
-                        },
-                    ] : undefined}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `programs_title`,
-                            }),
-                        },
-                    })}
+                    primaryAction={!disabled ? primaryAction : undefined}
+                    rowActions={!disabled ? rowActions : undefined}
+                    localization={localization}
+                    loading={loading}
+                    hasNextPage={!loading ? pageInfo?.hasNextPage : false}
+                    hasPreviousPage={!loading ? pageInfo?.hasPreviousPage : false}
+                    startCursor={pageInfo?.startCursor}
+                    endCursor={pageInfo?.endCursor}
+                    total={total}
+                    cursor={cursor}
+                    search={search}
                     onSelected={selectIds}
+                    onPageChange={onPageChange}
+                    onChange={onTableChange}
                 />
             </Paper>
             <ViewProgramDetailsDrawer
-                value={selectedProgram}
+                programId={selectedProgramId}
                 open={openViewDetailsDrawer}
                 onClose={() => {
-                    setSelectedProgram(undefined);
+                    setSelectedProgramId(undefined);
                     setOpenViewDetailsDrawer(false);
                 }}
             />
             <CreateProgramDialog
                 open={openCreateDialog}
                 onClose={(program) => {
-                    if (program) refetch();
+                    if (program) refetch?.();
                     setOpenCreateDialog(false);
                 }}
             />
             <EditProgramDialog
                 open={openEditDialog}
-                value={selectedProgram}
+                programId={selectedProgramId}
                 onClose={(program) => {
-                    if (program) refetch();
-                    setSelectedProgram(undefined);
+                    if (program) refetch?.();
+                    setSelectedProgramId(undefined);
                     setOpenEditDialog(false);
                 }}
             />

@@ -1,3 +1,4 @@
+import { AgeRangeEdge } from "@/api/programs";
 import {
     AgeRange,
     NON_SPECIFIED,
@@ -22,3 +23,16 @@ export const buildAgeRangeLabel = (ageRange: AgeRange) => {
 };
 
 export const sortAgeRanges = (a: AgeRange, b: AgeRange) => buildAgeRangeLabel(a).localeCompare(buildAgeRangeLabel(b));
+
+export const mapAgeRangeEdgesToAgeRanges = (ageRanges: AgeRangeEdge[]): AgeRange[] => {
+    return (ageRanges).map((ageRange) => ({
+        id: ageRange.id,
+        name: ageRange.name,
+        status: ageRange.status,
+        system: ageRange.system,
+        low_value: ageRange.lowValue,
+        low_value_unit: ageRange.lowValueUnit,
+        high_value: ageRange.highValue,
+        high_value_unit: ageRange.highValueUnit,
+    }));
+};

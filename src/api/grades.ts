@@ -3,10 +3,12 @@ import { DELETE_GRADE } from "@/operations/mutations/deleteGrade";
 import { GET_GRADES } from "@/operations/queries/getGrades";
 import { GET_PAGINATED_ORGANIZATION_GRADES } from "@/operations/queries/getOrganizationGrades";
 import {
-    Grade,
     Direction,
+    Grade,
     SortOrder,
     Status,
+    StringFilter,
+    UuidFilter,
 } from "@/types/graphQL";
 import {
     MutationHookOptions,
@@ -34,15 +36,9 @@ interface CursorFilter<T> {
     OR?: T[];
 }
 
-interface ValueFilter {
-    operator: 'contains' | 'eq';
-    value: string;
-    caseInsensitive?: boolean;
-}
-
 export interface GradeFilter extends CursorFilter<GradeFilter[]> {
-    id?: ValueFilter;
-    name?: ValueFilter;
+    id?: UuidFilter;
+    name?: StringFilter;
 }
 
 export interface GradeEdge {
