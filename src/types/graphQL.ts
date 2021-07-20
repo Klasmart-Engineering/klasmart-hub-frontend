@@ -1,3 +1,4 @@
+import { ProgramEdge } from "@/api/programs";
 import {
     Dispatch,
     SetStateAction,

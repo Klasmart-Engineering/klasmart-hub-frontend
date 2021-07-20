@@ -10,6 +10,7 @@ import {
     IntlShape,
     RawIntlProvider,
 } from 'react-intl';
+import { RecoilRoot } from 'recoil';
 
 export default (mocks: MockedResponse[], locale: IntlShape, component: ReactNode) => (
     render(<MockedProvider
@@ -19,9 +20,12 @@ export default (mocks: MockedResponse[], locale: IntlShape, component: ReactNode
                 fetchPolicy: `no-cache`,
             },
         }}
-        addTypename={false}>
-        <RawIntlProvider value={locale}>
-            {component}
-        </RawIntlProvider>
+        addTypename={false}
+    >
+        <RecoilRoot>
+            <RawIntlProvider value={locale}>
+                {component}
+            </RawIntlProvider>
+        </RecoilRoot>
     </MockedProvider>)
 );

@@ -1,4 +1,5 @@
-import { AgeRangeEdge } from "@/api/programs";
+import { AgeRangeNode } from "@/api/programs";
+import { AgeRangeRow } from "@/components/AgeRanges/Table";
 import {
     AgeRange,
     NON_SPECIFIED,
@@ -24,15 +25,13 @@ export const buildAgeRangeLabel = (ageRange: AgeRange) => {
 
 export const sortAgeRanges = (a: AgeRange, b: AgeRange) => buildAgeRangeLabel(a).localeCompare(buildAgeRangeLabel(b));
 
-export const mapAgeRangeEdgesToAgeRanges = (ageRanges: AgeRangeEdge[]): AgeRange[] => {
-    return (ageRanges).map((ageRange) => ({
-        id: ageRange.id,
-        name: ageRange.name,
-        status: ageRange.status,
-        system: ageRange.system,
-        low_value: ageRange.lowValue,
-        low_value_unit: ageRange.lowValueUnit,
-        high_value: ageRange.highValue,
-        high_value_unit: ageRange.highValueUnit,
-    }));
-};
+export const mapAgeRangeNodeToAgeRange = (node: AgeRangeNode): AgeRange => ({
+    id: node.id,
+    name: node.name,
+    status: node.status,
+    system: node.system,
+    low_value: node.lowValue,
+    low_value_unit: node.lowValueUnit,
+    high_value: node.highValue,
+    high_value_unit: node.highValueUnit,
+});

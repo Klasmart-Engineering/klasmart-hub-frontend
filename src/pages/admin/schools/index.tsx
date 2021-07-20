@@ -1,21 +1,122 @@
-import SchoolTable from "@/components/School/Table";
+import { useGetPaginatedSchools } from "@/api/schools";
+import SchoolTable,
+{ SchoolRow }  from "@/components/School/Table";
+import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { isActive } from "@/types/graphQL";
+import { usePermission } from "@/utils/checkAllowed";
+import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
 import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import React from "react";
-
-const useStyles = makeStyles((theme) => createStyles({}));
+    DEFAULT_ROWS_PER_PAGE,
+    pageChangeToDirection,
+    ServerCursorPagination,
+    serverToTableOrder,
+    tableToServerOrder,
+} from "@/utils/table";
+import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
+import { Redirect } from "react-router-dom";
 
 interface Props {
-
 }
 
 export default function SchoolsPage (props: Props) {
-    const classes = useStyles();
+    const currentOrganization = useCurrentOrganization();
+    const canView = usePermission(`view_school_20110`, true);
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
+        search: ``,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+        order: `ASC`,
+        orderBy: `name`,
+    });
+
+    const paginationFilter = buildOrganizationSchoolFilter({
+        organizationId: currentOrganization?.organization_id ?? ``,
+        search: serverPagination.search,
+    });
+
+    const {
+        loading,
+        data,
+        refetch,
+        fetchMore,
+    } = useGetPaginatedSchools({
+        variables: {
+            direction: `FORWARD`,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        },
+        skip: !currentOrganization?.organization_id,
+        notifyOnNetworkStatusChange: true,
+    });
+
+    const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
+        const direction = pageChangeToDirection(pageChange);
+        await fetchMore({
+            variables: {
+                count,
+                cursor,
+                direction,
+            },
+        });
+    };
+
+    const handleTableChange = async (tableData: CursorTableData<SchoolRow>) => {
+        if (loading) return;
+        setServerPagination({
+            order: tableToServerOrder(tableData.order),
+            orderBy: tableData.orderBy,
+            rowsPerPage: tableData.rowsPerPage,
+            search: tableData.search,
+        });
+    };
+
+    useEffect(() => {
+        refetch({
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        });
+    }, [
+        serverPagination.search,
+        serverPagination.rowsPerPage,
+        serverPagination.order,
+        serverPagination.orderBy,
+    ]);
+
+    const rows = data?.schoolsConnection.edges
+        ?.filter((edge) => isActive(edge.node))
+        .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
+        ?? [];
+
+    if (!canView && !loading) return <Redirect to="/" />;
 
     return (
-        <SchoolTable />
+        <SchoolTable
+            rows={rows}
+            loading={loading}
+            refetch={refetch}
+            order={serverToTableOrder(serverPagination.order)}
+            orderBy={serverPagination.orderBy}
+            rowsPerPage={serverPagination.rowsPerPage}
+            search={serverPagination.search}
+            total={data?.schoolsConnection.totalCount}
+            hasNextPage={data?.schoolsConnection.pageInfo.hasNextPage}
+            hasPreviousPage={data?.schoolsConnection.pageInfo.hasPreviousPage}
+            startCursor={data?.schoolsConnection.pageInfo.startCursor}
+            endCursor={data?.schoolsConnection.pageInfo.endCursor}
+            onPageChange={handlePageChange}
+            onTableChange={handleTableChange}
+        />
     );
 
 }

@@ -46,7 +46,7 @@ export default function StyledFAB(props: Props) {
                     </StyledFab>
                 </Hidden>
                 <Hidden mdUp>
-                    <StyledFab variant="round" size="small" {...other}>
+                    <StyledFab variant="circular" size="small" {...other}>
                         { sibling || <SendIcon fontSize="small" /> }
                     </StyledFab>
                 </Hidden>

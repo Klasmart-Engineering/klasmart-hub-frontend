@@ -1,10 +1,12 @@
-import { organizationSchool } from "@/components/School/Table";
-import { School } from "@/types/graphQL";
+import {
+    School,
+    Status,
+} from "@/types/graphQL";
 
-const schoolA: School = {
+export const schoolA: School = {
     school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
     school_name: `BTS University`,
-    status: `active`,
+    status: Status.ACTIVE,
     shortcode: null,
     programs: [
         {
@@ -31,24 +33,26 @@ const schoolA: School = {
                     high_value: 8,
                     high_value_unit: `month`,
                     system: false,
-                    status: `active`,
+                    status: Status.ACTIVE,
                 },
             ],
-            status: `active`,
+            status: Status.ACTIVE,
         },
     ],
 };
-const schoolB: School = {
+
+export const schoolB: School = {
     school_id: `b3ce8cc0-616b-43cc-b4a8-adae9b5c6940`,
     school_name: `Unam University`,
-    status: `inactive`,
+    status: Status.INACTIVE,
     shortcode: null,
     programs: [],
 };
-const schoolC: School = {
+
+export const schoolC: School = {
     school_id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
     school_name: `San Javier University`,
-    status: `active`,
+    status: Status.ACTIVE,
     shortcode: null,
     programs: [
         {
@@ -75,17 +79,18 @@ const schoolC: School = {
                     high_value: 10,
                     high_value_unit: `month`,
                     system: false,
-                    status: `active`,
+                    status: Status.ACTIVE,
                 },
             ],
-            status: `active`,
+            status: Status.ACTIVE,
         },
     ],
 };
-const schoolD: School = {
+
+export const schoolD: School = {
     school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
     school_name: `School for CSV`,
-    status: `active`,
+    status: Status.ACTIVE,
     shortcode: `6ASOPADS0T`,
     programs: [
         {
@@ -112,7 +117,7 @@ const schoolD: School = {
                     high_value: 6,
                     high_value_unit: `year`,
                     system: true,
-                    status: `active`,
+                    status: Status.ACTIVE,
                 },
                 {
                     id: `7965d220-619d-400f-8cab-42bd98c7d23c`,
@@ -122,7 +127,7 @@ const schoolD: School = {
                     high_value: 4,
                     high_value_unit: `year`,
                     system: true,
-                    status: `active`,
+                    status: Status.ACTIVE,
                 },
                 {
                     id: `bb7982cd-020f-4e1a-93fc-4a6874917f07`,
@@ -132,52 +137,10 @@ const schoolD: School = {
                     high_value: 5,
                     high_value_unit: `year`,
                     system: true,
-                    status: `active`,
+                    status: Status.ACTIVE,
                 },
             ],
-            status: `active`,
+            status: Status.ACTIVE,
         },
     ],
 };
-
-const schools: School[] = [
-    schoolA,
-    schoolB,
-    schoolC,
-    schoolD,
-];
-
-test(`should create an array of objects that conforms the School Table SchoolRow interface`, () => {
-    const rows = schools.filter((school) => school.status === `active`).map(organizationSchool);
-
-    const final: any[] = [
-        {
-            id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
-            name: `BTS University`,
-            shortCode: ``,
-            system: `Custom Value`,
-            status: `active`,
-        },
-        {
-            id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
-            name: `San Javier University`,
-            shortCode: ``,
-            system: `Custom Value`,
-            status: `active`,
-        },
-        {
-            id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
-            name: `School for CSV`,
-            shortCode: `6ASOPADS0T`,
-            system: `Custom Value`,
-            status: `active`,
-        },
-    ];
-    expect(rows).toEqual(final);
-});
-
-test(`should return an empty array`, () => {
-    const rows = [].map(organizationSchool);
-
-    expect(rows).toEqual([]);
-});

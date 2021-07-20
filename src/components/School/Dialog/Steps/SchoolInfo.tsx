@@ -1,4 +1,5 @@
-import { TabContent } from "./shared";
+import { School } from "@/types/graphQL";
+import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
 import {
     createStyles,
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export default function SchoolInfoStep (props: TabContent) {
+export default function SchoolInfoStep (props: EntityStepContent<School>) {
     const {
         value,
         disabled,

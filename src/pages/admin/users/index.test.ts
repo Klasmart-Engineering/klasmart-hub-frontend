@@ -1,5 +1,5 @@
 import { UserEdge } from "@/api/organizationMemberships";
-import { UserItem } from "@/components/User/Table";
+import { UserRow } from "@/components/User/Table";
 import { mapUserRow } from "@/pages/admin/users";
 import { Status } from "@/types/graphQL";
 
@@ -130,7 +130,7 @@ const userEdges: UserEdge[] = [
 test(`map server users to table users`, () => {
     const rows = userEdges.map(mapUserRow);
 
-    const final: UserItem[] = [
+    const final: UserRow[] = [
         {
             id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
             givenName: `Andres 09`,

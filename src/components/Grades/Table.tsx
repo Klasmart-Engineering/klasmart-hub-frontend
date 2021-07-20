@@ -1,24 +1,23 @@
 import {
     GradeEdge,
-    GradeFilter,
     useDeleteGrade,
     useGetPaginatedOrganizationGrades,
 } from "@/api/grades";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
+import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     Grade,
     NON_SPECIFIED,
 } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
-import { isUUID } from "@/utils/pagination";
 import {
     DEFAULT_ROWS_PER_PAGE,
     getTableLocalization,
     pageChangeToDirection,
+    ServerCursorPagination,
     serverToTableOrder,
-    TableState,
     tableToServerOrder,
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -82,28 +81,16 @@ export default function (props: Props) {
     const canEdit = usePermission(`edit_grade_20333`);
     const canDelete = usePermission(`delete_grade_20443`);
     const [ deleteGrade ] = useDeleteGrade();
-    const [ tableState, setTableState ] = useState<TableState>({
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
         order: `ASC`,
         orderBy: `name`,
     });
-    const queryFilter: GradeFilter = {
-        ...isUUID(tableState.search ?? ``)
-            ? {
-                id: {
-                    operator: `eq`,
-                    value: tableState.search,
-                },
-            } :
-            {
-                name: {
-                    operator: `contains`,
-                    value: tableState.search,
-                    caseInsensitive: true,
-                },
-            },
-    };
+    const paginationFilter = buildGradeFilter({
+        organizationId: currentOrganization?.organization_id ?? ``,
+        search: serverPagination.search,
+    });
 
     const {
         loading,
@@ -112,27 +99,26 @@ export default function (props: Props) {
         fetchMore,
     } = useGetPaginatedOrganizationGrades({
         variables: {
-            organizationId: currentOrganization?.organization_id ?? ``,
             direction: `FORWARD`,
-            count: tableState.rowsPerPage,
-            orderBy: tableState.orderBy,
-            order: tableState.order,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            orderBy: serverPagination.orderBy,
+            order: serverPagination.order,
+            filter: paginationFilter,
         },
+        skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
     });
 
     useEffect(() => {
-        if (data) {
-            const rows = data.gradesConnection.edges?.map((edge) => ({
-                id: edge.node.id ?? ``,
-                name: edge.node.name ?? ``,
-                progressFrom: edge.node.fromGrade?.name ?? NON_SPECIFIED,
-                progressTo: edge.node.toGrade?.name ?? NON_SPECIFIED,
-            })) ?? [];
-            setRows(rows);
-            setGrades(data?.gradesConnection.edges);
-        }
+        if (!data) return;
+        const rows = data.gradesConnection?.edges?.map((edge) => ({
+            id: edge.node.id ?? ``,
+            name: edge.node.name ?? ``,
+            progressFrom: edge.node.fromGrade?.name ?? NON_SPECIFIED,
+            progressTo: edge.node.toGrade?.name ?? NON_SPECIFIED,
+        })) ?? [];
+        setRows(rows);
+        setGrades(data.gradesConnection?.edges ?? []);
     }, [ data ]);
 
     const columns: TableColumn<GradeRow>[] = [
@@ -186,7 +172,6 @@ export default function (props: Props) {
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
-
         await fetchMore({
             variables: {
                 count,
@@ -197,7 +182,7 @@ export default function (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<GradeRow>) => {
-        setTableState({
+        setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             rowsPerPage: tableData.rowsPerPage,
@@ -207,16 +192,16 @@ export default function (props: Props) {
 
     useEffect(() => {
         refetch({
-            count: tableState.rowsPerPage,
-            order: tableState.order,
-            orderBy: tableState.orderBy,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
         });
     }, [
-        tableState.search,
-        tableState.order,
-        tableState.orderBy,
-        tableState.rowsPerPage,
+        serverPagination.search,
+        serverPagination.order,
+        serverPagination.orderBy,
+        serverPagination.rowsPerPage,
     ]);
 
     const handleDeleteRowClick = async (row: GradeRow) => {
@@ -279,9 +264,9 @@ export default function (props: Props) {
                     endCursor={data?.gradesConnection?.pageInfo.endCursor}
                     rows={rows}
                     columns={columns}
-                    order={serverToTableOrder(tableState.order)}
-                    orderBy={tableState.orderBy}
-                    rowsPerPage={tableState.rowsPerPage}
+                    order={serverToTableOrder(serverPagination.order)}
+                    orderBy={serverPagination.orderBy}
+                    rowsPerPage={serverPagination.rowsPerPage}
                     total={data?.gradesConnection?.totalCount}
                     primaryAction={{
                         label: intl.formatMessage({

@@ -33,6 +33,8 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     actionsContainer: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));
@@ -60,7 +62,7 @@ export default function CreateProgramDialog (props: Props) {
         max,
     } = useValidations();
     const currentOrganization = useCurrentOrganization();
-    const { data: programData } = useGetProgram({
+    const { data, loading } = useGetProgram({
         variables: {
             id: programId ?? ``,
         },
@@ -84,8 +86,8 @@ export default function CreateProgramDialog (props: Props) {
             return;
         }
         setStepIndex(INITIAL_STEP_INDEX);
-        setUpdatedProgram(programData?.program ?? buildEmptyProgram());
-    }, [ open, programData ]);
+        setUpdatedProgram(data?.program ?? buildEmptyProgram());
+    }, [ open, data ]);
 
     useEffect(() => {
         if (!steps_.length) return;
@@ -98,10 +100,12 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_projectInfoLabel`,
                 }),
-                content: <ProgramInfoStep
-                    value={updatedProgram}
-                    onChange={handleValue}
-                />,
+                content: (
+                    <ProgramInfoStep
+                        value={updatedProgram}
+                        onChange={handleValue}
+                    />
+                ),
                 error: [
                     required()(updatedProgram?.name),
                     letternumeric()(updatedProgram?.name),
@@ -114,20 +118,24 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_subjects`,
                 }),
-                content: <SubjectsStep
-                    value={updatedProgram}
-                    onChange={handleValue}
-                />,
+                content: (
+                    <SubjectsStep
+                        value={updatedProgram}
+                        onChange={handleValue}
+                    />
+                ),
                 error: [ required()(updatedProgram?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
                     id: `programs_summaryLabel`,
                 }),
-                content: <SummaryStep
-                    value={updatedProgram}
-                    onChange={handleValue}
-                />,
+                content: (
+                    <SummaryStep
+                        value={updatedProgram}
+                        onChange={handleValue}
+                    />
+                ),
             },
         ];
         setSteps(steps);
@@ -177,15 +185,15 @@ export default function CreateProgramDialog (props: Props) {
             title={intl.formatMessage({
                 id: `programs_editProgramLabel`,
             })}
-            header={
+            header={(
                 <Stepper
                     editable
                     step={stepIndex_}
                     steps={steps_}
                     onChange={setStepIndex}
                 />
-            }
-            footer={
+            )}
+            footer={(
                 <Toolbar className={classes.actionsContainer}>
                     <Box
                         display="flex"
@@ -221,7 +229,7 @@ export default function CreateProgramDialog (props: Props) {
                         />
                     </Box>
                 </Toolbar>
-            }
+            )}
             onClose={() => onClose()}
         >
             {StepComponent && StepComponent}

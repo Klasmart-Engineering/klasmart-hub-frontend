@@ -1,4 +1,4 @@
-image: node:16-alpine3.13
+image: node:14
 
 clone:
   lfs: true
@@ -14,11 +14,9 @@ pipelines:
               - node
               - dependecies
             script:
-              - apk add git --no-cache
-              - apk add openssh-client --no-cache
               - npm ci --prefer-offline --no-audit --no-progress --cache .npm
               - npm test
-              - npm run build
+              - npm run build:alpha
   custom:
     deploy:
     - variables:

@@ -42,8 +42,13 @@ export default function EditUserDialog (props: Props) {
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ valid, setValid ] = useState(true);
     const organization = useCurrentOrganization();
-    const [ getOrganizationMembership, { data: organizationMembershipData, loading: loadingMembershipData } ] = useGetOrganizationMembership({
+    const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationMembership({
         fetchPolicy: `cache-and-network`,
+        variables: {
+            organizationId: organization?.organization_id ?? ``,
+            userId: userId ?? ``,
+        },
+        skip: !open || !organization?.organization_id || !userId,
     });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
@@ -52,12 +57,6 @@ export default function EditUserDialog (props: Props) {
         if (!open || !userId || !organization) return;
         setInitOrganizationMembership(organizationMembershipData?.user.membership ?? buildEmptyOrganizationMembership());
         setEditedOrganizationMembership(buildEmptyOrganizationMembership());
-        getOrganizationMembership({
-            variables: {
-                organizationId: organization?.organization_id ?? ``,
-                userId: userId ?? ``,
-            },
-        });
     }, [
         open,
         userId,

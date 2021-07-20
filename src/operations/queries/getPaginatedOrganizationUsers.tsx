@@ -1,43 +1,76 @@
+import { UserFilter } from "@/api/organizationMemberships";
+import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
+
+export interface ProgramQueryFilter {
+    organizationId: string;
+    search: string;
+}
+
+export const buildOrganizationUserSearchFilter = (search: string): UserFilter => ({
+    ...isUuid(search)
+        ? {
+            userId: {
+                operator: `eq`,
+                value: search,
+            },
+        }
+        : {
+            OR: [
+                {
+                    givenName: {
+                        operator: `contains`,
+                        value: search,
+                        caseInsensitive: true,
+                    },
+                },
+                {
+                    familyName: {
+                        operator: `contains`,
+                        value: search,
+                        caseInsensitive: true,
+                    },
+                },
+                {
+                    email: {
+                        operator: `contains`,
+                        caseInsensitive: true,
+                        value: search,
+                    },
+                },
+                {
+                    phone: {
+                        operator: `contains`,
+                        caseInsensitive: true,
+                        value: search,
+                    },
+                },
+            ],
+        },
+});
+
+export const buildOrganizationUserFilter = (filter: ProgramQueryFilter): UserFilter => ({
+    organizationId: {
+        operator: `eq`,
+        value: filter.organizationId,
+    },
+    AND: [ buildOrganizationUserSearchFilter(filter.search) ],
+});
 
 export const GET_PAGINATED_ORGANIZATION_USERS = gql`
     query getOrganizationUsers(
         $direction: ConnectionDirection!
             $count: Int
             $cursor: String
-            $search: String!
-            $organizationId: UUID!
             $order: SortOrder!
             $orderBy: UserSortBy!
+            $filter: UserFilter
         ) {
             usersConnection(
                 direction: $direction
                 directionArgs: { count: $count, cursor: $cursor }
-                sort: {
-                    field: [$orderBy],
-                    order: $order
-                }
-                filter: {
-                    organizationId: { operator: eq, value: $organizationId }
-                    OR: [
-                        {
-                            givenName: {
-                                operator: contains
-                                caseInsensitive: true
-                                value: $search
-                            }
-                        }
-                        {
-                            familyName: {
-                                operator: contains
-                                caseInsensitive: true
-                                value: $search
-                            }
-                        }
-                        { email: { operator: contains, caseInsensitive: true, value: $search } }
-                        { phone: { operator: contains, caseInsensitive: true, value: $search } }
-                    ]
-                }
+                sort: { field: [$orderBy], order: $order }
+                filter: $filter
             ) {
                 totalCount
                 pageInfo {

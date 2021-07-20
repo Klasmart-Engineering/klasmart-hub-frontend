@@ -3,6 +3,7 @@ import { DELETE_GRADE } from "@/operations/mutations/deleteGrade";
 import { GET_GRADES } from "@/operations/queries/getGrades";
 import { GET_PAGINATED_ORGANIZATION_GRADES } from "@/operations/queries/getOrganizationGrades";
 import {
+    BooleanFilter,
     Direction,
     Grade,
     SortOrder,
@@ -10,6 +11,7 @@ import {
     StringFilter,
     UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -31,35 +33,37 @@ interface CreateUpdateGradeResponse {
     grades: Grade[];
 }
 
-interface CursorFilter<T> {
-    AND?: T[];
-    OR?: T[];
-}
-
-export interface GradeFilter extends CursorFilter<GradeFilter[]> {
+export interface GradeFilter extends PaginationFilter<GradeFilter> {
     id?: UuidFilter;
     name?: StringFilter;
+    status?: StringFilter;
+    system?: BooleanFilter;
+    organizationId?: UuidFilter;
+    fromGradeId?: UuidFilter;
+    toGradeId?: UuidFilter;
 }
 
-export interface GradeEdge {
-    node: {
+export interface GradeNode {
+    id: string;
+    name: string;
+    fromGrade?: {
         id: string;
         name: string;
-        fromGrade?: {
-            id: string;
-            name: string;
-            system: boolean;
-            status?: Status;
-        };
-        toGrade?: {
-            id: string;
-            name: string;
-            system: boolean;
-            status?: Status;
-        };
         system: boolean;
         status?: Status;
     };
+    toGrade?: {
+        id: string;
+        name: string;
+        system: boolean;
+        status?: Status;
+    };
+    system: boolean;
+    status?: Status;
+}
+
+export interface GradeEdge {
+    node: GradeNode;
 }
 
 export interface GetOrganizationGradesResponsePaginated {
@@ -76,7 +80,6 @@ export interface GetOrganizationGradesResponsePaginated {
 }
 
 export interface GetOrganizationGradesRequestPaginated {
-    organizationId: string;
     direction?: Direction;
     cursor?: string;
     count?: number;

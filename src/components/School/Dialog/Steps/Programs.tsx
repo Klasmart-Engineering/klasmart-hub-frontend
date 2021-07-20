@@ -1,20 +1,23 @@
-import { TabContent } from "./shared";
 import {
     ProgramFilter,
-    useDeleteProgram,
     useGetAllPaginatedPrograms,
 } from "@/api/programs";
 import ProgramsTable,
 { ProgramRow } from "@/components/Program/Table";
-import { buildProgramOrganizationFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { isUUID } from "@/utils/pagination";
-import { mapProgramEdgesToPrograms } from "@/utils/programs";
+import {
+    isActive,
+    School,
+} from "@/types/graphQL";
+import { EntityStepContent } from "@/utils/entitySteps";
+import { isUuid } from "@/utils/pagination";
+import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
     DEFAULT_ROWS_PER_PAGE,
     pageChangeToDirection,
+    ServerCursorPagination,
     serverToTableOrder,
-    TableState,
     tableToServerOrder,
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -23,7 +26,6 @@ import {
     FormHelperText,
     makeStyles,
 } from "@material-ui/core";
-import { useSnackbar } from "kidsloop-px";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -32,73 +34,55 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function ProgramsStep (props: TabContent) {
+export default function ProgramsStep (props: EntityStepContent<School>) {
     const {
-        programIds,
+        value,
         disabled,
-        onProgramIdsChange,
+        onChange,
     } = props;
     const classes = useStyles();
-    const intl = useIntl();
     const { required } = useValidations();
-    const [ deleteProgram ] = useDeleteProgram();
-    const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
-    const [ tableState, setTableState ] = useState<TableState>({
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
         order: `ASC`,
         orderBy: `name`,
     });
 
-    const searchFilter: ProgramFilter[] = [
-        {
-            ...isUUID(tableState.search ?? ``)
-                ? {
-                    id: {
-                        operator: `eq`,
-                        value: tableState.search ?? ``,
-                    },
-                }
-                : {
-                    name: {
-                        operator: `contains`,
-                        value: tableState.search ?? ``,
-                        caseInsensitive: true,
-                    },
-                },
-        },
-    ];
-
-    const queryFilter = buildProgramOrganizationFilter(currentOrganization?.organization_id, searchFilter);
+    const paginationFilter = buildOrganizationProgramFilter({
+        organizationId: currentOrganization?.organization_id ?? ``,
+        search: serverPagination.search,
+    });
 
     const {
         data,
         refetch,
-        fetchMore: fetchMorePrograms,
+        fetchMore,
         loading,
     } = useGetAllPaginatedPrograms({
         variables: {
             direction: `FORWARD`,
-            count: tableState.rowsPerPage,
-            orderBy: `name`,
-            order: `ASC`,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            orderBy: serverPagination.orderBy,
+            order: serverPagination.order,
+            filter: paginationFilter,
         },
         skip: !currentOrganization?.organization_id,
-        fetchPolicy: `network-only`,
+        fetchPolicy: `cache-and-network`,
         notifyOnNetworkStatusChange: true,
     });
 
-    const selectedProgramssError = required()(programIds?.length);
+    const selectedIds = value?.programs?.map((program) => program.id ?? ``) ?? [];
 
-    const onTableChange = async (tableData: CursorTableData<ProgramRow>) => {
+    const selectedProgramsError = required()(selectedIds);
+
+    const handleTableChange = async (tableData: CursorTableData<ProgramRow>) => {
         if (loading) return;
-        setTableState({
+        setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             search: tableData.search,
@@ -106,9 +90,9 @@ export default function ProgramsStep (props: TabContent) {
         });
     };
 
-    const onPageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
+    const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
-        await fetchMorePrograms({
+        fetchMore({
             variables: {
                 count,
                 cursor,
@@ -117,64 +101,57 @@ export default function ProgramsStep (props: TabContent) {
         });
     };
 
-    const handleDeleteProgram = async (id: string) => {
-        try {
-            await deleteProgram({
-                variables: {
-                    id,
-                },
-            });
-            await refetch?.();
-
-            enqueueSnackbar(intl.formatMessage({
-                id: `programs_deleteSuccess`,
-            }), {
-                variant: `success`,
-            });
-        } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `generic_createError`,
-            }), {
-                variant: `error`,
-            });
-        }
+    const handleSelected = (ids: string[]) => {
+        onChange?.({
+            ...value,
+            programs: ids.map((id) => ({
+                id: id ?? ``,
+            })),
+        });
     };
 
     useEffect(() => {
         refetch({
-            count: tableState.rowsPerPage,
-            order: tableState.order,
-            orderBy: tableState.orderBy,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
         });
     }, [
-        tableState.search,
-        tableState.order,
-        tableState.orderBy,
-        tableState.rowsPerPage,
+        serverPagination.search,
+        serverPagination.order,
+        serverPagination.orderBy,
+        serverPagination.rowsPerPage,
     ]);
+
+    const rows = data?.programsConnection?.edges
+        .filter((edge) => isActive(edge.node))
+        .map((edge) => mapProgramNodeToProgramRow(edge.node))
+        ?? [];
 
     return (
         <>
             <ProgramsTable
-                showSelectables={true}
+                showSelectables
+                rows={rows}
                 disabled={disabled}
-                selectedIds={disabled ? undefined : programIds}
+                selectedIds={disabled ? undefined : selectedIds}
                 loading={loading}
-                programs={mapProgramEdgesToPrograms(data?.programsConnection?.edges ?? [])}
                 total={data?.programsConnection?.totalCount}
-                rowsPerPage={tableState.rowsPerPage}
-                search={tableState.search}
-                pageInfo={data?.programsConnection?.pageInfo}
+                rowsPerPage={serverPagination.rowsPerPage}
+                search={serverPagination.search}
+                hasNextPage={data?.programsConnection?.pageInfo.hasNextPage}
+                hasPreviousPage={data?.programsConnection?.pageInfo.hasPreviousPage}
+                startCursor={data?.programsConnection?.pageInfo.startCursor}
+                endCursor={data?.programsConnection?.pageInfo.endCursor}
                 refetch={refetch}
-                order={serverToTableOrder(tableState.order)}
-                orderBy={tableState.orderBy}
-                onPageChange={onPageChange}
-                onTableChange={onTableChange}
-                onSelected={(ids: string[]) => { onProgramIdsChange?.(ids); }}
-                onDeleteRow={handleDeleteProgram}
+                order={serverToTableOrder(serverPagination.order)}
+                orderBy={serverPagination.orderBy}
+                onPageChange={handlePageChange}
+                onTableChange={handleTableChange}
+                onSelected={handleSelected}
             />
-            {!disabled && <FormHelperText error>{selectedProgramssError === true ? ` ` : selectedProgramssError}</FormHelperText>}
+            {!disabled && <FormHelperText error>{selectedProgramsError === true ? ` ` : selectedProgramsError}</FormHelperText>}
         </>
     );
 }

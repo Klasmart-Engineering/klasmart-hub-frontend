@@ -1,6 +1,3 @@
-import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
-import "typeface-nanum-square-round";
-import "inter-ui";
 import { useCurrentOrganization } from "./store/organizationMemberships";
 import { usePreviewOrganizationColor } from "./store/previewOrganizationColor";
 import { State } from "./store/store";
@@ -12,7 +9,7 @@ import {
     red,
 } from "@material-ui/core/colors";
 import {
-    createMuiTheme,
+    createTheme,
     darken,
     lighten,
     responsiveFontSizes,
@@ -169,14 +166,14 @@ export function themeProvider () {
         palette.background = {
             default: `#FFF`,
         };
-        theme = createMuiTheme({
+        theme = createTheme({
             overrides,
             palette,
             typography,
         });
     } else {
         palette.type = `dark`;
-        theme = createMuiTheme({
+        theme = createTheme({
             overrides,
             palette,
             typography,

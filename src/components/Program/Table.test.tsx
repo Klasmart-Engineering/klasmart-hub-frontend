@@ -2,12 +2,14 @@ import {
     GetAllProgramsPaginatedResponse,
     ProgramEdge,
 } from "@/api/programs";
-import ProgramTable,
-{ organizationProgram } from "@/components/Program/Table";
-import { Status } from "@/types/graphQL";
+import ProgramTable from "@/components/Program/Table";
+import {
+    isActive,
+    Status,
+} from "@/types/graphQL";
 import { getLanguage } from "@/utils/locale";
-import { isUUID } from "@/utils/pagination";
-import { mapProgramEdgesToPrograms } from "@/utils/programs";
+import { isUuid } from "@/utils/pagination";
+import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
     act,
     screen,
@@ -324,18 +326,18 @@ const programs: ProgramEdge[] = [
 ];
 
 test(`should return an empty array`, () => {
-    const rows = [].map(organizationProgram);
+    const rows = [].map(mapProgramNodeToProgramRow);
 
     expect(rows).toEqual([]);
 });
 
 test(`should return a truthy boolean if is a well formed UUID`, () => {
-    expect(isUUID(organizationId)).toBeTruthy();
-    expect(isUUID(programIdA)).toBeTruthy();
-    expect(isUUID(programIdB)).toBeTruthy();
-    expect(isUUID(programIdC)).toBeTruthy();
-    expect(isUUID(programIdD)).toBeTruthy();
-    expect(isUUID(inputSearch)).toBeFalsy();
+    expect(isUuid(organizationId)).toBeTruthy();
+    expect(isUuid(programIdA)).toBeTruthy();
+    expect(isUuid(programIdB)).toBeTruthy();
+    expect(isUuid(programIdC)).toBeTruthy();
+    expect(isUuid(programIdD)).toBeTruthy();
+    expect(isUuid(inputSearch)).toBeFalsy();
 });
 
 const data: GetAllProgramsPaginatedResponse = {
@@ -371,11 +373,13 @@ jest.mock(`@/utils/checkAllowed`, () => {
 
 test(`Programs table page renders data`, async () => {
     const locale = getLanguage(`en`);
-    const { queryAllByText } = qlRender([], locale, <ProgramTable
-        order='asc'
-        orderBy='name'
+    const component = <ProgramTable
+        order="asc"
+        orderBy="name"
         loading={false}
-        programs={mapProgramEdgesToPrograms(data.programsConnection.edges)}/>);
+        rows={data.programsConnection.edges.filter((edge) => isActive(edge.node)).map((edge) => mapProgramNodeToProgramRow(edge.node)) ?? []}
+    />;
+    const { queryAllByText } = qlRender([], locale, component);
 
     await act(async () => {
         const title = await screen.findByText(`Programs`);

@@ -1,4 +1,3 @@
-import { TabContent } from "./shared";
 import { useGetAllAgeRanges } from "@/api/age_ranges";
 import { useGetAllGrades } from "@/api/grades";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -9,10 +8,12 @@ import {
     isCustomValue,
     isNonSpecified,
     isOtherSystemValue,
+    Program,
     sortEntitiesByName,
     useHandleUpdateNonSpecified,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
 import {
     createStyles,
@@ -23,6 +24,7 @@ import {
     Select,
     TextField,
 } from "kidsloop-px";
+import { isEqual } from "lodash";
 import React,
 {
     useEffect,
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export default function ProgramInfoStep (props: TabContent) {
+export default function ProgramInfoStep (props: EntityStepContent<Program>) {
     const {
         value,
         disabled,
@@ -96,12 +98,14 @@ export default function ProgramInfoStep (props: TabContent) {
     ]);
 
     useEffect(() => {
-        onChange?.({
+        const updatedValue = {
             ...value,
             name: programName,
             grades: gradeIds.map((id) => allGrades.find((grade) => grade.id === id)).filter((grade): grade is Grade => !!grade),
             age_ranges: ageRanges.map((id) => allAgeRanges.find((ageRange) => ageRange.id === id)).filter((ageRange): ageRange is AgeRange => !!ageRange),
-        });
+        };
+        if (isEqual(value, updatedValue)) return;
+        onChange?.(updatedValue);
     }, [
         programName,
         gradeIds,

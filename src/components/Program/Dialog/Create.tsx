@@ -30,6 +30,8 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     actionsContainer: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));

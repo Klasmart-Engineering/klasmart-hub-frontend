@@ -9,14 +9,29 @@ import {
     Organization,
     OrganizationMembership,
     SortOrder,
+    StringFilter,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
-    useLazyQuery,
     useMutation,
     useQuery,
 } from "@apollo/client";
+
+export interface UserFilter extends PaginationFilter<UserFilter> {
+    userId?: UuidFilter;
+    givenName?: StringFilter;
+    familyName?: StringFilter;
+    avatar?: StringFilter;
+    email?: StringFilter;
+    phone?: StringFilter;
+    organizationId?: UuidFilter;
+    roleId?: UuidFilter;
+    schoolId?: UuidFilter;
+    organizationUserStatus?: StringFilter;
+}
 
 interface UpdateOrganizationMembershipRequest {
     user_id: string;
@@ -87,7 +102,7 @@ interface GetOrganizationMembershipResponse {
 }
 
 export const useGetOrganizationMembership = (options?: QueryHookOptions<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>) => {
-    return useLazyQuery<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>(GET_ORGANIZATION_USER, options);
+    return useQuery<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>(GET_ORGANIZATION_USER, options);
 };
 
 interface GetOrganizationMembershipsRequest {
@@ -106,37 +121,38 @@ interface GetOrganizationMembershipsRequest2 {
     direction: `FORWARD` | `BACKWARD`;
     cursor?: string;
     count?: number;
-    search?: string;
-    organizationId: string;
     order: SortOrder;
     orderBy: string;
+    filter?: UserFilter;
+}
+
+export interface UserNode {
+    id: string;
+    avatar: string | null;
+    contactInfo: {
+        email: string | null;
+        phone: string | null;
+    };
+    givenName: string | null;
+    familyName: string | null;
+    organizations: {
+        userStatus: string;
+        joinDate: string;
+    }[];
+    roles: {
+        id: string;
+        name: string;
+        status: string;
+    }[];
+    schools: {
+        id: string;
+        name: string;
+        status: string;
+    }[];
 }
 
 export interface UserEdge {
-    node: {
-        id: string;
-        avatar: string | null;
-        contactInfo: {
-            email: string | null;
-            phone: string | null;
-        };
-        givenName: string | null;
-        familyName: string | null;
-        organizations: {
-            userStatus: string;
-            joinDate: string;
-        }[];
-        roles: {
-            id: string;
-            name: string;
-            status: string;
-        }[];
-        schools: {
-            id: string;
-            name: string;
-            status: string;
-        }[];
-    };
+    node: UserNode;
 }
 
 export interface GetOrganizationMembershipsResponse2 {

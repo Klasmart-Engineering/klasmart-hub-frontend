@@ -82,6 +82,8 @@ export default function SubjectsTable (props: Props) {
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedSubject, setSelectedSubject ] = useState<Subject>();
+    const [ tableSelectedIds, setTableSelectedIds ] = useState(selectedIds ?? []);
+    const [ nonSpecifiedId, setNonSpecifiedId ] = useState<string>();
     const [ deleteSubject ] = useDeleteSubject();
     const {
         data,
@@ -100,12 +102,9 @@ export default function SubjectsTable (props: Props) {
 
     const subjects_ = data?.organization.subjects ?? [];
 
-    const mapPrograms = (subjectId: string, programs: Program[]): string[] => (
-        programs.filter((program: Program) => (
-            program.status === Status.ACTIVE && program.subjects?.find((sub) => sub.id === subjectId)
-        ))
-            .map((program: Program) => program.name ?? ``)
-    );
+    const mapPrograms = (subjectId: string, programs: Program[]): string[] => programs
+        .filter((program: Program) => program.status === Status.ACTIVE && program.subjects?.find((sub) => sub.id === subjectId))
+        .map((program: Program) => program.name ?? ``);
 
     useEffect(() => {
         if (!canView) {
@@ -246,6 +245,48 @@ export default function SubjectsTable (props: Props) {
         }
     };
 
+    const selectIds = (ids: string[]) => {
+        if (!ids.length) {
+            setTableSelectedIds([]);
+            return;
+        }
+
+        const last = ids[ids.length - 1];
+
+        if (ids.length > 1 && last === nonSpecifiedId) {
+            ids.splice(0, ids.length -1);
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
+        if (ids.length > 1 && ids[0] === nonSpecifiedId) {
+            ids.shift();
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
+        const nonSpecifiedIndex = ids.findIndex((id) => id === nonSpecifiedId);
+
+        // This is in case user checks on select all.
+        if (ids.length > 1 && nonSpecifiedIndex !== -1) {
+            ids.splice(nonSpecifiedIndex, 1);
+            setTableSelectedIds([ ...ids ]);
+            return;
+        }
+
+        setTableSelectedIds(ids);
+    };
+
+    useEffect(() => {
+        const nonSpecifiedId = subjects_?.find((subject) => subject.name === `None Specified` && subject.system)?.id;
+        if (!nonSpecifiedId) return;
+        setNonSpecifiedId(nonSpecifiedId);
+    }, [ data ]);
+
+    useEffect(() => {
+        onSelected?.(tableSelectedIds);
+    }, [ tableSelectedIds ]);
+
     return (
         <>
             <Paper className={classes.root}>
@@ -304,7 +345,7 @@ export default function SubjectsTable (props: Props) {
                             }),
                         },
                     })}
-                    onSelected={onSelected}
+                    onSelected={selectIds}
                 />
             </Paper>
             <ViewSubjectDetailsDrawer

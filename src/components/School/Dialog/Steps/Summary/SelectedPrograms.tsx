@@ -1,14 +1,18 @@
-import { TabContent } from "../shared";
 import { useGetAllPaginatedPrograms } from "@/api/programs";
 import ProgramsTable,
 { ProgramRow } from "@/components/Program/Table";
 import { buildProgramIdsFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import { mapProgramEdgesToPrograms } from "@/utils/programs";
+import {
+    isActive,
+    School,
+} from "@/types/graphQL";
+import { EntityStepContent } from "@/utils/entitySteps";
+import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
     DEFAULT_ROWS_PER_PAGE,
     pageChangeToDirection,
+    ServerCursorPagination,
     serverToTableOrder,
-    TableState,
     tableToServerOrder,
 } from "@/utils/table";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
@@ -20,30 +24,31 @@ import React,
     useState,
 } from "react";
 
-export default function SelectSchoolPrograms (props: TabContent) {
+export default function SelectSchoolPrograms (props: EntityStepContent<School>) {
     const {
-        programIds,
+        value,
         disabled,
     } = props;
-    const [ tableState, setTableState ] = useState<TableState>({
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
         order: `ASC`,
         orderBy: `name`,
+        search: ``,
     });
-    const queryFilter = buildProgramIdsFilter(programIds ?? []);
+    const paginationFilter = buildProgramIdsFilter(value?.programs?.map((program) => program.id ?? ``) ?? []);
 
     const {
         data,
         refetch,
-        fetchMore: fetchMorePrograms,
+        fetchMore,
         loading,
     } = useGetAllPaginatedPrograms({
         variables: {
             direction: `FORWARD`,
-            count: tableState.rowsPerPage,
-            orderBy: tableState.orderBy,
-            order: tableState.order,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            orderBy: serverPagination.orderBy,
+            order: serverPagination.order,
+            filter: paginationFilter,
         },
         fetchPolicy: `network-only`,
         notifyOnNetworkStatusChange: true,
@@ -51,7 +56,7 @@ export default function SelectSchoolPrograms (props: TabContent) {
 
     const onPageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
-        await fetchMorePrograms({
+        await fetchMore({
             variables: {
                 count,
                 cursor,
@@ -62,7 +67,7 @@ export default function SelectSchoolPrograms (props: TabContent) {
 
     const onTableChange = async (tableData: CursorTableData<ProgramRow>) => {
         if (loading) return;
-        setTableState({
+        setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             search: tableData.search,
@@ -73,25 +78,31 @@ export default function SelectSchoolPrograms (props: TabContent) {
     useEffect(() => {
         if (loading) return;
         refetch({
-            count: tableState.rowsPerPage,
-            filter: queryFilter,
+            count: serverPagination.rowsPerPage,
+            filter: paginationFilter,
         });
-    }, [ tableState.rowsPerPage, tableState.search ]);
+    }, [ serverPagination.rowsPerPage, serverPagination.search ]);
+
+    const rows = data?.programsConnection?.edges
+        .filter((edge) => isActive(edge.node))
+        .map((edge) => mapProgramNodeToProgramRow(edge.node))
+        ?? [];
 
     return (
-        <>
-            <ProgramsTable
-                disabled={disabled}
-                programs={mapProgramEdgesToPrograms(data?.programsConnection?.edges ?? [])}
-                rowsPerPage={tableState.rowsPerPage}
-                loading={loading}
-                total={data?.programsConnection.totalCount}
-                pageInfo={data?.programsConnection?.pageInfo}
-                order={serverToTableOrder(tableState.order)}
-                orderBy={tableState.orderBy}
-                onPageChange={onPageChange}
-                onTableChange={onTableChange}
-            />
-        </>
+        <ProgramsTable
+            disabled={disabled}
+            rows={rows}
+            rowsPerPage={serverPagination.rowsPerPage}
+            loading={loading}
+            total={data?.programsConnection.totalCount}
+            hasNextPage={data?.programsConnection?.pageInfo.hasNextPage}
+            hasPreviousPage={data?.programsConnection?.pageInfo.hasPreviousPage}
+            startCursor={data?.programsConnection?.pageInfo.startCursor}
+            endCursor={data?.programsConnection?.pageInfo.endCursor}
+            order={serverToTableOrder(serverPagination.order)}
+            orderBy={serverPagination.orderBy}
+            onPageChange={onPageChange}
+            onTableChange={onTableChange}
+        />
     );
 }

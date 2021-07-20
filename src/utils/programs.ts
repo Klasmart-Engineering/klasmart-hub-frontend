@@ -1,5 +1,9 @@
-import { mapAgeRangeEdgesToAgeRanges } from "./ageRanges";
-import { ProgramEdge } from "@/api/programs";
+import {
+    buildAgeRangeLabel,
+    mapAgeRangeNodeToAgeRange,
+} from "./ageRanges";
+import { ProgramNode } from "@/api/programs";
+import { ProgramRow } from "@/components/Program/Table";
 import {
     Program,
     Status,
@@ -15,22 +19,30 @@ export const buildEmptyProgram = (): Program => ({
     system: false,
 });
 
-export const mapProgramEdgesToPrograms = (data: ProgramEdge[]): Program[] => {
-    const mapped = data.map((edge) => ({
-        id: edge.node.id,
-        name: edge.node.name,
-        status: edge.node.status,
-        system: edge.node.system,
-        age_ranges: mapAgeRangeEdgesToAgeRanges(edge.node.ageRanges ?? []),
-        grades: edge.node.grades,
-        subjects: edge.node.subjects,
-    }));
+export const mapProgramNodeToProgram = (node: ProgramNode): Program => ({
+    id: node.id,
+    name: node.name,
+    status: node.status,
+    system: node.system,
+    age_ranges: node.ageRanges?.map(mapAgeRangeNodeToAgeRange) ?? [],
+    grades: node.grades,
+    subjects: node.subjects,
+});
 
-    return mapped ?? [];
-};
+export const mapProgramToProgramRow = (program: Program): ProgramRow => ({
+    id: program.id ?? ``,
+    name: program.name ?? ``,
+    ageRanges: program.age_ranges?.map(buildAgeRangeLabel) ?? [],
+    grades: program.grades?.map((grade) => grade.name).filter((name): name is string => !!name) ?? [],
+    subjects: program.subjects?.map((subject) => subject.name).filter((name): name is string => !!name) ?? [],
+    system: program.system ?? false,
+});
 
-export const mapSelectedProgramIds = (programs: Program[]): string[] => (
-    programs.filter((program) => program.status === Status.ACTIVE && program.id)
-        .map((program) => program.id)
-        .filter((id): id is string => !!id)
-);
+export const mapProgramNodeToProgramRow = (node: ProgramNode): ProgramRow => ({
+    id: node.id,
+    name: node.name,
+    system: node.system,
+    ageRanges: node.ageRanges?.map(mapAgeRangeNodeToAgeRange).map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
+    grades: node.grades.map((grade) => grade.name ?? ``),
+    subjects: node.subjects.map((subject) => subject.name ?? ``),
+});

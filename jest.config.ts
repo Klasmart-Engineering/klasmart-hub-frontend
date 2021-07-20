@@ -1,8 +1,7 @@
+import { compilerOptions } from "./tsconfig.json";
 import type { Config } from '@jest/types';
-
-const { defaults } = require(`jest-config`);
-const { pathsToModuleNameMapper } = require(`ts-jest/utils`);
-const { compilerOptions } = require(`./tsconfig`);
+import { defaults } from "jest-config";
+import { pathsToModuleNameMapper } from "ts-jest/utils";
 
 const config: Config.InitialOptions = {
     verbose: false,
@@ -16,9 +15,12 @@ const config: Config.InitialOptions = {
         `tsx`,
     ],
     moduleDirectories: [ `node_modules` ],
-    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-        prefix: `<rootDir>/`,
-    }),
+    moduleNameMapper: {
+        "\\.(css|less)$": `<rootDir>/tests/mocks/styleMock.ts`,
+        ...pathsToModuleNameMapper(compilerOptions.paths, {
+            prefix: `<rootDir>/`,
+        }),
+    },
 };
 
 export default config;

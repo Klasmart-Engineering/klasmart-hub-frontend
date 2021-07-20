@@ -1,19 +1,15 @@
 import ViewProgramDetailsDrawer from "./DetailsDrawer";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
-import {
-    isActive,
-    PageInfo,
-    Program,
-} from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { usePermission } from "@/utils/checkAllowed";
-import { getTableLocalization } from "@/utils/table";
-import { useValidations } from "@/utils/validations";
+import { useDeleteEntityPrompt } from "@/utils/common";
+import {
+    getTableLocalization,
+    TableProps,
+} from "@/utils/table";
 import {
     Chip,
     createStyles,
-    DialogContentText,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -25,14 +21,9 @@ import {
 } from "@material-ui/icons";
 import {
     CursorTable,
-    usePrompt,
+    useSnackbar,
 } from "kidsloop-px";
-import {
-    Order,
-    TableColumn,
-} from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -48,17 +39,6 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export const organizationProgram = (program: Program, i: number) => {
-    return {
-        id: program.id ?? `row-${i}`,
-        name: program.name ?? ``,
-        grades: program.grades?.filter(isActive).map((grade) => grade.name ?? ``) ?? [],
-        ageRanges: program.age_ranges?.filter(isActive).map(buildAgeRangeLabel) ?? [],
-        subjects: program.subjects?.filter(isActive).map((subject) => subject.name ?? ``) ?? [],
-        system: program.system ?? false,
-    };
-};
-
 export interface ProgramRow {
     id: string;
     name: string;
@@ -68,34 +48,20 @@ export interface ProgramRow {
     system: boolean;
 }
 
-interface Props {
-    disabled?: boolean;
-    selectedIds?: string[];
-    programs?: Program[] | null;
-    loading?: boolean;
-    pageInfo?: PageInfo;
-    total?: number;
-    cursor?: string;
-    rowsPerPage?: number;
-    search?: string;
-    order?: Order;
-    orderBy?: string;
-    showSelectables?: boolean;
-    refetch?: () => void;
-    onSelected?: (ids: string[]) => void;
-    onPageChange?: (page: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => Promise<void>;
-    onTableChange?: (tableData: CursorTableData<ProgramRow>) => Promise<void>;
-    onDeleteRow?: (id: string) => Promise<void>;
+interface Props extends TableProps<ProgramRow> {
 }
 
 export default function ProgramTable (props: Props) {
     const {
         disabled,
-        programs,
+        rows,
         selectedIds,
         onSelected,
         loading,
-        pageInfo,
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor,
         total,
         cursor,
         onPageChange,
@@ -103,37 +69,24 @@ export default function ProgramTable (props: Props) {
         onTableChange,
         search,
         refetch,
-        onDeleteRow,
         showSelectables,
         order,
         orderBy,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const prompt = usePrompt();
-    const [ rows, setRows ] = useState<ProgramRow[]>([]);
+    const { enqueueSnackbar } = useSnackbar();
+    const deletePrompt = useDeleteEntityPrompt();
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
     const [ selectedProgramId, setSelectedProgramId ] = useState<string>();
-    const [ tableSelectedIds, setTableSelectedIds ] = useState<string[]>(selectedIds || []);
+    const [ tableSelectedIds, setTableSelectedIds ] = useState(selectedIds ?? []);
     const [ nonSpecifiedId, setNonSpecifiedId ] = useState<string>();
     const canCreate = usePermission(`create_program_20221`);
     const canView = usePermission(`view_program_20111`);
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
-    const { required, equals } = useValidations();
-    const allPrograms = (programs ?? []).filter(isActive);
-
-    useEffect(() => {
-        if (!canView) {
-            setRows([]);
-            return;
-        }
-        const rows = allPrograms.map(organizationProgram) ?? [];
-        setNonSpecifiedId(allPrograms.find(program => program.name === `None Specified` && program.system)?.id ?? ``);
-        setRows(rows);
-    }, [ canView, programs ]);
 
     const selectIds = (ids: string[]) => {
         if (!ids.length) {
@@ -168,6 +121,12 @@ export default function ProgramTable (props: Props) {
     };
 
     useEffect(() => {
+        const nonSpecifiedId = rows.find((row) => row.name === `None Specified` && row.system)?.id;
+        if (!nonSpecifiedId) return;
+        setNonSpecifiedId(nonSpecifiedId);
+    }, [ rows ]);
+
+    useEffect(() => {
         onSelected?.(tableSelectedIds);
     }, [ tableSelectedIds ]);
 
@@ -193,7 +152,7 @@ export default function ProgramTable (props: Props) {
             label: intl.formatMessage({
                 id: `programs_grades`,
             }),
-            disableSearch: disabled,
+            disableSearch: true,
             disableSort: true,
             render: (row) => <>
                 {row.grades.map((grade, i) => (
@@ -210,7 +169,7 @@ export default function ProgramTable (props: Props) {
             label: intl.formatMessage({
                 id: `programs_ageRanges`,
             }),
-            disableSearch: disabled,
+            disableSearch: true,
             disableSort: true,
             render: (row) => <>
                 {row.ageRanges.map((ageRange, i) => (
@@ -227,7 +186,7 @@ export default function ProgramTable (props: Props) {
             label: intl.formatMessage({
                 id: `programs_subjects`,
             }),
-            disableSearch: disabled,
+            disableSearch: true,
             disableSort: true,
             render: (row) => <>
                 {row.subjects.map((subject, i) => (
@@ -252,31 +211,26 @@ export default function ProgramTable (props: Props) {
     };
 
     const handleDeleteRowClick = async (row: ProgramRow) => {
-        if (!await prompt({
-            variant: `error`,
-            title: intl.formatMessage({
-                id: `programs_deleteProgramLabel`,
-            }),
-            okLabel: intl.formatMessage({
-                id: `programs_deleteLabel`,
-            }),
-            content: <>
-                <DialogContentText>
-                    {intl.formatMessage({
-                        id: `editDialog_deleteConfirm`,
-                    }, {
-                        userName: row.name,
-                    })}
-                </DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeToRemovePrompt`,
-                }, {
-                    value: <strong>{row.name}</strong>,
-                })}</DialogContentText>
-            </>,
-            validations: [ required(), equals(row.name) ],
-        })) return;
-        await onDeleteRow?.(row.id);
+        try {
+            if (!await deletePrompt({
+                title: intl.formatMessage({
+                    id: `programs_deleteProgramLabel`,
+                }),
+                entityName: row.name,
+            })) return;
+            refetch?.();
+            enqueueSnackbar(intl.formatMessage({
+                id: `programs_deleteSuccess`,
+            }), {
+                variant: `success`,
+            });
+        } catch (err) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `generic_createError`,
+            }), {
+                variant: `error`,
+            });
+        }
     };
 
     const rowActions = (row: ProgramRow) => ([
@@ -344,10 +298,10 @@ export default function ProgramTable (props: Props) {
                     rowActions={!disabled ? rowActions : undefined}
                     localization={localization}
                     loading={loading}
-                    hasNextPage={!loading ? pageInfo?.hasNextPage : false}
-                    hasPreviousPage={!loading ? pageInfo?.hasPreviousPage : false}
-                    startCursor={pageInfo?.startCursor}
-                    endCursor={pageInfo?.endCursor}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
+                    startCursor={startCursor}
+                    endCursor={endCursor}
                     total={total}
                     cursor={cursor}
                     search={search}

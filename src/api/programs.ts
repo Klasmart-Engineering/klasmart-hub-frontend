@@ -19,6 +19,7 @@ import {
     Subject,
     UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -97,33 +98,33 @@ export const useEditProgramSubjects = (options?: MutationHookOptions<EditProgram
     return useMutation<EditProgramSubjectsResponse, EditProgramSubjectsRequest>(EDIT_PROGRAM_SUBJECTS, options);
 };
 
-export interface AgeRangeEdge extends BaseEntity {
+export interface AgeRangeNode extends BaseEntity {
     highValue?: number | null;
     highValueUnit?: string | null;
     lowValue?: number | null;
     lowValueUnit?: string | null;
 }
 
-export interface ProgramEdge {
-    node: {
-        id?: string;
-        name?: string | null;
-        status?: Status | null;
-        system?: boolean | null;
-        ageRanges?: AgeRangeEdge[];
-        subjects?: Subject[] | null;
-        grades?: Grade[] | null;
-    };
+export interface ProgramNode {
+    id: string;
+    name: string;
+    status: Status;
+    system: boolean;
+    ageRanges: AgeRangeNode[];
+    subjects: Subject[];
+    grades: Grade[];
 }
 
-export interface ProgramFilter {
+export interface ProgramEdge {
+    node: ProgramNode;
+}
+
+export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     name?: StringFilter;
     id?: UuidFilter;
     status?: StatusFilter;
     organizationId?: UuidFilter;
     system?: BooleanFilter;
-    OR?: ProgramFilter[];
-    AND?: ProgramFilter[];
 }
 
 interface GetProgramRequest {

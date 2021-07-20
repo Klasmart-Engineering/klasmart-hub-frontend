@@ -1,4 +1,4 @@
-import { useOrganizationStack } from "@/store/organizationMemberships";
+import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
 import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
 import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/themeProvider";
 import { Organization } from "@/types/graphQL";
@@ -83,10 +83,7 @@ export default function Personalization (props: Props) {
     const [ imageSelectError, setImageSelectError ] = useState(``);
 
     const [ previewOrganizationColor, setPreviewOrganizationColor ] = usePreviewOrganizationColor();
-    const [ organizationMembershipStack ] = useOrganizationStack();
-
-    const memberships = organizationMembershipStack.slice();
-    const currentOrganizationMembership = memberships[0];
+    const currentOrganizationMembership = useCurrentOrganizationMembership();
     const organizationName = currentOrganizationMembership?.organization?.organization_name ?? ``;
 
     const onImageChange = (file: File) => {

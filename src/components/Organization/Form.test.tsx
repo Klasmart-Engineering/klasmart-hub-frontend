@@ -1,4 +1,5 @@
 import Form from './Form';
+import { PRIMARY_THEME_COLOR } from '@/themeProvider';
 import { getLanguage } from "@/utils/locale";
 import {
     act,
@@ -8,7 +9,6 @@ import {
 import {
     mockOrg,
     mockOrgId,
-    mockOrgStack,
 } from '@tests/mockOrganizationData';
 import qlRender from '@tests/utils';
 import { utils } from 'kidsloop-px';
@@ -22,7 +22,6 @@ jest.mock(`@/store/organizationMemberships`, () => {
         useCurrentOrganizationMembership: () => ({
             organization_id: mockOrgId,
         }),
-        useOrganizationStack: () => ([ mockOrgStack[0] ]),
     };
 });
 
@@ -201,7 +200,8 @@ test(`OrganizationForm shows correct error labels.`, async () => {
         currentTab="organizationInfo"
         value={mockOrg}
         onValidation={jest.fn()}
-        onChange={jest.fn()}/>);
+        onChange={jest.fn()}
+    />);
 
     await act(async () => {
         const shortCode = await getByLabelText(`Shortcode`, {
@@ -247,7 +247,7 @@ test(`OrganizationForm shows correct error labels.`, async () => {
 
         await waitFor(() => {
             expect(queryByText(`Shortcode must have a minimum of 3 characters`)).toBeTruthy();
-            expect(queryByText(`The Organisation Name must have a minimum of 3 characters`)).toBeTruthy();
+            expect(queryByText(`The Organization Name must have a minimum of 3 characters`)).toBeTruthy();
             expect(queryByText(`Invalid phone number`)).toBeTruthy();
             expect(queryByText(`The first address must have a minimum of 3 characters`)).toBeTruthy();
         });
@@ -291,16 +291,16 @@ test(`PersonalizationForm renders correctly`, async () => {
         onChange={jest.fn()}/>);
 
     await act(async () => {
-        const orgLogo = queryByText(`Organization Logo`);
-        const altTextLabel = queryByText(`Alternate Text`);
-        const altText = queryByText(`The alternate text will be displayed when your image fails to load.`);
-        const orgColor = queryByText(`Organization Color`);
+        const orgLogoLabel = queryByText(`Organization Logo`);
+        const selectImageButton = queryByText(`Select Image`);
+        const orgColorLabel = queryByText(`Organization Color`);
+        const colorInputLabel = queryByText(`Color`);
 
         await waitFor(async () => {
-            expect(orgLogo).toBeTruthy();
-            expect(altTextLabel).toBeTruthy();
-            expect(altText).toBeTruthy();
-            expect(orgColor).toBeTruthy();
+            expect(orgLogoLabel).toBeTruthy();
+            expect(selectImageButton).toBeTruthy();
+            expect(orgColorLabel).toBeTruthy();
+            expect(colorInputLabel).toBeTruthy();
         });
     });
 });

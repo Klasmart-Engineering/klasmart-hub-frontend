@@ -1,12 +1,17 @@
 
-import { Status } from "@/types/graphQL";
+import {
+    Category,
+    Program,
+    Status,
+    Subject,
+} from "@/types/graphQL";
 
 export const mockOrgId = `b19de3cc-aa01-47f5-9f87-850eb70ae073`;
 export const mathId1 = `a00de3cc-aa01-47f5-9f87-850eb70ae001`;
 export const mathId2 = `b00de3cc-aa01-47f5-9f87-850eb70ae002`;
 export const programId1 = `b00de3cc-aa01-47f5-9f87-850eb70aprog`;
 export const categoryId1 = `b00de3cc-aa01-47f5-9f87-850eb70acate`;
-export const mockSubjects = [
+export const mockSubjects: Subject[] = [
     {
         id: mathId1,
         name: `Math Grade 5`,
@@ -38,7 +43,7 @@ export const mockSubjects = [
     },
 ];
 
-export const mockPrograms = [
+export const mockPrograms: Program[] = [
     {
         id: programId1,
         name: `Elementary`,
@@ -56,7 +61,7 @@ export const mockPrograms = [
     },
 ];
 
-export const mockCategories = [
+export const mockCategories: Category[] = [
     {
         id: `2d5ea951-836c-471e-996e-76823a992689`,
         name: `None Specified`,

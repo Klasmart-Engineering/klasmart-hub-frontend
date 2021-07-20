@@ -1,6 +1,9 @@
 import 'regenerator-runtime/runtime';
 import Grades from './Table';
-import { GET_PAGINATED_ORGANIZATION_GRADES } from '@/operations/queries/getOrganizationGrades';
+import {
+    buildGradeFilter,
+    GET_PAGINATED_ORGANIZATION_GRADES,
+} from '@/operations/queries/getOrganizationGrades';
 import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
@@ -19,18 +22,14 @@ const mocks: MockedResponse[] = [
         request: {
             query: GET_PAGINATED_ORGANIZATION_GRADES,
             variables: {
-                organizationId: mockOrgId,
                 direction: `FORWARD`,
                 count: 10,
                 orderBy: `name`,
                 order: `ASC`,
-                filter: {
-                    name: {
-                        operator: `contains`,
-                        value: ``,
-                        caseInsensitive: true,
-                    },
-                },
+                filter: buildGradeFilter({
+                    organizationId: mockOrgId,
+                    search: ``,
+                }),
             },
         },
         result: {

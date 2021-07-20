@@ -3,18 +3,32 @@ import { EDIT_SCHOOL } from "@/operations/mutations/editSchool";
 import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms";
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
 import { UPLOAD_SCHOOLS_CSV } from "@/operations/mutations/uploadSchoolsCsv";
+import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
+import { GET_SCHOOL } from "@/operations/queries/getSchool";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     Organization,
     Program,
     School,
+    Status,
+    StringFilter,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
     useMutation,
     useQuery,
 } from "@apollo/client";
+
+export interface SchoolFilter extends PaginationFilter<SchoolFilter> {
+    name?: StringFilter;
+    shortCode?: StringFilter;
+    organizationId?: UuidFilter;
+    schoolId?: UuidFilter;
+    status?: StringFilter;
+}
 
 interface CreateSchoolRequest {
     organization_id: string;
@@ -86,6 +100,18 @@ export const useGetSchools = (options?: QueryHookOptions<GetSchoolsResponse, Get
     return useQuery<GetSchoolsResponse, GetSchoolsRequest>(GET_SCHOOLS_FROM_ORGANIZATION, options);
 };
 
+interface GetSchoolRequest {
+    school_id: string;
+}
+
+interface GetSchoolResponse {
+    school: School;
+}
+
+export const useGetSchool = (options?: QueryHookOptions<GetSchoolResponse, GetSchoolRequest>) => {
+    return useQuery<GetSchoolResponse, GetSchoolRequest>(GET_SCHOOL, options);
+};
+
 interface UploadSchoolsCsvResponse {
     filename?: string;
     minetype?: string;
@@ -98,4 +124,41 @@ interface UploadSchoolsCsvRequest {
 
 export const useUploadSchoolsCsv = () => {
     return useMutation<UploadSchoolsCsvResponse, UploadSchoolsCsvRequest>(UPLOAD_SCHOOLS_CSV);
+};
+
+interface GetPaginatedSchoolsRequest {
+    direction: `FORWARD` | `BACKWARD`;
+    cursor?: string;
+    count?: number;
+    orderBy?: string;
+    order?: string;
+    filter?: SchoolFilter;
+}
+
+export interface SchoolNode {
+    id: string;
+    name: string;
+    status: Status;
+    shortCode: string;
+}
+
+export interface SchoolEdge {
+    node: SchoolNode;
+}
+
+export interface GetPaginatedSchoolsRequestResponse {
+    schoolsConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: SchoolEdge[];
+    };
+}
+
+export const useGetPaginatedSchools = (options?: QueryHookOptions<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>) => {
+    return useQuery<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>(GET_PAGINATED_ORGANIZATION_SCHOOLS, options);
 };

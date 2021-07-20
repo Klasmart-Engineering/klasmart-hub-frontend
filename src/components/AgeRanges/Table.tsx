@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export interface AgeRangeRow extends AgeRange{
+export interface AgeRangeRow extends AgeRange {
     ageRange: string;
 }
 
@@ -144,7 +144,7 @@ export default function (props: Props) {
         try {
             await deleteAgeRange({
                 variables: {
-                    id: selectedAgeRange.id,
+                    id: selectedAgeRange.id ?? ``,
                 },
             });
 

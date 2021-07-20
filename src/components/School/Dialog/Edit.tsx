@@ -1,17 +1,15 @@
-import ClassesStep from "./Steps/Classes";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
 import SummaryStep from "./Steps/Summary/Base";
 import {
     useEditSchoolPrograms,
+    useGetSchool,
     useUpdateSchool,
 } from "@/api/schools";
 import {
     School,
-    SchoolState,
     Status,
 } from "@/types/graphQL";
-import { mapSelectedProgramIds } from "@/utils/programs";
 import { buildEmptySchool } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
@@ -38,6 +36,8 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     actionsContainer: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));
@@ -46,14 +46,14 @@ const INITIAL_STEP_INDEX = 2;
 
 interface Props {
     open: boolean;
-    value?: School;
+    schoolId?: string;
     onClose: (value?: School) => void;
 }
 
 export default function EditSchoolDialog (props: Props) {
     const {
         open,
-        value,
+        schoolId,
         onClose,
     } = props;
     const classes = useStyles();
@@ -66,46 +66,32 @@ export default function EditSchoolDialog (props: Props) {
     } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const [ updateSchool ] = useUpdateSchool();
-    const [ editSchoolPrograms ] = useEditSchoolPrograms();
-    const [ editedSchool, setEditedSchool ] = useState<SchoolState>({
-        ...value ? value : buildEmptySchool(),
-        programIds: mapSelectedProgramIds(value?.programs ?? []),
+    const { data: schoolData } = useGetSchool({
+        variables: {
+            school_id: schoolId ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !schoolId,
     });
+    const [ editSchoolPrograms ] = useEditSchoolPrograms();
+    const [ editedSchool, setEditedSchool ] = useState(buildEmptySchool());
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
 
     const handleChange = (value: School) => {
-        if (isEqual({
-            ...value,
-            programIds: editedSchool.programIds,
-        }, editedSchool)) return;
-        setEditedSchool({
-            ...editedSchool,
-            ...value,
-        });
-    };
-
-    const setSelectedProgramIds = (programIds: string[], school?: School) => {
-        const schoolValue = school ? school : editedSchool;
-        if (isEqual({
-            ...schoolValue,
-            programIds,
-        }, editedSchool)) return;
-
-        setEditedSchool({
-            ...schoolValue,
-            programIds,
-        });
+        if (isEqual(value, editedSchool)) return;
+        setEditedSchool(value);
     };
 
     useEffect(() => {
-        if (!open) return;
-        setSelectedProgramIds(value?.programs?.filter((program) => program.status === Status.ACTIVE && program.id)
-            .map((program) => program.id)
-            .filter((id): id is string => !!id) ?? [], value ? value : buildEmptySchool());
+        if (!open) {
+            setEditedSchool(buildEmptySchool());
+            return;
+        }
+        setEditedSchool(schoolData?.school ?? buildEmptySchool());
         setStepIndex(INITIAL_STEP_INDEX);
-    }, [ open ]);
+    }, [ schoolData, open ]);
 
     useEffect(() => {
         if (!steps_.length) return;
@@ -118,15 +104,17 @@ export default function EditSchoolDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `schools_schoolInfoLabel`,
                 }),
-                content: <SchoolInfoStep
-                    value={editedSchool}
-                    onChange={handleChange}
-                />,
+                content: (
+                    <SchoolInfoStep
+                        value={editedSchool}
+                        onChange={handleChange}
+                    />
+                ),
                 error: [
                     required()(editedSchool?.school_name),
                     letternumeric()(editedSchool?.school_name),
                     max(120)(editedSchool?.school_name),
-                    max(10)(editedSchool?.shortcode?.length),
+                    max(10)(editedSchool?.shortcode),
                     alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
@@ -134,29 +122,24 @@ export default function EditSchoolDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `schools_programsLabel`,
                 }),
-                content: <ProgramsStep
-                    programIds={editedSchool.programIds}
-                    onProgramIdsChange={setSelectedProgramIds}
-                />,
-                error: [ required()(editedSchool?.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
+                content: (
+                    <ProgramsStep
+                        value={editedSchool}
+                        onChange={handleChange}
+                    />
+                ),
+                error: [ required()(editedSchool?.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
-            // {
-            //     label: `Classes`,
-            //     content: <ClassesStep
-            //         value={editedSchool}
-            //         onChange={handleChange}
-            //     />,
-            //     error: [ required()(editedSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
-            // },
             {
                 label: intl.formatMessage({
                     id: `schools_summaryLabel`,
                 }),
-                content: <SummaryStep
-                    value={editedSchool}
-                    programIds={editedSchool.programIds}
-                    onChange={handleChange}
-                />,
+                content: (
+                    <SummaryStep
+                        value={editedSchool}
+                        onChange={handleChange}
+                    />
+                ),
             },
         ];
 
@@ -164,7 +147,7 @@ export default function EditSchoolDialog (props: Props) {
     }, [ editedSchool ]);
 
     const handleSave = async () => {
-        if (!value) return;
+        if (!schoolId) return;
         const {
             school_id,
             school_name,
@@ -181,7 +164,7 @@ export default function EditSchoolDialog (props: Props) {
             await editSchoolPrograms({
                 variables: {
                     school_id,
-                    program_ids: editedSchool.programIds,
+                    program_ids: editedSchool.programs?.map((program) => program?.id).filter((id): id is string => !!id) ?? [],
                 },
             });
             onClose(editedSchool);
@@ -207,6 +190,7 @@ export default function EditSchoolDialog (props: Props) {
             })}
             header={
                 <Stepper
+                    editable
                     step={stepIndex_}
                     steps={steps_}
                     onChange={setStepIndex}

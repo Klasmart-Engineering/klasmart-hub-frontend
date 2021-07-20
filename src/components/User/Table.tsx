@@ -6,7 +6,10 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
 import { getCustomStatus } from "@/utils/status";
-import { getTableLocalization } from "@/utils/table";
+import {
+    getTableLocalization,
+    TableProps,
+} from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
@@ -30,12 +33,7 @@ import {
     UserAvatar,
     useSnackbar,
 } from "kidsloop-px";
-import {
-    Order,
-    TableColumn,
-} from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { escapeRegExp } from "lodash";
 import React,
 { useState } from "react";
@@ -64,7 +62,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export interface UserItem {
+export interface UserRow {
     id: string;
     givenName: string;
     familyName: string;
@@ -76,27 +74,12 @@ export interface UserItem {
     joinDate: Date;
 }
 
-interface Props {
-    items: UserItem[];
-    loading: boolean;
-    order?: string;
-    orderBy?: string;
-    rowsPerPage?: number;
-    search?: string;
-    cursor?: string;
-    total?: number;
-    hasNextPage?: boolean;
-    hasPreviousPage?: boolean;
-    startCursor?: string;
-    endCursor?: string;
-    onPageChange: (pageChange: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => Promise<void>;
-    onTableChange: (tableData: CursorTableData<UserItem>) => Promise<void>;
-    refetch: () => Promise<any> | void;
+interface Props extends TableProps<UserRow> {
 }
 
 export default function UserTable (props: Props) {
     const {
-        items,
+        rows,
         loading,
         order,
         orderBy,
@@ -128,12 +111,12 @@ export default function UserTable (props: Props) {
     const canDelete = usePermission(`delete_users_40440`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
-    const editSelectedRow = (row: UserItem) => {
+    const editSelectedRow = (row: UserRow) => {
         setSelectedUserId(row.id);
         setEditDialogOpen(true);
     };
 
-    const deleteSelectedRow = async (row: UserItem) => {
+    const deleteSelectedRow = async (row: UserRow) => {
         const userName = `${row.givenName} ${row.familyName}`.trim();
         if (!await prompt({
             variant: `error`,
@@ -169,7 +152,7 @@ export default function UserTable (props: Props) {
                     user_id: row.id,
                 },
             });
-            await refetch();
+            await refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `editDialog_deleteSuccess`,
             }), {
@@ -184,7 +167,7 @@ export default function UserTable (props: Props) {
         }
     };
 
-    const columns: TableColumn<UserItem>[] = [
+    const columns: TableColumn<UserRow>[] = [
         {
             id: `id`,
             label: `ID`,
@@ -307,7 +290,7 @@ export default function UserTable (props: Props) {
             <Paper className={classes.root}>
                 <CursorTable
                     columns={columns}
-                    rows={items}
+                    rows={rows}
                     loading={loading}
                     idField="id"
                     orderBy={orderBy}
@@ -381,21 +364,21 @@ export default function UserTable (props: Props) {
                 onClose={(value) => {
                     setSelectedUserId(undefined);
                     setEditDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
             <CreateUserDialog
                 open={createDialogOpen}
                 onClose={(value) => {
                     setCreateDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
             <UploadUserCsvDialog
                 open={uploadCsvDialogOpen}
                 onClose={(value) => {
                     setUploadCsvDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
         </>

@@ -15,11 +15,14 @@
             "@/*": [
                 "src/*"
             ],
-            "@tests/*": ["tests/*"]
+            "@tests/*": [
+                "tests/*"
+            ]
         }
     },
     "include": [
         "src",
+        "tests",
         "**.js",
         "**.ts"
     ]

@@ -36,6 +36,8 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
     actionsContainer: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         backgroundColor: theme.overrides?.MuiAppBar?.colorPrimary?.backgroundColor,
     },
 }));
@@ -64,39 +66,19 @@ export default function CreateSchoolDialog (props: Props) {
         letternumeric,
         max,
     } = useValidations();
-    const [ newSchool, setNewSchool ] = useState<SchoolState>({
-        ...buildEmptySchool(),
-        programIds: [],
-    });
+    const [ newSchool, setNewSchool ] = useState<School>(buildEmptySchool());
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ steps_, setSteps ] = useState<Step[]>([]);
 
     const handleChange = (value: School) => {
-        if (isEqual({
-            ...value,
-            programIds: newSchool.programIds,
-        }, newSchool)) return;
-        setNewSchool({
-            ...newSchool,
-            ...value,
-        });
-    };
-
-    const setSelectedProgramIds = (programIds: string[]) => {
-        console.log(`program IDS :`, programIds);
-        setNewSchool({
-            ...newSchool,
-            programIds,
-        });
+        if (isEqual(value, newSchool)) return;
+        setNewSchool(value);
     };
 
     useEffect(() => {
         if (!open) return;
-        setNewSchool({
-            ...buildEmptySchool(),
-            programIds: [],
-        });
+        setNewSchool(buildEmptySchool());
         setStepIndex(INITIAL_STEP_INDEX);
     }, [ open ]);
 
@@ -127,29 +109,24 @@ export default function CreateSchoolDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `schools_programsLabel`,
                 }),
-                content: <ProgramsStep
-                    programIds={newSchool.programIds}
-                    onProgramIdsChange={setSelectedProgramIds}
-                />,
-                error: [ required()(newSchool.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
+                content: (
+                    <ProgramsStep
+                        value={newSchool}
+                        onChange={handleChange}
+                    />
+                ),
+                error: [ required()(newSchool.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
-            // {
-            //     label: `Classes`,
-            //     content: <ClassesStep
-            //         value={newSchool}
-            //         onChange={handleChange}
-            //     />,
-            //     error: [ required()(newSchool?.classes) ].filter(((error): error is string => error !== true)).find((error) => error),
-            // },
             {
                 label: intl.formatMessage({
                     id: `schools_summaryLabel`,
                 }),
-                content: <SummaryStep
-                    value={newSchool}
-                    programIds={newSchool.programIds}
-                    onChange={handleChange}
-                />,
+                content: (
+                    <SummaryStep
+                        value={newSchool}
+                        onChange={handleChange}
+                    />
+                ),
             },
         ];
         setSteps(steps);
@@ -173,7 +150,7 @@ export default function CreateSchoolDialog (props: Props) {
             await editSchoolPrograms({
                 variables: {
                     school_id: schoolId,
-                    program_ids: newSchool.programIds,
+                    program_ids: newSchool.programs?.map((program) => program.id ?? ``) ?? [],
                 },
             });
             onClose(newSchool);

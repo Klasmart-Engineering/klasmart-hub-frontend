@@ -2,16 +2,40 @@ import { SortOrder } from "@/types/graphQL";
 import { TableLocalization } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
 import { merge } from "lodash";
 import { IntlShape } from "react-intl";
 
 export const DEFAULT_ROWS_PER_PAGE = 10;
-export interface TableState {
-    search?: string;
+
+export interface ServerCursorPagination {
+    search: string;
     rowsPerPage: number;
     order: SortOrder;
     orderBy: string;
     cursor?: string;
+}
+
+export interface TableProps<T> {
+    rows: T[];
+    disabled?: boolean;
+    loading?: boolean;
+    selectedIds?: string[];
+    order?: string;
+    orderBy?: string;
+    rowsPerPage?: number;
+    search?: string;
+    cursor?: string;
+    total?: number;
+    hasNextPage?: boolean;
+    hasPreviousPage?: boolean;
+    startCursor?: string;
+    endCursor?: string;
+    showSelectables?: boolean;
+    onPageChange?: (pageChange: PageChange, order: Order, cursor: string | undefined, rowsPerPage: number) => Promise<void>;
+    onTableChange?: (tableData: CursorTableData<T>) => Promise<void>;
+    onSelected?: (ids: string[]) => void;
+    refetch?: () => Promise<any> | void;
 }
 
 export const getTableLocalization = (intl: IntlShape, localization: TableLocalization): TableLocalization => merge<TableLocalization, TableLocalization>({

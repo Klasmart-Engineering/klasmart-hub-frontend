@@ -1,17 +1,19 @@
-import { TabContent } from "./shared";
 import { useGetAllSubjects } from "@/api/subjects";
 import SubjectsTable from "@/components/Subject/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
+    Program,
     Subject,
 } from "@/types/graphQL";
+import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     FormHelperText,
     makeStyles,
 } from "@material-ui/core";
+import { isEqual } from "lodash";
 import React,
 {
     useEffect,
@@ -20,7 +22,7 @@ import React,
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function SubjectStep (props: TabContent) {
+export default function SubjectStep (props: EntityStepContent<Program>) {
     const {
         value,
         disabled,
@@ -28,24 +30,32 @@ export default function SubjectStep (props: TabContent) {
     } = props;
     const classes = useStyles();
     const { required } = useValidations();
+    const [ selectedSubjectIds, setSelectedSubjectIds ] = useState(value.subjects?.filter(isActive).map((subject) => subject.id ?? ``) ?? []);
     const currentOrganization = useCurrentOrganization();
-    const [ selectedSubjectIds, setSelectedIds ] = useState(value.subjects?.filter(isActive).map((subject) => subject.id ?? ``) ?? []);
-    const { data: subjectsData } = useGetAllSubjects({
+    const { data } = useGetAllSubjects({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !currentOrganization?.organization_id,
     });
 
-    const allSubjects = subjectsData?.organization.subjects?.filter(isActive) ?? [];
-    const selectedSubjectsError = required()(value.subjects);
+    const allSubjects = data?.organization.subjects?.filter(isActive) ?? [];
+
+    const selectedSubjectsError = required()(selectedSubjectIds);
+
+    const handleSelected = (ids: string[]) => {
+        setSelectedSubjectIds(ids);
+    };
 
     useEffect(() => {
-        onChange?.({
+        const updatedValue = {
             ...value,
             subjects: selectedSubjectIds
-                .map((subjectId) => allSubjects.find((subject) => subject.id === subjectId))
+                .map((id) => allSubjects.find((subject) => subject.id === id))
                 .filter((subject): subject is Subject => !!subject),
-        });
+        };
+        if (isEqual(value, updatedValue)) return;
+        onChange?.(updatedValue);
     }, [ selectedSubjectIds ]);
 
     return (
@@ -55,7 +65,7 @@ export default function SubjectStep (props: TabContent) {
                 showSelectables={!disabled}
                 selectedIds={disabled ? undefined : selectedSubjectIds}
                 subjects={disabled ? value.subjects : undefined}
-                onSelected={setSelectedIds}
+                onSelected={handleSelected}
             />
             {!disabled && <FormHelperText error>{selectedSubjectsError === true ? ` ` : selectedSubjectsError}</FormHelperText>}
         </>

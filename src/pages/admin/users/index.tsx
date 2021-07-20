@@ -3,7 +3,8 @@ import {
     UserEdge,
 } from "@/api/organizationMemberships";
 import UserTable,
-{ UserItem } from "@/components/User/Table";
+{ UserRow } from "@/components/User/Table";
+import { buildOrganizationUserFilter } from "@/operations/queries/getPaginatedOrganizationUsers";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/checkAllowed";
@@ -11,8 +12,8 @@ import { sortSchoolNames } from "@/utils/schools";
 import {
     DEFAULT_ROWS_PER_PAGE,
     pageChangeToDirection,
+    ServerCursorPagination,
     serverToTableOrder,
-    TableState,
     tableToServerOrder,
 } from "@/utils/table";
 import { sortRoleNames } from "@/utils/userRoles";
@@ -42,16 +43,21 @@ export const mapUserRow = (edge: UserEdge) => {
 };
 
 export default function UsersPage () {
-    const [ rows, setRows ] = useState<UserItem[]>([]);
+    const [ rows, setRows ] = useState<UserRow[]>([]);
     const canView = usePermission(`view_users_40110`, true);
     const canViewSchoolUsers = usePermission(`view_my_school_users_40111`, true);
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
-    const [ tableState, setTableState ] = useState<TableState>({
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
         order: `ASC`,
         orderBy: `givenName`,
+    });
+
+    const paginationFilter = buildOrganizationUserFilter({
+        organizationId,
+        search: serverPagination.search,
     });
 
     const {
@@ -62,11 +68,10 @@ export default function UsersPage () {
     } = useGetPaginatedOrganizationMemberships({
         variables: {
             direction: `FORWARD`,
-            count: tableState.rowsPerPage,
-            search: tableState.search,
-            organizationId,
-            order: tableState.order,
-            orderBy: tableState.orderBy,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
         },
         notifyOnNetworkStatusChange: true,
     });
@@ -75,7 +80,6 @@ export default function UsersPage () {
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
-
         await fetchMoreUsers({
             variables: {
                 count,
@@ -85,27 +89,28 @@ export default function UsersPage () {
         });
     };
 
-    const handleTableChange = async (tableData: CursorTableData<UserItem>) => {
-        setTableState({
+    const handleTableChange = async (tableData: CursorTableData<UserRow>) => {
+        if (loadingOrganizationMemberships) return;
+        setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
-            rowsPerPage: tableData.rowsPerPage,
             search: tableData.search,
+            rowsPerPage: tableData.rowsPerPage,
         });
     };
 
     useEffect(() => {
         refetchUsers({
-            count: tableState.rowsPerPage,
-            order: tableState.order,
-            orderBy: tableState.orderBy,
-            search: tableState.search,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
         });
     }, [
-        tableState.search,
-        tableState.order,
-        tableState.orderBy,
-        tableState.rowsPerPage,
+        serverPagination.search,
+        serverPagination.order,
+        serverPagination.orderBy,
+        serverPagination.rowsPerPage,
     ]);
 
     useEffect(() => {
@@ -119,13 +124,13 @@ export default function UsersPage () {
 
     return (
         <UserTable
-            items={rows}
+            rows={rows}
             loading={loadingOrganizationMemberships}
             refetch={refetchUsers}
-            order={serverToTableOrder(tableState.order)}
-            orderBy={tableState.orderBy}
-            rowsPerPage={tableState.rowsPerPage}
-            search={tableState.search}
+            order={serverToTableOrder(serverPagination.order)}
+            orderBy={serverPagination.orderBy}
+            rowsPerPage={serverPagination.rowsPerPage}
+            search={serverPagination.search}
             total={usersData?.usersConnection.totalCount}
             hasNextPage={pageInfo?.hasNextPage}
             hasPreviousPage={pageInfo?.hasPreviousPage}
