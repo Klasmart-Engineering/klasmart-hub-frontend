@@ -1,4 +1,5 @@
 import ViewProgramDetailsDrawer from "./DetailsDrawer";
+import { useDeleteProgram } from "@/api/programs";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
 import { usePermission } from "@/utils/checkAllowed";
@@ -77,6 +78,7 @@ export default function ProgramTable (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const deletePrompt = useDeleteEntityPrompt();
+    const [ deleteProgram ] = useDeleteProgram();
     const [ openViewDetailsDrawer, setOpenViewDetailsDrawer ] = useState(false);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
@@ -211,13 +213,18 @@ export default function ProgramTable (props: Props) {
     };
 
     const handleDeleteRowClick = async (row: ProgramRow) => {
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `programs_deleteProgramLabel`,
+            }),
+            entityName: row.name,
+        })) return;
         try {
-            if (!await deletePrompt({
-                title: intl.formatMessage({
-                    id: `programs_deleteProgramLabel`,
-                }),
-                entityName: row.name,
-            })) return;
+            await deleteProgram({
+                variables: {
+                    id: row.id,
+                },
+            });
             refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `programs_deleteSuccess`,
