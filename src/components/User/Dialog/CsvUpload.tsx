@@ -79,10 +79,10 @@ export default function UploadUserCsvDialog (props: Props) {
                     id: `csvDialog_addCsvFile`,
                 })}
                 exceedsMaxSizeError={(fileSize, maxSize) => intl.formatMessage({
-                    id: `uploadCsv_exceedsMaxSizeError`,
+                    id: `validation.error.file.maxSize`,
                 }, {
-                    fileSize: (fileSize / 1000).toFixed(1),
-                    maxSize: (maxSize / 1000).toFixed(1),
+                    size: `${(fileSize / 1000).toFixed(1)} kB`,
+                    max: `${(maxSize / 1000).toFixed(1)} kB`,
                 })}
                 uploadSuccessMessage={intl.formatMessage({
                     id: `uploadCsv_uploadSuccessMessage`,
