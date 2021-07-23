@@ -1,15 +1,11 @@
 {
-  "name": "kidsloop-classroom",
+  "name": "kidsloop-hub-frontend",
   "version": "2.5.1",
   "description": "",
   "scripts": {
     "build": "webpack",
     "build:bitbucket": "cross-env ENV_PATH=.env.bitbucket webpack",
     "build:alpha": "cross-env ENV_PATH=.env.alpha webpack",
-    "build:prod": "cross-env ENV_PATH=.env.prod webpack",
-    "build:prod-cn": "cross-env ENV_PATH=.env.prod.cn webpack",
-    "build:prod-in": "cross-env ENV_PATH=.env.prod.in webpack",
-    "build:prod-uk": "cross-env ENV_PATH=.env.prod.uk webpack",
     "start": "cross-env NODE_ENV=development ENV_PATH=.env.local webpack serve",
     "test": "jest"
   },
