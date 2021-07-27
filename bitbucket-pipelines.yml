@@ -27,7 +27,6 @@ pipelines:
         name: 'Build NPM'
         image: node:lts
         script:
-          - sudo apt-get install git -y
           - npm i
           - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.bitbucket  
           - npm run build:bitbucket
