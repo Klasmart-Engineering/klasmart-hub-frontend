@@ -14,3 +14,10 @@ export const buildEmptySubject = (subject?: Subject): Subject => pickBy({
     status: subject?.status ?? Status.ACTIVE,
     system: subject?.system ?? false,
 }, (value) => value !== undefined);
+
+export const mapSubjectsToFilterValueOptions = (subjects: Subject[]) => (
+    subjects.map(subject => ({
+        value: subject.id ?? ``,
+        label: subject.name ?? ``,
+    }))
+);

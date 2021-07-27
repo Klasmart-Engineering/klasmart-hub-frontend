@@ -90,6 +90,7 @@ export default function SelectSchoolPrograms (props: EntityStepContent<School>) 
 
     return (
         <ProgramsTable
+            hideFilters
             disabled={disabled}
             rows={rows}
             rowsPerPage={serverPagination.rowsPerPage}

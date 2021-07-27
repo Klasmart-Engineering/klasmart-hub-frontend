@@ -1,13 +1,26 @@
 import {
     buildAgeRangeLabel,
     mapAgeRangeNodeToAgeRange,
+    mapAgeRangesHighValueToFilter,
+    mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
+import { mapGradeEdgesToFilterOptions } from "./grades";
+import { mapSubjectsToFilterValueOptions } from "./subjects";
+import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
+import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { ProgramNode } from "@/api/programs";
+import { useGetAllSubjectsList } from "@/api/subjects";
 import { ProgramRow } from "@/components/Program/Table";
+import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     Program,
     Status,
 } from "@/types/graphQL";
+import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import {
+    useEffect,
+    useState,
+} from "react";
 
 export const buildEmptyProgram = (): Program => ({
     id: ``,
@@ -46,3 +59,85 @@ export const mapProgramNodeToProgramRow = (node: ProgramNode): ProgramRow => ({
     grades: node.grades.map((grade) => grade.name ?? ``),
     subjects: node.subjects.map((subject) => subject.name ?? ``),
 });
+
+export const useProgramFilters = (orgId: string, skip?: boolean) => {
+    const [ gradeFilterValueOptions, setGradeFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ subjectFilterValueOptions, setSubjectFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
+    const {
+        data: gradesData,
+        fetchMore: fetchMoreGrades,
+    } = useGetPaginatedOrganizationGradesList({
+        variables: {
+            organizationId: orgId ?? ``,
+            direction: `FORWARD`,
+            count: 100,
+            orderBy: `name`,
+            order: `ASC`,
+        },
+        returnPartialData: true,
+        fetchPolicy: `no-cache`,
+        skip: !orgId || skip,
+    });
+
+    const { data: subjectsData } = useGetAllSubjectsList({
+        variables: {
+            organization_id: orgId ?? ``,
+        },
+        skip: !orgId || skip,
+    });
+
+    const {
+        data: ageRangesData,
+        fetchMore: fetchMoreAgeRanges,
+    } = useGetPaginatedAgeRangesList({
+        variables: {
+            direction: `FORWARD`,
+            count: 100,
+            orderBy: [ `lowValueUnit`, `lowValue` ],
+            order: `ASC`,
+            filter: buildOrganizationAgeRangeFilter({
+                organizationId: orgId ?? ``,
+            }),
+        },
+        returnPartialData: true,
+        fetchPolicy: `no-cache`,
+        skip: !orgId || skip,
+    });
+
+    useEffect(() => {
+        setGradeFilterValueOptions([ ...gradeFilterValueOptions, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]);
+        if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
+            fetchMoreGrades({
+                variables: {
+                    cursor: gradesData?.gradesConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
+    }, [ gradesData ]);
+
+    useEffect(() => {
+        setSubjectFilterValueOptions(mapSubjectsToFilterValueOptions(subjectsData?.organization?.subjects ?? []));
+    }, [ subjectsData ]);
+
+    useEffect(() => {
+        setAgeRangesLowValueOptions([ ...ageRangesLowValueOptions, ...mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
+        setAgeRangesHighValueOptions([ ...ageRangesHighValueOptions, ...mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
+
+        if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
+            fetchMoreAgeRanges({
+                variables: {
+                    cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
+    }, [ ageRangesData ]);
+
+    return {
+        gradeFilterValueOptions,
+        subjectFilterValueOptions,
+        ageRangesLowValueOptions,
+        ageRangesHighValueOptions,
+    };
+};

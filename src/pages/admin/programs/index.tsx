@@ -1,7 +1,10 @@
 import { useGetAllPaginatedPrograms } from "@/api/programs";
 import ProgramTable,
 { ProgramRow } from "@/components/Program/Table";
-import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import {
+    buildOrganizationProgramFilter,
+    buildProgramFilters,
+} from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { isActive } from "@/types/graphQL";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
@@ -16,6 +19,7 @@ import {
     createStyles,
     makeStyles,
 } from "@material-ui/core";
+import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -33,6 +37,7 @@ interface Props {
 export default function ProgramsPage (props: Props) {
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
+    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -43,6 +48,7 @@ export default function ProgramsPage (props: Props) {
     const paginationFilter = buildOrganizationProgramFilter({
         organizationId: currentOrganization?.organization_id ?? ``,
         search: serverPagination.search,
+        filters: buildProgramFilters(tableFilters),
     });
 
     const {
@@ -81,6 +87,7 @@ export default function ProgramsPage (props: Props) {
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
+        setTableFilters(tableData?.filters ?? []);
     };
 
     useEffect(() => {
@@ -95,6 +102,7 @@ export default function ProgramsPage (props: Props) {
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
+        tableFilters,
     ]);
 
     const rows = data?.programsConnection?.edges

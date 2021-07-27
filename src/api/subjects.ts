@@ -1,6 +1,9 @@
 import { CREATE_OR_UPDATE_SUBJECTS } from "@/operations/mutations/createOrUpdateSubjects";
 import { DELETE_SUBJECT } from "@/operations/mutations/deleteSubject";
-import { GET_ALL_SUBJECTS } from "@/operations/queries/getAllSubjects";
+import {
+    GET_ALL_SUBJECTS,
+    GET_ALL_SUBJECTS_LIST,
+} from "@/operations/queries/getAllSubjects";
 import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
     Organization,
@@ -69,4 +72,8 @@ interface GetAllSubjectsResponse {
 
 export const useGetAllSubjects = (options?: QueryHookOptions<GetAllSubjectsResponse, GetAllSubjectsRequest>) => {
     return useQuery<GetAllSubjectsResponse, GetAllSubjectsRequest>(GET_ALL_SUBJECTS, options);
+};
+
+export const useGetAllSubjectsList = (options?: QueryHookOptions<GetAllSubjectsResponse, GetAllSubjectsRequest>) => {
+    return useQuery<GetAllSubjectsResponse, GetAllSubjectsRequest>(GET_ALL_SUBJECTS_LIST, options);
 };

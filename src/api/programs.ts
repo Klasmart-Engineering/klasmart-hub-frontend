@@ -7,6 +7,7 @@ import { GET_ALL_PROGRAMS } from "@/operations/queries/getAllPrograms";
 import { GET_PAGINATED_ORGANIZATION_PROGRAMS } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { GET_PROGRAM } from "@/operations/queries/getProgram";
 import {
+    AgeRangeFilter,
     BaseEntity,
     BooleanFilter,
     Grade,
@@ -125,6 +126,10 @@ export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     status?: StatusFilter;
     organizationId?: UuidFilter;
     system?: BooleanFilter;
+    gradeId?: UuidFilter;
+    subjectId?: UuidFilter;
+    ageRangeFrom?: AgeRangeFilter;
+    ageRangeTo?: AgeRangeFilter;
 }
 
 interface GetProgramRequest {

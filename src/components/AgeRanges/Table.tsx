@@ -1,7 +1,7 @@
 import {
     useDeleteAgeRange,
     useGetAllAgeRanges,
-} from "@/api/age_ranges";
+} from "@/api/ageRanges";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";

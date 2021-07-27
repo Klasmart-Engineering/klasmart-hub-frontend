@@ -997,5 +997,11 @@
     "validation.error.file.type": "File must be in {fileType} format.",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} must only contain letters, numbers, space and & / , - .",
     "validation.error.permission.unauthorized": "You are unauthorized to perform this action.",
-    "validation.error.entity.minLength": "{min, plural, one {{entity} {attribute} must not be less than {min} character.} other {{entity} {attribute} must not be less than {min} characters.}}"
+    "validation.error.entity.minLength": "{min, plural, one {{entity} {attribute} must not be less than {min} character.} other {{entity} {attribute} must not be less than {min} characters.}}",
+    "generic_filtersEqualsLabel": "Equals",
+    "generic_filtersEqualsChipLabel": "{column} equals {value}",
+    "generic_filtersGradesLabel": "Grades",
+    "generic_filtersSubjectsLabel": "Subjects",
+    "generic_filtersAgeRangesFrom": "Age Ranges (From)",
+    "generic_filtersAgeRangesTo": "Age Ranges (To)"
 }

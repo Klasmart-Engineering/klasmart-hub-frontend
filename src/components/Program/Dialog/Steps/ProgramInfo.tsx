@@ -1,4 +1,4 @@
-import { useGetAllAgeRanges } from "@/api/age_ranges";
+import { useGetAllAgeRanges } from "@/api/ageRanges";
 import { useGetAllGrades } from "@/api/grades";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {

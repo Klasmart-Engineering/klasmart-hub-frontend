@@ -1,17 +1,16 @@
-import {
-    ProgramFilter,
-    useGetAllPaginatedPrograms,
-} from "@/api/programs";
+import { useGetAllPaginatedPrograms } from "@/api/programs";
 import ProgramsTable,
 { ProgramRow } from "@/components/Program/Table";
-import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import {
+    buildOrganizationProgramFilter,
+    buildProgramFilters,
+} from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
     School,
 } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
-import { isUuid } from "@/utils/pagination";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -26,6 +25,7 @@ import {
     FormHelperText,
     makeStyles,
 } from "@material-ui/core";
+import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -46,6 +46,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
     const classes = useStyles();
     const { required } = useValidations();
     const currentOrganization = useCurrentOrganization();
+    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -56,6 +57,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
     const paginationFilter = buildOrganizationProgramFilter({
         organizationId: currentOrganization?.organization_id ?? ``,
         search: serverPagination.search,
+        filters: buildProgramFilters(tableFilters),
     });
 
     const {
@@ -88,6 +90,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
+        setTableFilters(tableData?.filters ?? []);
     };
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -122,6 +125,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
+        tableFilters,
     ]);
 
     const rows = data?.programsConnection?.edges

@@ -1,5 +1,5 @@
 import AgeRangeForm from "./Form";
-import { useCreateAgeRange } from "@/api/age_ranges";
+import { useCreateAgeRange } from "@/api/ageRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AgeRange } from "@/types/graphQL";
 import { buildEmptyAgeRange } from "@/utils/ageRanges";

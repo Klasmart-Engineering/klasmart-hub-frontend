@@ -1,9 +1,10 @@
+import { AgeRangeEdge } from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
-import { AgeRangeRow } from "@/components/AgeRanges/Table";
 import {
     AgeRange,
     NON_SPECIFIED,
 } from "@/types/graphQL";
+import { isEqual } from "lodash";
 
 export const buildEmptyAgeRange = (): AgeRange => ({
     id: ``,
@@ -23,6 +24,12 @@ export const buildAgeRangeLabel = (ageRange: AgeRange) => {
     return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
 };
 
+export const buildAgeRangeEdgeLabel = (ageRange: AgeRangeEdge['node']) => {
+    if (ageRange?.system && ageRange?.name === NON_SPECIFIED) return NON_SPECIFIED;
+    const showFromUnit = ageRange?.lowValueUnit !== ageRange?.highValueUnit;
+    return `${ageRange?.lowValue}${showFromUnit ? ` ${buildUnit(ageRange?.lowValueUnit ?? ``)}` : ``} - ${ageRange?.highValue} ${buildUnit(ageRange?.highValueUnit ?? ``)}`;
+};
+
 export const sortAgeRanges = (a: AgeRange, b: AgeRange) => buildAgeRangeLabel(a).localeCompare(buildAgeRangeLabel(b));
 
 export const mapAgeRangeNodeToAgeRange = (node: AgeRangeNode): AgeRange => ({
@@ -35,3 +42,31 @@ export const mapAgeRangeNodeToAgeRange = (node: AgeRangeNode): AgeRange => ({
     high_value: node.highValue,
     high_value_unit: node.highValueUnit,
 });
+
+export const buildAgeRangeLowValueLabel = (ageRange: AgeRangeEdge['node']) => {
+    if (ageRange?.system && ageRange?.name === NON_SPECIFIED) return NON_SPECIFIED;
+    const showFromUnit = ageRange?.lowValueUnit;
+    return `${ageRange?.lowValue}${showFromUnit ? ` ${buildUnit(ageRange?.lowValueUnit ?? ``)}` : ``}`;
+};
+
+export const buildAgeRangeHighValueLabel = (ageRange: AgeRangeEdge['node']) => {
+    if (ageRange?.system && ageRange?.name === NON_SPECIFIED) return NON_SPECIFIED;
+    const showFromUnit = ageRange?.highValueUnit;
+    return `${ageRange?.highValue}${showFromUnit ? ` ${buildUnit(ageRange?.highValueUnit ?? ``)}` : ``}`;
+};
+
+export const mapAgeRangesLowValueToFilter = (edges: AgeRangeEdge[]) => (
+    edges.filter(edge => edge.node?.name !== NON_SPECIFIED).map(edge => ({
+        value: `${edge.node?.lowValue} ${edge.node?.lowValueUnit}`,
+        label: buildAgeRangeLowValueLabel(edge?.node),
+    })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
+);
+
+export const mapAgeRangesHighValueToFilter = (edges: AgeRangeEdge[]) => (
+    edges.filter(edge => edge.node?.name !== NON_SPECIFIED)
+        .sort((a, b) => a.node?.highValueUnit?.localeCompare(b.node?.highValueUnit ?? ``) || (a.node?.highValue ?? 0) - (b.node?.highValue ?? 0))
+        .map(edge => ({
+            value: `${edge.node?.highValue} ${edge.node?.highValueUnit}`,
+            label: buildAgeRangeHighValueLabel(edge?.node),
+        })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
+);

@@ -36,6 +36,7 @@ export interface TableProps<T> {
     onTableChange?: (tableData: CursorTableData<T>) => Promise<void>;
     onSelected?: (ids: string[]) => void;
     refetch?: () => Promise<any> | void;
+    hideFilters?: boolean;
 }
 
 export const getTableLocalization = (intl: IntlShape, localization: TableLocalization): TableLocalization => merge<TableLocalization, TableLocalization>({

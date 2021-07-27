@@ -2,7 +2,7 @@ import AgeRangeForm from "./Form";
 import {
     useDeleteAgeRange,
     useEditAgeRange,
-} from "@/api/age_ranges";
+} from "@/api/ageRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AgeRange } from "@/types/graphQL";
 import {

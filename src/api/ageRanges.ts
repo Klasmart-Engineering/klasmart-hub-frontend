@@ -2,7 +2,17 @@ import { CREATE_AGE_RANGE } from "@/operations/mutations/createAgeRange";
 import { DELETE_AGE_RANGE } from "@/operations/mutations/deleteAgeRange";
 import { EDIT_AGE_RANGE } from "@/operations/mutations/editAgeRange";
 import { GET_AGE_RANGES } from "@/operations/queries/getAgeRange";
-import { AgeRange } from "@/types/graphQL";
+import { GET_PAGINATED_AGE_RANGES } from "@/operations/queries/getPaginatedAgeRanges";
+import {
+    AgeRange,
+    BooleanFilter,
+    Direction,
+    SortOrder,
+    Status,
+    StatusFilter,
+    UuidFilter,
+} from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -53,4 +63,50 @@ export const useEditAgeRange = (options?: MutationHookOptions<EmptyAgeRangeRespo
 
 export const useDeleteAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, DeleteAgeRangeRequest>) => {
     return useMutation<EmptyAgeRangeResponse, DeleteAgeRangeRequest>(DELETE_AGE_RANGE, options);
+};
+
+export interface GetPaginatedOrganizationAgeRangesResponse {
+    ageRangesConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: AgeRangeEdge[];
+    };
+}
+
+export interface AgeRangeQueryFilter extends PaginationFilter<AgeRangeQueryFilter> {
+    status?: StatusFilter;
+    organizationId?: UuidFilter;
+    system?: BooleanFilter;
+}
+
+export interface GetPaginatedOrganizationAgeRangesRequest {
+    direction?: Direction;
+    cursor?: string;
+    count?: number;
+    order?: SortOrder;
+    orderBy?: string | string[];
+    filter?: AgeRangeQueryFilter;
+}
+
+export interface AgeRangeEdge {
+    cursor?: string;
+    node?: {
+        id?: string;
+        name?: string;
+        status?: Status;
+        system?: boolean;
+        lowValue?: number;
+        lowValueUnit?: string;
+        highValue?: number;
+        highValueUnit?: string;
+    };
+}
+
+export const useGetPaginatedAgeRangesList = (options?: QueryHookOptions<GetPaginatedOrganizationAgeRangesResponse, GetPaginatedOrganizationAgeRangesRequest>) => {
+    return useQuery<GetPaginatedOrganizationAgeRangesResponse, GetPaginatedOrganizationAgeRangesRequest>(GET_PAGINATED_AGE_RANGES, options);
 };

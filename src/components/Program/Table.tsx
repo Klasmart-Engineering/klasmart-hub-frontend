@@ -2,12 +2,15 @@ import ViewProgramDetailsDrawer from "./DetailsDrawer";
 import { useDeleteProgram } from "@/api/programs";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { usePermission } from "@/utils/checkAllowed";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { useProgramFilters } from "@/utils/programs";
 import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import {
     Chip,
     createStyles,
@@ -24,6 +27,7 @@ import {
     CursorTable,
     useSnackbar,
 } from "kidsloop-px";
+import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
@@ -47,6 +51,8 @@ export interface ProgramRow {
     ageRanges: string[];
     subjects: string[];
     system: boolean;
+    ageRangeFrom?: string;
+    ageRangeTo?: string;
 }
 
 interface Props extends TableProps<ProgramRow> {
@@ -73,6 +79,7 @@ export default function ProgramTable (props: Props) {
         showSelectables,
         order,
         orderBy,
+        hideFilters,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -89,6 +96,117 @@ export default function ProgramTable (props: Props) {
     const canView = usePermission(`view_program_20111`);
     const canEdit = usePermission(`edit_program_20331`);
     const canDelete = usePermission(`delete_program_20441`);
+    const currentOrganization = useCurrentOrganization();
+    const { required } = useValidations();
+    const {
+        gradeFilterValueOptions,
+        subjectFilterValueOptions,
+        ageRangesLowValueOptions,
+        ageRangesHighValueOptions,
+    } = useProgramFilters(currentOrganization?.organization_id ?? ``, hideFilters);
+
+    const filters: TableFilter<ProgramRow>[] = [
+        {
+            id: `grades`,
+            label: intl.formatMessage({
+                id: `generic_filtersGradesLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: gradeFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `subjects`,
+            label: intl.formatMessage({
+                id: `generic_filtersSubjectsLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: subjectFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `ageRangeFrom`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesFrom`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: ageRangesLowValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `ageRangeTo`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesTo`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: ageRangesHighValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+    ];
 
     const selectIds = (ids: string[]) => {
         if (!ids.length) {
@@ -293,6 +411,7 @@ export default function ProgramTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
+                    filters={!hideFilters ? filters : undefined}
                     showSelectables={showSelectables}
                     idField="id"
                     orderBy={orderBy}

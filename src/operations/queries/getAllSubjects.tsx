@@ -32,3 +32,14 @@ export const GET_ALL_SUBJECTS = gql`
         }
     }
 `;
+
+export const GET_ALL_SUBJECTS_LIST = gql`
+    query getOrganizationSubjects($organization_id: ID!) {
+        organization(organization_id: $organization_id) {
+            subjects {
+                id
+                name
+            }
+        }
+    }
+`;

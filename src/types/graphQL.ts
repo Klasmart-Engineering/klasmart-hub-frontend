@@ -275,6 +275,13 @@ export type BooleanOperator = `eq`;
 
 export type NumberOperator = `eq` | `neq` | `gt` | `gte` | `lt` | `lte`;
 
+export type AgeRangeUnit = `year` | `month`;
+
+export interface AgeRangeValue {
+    value: number;
+    unit: AgeRangeUnit;
+}
+
 export interface UuidFilter {
     operator: UuidOperator;
     value: string;
@@ -304,4 +311,9 @@ export interface DateFilter {
 export interface NumberFilter {
     operator: NumberOperator;
     value: number;
+}
+
+export interface AgeRangeFilter {
+    operator: NumberOperator;
+    value: AgeRangeValue;
 }

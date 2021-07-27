@@ -1,7 +1,10 @@
 import { CREATE_UPDATE_GRADES } from "@/operations/mutations/createUpdateGrades";
 import { DELETE_GRADE } from "@/operations/mutations/deleteGrade";
 import { GET_GRADES } from "@/operations/queries/getGrades";
-import { GET_PAGINATED_ORGANIZATION_GRADES } from "@/operations/queries/getOrganizationGrades";
+import {
+    GET_PAGINATED_ORGANIZATION_GRADES,
+    GET_PAGINATED_ORGANIZATION_GRADES_LIST,
+} from "@/operations/queries/getOrganizationGrades";
 import {
     BooleanFilter,
     Direction,
@@ -80,6 +83,7 @@ export interface GetOrganizationGradesResponsePaginated {
 }
 
 export interface GetOrganizationGradesRequestPaginated {
+    organizationId?: string;
     direction?: Direction;
     cursor?: string;
     count?: number;
@@ -118,4 +122,8 @@ export const useGetAllGrades = (options?: QueryHookOptions<GetAllGradesResponse,
 
 export const useGetPaginatedOrganizationGrades = (options?: QueryHookOptions<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>) => {
     return useQuery<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>(GET_PAGINATED_ORGANIZATION_GRADES, options);
+};
+
+export const useGetPaginatedOrganizationGradesList = (options?: QueryHookOptions<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>) => {
+    return useQuery<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>(GET_PAGINATED_ORGANIZATION_GRADES_LIST, options);
 };
