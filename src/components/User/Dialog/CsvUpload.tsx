@@ -1,8 +1,7 @@
 import { useUploadUserCsv } from "@/api/users";
 import {
     addCsvTypeIfMissing,
-    CSV_ACCEPT_TYPES,
-    handleFileUploadError,
+    buildDefaultSpreadsheetFileInputProps,
 } from "@/utils/csv";
 import {
     FullScreenDialog,
@@ -15,8 +14,6 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-
-const MAX_FILE_SIZE = 50000; // 50 kb
 
 interface Props {
     open: boolean;
@@ -72,43 +69,8 @@ export default function UploadUserCsvDialog (props: Props) {
             onClose={() => onClose(uploadSuccess)}
         >
             <SpreadsheetFileInput
-                accept={CSV_ACCEPT_TYPES}
-                maxSize={MAX_FILE_SIZE}
-                locales={intl.locale}
-                dropzoneLabel={intl.formatMessage({
-                    id: `csvDialog_addCsvFile`,
-                })}
-                exceedsMaxSizeError={(fileSize, maxSize) => intl.formatMessage({
-                    id: `validation.error.file.maxSize`,
-                }, {
-                    size: `${(fileSize / 1000).toFixed(1)} kB`,
-                    max: `${(maxSize / 1000).toFixed(1)} kB`,
-                })}
-                uploadSuccessMessage={intl.formatMessage({
-                    id: `uploadCsv_uploadSuccessMessage`,
-                })}
-                removeButtonTooltip={intl.formatMessage({
-                    id: `uploadCsv_removeButtonTooltip`,
-                })}
-                uploadButtonTooltip={intl.formatMessage({
-                    id: `uploadCsv_uploadButtonTooltip`,
-                })}
-                spreadsheetInvalidData={intl.formatMessage({
-                    id: `uploadCsv_invalidDataError`,
-                })}
-                typeRejectedError={intl.formatMessage({
-                    id: `uploadCsv_typeRejectedError`,
-                })}
-                allValidationsPassedMessage={intl.formatMessage({
-                    id: `uploadCsv_allValidationsPassedMessage`,
-                })}
-                numValidationsFailedMessage={(count) => intl.formatMessage({
-                    id: `uploadCsv_numValidationsFailedMessage`,
-                }, {
-                    count,
-                })}
+                {...buildDefaultSpreadsheetFileInputProps(intl)}
                 onFileUpload={handleFileUpload}
-                onFileUploadError={handleFileUploadError(intl)}
             />
         </FullScreenDialog>
     );

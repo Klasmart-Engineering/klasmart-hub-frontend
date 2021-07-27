@@ -1,5 +1,8 @@
 import { ApolloError } from "@apollo/client";
-import { SpreadsheetValidtionError } from "kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+import {
+    Props as SpreadsheetFileInputProps,
+    SpreadsheetValidationError,
+} from "kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
 import { IntlShape } from "react-intl";
 
 export const CSV_ACCEPT_TYPES = [
@@ -375,7 +378,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
     }
 };
 
-export const handleFileUploadError = (intl: IntlShape) => (error: ApolloError): SpreadsheetValidtionError[] => {
+export const handleFileUploadError = (intl: IntlShape) => (error: ApolloError): SpreadsheetValidationError[] => {
     const errors = error.graphQLErrors;
     return errors
         ?.filter((error) => error.message === CsvUploadErrorCode.ERR_CSV_BAD_INPUT)
@@ -395,3 +398,73 @@ export const addCsvTypeIfMissing = (file: File) => {
         type: `text/csv`,
     });
 };
+
+const MAX_FILE_SIZE = 50_000; // 50kB
+
+const defaultStaticSpreadsheetFileInputProps = {
+    accept: CSV_ACCEPT_TYPES,
+    maxFileSize: MAX_FILE_SIZE,
+};
+
+export function buildDefaultSpreadsheetFileInputProps (intl: IntlShape): Partial<SpreadsheetFileInputProps> {
+    return {
+        ...defaultStaticSpreadsheetFileInputProps,
+        locales: intl.locale,
+        dropzoneLabel: intl.formatMessage({
+            id: `csvDialog_addCsvFile`,
+        }),
+        uploadSuccessMessage: intl.formatMessage({
+            id: `uploadCsv_uploadSuccessMessage`,
+        }),
+        removeButtonTooltip: intl.formatMessage({
+            id: `uploadCsv_removeButtonTooltip`,
+        }),
+        uploadButtonTooltip: intl.formatMessage({
+            id: `uploadCsv_uploadButtonTooltip`,
+        }),
+        spreadsheetInvalidData: intl.formatMessage({
+            id: `uploadCsv_invalidDataError`,
+        }),
+        typeRejectedError: intl.formatMessage({
+            id: `uploadCsv_typeRejectedError`,
+        }),
+        allValidationsPassedMessage: intl.formatMessage({
+            id: `uploadCsv_allValidationsPassedMessage`,
+        }),
+        validationInProgressMessage: intl.formatMessage({
+            id: `uploadCsv_validationInProgressMessage`,
+        }),
+        maxFilesError: intl.formatMessage({
+            id: `validation.error.file.maxCount`,
+        }, {
+            max: 1,
+        }),
+        exceedsMaxSizeError: (fileSize, maxSize) => intl.formatMessage({
+            id: `validation.error.file.maxSize`,
+        }, {
+            size: `${(fileSize / 1000).toFixed(1)} kB`,
+            max: `${(maxSize / 1000).toFixed(1)} kB`,
+        }),
+        numValidationsFailedMessage: (count) => intl.formatMessage({
+            id: `uploadCsv_numValidationsFailedMessage`,
+        }, {
+            count,
+        }),
+        validationLocalization: {
+            emptyFileError: intl.formatMessage({
+                id: `validation.error.file.empty`,
+            }),
+            duplicateColumnError: (columnName) => intl.formatMessage({
+                id: `validation.error.spreadsheet.duplicateColumn`,
+            }, {
+                columnName,
+            }),
+            missingColumnError: (columnName) => intl.formatMessage({
+                id: `validation.error.spreadsheet.missingColumn`,
+            }, {
+                columnName,
+            }),
+        },
+        onFileUploadError: handleFileUploadError(intl),
+    };
+}
