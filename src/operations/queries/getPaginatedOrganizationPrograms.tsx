@@ -127,7 +127,7 @@ export const buildProgramFilters = (filters: BaseTableData<ProgramRow>['filters'
                 OR: values,
             };
         }
-        default: {
+        case `grades`: {
             const values = filter.values.map((value) => {
                 const gradeFilter: ProgramFilter = {
                     gradeId: {
@@ -142,6 +142,7 @@ export const buildProgramFilters = (filters: BaseTableData<ProgramRow>['filters'
                 OR: values,
             };
         }
+        default: return {};
         }
     });
 };
