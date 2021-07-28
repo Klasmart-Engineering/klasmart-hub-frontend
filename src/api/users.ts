@@ -72,6 +72,7 @@ interface UploadCsvResponse {
 
 interface UploadUserCsvRequest {
     file: File;
+    isDryRun: boolean;
 }
 
 export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {

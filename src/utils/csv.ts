@@ -64,6 +64,7 @@ export enum CsvUploadEntityErrorCode {
     ERR_CSV_INVALID_MULTIPLE_EXIST_CHILD = `ERR_CSV_INVALID_MULTIPLE_EXIST_CHILD`,
     ERR_CSV_INVALID_LENGTH = `ERR_CSV_INVALID_LENGTH`,
     UNAUTHORIZED = `UNAUTHORIZED`,
+    UNAUTHORIZED_UPLOAD_TO_ORGANIZATION = `UNAUTHORIZED_UPLOAD_TO_ORGANIZATION`
 }
 
 export interface CsvBadInputErrorDetails {
@@ -72,6 +73,8 @@ export interface CsvBadInputErrorDetails {
     row: number;
     column: string;
     entity?: string;
+    entityName?: string;
+    organizationName?: string;
     attribute?: string;
     name?: string;
     parent_name?: string;
@@ -100,6 +103,8 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
     const {
         name,
         entity,
+        entityName,
+        organizationName,
         message,
         parent_name,
         parentName,
@@ -134,7 +139,8 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         return intl.formatMessage({
             id: `validation.error.entity.duplicate`,
         }, {
-            name,
+            // Support `name` param for legacy ERR_CSV code
+            name: entityName || name,
             entity,
         });
     case CsvUploadEntityErrorCode.ERR_EMPTY_FILE:
@@ -325,7 +331,8 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         return intl.formatMessage({
             id: `validation.error.entity.nonExistentChild`,
         }, {
-            name,
+            // Support `name` param for legacy ERR_CSV code
+            name: entityName || name,
             entity,
             // Support legacy snake_case properties
             parentEntity: parentEntity || parent_entity,
@@ -336,12 +343,20 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         return intl.formatMessage({
             id: `validation.error.entity.nonExistent`,
         }, {
-            name,
+            // Support `name` param for legacy ERR_CSV code
+            name: entityName || name,
             entity,
         });
     case CsvUploadEntityErrorCode.UNAUTHORIZED:
         return intl.formatMessage({
             id: `validation.error.permission.unauthorized`,
+        });
+    case CsvUploadEntityErrorCode.UNAUTHORIZED_UPLOAD_TO_ORGANIZATION:
+        return intl.formatMessage({
+            id: `validation.error.permission.uploadToOrganization`,
+        }, {
+            entity,
+            organizationName,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_MISSING_REQUIRED_COLUMN:
         return intl.formatMessage({
