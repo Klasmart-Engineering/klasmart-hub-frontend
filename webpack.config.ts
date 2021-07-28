@@ -32,6 +32,7 @@ const brandingOptions = loadBrandingOptions(process.env.BRAND);
 
 const webpackConfig: Configuration = {
     mode: nodeEnv,
+    devtool: isDev ? `eval-cheap-module-source-map`: undefined,
     entry: {
         hubui: `./src/client-entry.tsx`,
     },
