@@ -206,7 +206,9 @@ export default function UserTable (props: Props) {
             id: `roleNames`,
             disableSort: true,
             label: intl.formatMessage({
-                id: `users_organizationRoles`,
+                id: `organization.roles`,
+            }, {
+                count: 2,
             }),
             search: (row: string[], searchValue: string) => {
                 const values = Array.isArray(row) ? row : [ row ];

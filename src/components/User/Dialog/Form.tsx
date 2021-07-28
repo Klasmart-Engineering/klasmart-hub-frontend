@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
         heading: {
             display: `grid`,
             gridColumnGap: `10px`,
+            gridRowGap: `10px`,
         },
         shortCode: {
             gridColumn: `1 / span 2`,
@@ -161,9 +162,9 @@ export default function UserDialogForm (props: Props) {
         alphanumeric,
         max,
         min,
-        emailOrPhone,
         email,
         phone,
+        emailOrPhone,
         letternumeric,
         notEquals,
         afterDate,
@@ -175,6 +176,8 @@ export default function UserDialogForm (props: Props) {
     const currentYear = today.getFullYear();
     const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
     minDateAllowed.setFullYear(currentYear - 100);
+
+    const isExistingUser = !!(value.user_id && value.organization_id);
 
     useEffect(() => {
         onValidation([
@@ -298,6 +301,32 @@ export default function UserDialogForm (props: Props) {
         }
     }, [ radioValue, gender ]);
 
+    const attributes = {
+        givenName: intl.formatMessage({
+            id: `users_firstName`,
+        }),
+        familyName: intl.formatMessage({
+            id: `users_lastName`,
+        }),
+        contactInfo: intl.formatMessage({
+            id: `common.emailOrPhone`,
+        }),
+        shortCode: intl.formatMessage({
+            id: `common.shortCode`,
+        }),
+        email: intl.formatMessage({
+            id: `common.email`,
+        }),
+        gender: intl.formatMessage({
+            id: `user.gender`,
+        }),
+        roles: intl.formatMessage({
+            id: `organization.roles`,
+        }, {
+            count: 1,
+        }),
+    };
+
     return (
         <div className={classes.root}>
             <div className={classes.heading}>
@@ -310,9 +339,22 @@ export default function UserDialogForm (props: Props) {
                     type="text"
                     autoFocus={!value?.user?.user_id}
                     validations={[
-                        required(),
-                        letternumeric(),
-                        max(35),
+                        required(intl.formatMessage({
+                            id: `validation.error.attribute.required`,
+                        }, {
+                            attribute: attributes.givenName,
+                        })),
+                        max(35, intl.formatMessage({
+                            id: `validation.error.attribute.maxLength`,
+                        }, {
+                            attribute: attributes.givenName,
+                            max: 35,
+                        })),
+                        letternumeric(intl.formatMessage({
+                            id: `validation.error.attribute.alphanumericAndSpecialCharacters`,
+                        }, {
+                            attribute: attributes.givenName,
+                        })),
                     ]}
                     onChange={setGivenName}
                     onValidate={setGivenNameValid}
@@ -325,9 +367,22 @@ export default function UserDialogForm (props: Props) {
                     variant="outlined"
                     type="text"
                     validations={[
-                        required(),
-                        letternumeric(),
-                        max(35),
+                        required(intl.formatMessage({
+                            id: `validation.error.attribute.required`,
+                        }, {
+                            attribute: attributes.familyName,
+                        })),
+                        max(35, intl.formatMessage({
+                            id: `validation.error.attribute.maxLength`,
+                        }, {
+                            attribute: attributes.familyName,
+                            max: 35,
+                        })),
+                        letternumeric(intl.formatMessage({
+                            id: `validation.error.attribute.alphanumericAndSpecialCharacters`,
+                        }, {
+                            attribute: attributes.familyName,
+                        })),
                     ]}
                     onChange={setFamilyName}
                     onValidate={setFamilyNameValid}
@@ -339,12 +394,32 @@ export default function UserDialogForm (props: Props) {
                         id: `createUser_contactInfoLabel`,
                     })}
                     type="text"
-                    validations={[ required(), emailOrPhone() ]}
+                    validations={isExistingUser ? undefined : [
+                        required(intl.formatMessage({
+                            id: `validation.error.attribute.required`,
+                        }, {
+                            attribute: attributes.contactInfo,
+                        })),
+                        emailOrPhone(intl.formatMessage({
+                            id: `validation.error.email.format`,
+                        }), intl.formatMessage({
+                            id: `validation.error.phone.format`,
+                        })),
+                        max(250, intl.formatMessage({
+                            id: `validation.error.attribute.maxLength`,
+                        }, {
+                            attribute: attributes.email,
+                            max: 250,
+                        })),
+                    ]}
+                    disabled={isExistingUser}
                     onChange={setContactInfo}
                     onValidate={setContactInfoIsValid}
                 />
                 <TextField
-                    label="Birthday"
+                    label={intl.formatMessage({
+                        id: `user.birthday`,
+                    })}
                     type="month"
                     value={birthday}
                     InputLabelProps={{
@@ -363,49 +438,85 @@ export default function UserDialogForm (props: Props) {
                 <TextField
                     className={classes.shortCode}
                     value={shortcode}
-                    label="Short Code"
+                    label={attributes.shortCode}
                     variant="outlined"
                     type="text"
-                    validations={[ alphanumeric(), max(16) ]}
+                    validations={[
+                        max(16, intl.formatMessage({
+                            id: `validation.error.attribute.maxLength`,
+                        }, {
+                            attribute: attributes.shortCode,
+                            max: 16,
+                        })),
+                        alphanumeric(intl.formatMessage({
+                            id: `validation.error.attribute.alphanumeric`,
+                        }, {
+                            attribute: attributes.shortCode,
+                        })),
+                    ]}
                     onChange={setShortcode}
                     onValidate={setShortcodeIsValid}
                 />
             </div>
             <FormControl className={classes.genderContainer}>
-                <FormLabel>Gender</FormLabel>
+                <FormLabel>{attributes.gender}</FormLabel>
                 <RadioGroup
-                    aria-label="gender"
+                    aria-label={attributes.gender}
                     name="gender"
                     value={radioValue}
                     onChange={handleGenderChange}>
                     <FormControlLabel
                         value={UserGenders.FEMALE}
                         control={<Radio />}
-                        label="Female" />
+                        label={intl.formatMessage({
+                            id: `user.gender.female`,
+                        })} />
                     <FormControlLabel
                         value={UserGenders.MALE}
                         control={<Radio />}
-                        label="Male" />
+                        label={intl.formatMessage({
+                            id: `user.gender.male`,
+                        })} />
                     <FormControlLabel
                         value={UserGenders.NOT_SPECIFIED}
                         control={<Radio />}
-                        label="I prefer not to say"
+                        label={intl.formatMessage({
+                            id: `user.gender.preferNotToSay`,
+                        })}
                     />
                     <FormControlLabel
                         value={UserGenders.OTHER}
                         control={<Radio />}
-                        label="Other" />
+                        label={intl.formatMessage({
+                            id: `common.other`,
+                        })} />
                 </RadioGroup>
                 {radioValue === UserGenders.OTHER && (
                     <TextField
                         value={gender}
-                        label="Please specify gender"
+                        label={intl.formatMessage({
+                            id: `user.gender.pleaseSpecify`,
+                        })}
                         variant="outlined"
                         type="text"
                         validations={[
-                            min(3),
-                            max(16),
-                            letternumeric(),
+                            min(3, intl.formatMessage({
+                                id: `validation.error.attribute.minLength`,
+                            }, {
+                                attribute: attributes.gender,
+                                min: 3,
+                            })),
+                            max(16, intl.formatMessage({
+                                id: `validation.error.attribute.maxLength`,
+                            }, {
+                                attribute: attributes.gender,
+                                max: 16,
+                            })),
+                            letternumeric(intl.formatMessage({
+                                id: `validation.error.attribute.alphanumericAndSpecialCharacters`,
+                            }, {
+                                attribute: attributes.gender,
+                            })),
                         ]}
                         onChange={setGender}
                         onValidate={setGenderIsValid}
@@ -420,7 +531,13 @@ export default function UserDialogForm (props: Props) {
                 })}
                 items={allRoles}
                 value={roleIds}
-                validations={[ required() ]}
+                validations={[
+                    required(intl.formatMessage({
+                        id: `validation.error.attribute.required`,
+                    }, {
+                        attribute: attributes.roles,
+                    })),
+                ]}
                 itemText={(role) =>
                     role.role_name && roleNameTranslations[role.role_name]
                         ? intl.formatMessage({
@@ -457,17 +574,29 @@ export default function UserDialogForm (props: Props) {
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     id="panel1d-header">
-                    <FormLabel>Alternative Contact Info</FormLabel>
+                    <FormLabel>{intl.formatMessage({
+                        id: `common.contactInfo.alternative`,
+                    })}</FormLabel>
                 </AccordionSummary>
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
                         <TextField
                             value={alternativeEmail}
                             variant="outlined"
-                            label="Alternative Email"
+                            label={intl.formatMessage({
+                                id: `common.email.alternative`,
+                            })}
                             type="text"
                             validations={[
-                                email(),
+                                max(250, intl.formatMessage({
+                                    id: `validation.error.attribute.maxLength`,
+                                }, {
+                                    attribute: attributes.email,
+                                    max: 250,
+                                })),
+                                email(intl.formatMessage({
+                                    id: `validation.error.email.format`,
+                                })),
                                 ...(contactInfo
                                     ? [
                                         notEquals(contactInfo, intl.formatMessage({
@@ -486,9 +615,15 @@ export default function UserDialogForm (props: Props) {
                         <TextField
                             value={alternativePhone}
                             variant="outlined"
-                            label="Alternative Phone"
+                            label={intl.formatMessage({
+                                id: `common.phone.alternative`,
+                            })}
                             type="text"
-                            validations={[ phone() ]}
+                            validations={[
+                                phone(intl.formatMessage({
+                                    id: `validation.error.phone.format`,
+                                })),
+                            ]}
                             onChange={setAlternativePhone}
                             onValidate={setAlternativePhoneIsValid}
                         />
