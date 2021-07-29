@@ -1023,8 +1023,10 @@
     "validation.error.permission.uploadToOrganization": "Unauthorized to upload {entity} to Organization {organizationName}.",
     "generic_filtersEqualsLabel": "Equals",
     "generic_filtersEqualsChipLabel": "{column} equals {value}",
-    "generic_filtersGradesLabel": "Grades",
-    "generic_filtersSubjectsLabel": "Subjects",
+    "generic_filtersGradesLabel": "Calificaciones",
+    "generic_filtersSubjectsLabel": "Materias",
     "generic_filtersAgeRangesFrom": "Age Ranges (From)",
-    "generic_filtersAgeRangesTo": "Age Ranges (To)"
+    "generic_filtersAgeRangesTo": "Age Ranges (To)",
+    "generic_filtersProgressFromLabel": "Progress From",
+    "generic_filtersProgressToLabel": "Progress To"
 }
