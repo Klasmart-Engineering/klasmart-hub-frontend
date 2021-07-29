@@ -11,6 +11,7 @@ import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { ProgramNode } from "@/api/programs";
 import { useGetAllSubjectsList } from "@/api/subjects";
 import { ProgramRow } from "@/components/Program/Table";
+import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     Program,
@@ -65,16 +66,21 @@ export const useProgramFilters = (orgId: string, skip?: boolean) => {
     const [ subjectFilterValueOptions, setSubjectFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
     const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
+    const filter = buildGradeFilter({
+        organizationId: orgId ?? ``,
+        search: ``,
+        filters: [],
+    });
     const {
         data: gradesData,
         fetchMore: fetchMoreGrades,
     } = useGetPaginatedOrganizationGradesList({
         variables: {
-            organizationId: orgId ?? ``,
             direction: `FORWARD`,
             count: 100,
             orderBy: `name`,
             order: `ASC`,
+            filter,
         },
         returnPartialData: true,
         fetchPolicy: `no-cache`,

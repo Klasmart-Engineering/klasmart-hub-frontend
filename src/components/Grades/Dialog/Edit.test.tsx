@@ -1,19 +1,19 @@
 import EditGrade from './Edit';
+import { GET_GRADE } from '@/operations/queries/getGrade';
 import { GET_GRADES } from '@/operations/queries/getGrades';
 import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
-    screen,
     waitFor,
 } from '@testing-library/react';
 import {
+    grade2Id,
     grades,
     mockGrade,
     mockOrgId,
 } from '@tests/mockDataGrades';
 import qlRender from '@tests/utils';
-import { utils } from 'kidsloop-px';
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -37,16 +37,14 @@ jest.mock(`@/utils/checkAllowed`, () => {
 const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_GRADES,
+            query: GET_GRADE,
             variables: {
-                organization_id: mockOrgId,
+                id: grade2Id,
             },
         },
         result: {
             data: {
-                organization: {
-                    grades,
-                },
+                grade: mockGrade,
             },
         },
     },
@@ -55,7 +53,7 @@ const mocks: MockedResponse[] = [
 test(`Edit grade dialog renders correctly`, async () => {
     const locale = getLanguage(`en`);
     const { getByLabelText, getByText } = qlRender(mocks, locale, <EditGrade
-        value={mockGrade}
+        gradeId={grade2Id}
         open={true}
         onClose={jest.fn()}/>);
 
@@ -80,7 +78,7 @@ test(`Edit grade dialog renders correctly with correct data`, async () => {
 
     await act(async () => {
         const { queryByLabelText } = qlRender(mocks, locale, <EditGrade
-            value={mockGrade}
+            gradeId={grade2Id}
             open={true}
             onClose={jest.fn()}/>);
 
@@ -88,8 +86,6 @@ test(`Edit grade dialog renders correctly with correct data`, async () => {
             expect(queryByLabelText(`Grade Name`, {
                 selector: `input`,
             })?.value).toBe(`Grade 2`);
-            expect(screen.queryAllByText(/grade 1/gi).length).toEqual(1);
-            expect(screen.queryAllByText(/grade 3/gi).length).toEqual(1);
         });
 
     });

@@ -2,16 +2,13 @@ import GradeForm from "./Form";
 import {
     useCreateUpdateGrade,
     useDeleteGrade,
+    useGetGrade,
 } from "@/api/grades";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Grade } from "@/types/graphQL";
 import { buildEmptyGrade } from "@/utils/grades";
 import { useValidations } from "@/utils/validations";
-import {
-    createStyles,
-    DialogContentText,
-    makeStyles,
-} from "@material-ui/core";
+import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
     usePrompt,
@@ -24,30 +21,37 @@ import React, {
 import { useIntl } from "react-intl";
 
 interface Props {
-    value?: Grade;
     open: boolean;
     onClose: (updatedGrade?: Grade) => void;
+    gradeId?: string;
 }
 
 export default function (props: Props) {
     const {
         open,
         onClose,
-        value,
+        gradeId,
     } = props;
     const intl = useIntl();
     const prompt = usePrompt();
     const { equals, required } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
-    const [ updatedGrade, setUpdatedGrade ] = useState(value ?? buildEmptyGrade());
+    const [ updatedGrade, setUpdatedGrade ] = useState(buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
     const [ updateGrade ] = useCreateUpdateGrade();
     const [ deleteGrade ] = useDeleteGrade();
 
+    const { data } = useGetGrade({
+        variables: {
+            id: gradeId ?? ``,
+        },
+        skip: !open || !gradeId,
+    });
+
     useEffect(() => {
-        setUpdatedGrade(value ?? buildEmptyGrade());
-    }, [ open ]);
+        setUpdatedGrade(data?.grade ?? buildEmptyGrade());
+    }, [ open, data ]);
 
     const handleSave = async () => {
         try {
@@ -94,21 +98,21 @@ export default function (props: Props) {
                         {intl.formatMessage({
                             id: `editDialog_deleteConfirm`,
                         }, {
-                            userName: value?.name,
+                            userName: updatedGrade?.name,
                         })}
                     </DialogContentText>
                     <DialogContentText>{intl.formatMessage({
                         id: `generic_typeToRemovePrompt`,
                     }, {
-                        value: <strong>{value?.name}</strong>,
+                        value: <strong>{updatedGrade?.name}</strong>,
                     })}</DialogContentText>
                 </>,
-                validations: [ required(), equals(value?.name) ],
+                validations: [ required(), equals(updatedGrade?.name) ],
             })) return;
 
             await deleteGrade({
                 variables: {
-                    id: value?.id ?? ``,
+                    id: updatedGrade?.id ?? ``,
                 },
             });
             onClose(updatedGrade);
@@ -163,6 +167,7 @@ export default function (props: Props) {
                 onClose={() => onClose()}
             >
                 <GradeForm
+                    key={updatedGrade.id}
                     value={updatedGrade}
                     onChange={setUpdatedGrade}
                     onValidation={setValid}

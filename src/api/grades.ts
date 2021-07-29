@@ -1,5 +1,6 @@
 import { CREATE_UPDATE_GRADES } from "@/operations/mutations/createUpdateGrades";
 import { DELETE_GRADE } from "@/operations/mutations/deleteGrade";
+import { GET_GRADE } from "@/operations/queries/getGrade";
 import { GET_GRADES } from "@/operations/queries/getGrades";
 import {
     GET_PAGINATED_ORGANIZATION_GRADES,
@@ -11,6 +12,7 @@ import {
     Grade,
     SortOrder,
     Status,
+    StatusFilter,
     StringFilter,
     UuidFilter,
 } from "@/types/graphQL";
@@ -116,6 +118,14 @@ interface GetAllGradesResponse {
     organization: { grades: Grade[] };
 }
 
+interface GetGradeRequest {
+    id: string;
+}
+
+interface GetGradeResponse {
+    grade: Grade;
+}
+
 export const useGetAllGrades = (options?: QueryHookOptions<GetAllGradesResponse, GetAllGradesRequest>) => {
     return useQuery<GetAllGradesResponse, GetAllGradesRequest>(GET_GRADES, options);
 };
@@ -126,4 +136,8 @@ export const useGetPaginatedOrganizationGrades = (options?: QueryHookOptions<Get
 
 export const useGetPaginatedOrganizationGradesList = (options?: QueryHookOptions<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>) => {
     return useQuery<GetOrganizationGradesResponsePaginated, GetOrganizationGradesRequestPaginated>(GET_PAGINATED_ORGANIZATION_GRADES_LIST, options);
+};
+
+export const useGetGrade = (options?: QueryHookOptions<GetGradeResponse, GetGradeRequest>) => {
+    return useQuery<GetGradeResponse, GetGradeRequest>(GET_GRADE, options);
 };

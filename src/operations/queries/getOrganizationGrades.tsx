@@ -1,10 +1,14 @@
 import { GradeFilter } from "@/api/grades";
+import { GradeRow } from "@/components/Grades/Table";
+import { UuidOperator } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
+import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
 export interface GradePaginationFilter {
     organizationId: string;
     search: string;
+    filters: GradeFilter[];
 }
 
 export const buildGradeSearchFilter = (search: string): GradeFilter => ({
@@ -51,10 +55,48 @@ export const buildGradeFilter = (filter: GradePaginationFilter): GradeFilter => 
             ],
         },
         {
-            AND: [ buildGradeSearchFilter(filter.search) ],
+            AND: [ buildGradeSearchFilter(filter.search), ...filter.filters ],
         },
     ],
 });
+
+export const buildGradesFilters = (filters: BaseTableData<GradeRow>['filters'] = []): GradeFilter[] => {
+    return filters.map((filter) => {
+        switch (filter.columnId) {
+        case `progressFrom`: {
+            const values = filter.values.map((value) => {
+                const progressFromIdFilter: GradeFilter = {
+                    fromGradeId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return progressFromIdFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `progressTo`: {
+            const values = filter.values.map((value) => {
+                const progressToIdFilter: GradeFilter = {
+                    toGradeId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return progressToIdFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        default: return {};
+        }
+    });
+};
 
 export const GET_PAGINATED_ORGANIZATION_GRADES = gql`
 query getOrganizationGrades(
@@ -103,41 +145,18 @@ query getOrganizationGrades(
 
 export const GET_PAGINATED_ORGANIZATION_GRADES_LIST = gql`
 query getOrganizationGrades(
-    $organizationId: UUID!
     $direction: ConnectionDirection!
     $count: Int
     $cursor: String
     $orderBy: [GradeSortBy!]!
     $order: SortOrder!
+    $filter: GradeFilter!
 ){
     gradesConnection(
         direction: $direction
         directionArgs: { count: $count, cursor: $cursor }
         sort: { field: $orderBy, order: $order }
-        filter: {
-            status: {
-                operator: eq,
-                value: "active",
-            },
-            AND: [
-                {
-                    OR: [
-                        {
-                            organizationId: {
-                                operator: eq,
-                                value: $organizationId,
-                            },
-                        },
-                        {
-                            system: {
-                                operator: eq,
-                                value: true,
-                            },
-                        },
-                    ],
-                },
-            ],
-        }
+        filter: $filter
     ) {
         totalCount
         pageInfo {

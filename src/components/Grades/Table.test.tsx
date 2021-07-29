@@ -1,42 +1,32 @@
 import 'regenerator-runtime/runtime';
 import Grades from './Table';
-import {
-    buildGradeFilter,
-    GET_PAGINATED_ORGANIZATION_GRADES,
-} from '@/operations/queries/getOrganizationGrades';
+import {  NON_SPECIFIED } from "@/types/graphQL";
 import { getLanguage } from "@/utils/locale";
-import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
+    screen,
     waitFor,
-} from '@testing-library/react';
+} from "@testing-library/react";
 import {
+    grades,
     mockOrgId,
-    mockPaginatedGrades,
 } from '@tests/mockDataGrades';
 import qlRender from '@tests/utils';
+import { utils } from "kidsloop-px";
 import React from 'react';
 
-const mocks: MockedResponse[] = [
-    {
-        request: {
-            query: GET_PAGINATED_ORGANIZATION_GRADES,
-            variables: {
-                direction: `FORWARD`,
-                count: 10,
-                orderBy: `name`,
-                order: `ASC`,
-                filter: buildGradeFilter({
-                    organizationId: mockOrgId,
-                    search: ``,
-                }),
-            },
+const data = {
+    gradesConnection: {
+        totalCount: grades.length,
+        pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: ``,
+            endCursor: ``,
         },
-        result: {
-            data: mockPaginatedGrades,
-        },
+        edges: grades,
     },
-];
+};
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
@@ -56,20 +46,36 @@ jest.mock(`@/utils/checkAllowed`, () => {
     };
 });
 
-test(`Grades page renders correctly`, async () => {
+test(`Grades table page renders correctly`, async () => {
     const locale = getLanguage(`en`);
-    const { findByText, queryByText } = qlRender(mocks, locale, <Grades />);
+
+    const rows = data?.gradesConnection?.edges?.map((edge) => ({
+        id: edge.id ?? ``,
+        name: edge.name ?? ``,
+        progressFrom: edge.progress_from_grade?.name ?? NON_SPECIFIED,
+        progressTo: edge.progress_to_grade?.name ?? NON_SPECIFIED,
+    })) ?? [];
+
+    const component = <Grades
+        order="asc"
+        orderBy="name"
+        rows={rows}
+    />;
+    const { queryAllByText } = qlRender([], locale, component);
 
     await act(async () => {
-        const noRecords = await findByText(`No data found`);
+        const title = await screen.findByText(`Grades`);
 
         await waitFor(() => {
-            expect(noRecords).toBeTruthy();
+            expect(title).toBeTruthy();
         });
+
+        await utils.sleep(0);
 
         await waitFor(() => {
-            expect(queryByText(`Grade 3`)).toBeTruthy();
+            expect(queryAllByText(`Grade 1`)).toBeTruthy();
+            expect(queryAllByText(`Grade 2`)).toBeTruthy();
+            expect(queryAllByText(`Grade 3`)).toBeTruthy();
         });
-
     });
 });
