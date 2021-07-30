@@ -155,7 +155,7 @@ export default function ClassesTable (props: Props) {
     const canCreate = usePermission(`create_class_20224`);
     const canEdit = usePermission(`edit_class_20334`);
     const canDelete = usePermission(`delete_class_20444`);
-    const canView = usePermission(`view_classes_20114`);
+    const canView = [ usePermission(`view_classes_20114`), usePermission(`view_school_classes_20117`) ].some(Boolean);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ detailsDrawerOpen, setDetailsDrawerOpen ] = useState(false);
