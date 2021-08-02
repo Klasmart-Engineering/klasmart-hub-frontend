@@ -87,6 +87,7 @@ export default function (props: Props) {
                 id: `ageRanges_idLabel`,
             }),
             hidden: true,
+            disableSearch: true
         },
         {
             id: `ageRange`,
@@ -94,6 +95,7 @@ export default function (props: Props) {
                 id: `ageRanges_ageRangeLabel`,
             }),
             persistent: true,
+            disableSearch: true
         },
     ];
 
