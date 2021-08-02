@@ -132,31 +132,6 @@ export default function ProgramTable (props: Props) {
             ],
         },
         {
-            id: `subjects`,
-            label: intl.formatMessage({
-                id: `generic_filtersSubjectsLabel`,
-            }),
-            operators: [
-                {
-                    label: intl.formatMessage({
-                        id: `generic_filtersEqualsLabel`,
-                    }),
-                    value: `eq`,
-                    multipleValues: true,
-                    validations: [ required() ],
-                    options: subjectFilterValueOptions,
-                    chipLabel: (column, value) => (
-                        intl.formatMessage({
-                            id: `generic_filtersEqualsChipLabel`,
-                        }, {
-                            column,
-                            value,
-                        })
-                    ),
-                },
-            ],
-        },
-        {
             id: `ageRangeFrom`,
             label: intl.formatMessage({
                 id: `generic_filtersAgeRangesFrom`,
@@ -195,6 +170,31 @@ export default function ProgramTable (props: Props) {
                     multipleValues: true,
                     validations: [ required() ],
                     options: ageRangesHighValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `subjects`,
+            label: intl.formatMessage({
+                id: `generic_filtersSubjectsLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: subjectFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersEqualsChipLabel`,
