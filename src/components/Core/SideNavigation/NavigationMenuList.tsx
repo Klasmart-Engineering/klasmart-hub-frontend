@@ -59,10 +59,10 @@ const useStyles = makeStyles((theme) => createStyles({
     selectedLink: {
         backgroundColor: lighten(theme.palette.primary.main, 0.9),
         "& .MuiListItemText-primary": {
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
         },
         "& .MuiListItemIcon-root": {
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
         },
     },
 }));

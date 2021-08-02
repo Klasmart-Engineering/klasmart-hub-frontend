@@ -128,13 +128,19 @@ export function themeProvider () {
         },
     };
 
+    const getContrastColor = (color: string) => {
+        return utils.getContrastColor(color, {
+            lightColor: color,
+        });
+    };
+
     const palette: PaletteOptions = {
         background: {
             default: themeMode === `light` ? `#fafafa` : `#030D1C`,
             paper: themeMode === `light` ? `#FFF` : `#030D1C`,
         },
         primary: {
-            contrastText: `#FFF`,
+            contrastText: getContrastColor(organizationColor),
             main: organizationColor,
             light: lighten(organizationColor, 0.9),
             dark: darken(organizationColor, 0.75),
@@ -143,19 +149,19 @@ export function themeProvider () {
             main: organizationColor,
         },
         error: {
-            contrastText: `#FFF`,
+            contrastText: getContrastColor(red[500]),
             main: red[500],
         },
         info: {
-            contrastText: `#FFF`,
+            contrastText: getContrastColor(blue[500]),
             main: blue[500],
         },
         success: {
-            contrastText: `#FFF`,
+            contrastText: getContrastColor(green[500]),
             main: green[500],
         },
         warning: {
-            contrastText: `#FFF`,
+            contrastText: getContrastColor(orange[500]),
             main: orange[500],
         },
     };

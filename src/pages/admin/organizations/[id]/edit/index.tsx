@@ -226,6 +226,7 @@ export default function EditOrganizationPage () {
                                                 })}
                                                 size="large"
                                                 color="primary"
+                                                variant="text"
                                                 onClick={handleCancel}
                                             />
                                         </Box>
@@ -237,6 +238,7 @@ export default function EditOrganizationPage () {
                                                 type="submit"
                                                 size="large"
                                                 color="primary"
+                                                variant="text"
                                                 disabled={!isValid}
                                                 onClick={handleSave}
                                             />
