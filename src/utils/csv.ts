@@ -205,11 +205,9 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_EMAIL:
     case CsvUploadEntityErrorCode.ERR_INVALID_EMAIL:
+        // NB: This code includes `entity` and `attribute` params, but these are not currently used
         return intl.formatMessage({
-            id: `validation.error.entity.email`,
-        }, {
-            entity,
-            attribute,
+            id: `validation.error.email.format`,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_ENUM:
         return intl.formatMessage({
@@ -287,11 +285,9 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_PHONE:
     case CsvUploadEntityErrorCode.ERR_INVALID_PHONE:
+        // NB: This code includes `entity` and `attribute` params, but these are not currently used
         return intl.formatMessage({
-            id: `validation.error.entity.phone`,
-        }, {
-            entity,
-            attribute,
+            id: `validation.error.phone.format`,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_UPPERCASE_ALPHA_NUM_WITH_MAX:
         return intl.formatMessage({
