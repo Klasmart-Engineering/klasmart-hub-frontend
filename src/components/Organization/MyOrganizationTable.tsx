@@ -81,8 +81,12 @@ export default function MyOrganizationTable (props: Props) {
     const [ deleteOrganization ] = useDeleteOrganizationOwnership();
     const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ rows, setRows ] = useState<MyOrganizationRow[]>([]);
-    const canCreate = usePermission(`create_own_organization_10220`);
-    const canCreateAdmin = usePermission(`create_an_organization_account_1`);
+    const canCreate = usePermission({
+        OR: [ `create_own_organization_10220`, `create_an_organization_account_1` ],
+    });
+    const canEdit = usePermission({
+        OR: [ `edit_this_organization_10330`, `edit_my_organization_10331` ],
+    });
     const organizationOwnerships = data?.me?.organization_ownerships ?? [];
 
     useEffect(() => {
@@ -240,7 +244,7 @@ export default function MyOrganizationTable (props: Props) {
                         }),
                         icon: AddIcon,
                         onClick: () => history.push(`/admin/organizations/create`),
-                        disabled: organizationOwnerships.length > 0 || (!canCreate && !canCreateAdmin),
+                        disabled: organizationOwnerships.length > 0 || !canCreate,
                     }}
                     rowActions={(row) => [
                         {
@@ -248,7 +252,7 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_editButton`,
                             }),
                             icon: EditIcon,
-                            disabled: row.status === Status.INACTIVE,
+                            disabled: row.status === Status.INACTIVE || !canEdit,
                             onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
                         },
                         {

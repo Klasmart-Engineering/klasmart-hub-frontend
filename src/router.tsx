@@ -74,11 +74,18 @@ export default function Router (props: Props)  {
             <ProtectedRoute
                 exact
                 path="/admin/organizations/:organizationId/edit"
-                permissions={[
-                    `organizational_profile_10100`,
-                    `view_this_organization_profile_10110`,
-                    `edit_this_organization_10330`,
-                ]}
+                permissions={{
+                    OR: [
+                        `edit_this_organization_10330`,
+                        {
+                            AND: [
+                                `organizational_profile_10100`,
+                                `view_this_organization_profile_10110`,
+                                `edit_my_organization_10331`,
+                            ],
+                        },
+                    ],
+                }}
             >
                 <Layout>
                     <EditOrganizationPage />
@@ -154,7 +161,7 @@ export default function Router (props: Props)  {
                 path={[ `/admin/users`, `/admin` ]}
                 permissions={{
                     AND: [ `view_user_page_40101` ],
-                    OR:[
+                    OR: [
                         `view_users_40110`,
                         `view_my_school_users_40111`,
                         `view_my_class_users_40112`,
