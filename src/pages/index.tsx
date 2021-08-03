@@ -5,6 +5,7 @@ import Assessment from "@/components/HomeCard/Assessments";
 import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
 import ScheduleInfoShort from "@/components/HomeCard/scheduleInfo";
+import TeacherFeedback from "@/components/HomeCard/TeacherFeedback/Table";
 import UsageInfo from "@/components/HomeCard/usageInfo";
 import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
 import YourClasses from "@/components/HomeCard/yourClasses";
@@ -14,9 +15,7 @@ import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
 import { useReactiveVar } from "@apollo/client/react";
 import {
-    Backdrop,
     Box,
-    CircularProgress,
     Container,
     Grid,
 } from "@material-ui/core";
@@ -70,6 +69,7 @@ export default function HomePage () {
     const currentOrganization = useCurrentOrganization();
 
     const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
+    const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
 
     const userId = useReactiveVar(userIdVar);
     const { data: userData, loading: userDataLoading } = useGetUser({
@@ -149,6 +149,18 @@ export default function HomePage () {
                         container
                         direction="column"
                     >
+                        {canViewTeacherFeedback && (
+                            <Grid
+                                item
+                                xs
+                                style={{
+                                    marginBottom: theme.spacing(4),
+                                }}>
+                                <Card className={classes.assessmentCard}>
+                                    <TeacherFeedback />
+                                </Card>
+                            </Grid>
+                        )}
                         {permissionAttendLiveAsTeacher && (
                             <Grid
                                 item

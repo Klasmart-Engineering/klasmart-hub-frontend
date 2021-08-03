@@ -1,4 +1,5 @@
 import english from "./en.json";
+import spanish from "./es.json";
 import indonesian from "./id.json";
 import korean from "./ko.json";
 import vietnamese from "./vi.json";
@@ -15,6 +16,7 @@ export const localeCodes = [
     `zh-CN`,
     `vi`,
     `id`,
+    `es`,
 ];
 export const LANGUAGES_LABEL: Language[] = [
     {
@@ -37,6 +39,10 @@ export const LANGUAGES_LABEL: Language[] = [
         code: `id`,
         text: `bahasa Indonesia`,
     },
+    {
+        code: `es`,
+        text: `Español`,
+    },
 ];
 
 const intlCache = createIntlCache();
@@ -50,6 +56,11 @@ export function getIntl (locale: string) {
         return createIntl({
             locale: `en-US`,
             messages: english,
+        }, intlCache);
+    case `es`:
+        return createIntl({
+            locale: `es`,
+            messages: spanish,
         }, intlCache);
     case `ko`:
         return createIntl({

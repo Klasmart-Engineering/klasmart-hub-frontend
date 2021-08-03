@@ -1,3 +1,4 @@
+import { ScheduleServerType } from "@/api/restapi";
 import { AssessmentStatus } from "@/types/objectTypes";
 import { SubgroupTab } from "kidsloop-px/dist/types/components/Table/Common/GroupTabs";
 import { IntlShape } from "react-intl";
@@ -29,3 +30,14 @@ export const buildDefaultAssessmentStatusTabs = (intl: IntlShape): SubgroupTab[]
         count: 0,
     },
 ]);
+
+export type ScheduleClientType = `class` | `live` | `study` | `home_fun_study`
+
+export const mapAssessmentScheduleServerToClientType = (type: ScheduleServerType): ScheduleClientType => {
+    switch (type) {
+    case `OfflineClass`: return `class`;
+    case `OnlineClass`: return `live`;
+    case `Homework`: return `study`;
+    case `IsHomeFun`: return `home_fun_study`;
+    }
+};

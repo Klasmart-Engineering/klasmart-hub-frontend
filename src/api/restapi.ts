@@ -192,6 +192,71 @@ interface GetAssessmentsSummaryResponse {
     [AssessmentStatus: string]: number;
 }
 
+export type ScheduleServerType = `OfflineClass` | `OnlineClass` | `Homework` | `IsHomeFun`
+
+export interface AssessmentForStudent {
+    id: string;
+    title: string;
+    score: number;
+    status: string;
+    create_at: number;
+    complete_at: number;
+    update_at: number;
+    teacher_comments: {
+        teacher: {
+            id: string;
+            avatar: string;
+            given_name: string;
+            family_name: string;
+        };
+        comment: string;
+    }[];
+    schedule: {
+        id: string;
+        title: string;
+        type: ScheduleServerType;
+        attachment: {
+            name: string;
+            id: string;
+        };
+    };
+    student_attachments: {
+        name: string;
+        id: string;
+    }[];
+}
+
+interface GetAssessmentsForStudentRequest {
+    org_id: string;
+    type: string;
+    order_by?: string;
+    teacher_id?: string;
+    assessment_id?: string;
+    status?: string;
+    create_at_ge?: number;
+    create_at_le?: number;
+    update_at_ge?: number;
+    update_at_le?: number;
+    complete_at_ge?: number;
+    complete_at_le?: number;
+    page?: number;
+    page_size?: number;
+}
+
+interface GetAssessmentsForStudentResponse {
+    list: AssessmentForStudent[];
+    total: number;
+}
+
+interface GetContentResourcesDownloadByIdRequest {
+    org_id: string;
+    resource_id: string;
+}
+
+interface GetContentResourcesDownloadByIdResponse {
+    path: string;
+}
+
 export class RestAPI {
 
     private store: Store;
@@ -456,6 +521,25 @@ export class RestAPI {
         });
         const response = await this.assessmentCall(`GET`, `v1/assessments_summary?${str}`);
         const body = await response.json() as GetAssessmentsSummaryResponse | null;
+        return body;
+    }
+
+    public async getAssessmentsForStudent (request: GetAssessmentsForStudentRequest): Promise<GetAssessmentsForStudentResponse | null> {
+        const str = queryString.stringify(request, {
+            skipNull: true,
+        });
+        const response = await this.assessmentCall(`GET`, `v1/assessments_for_student?${str}`);
+        const body = await response.json() as GetAssessmentsForStudentResponse | null;
+        return body;
+    }
+
+    public async getContentsResourcesDownloadById (request: GetContentResourcesDownloadByIdRequest): Promise<GetContentResourcesDownloadByIdResponse | null> {
+        const { org_id, resource_id } = request;
+        const str = queryString.stringify({
+            org_id,
+        });
+        const response = await this.assessmentCall(`GET`, `v1/contents_resources/${resource_id}/download?${str}`);
+        const body = await response.json() as GetContentResourcesDownloadByIdResponse | null;
         return body;
     }
 
