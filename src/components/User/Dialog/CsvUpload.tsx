@@ -91,12 +91,14 @@ export default function UploadUserCsvDialog (props: Props) {
                 setUploadSuccess(true);
             }
         } catch (err) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `createUser_error`,
-            }), {
-                variant: `error`,
-            });
-            setUploadSuccess(false);
+            if (!isDryRun) {
+                enqueueSnackbar(intl.formatMessage({
+                    id: `createUser_error`,
+                }), {
+                    variant: `error`,
+                });
+                setUploadSuccess(false);
+            }
             throw err;
         }
     };
