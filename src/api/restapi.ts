@@ -2,6 +2,7 @@ import { getCNEndpoint } from "../config";
 import { Store } from "../store/store";
 import {
     AssessmentItem,
+    AssessmentStatus,
     ContentItemDetails,
     PublishedContentItem,
     PublishedContentPayload,
@@ -188,8 +189,7 @@ interface GetAssessmentsSummaryRequest {
 }
 
 interface GetAssessmentsSummaryResponse {
-    items: AssessmentItem[];
-    total: number;
+    [AssessmentStatus: string]: number;
 }
 
 export class RestAPI {

@@ -49,23 +49,23 @@ export default function AssessmentTable (props: Props) {
     const [ allStatusTotal, setAllStatusTotal ] = useState(0);
     const [ page, setPage ] = useState(0);
     const [ loading, setLoading ] = useState(false);
-    const [ status, setStatus ] = useState(AssessmentStatus.IN_PROGRESS);
+    const [ subgroupBy, setSubgroupBy ] = useState<string| undefined>(AssessmentStatus.IN_PROGRESS);
     const [ statusGroups, setStatusGroups ] = useState<SubgroupTab[]>(buildDefaultAssessmentStatusTabs(intl) ?? []);
     const currentOrganization = useCurrentOrganization();
 
     const fetchStatusGroups = async () => {
-        const resp = await restApi.getAssessmentsSummary({
+        const assessmentSummary = await restApi.getAssessmentsSummary({
             org_id: currentOrganization?.organization_id ?? ``,
         });
         const groups: SubgroupTab[] = Object
-            .entries(resp ?? {})
-            .map(([ status, count ] : [ AssessmentStatus, number ]) => ({
+            .values(AssessmentStatus)
+            .map((status) => ({
                 text: getStatusLabel(status, intl),
                 value: status,
-                count,
+                count: assessmentSummary?.[status] ?? 0,
             }));
 
-        const allCount = sumBy(groups, (group) => group.count);
+        const allCount = sumBy(groups, (group) => typeof group.count === `number` ? group.count : 0);
 
         setAllStatusTotal(allCount);
         setStatusGroups(groups);
@@ -76,7 +76,7 @@ export default function AssessmentTable (props: Props) {
             org_id: currentOrganization?.organization_id ?? ``,
             page: page + 1,
             page_size: ROWS_PER_PAGE,
-            status,
+            status: subgroupBy,
         });
         const items = resp?.items ?? [];
         const total = resp?.total ?? 0;
@@ -86,7 +86,7 @@ export default function AssessmentTable (props: Props) {
 
     const handleOnChange = (tableData: PageTableData<AssessmentItem>) => {
         setPage(tableData.page);
-        setStatus(tableData.subgroupBy);
+        setSubgroupBy(tableData.subgroupBy);
     };
 
     useEffect(() => {
@@ -113,7 +113,7 @@ export default function AssessmentTable (props: Props) {
         })();
     }, [
         currentOrganization,
-        status,
+        subgroupBy,
         page,
     ]);
 
@@ -176,7 +176,7 @@ export default function AssessmentTable (props: Props) {
             rows={rows}
             total={total}
             groupBy="status"
-            subgroupBy={AssessmentStatus.IN_PROGRESS}
+            subgroupBy={subgroupBy}
             rowsPerPage={ROWS_PER_PAGE}
             rowsPerPageOptions={[ ROWS_PER_PAGE ]}
             noGroupTotal={allStatusTotal}
