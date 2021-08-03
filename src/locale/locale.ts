@@ -24,6 +24,10 @@ export const LANGUAGES_LABEL: Language[] = [
         text: `English`,
     },
     {
+        code: `es`,
+        text: `Español`,
+    },
+    {
         code: `ko`,
         text: `한국어`,
     },
@@ -38,10 +42,6 @@ export const LANGUAGES_LABEL: Language[] = [
     {
         code: `id`,
         text: `bahasa Indonesia`,
-    },
-    {
-        code: `es`,
-        text: `Español`,
     },
 ];
 
