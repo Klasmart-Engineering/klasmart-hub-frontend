@@ -12,7 +12,7 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { buildEmptySubject } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
 import { DialogContentText } from "@material-ui/core";

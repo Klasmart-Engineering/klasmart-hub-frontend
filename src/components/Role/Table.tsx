@@ -13,9 +13,9 @@ import ViewRoleDetailsDialog from "@/components/Role/Dialog/ViewDetails";
 import globalStyles from "@/globalStyles";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
-import { systemRoles } from "@/utils/permissions";
+import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
+import { systemRoles } from "@/utils/userRoles";
 import {
     Link,
     Paper,

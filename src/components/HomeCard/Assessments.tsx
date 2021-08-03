@@ -1,7 +1,7 @@
 import AssessmentTable from "../Assessment/Table";
 import AssessmentPieChart from "@/components/Assessment/PieChart";
-import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
+import { usePermission } from "@/utils/permissions";
 import {
     Box,
     Typography,

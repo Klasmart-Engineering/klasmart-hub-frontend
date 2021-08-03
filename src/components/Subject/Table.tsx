@@ -11,7 +11,7 @@ import {
     Status,
     Subject,
 } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {

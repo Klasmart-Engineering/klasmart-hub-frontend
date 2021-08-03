@@ -14,6 +14,14 @@ export const roleNameTranslations: { [key: string]: string } = {
     Teacher: `users_teacherRole`,
 };
 
+export const systemRoles = [
+    `Organization Admin`,
+    `School Admin`,
+    `Parent`,
+    `Student`,
+    `Teacher`,
+];
+
 const orderedRoleNames = orderedSystemRoleNames.slice() as string[];
 
 export const sortRoleNames = (a: string, b: string) => {

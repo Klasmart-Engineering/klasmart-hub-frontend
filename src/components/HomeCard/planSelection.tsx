@@ -7,8 +7,8 @@ import {
 } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
-import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
+import { usePermission } from "@/utils/permissions";
 import { Button } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import Grid from "@material-ui/core/Grid";

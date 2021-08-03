@@ -10,7 +10,7 @@ import {
     Status,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {

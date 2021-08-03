@@ -20,9 +20,9 @@ jest.mock(`@/store/organizationMemberships`, () => {
     };
 });
 
-jest.mock(`@/utils/checkAllowed`, () => {
+jest.mock(`@/utils/permissions`, () => {
     return {
-        ...jest.requireActual(`@/utils/checkAllowed`),
+        ...jest.requireActual(`@/utils/permissions`),
         usePermission: () => true,
     };
 });

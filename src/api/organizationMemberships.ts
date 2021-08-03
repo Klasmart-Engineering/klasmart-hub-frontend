@@ -175,7 +175,7 @@ export const useGetPaginatedOrganizationMemberships = (options?: QueryHookOption
 interface GetOrganizationMembershipsPermissionsRequest {
 }
 
-interface GetOrganizationMembershipsPermissionsResponse {
+export interface GetOrganizationMembershipsPermissionsResponse {
     me: {
         memberships: OrganizationMembership[];
     };

@@ -7,7 +7,6 @@ import UserTable,
 import { buildOrganizationUserFilter } from "@/operations/queries/getPaginatedOrganizationUsers";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
 import { sortSchoolNames } from "@/utils/schools";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -25,7 +24,6 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { Redirect } from "react-router-dom";
 
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
@@ -44,8 +42,6 @@ export const mapUserRow = (edge: UserEdge) => {
 
 export default function UsersPage () {
     const [ rows, setRows ] = useState<UserRow[]>([]);
-    const canView = usePermission(`view_users_40110`, true);
-    const canViewSchoolUsers = usePermission(`view_my_school_users_40111`, true);
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
@@ -117,10 +113,6 @@ export default function UsersPage () {
         const rows = usersData?.usersConnection.edges?.map(mapUserRow);
         setRows(rows ?? []);
     }, [ usersData ]);
-
-    if (!(canView || canViewSchoolUsers) && !loadingOrganizationMemberships) {
-        return <Redirect to="/" />;
-    }
 
     return (
         <UserTable

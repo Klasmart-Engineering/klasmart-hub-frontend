@@ -11,7 +11,7 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {

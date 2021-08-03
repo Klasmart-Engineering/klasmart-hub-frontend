@@ -8,8 +8,8 @@ import {
     useUpdateClass,
 } from "@/api/classes";
 import { Class } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
 import { buildEmptyClass } from "@/utils/classes";
+import { usePermission } from "@/utils/permissions";
 import {
     Dialog,
     useSnackbar,

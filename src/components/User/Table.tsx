@@ -4,7 +4,7 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { getCustomStatus } from "@/utils/status";
 import {
     getTableLocalization,

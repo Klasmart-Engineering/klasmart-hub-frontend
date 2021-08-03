@@ -1,19 +1,24 @@
+import { systemRoles } from "./userRoles";
+import {
+    GetOrganizationMembershipsPermissionsResponse,
+    useGetOrganizationMembershipsPermissions,
+} from "@/api/organizationMemberships";
 import {
     Group,
     Permission,
     PermissionsCategory,
     Role,
 } from "@/components/Role/Dialog/CreateEdit";
+import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
 
 export type PermissionId = typeof permissions[number]
 
-export const systemRoles = [
-    `Organization Admin`,
-    `School Admin`,
-    `Parent`,
-    `Student`,
-    `Teacher`,
-];
+export interface PermissionCondition {
+    AND?: (PermissionId | PermissionCondition)[];
+    OR?: (PermissionId | PermissionCondition)[];
+}
+
+export type PermissionOption = PermissionId | PermissionId[] | PermissionCondition
 
 export const permissions = [
     `create_an_organization_account_1`,
@@ -638,3 +643,78 @@ export const permissionsCategoriesHandler = (permissionCategories: PermissionsCa
         return permissionsCategories;
     }, []) as PermissionsCategory[];
 };
+
+function isPermissionCondition (permissionOption: PermissionOption): permissionOption is PermissionCondition {
+    return typeof permissionOption !== `string` && !Array.isArray(permissionOption);
+}
+
+function buildPermissionCondition (permissionOption: PermissionOption): PermissionCondition {
+    if (isPermissionCondition(permissionOption)) {
+        return permissionOption;
+    }
+
+    return {
+        AND: Array.isArray(permissionOption) ? permissionOption : [ permissionOption ],
+    };
+}
+
+const permissionsInOrganization = (organizationId: string, data: GetOrganizationMembershipsPermissionsResponse | undefined) => {
+    return new Set((data?.me.memberships ?? [])
+        .filter((membership) => membership.organization_id === organizationId)
+        .flatMap((membership) => (membership.roles ?? [])
+            .flatMap((role) => role.permissions.map((permission) => permission.permission_id as PermissionId))));
+};
+
+const hasRequiredPermissions = (actualPermissions: Set<PermissionId>, permissionOption: PermissionOption) => {
+    const root = buildPermissionCondition(permissionOption);
+
+    const hasPermission = (perm: PermissionId | PermissionCondition) => {
+        if (typeof perm === `string`) {
+            return actualPermissions.has(perm);
+        }
+        return traversePermissionCondition(perm);
+    };
+
+    const traversePermissionCondition = (node: PermissionCondition): boolean => {
+        let result = true;
+        if (node?.AND) {
+            result &&= node.AND.every(hasPermission);
+        }
+        if (node?.OR) {
+            result &&= node.OR.some(hasPermission);
+        }
+        return result;
+    };
+
+    return traversePermissionCondition(root);
+};
+
+export type UsePermissionResult = {
+    hasPermission?: boolean;
+    loading: boolean;
+}
+
+export function usePermission (permissionOption: PermissionOption, wait?: undefined): boolean;
+export function usePermission (permissionOption: PermissionOption, wait: boolean): UsePermissionResult;
+export function usePermission (permissionOption: PermissionOption, wait?: boolean | undefined): boolean | UsePermissionResult {
+    const currentOrganizationMembership = useCurrentOrganizationMembership();
+    const organizationId = currentOrganizationMembership?.organization_id ?? ``;
+
+    const { data, loading } = useGetOrganizationMembershipsPermissions();
+
+    if (loading && wait) {
+        return {
+            loading,
+        };
+    }
+
+    const actualPermissions = permissionsInOrganization(organizationId, data);
+    const hasPermission = hasRequiredPermissions(actualPermissions, permissionOption);
+
+    if (!wait) return hasPermission;
+
+    return {
+        loading,
+        hasPermission: !loading ? hasPermission : undefined,
+    };
+}

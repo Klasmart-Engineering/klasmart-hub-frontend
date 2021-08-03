@@ -3,8 +3,8 @@ import CreateSchoolDialog from "@/components/School/Dialog/Create";
 import UploadSchoolCsvDialog from "@/components/School/Dialog/CsvUpload";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
 import { Status } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
     TableProps,

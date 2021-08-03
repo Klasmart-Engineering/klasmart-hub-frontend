@@ -1,4 +1,4 @@
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { useIsSuperAdmin } from "@/utils/userRoles";
 import {
     createStyles,
@@ -197,7 +197,7 @@ export default function NavigationMenuList (props: Props) {
                         link: `/admin/roles`,
                     },
                 ] : [],
-                ...usePermission(`view_school_20110`) ? [
+                ...usePermission(`define_school_program_page_20101`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_schoolsTitle`,

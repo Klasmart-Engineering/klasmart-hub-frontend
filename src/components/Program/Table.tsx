@@ -3,8 +3,8 @@ import { useDeleteProgram } from "@/api/programs";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { usePermission } from "@/utils/checkAllowed";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { usePermission } from "@/utils/permissions";
 import { useProgramFilters } from "@/utils/programs";
 import {
     getTableLocalization,

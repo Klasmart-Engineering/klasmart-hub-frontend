@@ -4,7 +4,7 @@ import SchoolTable,
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { isActive } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -21,14 +21,13 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { Redirect } from "react-router-dom";
 
 interface Props {
 }
 
 export default function SchoolsPage (props: Props) {
     const currentOrganization = useCurrentOrganization();
-    const canView = usePermission(`view_school_20110`, true);
+    const canView = usePermission(`view_school_20110`);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -54,7 +53,7 @@ export default function SchoolsPage (props: Props) {
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.organization_id || !canView,
         notifyOnNetworkStatusChange: true,
     });
 
@@ -97,8 +96,6 @@ export default function SchoolsPage (props: Props) {
         ?.filter((edge) => isActive(edge.node))
         .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
         ?? [];
-
-    if (!canView && !loading) return <Redirect to="/" />;
 
     return (
         <SchoolTable

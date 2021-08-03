@@ -8,9 +8,9 @@ import {
     OrganizationOwnership,
     Status,
 } from "@/types/graphQL";
-import { usePermission } from "@/utils/checkAllowed";
 import { history } from "@/utils/history";
 import { removeOrganizationMembership } from "@/utils/organizationMemberships";
+import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {

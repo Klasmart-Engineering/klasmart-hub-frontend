@@ -11,7 +11,7 @@ import YourClasses from "@/components/HomeCard/yourClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { User } from "@/types/graphQL";
 import { SchedulePayload } from "@/types/objectTypes";
-import { usePermission } from "@/utils/checkAllowed";
+import { usePermission } from "@/utils/permissions";
 import { useReactiveVar } from "@apollo/client/react";
 import {
     Backdrop,
