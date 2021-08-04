@@ -1036,7 +1036,7 @@
     "assessment.feedback.score.poor": "Poor",
     "teacherFeedback.title": "Teacher Feedback",
     "teacherFeedback.column.feedback.showMore": "more",
-    "teacherFeedback.column.feedback.empty": "No feedback received",
+    "teacherFeedback.column.feedback.empty": "No teacher comment available",
     "teacherFeedback.column.title": "Title",
     "teacherFeedback.column.score": "Score",
     "teacherFeedback.column.feedback": "Feedback",
@@ -1046,5 +1046,6 @@
     "class.type.class": "Class",
     "class.type.live": "Live",
     "class.type.study": "Study",
-    "teacherFeedback.body.empty": "{count, plural, one {No assessments were completed in the past day} other {No assessments were completed in the past {count} days}}"
+    "teacherFeedback.body.empty": "{count, plural, one {No assessments were completed in the past day} other {No assessments were completed in the past {count} days}}",
+    "common.close": "Close"
 }

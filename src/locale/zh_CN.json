@@ -1036,7 +1036,7 @@
     "assessment.feedback.score.poor": "较差",
     "teacherFeedback.title": "老师反馈",
     "teacherFeedback.column.feedback.showMore": "更多",
-    "teacherFeedback.column.feedback.empty": "没有收到反馈信息",
+    "teacherFeedback.column.feedback.empty": "No teacher comment available",
     "teacherFeedback.column.title": "标题",
     "teacherFeedback.column.score": "分数",
     "teacherFeedback.column.feedback": "反馈",
@@ -1046,5 +1046,6 @@
     "class.type.class": "线下课",
     "class.type.live": "在线课堂",
     "class.type.study": "家庭作业",
-    "teacherFeedback.body.empty": "{count, plural, other {过去{count}天内没有已完成的学习评估}}"
+    "teacherFeedback.body.empty": "{count, plural, other {过去{count}天内没有已完成的学习评估}}",
+    "common.close": "关闭"
 }

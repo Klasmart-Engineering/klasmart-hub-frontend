@@ -1036,7 +1036,7 @@
     "assessment.feedback.score.poor": "Kurang",
     "teacherFeedback.title": "Masukan Guru",
     "teacherFeedback.column.feedback.showMore": "selebihnya",
-    "teacherFeedback.column.feedback.empty": "Tidak ada masukan yang diterima",
+    "teacherFeedback.column.feedback.empty": "No teacher comment available",
     "teacherFeedback.column.title": "Judul",
     "teacherFeedback.column.score": "Skor",
     "teacherFeedback.column.feedback": "Masukan",
@@ -1046,5 +1046,6 @@
     "class.type.class": "Kelas",
     "class.type.live": "Live",
     "class.type.study": "Belajar",
-    "teacherFeedback.body.empty": "{count, plural, one {No assessments were completed in the past day} other {No assessments were completed in the past {count} days}}"
+    "teacherFeedback.body.empty": "{count, plural, other {Tidak ada penilaian yang diselesaikan dalam {count} hari terakhir}}",
+    "common.close": "Tutup"
 }
