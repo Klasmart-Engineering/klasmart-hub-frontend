@@ -102,7 +102,8 @@ const webpackConfig: Configuration = {
                 path: process.env.ENV_PATH,
             })
             : new EnvironmentPlugin({
-                CN_CMS_ENDPOINT: process.env.CN_CMS_ENDPOINT,
+                CMS_API_ENDPOINT: process.env.CMS_API_ENDPOINT,
+                CMS_SITE_ENDPOINT: process.env.CMS_SITE_ENDPOINT,
                 API_ENDPOINT: process.env.API_ENDPOINT,
                 AUTH_ENDPOINT: process.env.AUTH_ENDPOINT,
                 LIVE_ENDPOINT: process.env.LIVE_ENDPOINT,
@@ -127,6 +128,13 @@ const webpackConfig: Configuration = {
         port: 8080,
         https: true,
         historyApiFallback: true,
+        proxy: {
+            "/v1": {
+                target: `https://cms.alpha.kidsloop.net/`,
+                secure: true,
+                changeOrigin: true,
+            },
+        },
     },
 };
 

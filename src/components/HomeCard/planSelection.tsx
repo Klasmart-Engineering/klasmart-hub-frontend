@@ -1,10 +1,7 @@
 import { useRestAPI } from "@/api/restapi";
 import InviteButton from "@/components/invite";
 import StyledFAB from "@/components/styled/fabButton";
-import {
-    getCNEndpoint,
-    getLiveEndpoint,
-} from "@/config";
+import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
 import { history } from "@/utils/history";

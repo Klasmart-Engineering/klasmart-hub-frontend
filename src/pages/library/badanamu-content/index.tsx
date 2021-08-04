@@ -1,4 +1,4 @@
-import { getCNEndpoint } from "@/config";
+import { getCmsSiteEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     createStyles,
@@ -23,7 +23,7 @@ export default function BadanamuContentPage (props: Props) {
 
     return (
         <iframe
-            src={`${getCNEndpoint()}?org_id=${organizationId}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
+            src={`${getCmsSiteEndpoint()}?org_id=${organizationId}#/library/my-content-list?program_group=BadaESL&order_by=-update_at&page=1`}
             frameBorder="0"
             className={classes.root}
         />

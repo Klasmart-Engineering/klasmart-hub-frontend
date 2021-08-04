@@ -1,4 +1,4 @@
-import { getCNEndpoint } from "@/config";
+import { getCmsSiteEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     createStyles,
@@ -23,7 +23,7 @@ export default function OrganizationContentPage (props: Props) {
 
     return (
         <iframe
-            src={`${getCNEndpoint()}?org_id=${organizationId}#/library`}
+            src={`${getCmsSiteEndpoint()}?org_id=${organizationId}#/library`}
             allow="microphone"
             frameBorder="0"
             className={classes.root}

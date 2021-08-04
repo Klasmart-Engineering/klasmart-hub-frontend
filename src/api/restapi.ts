@@ -1,4 +1,4 @@
-import { getCNEndpoint } from "../config";
+import { getCmsApiEndpoint } from "../config";
 import { Store } from "../store/store";
 import {
     AssessmentItem,
@@ -544,15 +544,15 @@ export class RestAPI {
     }
 
     private contentCall (method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
-        return this.call(method, getCNEndpoint(), route, body);
+        return this.call(method, getCmsApiEndpoint(), route, body);
     }
 
     private scheduleCall (method: "POST" | "GET" | "PUT" | "DELETE", route: string, body?: string) {
-        return this.call(method, getCNEndpoint(), route, body);
+        return this.call(method, getCmsApiEndpoint(), route, body);
     }
 
     private assessmentCall (method: "POST" | "GET" | "PUT", route: string, body?: string) {
-        return this.call(method, getCNEndpoint(), route, body);
+        return this.call(method, getCmsApiEndpoint(), route, body);
     }
 
     private async call (method: string, prefix: string, route: string, body: string | undefined) {

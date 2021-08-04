@@ -4,10 +4,7 @@ import {
 } from "@/api/classRoster";
 import { useRestAPI } from "@/api/restapi";
 import StyledFAB from "@/components/styled/fabButton";
-import {
-    getCNEndpoint,
-    getLiveEndpoint,
-} from "@/config";
+import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import {

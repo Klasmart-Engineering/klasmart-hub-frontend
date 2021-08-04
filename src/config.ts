@@ -1,4 +1,6 @@
-export const getCNEndpoint = () => process.env.CN_CMS_ENDPOINT ?? ``;
+export const getCmsApiEndpoint = () => process.env.CMS_API_ENDPOINT ?? ``;
+
+export const getCmsSiteEndpoint = () => process.env.CMS_SITE_ENDPOINT ?? ``;
 
 export const getAuthEndpoint = () => process.env.AUTH_ENDPOINT ?? ``;
 
