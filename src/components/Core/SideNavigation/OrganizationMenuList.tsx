@@ -25,10 +25,10 @@ const useStyles = makeStyles((theme) => createStyles({
     selectedOrganization: {
         backgroundColor: lighten(theme.palette.primary.main, 0.9),
         "& .MuiListItemText-primary": {
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
         },
         "& .MuiListItemText-secondary": {
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
             opacity: 0.66,
         },
         "& .MuiListItemIcon-root": {

@@ -1,6 +1,7 @@
 import { User } from "@/types/graphQL";
 import {
     Box,
+    lighten,
     Typography,
 } from "@material-ui/core";
 import {
@@ -62,7 +63,7 @@ export default function WelcomeMessage (props: Props) {
                             values={{
                                 userName: (
                                     <span style={{
-                                        color: theme.palette.primary.main,
+                                        color: theme.palette.primary.main !== theme.palette.primary.contrastText ? lighten(theme.palette.primary.contrastText, 0.4) : theme.palette.primary.main,
                                     }}>
                                         {user?.username ?? user.given_name}
                                     </span>

@@ -25,6 +25,7 @@ export default (theme: Theme) => createStyles({
     },
     clickable: {
         cursor: `pointer`,
+        color: theme.palette.primary.contrastText,
     },
     fontWeightBold: {
         fontWeight: `bold`,

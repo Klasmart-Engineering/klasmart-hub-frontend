@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => {
         },
         cardButton: {
             background: `transparent`,
-            color: theme.palette.primary.main,
             boxShadow: `none`,
             "&:hover, &:active": {
                 backgroundColor: theme.palette.grey[100],
@@ -163,6 +162,7 @@ export default function ScheduleInfoShort ({ schedule }: {
                 </Grid>
                 <Grid item>
                     <Button
+                        color="primary"
                         variant="contained"
                         className={classes.cardButton}
                         onClick={(e: React.MouseEvent) => {

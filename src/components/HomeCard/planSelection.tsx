@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     cardButton: {
         background: `transparent`,
-        color: theme.palette.primary.main,
         boxShadow: `none`,
         "&:hover, &:active": {
             backgroundColor: `#f3f3f3`,
@@ -172,6 +171,7 @@ export default function PlanSelection () {
                     </Grid>
                     {permissionAccessLibrary && <Grid item>
                         <Button
+                            color="primary"
                             variant="contained"
                             className={classes.cardButton}
                             onClick={(e: React.MouseEvent) => {
