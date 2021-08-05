@@ -91,6 +91,7 @@ export interface CsvBadInputErrorDetails {
     other_attribute?: string;
     size?: string;
     fileType?: string;
+    fileName?: string;
     columnName?: string;
 }
 
@@ -121,6 +122,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         other_attribute,
         size,
         fileType,
+        fileName,
         columnName,
     } = error;
     switch (error.code) {
@@ -145,7 +147,9 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         });
     case CsvUploadEntityErrorCode.ERR_EMPTY_FILE:
         return intl.formatMessage({
-            id: `validation.error.file.empty`,
+            id: `validation.error.spreadsheet.empty`,
+        }, {
+            fileName,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_ALPHA:
     case CsvUploadEntityErrorCode.ERR_INVALID_ALPHABETIC:
@@ -462,8 +466,10 @@ export function buildDefaultSpreadsheetFileInputProps (intl: IntlShape): Partial
             count,
         }),
         validationLocalization: {
-            emptyFileError: intl.formatMessage({
-                id: `validation.error.file.empty`,
+            emptyFileError: (fileName) =>  intl.formatMessage({
+                id: `validation.error.spreadsheet.empty`,
+            }, {
+                fileName,
             }),
             duplicateColumnError: (columnName) => intl.formatMessage({
                 id: `validation.error.spreadsheet.duplicateColumn`,
