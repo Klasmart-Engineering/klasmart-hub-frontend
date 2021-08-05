@@ -795,7 +795,7 @@
     "subjects_subjectDeleteMessage": "과목이 성공적으로 삭제되었습니다",
     "subjects_subjectDeleteError": "죄송하지만, 무언가 잘못됐으니 다시 시도해보세요",
     "navMenu_programsTitle": "프로그램",
-    "navMenu_classesTitle": "수업",
+    "navMenu_classesTitle": "학급",
     "navMenu_subjectsTitle": "과목",
     "navMenu_gradesTitle": "학년",
     "navMenu_ageRangesTitle": "나이대",
@@ -1047,5 +1047,6 @@
     "class.type.live": "라이브",
     "class.type.study": "스터디",
     "teacherFeedback.body.empty": "{count, plural, other {최근 {count} 일간 평가 완료된 항목이 없습니다.}}",
-    "common.close": "닫기"
+    "common.close": "닫기",
+    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row."
 }
