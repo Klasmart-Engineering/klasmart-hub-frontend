@@ -49,9 +49,10 @@ import React,
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
-    const { clickable } = globalStyles(theme);
+    const { clickable, primaryText } = globalStyles(theme);
     return createStyles({
         clickable,
+        primaryText,
         root: {
             width: `100%`,
         },
@@ -282,7 +283,7 @@ export default function ClassesTable (props: Props) {
             render: (row) => (
                 <Link
                     href={undefined}
-                    className={classes.clickable}
+                    className={clsx(classes.clickable, classes.primaryText)}
                     onClick={() => {
                         const selectedClass = findClass(row);
                         if (!selectedClass) return;

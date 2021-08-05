@@ -4,6 +4,9 @@ import {
 } from "@material-ui/core";
 
 export default (theme: Theme) => createStyles({
+    primaryText: {
+        color: theme.palette.primary.contrastText,
+    },
     statusText: {
         fontWeight: `bold`,
         textTransform: `capitalize`,
@@ -25,7 +28,6 @@ export default (theme: Theme) => createStyles({
     },
     clickable: {
         cursor: `pointer`,
-        color: theme.palette.primary.contrastText,
     },
     fontWeightBold: {
         fontWeight: `bold`,

@@ -24,7 +24,9 @@ import {
     SentimentVeryDissatisfied,
     SentimentVerySatisfied,
 } from "@material-ui/icons";
+import clsx from "clsx";
 import {
+    Button,
     FileCounterIconButton,
     PageTable,
     UserAvatar,
@@ -69,13 +71,17 @@ const useStyles = makeStyles((theme) => {
         teacherAvatar: {
             marginRight: theme.spacing(1),
         },
+        feedbackText: {
+            display: `inline-block`,
+        },
         feedbackShort: {
-            display: `-webkit-box`,
+            display: `-webkit-inline-box`,
             lineClamp: 2,
             boxOrient: `vertical`,
             overflow: `hidden`,
             textOverflow: `ellipsis`,
             cursor: `pointer`,
+            verticalAlign: `bottom`,
         },
         moreFeedbackPopover: {
             transform: `translate(${theme.spacing(-2)}px, ${theme.spacing(-2)}px)`,
@@ -249,14 +255,14 @@ export default function TeacherFeedback (props: Props) {
                 return (
                     <Typography
                         variant="body2"
-                        className={classes.clickable}
+                        className={clsx(classes.clickable, classes.feedbackText)}
                         onClick={(event) => handleMoreFeedbackOpen(event, row)}
                     >
-                        <div className={classes.feedbackShort}>{row.feedback}{` `}</div>
+                        <div className={classes.feedbackShort}>{row.feedback}</div>
                         <Link href={undefined}>
-                            ... {intl.formatMessage({
+                            {` ... ${intl.formatMessage({
                                 id: `teacherFeedback.column.feedback.showMore`,
-                            })}
+                            })}`}
                         </Link>
                     </Typography>
                 );
@@ -487,6 +493,14 @@ export default function TeacherFeedback (props: Props) {
                         >
                             {selectedRow?.teacherName}
                         </Typography>
+                        <Box flex="1"/>
+                        <Button
+                            color="primary"
+                            label={intl.formatMessage({
+                                id: `common.close`,
+                            })}
+                            onClick={() => handleMoreFeedbackClose()}
+                        />
                     </Box>
                 </Box>
             </Popover>

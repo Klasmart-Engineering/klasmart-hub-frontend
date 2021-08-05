@@ -29,6 +29,7 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@material-ui/icons";
+import clsx from "clsx";
 import {
     PageTable,
     useConfirm,
@@ -42,9 +43,10 @@ import React, {
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
-    const { clickable } = globalStyles(theme);
+    const { clickable, primaryText } = globalStyles(theme);
     return createStyles({
         clickable,
+        primaryText,
         root: {
             width: `100%`,
         },
@@ -173,7 +175,7 @@ export default function RoleTable () {
             render: (row) => (
                 <Link
                     href={undefined}
-                    className={classes.clickable}
+                    className={clsx(classes.clickable, classes.primaryText)}
                     onClick={() => handleOpenViewDialog(row)}
                 >
                     {row.role}
