@@ -33,7 +33,7 @@ export const mapUserRow = (edge: UserEdge) => {
         familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
         contactInfo: user.contactInfo.email ?? user.contactInfo.phone ?? ``,
-        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames),
+        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
         schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
         status: user.organizations?.[0].userStatus,
         joinDate: new Date(user.organizations?.[0].joinDate),

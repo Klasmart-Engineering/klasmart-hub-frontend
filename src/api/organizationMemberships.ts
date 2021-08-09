@@ -1,3 +1,4 @@
+import { RoleSummaryNode } from "@/api/roles";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
@@ -139,11 +140,7 @@ export interface UserNode {
         userStatus: string;
         joinDate: string;
     }[];
-    roles: {
-        id: string;
-        name: string;
-        status: string;
-    }[];
+    roles: RoleSummaryNode[];
     schools: {
         id: string;
         name: string;

@@ -25,6 +25,14 @@ interface GetAllRolesResponse {
     };
 }
 
+export interface RoleSummaryNode {
+    id: string;
+    name: string;
+    status: string;
+    organizationId: string | null;
+    schoolId: string | null;
+}
+
 export const useGetOrganizationRoles = (options?: QueryHookOptions<GetAllRolesResponse, GetAllRolesRequest>) => {
     return useQuery<GetAllRolesResponse, GetAllRolesRequest>(GET_ORGANIZATION_ROLES, options);
 };

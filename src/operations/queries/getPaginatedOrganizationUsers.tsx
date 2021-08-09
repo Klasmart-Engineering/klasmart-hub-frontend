@@ -1,4 +1,5 @@
 import { UserFilter } from "@/api/organizationMemberships";
+import { ROLE_SUMMARY_NODE_FIELDS } from "@/operations/fragments";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
 
@@ -58,6 +59,8 @@ export const buildOrganizationUserFilter = (filter: ProgramQueryFilter): UserFil
 });
 
 export const GET_PAGINATED_ORGANIZATION_USERS = gql`
+    ${ROLE_SUMMARY_NODE_FIELDS}
+    
     query getOrganizationUsers(
         $direction: ConnectionDirection!
             $count: Int
@@ -97,10 +100,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                         status
                     }
                     roles {
-                        id
-                        name
-                        organizationId
-                        status
+                        ...RoleSummaryNodeFields
                     }
                     contactInfo {
                         email

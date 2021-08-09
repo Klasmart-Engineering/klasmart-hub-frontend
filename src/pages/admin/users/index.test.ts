@@ -3,28 +3,38 @@ import { UserRow } from "@/components/User/Table";
 import { mapUserRow } from "@/pages/admin/users";
 import { Status } from "@/types/graphQL";
 
+const organizationId = `217466ed-3020-4117-b922-b8339c61573e`;
+
 const studentRole = {
     id: `fd37310d-5ced-4dda-9968-c6cb084a542b`,
     name: `Student`,
     status: Status.ACTIVE,
+    organizationId,
+    schoolId: null,
 };
 
 const orgAdminRole = {
     id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
     name: `Organization Admin`,
     status: Status.ACTIVE,
+    organizationId,
+    schoolId: null,
 };
 
 const teacherRole = {
     id: `893f28d2-69f1-4dc5-aa37-a04b9a8d90b9`,
     name: `Teacher`,
     status: Status.ACTIVE,
+    organizationId,
+    schoolId: null,
 };
 
 const customRoleA = {
     id: `abbc8e9b-9e4b-43bb-95fb-61302ba7f398`,
     name: `Role 12`,
     status: Status.ACTIVE,
+    organizationId,
+    schoolId: null,
 };
 
 const schoolA = {
@@ -178,6 +188,44 @@ test(`map server users to table users`, () => {
     ];
 
     expect(rows).toEqual(final);
+});
+
+test(`filters out School Roles`, () => {
+    expect([
+        {
+            node: {
+                ...userA.node,
+                roles: [
+                    {
+                        id: `c89dc032-d021-4028-a584-b8a8b9d1c9b9`,
+                        status: Status.ACTIVE,
+                        name: `School Role`,
+                        organizationId: null,
+                        schoolId: `a1951b16-1653-4c4e-9e43-a2817e6b291e`,
+                    },
+                ],
+            },
+        },
+    ].map(mapUserRow).map(userRow => userRow.roleNames)[0]).toEqual([]);
+});
+
+test(`filters out inactive roles`, () => {
+    expect([
+        {
+            node: {
+                ...userA.node,
+                roles: [
+                    {
+                        id: `aadb5b12-b8fe-424d-854f-8e87b1a6885e`,
+                        status: Status.INACTIVE,
+                        name: `Inactive Role`,
+                        organizationId,
+                        schoolId: null,
+                    },
+                ],
+            },
+        },
+    ].map(mapUserRow).map(userRow => userRow.roleNames)[0]).toEqual([]);
 });
 
 test(`should return an empty array`, () => {

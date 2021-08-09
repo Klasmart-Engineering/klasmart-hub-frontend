@@ -2,6 +2,7 @@ import { CurrentMembership } from "./models/CurrentMembership";
 import { User } from "@/types/graphQL";
 import {
     InMemoryCache,
+    InMemoryCacheConfig,
     makeVar,
     ReactiveVar,
 } from "@apollo/client";
@@ -30,7 +31,7 @@ export const userIdVar: ReactiveVar<string> = makeVar<string>(userIdInitialValue
 
 export const userProfileVar: ReactiveVar<User> = makeVar<User>(userProfileInitialValue);
 
-export const cache: InMemoryCache = new InMemoryCache({
+export const cacheConfig: InMemoryCacheConfig = {
     typePolicies: {
         // Cache [Organization/School]SummaryNode on the parent UserConnectionNode
         // to avoid invalid caching due to the non-unique `id` field
@@ -39,6 +40,14 @@ export const cache: InMemoryCache = new InMemoryCache({
         },
         SchoolSummaryNode: {
             keyFields: false,
+        },
+        RoleSummaryNode: {
+            // Same Role could be assigned on the Organization or School level
+            keyFields: [
+                `id`,
+                `schoolId`,
+                `organizationId`,
+            ],
         },
         Query: {
             fields: {
@@ -86,4 +95,6 @@ export const cache: InMemoryCache = new InMemoryCache({
             },
         },
     },
-});
+};
+
+export const cache: InMemoryCache = new InMemoryCache(cacheConfig);
