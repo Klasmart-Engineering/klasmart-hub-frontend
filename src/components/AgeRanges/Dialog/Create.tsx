@@ -4,10 +4,6 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AgeRange } from "@/types/graphQL";
 import { buildEmptyAgeRange } from "@/utils/ageRanges";
 import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
-import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
@@ -17,21 +13,16 @@ import React, {
 } from "react";
 import { useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({}));
-
 interface Props {
     open: boolean;
     onClose: (newAgeRange?: AgeRange) => void;
-    refetch: () => void;
 }
 
-export default function (props: Props) {
+export default function CreateAgeRangeDialog (props: Props) {
     const {
         open,
         onClose,
-        refetch,
     } = props;
-    const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ newAgeRange, setNewAgeRange ] = useState(buildEmptyAgeRange());
@@ -45,7 +36,7 @@ export default function (props: Props) {
 
     const handleCreate = async () => {
         try {
-            onClose(newAgeRange);
+
             await addAgeRange({
                 variables: {
                     organization_id: currentOrganization?.organization_id ?? ``,
@@ -56,8 +47,8 @@ export default function (props: Props) {
                     high_value_unit: newAgeRange.high_value_unit,
                 },
             });
+            onClose(newAgeRange);
 
-            refetch();
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_createSuccess`,
             }), {

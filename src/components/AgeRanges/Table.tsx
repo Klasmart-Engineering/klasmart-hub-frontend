@@ -1,21 +1,14 @@
-import {
-    useDeleteAgeRange,
-    useGetAllAgeRanges,
-} from "@/api/ageRanges";
+import { useDeleteAgeRange } from "@/api/ageRanges";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    AgeRange,
-    Status,
-} from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
-import { getTableLocalization } from "@/utils/table";
-import { useValidations } from "@/utils/validations";
+import {
+    getTableLocalization,
+    TableProps,
+} from "@/utils/table";
 import {
     createStyles,
-    DialogContentText,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -25,15 +18,12 @@ import {
     Edit as EditIcon,
 } from "@material-ui/icons";
 import {
-    PageTable,
-    usePrompt,
+    CursorTable,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import React, {
-    useEffect,
-    useState,
-} from "react";
+import React,
+{ useState } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -42,43 +32,46 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export interface AgeRangeRow extends AgeRange {
+export interface AgeRangeRow {
+    id: string;
     ageRange: string;
+    system: boolean;
 }
 
-interface Props {
-}
+interface Props extends TableProps<AgeRangeRow> {}
 
 export default function (props: Props) {
+
+    const {
+        rows,
+        loading,
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor,
+        total,
+        cursor,
+        onPageChange,
+        rowsPerPage,
+        onTableChange,
+        search,
+        refetch,
+        showSelectables,
+        order,
+        orderBy,
+    } = props;
+
     const classes = useStyles();
     const intl = useIntl();
-    const prompt = usePrompt();
-    const { required, equals } = useValidations();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
-    const [ rows, setRows ] = useState<AgeRangeRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedAgeRange, setSelectedAgeRange ] = useState<AgeRange>();
+    const [ selectedAgeRangeId, setSelectedAgeRangeId ] = useState<string>();
     const canCreate = usePermission(`create_age_range_20222`);
     const canEdit = usePermission(`edit_age_range_20332`);
     const canDelete = usePermission(`delete_age_range_20442`);
-    const currentOrganization = useCurrentOrganization();
     const [ deleteAgeRange ] = useDeleteAgeRange();
-    const { data, refetch } = useGetAllAgeRanges({
-        variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-        },
-    });
-
-    useEffect(() => {
-        const rows = data?.organization?.ageRanges?.filter((range: AgeRange) => range.status === Status.ACTIVE)
-            .map((range: AgeRange): AgeRangeRow => ({
-                ...range,
-                ageRange: buildAgeRangeLabel(range),
-            })) ?? [];
-
-        setRows(rows);
-    }, [ data ]);
 
     const columns: TableColumn<AgeRangeRow>[] = [
         {
@@ -87,7 +80,7 @@ export default function (props: Props) {
                 id: `ageRanges_idLabel`,
             }),
             hidden: true,
-            disableSearch: true
+            disableSearch: true,
         },
         {
             id: `ageRange`,
@@ -95,62 +88,32 @@ export default function (props: Props) {
                 id: `ageRanges_ageRangeLabel`,
             }),
             persistent: true,
-            disableSearch: true
+            disableSearch: true,
         },
     ];
 
-    const findAgeRange = (row: AgeRangeRow) => data?.organization?.ageRanges?.find((ageRange: AgeRange) => ageRange.id === row.id);
-
     const handleEditRowClick = async (row: AgeRangeRow) => {
-        const selectedAgeRange = findAgeRange(row);
-        if (!selectedAgeRange) return;
-        setSelectedAgeRange({
-            age_range_id: selectedAgeRange.id,
-            from: selectedAgeRange.low_value,
-            fromUnit: selectedAgeRange.low_value_unit,
-            to: selectedAgeRange.high_value,
-            toUnit: selectedAgeRange.high_value_unit,
-        } as unknown as AgeRange);
-        setSelectedAgeRange(selectedAgeRange);
+        setSelectedAgeRangeId(row.id);
         setOpenEditDialog(true);
     };
 
     const handleDeleteRowClick = async (row: AgeRangeRow) => {
-        const selectedAgeRange = findAgeRange(row);
-        if (!selectedAgeRange) return;
-        setSelectedAgeRange(selectedAgeRange);
-        const ageRangeName = buildAgeRangeLabel(row);
 
-        if (!await prompt({
-            variant: `error`,
+        const entityName = row.ageRange;
+        if (!await deletePrompt({
+            entityName,
             title: intl.formatMessage({
                 id: `ageRanges_deleteAgeRangeTitle`,
             }),
-            okLabel: `Delete`,
-            content: <>
-                <DialogContentText>{intl.formatMessage({
-                    id: `class_confirmDelete`,
-                }, {
-                    name: ageRangeName,
-                })}</DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `ageRanges_typeText`,
-                }, {
-                    name: ageRangeName,
-                })} <strong>{ageRangeName}</strong> {intl.formatMessage({
-                    id: `ageRanges_typeEndText`,
-                })}</DialogContentText>
-            </>,
-            validations: [ required(), equals(ageRangeName) ],
         })) return;
         try {
             await deleteAgeRange({
                 variables: {
-                    id: selectedAgeRange.id ?? ``,
+                    id: row.id ?? ``,
                 },
             });
 
-            refetch();
+            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_deleteSuccess`,
             }), {
@@ -168,9 +131,14 @@ export default function (props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
+                <CursorTable
+                    filters={undefined}
+                    showSelectables={showSelectables}
                     idField="id"
+                    orderBy={orderBy}
+                    order={order}
                     rows={rows}
+                    rowsPerPage={rowsPerPage}
                     columns={columns}
                     primaryAction={{
                         label: intl.formatMessage({
@@ -205,21 +173,35 @@ export default function (props: Props) {
                             }),
                         },
                     })}
+                    loading={loading}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
+                    startCursor={startCursor}
+                    endCursor={endCursor}
+                    total={total}
+                    cursor={cursor}
+                    search={search}
+                    onPageChange={onPageChange}
+                    onChange={onTableChange}
                 />
             </Paper>
             <CreateAgeRangeDialog
                 open={openCreateDialog}
-                refetch={refetch}
-                onClose={() => {
+                onClose={(ageRange) => {
+                    if (ageRange) {
+                        refetch?.();
+                    }
                     setOpenCreateDialog(false);
                 }}
             />
             <EditAgeRangeDialog
                 open={openEditDialog}
-                value={selectedAgeRange}
-                refetch={refetch}
+                ageRangeId={selectedAgeRangeId}
                 onClose={(ageRange) => {
-                    setSelectedAgeRange(undefined);
+                    if (ageRange) {
+                        refetch?.();
+                    }
+                    setSelectedAgeRangeId(undefined);
                     setOpenEditDialog(false);
                 }}
             />

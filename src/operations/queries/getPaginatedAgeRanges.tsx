@@ -55,10 +55,12 @@ query getPaginatedAgeRanges(
         }
         edges {
             node {
+                id
                 lowValue
                 lowValueUnit
                 highValue
                 highValueUnit
+                system
             }
         }
     }

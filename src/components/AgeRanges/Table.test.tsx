@@ -1,20 +1,16 @@
 import 'regenerator-runtime/runtime';
 import AgeRanges from './Table';
-import { DELETE_AGE_RANGE } from '@/operations/mutations/deleteAgeRange';
-import { GET_AGE_RANGES  } from '@/operations/queries/getAgeRange';
+import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { getLanguage } from "@/utils/locale";
-import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
     screen,
     waitFor,
-    waitForElementToBeRemoved,
 } from '@testing-library/react';
 import qlRender from '@tests/utils';
 import { utils } from 'kidsloop-px';
 import React from 'react';
 
-let deleteCalled = false;
 const ageRangeId1 = `a19de3cc-aa01-47f5-9f87-850eb70ae073`;
 const ageRangeId2 = `m19de3cc-aa01-47f5-9f87-850eb70ae073`;
 const ageRangeId3 = `z19de3cc-aa01-47f5-9f87-850eb70ae073`;
@@ -23,7 +19,6 @@ const orgId = `b19de3cc-aa01-47f5-9f87-850eb70ae073`;
 const ageRanges = [
     {
         id: ageRangeId1,
-        name: `0 - 2 years`,
         low_value: 0,
         high_value: 2,
         low_value_unit: `year`,
@@ -33,7 +28,6 @@ const ageRanges = [
     },
     {
         id: ageRangeId2,
-        name: `3 - 4 years`,
         low_value: 3,
         high_value: 4,
         low_value_unit: `year`,
@@ -43,7 +37,6 @@ const ageRanges = [
     },
     {
         id: ageRangeId3,
-        name: `5 - 6 years`,
         low_value: 5,
         high_value: 6,
         low_value_unit: `year`,
@@ -53,54 +46,18 @@ const ageRanges = [
     },
 ];
 
-const mocks: MockedResponse[] = [
-    {
-        request: {
-            query: GET_AGE_RANGES,
-            variables: {
-                organization_id: orgId,
-            },
+const data = {
+    ageRangesConnection: {
+        totalCount: ageRanges.length,
+        pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: ``,
+            endCursor: ``,
         },
-        result: {
-            data: {
-                organization: {
-                    ageRanges,
-                },
-            },
-        },
-        newData: () => {
-            if (!deleteCalled) {
-                return {
-                    data: {
-                        organization: {
-                            ageRanges,
-                        },
-                    },
-                };
-            } else  {
-                return {
-                    data: {
-                        organization: {
-                            ageRanges: ageRanges.filter((ageRange) => ageRange.id !== ageRangeId2),
-                        },
-                    },
-                };
-            }
-        },
+        edges: ageRanges,
     },
-    {
-        request: {
-            query: DELETE_AGE_RANGE,
-            variables: {
-                id: ageRangeId2,
-            },
-        },
-        result: () => {
-            deleteCalled = true;
-            return {};
-        },
-    },
-];
+};
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
@@ -122,68 +79,52 @@ jest.mock(`@/utils/permissions`, () => {
 
 test(`Age ranges page renders with correct data`, async () => {
     const locale = getLanguage(`en`);
-    const { findByText, queryByText } = qlRender(mocks, locale, <AgeRanges />);
+
+    const rows =
+    data?.ageRangesConnection?.edges?.map((edge) => ({
+        id: edge?.id as string,
+        system: edge?.system,
+        ageRange: buildAgeRangeLabel({
+            high_value: edge?.high_value,
+            high_value_unit: edge?.high_value_unit,
+            low_value: edge?.low_value as number,
+            low_value_unit: edge?.low_value_unit as string,
+        }),
+    })) ?? [];
+
+    const component = <AgeRanges
+        order="asc"
+        orderBy="name"
+        rows={rows}
+    />;
+    const {  queryAllByText } = qlRender([], locale, component);
 
     await act(async () => {
-        const noRecords = await findByText(`No data found`);
+
+        const title = await screen.findByText(`Age Ranges`);
 
         await waitFor(() => {
-            expect(noRecords).toBeTruthy();
+            expect(title).toBeTruthy();
         });
 
         await utils.sleep(0);
 
-        const values = ageRanges;
-        let i = 0;
-        const l = values.length;
+        await waitFor(() => {
+            expect(queryAllByText(`0 - 2 Year(s)`)).toHaveLength(1);
 
-        for (i; i < l; i++) {
-            if (values[i].status === `active`) {
-                const value = await screen.getByText(`${values[i].low_value} - ${values[i].high_value} Year(s)`);
+        });
+
+        for (const ageRange of ageRanges) {
+            const value = `${ageRange.low_value} - ${ageRange.high_value} Year(s)`;
+            if (ageRange.status === `active`) {
                 await waitFor(() => {
-                    expect(value).toBeTruthy();
+                    expect(queryAllByText(value)).toHaveLength(1);
                 });
             } else {
                 await waitFor(() => {
-                    expect(queryByText(`${values[i].low_value} - ${values[i].high_value} Year(s)`)).toBeNull();
+                    expect(queryAllByText(value)).toHaveLength(1);
                 });
             }
         }
-    });
-});
-
-test(`Age range table properly updates records after delete`, async () => {
-    const locale = getLanguage(`en`);
-    const {
-        findAllByTitle,
-        queryByText,
-        queryAllByTitle,
-    } = await qlRender(mocks, locale, <AgeRanges />);
-
-    await act(async () => {
-        const value = ageRanges[1];
-        const name = `${value.low_value} - ${value.high_value} Year(s)`;
-        const rows = await findAllByTitle(`More actions`);
-        const toBeDeleted = queryByText(name);
-
-        await waitFor(() => {
-            expect(toBeDeleted).toBeTruthy();
-            expect(rows.length).toEqual(2);
-            expect(queryByText(`Delete`)).toBeNull();
-        });
-
-        await waitFor(() => {
-            rows[1].click();
-        });
-
-        const deleteSpan = await queryByText(`Delete`);
-
-        deleteSpan?.click();
-
-        await waitForElementToBeRemoved(() => queryByText(name));
-
-        await waitFor(() => {
-            expect(queryAllByTitle(`More actions`).length).toEqual(1);
-        });
     });
 });

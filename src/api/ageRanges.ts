@@ -1,7 +1,8 @@
 import { CREATE_AGE_RANGE } from "@/operations/mutations/createAgeRange";
 import { DELETE_AGE_RANGE } from "@/operations/mutations/deleteAgeRange";
 import { EDIT_AGE_RANGE } from "@/operations/mutations/editAgeRange";
-import { GET_AGE_RANGES } from "@/operations/queries/getAgeRange";
+import { GET_AGE_RANGE } from "@/operations/queries/getAgeRange";
+import { GET_AGE_RANGES } from "@/operations/queries/getAgeRanges";
 import { GET_PAGINATED_AGE_RANGES } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     AgeRange,
@@ -20,14 +21,22 @@ import {
     useQuery,
 } from "@apollo/client";
 
-interface GetAgeRangeRequest {
+interface GetAgeRangesRequest {
     organization_id: string;
 }
 
-interface GetAgeRangeResponse {
+interface GetAgeRangesResponse {
     organization: {
         ageRanges: AgeRange[];
     };
+}
+
+interface GetAgeRangeRequest {
+    id: string;
+}
+
+interface GetAgeRangeResponse {
+    age_range: AgeRange;
 }
 
 interface CreateAgeRangeRequest {
@@ -49,8 +58,8 @@ interface DeleteAgeRangeRequest {
 
 interface EmptyAgeRangeResponse { }
 
-export const useGetAllAgeRanges = (options?: QueryHookOptions<GetAgeRangeResponse, GetAgeRangeRequest>) => {
-    return useQuery<GetAgeRangeResponse, GetAgeRangeRequest>(GET_AGE_RANGES, options);
+export const useGetAllAgeRanges = (options?: QueryHookOptions<GetAgeRangesResponse, GetAgeRangesRequest>) => {
+    return useQuery<GetAgeRangesResponse, GetAgeRangesRequest>(GET_AGE_RANGES, options);
 };
 
 export const useCreateAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, CreateAgeRangeRequest>) => {
@@ -109,4 +118,8 @@ export interface AgeRangeEdge {
 
 export const useGetPaginatedAgeRangesList = (options?: QueryHookOptions<GetPaginatedOrganizationAgeRangesResponse, GetPaginatedOrganizationAgeRangesRequest>) => {
     return useQuery<GetPaginatedOrganizationAgeRangesResponse, GetPaginatedOrganizationAgeRangesRequest>(GET_PAGINATED_AGE_RANGES, options);
+};
+
+export const useGetAgeRange = (options?: QueryHookOptions<GetAgeRangeResponse, GetAgeRangeRequest>) => {
+    return useQuery<GetAgeRangeResponse, GetAgeRangeRequest>(GET_AGE_RANGE, options);
 };

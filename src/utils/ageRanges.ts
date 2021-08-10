@@ -1,8 +1,10 @@
 import { AgeRangeEdge } from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
+import { AgeRangeRow } from "@/components/AgeRange/Table";
 import {
     AgeRange,
     NON_SPECIFIED,
+    Status,
 } from "@/types/graphQL";
 import { isEqual } from "lodash";
 
@@ -41,6 +43,28 @@ export const mapAgeRangeNodeToAgeRange = (node: AgeRangeNode): AgeRange => ({
     low_value_unit: node.lowValueUnit,
     high_value: node.highValue,
     high_value_unit: node.highValueUnit,
+});
+
+export interface AgeRangesNode{
+    id?: string;
+    name?: string;
+    status?: Status;
+    system?: boolean;
+    lowValue?: number;
+    lowValueUnit?: string;
+    highValue?: number;
+    highValueUnit?: string;
+}
+
+export const mapAgeRangeNodeToAgeRangeRow = (node: AgeRangesNode | undefined): AgeRangeRow => ({
+    id: node?.id,
+    system: node?.system,
+    ageRange: buildAgeRangeLabel({
+        high_value: node?.highValue,
+        high_value_unit: node?.highValueUnit,
+        low_value: node?.lowValue,
+        low_value_unit: node?.lowValueUnit,
+    }),
 });
 
 export const buildAgeRangeLowValueLabel = (ageRange: AgeRangeEdge['node']) => {
