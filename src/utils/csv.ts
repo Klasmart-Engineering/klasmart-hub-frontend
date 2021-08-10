@@ -29,6 +29,7 @@ export enum CsvUploadEntityErrorCode {
     ERR_CSV_MISSING_REQUIRED = `ERR_CSV_MISSING_REQUIRED`,
     ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE = `ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE`,
     ERR_CSV_MISSING_REQUIRED_EITHER = `ERR_CSV_MISSING_REQUIRED_EITHER`,
+    ERR_MISSING_REQUIRED_EITHER = `ERR_MISSING_REQUIRED_EITHER`,
     ERR_CSV_DUPLICATE_ENTITY = `ERR_CSV_DUPLICATE_ENTITY`,
     ERR_DUPLICATE_ENTITY = `ERR_DUPLICATE_ENTITY`,
     ERR_CSV_DUPLICATE_CHILD_ENTITY = `ERR_CSV_DUPLICATE_CHILD_ENTITY`,
@@ -87,8 +88,8 @@ export interface CsvBadInputErrorDetails {
     other?: string;
     values?: string;
     count?: string;
-    other_entity?: string;
     other_attribute?: string;
+    otherAttribute?: string;
     size?: string;
     fileType?: string;
     fileName?: string;
@@ -118,8 +119,8 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
         other,
         values,
         count,
-        other_entity,
         other_attribute,
+        otherAttribute,
         size,
         fileType,
         fileName,
@@ -318,13 +319,14 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_MISSING_REQUIRED_EITHER:
+    case CsvUploadEntityErrorCode.ERR_MISSING_REQUIRED_EITHER:
         return intl.formatMessage({
-            id: `validation.error.entity.conditionallyRequired`,
+            id: `validation.error.entity.eitherRequired`,
         }, {
             entity,
             attribute,
-            other_entity,
-            other_attribute,
+            // Support legacy snake_case property
+            otherAttribute: otherAttribute || other_attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_NONE_EXIST_CHILD_ENTITY:
     case CsvUploadEntityErrorCode.ERR_NON_EXISTENT_CHILD_ENTITY:
