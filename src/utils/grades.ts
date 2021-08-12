@@ -5,10 +5,14 @@ import {
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import {
     Grade,
+    Program,
     Status,
 } from "@/types/graphQL";
 import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { pickBy } from "lodash";
+import {
+    isEqual,
+    pickBy,
+} from "lodash";
 import {
     useEffect,
     useState,
@@ -29,6 +33,13 @@ export const mapGradeEdgesToFilterOptions = (edges: GradeEdge[]) =>
         value: edge.node.id,
         label: edge.node.name,
     }));
+
+export const mapGradesFromPrograms = (programs: Program[]): Grade[] => {
+    const grades = programs.filter(program => program.grades?.length).flatMap(program => program.grades)
+        .filter((grade, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, grade))));
+
+    return grades as Grade[] ?? [];
+};
 
 export const useGradeFilters = (orgId: string, skip?: boolean) => {
     const [ gradeFilterValueOptions, setGradeFilterValueOptions ] = useState<FilterValueOption[]>([]);

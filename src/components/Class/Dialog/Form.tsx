@@ -7,11 +7,18 @@ import {
     Class,
     Grade,
     Program,
+    School,
     Status,
     Subject,
 } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+import {
+    buildAgeRangeLabel,
+    mapAgeRangesFromPrograms,
+} from "@/utils/ageRanges";
+import { mapGradesFromPrograms } from "@/utils/grades";
 import { usePermission } from "@/utils/permissions";
+import { mapProgramsFromSchools } from "@/utils/programs";
+import { mapSubjectsFromPrograms } from "@/utils/subjects";
 import { useValidations } from "@/utils/validations";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -61,9 +68,11 @@ export default function ClassDialogForm (props: Props) {
     const canEditSchool = usePermission(`edit_school_20330`);
     const currentOrganization = useCurrentOrganization();
     const { data } = useGetSchools({
+        fetchPolicy: `network-only`,
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !currentOrganization?.organization_id,
     });
     const userId = useReactiveVar(userIdVar);
     const [ isSchoolAdmin, setIsSchoolAdmin ] = useState(false);
@@ -73,6 +82,7 @@ export default function ClassDialogForm (props: Props) {
             organization_id: currentOrganization?.organization_id ?? ``,
             user_id: userId,
         },
+        skip: !currentOrganization?.organization_id || !userId,
     });
 
     const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_name) ?? [];
@@ -83,23 +93,17 @@ export default function ClassDialogForm (props: Props) {
         setIsSchoolAdmin(isUserSchoolAdmin);
     }, [ user ]);
 
-    const allSchools = data?.organization?.schools?.filter((s) => {
-        if (isSchoolAdmin) {
-            return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_name);
-        }
-
-        return s.status === Status.ACTIVE;
-    }) ?? [];
+    const [ allSchools, setAllSchools ] = useState<School[]>([]);
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
-    const [ programsIds, setProgramsIds ] = useState<string[]>(value.programs?.map((program) => program.id ?? ``) ?? []);
+    const [ programsIds, setProgramsIds ] = useState<string[]>([]);
     const [ allGrades, setAllGrades ] = useState<Grade[]>([]);
-    const [ gradesIds, setGradesIds ] = useState<string[]>(value.grades?.map((grade) => grade.id ?? ``) ?? []);
+    const [ gradesIds, setGradesIds ] = useState<string[]>([]);
     const [ allSubjects, setAllSubjects ] = useState<Subject[]>([]);
-    const [ subjectsIds, setSubjectsIds ] = useState<string[]>(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
+    const [ subjectsIds, setSubjectsIds ] = useState<string[]>([]);
     const [ allAgeRanges, setAllAgeRanges ] = useState<AgeRange[]>([]);
-    const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
+    const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>([]);
     const [ className, setClassName ] = useState(value.class_name ?? ``);
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(value.schools?.map((school) => school.school_id) ?? []);
+    const [ schoolIds, setSchoolIds ] = useState<string[]>([]);
     const [ classNameValid, setClassNameValid ] = useState(true);
 
     const programsHandler = () => {
@@ -150,7 +154,7 @@ export default function ClassDialogForm (props: Props) {
         });
 
         setAllGrades(grades);
-        const updateGradesIds = gradesIds?.filter((value: string) => grades.find((grade) => grade.id === value));
+        const updateGradesIds = gradesIds?.filter((value: string) => allGrades.find((grade) => grade.id === value));
         setGradesIds(updateGradesIds);
 
         setAllSubjects(subjects);
@@ -200,6 +204,32 @@ export default function ClassDialogForm (props: Props) {
     useEffect(() => {
         onValidation([ classNameValid ].every((value) => value));
     }, [ classNameValid ]);
+
+    useEffect(() => {
+        const schools = data?.organization?.schools?.filter((s) => {
+            if (isSchoolAdmin) {
+                return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_name);
+            }
+
+            return s.status === Status.ACTIVE;
+        }) ?? [];
+
+        const programs = mapProgramsFromSchools(schools, value.schools?.map((school) => school.school_id) ?? []);
+
+        setAllSchools(schools);
+        setAllPrograms(programs);
+        setSchoolIds(value.schools?.map((school) => school.school_id) ?? []);
+        setProgramsIds(value.programs?.map((program) => program.id ?? ``) ?? []);
+
+        if (programs.length) {
+            setAllGrades(mapGradesFromPrograms(programs));
+            setGradesIds(value.grades?.map((grade) => grade.id ?? ``) ?? []);
+            setAllSubjects(mapSubjectsFromPrograms(programs));
+            setSubjectsIds(value.subjects?.map((subject) => subject.id ?? ``) ?? []);
+            setAllAgeRanges(mapAgeRangesFromPrograms(programs));
+            setAgeRangesIds(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
+        }
+    }, [ data ]);
 
     return (
         <div className={classes.root}>

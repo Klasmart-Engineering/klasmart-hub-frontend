@@ -38,6 +38,7 @@ export interface ClassUser {
 
 interface GetClassRosterRespone {
     class: {
+        class_name?: string;
         students: ClassUser[];
         teachers: ClassUser[];
     };

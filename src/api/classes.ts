@@ -1,3 +1,4 @@
+import { AgeRangeNode } from "./programs";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
 import { EDIT_CLASS_AGE_RANGES } from "@/operations/mutations/editClassAgeRanges";
@@ -8,13 +9,25 @@ import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
 import { UPLOAD_CLASSES_CSV } from "@/operations/mutations/uploadClassesCsv";
 import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
+import { GET_CLASS } from "@/operations/queries/getClass";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
+import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
 import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
 import {
+    BooleanFilter,
     Class,
+    Grade,
     Organization,
+    PageInfo,
+    PaginationDirection,
+    Status,
+    StatusFilter,
+    StringFilter,
+    Subject,
     User,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -170,6 +183,62 @@ interface GetUserSchoolMembershipsResponse {
     user: User;
 }
 
+interface ClassSchoolNode {
+    id: string;
+    name: string;
+}
+
+interface ClassProgramNode {
+    id: string;
+    name: string;
+    status?: Status;
+    system?: boolean;
+    ageRanges?: AgeRangeNode[];
+    subjects?: Subject[];
+    grades?: Grade[];
+}
+
+export interface ClassNode {
+    id: string;
+    name: string;
+    status: Status;
+    ageRanges: AgeRangeNode[];
+    subjects: Subject[];
+    grades: Grade[];
+    schools: ClassSchoolNode[];
+    programs: ClassProgramNode[];
+}
+
+export interface ClassEdge {
+    node: ClassNode;
+}
+
+export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
+    name?: StringFilter;
+    id?: UuidFilter;
+    status?: StatusFilter;
+    organizationId?: UuidFilter;
+    system?: BooleanFilter;
+}
+
+interface GetAllClassesPaginatedRequest {
+    direction: PaginationDirection;
+    cursor?: string | null;
+    count?: number;
+    search?: string;
+    orderBy?: string;
+    order?: string;
+    filter?: ClassesFilter;
+}
+
+export interface GetAllClassesPaginatedResponse {
+    classesConnection: {
+        totalCount: number;
+        pageInfo: PageInfo;
+        edges: ClassEdge[];
+    };
+}
+
 export const useGetUserSchoolMemberships = (options?: QueryHookOptions<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>) => {
     return useQuery<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>(GET_USER_SCHOOL_MEMBERSHIPS, options);
 };
@@ -184,6 +253,23 @@ interface UploadClassesCsvRequest {
     file: File;
 }
 
+interface GetClassRequest {
+    id: string;
+    organizationId: string;
+}
+
+interface GetClassResponse {
+    class: Class;
+}
+
+export const useGetClass = (options?: QueryHookOptions<GetClassResponse, GetClassRequest>) => {
+    return useQuery<GetClassResponse, GetClassRequest>(GET_CLASS, options);
+};
+
 export const useUploadClassesCsv = () => {
     return useMutation<UploadClassesCsvResponse, UploadClassesCsvRequest>(UPLOAD_CLASSES_CSV);
+};
+
+export const useGetAllPaginatedClasses = (options?: QueryHookOptions<GetAllClassesPaginatedResponse, GetAllClassesPaginatedRequest>) => {
+    return useQuery<GetAllClassesPaginatedResponse, GetAllClassesPaginatedRequest>(GET_PAGINATED_ORGANIZATION_CLASSES, options);
 };

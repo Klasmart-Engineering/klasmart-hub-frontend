@@ -15,9 +15,11 @@ import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     Program,
+    School,
     Status,
 } from "@/types/graphQL";
 import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { isEqual } from "lodash";
 import {
     useEffect,
     useState,
@@ -32,6 +34,14 @@ export const buildEmptyProgram = (): Program => ({
     status: Status.ACTIVE,
     system: false,
 });
+
+export const mapProgramsFromSchools = (allSchools: School[], schoolIds: string[]): Program[] => {
+    const programs = allSchools.filter(school => schoolIds.includes(school.school_id) && school.programs?.length)
+        .flatMap(school => school.programs)
+        .filter((program, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, program))));
+
+    return programs as Program[] ?? [];
+};
 
 export const mapProgramNodeToProgram = (node: ProgramNode): Program => ({
     id: node.id,

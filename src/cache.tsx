@@ -82,7 +82,8 @@ export const cacheConfig: InMemoryCacheConfig = {
                 usersConnection: relayStylePagination(),
                 programsConnection: relayStylePagination(),
                 schoolsConnection: relayStylePagination(),
-                ageRangesConnection: relayStylePagination()
+                ageRangesConnection: relayStylePagination(),
+                classesConnection: relayStylePagination(),
             },
         },
         Mutation: {

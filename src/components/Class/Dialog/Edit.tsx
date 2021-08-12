@@ -5,8 +5,10 @@ import {
     useEditClassPrograms,
     useEditClassSchools,
     useEditClassSubjects,
+    useGetClass,
     useUpdateClass,
 } from "@/api/classes";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Class } from "@/types/graphQL";
 import { buildEmptyClass } from "@/utils/classes";
 import { usePermission } from "@/utils/permissions";
@@ -23,15 +25,15 @@ import { useIntl } from "react-intl";
 
 interface Props {
     open: boolean;
-    value?: Class;
     onClose: (value?: Class) => void;
+    classId?: string;
 }
 
 export default function EditClassDialog (props: Props) {
     const {
         open,
-        value,
         onClose,
+        classId,
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -43,11 +45,28 @@ export default function EditClassDialog (props: Props) {
     const [ editSubjects ] = useEditClassSubjects();
     const [ editGrades ] = useEditClassGrades();
     const [ editAgeRanges ] = useEditClassAgeRanges();
+    const currentOrganization = useCurrentOrganization();
     const canEditSchool = usePermission(`edit_school_20330`);
+    const [ initClass, setInitClass ] = useState<Class>(buildEmptyClass());
+
+    const { data } = useGetClass({
+        variables: {
+            id: classId ?? ``,
+            organizationId: currentOrganization?.organization_id ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !classId || !currentOrganization?.organization_id,
+    });
 
     useEffect(() => {
-        setEditedClass(value ?? buildEmptyClass());
-    }, [ value ]);
+        if (!open || !data?.class) {
+            setInitClass(buildEmptyClass());
+            return;
+        }
+
+        setInitClass(data?.class ?? buildEmptyClass());
+        setEditedClass(data?.class ?? buildEmptyClass());
+    }, [ open, data ]);
 
     const handleEdit = async () => {
         try {
@@ -154,7 +173,8 @@ export default function EditClassDialog (props: Props) {
             onClose={() => onClose()}
         >
             <ClassDialogForm
-                value={editedClass}
+                key={initClass?.class_id}
+                value={initClass}
                 onChange={(value) => setEditedClass(value)}
                 onValidation={setValid} />
         </Dialog>

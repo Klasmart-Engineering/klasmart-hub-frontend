@@ -1,7 +1,4 @@
-import {
-    useDeleteClass,
-    useGetAllClasses,
-} from "@/api/classes";
+import { useDeleteClass } from "@/api/classes";
 import ClassRoster from "@/components/Class/ClassRoster/Table";
 import ClassDetailsDrawer from "@/components/Class/DetailsDrawer";
 import CreateClassDialog from "@/components/Class/Dialog/Create";
@@ -14,15 +11,15 @@ import {
     Status,
     Subject,
 } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
-import { buildEmptyClassDetails } from "@/utils/classes";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
-import { getTableLocalization } from "@/utils/table";
-import { useValidations } from "@/utils/validations";
+import {
+    getTableLocalization,
+    TableProps,
+} from "@/utils/table";
 import {
     Chip,
     createStyles,
-    DialogContentText,
     Link,
     makeStyles,
     Paper,
@@ -36,16 +33,12 @@ import {
 } from "@material-ui/icons";
 import clsx from "clsx";
 import {
-    PageTable,
-    usePrompt,
+    CursorTable,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
-{
-    useEffect,
-    useState,
-} from "react";
+{ useState } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
@@ -82,32 +75,6 @@ const useStyles = makeStyles((theme) => {
 
 export const isActive = (classItem: Class) => classItem.status === Status.ACTIVE;
 
-export const organizationClasses = (classItem: Class) => {
-    return {
-        id: classItem.class_id,
-        name: classItem.class_name ?? ``,
-        schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
-        programs: classItem.programs?.map((program) => program.name ?? ``) ?? [],
-        subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
-        grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
-        ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
-        students:
-            classItem.students
-                ?.filter((student) => student?.membership?.status === Status.ACTIVE)
-                .map((student) => student?.given_name ?? ``) ?? [],
-        teachers:
-            classItem.teachers
-                ?.filter((teacher) => teacher?.membership?.status === Status.ACTIVE)
-                .map((teacher) => teacher?.given_name ?? ``) ?? [],
-        status: classItem.status ?? ``,
-        programSubjects:
-            classItem.programs?.map((program) => ({
-                programName: program.name ?? ``,
-                subjects: program?.subjects ?? [],
-            })) ?? [],
-    };
-};
-
 interface ProgramSubject {
     programName: string;
     subjects: Subject[];
@@ -120,7 +87,7 @@ export interface ClassDetails {
     students: string[];
 }
 
-interface ClassRow {
+export interface ClassRow {
     id: string;
     name: string;
     ageRanges: string[];
@@ -129,134 +96,76 @@ interface ClassRow {
     programs: string[];
     subjects: string[];
     status: string;
-    programSubjects: ProgramSubject[];
-    teachers: string[];
-    students: string[];
 }
 
-interface Props {
-    disabled?: boolean;
-    selectedIds?: string[];
-    classItems?: Class[] | null;
-    onSelected?: (ids: string[]) => void;
+interface Props extends TableProps<ClassRow> {
 }
 
 export default function ClassesTable (props: Props) {
     const {
         disabled,
+        showSelectables,
         selectedIds,
-        classItems,
         onSelected,
+        rows,
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor,
+        total,
+        order,
+        orderBy,
+        onPageChange,
+        rowsPerPage,
+        onTableChange,
+        refetch,
+        loading,
     } = props;
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
-    const prompt = usePrompt();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const canCreate = usePermission(`create_class_20224`);
     const canEdit = usePermission(`edit_class_20334`);
     const canDelete = usePermission(`delete_class_20444`);
-    const canView = [ usePermission(`view_classes_20114`), usePermission(`view_school_classes_20117`) ].some(Boolean);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ detailsDrawerOpen, setDetailsDrawerOpen ] = useState(false);
     const currentOrganization = useCurrentOrganization();
-    const [ classDetails, setClassDetails ] = useState<ClassDetails>(buildEmptyClassDetails());
+    const [ selectedClassId, setSelectedClassId ] = useState<string>();
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
-    const [ selectedClass, setSelectedClass ] = useState<Class>();
-    const [ rows, setRows ] = useState<ClassRow[]>([]);
     const [ selectedIds_, setSelectedIds ] = useState<string[]>(selectedIds ?? []);
-    const { required, equals } = useValidations();
-    const {
-        data,
-        refetch,
-        loading,
-    } = useGetAllClasses({
-        fetchPolicy: `network-only`,
-        variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-        },
-    });
     const [ deleteClass ] = useDeleteClass();
-
-    const schoolClasses = data?.organization?.classes;
-
+    const deletePrompt = useDeleteEntityPrompt();
     const setIds = (ids: string[]) => {
         setSelectedIds(ids);
         onSelected?.(ids);
     };
 
-    useEffect(() => {
-        if (!canView) {
-            setRows([]);
-            return;
-        }
-        const rows = (classItems ?? schoolClasses)?.filter(isActive).map(organizationClasses) ?? [];
-        setRows(rows);
-    }, [ schoolClasses, canView ]);
-
-    const findClass = (row: ClassRow) => schoolClasses?.find((c) => c.class_id === row.id);
-
     const editSelectedRow = (row: ClassRow) => {
-        const selectedClass = findClass(row);
-        if (!selectedClass) return;
-        setSelectedClass(selectedClass);
+        setSelectedClassId(row.id);
         setEditDialogOpen(true);
     };
 
-    const deleteSelectedRow = async (row: ClassRow) => {
-        const selectedClass = findClass(row);
-        if (!selectedClass) return;
-
-        const { class_name } = selectedClass;
-
-        if (
-            !(await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `class_deleteClassTitle`,
-                }),
-                okLabel: intl.formatMessage({
-                    id: `generic_deleteLabel`,
-                }),
-                content: (
-                    <>
-                        <DialogContentText>
-                            {intl.formatMessage({
-                                id: `classRoster_deletePrompt`,
-                            }, {
-                                value: class_name,
-                            })}
-                        </DialogContentText>
-                        <DialogContentText>
-                            {intl.formatMessage({
-                                id: `generic_typeToRemovePrompt`,
-                            }, {
-                                value: <strong>{class_name}</strong>,
-                            })}
-                        </DialogContentText>
-                    </>
-                ),
-                validations: [ required(), equals(class_name) ],
-            }))
-        )
-            return;
-
-        const { class_id } = selectedClass;
+    const handleDeleteRowClick = async (row: ClassRow) => {
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `class_deleteClassTitle`,
+            }),
+            entityName: row.name,
+        })) return;
         try {
             await deleteClass({
                 variables: {
-                    class_id,
+                    class_id: row.id,
                 },
             });
-            await refetch();
+            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedMessage`,
             }), {
                 variant: `success`,
             });
-
-            setIds([]);
         } catch (err) {
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedError`,
@@ -285,9 +194,7 @@ export default function ClassesTable (props: Props) {
                     href={undefined}
                     className={clsx(classes.clickable, classes.primaryText)}
                     onClick={() => {
-                        const selectedClass = findClass(row);
-                        if (!selectedClass) return;
-                        setSelectedClass(selectedClass);
+                        setSelectedClassId(row.id);
                         setClassRosterDialogOpen(true);
                     }}
                 >
@@ -300,6 +207,7 @@ export default function ClassesTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_schoolsNameLabel`,
             }),
+            disableSort: true,
             disableSearch: disabled,
             render: (row) => <>
                 {row.schoolNames.map((school, i) => (
@@ -316,6 +224,8 @@ export default function ClassesTable (props: Props) {
             label: intl.formatMessage({
                 id: `schools_ageRangesLabel`,
             }),
+            disableSort: true,
+            disableSearch: disabled,
             render: (row) => (
                 <>
                     {row.ageRanges.map((ageRange, i) => (
@@ -332,6 +242,8 @@ export default function ClassesTable (props: Props) {
             label: intl.formatMessage({
                 id: `schools_gradesLabel`,
             }),
+            disableSort: true,
+            disableSearch: disabled,
             render: (row) => (
                 <>
                     {row.grades.map((grade, i) => (
@@ -349,6 +261,7 @@ export default function ClassesTable (props: Props) {
                 id: `schools_programsLabel`,
             }),
             disableSort: true,
+            disableSearch: disabled,
             render: (row) => (
                 <>
                     {row.programs.map((program, i) => (
@@ -366,6 +279,7 @@ export default function ClassesTable (props: Props) {
                 id: `schools_subjectsLabel`,
             }),
             disableSort: true,
+            disableSearch: disabled,
             render: (row) => (
                 <>
                     {row.subjects.map((subject, i) => (
@@ -382,6 +296,8 @@ export default function ClassesTable (props: Props) {
             label: intl.formatMessage({
                 id: `classes_statusTitle`,
             }),
+            disableSort: true,
+            disableSearch: disabled,
             render: (row) => (
                 <span
                     className={clsx(classes.statusText, {
@@ -397,97 +313,108 @@ export default function ClassesTable (props: Props) {
         },
     ];
 
+    const rowActions = (row: ClassRow) => ([
+        {
+            label: intl.formatMessage({
+                id: `class_viewDetailsLabel`,
+            }),
+            icon: ViewListIcon,
+            onClick: (row: ClassRow) => {
+                setSelectedClassId(row.id);
+                setDetailsDrawerOpen(true);
+            },
+        },
+        {
+            label: intl.formatMessage({
+                id: `classes_editRowTooltip`,
+            }),
+            icon: EditIcon,
+            disabled: !(row.status === Status.ACTIVE && canEdit),
+            onClick: editSelectedRow,
+        },
+        {
+            label: intl.formatMessage({
+                id: `classes_deleteRowTooltip`,
+            }),
+            icon: DeleteIcon,
+            disabled: !(row.status === Status.ACTIVE && canDelete),
+            onClick: handleDeleteRowClick,
+        },
+    ]);
+
+    const localization = getTableLocalization(intl, {
+        toolbar: {
+            title: intl.formatMessage({
+                id: `adminHeader_viewClasses`,
+            }),
+        },
+        search: {
+            placeholder: intl.formatMessage({
+                id: `classes_searchPlaceholder`,
+            }),
+        },
+        body: {
+            noData: intl.formatMessage({
+                id: `classes_noRecords`,
+            }),
+        },
+    });
+
+    const primaryAction = ({
+        label: intl.formatMessage({
+            id: `classes_createClassLabel`,
+        }),
+        icon: AddIcon,
+        disabled: !canCreate,
+        onClick: () => setCreateDialogOpen(true),
+    });
+
+    const secondaryActions = [
+        {
+            label: `Upload CSV`,
+            icon: CloudIcon,
+            disabled: !canCreate,
+            onClick: () => {
+                setUploadCsvDialogOpen(true);
+            },
+        },
+    ];
+
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
-                    showSelectables={!disabled}
-                    selectedRows={selectedIds_}
-                    columns={columns}
-                    rows={rows}
-                    loading={loading}
+                <CursorTable
+                    showSelectables={showSelectables}
                     idField="id"
-                    orderBy="name"
-                    order="asc"
-                    primaryAction={!disabled ? {
-                        label: intl.formatMessage({
-                            id: `classes_createClassLabel`,
-                        }),
-                        icon: AddIcon,
-                        disabled: !canCreate,
-                        onClick: () => setCreateDialogOpen(true),
-                    } : undefined}
-                    secondaryActions={[
-                        {
-                            label: `Upload CSV`,
-                            icon: CloudIcon,
-                            disabled: !canCreate,
-                            onClick: () => {
-                                setUploadCsvDialogOpen(true);
-                            },
-                        },
-                    ]}
-                    rowActions={!disabled ? (row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `class_viewDetailsLabel`,
-                            }),
-                            icon: ViewListIcon,
-                            onClick: (row) => {
-                                setClassDetails({
-                                    className: row.name,
-                                    programSubjects: row.programSubjects,
-                                    teachers: row.teachers,
-                                    students: row.students,
-                                });
-                                setDetailsDrawerOpen(true);
-                            },
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `classes_editRowTooltip`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !(row.status === Status.ACTIVE && canEdit),
-                            onClick: editSelectedRow,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `classes_deleteRowTooltip`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !(row.status === Status.ACTIVE && canDelete),
-                            onClick: deleteSelectedRow,
-                        },
-                    ] : undefined}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `adminHeader_viewClasses`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `classes_searchPlaceholder`,
-                            }),
-                        },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `classes_noRecords`,
-                            }),
-                        },
-                    })}
+                    orderBy={orderBy}
+                    order={order}
+                    rows={rows}
+                    rowsPerPage={rowsPerPage}
+                    selectedRows={selectedIds_}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
+                    startCursor={startCursor}
+                    endCursor={endCursor}
+                    total={total}
+                    columns={columns}
+                    loading={loading}
+                    primaryAction={!disabled ? primaryAction : undefined}
+                    secondaryActions={secondaryActions}
+                    rowActions={!disabled ? rowActions : undefined}
+                    localization={localization}
                     onSelected={setIds}
+                    onPageChange={onPageChange}
+                    onChange={onTableChange}
                 />
             </Paper>
 
             <EditClassDialog
                 open={editDialogOpen}
-                value={selectedClass}
+                classId={selectedClassId}
                 onClose={(value) => {
-                    setSelectedClass(undefined);
+                    setSelectedClassId(undefined);
                     setEditDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
 
@@ -495,25 +422,25 @@ export default function ClassesTable (props: Props) {
                 open={createDialogOpen}
                 onClose={(value) => {
                     setCreateDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
 
             <ClassDetailsDrawer
                 open={detailsDrawerOpen}
-                classDetails={classDetails}
+                classId={selectedClassId}
                 onClose={() => {
+                    setSelectedClassId(undefined);
                     setDetailsDrawerOpen(false);
-                    setClassDetails(buildEmptyClassDetails());
                 }}
             />
 
-            {selectedClass && <ClassRoster
+            {selectedClassId && <ClassRoster
                 open={classRosterDialogOpen}
                 organizationId={currentOrganization?.organization_id ?? ``}
-                classItem={selectedClass}
+                classId={selectedClassId}
                 onClose={() => {
-                    setSelectedClass(undefined);
+                    setSelectedClassId(undefined);
                     setClassRosterDialogOpen(false);
                 }}
             />}
@@ -522,7 +449,7 @@ export default function ClassesTable (props: Props) {
                 open={uploadCsvDialogOpen}
                 onClose={(value) => {
                     setUploadCsvDialogOpen(false);
-                    if (value) refetch();
+                    if (value) refetch?.();
                 }}
             />
         </>

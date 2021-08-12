@@ -19,6 +19,9 @@ export default (mocks: MockedResponse[], locale: IntlShape, component: ReactNode
             watchQuery: {
                 fetchPolicy: `no-cache`,
             },
+            query: {
+                fetchPolicy: `no-cache`,
+            },
         }}
         addTypename={false}
     >

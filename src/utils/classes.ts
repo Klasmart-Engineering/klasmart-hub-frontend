@@ -1,3 +1,8 @@
+import {
+    buildAgeRangeEdgeLabel,
+    buildAgeRangeLabel,
+} from "./ageRanges";
+import { ClassEdge } from "@/api/classes";
 import { ClassDetails } from "@/components/Class/Table";
 import {
     Class,
@@ -21,3 +26,42 @@ export const buildEmptyClassDetails = (): ClassDetails => ({
     teachers: [],
     students: [],
 });
+
+export const organizationClasses = (classItem: Class) => {
+    return {
+        id: classItem.class_id,
+        name: classItem.class_name ?? ``,
+        schoolNames: classItem.schools?.map((school) => school.school_name ?? ``) ?? [],
+        programs: classItem.programs?.map((program) => program.name ?? ``) ?? [],
+        subjects: classItem.subjects?.map((subject) => subject.name ?? ``) ?? [],
+        grades: classItem.grades?.map((grade) => grade.name ?? ``) ?? [],
+        ageRanges: classItem.age_ranges?.map(buildAgeRangeLabel) ?? [],
+        students:
+            classItem.students
+                ?.filter((student) => student?.membership?.status === Status.ACTIVE)
+                .map((student) => student?.given_name ?? ``) ?? [],
+        teachers:
+            classItem.teachers
+                ?.filter((teacher) => teacher?.membership?.status === Status.ACTIVE)
+                .map((teacher) => teacher?.given_name ?? ``) ?? [],
+        status: classItem.status ?? ``,
+        programSubjects:
+            classItem.programs?.map((program) => ({
+                programName: program.name ?? ``,
+                subjects: program?.subjects ?? [],
+            })) ?? [],
+    };
+};
+
+export const organizationPaginatedClasses = (classItem: ClassEdge) => {
+    return {
+        id: classItem.node.id,
+        name: classItem.node.name ?? ``,
+        schoolNames: classItem.node.schools?.map((school) => school.name ?? ``) ?? [],
+        programs: classItem.node.programs?.map((program) => program.name ?? ``) ?? [],
+        subjects: classItem.node.subjects?.map((subject) => subject.name ?? ``) ?? [],
+        grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
+        ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
+        status: classItem.node.status ?? ``,
+    };
+};

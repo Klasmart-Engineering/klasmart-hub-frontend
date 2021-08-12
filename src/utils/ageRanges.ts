@@ -1,9 +1,10 @@
 import { AgeRangeEdge } from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
-import { AgeRangeRow } from "@/components/AgeRange/Table";
+import { AgeRangeRow } from "@/components/AgeRanges/Table";
 import {
     AgeRange,
     NON_SPECIFIED,
+    Program,
     Status,
 } from "@/types/graphQL";
 import { isEqual } from "lodash";
@@ -26,7 +27,7 @@ export const buildAgeRangeLabel = (ageRange: AgeRange) => {
     return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
 };
 
-export const buildAgeRangeEdgeLabel = (ageRange: AgeRangeEdge['node']) => {
+export const buildAgeRangeEdgeLabel = (ageRange: AgeRangeNode) => {
     if (ageRange?.system && ageRange?.name === NON_SPECIFIED) return NON_SPECIFIED;
     const showFromUnit = ageRange?.lowValueUnit !== ageRange?.highValueUnit;
     return `${ageRange?.lowValue}${showFromUnit ? ` ${buildUnit(ageRange?.lowValueUnit ?? ``)}` : ``} - ${ageRange?.highValue} ${buildUnit(ageRange?.highValueUnit ?? ``)}`;
@@ -57,8 +58,8 @@ export interface AgeRangesNode{
 }
 
 export const mapAgeRangeNodeToAgeRangeRow = (node: AgeRangesNode | undefined): AgeRangeRow => ({
-    id: node?.id,
-    system: node?.system,
+    id: node?.id ?? ``,
+    system: node?.system ?? false,
     ageRange: buildAgeRangeLabel({
         high_value: node?.highValue,
         high_value_unit: node?.highValueUnit,
@@ -94,3 +95,10 @@ export const mapAgeRangesHighValueToFilter = (edges: AgeRangeEdge[]) => (
             label: buildAgeRangeHighValueLabel(edge?.node),
         })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
 );
+
+export const mapAgeRangesFromPrograms = (programs: Program[]): AgeRange[] => {
+    const ageRanges = programs.filter(program => program.age_ranges?.length).flatMap(program => program.age_ranges)
+        .filter((ageRange, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, ageRange))));
+
+    return ageRanges as AgeRange[] ?? [];
+};

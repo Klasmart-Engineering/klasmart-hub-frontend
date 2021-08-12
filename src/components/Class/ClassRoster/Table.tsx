@@ -6,10 +6,7 @@ import {
 } from "@/api/classRoster";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    Class,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
@@ -53,7 +50,8 @@ const useStyles = makeStyles((theme) => createStyles({
 interface Props {
     open: boolean;
     onClose: () => void;
-    classItem: Class;
+    classId?: string;
+    className?: string;
     organizationId: string;
 }
 
@@ -61,7 +59,7 @@ export default function ClassRoster (props: Props) {
     const {
         open,
         onClose,
-        classItem,
+        classId,
         organizationId,
     } = props;
 
@@ -79,12 +77,14 @@ export default function ClassRoster (props: Props) {
     } = useGetClassRoster({
         fetchPolicy: `network-only`,
         variables: {
-            class_id: classItem.class_id,
+            class_id: classId ?? ``,
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !classId,
     });
 
     let classInfo = data?.class || {
+        class_name: ``,
         students: [],
         teachers: [],
     };
@@ -224,7 +224,7 @@ export default function ClassRoster (props: Props) {
 
         const deleteProps = {
             variables: {
-                class_id: classItem.class_id,
+                class_id: classId ?? ``,
                 user_id: selectedUser.user_id.replace(`-student`, ``).replace(`-teacher`, ``),
             },
         };
@@ -241,7 +241,7 @@ export default function ClassRoster (props: Props) {
     return (
         <FullScreenDialog
             open={open}
-            title={classItem.class_name ?? ``}
+            title={data?.class?.class_name ?? ``}
             onClose={() => {
                 onClose();
             }}
@@ -289,11 +289,11 @@ export default function ClassRoster (props: Props) {
                 />
             </Paper>
 
-            {classItem &&
+            {classId &&
                 <SchoolRoster
                     open={schoolRosterDialogOpen}
                     refetchClassRoster={refetch}
-                    classId={classItem.class_id}
+                    classId={classId}
                     existingStudents={classInfo.students.map((user: ClassUser) => user.user_id)}
                     existingTeachers={classInfo.teachers.map((user: ClassUser) => user.user_id)}
                     organizationId={organizationId}

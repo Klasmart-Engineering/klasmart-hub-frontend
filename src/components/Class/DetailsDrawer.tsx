@@ -1,4 +1,10 @@
-import { ClassDetails } from "@/components/Class/Table";
+import { useGetClass } from "@/api/classes";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import {
+    Status,
+    Student,
+    Teacher,
+} from "@/types/graphQL";
 import {
     Box,
     createStyles,
@@ -17,7 +23,11 @@ import {
     Drawer,
     UserAvatar,
 } from "kidsloop-px";
-import React from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import { useIntl } from "react-intl";
 
 const Accordion = withStyles({
@@ -81,30 +91,39 @@ const useStyles = makeStyles((theme) => createStyles({
 interface Props {
     open: boolean;
     onClose: () => void;
-    classDetails: ClassDetails;
+    classId?: string;
 }
 
 export default function ClassDetailsDrawer (props: Props) {
     const {
         open,
         onClose,
-        classDetails,
+        classId,
     } = props;
-
-    const {
-        className,
-        programSubjects,
-        students,
-        teachers,
-    } = classDetails;
-
     const classes = useStyles();
     const intl = useIntl();
+    const currentOrganization = useCurrentOrganization();
+    const [ students, setStudents ] = useState<Student[]>([]);
+    const [ teachers, setTeachers ] = useState<Teacher[]>([]);
+    const { data } = useGetClass({
+        variables: {
+            id: classId ?? ``,
+            organizationId: currentOrganization?.organization_id ?? ``,
+        },
+        fetchPolicy: `network-only`,
+        skip: !open || !classId || !currentOrganization?.organization_id,
+    });
+
+    useEffect(() => {
+        setStudents(data?.class?.students?.filter(student => student.membership?.status === Status.ACTIVE) ?? []);
+        setTeachers(data?.class?.teachers?.filter(teacher => teacher.membership?.status === Status.ACTIVE) ?? []);
+    }, [ data ]);
 
     return (
         <Drawer
+            key={data?.class?.class_id}
             open={open}
-            title={className}
+            title={data?.class?.class_name ?? ``}
             sections={[
                 {
                     header: intl.formatMessage({
@@ -112,13 +131,13 @@ export default function ClassDetailsDrawer (props: Props) {
                     }),
                     content: (
                         <>
-                            {programSubjects.map((program, i) => (
-                                <Accordion key={`program-${i}`}>
+                            {data?.class?.programs?.map((program) => (
+                                <Accordion key={program.id}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel-content"
                                     >
-                                        <Typography className={classes.heading}>{program.programName}</Typography>
+                                        <Typography className={classes.heading}>{program.name}</Typography>
                                     </AccordionSummary>
                                     <Typography
                                         variant="caption"
@@ -131,8 +150,8 @@ export default function ClassDetailsDrawer (props: Props) {
                                     </Typography>
                                     <AccordionDetails className={classes.accordionDetails}>
                                         <List dense>
-                                            {program.subjects.map((subject, i) => (
-                                                <ListItem key={`subject-${i}`}>
+                                            {program?.subjects?.map((subject) => (
+                                                <ListItem key={subject.id}>
                                                     <ListItemText primary={`- ${subject.name}`} />
                                                 </ListItem>
                                             ))}
@@ -176,11 +195,11 @@ export default function ClassDetailsDrawer (props: Props) {
                                                     alignItems="center"
                                                 >
                                                     <UserAvatar
-                                                        name={teacher}
+                                                        name={`${teacher.given_name} ${teacher.family_name}`}
                                                         className={classes.avatar}
                                                         size="small"
                                                     />
-                                                    <span>{teacher}</span>
+                                                    <span>{teacher.given_name} {teacher.family_name}</span>
                                                 </Box>
                                             </ListItem>
                                         ))}
@@ -214,15 +233,14 @@ export default function ClassDetailsDrawer (props: Props) {
                                                     alignItems="center"
                                                 >
                                                     <UserAvatar
-                                                        name={student}
+                                                        name={`${student.given_name} ${student.family_name}`}
                                                         className={classes.avatar}
                                                         size="small"
                                                     />
-                                                    <span>{student}</span>
+                                                    <span>{student.given_name} {student.family_name}</span>
                                                 </Box>
                                             </ListItem>
                                         ))}
-
                                     </List>
                                 </AccordionDetails>
                             </Accordion>
