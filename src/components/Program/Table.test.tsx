@@ -1,14 +1,24 @@
 import { GetAllProgramsPaginatedResponse } from "@/api/programs";
 import ProgramTable from "@/components/Program/Table";
+import {
+    buildOrganizationAgeRangeFilter,
+    GET_PAGINATED_AGE_RANGES,
+} from "@/operations/queries/getPaginatedAgeRanges";
 import { isActive } from "@/types/graphQL";
 import { getLanguage } from "@/utils/locale";
 import { isUuid } from "@/utils/pagination";
-import { mapProgramNodeToProgramRow } from "@/utils/programs";
+import {
+    mapProgramNodeToProgramRow,
+    useProgramFilters,
+} from "@/utils/programs";
+import { MockedProvider } from "@apollo/client/testing/";
 import {
     act,
     screen,
     waitFor,
 } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
+import { mockPaginatedAgeRanges } from "@tests/mockDataAgeRanges";
 import {
     inputSearch,
     mockOrganizationId,
@@ -21,6 +31,7 @@ import {
 import qlRender from "@tests/utils";
 import { utils } from "kidsloop-px";
 import React from "react";
+import TestRenderer from 'react-test-renderer';
 
 test(`should return an empty array`, () => {
     const rows = [].map(mapProgramNodeToProgramRow);
@@ -49,6 +60,26 @@ const data: GetAllProgramsPaginatedResponse = {
         edges: programs,
     },
 };
+
+const mocks = [
+    {
+        request: {
+            query: GET_PAGINATED_AGE_RANGES,
+            variables: {
+                direction: `FORWARD`,
+                count: 100,
+                orderBy: [ `lowValueUnit`, `lowValue` ],
+                order: `ASC`,
+                filter: buildOrganizationAgeRangeFilter({
+                    organizationId: mockOrganizationId,
+                }),
+            },
+        },
+        result: {
+            data: mockPaginatedAgeRanges,
+        },
+    },
+];
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
@@ -91,6 +122,32 @@ test(`Programs table page renders data`, async () => {
             expect(queryAllByText(`Bada Read`)).toBeTruthy();
             expect(queryAllByText(`Bada Rhyme`)).toBeTruthy();
             expect(queryAllByText(`Bada Sound`)).toBeTruthy();
+        });
+    });
+});
+
+test(`useProgramFilters hook should return mapped age range data`, async () => {
+    const { act } = TestRenderer;
+    const wrapper = ({ children }: { children: [] }) => (
+        <MockedProvider
+            mocks={mocks}
+            addTypename={false}>
+            {children}
+        </MockedProvider>
+    );
+    const { result } = renderHook(() => useProgramFilters(mockOrganizationId, false), {
+        wrapper,
+    });
+    await act(async () => {
+        await waitFor(() => {
+            expect(result.current.ageRangesHighValueOptions.length).toEqual(1);
+            expect(result.current.ageRangesLowValueOptions.length).toEqual(2);
+            expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
+            expect(result.current.ageRangesLowValueOptions[0].value).toBe(`1 year`);
+            expect(result.current.ageRangesLowValueOptions[1].value).toBe(`3 year`);
+            expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
+            expect(result.current.ageRangesLowValueOptions[0].label).toBe(`1 Year(s)`);
+            expect(result.current.ageRangesLowValueOptions[1].label).toBe(`3 Year(s)`);
         });
     });
 });

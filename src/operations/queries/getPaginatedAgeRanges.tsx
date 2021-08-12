@@ -61,6 +61,7 @@ query getPaginatedAgeRanges(
                 highValue
                 highValueUnit
                 system
+                name
             }
         }
     }
