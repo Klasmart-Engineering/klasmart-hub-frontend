@@ -1,32 +1,18 @@
 import {
     buildAgeRangeLabel,
     mapAgeRangeNodeToAgeRange,
-    mapAgeRangesHighValueToFilter,
-    mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
-import { mapGradeEdgesToFilterOptions } from "./grades";
-import { mapSubjectsToFilterValueOptions } from "./subjects";
-import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
-import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import {
     ProgramEdge,
     ProgramNode,
 } from "@/api/programs";
-import { useGetAllSubjectsList } from "@/api/subjects";
 import { ProgramRow } from "@/components/Program/Table";
-import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
-import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     Program,
     School,
     Status,
 } from "@/types/graphQL";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { isEqual } from "lodash";
-import {
-    useEffect,
-    useState,
-} from "react";
 
 export const buildEmptyProgram = (): Program => ({
     id: ``,

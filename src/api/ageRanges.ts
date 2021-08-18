@@ -6,11 +6,13 @@ import { GET_AGE_RANGES } from "@/operations/queries/getAgeRanges";
 import { GET_PAGINATED_AGE_RANGES } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     AgeRange,
+    AgeRangeFilter,
     BooleanFilter,
     Direction,
     SortOrder,
     Status,
     StatusFilter,
+    StringFilter,
     UuidFilter,
 } from "@/types/graphQL";
 import { PaginationFilter } from "@/utils/pagination";
@@ -88,9 +90,15 @@ export interface GetPaginatedOrganizationAgeRangesResponse {
 }
 
 export interface AgeRangeQueryFilter extends PaginationFilter<AgeRangeQueryFilter> {
+    id?: UuidFilter;
+    name?: StringFilter;
     status?: StatusFilter;
     organizationId?: UuidFilter;
     system?: BooleanFilter;
+    ageRangeUnitFrom?: AgeRangeFilter;
+    ageRangeValueFrom?: AgeRangeFilter;
+    ageRangeUnitTo?: AgeRangeFilter;
+    ageRangeValueTo?: AgeRangeFilter;
 }
 
 export interface GetPaginatedOrganizationAgeRangesRequest {
@@ -123,3 +131,13 @@ export const useGetPaginatedAgeRangesList = (options?: QueryHookOptions<GetPagin
 export const useGetAgeRange = (options?: QueryHookOptions<GetAgeRangeResponse, GetAgeRangeRequest>) => {
     return useQuery<GetAgeRangeResponse, GetAgeRangeRequest>(GET_AGE_RANGE, options);
 };
+
+export interface AgeRangesFilter extends PaginationFilter<AgeRangesFilter> {
+    name?: StringFilter;
+    id?: UuidFilter;
+    status?: StatusFilter;
+    organizationId?: UuidFilter;
+    system?: BooleanFilter;
+    from?: AgeRangeFilter;
+    to?: AgeRangeFilter;
+}

@@ -1,12 +1,15 @@
 import { useDeleteAgeRange } from "@/api/ageRanges";
 import CreateAgeRangeDialog from "@/components/AgeRanges/Dialog/Create";
 import EditAgeRangeDialog from "@/components/AgeRanges/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useAgeRangesFilters } from "@/utils/ageRanges";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     makeStyles,
@@ -21,6 +24,7 @@ import {
     CursorTable,
     useSnackbar,
 } from "kidsloop-px";
+import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
@@ -36,6 +40,8 @@ export interface AgeRangeRow {
     id: string;
     ageRange: string;
     system: boolean;
+    from?: string;
+    to?: string;
 }
 
 interface Props extends TableProps<AgeRangeRow> {}
@@ -59,6 +65,7 @@ export default function (props: Props) {
         showSelectables,
         order,
         orderBy,
+        hideFilters,
     } = props;
 
     const classes = useStyles();
@@ -72,6 +79,66 @@ export default function (props: Props) {
     const canEdit = usePermission(`edit_age_range_20332`);
     const canDelete = usePermission(`delete_age_range_20442`);
     const [ deleteAgeRange ] = useDeleteAgeRange();
+    const currentOrganization = useCurrentOrganization();
+    const { required } = useValidations();
+    const {
+        ageRangesLowValueOptions,
+        ageRangesHighValueOptions,
+        refetchAgeRanges,
+    } = useAgeRangesFilters(currentOrganization?.organization_id ?? ``, hideFilters);
+
+    const filters: TableFilter<AgeRangeRow>[] = [
+        {
+            id: `from`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesFrom`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: ageRangesLowValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `to`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesTo`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [],
+                    options: ageRangesHighValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+    ];
 
     const columns: TableColumn<AgeRangeRow>[] = [
         {
@@ -132,7 +199,7 @@ export default function (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
-                    filters={undefined}
+                    filters={!hideFilters ? filters : undefined}
                     showSelectables={showSelectables}
                     idField="id"
                     orderBy={orderBy}
@@ -190,6 +257,7 @@ export default function (props: Props) {
                 onClose={(ageRange) => {
                     if (ageRange) {
                         refetch?.();
+                        refetchAgeRanges();
                     }
                     setOpenCreateDialog(false);
                 }}
@@ -200,6 +268,7 @@ export default function (props: Props) {
                 onClose={(ageRange) => {
                     if (ageRange) {
                         refetch?.();
+                        refetchAgeRanges();
                     }
                     setSelectedAgeRangeId(undefined);
                     setOpenEditDialog(false);

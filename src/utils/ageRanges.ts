@@ -1,13 +1,22 @@
-import { AgeRangeEdge } from "@/api/ageRanges";
+import {
+    AgeRangeEdge,
+    useGetPaginatedAgeRangesList,
+} from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
-import { AgeRangeRow } from "@/components/AgeRanges/Table";
+import { AgeRangeRow } from "@/components/AgeRange/Table";
+import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     AgeRange,
     NON_SPECIFIED,
     Program,
     Status,
 } from "@/types/graphQL";
+import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { isEqual } from "lodash";
+import {
+    useEffect,
+    useState,
+} from "react";
 
 export const buildEmptyAgeRange = (): AgeRange => ({
     id: ``,
@@ -21,10 +30,14 @@ const buildUnit = (unit: string) => {
     }
 };
 
+const buildLabel = (value: number | null | undefined, unit: string | null | undefined, showUnit = true) => {
+    return `${value}${showUnit ? ` ${buildUnit(unit ?? ``)}` : ``}`;
+};
+
 export const buildAgeRangeLabel = (ageRange: AgeRange) => {
     if (ageRange.system && ageRange.name === NON_SPECIFIED) return NON_SPECIFIED;
     const showFromUnit = ageRange.low_value_unit !== ageRange.high_value_unit;
-    return `${ageRange.low_value}${showFromUnit ? ` ${buildUnit(ageRange.low_value_unit ?? ``)}` : ``} - ${ageRange.high_value} ${buildUnit(ageRange.high_value_unit ?? ``)}`;
+    return `${buildLabel(ageRange.low_value, ageRange.low_value_unit, showFromUnit)} - ${buildLabel(ageRange.high_value, ageRange.high_value_unit)}`;
 };
 
 export const buildAgeRangeEdgeLabel = (ageRange: AgeRangeNode) => {
@@ -66,6 +79,8 @@ export const mapAgeRangeNodeToAgeRangeRow = (node: AgeRangesNode | undefined): A
         low_value: node?.lowValue,
         low_value_unit: node?.lowValueUnit,
     }),
+    from: buildLabel(node?.lowValue, node?.lowValueUnit),
+    to: buildLabel(node?.highValue, node?.highValueUnit),
 });
 
 export const buildAgeRangeLowValueLabel = (ageRange: AgeRangeEdge['node']) => {
@@ -95,6 +110,50 @@ export const mapAgeRangesHighValueToFilter = (edges: AgeRangeEdge[]) => (
             label: buildAgeRangeHighValueLabel(edge?.node),
         })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
 );
+
+export const useAgeRangesFilters = (orgId: string, skip?: boolean) => {
+    const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
+
+    const {
+        data: ageRangesData,
+        fetchMore: fetchMoreAgeRanges,
+        refetch: refetchAgeRanges,
+    } = useGetPaginatedAgeRangesList({
+        variables: {
+            direction: `FORWARD`,
+            count: 100,
+            orderBy: [ `lowValueUnit`, `lowValue` ],
+            order: `ASC`,
+            filter: buildOrganizationAgeRangeFilter({
+                organizationId: orgId ?? ``,
+                filters: [],
+            }),
+        },
+        returnPartialData: true,
+        fetchPolicy: `no-cache`,
+        skip: !orgId || skip,
+    });
+
+    useEffect(() => {
+        setAgeRangesLowValueOptions(mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []));
+        setAgeRangesHighValueOptions(mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []));
+
+        if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
+            fetchMoreAgeRanges({
+                variables: {
+                    cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
+    }, [ ageRangesData ]);
+
+    return {
+        ageRangesLowValueOptions,
+        ageRangesHighValueOptions,
+        refetchAgeRanges,
+    };
+};
 
 export const mapAgeRangesFromPrograms = (programs: Program[]): AgeRange[] => {
     const ageRanges = programs.filter(program => program.age_ranges?.length).flatMap(program => program.age_ranges)

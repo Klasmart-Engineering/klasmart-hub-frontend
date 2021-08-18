@@ -70,6 +70,7 @@ const mocks = [
                 order: `ASC`,
                 filter: buildOrganizationAgeRangeFilter({
                     organizationId: mockOrganizationId,
+                    filters: [],
                 }),
             },
         },
@@ -140,14 +141,14 @@ test(`useGetTableFilters hook should return mapped age range data`, async () => 
     });
     await act(async () => {
         await waitFor(() => {
-            expect(result.current.ageRangesHighValueOptions.length).toEqual(1);
-            expect(result.current.ageRangesLowValueOptions.length).toEqual(2);
+            expect(result.current.ageRangesHighValueOptions.length).toEqual(2);
+            expect(result.current.ageRangesLowValueOptions.length).toEqual(3);
             expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
-            expect(result.current.ageRangesLowValueOptions[0].value).toBe(`1 year`);
-            expect(result.current.ageRangesLowValueOptions[1].value).toBe(`3 year`);
+            expect(result.current.ageRangesLowValueOptions[0].value).toBe(`0 year`);
+            expect(result.current.ageRangesLowValueOptions[1].value).toBe(`1 year`);
             expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[0].label).toBe(`1 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[1].label).toBe(`3 Year(s)`);
+            expect(result.current.ageRangesLowValueOptions[0].label).toBe(`0 Year(s)`);
+            expect(result.current.ageRangesLowValueOptions[1].label).toBe(`1 Year(s)`);
         });
     });
 });

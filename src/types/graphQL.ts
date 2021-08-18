@@ -313,5 +313,5 @@ export interface NumberFilter {
 
 export interface AgeRangeFilter {
     operator: NumberOperator;
-    value: AgeRangeValue;
+    value: number | AgeRangeUnit;
 }

@@ -50,6 +50,7 @@ export default function EditAgeRangeDialog (props: Props) {
             id: ageRangeId ?? ``,
         },
         skip: !open || !ageRangeId,
+        fetchPolicy: `no-cache`,
     });
 
     useEffect(() => {

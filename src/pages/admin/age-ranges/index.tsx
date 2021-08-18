@@ -1,9 +1,11 @@
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import AgeRangesTable,
 { AgeRangeRow } from "@/components/AgeRanges/Table";
-import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
+import {
+    buildAgeRangesFilters,
+    buildOrganizationAgeRangeFilter,
+} from "@/operations/queries/getPaginatedAgeRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { isActive } from "@/types/graphQL";
 import { mapAgeRangeNodeToAgeRangeRow } from "@/utils/ageRanges";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -12,10 +14,7 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core";
+import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -25,12 +24,10 @@ import React,
     useState,
 } from "react";
 
-interface Props {
-}
-
-export default function AgeRangesPage (props: Props) {
+export default function AgeRangesPage () {
     const currentOrganization = useCurrentOrganization();
     const combinedOrderBy = [ `lowValueUnit`, `lowValue` ];
+    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -40,6 +37,7 @@ export default function AgeRangesPage (props: Props) {
 
     const paginationFilter = buildOrganizationAgeRangeFilter({
         organizationId: currentOrganization?.organization_id ?? ``,
+        filters: buildAgeRangesFilters(tableFilters),
     });
 
     const {
@@ -72,6 +70,7 @@ export default function AgeRangesPage (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<AgeRangeRow>) => {
+        setTableFilters(tableData?.filters ?? []);
 
         setServerPagination({
             order: tableToServerOrder(tableData.order),
@@ -86,11 +85,13 @@ export default function AgeRangesPage (props: Props) {
             count: serverPagination.rowsPerPage,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy === `ageRange` ? combinedOrderBy : serverPagination.orderBy,
+            filter: paginationFilter,
         });
     }, [
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
+        tableFilters,
     ]);
 
     const rows =
