@@ -1,11 +1,15 @@
 import { UserFilter } from "@/api/organizationMemberships";
+import { UserRow } from "@/components/User/Table";
 import { ROLE_SUMMARY_NODE_FIELDS } from "@/operations/fragments";
+import { UuidOperator } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
+import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
 export interface ProgramQueryFilter {
     organizationId: string;
     search: string;
+    filters: UserFilter[];
 }
 
 export const buildOrganizationUserSearchFilter = (search: string): UserFilter => ({
@@ -55,8 +59,46 @@ export const buildOrganizationUserFilter = (filter: ProgramQueryFilter): UserFil
         operator: `eq`,
         value: filter.organizationId,
     },
-    AND: [ buildOrganizationUserSearchFilter(filter.search) ],
+    AND: [ buildOrganizationUserSearchFilter(filter.search), ...filter.filters ],
 });
+
+export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['filters'] = []): UserFilter[] => {
+    return filters.map((filter) => {
+        switch (filter.columnId) {
+        case `roleNames`: {
+            const values = filter.values.map((value) => {
+                const organizationRolesFilter: UserFilter = {
+                    roleId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return organizationRolesFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `status`: {
+            const values = filter.values.map((value) => {
+                const organizationStatusFilter: UserFilter = {
+                    organizationUserStatus: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return organizationStatusFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        default: return {};
+        }
+    });
+};
 
 export const GET_PAGINATED_ORGANIZATION_USERS = gql`
     ${ROLE_SUMMARY_NODE_FIELDS}

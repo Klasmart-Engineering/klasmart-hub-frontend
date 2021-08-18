@@ -11,6 +11,7 @@ import {
     TableProps,
 } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
+import { useUserFilters } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -33,6 +34,7 @@ import {
     UserAvatar,
     useSnackbar,
 } from "kidsloop-px";
+import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { escapeRegExp } from "lodash";
 import React,
@@ -110,6 +112,7 @@ export default function UserTable (props: Props) {
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
+    const { userRolesFilterValueOptions } = useUserFilters(currentOrganization?.organization_id ?? ``);
 
     const editSelectedRow = (row: UserRow) => {
         setSelectedUserId(row.id);
@@ -287,10 +290,78 @@ export default function UserTable (props: Props) {
         },
     ];
 
+    const filters: TableFilter<UserRow>[] = [
+        {
+            id: `roleNames`,
+            label: intl.formatMessage({
+                id: `organization.roles`,
+            }, {
+                count: 2,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: userRolesFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `status`,
+            label: intl.formatMessage({
+                id: `classes_statusTitle`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    validations: [ required() ],
+                    options: [
+                        {
+                            value: Status.ACTIVE,
+                            label: intl.formatMessage({
+                                id: `users_activeStatus`,
+                            }),
+                        },
+                        {
+                            value: Status.INACTIVE,
+                            label: intl.formatMessage({
+                                id: `users_inactiveStatus`,
+                            }),
+                        },
+                    ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+    ];
+
     return (
         <>
             <Paper className={classes.root}>
                 <CursorTable
+                    filters={filters}
                     columns={columns}
                     rows={rows}
                     loading={loading}

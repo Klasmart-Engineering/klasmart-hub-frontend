@@ -4,7 +4,10 @@ import {
 } from "@/api/organizationMemberships";
 import UserTable,
 { UserRow } from "@/components/User/Table";
-import { buildOrganizationUserFilter } from "@/operations/queries/getPaginatedOrganizationUsers";
+import {
+    buildOrganizationUserFilter,
+    buildOrganizationUserFilters,
+} from "@/operations/queries/getPaginatedOrganizationUsers";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { sortSchoolNames } from "@/utils/schools";
@@ -16,6 +19,7 @@ import {
     tableToServerOrder,
 } from "@/utils/table";
 import { sortRoleNames } from "@/utils/userRoles";
+import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -44,6 +48,7 @@ export default function UsersPage () {
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
+    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -54,6 +59,7 @@ export default function UsersPage () {
     const paginationFilter = buildOrganizationUserFilter({
         organizationId,
         search: serverPagination.search,
+        filters: buildOrganizationUserFilters(tableFilters),
     });
 
     const {
@@ -93,6 +99,8 @@ export default function UsersPage () {
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
+
+        setTableFilters(tableData?.filters ?? []);
     };
 
     useEffect(() => {
@@ -107,6 +115,7 @@ export default function UsersPage () {
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
+        tableFilters,
     ]);
 
     useEffect(() => {
