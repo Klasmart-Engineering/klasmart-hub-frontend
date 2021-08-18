@@ -3,17 +3,23 @@ import {
     buildOrganizationClassesFilter,
     GET_PAGINATED_ORGANIZATION_CLASSES,
 } from "@/operations/queries/getPaginatedOrganizationClasses";
+import {
+    buildOrganizationProgramFilter,
+    GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST,
+} from '@/operations/queries/getPaginatedOrganizationPrograms';
 import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     act,
-    screen,
+    fireEvent,
     waitFor,
 } from "@testing-library/react";
 import {
     mockClasses,
     mockOrgId,
+    mockSearchClasses,
 } from "@tests/mockDataClasses";
+import { mockProgramsFilterList } from '@tests/mockDataPrograms';
 import qlRender from "@tests/utils";
 import React from 'react';
 
@@ -29,6 +35,18 @@ const mockQueryVariables = {
     }),
 };
 
+const mockSearchQueryVariables = {
+    direction: `FORWARD`,
+    count: 10,
+    orderBy: `name`,
+    order: `ASC`,
+    filter: buildOrganizationClassesFilter({
+        organizationId: mockOrgId,
+        search: `Mock Class`,
+        filters:  [],
+    }),
+};
+
 const mocks: MockedResponse[] = [
     {
         request: {
@@ -39,6 +57,36 @@ const mocks: MockedResponse[] = [
             data: {
                 classesConnection: mockClasses,
             },
+        },
+    },
+    {
+        request: {
+            query: GET_PAGINATED_ORGANIZATION_CLASSES,
+            variables: mockSearchQueryVariables,
+        },
+        result: {
+            data: {
+                classesConnection: mockSearchClasses,
+            },
+        },
+    },
+    {
+        request: {
+            query: GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST,
+            variables: {
+                direction: `FORWARD`,
+                count: 50,
+                order: `ASC`,
+                orderBy: `name`,
+                filter: buildOrganizationProgramFilter({
+                    organizationId: mockOrgId,
+                    search: ``,
+                    filters: [],
+                }),
+            },
+        },
+        result: {
+            data: mockProgramsFilterList,
         },
     },
 ];
@@ -112,6 +160,30 @@ test(`Class page renders with correct program chips`, async () => {
             expect(queryAllByText(`Bada Talk`).length).toEqual(2);
             expect(queryAllByText(`Bada STEAM 1`).length).toEqual(2);
             expect(queryAllByText(`None Specified`).length).toEqual(2);
+        });
+    });
+});
+
+test(`Class page results render when searching by name`, async () => {
+    const locale = getLanguage(`en`);
+    const {
+        queryAllByText,
+        getByPlaceholderText,
+        queryByText,
+    } = qlRender(mocks, locale, <ClassesPage />);
+
+    fireEvent.change(getByPlaceholderText(`Search`), {
+        target: {
+            value: `Mock Class`,
+        },
+    });
+
+    await act(async () => {
+        await waitFor(() => {
+            expect(queryAllByText(`Mock Class`).length).toEqual(1);
+            expect(queryByText(`Class Grade 3`)).toBeFalsy();
+        }, {
+            timeout: 4000,
         });
     });
 });

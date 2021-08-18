@@ -4,8 +4,8 @@ import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
-import { useProgramFilters } from "@/utils/programs";
 import {
     getTableLocalization,
     TableProps,
@@ -103,7 +103,11 @@ export default function ProgramTable (props: Props) {
         subjectFilterValueOptions,
         ageRangesLowValueOptions,
         ageRangesHighValueOptions,
-    } = useProgramFilters(currentOrganization?.organization_id ?? ``, hideFilters);
+    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+        queryGrades: true,
+        querySubjects: true,
+        queryAgeRanges: true,
+    }, hideFilters);
 
     const filters: TableFilter<ProgramRow>[] = [
         {

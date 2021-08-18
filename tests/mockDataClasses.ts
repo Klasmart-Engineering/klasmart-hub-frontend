@@ -505,6 +505,35 @@ export const mockSchoolsData = {
     },
 };
 
+export const mockSearchClasses = {
+    totalCount: 1,
+    pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+        endCursor: `eyJjbGFzc19pZCI6Ijc0NWU3OTYwLTUzZDEtNGM0Mi1iYzE1LWI4ZDBiOGY0OWFiOCIsImNsYXNzX25hbWUiOiJKdW5pb3IifQ==`,
+    },
+    edges: [
+        {
+            node:{
+                id:`9b44b46c-4597-4ce3-8320-250e958c9800`,
+                name:`Mock Class`,
+                status: Status.ACTIVE,
+                schools:[
+                    {
+                        id:`649e1722-1cab-4930-99b2-ad6bd0278e0d`,
+                        name:`Online Mock Elementary`,
+                    },
+                ],
+                ageRanges:[],
+                grades:[],
+                subjects:[],
+                programs:[],
+            },
+        },
+    ],
+};
+
 export const mockUserSchoolMemberships = {
     user: {
         user_id: mockUserId,

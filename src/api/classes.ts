@@ -17,6 +17,7 @@ import {
     BooleanFilter,
     Class,
     Grade,
+    NumberFilter,
     Organization,
     PageInfo,
     PaginationDirection,
@@ -219,6 +220,14 @@ export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
     status?: StatusFilter;
     organizationId?: UuidFilter;
     system?: BooleanFilter;
+    schoolId?: UuidFilter;
+    ageRangeUnitFrom?: UuidFilter;
+    ageRangeValueFrom?: NumberFilter;
+    ageRangeUnitTo?: UuidFilter;
+    ageRangeValueTo?: NumberFilter;
+    programId?: UuidFilter;
+    subjectId?: UuidFilter;
+    gradeId?: UuidFilter;
 }
 
 interface GetAllClassesPaginatedRequest {

@@ -12,11 +12,13 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
+import { useValidations } from "@/utils/validations";
 import {
     Chip,
     createStyles,
@@ -36,6 +38,7 @@ import {
     CursorTable,
     useSnackbar,
 } from "kidsloop-px";
+import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
@@ -96,6 +99,8 @@ export interface ClassRow {
     programs: string[];
     subjects: string[];
     status: string;
+    ageRangeFrom?: string;
+    ageRangeTo?: string;
 }
 
 interface Props extends TableProps<ClassRow> {
@@ -136,7 +141,23 @@ export default function ClassesTable (props: Props) {
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedIds_, setSelectedIds ] = useState<string[]>(selectedIds ?? []);
     const [ deleteClass ] = useDeleteClass();
+    const { required } = useValidations();
     const deletePrompt = useDeleteEntityPrompt();
+    const {
+        schoolsFilterValueOptions,
+        programsFilterValueOptions,
+        ageRangesLowValueOptions,
+        ageRangesHighValueOptions,
+        subjectFilterValueOptions,
+        gradeFilterValueOptions,
+    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+        querySchools: true,
+        queryPrograms: true,
+        queryAgeRanges: true,
+        querySubjects: true,
+        queryGrades: true,
+    });
+
     const setIds = (ids: string[]) => {
         setSelectedIds(ids);
         onSelected?.(ids);
@@ -146,6 +167,196 @@ export default function ClassesTable (props: Props) {
         setSelectedClassId(row.id);
         setEditDialogOpen(true);
     };
+
+    const filters: TableFilter<ClassRow>[] = [
+        {
+            id: `schoolNames`,
+            label: intl.formatMessage({
+                id: `classes_schoolsNameLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: schoolsFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `ageRangeFrom`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesFrom`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: ageRangesLowValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `ageRangeTo`,
+            label: intl.formatMessage({
+                id: `generic_filtersAgeRangesTo`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: ageRangesHighValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `grades`,
+            label: intl.formatMessage({
+                id: `generic_filtersGradesLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: gradeFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `programs`,
+            label: intl.formatMessage({
+                id: `programs_title`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: programsFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `subjects`,
+            label: intl.formatMessage({
+                id: `generic_filtersSubjectsLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: subjectFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `status`,
+            label: intl.formatMessage({
+                id: `classes_statusTitle`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    validations: [ required() ],
+                    options: [
+                        {
+                            value: Status.ACTIVE,
+                            label: intl.formatMessage({
+                                id: `data_activeStatus`,
+                            }),
+                        },
+                        {
+                            value: Status.INACTIVE,
+                            label: intl.formatMessage({
+                                id: `data_inactiveStatus`,
+                            }),
+                        },
+                    ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+    ];
 
     const handleDeleteRowClick = async (row: ClassRow) => {
         if (!await deletePrompt({
@@ -384,6 +595,7 @@ export default function ClassesTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
+                    filters={filters}
                     showSelectables={showSelectables}
                     idField="id"
                     orderBy={orderBy}

@@ -7,6 +7,10 @@ export const programIdB = `93f293e8-2c6a-47ad-bc46-1554caac99e4`;
 export const programIdC = `56e24fa0-e139-4c80-b365-61c9bc42cd3f`;
 export const programIdD = `d1bbdcc5-0d80-46b0-b98e-162e7439058f`;
 export const inputSearch = `Bada Read`;
+export const programNameA = `Bada Genius`;
+export const programNameB = `Bada Math`;
+export const programNameC = `Geometry`;
+export const programNameD = `Science`;
 
 export const programA = {
     node: {
@@ -306,3 +310,45 @@ export const programs: ProgramEdge[] = [
     programC,
     programD,
 ];
+
+export const mockProgramsFilterList = {
+    programsConnection: {
+        edges: [
+            {
+                node: {
+                    id: programIdA,
+                    name: programNameA,
+                    status: `active`,
+                },
+            },
+            {
+                node: {
+                    id: programIdB,
+                    name: programNameB,
+                    status: `active`,
+                },
+            },
+            {
+                node: {
+                    id: programIdC,
+                    name: programNameC,
+                    status: `active`,
+                },
+            },
+            {
+                node: {
+                    id: programIdD,
+                    name: programNameD,
+                    status: `active`,
+                },
+            },
+        ],
+        pageInfo: {
+            endCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+        },
+        totalCount: 4,
+    },
+};

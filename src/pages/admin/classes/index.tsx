@@ -1,7 +1,10 @@
 import { useGetAllPaginatedClasses } from "@/api/classes";
 import ClassTable,
 { ClassRow } from "@/components/Class/Table";
-import { buildOrganizationClassesFilter } from "@/operations/queries/getPaginatedOrganizationClasses";
+import {
+    buildClassesFilters,
+    buildOrganizationClassesFilter,
+} from "@/operations/queries/getPaginatedOrganizationClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { organizationPaginatedClasses } from "@/utils/classes";
 import { usePermission } from "@/utils/permissions";
@@ -12,6 +15,7 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
+import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
@@ -29,6 +33,7 @@ export default function ClassesPage (props: Props) {
     const canView = usePermission({
         OR: [ `view_classes_20114`, `view_school_classes_20117` ],
     });
+    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -39,7 +44,7 @@ export default function ClassesPage (props: Props) {
     const paginationFilter = buildOrganizationClassesFilter({
         organizationId: currentOrganization?.organization_id ?? ``,
         search: serverPagination.search,
-        filters: [],
+        filters: buildClassesFilters(tableFilters),
     });
 
     const {
@@ -78,6 +83,7 @@ export default function ClassesPage (props: Props) {
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
+        setTableFilters(tableData?.filters ?? []);
     };
 
     useEffect(() => {
@@ -92,6 +98,7 @@ export default function ClassesPage (props: Props) {
         serverPagination.rowsPerPage,
         serverPagination.order,
         serverPagination.orderBy,
+        tableFilters,
     ]);
 
     const rows = data?.classesConnection?.edges?.map(organizationPaginatedClasses) ?? [];

@@ -202,3 +202,36 @@ export const GET_PAGINATED_ORGANIZATION_PROGRAMS = gql`
         }
     }
 `;
+
+export const GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST = gql`
+    query getOrganizationPrograms(
+        $direction: ConnectionDirection!
+        $count: Int
+        $cursor: String
+        $orderBy: [ProgramSortBy!]!
+        $order: SortOrder!
+        $filter: ProgramFilter
+    ) {
+        programsConnection(
+            direction: $direction
+            directionArgs: { count: $count, cursor: $cursor }
+            sort: { field: $orderBy, order: $order }
+            filter: $filter
+        ) {
+            totalCount
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+            edges {
+                node {
+                    id
+                    name
+                    status
+                }
+            }
+        }
+    }
+`;

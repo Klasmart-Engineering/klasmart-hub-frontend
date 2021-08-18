@@ -8,7 +8,10 @@ import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapSubjectsToFilterValueOptions } from "./subjects";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
-import { ProgramNode } from "@/api/programs";
+import {
+    ProgramEdge,
+    ProgramNode,
+} from "@/api/programs";
 import { useGetAllSubjectsList } from "@/api/subjects";
 import { ProgramRow } from "@/components/Program/Table";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
@@ -71,89 +74,9 @@ export const mapProgramNodeToProgramRow = (node: ProgramNode): ProgramRow => ({
     subjects: node.subjects.map((subject) => subject.name ?? ``),
 });
 
-export const useProgramFilters = (orgId: string, skip?: boolean) => {
-    const [ gradeFilterValueOptions, setGradeFilterValueOptions ] = useState<FilterValueOption[]>([]);
-    const [ subjectFilterValueOptions, setSubjectFilterValueOptions ] = useState<FilterValueOption[]>([]);
-    const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
-    const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
-    const filter = buildGradeFilter({
-        organizationId: orgId ?? ``,
-        search: ``,
-        filters: [],
-    });
-    const {
-        data: gradesData,
-        fetchMore: fetchMoreGrades,
-    } = useGetPaginatedOrganizationGradesList({
-        variables: {
-            direction: `FORWARD`,
-            count: 100,
-            orderBy: `name`,
-            order: `ASC`,
-            filter,
-        },
-        returnPartialData: true,
-        fetchPolicy: `no-cache`,
-        skip: !orgId || skip,
-    });
-
-    const { data: subjectsData } = useGetAllSubjectsList({
-        variables: {
-            organization_id: orgId ?? ``,
-        },
-        skip: !orgId || skip,
-    });
-
-    const {
-        data: ageRangesData,
-        fetchMore: fetchMoreAgeRanges,
-    } = useGetPaginatedAgeRangesList({
-        variables: {
-            direction: `FORWARD`,
-            count: 100,
-            orderBy: [ `lowValueUnit`, `lowValue` ],
-            order: `ASC`,
-            filter: buildOrganizationAgeRangeFilter({
-                organizationId: orgId ?? ``,
-            }),
-        },
-        returnPartialData: true,
-        fetchPolicy: `no-cache`,
-        skip: !orgId || skip,
-    });
-
-    useEffect(() => {
-        setGradeFilterValueOptions([ ...gradeFilterValueOptions, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]);
-        if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
-            fetchMoreGrades({
-                variables: {
-                    cursor: gradesData?.gradesConnection?.pageInfo?.endCursor ?? ``,
-                },
-            });
-        }
-    }, [ gradesData ]);
-
-    useEffect(() => {
-        setSubjectFilterValueOptions(mapSubjectsToFilterValueOptions(subjectsData?.organization?.subjects ?? []));
-    }, [ subjectsData ]);
-
-    useEffect(() => {
-        setAgeRangesLowValueOptions([ ...ageRangesLowValueOptions, ...mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
-        setAgeRangesHighValueOptions([ ...ageRangesHighValueOptions, ...mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
-
-        if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
-            fetchMoreAgeRanges({
-                variables: {
-                    cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
-                },
-            });
-        }
-    }, [ ageRangesData ]);
-
-    return {
-        gradeFilterValueOptions,
-        subjectFilterValueOptions,
-        ageRangesLowValueOptions,
-        ageRangesHighValueOptions,
-    };
-};
+export const mapProgramEdgesToFilterValues = (programEdges: ProgramEdge[]) => (
+    programEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
+        label: edge.node.name,
+        value: edge.node.id,
+    }))
+);

@@ -1,6 +1,12 @@
-import { SchoolNode } from "@/api/schools";
+import {
+    SchoolEdge,
+    SchoolNode,
+} from "@/api/schools";
 import { SchoolRow } from "@/components/School/Table";
-import { School } from "@/types/graphQL";
+import {
+    School,
+    Status,
+} from "@/types/graphQL";
 
 export const buildEmptySchool = (school?: School): School => ({
     school_id: school?.school_id ?? ``,
@@ -27,3 +33,10 @@ export const mapSchoolNodeToSchoolRow = (node: SchoolNode): SchoolRow => ({
 });
 
 export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
+
+export const mapSchoolEdgesToFilterValues = (schoolEdges: SchoolEdge[]) => (
+    schoolEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
+        label: edge.node.name,
+        value: edge.node.id,
+    }))
+);

@@ -10,6 +10,7 @@ export const grade2Id = `p19de3cc-aa01-47f5-9f87-850eb70ae072`;
 export const grade3Id = `048000ea-e503-4ef4-87f0-78e893ffb4ac`;
 export const grade4Id = `p19de3cc-aa01-47f5-9f87-850eb70ae074`;
 export const grade1Name = `Grade 1`;
+export const grade2Name = `Grade 2`;
 export const grade3Name = `Grade 3`;
 
 export const grades: Grade[] = [
@@ -121,3 +122,29 @@ export const mockPaginatedGrades = {
 };
 
 export const gradesVar = makeVar(mockPaginatedGrades.gradesConnection);
+
+export const mockPaginatedGradesList = {
+    gradesConnection: {
+        edges: [
+            {
+                node: {
+                    id: grade2Id,
+                    name: grade2Name,
+                },
+            },
+            {
+                node: {
+                    id: grade3Id,
+                    name: grade3Name,
+                },
+            },
+        ],
+        pageInfo: {
+            endCursor: `eyJpZCI6Ijc4MWU4YTA4LTI5ZTgtNDE3MS04MzkyLTdlOGFjOWYxODNhMCIsIm5hbWUiOiJQcmVLLTcifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6Ijc4MWU4YTA4LTI5ZTgtNDE3MS04MzkyLTdlOGFjOWYxODNhMCIsIm5hbWUiOiJQcmVLLTcifQ==`,
+        },
+        totalCount: 0,
+    },
+};

@@ -4,7 +4,10 @@ import { EDIT_PROGRAM_AGE_RANGES } from "@/operations/mutations/editProgramAgeRa
 import { EDIT_PROGRAM_GRADES } from "@/operations/mutations/editProgramGrades";
 import { EDIT_PROGRAM_SUBJECTS } from "@/operations/mutations/editProgramSubjects";
 import { GET_ALL_PROGRAMS } from "@/operations/queries/getAllPrograms";
-import { GET_PAGINATED_ORGANIZATION_PROGRAMS } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import {
+    GET_PAGINATED_ORGANIZATION_PROGRAMS,
+    GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST,
+} from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { GET_PROGRAM } from "@/operations/queries/getProgram";
 import {
     AgeRangeFilter,
@@ -176,4 +179,8 @@ export interface GetAllProgramsPaginatedResponse {
 
 export const useGetAllPaginatedPrograms = (options?: QueryHookOptions<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>) => {
     return useQuery<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>(GET_PAGINATED_ORGANIZATION_PROGRAMS, options);
+};
+
+export const useGetAllPaginatedProgramsList = (options?: QueryHookOptions<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>) => {
+    return useQuery<GetAllProgramsPaginatedResponse, GetAllProgramsPaginatedRequest>(GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST, options);
 };

@@ -5,12 +5,10 @@ import {
     GET_PAGINATED_AGE_RANGES,
 } from "@/operations/queries/getPaginatedAgeRanges";
 import { isActive } from "@/types/graphQL";
+import { useGetTableFilters } from "@/utils/filters";
 import { getLanguage } from "@/utils/locale";
 import { isUuid } from "@/utils/pagination";
-import {
-    mapProgramNodeToProgramRow,
-    useProgramFilters,
-} from "@/utils/programs";
+import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import { MockedProvider } from "@apollo/client/testing/";
 import {
     act,
@@ -126,7 +124,7 @@ test(`Programs table page renders data`, async () => {
     });
 });
 
-test(`useProgramFilters hook should return mapped age range data`, async () => {
+test(`useGetTableFilters hook should return mapped age range data`, async () => {
     const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
@@ -135,7 +133,9 @@ test(`useProgramFilters hook should return mapped age range data`, async () => {
             {children}
         </MockedProvider>
     );
-    const { result } = renderHook(() => useProgramFilters(mockOrganizationId, false), {
+    const { result } = renderHook(() => useGetTableFilters(mockOrganizationId, {
+        queryAgeRanges: true,
+    }), {
         wrapper,
     });
     await act(async () => {
