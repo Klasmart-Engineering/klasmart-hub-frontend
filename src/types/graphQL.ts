@@ -232,10 +232,6 @@ export interface Permission {
 }
 
 export interface AgeRange extends BaseEntity {
-    from?: number | null;
-    fromUnit?: string | null;
-    to?: number | null;
-    toUnit?: string | null;
     high_value?: number | null;
     high_value_unit?: string | null;
     low_value?: number | null;
