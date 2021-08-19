@@ -933,7 +933,7 @@
     "validation.error.entity.eitherRequired": "{entity} {attribute}/{otherAttribute}是必填项",
     "validation.error.entity.duplicate": "{entity} \"{name}\" 已存在",
     "validation.error.entity.duplicateChild": "家长{entity} \"{name}\" 的 {parentEntity} \"{parentName}\" 已存在",
-    "validation.error.entity.nonExistent": "{entity} \"{name}\" 已存在。",
+    "validation.error.entity.nonExistent": "{entity} \"{name}\" 不存在。",
     "validation.error.entity.nonExistentChild": "{parentEntity} \"{parentName}\"不存在于{entity} \"{name}\"。",
     "validation.error.entity.enum": "{entity} {attribute} 必须包含这些 {values}.",
     "validation.error.entity.min": "{entity} {attribute} 至少包含{min}.",
