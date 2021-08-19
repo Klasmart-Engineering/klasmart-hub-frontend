@@ -125,7 +125,7 @@ export default function (props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [],
+                    validations: [ required() ],
                     options: ageRangesHighValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
