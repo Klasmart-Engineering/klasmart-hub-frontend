@@ -100,7 +100,7 @@ export default function CreateClassDialog (props: Props) {
 
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSavedMessage`,
+                id: `classes_classCreatedMessage`,
             }), {
                 variant: `success`,
             });

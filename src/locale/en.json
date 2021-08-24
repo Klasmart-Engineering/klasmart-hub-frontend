@@ -321,7 +321,7 @@
     "classes_lastTooltip": "Last Page",
     "classes_errorDisplay": "Error displaying classes list, please check if the organization is selected",
     "classes_savedSchoolsError": "Failed to show saved schools, check if the organization is selected",
-    "classes_classSavedMessage": "Class has been created successfully",
+    "classes_classCreatedMessage": "Class has been created successfully",
     "classes_classSaveError": "Sorry, something went wrong, please try again",
     "classes_classDeletedMessage": "Class has been deleted successfully",
     "classes_classDeletedError": "Sorry, something went wrong, please try again",
@@ -1048,5 +1048,6 @@
     "class.type.study": "Study",
     "teacherFeedback.body.empty": "{count, plural, one {No assessments were completed in the past day} other {No assessments were completed in the past {count} days}}",
     "common.close": "Close",
-    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row."
+    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
+    "classes_editSuccess": "Class has been saved successfully"
 }

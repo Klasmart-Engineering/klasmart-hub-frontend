@@ -132,7 +132,7 @@ export default function EditClassDialog (props: Props) {
 
             onClose(editedClass);
             enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSavedMessage`,
+                id: `classes_editSuccess`,
             }), {
                 variant: `success`,
             });

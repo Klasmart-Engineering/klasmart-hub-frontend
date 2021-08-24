@@ -1048,5 +1048,6 @@
     "class.type.study": "Bài Tập Về Nhà",
     "teacherFeedback.body.empty": "{count, plural, other {Không có bài đánh giá nào được hoàn thành trong {count} ngày qua}}",
     "common.close": "Đóng",
-    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row."
+    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
+    "classes_editSuccess": "Class has been saved successfully"
 }

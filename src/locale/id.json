@@ -1048,5 +1048,6 @@
     "class.type.study": "Belajar",
     "teacherFeedback.body.empty": "{count, plural, other {Tidak ada penilaian yang diselesaikan dalam {count} hari terakhir}}",
     "common.close": "Tutup",
-    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row."
+    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
+    "classes_editSuccess": "Class has been saved successfully"
 }

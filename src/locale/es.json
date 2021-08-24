@@ -1048,5 +1048,6 @@
     "class.type.study": "Study",
     "teacherFeedback.body.empty": "{count, plural, one {No assessments were completed in the past day} other {No assessments were completed in the past {count} days}}",
     "common.close": "Cerrar",
-    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row."
+    "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
+    "classes_editSuccess": "Class has been saved successfully"
 }
