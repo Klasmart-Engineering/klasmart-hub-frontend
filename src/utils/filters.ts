@@ -6,9 +6,11 @@ import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { mapSubjectsToFilterValueOptions } from "./subjects";
+import { mapUserRolesToFilterValueOptions } from "./users";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedProgramsList } from "@/api/programs";
+import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
 import { useGetAllSubjectsList } from "@/api/subjects";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
@@ -27,6 +29,7 @@ interface SelectFilters {
     queryAgeRanges?: boolean;
     querySchools?: boolean;
     queryPrograms?: boolean;
+    queryUserRoles?: boolean;
 }
 
 export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters, skipAll?: boolean) => {
@@ -36,6 +39,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
     const [ schoolsFilterValueOptions, setSchoolsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ programsFilterValueOptions, setProgramsFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ userRolesFilterValueOptions, setUserRolesFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const gradeFilter = buildGradeFilter({
         organizationId: orgId ?? ``,
         search: ``,
@@ -123,6 +127,13 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         skip: !orgId || skipAll || !selectedFilters.queryPrograms,
     });
 
+    const { data: userRolesData } = useGetOrganizationRoles({
+        variables: {
+            organization_id: orgId ?? ``,
+        },
+        skip: !orgId || skipAll || !selectedFilters.queryUserRoles,
+    });
+
     useEffect(() => {
         setGradeFilterValueOptions([ ...gradeFilterValueOptions, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]);
         if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
@@ -173,6 +184,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         }
     }, [ programsData ]);
 
+    useEffect(() => {
+        setUserRolesFilterValueOptions(mapUserRolesToFilterValueOptions(userRolesData?.organization?.roles ?? []));
+    }, [ userRolesData ]);
+
     return {
         gradeFilterValueOptions,
         subjectFilterValueOptions,
@@ -180,5 +195,6 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         ageRangesHighValueOptions,
         schoolsFilterValueOptions,
         programsFilterValueOptions,
+        userRolesFilterValueOptions,
     };
 };

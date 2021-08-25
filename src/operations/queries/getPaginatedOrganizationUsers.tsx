@@ -95,6 +95,21 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
                 OR: values,
             };
         }
+        case `schoolNames`: {
+            const values = filter.values.map((value) => {
+                const organizationSchoolsFilter: UserFilter = {
+                    schoolId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return organizationSchoolsFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         default: return {};
         }
     });

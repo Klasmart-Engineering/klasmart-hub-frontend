@@ -1,7 +1,7 @@
 import { UserNode } from "@/api/organizationMemberships";
 import { Status } from "@/types/graphQL";
 
-export const mockOrgId = `b19de3cc-aa01-47f5-9f87-850eb70ae073`;
+export const mockOrgId = `c19de3cc-aa01-47f5-9f87-850eb70ae073`;
 export const user1Id = `p19de3cc-aa01-47f5-9f87-850eb70ae071`;
 export const user2Id = `p19de3cc-aa01-47f5-9f87-850eb70ae072`;
 export const user3Id = `p19de3cc-aa01-47f5-9f87-850eb70ae073`;
@@ -24,14 +24,16 @@ export const users: UserNode[] = [
         ],
         roles: [
             {
-                id: `11111111`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4690a`,
+                organizationId: mockOrgId,
+                schoolId: `87aca549-fdb6-4a63-97d4-d563d4a4665f`,
                 name: `Organization Admin`,
                 status: Status.ACTIVE,
             },
         ],
         schools: [
             {
-                id: `22222222`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4665f`,
                 name: `Mock Data School`,
                 status: Status.ACTIVE,
             },
@@ -54,15 +56,17 @@ export const users: UserNode[] = [
         ],
         roles: [
             {
-                id: `11111111`,
-                name: `Organization Admin`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4690b`,
+                organizationId: mockOrgId,
+                schoolId: `87aca549-fdb6-4a63-97d4-d563d4a4687g`,
+                name: `School Admin`,
                 status: Status.ACTIVE,
             },
         ],
         schools: [
             {
-                id: `22222222`,
-                name: `Mock Data School`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4687g`,
+                name: `Mock Data Academy`,
                 status: Status.ACTIVE,
             },
         ],
@@ -90,5 +94,54 @@ export const mockPaginatedUsers = {
             startCursor: ``,
         },
         totalCount: 1,
+    },
+};
+
+export const mockRolesFilterList = {
+    organization: {
+        roles: [
+            {
+                role_description: `System Default Role`,
+                role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690a`,
+                role_name: `Test Organization Admin`,
+                status: `active`,
+                system_role: true,
+            },
+            {
+                role_description: `System Default Role`,
+                role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690b`,
+                role_name: `Test School Admin`,
+                status: `active`,
+                system_role: true,
+            },
+            {
+                role_description: `System Default Role`,
+                role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690c`,
+                role_name: `Test Parent`,
+                status: `active`,
+                system_role: true,
+            },
+            {
+                role_description: `System Default Role`,
+                role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690d`,
+                role_name: `Test Student`,
+                status: `active`,
+                system_role: true,
+            },
+            {
+                role_description: `System Default Role`,
+                role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690d`,
+                role_name: `Test Teacher`,
+                status: `active`,
+                system_role: true,
+            },
+        ],
+        pageInfo: {
+            endCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+        },
+        totalCount: 4,
     },
 };

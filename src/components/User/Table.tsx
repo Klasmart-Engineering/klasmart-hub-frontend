@@ -4,6 +4,7 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
+import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import { getCustomStatus } from "@/utils/status";
 import {
@@ -11,7 +12,6 @@ import {
     TableProps,
 } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
-import { useUserFilters } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -112,7 +112,13 @@ export default function UserTable (props: Props) {
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
-    const { userRolesFilterValueOptions } = useUserFilters(currentOrganization?.organization_id ?? ``);
+    const {
+        schoolsFilterValueOptions,
+        userRolesFilterValueOptions,
+    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+        querySchools: true,
+        queryUserRoles: true,
+    });
 
     const editSelectedRow = (row: UserRow) => {
         setSelectedUserId(row.id);
@@ -344,6 +350,31 @@ export default function UserTable (props: Props) {
                             }),
                         },
                     ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `schoolNames`,
+            label: intl.formatMessage({
+                id: `classes_schoolsNameLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: schoolsFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersEqualsChipLabel`,
