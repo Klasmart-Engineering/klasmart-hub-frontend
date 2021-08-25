@@ -1049,5 +1049,7 @@
     "teacherFeedback.body.empty": "{count, plural, other {최근 {count} 일간 평가 완료된 항목이 없습니다.}}",
     "common.close": "닫기",
     "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
-    "classes_editSuccess": "Class has been saved successfully"
+    "classes_editSuccess": "Class has been saved successfully",
+    "generic_filtersContainsLabel": "Contains",
+    "generic_filtersContainsChipLabel": "{column} contains {value}"
 }

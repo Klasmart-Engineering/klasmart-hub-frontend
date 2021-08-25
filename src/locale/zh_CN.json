@@ -1049,5 +1049,7 @@
     "teacherFeedback.body.empty": "{count, plural, other {过去{count}天内没有已完成的学习评估}}",
     "common.close": "关闭",
     "validation.error.spreadsheet.empty": "{fileName}必须至少包含一个行数据。",
-    "classes_editSuccess": "Class has been saved successfully"
+    "classes_editSuccess": "班级已创建成功",
+    "generic_filtersContainsLabel": "包含",
+    "generic_filtersContainsChipLabel": "{column}包含{value}"
 }
