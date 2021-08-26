@@ -1051,5 +1051,7 @@
     "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
     "classes_editSuccess": "Class has been saved successfully",
     "generic_filtersContainsLabel": "Contains",
-    "generic_filtersContainsChipLabel": "{column} contains {value}"
+    "generic_filtersContainsChipLabel": "{column} contains {value}",
+    "organization.unknown": "Unknown organization",
+    "role.unknown": "Unknown role"
 }

@@ -1051,5 +1051,7 @@
     "validation.error.spreadsheet.empty": "{fileName}必须至少包含一个行数据。",
     "classes_editSuccess": "班级已创建成功",
     "generic_filtersContainsLabel": "包含",
-    "generic_filtersContainsChipLabel": "{column}包含{value}"
+    "generic_filtersContainsChipLabel": "{column}包含{value}",
+    "organization.unknown": "Unknown organization",
+    "role.unknown": "Unknown role"
 }
