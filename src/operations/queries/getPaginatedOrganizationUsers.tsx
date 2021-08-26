@@ -110,6 +110,36 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
                 OR: values,
             };
         }
+        case `email`: {
+            const values = filter.values.map((value) => {
+                const userEmailFilter: UserFilter = {
+                    email: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return userEmailFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `phone`: {
+            const values = filter.values.map((value) => {
+                const userPhoneFilter: UserFilter = {
+                    phone: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return userPhoneFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         default: return {};
         }
     });

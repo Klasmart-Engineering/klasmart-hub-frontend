@@ -69,7 +69,9 @@ export interface UserRow {
     givenName: string;
     familyName: string;
     avatar: string;
-    contactInfo: string;
+    contactInfo?: string;
+    email: string;
+    phone: string;
     roleNames: string[];
     schoolNames: string[];
     status: string;
@@ -258,6 +260,11 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_contactInfo`,
             }),
+            render: (row) => (
+                <span>
+                    {row.email || row.phone}
+                </span>
+            ),
         },
         {
             id: `status`,
@@ -378,6 +385,52 @@ export default function UserTable (props: Props) {
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `email`,
+            label: intl.formatMessage({
+                id: `common.email`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersContainsLabel`,
+                    }),
+                    value: `contains`,
+                    validations: [ required() ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersContainsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `phone`,
+            label: intl.formatMessage({
+                id: `common.phone`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersContainsLabel`,
+                    }),
+                    value: `contains`,
+                    validations: [ required() ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersContainsChipLabel`,
                         }, {
                             column,
                             value,
