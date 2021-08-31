@@ -749,7 +749,7 @@
     "programs_programSaveMessage": "Chương trình được lưu thành công",
     "programs_programSaveError": "Rất tiếc đã xảy ra sự cố, vui lòng thử lại",
     "class_nameLabel": "Tên",
-    "class_roleLabel": "Trường",
+    "class_roleLabel": "Participating As",
     "class_emailLabel": "Email",
     "class_phoneLabel": "Số điện thoại",
     "class_removeUserLabel": "Gở bỏ người dùng",

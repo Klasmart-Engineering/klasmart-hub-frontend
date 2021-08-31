@@ -749,7 +749,7 @@
     "programs_programSaveMessage": "学科已保存成功",
     "programs_programSaveError": "抱歉，发生了错误，请重试",
     "class_nameLabel": "名称",
-    "class_roleLabel": "角色",
+    "class_roleLabel": "Participating As",
     "class_emailLabel": "邮箱",
     "class_phoneLabel": "手机号",
     "class_removeUserLabel": "移出用户",

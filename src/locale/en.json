@@ -749,7 +749,7 @@
     "programs_programSaveMessage": "Program has been successfully saved",
     "programs_programSaveError": "Sorry, something went wrong, please try again",
     "class_nameLabel": "Name",
-    "class_roleLabel": "Role",
+    "class_roleLabel": "Participating As",
     "class_emailLabel": "Email",
     "class_phoneLabel": "Phone number",
     "class_removeUserLabel": "Remove User",

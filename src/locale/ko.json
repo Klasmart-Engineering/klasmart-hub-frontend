@@ -749,7 +749,7 @@
     "programs_programSaveMessage": "프로그램이 성공적으로 저장되었습니다",
     "programs_programSaveError": "이런, 알 수 없는 문제가 발생했습니다. 다시 시도해 주세요.",
     "class_nameLabel": "이름",
-    "class_roleLabel": "역할",
+    "class_roleLabel": "Participating As",
     "class_emailLabel": "이메일",
     "class_phoneLabel": "휴대폰 번호",
     "class_removeUserLabel": "사용자 제거하기",

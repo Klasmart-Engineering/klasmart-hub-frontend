@@ -749,7 +749,7 @@
     "programs_programSaveMessage": "El programa se ha guardado correctamente",
     "programs_programSaveError": "Lo sentimos, algo falló; inténtalo de nuevo",
     "class_nameLabel": "Nombre",
-    "class_roleLabel": "Función",
+    "class_roleLabel": "Participando como",
     "class_emailLabel": "Correo electrónico",
     "class_phoneLabel": "Número de teléfono",
     "class_removeUserLabel": "Quitar usuario",
