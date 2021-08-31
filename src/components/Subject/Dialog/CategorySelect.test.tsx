@@ -56,12 +56,6 @@ test(`Category select renders correctly with correct data.`, async () => {
         onClose={jest.fn()}
     />);
 
-    await act(async () => {
-        const motorSkills = await findByText(/Fine Motor Skills/gi);
-
-        await waitFor(() => {
-            expect(motorSkills).toBeTruthy();
-        });
-    });
+    expect(await findByText(/Fine Motor Skills/gi)).toBeInTheDocument();
 
 });

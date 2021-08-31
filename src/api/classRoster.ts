@@ -33,7 +33,7 @@ export interface ClassUser {
     school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
     subjectsTeaching: Subject[];
-    alternate_phone: string;
+    contactInfo: string;
 }
 
 interface GetClassRosterRespone {

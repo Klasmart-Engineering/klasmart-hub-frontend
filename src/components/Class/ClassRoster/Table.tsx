@@ -98,7 +98,7 @@ export default function ClassRoster (props: Props) {
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
                 subjectsTeaching: user.subjectsTeaching,
-                alternate_phone: user.alternate_phone,
+                contactInfo: user.email || user.phone || ``,
             })),
         teachers: classInfo.teachers
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
@@ -108,7 +108,7 @@ export default function ClassRoster (props: Props) {
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
                 subjectsTeaching: user.subjectsTeaching,
-                alternate_phone: user.alternate_phone,
+                contactInfo: user.email || user.phone || ``,
             })),
     };
 
@@ -153,17 +153,11 @@ export default function ClassRoster (props: Props) {
             })),
         },
         {
-            id: `email`,
+            id: `contactInfo`,
             label: intl.formatMessage({
-                id: `class_emailLabel`,
+                id: `users_contactInfo`,
             }),
             disableSort: true,
-        },
-        {
-            id: `alternate_phone`,
-            label: intl.formatMessage({
-                id: `class_phoneLabel`,
-            }),
         },
         {
             id: `subjectsTeaching`,
