@@ -748,7 +748,7 @@
     "programs_programCreateError": "Maaf, terjadi kesalahan, yuk coba lagi",
     "programs_programSaveMessage": "Program berhasil disimpan",
     "programs_programSaveError": "Maaf, terjadi kesalahan, yuk coba lagi",
-    "class_nameLabel": "Nama",
+    "class_nameLabel": "User Name",
     "class_roleLabel": "Participating As",
     "class_emailLabel": "E-mail",
     "class_phoneLabel": "Nomor telepon",
@@ -1053,5 +1053,8 @@
     "generic_filtersContainsLabel": "Contains",
     "generic_filtersContainsChipLabel": "{column} contains {value}",
     "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role"
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template"
 }

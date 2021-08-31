@@ -748,7 +748,7 @@
     "programs_programCreateError": "抱歉，发生了错误，请重试",
     "programs_programSaveMessage": "学科已保存成功",
     "programs_programSaveError": "抱歉，发生了错误，请重试",
-    "class_nameLabel": "名称",
+    "class_nameLabel": "User Name",
     "class_roleLabel": "Participating As",
     "class_emailLabel": "邮箱",
     "class_phoneLabel": "手机号",
@@ -1053,5 +1053,8 @@
     "generic_filtersContainsLabel": "包含",
     "generic_filtersContainsChipLabel": "{column}包含{value}",
     "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role"
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template"
 }

@@ -748,7 +748,7 @@
     "programs_programCreateError": "Sorry, something went wrong, please try again",
     "programs_programSaveMessage": "Program has been successfully saved",
     "programs_programSaveError": "Sorry, something went wrong, please try again",
-    "class_nameLabel": "Name",
+    "class_nameLabel": "User Name",
     "class_roleLabel": "Participating As",
     "class_emailLabel": "Email",
     "class_phoneLabel": "Phone number",
@@ -1053,5 +1053,8 @@
     "generic_filtersContainsLabel": "Contains",
     "generic_filtersContainsChipLabel": "{column} contains {value}",
     "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role"
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template"
 }

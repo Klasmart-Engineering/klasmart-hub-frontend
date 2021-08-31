@@ -748,7 +748,7 @@
     "programs_programCreateError": "Rất tiếc đã xảy ra sự cố, vui lòng thử lại",
     "programs_programSaveMessage": "Chương trình được lưu thành công",
     "programs_programSaveError": "Rất tiếc đã xảy ra sự cố, vui lòng thử lại",
-    "class_nameLabel": "Tên",
+    "class_nameLabel": "User Name",
     "class_roleLabel": "Participating As",
     "class_emailLabel": "Email",
     "class_phoneLabel": "Số điện thoại",
@@ -1053,5 +1053,8 @@
     "generic_filtersContainsLabel": "Contains",
     "generic_filtersContainsChipLabel": "{column} contains {value}",
     "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role"
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template"
 }

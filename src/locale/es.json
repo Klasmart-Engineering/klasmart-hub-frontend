@@ -748,7 +748,7 @@
     "programs_programCreateError": "Lo sentimos, algo falló; inténtalo de nuevo",
     "programs_programSaveMessage": "El programa se ha guardado correctamente",
     "programs_programSaveError": "Lo sentimos, algo falló; inténtalo de nuevo",
-    "class_nameLabel": "Nombre",
+    "class_nameLabel": "Nombre de usuario",
     "class_roleLabel": "Participando como",
     "class_emailLabel": "Correo electrónico",
     "class_phoneLabel": "Número de teléfono",
@@ -1053,5 +1053,8 @@
     "generic_filtersContainsLabel": "Contains",
     "generic_filtersContainsChipLabel": "{column} contains {value}",
     "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role"
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template"
 }
