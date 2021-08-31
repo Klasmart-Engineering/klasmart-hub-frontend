@@ -1,6 +1,5 @@
 import GradeDialogForm from './Form';
 import { GET_GRADES } from '@/operations/queries/getGrades';
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
@@ -12,7 +11,7 @@ import {
     grades,
     mockOrgId,
 } from '@tests/mockDataGrades';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
 
@@ -59,11 +58,12 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Grades form renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { getByLabelText } = qlRender(mocks, locale, <GradeDialogForm
+    const { getByLabelText } = render(<GradeDialogForm
         value={formValue}
         onChange={jest.fn()}
-        onValidation={jest.fn()}/>);
+        onValidation={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const name = await getByLabelText(`Grade Name`);
@@ -80,16 +80,16 @@ test(`Grades form renders correctly`, async () => {
 });
 
 test(`Grades form updates correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         getByLabelText,
-        getByTestId,
         getAllByText,
         getAllByRole,
-    } = qlRender(mocks, locale, <GradeDialogForm
+    } = render(<GradeDialogForm
         value={formValue}
         onChange={jest.fn()}
-        onValidation={jest.fn()}/>);
+        onValidation={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const name = await getByLabelText(`Grade Name`, {

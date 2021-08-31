@@ -14,7 +14,6 @@ import {
 } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { organizationPaginatedClasses } from "@/utils/classes";
 import { useGetTableFilters } from "@/utils/filters";
-import { getLanguage } from "@/utils/locale";
 import { MockedProvider } from "@apollo/client/testing/";
 import {
     act,
@@ -29,7 +28,6 @@ import {
     grade2Name,
     grade3Id,
     grade3Name,
-    mockPaginatedGrades,
     mockPaginatedGradesList,
 } from "@tests/mockDataGrades";
 import {
@@ -50,7 +48,7 @@ import {
     mockSchoolName2,
     mockSchoolsData,
 } from "@tests/mockDataSchools";
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import { utils } from "kidsloop-px";
 import React from "react";
 import TestRenderer from 'react-test-renderer';
@@ -137,8 +135,7 @@ const mocks = [
 ];
 
 test(`Class table renders without records`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender([], locale, <ClassTable rows={[]}/>);
+    const { queryByText } = render(<ClassTable rows={[]}/>);
 
     await act(async () => {
         await waitFor(() => {
@@ -149,8 +146,7 @@ test(`Class table renders without records`, async () => {
 });
 
 test(`Class table renders with records`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText, queryAllByText } = qlRender([], locale, <ClassTable rows={rows}/>);
+    const { queryByText, queryAllByText } = render(<ClassTable rows={rows}/>);
 
     await act(async () => {
         await waitFor(() => {
@@ -252,13 +248,14 @@ test(`useClassFilters hook should return mapped grades data for filter drop down
 });
 
 test(`Class page filter dropdown opens`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryAllByText,
         queryByText,
         getByText,
         findByText,
-    } = qlRender(mocks, locale, <ClassTable rows={[]} />);
+    } = render(<ClassTable rows={[]} />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         await waitFor(() => {

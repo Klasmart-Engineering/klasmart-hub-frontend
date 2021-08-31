@@ -2,7 +2,6 @@ import EditClassDialog from "@/components/Class/Dialog/Edit";
 import { GET_CLASS } from "@/operations/queries/getClass";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     act,
@@ -16,7 +15,7 @@ import {
     mockUserId,
     mockUserSchoolMemberships,
 } from "@tests/mockDataClasses";
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -83,16 +82,17 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Class edit component renders with correct information`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryByText,
         queryAllByText,
         getByDisplayValue,
-    } = qlRender(mocks, locale, <EditClassDialog
+    } = render(<EditClassDialog
         open={true}
         classId={mockClassId}
         onClose={(() => jest.fn())}
-    />);
+    />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         expect(queryByText(`Edit class`)).toBeTruthy();

@@ -1,16 +1,14 @@
 import DetailsDrawer from './DetailsDrawer';
-import { getLanguage } from "@/utils/locale";
 import {
     act,
     waitFor,
 } from '@testing-library/react';
 import { mockSubjects } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 test(`Details drawer component renders and displays correct information`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender([], locale, <DetailsDrawer
+    const { queryByText } = render(<DetailsDrawer
         value={mockSubjects[0]}
         open={true}
         onClose={jest.fn()}/>);

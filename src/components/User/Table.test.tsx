@@ -1,9 +1,7 @@
 import UsersTable from './Table';
 import { GET_ORGANIZATION_ROLES } from '@/operations/queries/getOrganizationRoles';
-import { buildOrganizationUserFilter } from '@/operations/queries/getPaginatedOrganizationUsers';
 import { Status } from "@/types/graphQL";
 import { useGetTableFilters } from '@/utils/filters';
-import { getLanguage } from "@/utils/locale";
 import { sortSchoolNames } from '@/utils/schools';
 import { sortRoleNames } from '@/utils/userRoles';
 import { MockedProvider } from '@apollo/client/testing';
@@ -18,12 +16,10 @@ import {
     mockPaginatedUsers,
     mockRolesFilterList,
 } from '@tests/mockDataUsers';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import TestRenderer from 'react-test-renderer';
-
-const locale = getLanguage(`en`);
 
 const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     id: edge.node.id,
@@ -62,7 +58,7 @@ test(`Users table page renders correctly`, async () => {
         orderBy="name"
         rows={rows}
     />;
-    qlRender([], locale, component);
+    render(component);
 
     expect(await screen.findByText(`Users`)).toBeInTheDocument();
     expect(await screen.findByText(`John`)).toBeInTheDocument();
@@ -120,7 +116,9 @@ test(`User page filter dropdown opens`, async () => {
         queryByText,
         getByText,
         findByText,
-    } = qlRender(mocks, locale, component);
+    } = render(component, {
+        mockedResponses: mocks,
+    });
     await act(async () => {
         await waitFor(() => {
             expect(queryAllByText(`Organization Roles`).length).toEqual(2);

@@ -1,6 +1,4 @@
 import Form from './Form';
-import { PRIMARY_THEME_COLOR } from '@/themeProvider';
-import { getLanguage } from "@/utils/locale";
 import {
     act,
     fireEvent,
@@ -10,7 +8,7 @@ import {
     mockOrg,
     mockOrgId,
 } from '@tests/mockOrganizationData';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
 
@@ -33,11 +31,10 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`OrganizationForm renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryByText,
         queryAllByText,
-    } = qlRender([], locale, <Form
+    } = render(<Form
         currentTab="organizationInfo"
         value={mockOrg}
         onValidation={jest.fn()}
@@ -65,11 +62,10 @@ test(`OrganizationForm renders correctly`, async () => {
 });
 
 test(`OrganizationForm renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryByText,
         queryAllByText,
-    } = qlRender([], locale, <Form
+    } = render(<Form
         currentTab="organizationInfo"
         value={mockOrg}
         onValidation={jest.fn()}
@@ -97,8 +93,7 @@ test(`OrganizationForm renders correctly`, async () => {
 });
 
 test(`OrganizationForm updates correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { getByLabelText } = qlRender([], locale, <Form
+    const { getByLabelText } = render(<Form
         currentTab="organizationInfo"
         value={mockOrg}
         onValidation={jest.fn()}
@@ -191,12 +186,11 @@ test(`OrganizationForm updates correctly`, async () => {
 });
 
 test(`OrganizationForm shows correct error labels.`, async () => {
-    const locale = getLanguage(`en`);
     const {
         getByLabelText,
         queryByText,
         queryAllByText,
-    } = qlRender([], locale, <Form
+    } = render(<Form
         currentTab="organizationInfo"
         value={mockOrg}
         onValidation={jest.fn()}
@@ -283,8 +277,7 @@ test(`OrganizationForm shows correct error labels.`, async () => {
 });
 
 test(`PersonalizationForm renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender([], locale, <Form
+    const { queryByText } = render(<Form
         currentTab="personalization"
         value={mockOrg}
         onValidation={jest.fn()}

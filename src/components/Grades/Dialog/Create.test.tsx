@@ -1,12 +1,11 @@
 import CreateGrade from './Create';
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
     waitFor,
 } from '@testing-library/react';
 import { mockOrgId } from '@tests/mockDataGrades';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -30,10 +29,11 @@ jest.mock(`@/utils/permissions`, () => {
 const mocks: MockedResponse[] = [];
 
 test(`Create grade dialog renders correctly and with empty fields.`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByLabelText, queryByText } = qlRender(mocks, locale, <CreateGrade
+    const { queryByLabelText, queryByText } = render(<CreateGrade
         open={true}
-        onClose={jest.fn()}/>);
+        onClose={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const title = queryByText(`Create Grade`);

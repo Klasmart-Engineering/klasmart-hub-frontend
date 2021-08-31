@@ -1,7 +1,6 @@
 import 'regenerator-runtime/runtime';
 import Grades from './Table';
-import {  NON_SPECIFIED } from "@/types/graphQL";
-import { getLanguage } from "@/utils/locale";
+import { NON_SPECIFIED } from "@/types/graphQL";
 import {
     act,
     screen,
@@ -11,7 +10,7 @@ import {
     grades,
     mockOrgId,
 } from '@tests/mockDataGrades';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import { utils } from "kidsloop-px";
 import React from 'react';
 
@@ -47,8 +46,6 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Grades table page renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-
     const rows = data?.gradesConnection?.edges?.map((edge) => ({
         id: edge.id ?? ``,
         name: edge.name ?? ``,
@@ -61,7 +58,7 @@ test(`Grades table page renders correctly`, async () => {
         orderBy="name"
         rows={rows}
     />;
-    const { queryAllByText } = qlRender([], locale, component);
+    const { queryAllByText } = render(component);
 
     await act(async () => {
         const title = await screen.findByText(`Grades`);

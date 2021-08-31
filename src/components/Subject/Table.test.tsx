@@ -2,7 +2,6 @@ import 'regenerator-runtime/runtime';
 import SubjectTable from './Table';
 import { DELETE_SUBJECT } from '@/operations/mutations/deleteSubject';
 import { GET_ALL_SUBJECTS } from '@/operations/queries/getAllSubjects';
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
@@ -15,7 +14,7 @@ import {
     mockPrograms,
     mockSubjects,
 } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
 
@@ -91,8 +90,7 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subjects table page renders`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText } = qlRender([], locale, <SubjectTable />);
+    const { findByText } = render(<SubjectTable />);
 
     await act(async () => {
         const title = await screen.findByText(`Subjects`);
@@ -113,8 +111,9 @@ test(`Subjects table page renders`, async () => {
 });
 
 test(`Subjects page renders data`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText, queryAllByText } = qlRender(mocks, locale, <SubjectTable />);
+    const { findByText, queryAllByText } = render(<SubjectTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const title = await screen.findByText(`Subjects`);
@@ -135,12 +134,13 @@ test(`Subjects page renders data`, async () => {
 });
 
 test(`Subjects table properly updates records after delete`, async () => {
-    const locale = getLanguage(`en`);
     const {
         findAllByTitle,
         queryByText,
         queryAllByTitle,
-    } = await qlRender(mocks, locale, <SubjectTable />);
+    } = render(<SubjectTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         await utils.sleep(0);

@@ -1,6 +1,5 @@
 import CategorySelectDialog from './CategorySelect';
 import { GET_ALL_CATEGORIES } from '@/operations/queries/getAllCategories';
-import { getLanguage } from '@/utils/locale';
 import { MockedResponse } from '@apollo/client/testing';
 import { waitFor } from '@testing-library/react';
 import {
@@ -8,7 +7,7 @@ import {
     mockOrgId,
     mockSubjects,
 } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 import { act } from 'react-test-renderer';
 
@@ -49,12 +48,13 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Category select renders correctly with correct data.`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText } = qlRender(mocks, locale, <CategorySelectDialog
+    const { findByText } = render(<CategorySelectDialog
         value={mockSubjects[0].categories[0]}
         open={true}
         onClose={jest.fn()}
-    />);
+    />, {
+        mockedResponses: mocks,
+    });
 
     expect(await findByText(/Fine Motor Skills/gi)).toBeInTheDocument();
 

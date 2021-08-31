@@ -1,6 +1,5 @@
 import EditSubjectDialog from './Edit';
 import { Status } from '@/types/graphQL';
-import { getLanguage } from '@/utils/locale';
 import {
     act,
     screen,
@@ -10,7 +9,7 @@ import {
     mockCategories,
     mockOrgId,
 } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -40,11 +39,10 @@ const formValue = {
 };
 
 test(`Subject edit dialog renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         getByText,
         getByLabelText,
-    } = qlRender([], locale, <EditSubjectDialog
+    } = render(<EditSubjectDialog
         value={formValue}
         open={true}
         onClose={jest.fn()}/>);

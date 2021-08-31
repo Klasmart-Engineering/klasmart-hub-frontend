@@ -6,7 +6,6 @@ import {
 } from "@/operations/queries/getPaginatedAgeRanges";
 import { isActive } from "@/types/graphQL";
 import { useGetTableFilters } from "@/utils/filters";
-import { getLanguage } from "@/utils/locale";
 import { isUuid } from "@/utils/pagination";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import { MockedProvider } from "@apollo/client/testing/";
@@ -26,7 +25,7 @@ import {
     programIdD,
     programs,
 } from '@tests/mockDataPrograms';
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import { utils } from "kidsloop-px";
 import React from "react";
 import TestRenderer from 'react-test-renderer';
@@ -99,14 +98,13 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Programs table page renders data`, async () => {
-    const locale = getLanguage(`en`);
     const component = <ProgramTable
         order="asc"
         orderBy="name"
         loading={false}
         rows={data.programsConnection.edges.filter((edge) => isActive(edge.node)).map((edge) => mapProgramNodeToProgramRow(edge.node)) ?? []}
     />;
-    const { queryAllByText } = qlRender([], locale, component);
+    const { queryAllByText } = render(component);
 
     await act(async () => {
         const title = await screen.findByText(`Programs`);
