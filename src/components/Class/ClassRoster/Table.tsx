@@ -94,7 +94,6 @@ export default function ClassRoster (props: Props) {
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
             .map((user: ClassUser) => ({
                 ...user,
-                name: `${user.given_name} ${user.family_name}`,
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
                 subjectsTeaching: user.subjectsTeaching,
@@ -105,7 +104,6 @@ export default function ClassRoster (props: Props) {
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
             .map((user: ClassUser) => ({
                 ...user,
-                name: `${user.given_name} ${user.family_name}`,
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
                 subjectsTeaching: user.subjectsTeaching,
@@ -125,24 +123,16 @@ export default function ClassRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `name`,
+            id: `given_name`,
             label: intl.formatMessage({
-                id: `class_nameLabel`,
+                id: `users_firstName`,
             }),
-            persistent: true,
-            render: (row) => (
-                <Box
-                    display="flex"
-                    flexDirection="row"
-                    alignItems="center"
-                >
-                    <UserAvatar
-                        name={row.name ?? ``}
-                        size="small"
-                    />
-                    <span className={classes.userName}>{row.name}</span>
-                </Box>
-            ),
+        },
+        {
+            id: `family_name`,
+            label: intl.formatMessage({
+                id: `users_lastName`,
+            }),
         },
         {
             id: `role`,
@@ -255,7 +245,7 @@ export default function ClassRoster (props: Props) {
                     columns={columns}
                     rows={rows}
                     idField="user_id"
-                    orderBy="name"
+                    orderBy="given_name"
                     order="asc"
                     groupBy="role"
                     primaryAction={{
