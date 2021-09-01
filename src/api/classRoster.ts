@@ -33,6 +33,7 @@ export interface ClassUser {
     school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
     subjectsTeaching: Subject[];
+    organizationRole: string;
     contactInfo: string;
 }
 

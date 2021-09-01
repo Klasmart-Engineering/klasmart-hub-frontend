@@ -98,6 +98,7 @@ export default function ClassRoster (props: Props) {
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
                 subjectsTeaching: user.subjectsTeaching,
+                organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
                 contactInfo: user.email || user.phone || ``,
             })),
         teachers: classInfo.teachers
@@ -108,6 +109,7 @@ export default function ClassRoster (props: Props) {
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
                 subjectsTeaching: user.subjectsTeaching,
+                organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
                 contactInfo: user.email || user.phone || ``,
             })),
     };
@@ -172,6 +174,14 @@ export default function ClassRoster (props: Props) {
                     ))}
                 </>
             ),
+        },
+        {
+            id: `organizationRole`,
+            label: intl.formatMessage({
+                id: `organization.roles`,
+            }, {
+                count: 2,
+            }),
         },
     ];
 
