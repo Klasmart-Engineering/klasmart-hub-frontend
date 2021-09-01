@@ -42,7 +42,7 @@ export default function (props: Props) {
     const [ updateGrade ] = useCreateUpdateGrade();
     const [ deleteGrade ] = useDeleteGrade();
 
-    const { data } = useGetGrade({
+    const { data, loading } = useGetGrade({
         variables: {
             id: gradeId ?? ``,
         },
@@ -169,6 +169,7 @@ export default function (props: Props) {
                 <GradeForm
                     key={updatedGrade.id}
                     value={updatedGrade}
+                    loading={loading}
                     onChange={setUpdatedGrade}
                     onValidation={setValid}
                 />

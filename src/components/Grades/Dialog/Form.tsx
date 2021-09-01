@@ -38,6 +38,7 @@ interface Props {
     value: Grade;
     onChange: (value: Grade) => void;
     onValidation: (valid: boolean) => void;
+    loading?: boolean;
 }
 
 export default function GradeDialogForm (props: Props) {
@@ -45,6 +46,7 @@ export default function GradeDialogForm (props: Props) {
         value,
         onChange,
         onValidation,
+        loading,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -62,7 +64,7 @@ export default function GradeDialogForm (props: Props) {
     const [ progressToIdValid, setProgressToIdValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
 
-    const { data: gradesData } = useGetAllGrades({
+    const { data: gradesData, loading: gradesDataLoading } = useGetAllGrades({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
@@ -121,6 +123,7 @@ export default function GradeDialogForm (props: Props) {
                     max(15, `Max length 15 of characters.`),
                 ]}
                 id="gradeNameInput"
+                loading={ loading || gradesDataLoading}
                 onChange={setGradeName}
                 onValidate={setGradeNameValid}
             />
@@ -144,6 +147,7 @@ export default function GradeDialogForm (props: Props) {
                 itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
                 validations={[ required() ]}
                 id="progressFromSelect"
+                loading={ loading || gradesDataLoading}
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
             />
@@ -167,6 +171,7 @@ export default function GradeDialogForm (props: Props) {
                 itemText={(grade) => `${grade?.name} (${grade?.id?.split(`-`)[0]})`}
                 validations={[ required() ]}
                 id="progressToSelect"
+                loading={ loading || gradesDataLoading}
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}
             />
