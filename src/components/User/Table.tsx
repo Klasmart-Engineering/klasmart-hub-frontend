@@ -4,6 +4,10 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
+import {
+    buildCsvTemplateOptions,
+    EMPTY_CSV_DATA,
+} from "@/utils/csv";
 import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import { getCustomStatus } from "@/utils/status";
@@ -24,6 +28,7 @@ import {
 import {
     CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
+    Description as DescriptionIcon,
     Edit as EditIcon,
     PersonAdd as PersonAddIcon,
 } from "@material-ui/icons";
@@ -120,6 +125,27 @@ export default function UserTable (props: Props) {
     } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
         querySchools: true,
         queryUserRoles: true,
+    });
+
+    const userCsvTemplateHeaders = [
+        `organization_name`,
+        `user_given_name`,
+        `user_family_name`,
+        `user_shortcode`,
+        `user_email`,
+        `user_phone`,
+        `user_date_of_birth`,
+        `user_gender`,
+        `organization_role_name`,
+        `school_name`,
+        `class_name`,
+    ];
+
+    const csvExporter = buildCsvTemplateOptions({
+        filename: intl.formatMessage({
+            id: `entity.user.importTemplate.filename`,
+        }),
+        headers: userCsvTemplateHeaders,
     });
 
     const editSelectedRow = (row: UserRow) => {
@@ -470,7 +496,17 @@ export default function UserTable (props: Props) {
                     }}
                     secondaryActions={[
                         {
-                            label: `Upload CSV`,
+                            label: intl.formatMessage({
+                                id: `entity.user.template.download.button`,
+                            }),
+                            icon: DescriptionIcon,
+                            disabled: !canCreate,
+                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                        },
+                        {
+                            label: intl.formatMessage({
+                                id: `entity.user.bulkImport.button`,
+                            }),
                             icon: CloudUploadIcon,
                             disabled: !canCreate,
                             onClick: () => setUploadCsvDialogOpen(true),

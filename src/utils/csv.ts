@@ -1,4 +1,5 @@
 import { ApolloError } from "@apollo/client";
+import { ExportToCsv } from 'export-to-csv';
 import {
     Props as SpreadsheetFileInputProps,
     SpreadsheetValidationError,
@@ -487,3 +488,38 @@ export function buildDefaultSpreadsheetFileInputProps (intl: IntlShape): Partial
         onFileUploadError: handleFileUploadError(intl),
     };
 }
+
+interface CsvTemplateOptions {
+    fieldSeparator?: string;
+    filename: string;
+    quoteStrings?: string;
+    decimalSeparator?: string;
+    showLabels?: boolean;
+    useTextFile?: boolean;
+    useBom?: boolean;
+    useKeysAsHeaders?: boolean;
+    headers?: string[];
+}
+
+const csvTemplateDefaultOptions: CsvTemplateOptions = {
+    fieldSeparator: `,`,
+    filename: `kidsloop-csv-template`,
+    quoteStrings: `"`,
+    decimalSeparator: `.`,
+    showLabels: true,
+    useTextFile: false,
+    useBom: true,
+    useKeysAsHeaders: false,
+    headers: [],
+};
+
+export const buildCsvTemplateOptions = (options?: CsvTemplateOptions) => {
+    const csvTemplateOptions = {
+        ...csvTemplateDefaultOptions,
+        ...options,
+    };
+
+    return new ExportToCsv(csvTemplateOptions);
+};
+
+export const EMPTY_CSV_DATA = [ {} ];
