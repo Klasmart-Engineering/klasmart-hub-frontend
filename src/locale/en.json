@@ -1056,5 +1056,7 @@
     "role.unknown": "Unknown role",
     "entity.user.importTemplate.filename": "kidsloop-users-template",
     "entity.school.importTemplate.filename": "kidsloop-schools-template",
-    "entity.class.importTemplate.filename": "kidsloop-classes-template"
+    "entity.class.importTemplate.filename": "kidsloop-classes-template",
+    "entity.user.template.download.button": "Download CSV Template File",
+    "entity.user.bulkImport.button": "Upload CSV"
 }

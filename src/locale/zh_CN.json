@@ -748,8 +748,8 @@
     "programs_programCreateError": "抱歉，发生了错误，请重试",
     "programs_programSaveMessage": "学科已保存成功",
     "programs_programSaveError": "抱歉，发生了错误，请重试",
-    "class_nameLabel": "User Name",
-    "class_roleLabel": "Participating As",
+    "class_nameLabel": "用户名",
+    "class_roleLabel": "参与身份",
     "class_emailLabel": "邮箱",
     "class_phoneLabel": "手机号",
     "class_removeUserLabel": "移出用户",
@@ -1052,9 +1052,11 @@
     "classes_editSuccess": "班级已创建成功",
     "generic_filtersContainsLabel": "包含",
     "generic_filtersContainsChipLabel": "{column}包含{value}",
-    "organization.unknown": "Unknown organization",
-    "role.unknown": "Unknown role",
-    "entity.user.importTemplate.filename": "kidsloop-users-template",
-    "entity.school.importTemplate.filename": "kidsloop-schools-template",
-    "entity.class.importTemplate.filename": "kidsloop-classes-template"
+    "organization.unknown": "未知机构",
+    "role.unknown": "未知角色",
+    "entity.user.importTemplate.filename": "kidsloop-用户-模板",
+    "entity.school.importTemplate.filename": "kidsloop-学校-模板",
+    "entity.class.importTemplate.filename": "kidsloop-classes-模板",
+    "entity.user.template.download.button": "下载CSV文件模板",
+    "entity.user.bulkImport.button": "Upload CSV"
 }
