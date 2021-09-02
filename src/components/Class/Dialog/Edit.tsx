@@ -49,7 +49,7 @@ export default function EditClassDialog (props: Props) {
     const canEditSchool = usePermission(`edit_school_20330`);
     const [ initClass, setInitClass ] = useState<Class>(buildEmptyClass());
 
-    const { data } = useGetClass({
+    const { data, loading } = useGetClass({
         variables: {
             id: classId ?? ``,
             organizationId: currentOrganization?.organization_id ?? ``,
@@ -175,6 +175,7 @@ export default function EditClassDialog (props: Props) {
             <ClassDialogForm
                 key={initClass?.class_id}
                 value={initClass}
+                loading={loading}
                 onChange={(value) => setEditedClass(value)}
                 onValidation={setValid} />
         </Dialog>
