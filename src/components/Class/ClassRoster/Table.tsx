@@ -11,7 +11,6 @@ import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
-    Chip,
     createStyles,
     DialogContentText,
     makeStyles,
@@ -41,9 +40,6 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     userName: {
         marginLeft: theme.spacing(2),
-    },
-    chip: {
-        margin: theme.spacing(0.25),
     },
 }));
 
@@ -96,7 +92,6 @@ export default function ClassRoster (props: Props) {
                 ...user,
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
-                subjectsTeaching: user.subjectsTeaching,
                 organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
                 contactInfo: user.email || user.phone || ``,
             })),
@@ -106,7 +101,6 @@ export default function ClassRoster (props: Props) {
                 ...user,
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
-                subjectsTeaching: user.subjectsTeaching,
                 organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
                 contactInfo: user.email || user.phone || ``,
             })),
@@ -127,6 +121,20 @@ export default function ClassRoster (props: Props) {
             label: intl.formatMessage({
                 id: `users_firstName`,
             }),
+            persistent: true,
+            render: (row) => (
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                >
+                    <UserAvatar
+                        name={`${row.given_name} ${row.family_name}`}
+                        size="small"
+                    />
+                    <span className={classes.userName}>{row.given_name}</span>
+                </Box>
+            ),
         },
         {
             id: `family_name`,
@@ -150,20 +158,6 @@ export default function ClassRoster (props: Props) {
                 id: `users_contactInfo`,
             }),
             disableSort: true,
-        },
-        {
-            id: `subjectsTeaching`,
-            label: `Subjects`,
-            render: (row) => (
-                <>
-                    {row.subjectsTeaching.map((subject, i) => (
-                        <Chip
-                            key={`subject-${i}`}
-                            label={subject.name}
-                            className={classes.chip} />
-                    ))}
-                </>
-            ),
         },
         {
             id: `organizationRole`,
