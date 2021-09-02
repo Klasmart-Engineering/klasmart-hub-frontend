@@ -31,7 +31,7 @@ export interface ClassUser {
     role?: string;
     school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
-    organizationRole: string;
+    organizationRoles: string[];
     contactInfo: string;
 }
 

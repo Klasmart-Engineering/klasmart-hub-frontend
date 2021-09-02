@@ -8,6 +8,7 @@ import SchoolRoster from "@/components/Class/SchoolRoster/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
+import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -15,6 +16,7 @@ import {
     DialogContentText,
     makeStyles,
     Paper,
+    Typography,
 } from "@material-ui/core";
 import {
     Delete as DeleteIcon,
@@ -92,7 +94,9 @@ export default function ClassRoster (props: Props) {
                 ...user,
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
-                organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
+                organizationRoles: user.membership.roles?.map((role) => (
+                    role.role_name ?? ``
+                )) ?? [],
                 contactInfo: user.email || user.phone || ``,
             })),
         teachers: classInfo.teachers
@@ -101,7 +105,9 @@ export default function ClassRoster (props: Props) {
                 ...user,
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
-                organizationRole: user.membership.roles?.map( role => role.role_name ).join(`, `) ?? ``,
+                organizationRoles: user.membership.roles?.map((role) => (
+                    role.role_name ?? ``
+                )) ?? [],
                 contactInfo: user.email || user.phone || ``,
             })),
     };
@@ -160,12 +166,21 @@ export default function ClassRoster (props: Props) {
             disableSort: true,
         },
         {
-            id: `organizationRole`,
+            id: `organizationRoles`,
             label: intl.formatMessage({
                 id: `organization.roles`,
             }, {
                 count: 2,
             }),
+            render: (row) => row.organizationRoles.map((roleName, i) => (
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {getCustomRoleName(intl, roleName)}
+                </Typography>
+            )),
         },
     ];
 
