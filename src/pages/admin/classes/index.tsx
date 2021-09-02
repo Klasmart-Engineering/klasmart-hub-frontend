@@ -99,6 +99,7 @@ export default function ClassesPage (props: Props) {
         serverPagination.order,
         serverPagination.orderBy,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     const rows = data?.classesConnection?.edges?.map(organizationPaginatedClasses) ?? [];

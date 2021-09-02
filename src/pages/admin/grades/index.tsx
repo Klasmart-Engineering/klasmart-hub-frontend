@@ -101,6 +101,7 @@ export default function GradesPage (props: Props) {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     const rows =

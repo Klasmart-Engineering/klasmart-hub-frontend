@@ -117,6 +117,7 @@ export default function UsersPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     useEffect(() => {

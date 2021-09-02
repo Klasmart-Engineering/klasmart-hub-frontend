@@ -90,6 +90,7 @@ export default function SchoolsPage (props: Props) {
         serverPagination.rowsPerPage,
         serverPagination.order,
         serverPagination.orderBy,
+        currentOrganization?.organization_id,
     ]);
 
     const rows = data?.schoolsConnection.edges

@@ -103,6 +103,7 @@ export default function ProgramsPage (props: Props) {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     const rows = data?.programsConnection?.edges

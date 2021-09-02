@@ -92,6 +92,7 @@ export default function AgeRangesPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     const rows =
