@@ -62,7 +62,7 @@ export default function CreateProgramDialog (props: Props) {
         max,
     } = useValidations();
     const currentOrganization = useCurrentOrganization();
-    const { data, loading } = useGetProgram({
+    const { data, loading: programsLoading } = useGetProgram({
         variables: {
             id: programId ?? ``,
         },
@@ -74,6 +74,7 @@ export default function CreateProgramDialog (props: Props) {
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
     const [ updatedProgram, setUpdatedProgram ] = useState<Program>(buildEmptyProgram());
+    const [ loading, setLoading ] = useState<boolean>(true);
 
     const handleValue = (value: Program) => {
         if (isEqual(value, updatedProgram)) return;
@@ -87,6 +88,7 @@ export default function CreateProgramDialog (props: Props) {
         }
         setStepIndex(INITIAL_STEP_INDEX);
         setUpdatedProgram(data?.program ?? buildEmptyProgram());
+        setLoading(programsLoading);
     }, [ open, data ]);
 
     useEffect(() => {
@@ -103,6 +105,7 @@ export default function CreateProgramDialog (props: Props) {
                 content: (
                     <ProgramInfoStep
                         value={updatedProgram}
+                        loading={programsLoading}
                         onChange={handleValue}
                     />
                 ),
@@ -133,13 +136,14 @@ export default function CreateProgramDialog (props: Props) {
                 content: (
                     <SummaryStep
                         value={updatedProgram}
+                        loading={programsLoading}
                         onChange={handleValue}
                     />
                 ),
             },
         ];
         setSteps(steps);
-    }, [ updatedProgram ]);
+    }, [ updatedProgram, loading ]);
 
     const updateProgram = async () => {
         const {

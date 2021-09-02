@@ -11,7 +11,7 @@ import React from "react";
 const useStyles = makeStyles((theme) => createStyles({}));
 
 export default function SummaryStep (props: EntityStepContent<Program>) {
-    const { value } = props;
+    const { value, loading } = props;
 
     const classes = useStyles();
 
@@ -21,11 +21,13 @@ export default function SummaryStep (props: EntityStepContent<Program>) {
                 key={`programInfo-${JSON.stringify(value)}`}
                 disabled
                 value={value}
+                loading={loading}
             />
             <Subjects
                 key={`subjects-${JSON.stringify(value)}`}
                 disabled
                 value={value}
+                loading={loading}
             />
         </>
     );

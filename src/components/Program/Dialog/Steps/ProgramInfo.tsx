@@ -44,6 +44,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
         value,
         disabled,
         onChange,
+        loading,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -134,6 +135,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                         })),
                         max(35, `The program name has a max length of 35 characters.`),
                     ]}
+                    loading={loading}
                     onChange={setProgramName}
                 />
             </Paper>
@@ -165,6 +167,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     validations={[ required(`The Grade is required.`) ]}
+                    loading={loading || gradesLoading}
                     onChange={setGradeIds}
                 />
             </Paper>
@@ -196,6 +199,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     disabled={disabled}
                     hideHelperText={disabled}
                     validations={[ required(`The Age Range is required.`) ]}
+                    loading={loading || ageRangesLoading}
                     onChange={setAgeRanges}
                 />
             </Paper>
