@@ -73,8 +73,8 @@ interface CreateOrganizationMembershipRequest {
     organization_id: string;
     email?: string | null;
     phone?: string | null;
-    given_name?: string | null;
-    family_name?: string | null;
+    given_name: string;
+    family_name: string;
     organization_role_ids: string[];
     school_ids: string[];
     date_of_birth: string;
