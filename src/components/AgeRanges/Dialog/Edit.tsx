@@ -45,7 +45,7 @@ export default function EditAgeRangeDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
 
-    const { data } = useGetAgeRange({
+    const { data, loading } = useGetAgeRange({
         variables: {
             id: ageRangeId ?? ``,
         },
@@ -54,6 +54,10 @@ export default function EditAgeRangeDialog (props: Props) {
     });
 
     useEffect(() => {
+        if (!open) {
+            setUpdatedAgeRange(buildEmptyAgeRange());
+            return;
+        }
         if (!data?.age_range) return;
         setUpdatedAgeRange(data?.age_range);
     }, [ open, data ]);
@@ -173,6 +177,7 @@ export default function EditAgeRangeDialog (props: Props) {
                 <AgeRangeForm
                     key={updatedAgeRange.id}
                     value={updatedAgeRange}
+                    loading={loading}
                     onChange={setUpdatedAgeRange}
                     onValidation={setValid}
                 />
