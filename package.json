@@ -115,7 +115,7 @@
     "interpolate-html-plugin": "^4.0.0",
     "jwt-decode": "^3.1.2",
     "kidsloop-branding": "bitbucket:calmisland/kidsloop-branding#1.0.1",
-    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#1.7.0",
+    "kidsloop-px": "bitbucket:calmisland/kidsloop-px#1.7.1",
     "lodash": "^4.17.21",
     "logrocket": "^1.0.14",
     "moment": "^2.29.1",
