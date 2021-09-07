@@ -12,13 +12,11 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import { buildEmptySubject } from "@/utils/subjects";
-import { useValidations } from "@/utils/validations";
-import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
-    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import React, {
@@ -40,8 +38,7 @@ export default function EditSubjectDialog (props: Props) {
         onClose,
     } = props;
     const intl = useIntl();
-    const prompt = usePrompt();
-    const { required, equals } = useValidations();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const canDelete = usePermission(`delete_subjects_20447`);
     const currentOrganization = useCurrentOrganization();
@@ -126,33 +123,13 @@ export default function EditSubjectDialog (props: Props) {
     };
 
     const handleDelete = async () => {
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `subjects_deleteSubjectLabel`,
+            }),
+            entityName: value?.name ?? ``,
+        })) return;
         try {
-            if (!await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `subjects_deleteSubjectLabel`,
-                }),
-                okLabel: intl.formatMessage({
-                    id: `generic_deleteLabel`,
-                }),
-                content: <>
-                    <DialogContentText>
-                        {intl.formatMessage({
-                            id: `editDialog_deleteConfirm`,
-                        }, {
-                            userName: value?.name,
-                        })}
-                    </DialogContentText>
-                    <DialogContentText>
-                        {intl.formatMessage({
-                            id: `generic_typeToRemovePrompt`,
-                        }, {
-                            value: <strong>{value?.name}</strong>,
-                        })}
-                    </DialogContentText>
-                </>,
-                validations: [ required(), equals(value?.name) ],
-            })) return;
             await deleteSubject({
                 variables: {
                     id: value?.id ?? ``,

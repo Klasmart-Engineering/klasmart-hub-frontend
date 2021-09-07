@@ -11,13 +11,12 @@ import {
     Status,
     Subject,
 } from "@/types/graphQL";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
-import { useValidations } from "@/utils/validations";
 import {
     Chip,
     createStyles,
-    DialogContentText,
     makeStyles,
     Paper,
 } from "@material-ui/core";
@@ -29,7 +28,6 @@ import {
 } from "@material-ui/icons";
 import {
     PageTable,
-    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
@@ -74,7 +72,7 @@ export default function SubjectsTable (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const prompt = usePrompt();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ rows_, setRows ] = useState<SubjectRow[]>([]);
     const currentOrganization = useCurrentOrganization();
@@ -98,7 +96,6 @@ export default function SubjectsTable (props: Props) {
     const canView = usePermission(`view_subjects_20115`);
     const canEdit = usePermission(`edit_subjects_20337`);
     const canDelete = usePermission(`delete_subjects_20447`);
-    const { required, equals } = useValidations();
 
     const subjects_ = data?.organization.subjects ?? [];
 
@@ -190,7 +187,7 @@ export default function SubjectsTable (props: Props) {
         setOpenViewDetailsDrawer(true);
     };
 
-    const handleEditRowClick = async (row: SubjectRow) => {
+    const handleEditRowClick = (row: SubjectRow) => {
         const selectedSubject = findSubject(row);
         if (!selectedSubject) return;
         setSelectedSubject(selectedSubject);
@@ -202,27 +199,11 @@ export default function SubjectsTable (props: Props) {
         if (!selectedSubject) return;
         setSelectedSubject(selectedSubject);
         const { id, name } = selectedSubject;
-        if (!await prompt({
-            variant: `error`,
+        if (!await deletePrompt({
             title: intl.formatMessage({
                 id: `subjects_deleteSubjectLabel`,
             }),
-            okLabel: intl.formatMessage({
-                id: `generic_deleteLabel`,
-            }),
-            content: <>
-                <DialogContentText>{intl.formatMessage({
-                    id: `editDialog_deleteConfirm`,
-                }, {
-                    userName: name,
-                })}</DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeToRemovePrompt`,
-                }, {
-                    value: <strong>{name}</strong>,
-                })}</DialogContentText>
-            </>,
-            validations: [ required(), equals(name) ],
+            entityName: name ?? ``,
         })) return;
         try {
             await deleteSubject({

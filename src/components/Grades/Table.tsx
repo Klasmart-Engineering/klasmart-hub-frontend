@@ -167,7 +167,7 @@ export default function GradeTable (props: Props) {
         },
     ];
 
-    const handleEditRowClick = async (row: GradeRow) => {
+    const handleEditRowClick = (row: GradeRow) => {
         setSelectedGradeId(row.id);
         setOpenEditDialog(true);
     };

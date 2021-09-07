@@ -159,13 +159,12 @@ export default function (props: Props) {
         },
     ];
 
-    const handleEditRowClick = async (row: AgeRangeRow) => {
+    const handleEditRowClick = (row: AgeRangeRow) => {
         setSelectedAgeRangeId(row.id);
         setOpenEditDialog(true);
     };
 
     const handleDeleteRowClick = async (row: AgeRangeRow) => {
-
         const entityName = row.ageRange;
         if (!await deletePrompt({
             entityName,
@@ -179,7 +178,6 @@ export default function (props: Props) {
                     id: row.id ?? ``,
                 },
             });
-
             refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_deleteSuccess`,

@@ -1,5 +1,6 @@
 import ClassDialogForm from "./Form";
 import {
+    useDeleteClass,
     useEditClassAgeRanges,
     useEditClassGrades,
     useEditClassPrograms,
@@ -11,6 +12,7 @@ import {
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Class } from "@/types/graphQL";
 import { buildEmptyClass } from "@/utils/classes";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import {
     Dialog,
@@ -40,6 +42,7 @@ export default function EditClassDialog (props: Props) {
     const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
     const [ valid, setValid ] = useState(true);
     const [ updateClass ] = useUpdateClass();
+    const [ deleteClass ] = useDeleteClass();
     const [ editSchools ] = useEditClassSchools();
     const [ editPrograms ] = useEditClassPrograms();
     const [ editSubjects ] = useEditClassSubjects();
@@ -47,6 +50,7 @@ export default function EditClassDialog (props: Props) {
     const [ editAgeRanges ] = useEditClassAgeRanges();
     const currentOrganization = useCurrentOrganization();
     const canEditSchool = usePermission(`edit_school_20330`);
+    const deletePrompt = useDeleteEntityPrompt();
     const [ initClass, setInitClass ] = useState<Class>(buildEmptyClass());
 
     const { data, loading } = useGetClass({
@@ -145,6 +149,34 @@ export default function EditClassDialog (props: Props) {
         }
     };
 
+    const handleDelete = async () => {
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `class_deleteClassTitle`,
+            }),
+            entityName: editedClass.class_name ?? ``,
+        })) return;
+        try {
+            await deleteClass({
+                variables: {
+                    class_id: editedClass.class_id,
+                },
+            });
+            onClose(editedClass);
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedMessage`,
+            }), {
+                variant: `success`,
+            });
+        } catch (err) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `classes_classDeletedError`,
+            }), {
+                variant: `error`,
+            });
+        }
+    };
+
     return (
         <Dialog
             open={open}
@@ -154,7 +186,15 @@ export default function EditClassDialog (props: Props) {
             actions={[
                 {
                     label: intl.formatMessage({
-                        id: `class_cancelLabel`,
+                        id: `generic_deleteLabel`,
+                    }),
+                    color: `error`,
+                    align: `left`,
+                    onClick: handleDelete,
+                },
+                {
+                    label: intl.formatMessage({
+                        id: `generic_cancelLabel`,
                     }),
                     color: `primary`,
                     align: `right`,
@@ -162,7 +202,7 @@ export default function EditClassDialog (props: Props) {
                 },
                 {
                     label: intl.formatMessage({
-                        id: `class_editLabel`,
+                        id: `generic_saveLabel`,
                     }),
                     color: `primary`,
                     align: `right`,

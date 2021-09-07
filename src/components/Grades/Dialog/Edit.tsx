@@ -6,12 +6,10 @@ import {
 } from "@/api/grades";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Grade } from "@/types/graphQL";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { buildEmptyGrade } from "@/utils/grades";
-import { useValidations } from "@/utils/validations";
-import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
-    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import React, {
@@ -33,8 +31,7 @@ export default function (props: Props) {
         gradeId,
     } = props;
     const intl = useIntl();
-    const prompt = usePrompt();
-    const { equals, required } = useValidations();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ updatedGrade, setUpdatedGrade ] = useState(buildEmptyGrade());
     const [ valid, setValid ] = useState(true);
@@ -84,32 +81,13 @@ export default function (props: Props) {
     };
 
     const handleDelete = async () => {
+        if (!await deletePrompt({
+            entityName: updatedGrade.name ?? ``,
+            title: intl.formatMessage({
+                id: `grades_deleteGradePrompt`,
+            }),
+        })) return;
         try {
-            if (!await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `grades_deleteGradePromptTitle`,
-                }),
-                okLabel: intl.formatMessage({
-                    id: `grades_deleteLabel`,
-                }),
-                content: <>
-                    <DialogContentText>
-                        {intl.formatMessage({
-                            id: `editDialog_deleteConfirm`,
-                        }, {
-                            userName: updatedGrade?.name,
-                        })}
-                    </DialogContentText>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `generic_typeToRemovePrompt`,
-                    }, {
-                        value: <strong>{updatedGrade?.name}</strong>,
-                    })}</DialogContentText>
-                </>,
-                validations: [ required(), equals(updatedGrade?.name) ],
-            })) return;
-
             await deleteGrade({
                 variables: {
                     id: updatedGrade?.id ?? ``,

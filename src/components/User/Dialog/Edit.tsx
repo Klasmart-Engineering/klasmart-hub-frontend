@@ -5,6 +5,7 @@ import {
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     createStyles,
@@ -37,6 +38,7 @@ export default function EditUserDialog (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ initOrganizationMembership, setInitOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
@@ -114,14 +116,13 @@ export default function EditUserDialog (props: Props) {
         if (!userId) return;
         const { given_name, family_name } = organizationMembershipData?.user.membership.user ?? {};
         const userName = `${given_name} ${family_name}`;
-        if (!confirm(intl.formatMessage({
-            id: `editDialog_deleteConfirm`,
-        }, {
-            userName,
-        }))) return;
-
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `users_deleteTitle`,
+            }),
+            entityName: userName,
+        })) return;
         const { organization_id } = editedOrganizationMembership;
-
         try {
             await deleteOrganizationMembership({
                 variables: {

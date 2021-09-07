@@ -4,6 +4,7 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import {
     buildCsvTemplateOptions,
     EMPTY_CSV_DATA,
@@ -20,7 +21,6 @@ import { useValidations } from "@/utils/validations";
 import {
     Box,
     createStyles,
-    DialogContentText,
     makeStyles,
     Paper,
     Typography,
@@ -35,7 +35,6 @@ import {
 import clsx from "clsx";
 import {
     CursorTable,
-    usePrompt,
     UserAvatar,
     useSnackbar,
 } from "kidsloop-px";
@@ -107,11 +106,11 @@ export default function UserTable (props: Props) {
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
-    const prompt = usePrompt();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
-    const { required, equals } = useValidations();
+    const { required } = useValidations();
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedUserId, setSelectedUserId ] = useState<string>();
@@ -155,32 +154,11 @@ export default function UserTable (props: Props) {
 
     const deleteSelectedRow = async (row: UserRow) => {
         const userName = `${row.givenName} ${row.familyName}`.trim();
-        if (!await prompt({
-            variant: `error`,
+        if (!await deletePrompt({
             title: intl.formatMessage({
                 id: `users_deleteTitle`,
             }),
-            content: (
-                <>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `generic_deleteText`,
-                    }, {
-                        value: userName,
-                    })}</DialogContentText>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `generic_typeToDeletePrompt`,
-                    }, {
-                        value: <strong>{userName}</strong>,
-                    })}</DialogContentText>
-                </>
-            ),
-            okLabel: intl.formatMessage({
-                id: `generic_deleteLabel`,
-            }),
-            cancelLabel: intl.formatMessage({
-                id: `generic_cancelLabel`,
-            }),
-            validations: [ required(), equals(userName) ],
+            entityName: userName,
         })) return;
         try {
             await deleteOrganizationMembership({
