@@ -125,7 +125,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                         id: `programs_programNameLabel`,
                     })}
                     value={programName}
-                    disabled={disabled}
+                    disabled={disabled || loading}
                     hideHelperText={disabled}
                     autoFocus={!value.id}
                     validations={[
@@ -164,7 +164,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     ]}
                     itemText={(grade) => grade.name ?? ``}
                     itemValue={(grade) => grade.id ?? ``}
-                    disabled={disabled}
+                    disabled={disabled || loading || gradesLoading}
                     hideHelperText={disabled}
                     validations={[ required(`The Grade is required.`) ]}
                     loading={loading || gradesLoading}
@@ -196,7 +196,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     ]}
                     itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
                     itemValue={(ageRange) => ageRange.id ?? ``}
-                    disabled={disabled}
+                    disabled={disabled || loading || ageRangesLoading}
                     hideHelperText={disabled}
                     validations={[ required(`The Age Range is required.`) ]}
                     loading={loading || ageRangesLoading}

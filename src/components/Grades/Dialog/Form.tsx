@@ -124,6 +124,7 @@ export default function GradeDialogForm (props: Props) {
                 ]}
                 id="gradeNameInput"
                 loading={ loading || gradesDataLoading}
+                disabled={ loading || gradesDataLoading}
                 onChange={setGradeName}
                 onValidate={setGradeNameValid}
             />
@@ -148,6 +149,7 @@ export default function GradeDialogForm (props: Props) {
                 validations={[ required() ]}
                 id="progressFromSelect"
                 loading={ loading || gradesDataLoading}
+                disabled={ loading || gradesDataLoading}
                 onChange={setProgressFromId}
                 onValidate={setProgressFromIdValid}
             />
@@ -172,6 +174,7 @@ export default function GradeDialogForm (props: Props) {
                 validations={[ required() ]}
                 id="progressToSelect"
                 loading={ loading || gradesDataLoading}
+                disabled={ loading || gradesDataLoading}
                 onChange={setProgressToId}
                 onValidate={setProgressToIdValid}
             />

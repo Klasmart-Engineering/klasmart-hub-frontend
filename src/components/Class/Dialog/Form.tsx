@@ -256,6 +256,7 @@ export default function ClassDialogForm (props: Props) {
                     })),
                 ]}
                 loading={loading}
+                disabled={loading}
                 onChange={(value) => setClassName(value)}
                 onValidate={setClassNameValid}
             />
@@ -267,7 +268,7 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={allSchools}
                 value={schoolIds}
-                disabled={!canEditSchool}
+                disabled={!canEditSchool || loading || schoolDataLoading}
                 itemText={(school) => school.school_name ?? ``}
                 itemValue={(school) => school.school_id}
                 loading={loading || schoolDataLoading}
@@ -286,6 +287,7 @@ export default function ClassDialogForm (props: Props) {
                 itemText={(program) => program.name ?? ``}
                 itemValue={(program) => program.id ?? ``}
                 loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setProgramsIds(values)}
             />
             <Select
@@ -299,6 +301,7 @@ export default function ClassDialogForm (props: Props) {
                 itemText={(grade) => grade.name ?? ``}
                 itemValue={(grade) => grade.id ?? ``}
                 loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -312,6 +315,7 @@ export default function ClassDialogForm (props: Props) {
                 itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
                 itemValue={(ageRange) => ageRange.id ?? ``}
                 loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setAgeRangesIds(values)}
             />
             <Select
@@ -325,6 +329,7 @@ export default function ClassDialogForm (props: Props) {
                 itemText={(subject) => subject.name ?? ``}
                 itemValue={(subject) => subject.id ?? ``}
                 loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>
