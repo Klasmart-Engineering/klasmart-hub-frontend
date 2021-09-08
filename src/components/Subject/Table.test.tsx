@@ -1,72 +1,66 @@
+import {  GetAllSubjectsPaginatedResponse } from "@/api/subjects";
+import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
+import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import 'regenerator-runtime/runtime';
-import SubjectTable from './Table';
-import { DELETE_SUBJECT } from '@/operations/mutations/deleteSubject';
-import { GET_ALL_SUBJECTS } from '@/operations/queries/getAllSubjects';
-import { MockedResponse } from '@apollo/client/testing';
+import { SubjectRow } from './Table';
+import { getLanguage } from "@/utils/locale";
 import {
     act,
     screen,
     waitFor,
 } from '@testing-library/react';
 import {
-    mathId1,
     mockOrgId,
-    mockPrograms,
     mockSubjects,
 } from '@tests/mockDataSubjects';
 import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
+import { isUuid } from "@/utils/pagination";
+import SubjectsTable from "./Table";
+import { isActive } from "@/types/graphQL";
+export const inputSearch = `Maths`;
 
-let deleteCalled = false;
-const mocks: MockedResponse[] = [
+test(`should return an empty array`, () => {
+    const rows: SubjectRow[] = [];
+
+    expect(rows).toEqual([]);
+});
+
+test(`should return a truthy boolean if is a well formed UUID`, () => {
+    expect(isUuid(mockOrgId)).toBeTruthy();
+    for(let mockSubject of mockSubjects){
+        expect(isUuid(mockSubject.node.id)).toBeTruthy();
+    }
+    expect(isUuid(inputSearch)).toBeFalsy();
+});
+
+const data: GetAllSubjectsPaginatedResponse = {
+    subjectsConnection: {
+        totalCount: 4,
+        pageInfo: {
+            hasNextPage: true,
+            hasPreviousPage: false,
+            startCursor: ``,
+            endCursor: ``,
+        },
+        edges: mockSubjects,
+    },
+};
+
+const mocks = [
     {
         request: {
-            query: GET_ALL_SUBJECTS,
+            query: GET_PAGINATED_ORGANIZATION_SUBJECTS,
             variables: {
-                organization_id: mockOrgId,
+                direction: `FORWARD`,
+                count: 100,
+                orderBy: [ `given_name` ],
+                order: `ASC`,
             },
         },
         result: {
-            data: {
-                organization: {
-                    subjects: mockSubjects,
-                    programs: mockPrograms,
-                },
-            },
-        },
-        newData: () => {
-            if (!deleteCalled) {
-                return {
-                    data: {
-                        organization: {
-                            subjects: mockSubjects,
-                            programs: mockPrograms,
-                        },
-                    },
-                };
-            } else  {
-                return {
-                    data: {
-                        organization: {
-                            subjects: mockSubjects.filter((sub) => sub.id !== mathId1),
-                            programs: [],
-                        },
-                    },
-                };
-            }
-        },
-    },
-    {
-        request: {
-            query: DELETE_SUBJECT,
-            variables: {
-                id: mathId1,
-            },
-        },
-        result: () => {
-            deleteCalled = true;
-            return {};
+            data: mockSubjects,
         },
     },
 ];
@@ -89,80 +83,29 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-test(`Subjects table page renders`, async () => {
-    const { findByText } = render(<SubjectTable />);
+test(`Subjects table page renders data`, async () => {
+    
+    const component = <SubjectsTable
+        order="asc"
+        orderBy="name"
+        loading={false}
+        rows={data.subjectsConnection.edges.filter((edge) => isActive(edge.node)).map((edge) => mapSubjectNodeToSubjectRow(edge.node)) ?? []}
+    />;
+    const { queryAllByText } = render(component);
 
     await act(async () => {
         const title = await screen.findByText(`Subjects`);
-        const noRecords = await findByText(`No records to display`);
+
         await waitFor(() => {
             expect(title).toBeTruthy();
-            expect(noRecords).toBeTruthy();
-        });
-
-        await utils.sleep(0);
-
-        const subjectLabel = await findByText(`Subjects`);
-
-        await waitFor(() => {
-            expect(subjectLabel).toBeTruthy();
-        });
-    });
-});
-
-test(`Subjects page renders data`, async () => {
-    const { findByText, queryAllByText } = render(<SubjectTable />, {
-        mockedResponses: mocks,
-    });
-
-    await act(async () => {
-        const title = await screen.findByText(`Subjects`);
-        const noRecords = await findByText(`No records to display`);
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(noRecords).toBeTruthy();
         });
 
         await utils.sleep(0);
 
         await waitFor(() => {
-            expect(queryAllByText(/Math/gi).length).toEqual(2);
-            expect(queryAllByText(/Elementary/gi).length).toEqual(1);
-            expect(queryAllByText(/Algebra/gi).length).toEqual(1);
-        });
-    });
-});
-
-test(`Subjects table properly updates records after delete`, async () => {
-    const {
-        findAllByTitle,
-        queryByText,
-        queryAllByTitle,
-    } = render(<SubjectTable />, {
-        mockedResponses: mocks,
-    });
-
-    await act(async () => {
-        await utils.sleep(0);
-        const rows = await findAllByTitle(`More actions`);
-
-        await waitFor(() => {
-            expect(rows.length).toEqual(2);
-            expect(queryByText(`Delete`)).toBeNull();
-        });
-
-        await waitFor(() => {
-            rows[0].click();
-        });
-
-        const deleteSpan = await queryByText(`Delete`);
-
-        await waitFor(() => {
-            deleteSpan?.click();
-        });
-
-        await waitFor(() => {
-            expect(queryAllByTitle(`More actions`).length).toEqual(1);
+            for(let mockSubject of mockSubjects){
+                expect(queryAllByText(mockSubject.node.name)).toBeTruthy();
+            }
         });
     });
 });

@@ -1,4 +1,7 @@
+import { useGetSubject } from "@/api/subjects";
 import { Subject } from "@/types/graphQL";
+import { buildEmptyProgram } from "@/utils/programs";
+import { buildEmptySubject } from "@/utils/subjects";
 import {
     Box,
     createStyles,
@@ -85,19 +88,37 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    value?: Subject;
+    subjectId?: string;
     open: boolean;
     onClose: () => void;
 }
 
 export default function ViewSubjectDetailsDrawer (props: Props) {
     const {
-        value,
+        subjectId,
         open,
         onClose,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
+
+    const { data: subjectData } = useGetSubject({
+        variables: {
+            subject_id: subjectId ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !subjectId,
+    });
+    const [ subject, setSubject ] = useState<Subject>(buildEmptySubject());
+
+    useEffect(() => {
+        if (!open) {
+            setSubject(buildEmptySubject());
+            return;
+        }
+        setSubject(subjectData?.subject ?? buildEmptySubject());
+    }, [ open, subjectData ]);
+
     const [ expandedSubject, setExpandedSubject ] = useState<string | false>(false);
 
     const handleChangeSubject = (subjectId: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
@@ -112,7 +133,7 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
     return (
         <Drawer
             open={open}
-            title={value?.name ?? ``}
+            title={subject?.name ?? ``}
             sections={[
                 {
                     header: intl.formatMessage({
@@ -120,7 +141,7 @@ export default function ViewSubjectDetailsDrawer (props: Props) {
                     }),
                     content: (
                         <>
-                            {value?.categories?.map((category) => (
+                            {subject?.categories?.map((category) => (
                                 <Accordion
                                     key={category.id}
                                     square

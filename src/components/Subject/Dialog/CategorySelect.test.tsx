@@ -49,7 +49,7 @@ jest.mock(`@/utils/permissions`, () => {
 
 test(`Category select renders correctly with correct data.`, async () => {
     const { findByText } = render(<CategorySelectDialog
-        value={mockSubjects[0].categories[0]}
+        value={mockSubjects[0].node.categories[0]}
         open={true}
         onClose={jest.fn()}
     />, {

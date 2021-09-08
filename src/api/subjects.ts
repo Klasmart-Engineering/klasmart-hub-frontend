@@ -4,10 +4,16 @@ import {
     GET_ALL_SUBJECTS,
     GET_ALL_SUBJECTS_LIST,
 } from "@/operations/queries/getAllSubjects";
+import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
+    Category,
     Organization,
+    PageInfo,
+    PaginationDirection,
     Program,
+    Status,
+    Subcategory,
     Subject,
 } from "@/types/graphQL";
 import {
@@ -48,11 +54,11 @@ export const useDeleteSubject = (options?: MutationHookOptions<DeleteSubjectResp
 };
 
 interface GetSubjectRequest {
-    id: string;
+    subject_id: string;
 }
 
 interface GetSubjectResponse {
-    organization: Organization;
+    subject: Subject;
 }
 
 export const useGetSubject = (options?: QueryHookOptions<GetSubjectResponse, GetSubjectRequest>) => {
@@ -76,4 +82,37 @@ export const useGetAllSubjects = (options?: QueryHookOptions<GetAllSubjectsRespo
 
 export const useGetAllSubjectsList = (options?: QueryHookOptions<GetAllSubjectsResponse, GetAllSubjectsRequest>) => {
     return useQuery<GetAllSubjectsResponse, GetAllSubjectsRequest>(GET_ALL_SUBJECTS_LIST, options);
+};
+
+export interface SubjectNode {
+    id: string;
+    name: string;
+    status: Status;
+    system: boolean;
+    categories: Category[];
+}
+
+export interface SubjectEdge {
+    node: SubjectNode;
+}
+
+interface GetAllSubjectsPaginatedRequest {
+    direction: PaginationDirection;
+    cursor?: string | null;
+    count?: number;
+    search?: string;
+    orderBy?: string;
+    order?: string;
+}
+
+export interface GetAllSubjectsPaginatedResponse {
+    subjectsConnection: {
+        totalCount: number;
+        pageInfo: PageInfo;
+        edges: SubjectEdge[];
+    };
+}
+
+export const useGetAllPaginatedSubjects = (options?: QueryHookOptions<GetAllSubjectsPaginatedResponse, GetAllSubjectsPaginatedRequest>) => {
+    return useQuery<GetAllSubjectsPaginatedResponse, GetAllSubjectsPaginatedRequest>(GET_PAGINATED_ORGANIZATION_SUBJECTS, options);
 };

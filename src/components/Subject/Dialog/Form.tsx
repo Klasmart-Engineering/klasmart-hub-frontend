@@ -56,6 +56,7 @@ interface Props {
     value: Subject;
     onChange: (value: Subject) => void;
     onValidation: (valid: boolean) => void;
+    loading?: boolean;
 }
 
 export default function SubjectDialogForm (props: Props) {
@@ -63,6 +64,7 @@ export default function SubjectDialogForm (props: Props) {
         value,
         onChange,
         onValidation,
+        loading,
     } = props;
     const classes = useStyles();
     const {
@@ -77,6 +79,11 @@ export default function SubjectDialogForm (props: Props) {
     const [ subjectCategories, setSubjectCategories ] = useState(value.categories ?? []);
     const [ selectedCategoryIndex, setSelectedCategoryIndex ] = useState<number>();
     const [ selectedSubcategoriesIndex, setSelectedSubcategoriesIndex ] = useState<number>();
+
+    useEffect(()=> {
+        setSubjectName(value.name ?? ``);
+        setSubjectCategories(value.categories ?? []);
+    }, [ value ]);
 
     const removeSubcategory = (category: Category, subcategory: Subcategory) => {
         setSubjectCategories((categories) => categories.map((c) => c.id === category.id
@@ -138,6 +145,8 @@ export default function SubjectDialogForm (props: Props) {
                     max(35, `The subject name has a max length of 35 characters.`),
                 ]}
                 id="subjectName"
+                loading={loading}
+                disabled={loading}
                 onChange={setSubjectName}
                 onValidate={setSubjectNameValid}
             />

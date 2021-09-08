@@ -1,4 +1,6 @@
 import EditSubjectDialog from './Edit';
+import { GET_SUBJECT } from '@/operations/queries/getSubject';
+import { MockedResponse } from '@apollo/client/testing';
 import { Status } from '@/types/graphQL';
 import {
     act,
@@ -8,6 +10,7 @@ import {
 import {
     mockCategories,
     mockOrgId,
+    mockSubjects,
 } from '@tests/mockDataSubjects';
 import { render } from "@tests/utils/render";
 import React from 'react';
@@ -31,34 +34,45 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 const formValue = {
-    id: ``,
-    name: `Math`,
+    id: mockSubjects[0].node.id,
+    name: mockSubjects[0].node.name,
     categories: mockCategories,
     status: Status.ACTIVE,
     system: false,
 };
+
+const mocks: MockedResponse[] = [
+    {
+        request: {
+            query: GET_SUBJECT,
+            variables: {
+                id: mockSubjects[0].node.id,
+            },
+        },
+        result: {
+            data: {
+                subject: mockSubjects[0].node,
+            },
+        },
+    },
+];
 
 test(`Subject edit dialog renders correctly`, async () => {
     const {
         getByText,
         getByLabelText,
     } = render(<EditSubjectDialog
-        value={formValue}
+        subjectId={formValue.id}
         open={true}
         onClose={jest.fn()}/>);
 
     await act(async () => {
         const title = getByText(`Edit Subject`);
         const name = await getByLabelText(`Subject Name`);
-        const categoryLabels = await screen.findAllByText(/category/gi);
-        const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
 
         await waitFor(() => {
             expect(title).toBeTruthy();
             expect(name).toBeTruthy();
-            expect(categoryLabels.length).toBeTruthy();
-            expect(subcategoryLabels.length).toBeTruthy();
-            expect(name.value).toBe(`Math`);
         });
     });
 });

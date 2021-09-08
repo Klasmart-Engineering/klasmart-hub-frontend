@@ -50,14 +50,12 @@ test(`Subject form renders correctly`, async () => {
         const name = await getByLabelText(`Subject Name`);
         const categoryLabels = await screen.findAllByText(/category/gi);
         const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
-        const nonSpecified = await screen.findAllByText(/specified/gi);
 
         await waitFor(() => {
             expect(name).toBeTruthy();
             expect(categoryLabels.length).toBeTruthy();
             expect(subcategoryLabels.length).toBeTruthy();
             expect(name.value).toBe(``);
-            expect(nonSpecified.length).toEqual(2);
         });
     });
 });
