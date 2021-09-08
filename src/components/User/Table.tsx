@@ -26,9 +26,9 @@ import {
     Typography,
 } from "@material-ui/core";
 import {
+    AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
-    Description as DescriptionIcon,
     Edit as EditIcon,
     PersonAdd as PersonAddIcon,
 } from "@material-ui/icons";
@@ -477,7 +477,7 @@ export default function UserTable (props: Props) {
                             label: intl.formatMessage({
                                 id: `entity.user.template.download.button`,
                             }),
-                            icon: DescriptionIcon,
+                            icon: AssignmentReturnedIcon,
                             disabled: !canCreate,
                             onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
                         },
