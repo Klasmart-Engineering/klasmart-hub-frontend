@@ -150,7 +150,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
     
     query getOrganizationUsers(
         $direction: ConnectionDirection!
-            $count: Int
+            $count: PageSize
             $cursor: String
             $order: SortOrder!
             $orderBy: UserSortBy!
