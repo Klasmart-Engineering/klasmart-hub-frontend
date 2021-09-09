@@ -12,6 +12,11 @@ export const GET_ELIGIBLE_USERS = gql`
                 phone
                 membership(organization_id: $organization_id) {
                     status
+                    roles {
+                        role_id
+                        role_name
+                        status
+                    }
                 }
                 school_memberships {
                     school_id
@@ -32,6 +37,11 @@ export const GET_ELIGIBLE_USERS = gql`
                 phone
                 membership(organization_id: $organization_id) {
                     status
+                    roles {
+                        role_id
+                        role_name
+                        status
+                    }
                 }
                 school_memberships {
                     school_id

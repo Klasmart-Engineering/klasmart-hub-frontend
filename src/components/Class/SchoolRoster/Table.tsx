@@ -2,12 +2,17 @@ import {
     useAddUsersToClass,
     useGetClassRosterEligibleUsers,
 } from "@/api/classRoster";
-import { Status } from "@/types/graphQL";
+import {
+    Role,
+    Status,
+} from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
+import { getCustomRoleName } from "@/utils/userRoles";
 import {
     createStyles,
     makeStyles,
     Paper,
+    Typography,
 } from "@material-ui/core";
 import {
     FullScreenDialog,
@@ -31,6 +36,7 @@ interface ClassRosterRow {
     role: string;
     email: string;
     phoneNumber: string | null;
+    organizationRoles: string[];
 }
 
 interface Props {
@@ -75,6 +81,7 @@ export default function SchoolRoster (props: Props) {
             role: `Student`,
             email: student.email,
             phoneNumber: student.phone,
+            organizationRoles: student.membership.roles?.map(role => role.role_name ?? ``) ?? [],
         }));
     const teachers = data?.class
         ?.eligibleTeachers?.filter((teacher) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
@@ -85,6 +92,7 @@ export default function SchoolRoster (props: Props) {
             role: `Teacher`,
             email: teacher.email,
             phoneNumber: teacher.phone,
+            organizationRoles: teacher.membership.roles?.map(role => role.role_name ?? ``) ?? [],
         }));
 
     const rows = teachers && students ? [ ...students, ...teachers ] : [];
@@ -107,7 +115,7 @@ export default function SchoolRoster (props: Props) {
         {
             id: `role`,
             label: intl.formatMessage({
-                id: `schools_roleLabel`,
+                id: `class_roleLabel`,
             }),
             groups: roles.map((role) => ({
                 text: role,
@@ -126,6 +134,23 @@ export default function SchoolRoster (props: Props) {
             label: intl.formatMessage({
                 id: `schools_phoneLabel`,
             }),
+        },
+        {
+            id: `organizationRoles`,
+            label: intl.formatMessage({
+                id: `organization.roles`,
+            }, {
+                count: 2,
+            }),
+            render: (row) => row?.organizationRoles?.map((role, i) => (
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {getCustomRoleName(intl, role)}
+                </Typography>
+            )),
         },
     ];
 
