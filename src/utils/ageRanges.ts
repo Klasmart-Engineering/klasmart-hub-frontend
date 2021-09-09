@@ -122,7 +122,7 @@ export const useAgeRangesFilters = (orgId: string, skip?: boolean) => {
     } = useGetPaginatedAgeRangesList({
         variables: {
             direction: `FORWARD`,
-            count: 100,
+            count: 50,
             orderBy: [ `lowValueUnit`, `lowValue` ],
             order: `ASC`,
             filter: buildOrganizationAgeRangeFilter({

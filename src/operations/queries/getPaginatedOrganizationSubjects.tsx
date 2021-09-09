@@ -39,7 +39,7 @@ export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter):
 export const GET_PAGINATED_ORGANIZATION_SUBJECTS = gql`
     query getOrganizationSubjects(
         $direction: ConnectionDirection!
-        $count: Int
+        $count: PageSize
         $cursor: String
         $orderBy: SubjectSortBy!
         $order: SortOrder!

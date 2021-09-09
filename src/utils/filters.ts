@@ -62,7 +62,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     } = useGetPaginatedOrganizationGradesList({
         variables: {
             direction: `FORWARD`,
-            count: 100,
+            count: 50,
             orderBy: `name`,
             order: `ASC`,
             filter: gradeFilter,
@@ -85,7 +85,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     } = useGetPaginatedAgeRangesList({
         variables: {
             direction: `FORWARD`,
-            count: 100,
+            count: 50,
             orderBy: [ `lowValueUnit`, `lowValue` ],
             order: `ASC`,
             filter: buildOrganizationAgeRangeFilter({

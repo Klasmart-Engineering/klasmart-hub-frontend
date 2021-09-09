@@ -118,7 +118,7 @@ const mocks = [
             query: GET_PAGINATED_ORGANIZATION_GRADES_LIST,
             variables: {
                 direction: `FORWARD`,
-                count: 100,
+                count: 50,
                 orderBy: `name`,
                 order: `ASC`,
                 filter: buildGradeFilter({

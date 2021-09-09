@@ -52,7 +52,7 @@ export const useGradeFilters = (orgId: string, skip?: boolean) => {
     useGetPaginatedOrganizationGradesList({
         variables: {
             direction: `FORWARD`,
-            count: 100,
+            count: 50,
             orderBy: `name`,
             order: `ASC`,
             filter,

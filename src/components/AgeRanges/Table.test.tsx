@@ -41,7 +41,7 @@ const mocks = [
             query: GET_PAGINATED_AGE_RANGES,
             variables: {
                 direction: `FORWARD`,
-                count: 100,
+                count: 50,
                 orderBy: [ `lowValueUnit`, `lowValue` ],
                 order: `ASC`,
                 filter: buildOrganizationAgeRangeFilter({
