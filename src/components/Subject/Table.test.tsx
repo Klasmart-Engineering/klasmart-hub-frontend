@@ -1,11 +1,11 @@
-import {  GetAllSubjectsPaginatedResponse } from "@/api/subjects";
-import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import 'regenerator-runtime/runtime';
-import { SubjectRow } from './Table';
-import { getLanguage } from "@/utils/locale";
+import SubjectsTable,
+{ SubjectRow } from './Table';
+import { GetAllSubjectsPaginatedResponse } from "@/api/subjects";
+import { isActive } from "@/types/graphQL";
+import { isUuid } from "@/utils/pagination";
+import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
-    act,
     screen,
     waitFor,
 } from '@testing-library/react';
@@ -16,10 +16,8 @@ import {
 import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
-import { isUuid } from "@/utils/pagination";
-import SubjectsTable from "./Table";
-import { isActive } from "@/types/graphQL";
-export const inputSearch = `Maths`;
+
+const inputSearch = `Maths`;
 
 test(`should return an empty array`, () => {
     const rows: SubjectRow[] = [];
@@ -29,7 +27,7 @@ test(`should return an empty array`, () => {
 
 test(`should return a truthy boolean if is a well formed UUID`, () => {
     expect(isUuid(mockOrgId)).toBeTruthy();
-    for(let mockSubject of mockSubjects){
+    for(const mockSubject of mockSubjects.edges){
         expect(isUuid(mockSubject.node.id)).toBeTruthy();
     }
     expect(isUuid(inputSearch)).toBeFalsy();
@@ -44,26 +42,9 @@ const data: GetAllSubjectsPaginatedResponse = {
             startCursor: ``,
             endCursor: ``,
         },
-        edges: mockSubjects,
+        edges: mockSubjects.edges,
     },
 };
-
-const mocks = [
-    {
-        request: {
-            query: GET_PAGINATED_ORGANIZATION_SUBJECTS,
-            variables: {
-                direction: `FORWARD`,
-                count: 100,
-                orderBy: [ `given_name` ],
-                order: `ASC`,
-            },
-        },
-        result: {
-            data: mockSubjects,
-        },
-    },
-];
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
@@ -84,7 +65,7 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subjects table page renders data`, async () => {
-    
+
     const component = <SubjectsTable
         order="asc"
         orderBy="name"
@@ -93,19 +74,17 @@ test(`Subjects table page renders data`, async () => {
     />;
     const { queryAllByText } = render(component);
 
-    await act(async () => {
-        const title = await screen.findByText(`Subjects`);
+    const title = await screen.findByText(`Subjects`);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(title).toBeTruthy();
+    });
 
-        await utils.sleep(0);
+    await utils.sleep(0);
 
-        await waitFor(() => {
-            for(let mockSubject of mockSubjects){
-                expect(queryAllByText(mockSubject.node.name)).toBeTruthy();
-            }
-        });
+    await waitFor(() => {
+        for(const mockSubject of mockSubjects.edges){
+            expect(queryAllByText(mockSubject.node.name)).toBeTruthy();
+        }
     });
 });

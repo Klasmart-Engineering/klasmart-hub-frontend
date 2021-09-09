@@ -1,7 +1,6 @@
 import CategorySelectDialog from './CategorySelect';
 import { GET_ALL_CATEGORIES } from '@/operations/queries/getAllCategories';
 import { MockedResponse } from '@apollo/client/testing';
-import { waitFor } from '@testing-library/react';
 import {
     mockCategories,
     mockOrgId,
@@ -9,7 +8,6 @@ import {
 } from '@tests/mockDataSubjects';
 import { render } from "@tests/utils/render";
 import React from 'react';
-import { act } from 'react-test-renderer';
 
 const mocks: MockedResponse[] = [
     {
@@ -49,7 +47,7 @@ jest.mock(`@/utils/permissions`, () => {
 
 test(`Category select renders correctly with correct data.`, async () => {
     const { findByText } = render(<CategorySelectDialog
-        value={mockSubjects[0].node.categories[0]}
+        value={mockSubjects.edges[0].node.categories[0]}
         open={true}
         onClose={jest.fn()}
     />, {

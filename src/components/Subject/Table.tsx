@@ -69,6 +69,7 @@ export default function SubjectsTable (props: Props) {
         onTableChange,
         refetch,
         showSelectables,
+        search,
         order,
         orderBy,
     } = props;
@@ -136,7 +137,7 @@ export default function SubjectsTable (props: Props) {
                 id: `generic_idLabel`,
             }),
             hidden: true,
-            disableSearch: true,
+            disableSearch: disabled,
         },
         {
             id: `name`,
@@ -144,7 +145,7 @@ export default function SubjectsTable (props: Props) {
                 id: `subjects_nameLabel`,
             }),
             persistent: true,
-            disableSearch: true,
+            disableSearch: disabled,
         },
         {
             id: `categories`,
@@ -277,6 +278,7 @@ export default function SubjectsTable (props: Props) {
                     endCursor={endCursor}
                     total={total}
                     cursor={cursor}
+                    search={search}
                     onSelected={selectIds}
                     onPageChange={onPageChange}
                     onChange={onTableChange}

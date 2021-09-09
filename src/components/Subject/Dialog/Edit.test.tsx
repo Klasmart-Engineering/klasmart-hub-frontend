@@ -1,12 +1,6 @@
 import EditSubjectDialog from './Edit';
-import { GET_SUBJECT } from '@/operations/queries/getSubject';
-import { MockedResponse } from '@apollo/client/testing';
 import { Status } from '@/types/graphQL';
-import {
-    act,
-    screen,
-    waitFor,
-} from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import {
     mockCategories,
     mockOrgId,
@@ -34,28 +28,12 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 const formValue = {
-    id: mockSubjects[0].node.id,
-    name: mockSubjects[0].node.name,
+    id: mockSubjects.edges[0].node.id,
+    name: mockSubjects.edges[0].node.name,
     categories: mockCategories,
     status: Status.ACTIVE,
     system: false,
 };
-
-const mocks: MockedResponse[] = [
-    {
-        request: {
-            query: GET_SUBJECT,
-            variables: {
-                id: mockSubjects[0].node.id,
-            },
-        },
-        result: {
-            data: {
-                subject: mockSubjects[0].node,
-            },
-        },
-    },
-];
 
 test(`Subject edit dialog renders correctly`, async () => {
     const {
@@ -66,13 +44,11 @@ test(`Subject edit dialog renders correctly`, async () => {
         open={true}
         onClose={jest.fn()}/>);
 
-    await act(async () => {
-        const title = getByText(`Edit Subject`);
-        const name = await getByLabelText(`Subject Name`);
+    const title = getByText(`Edit Subject`);
+    const name = await getByLabelText(`Subject Name`);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(title).toBeTruthy();
+        expect(name).toBeTruthy();
     });
 });

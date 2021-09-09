@@ -1,3 +1,4 @@
+import { ProgramFilter } from "./programs";
 import { CREATE_OR_UPDATE_SUBJECTS } from "@/operations/mutations/createOrUpdateSubjects";
 import { DELETE_SUBJECT } from "@/operations/mutations/deleteSubject";
 import {
@@ -13,9 +14,13 @@ import {
     PaginationDirection,
     Program,
     Status,
+    StatusFilter,
+    StringFilter,
     Subcategory,
     Subject,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -96,6 +101,13 @@ export interface SubjectEdge {
     node: SubjectNode;
 }
 
+export interface SubjectFilter extends PaginationFilter<ProgramFilter> {
+    name?: StringFilter;
+    id?: UuidFilter;
+    status?: StatusFilter;
+    organizationId?: UuidFilter;
+}
+
 interface GetAllSubjectsPaginatedRequest {
     direction: PaginationDirection;
     cursor?: string | null;
@@ -103,6 +115,7 @@ interface GetAllSubjectsPaginatedRequest {
     search?: string;
     orderBy?: string;
     order?: string;
+    filter?: SubjectFilter;
 }
 
 export interface GetAllSubjectsPaginatedResponse {

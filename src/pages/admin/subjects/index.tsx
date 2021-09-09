@@ -1,6 +1,7 @@
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
+import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { isActive } from "@/types/graphQL";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
@@ -41,6 +42,11 @@ export default function SubjectsPage (props: Props) {
         orderBy: `name`,
     });
 
+    const paginationFilter = buildOrganizationSubjectFilter({
+        organizationId: currentOrganization?.organization_id ?? ``,
+        search: serverPagination.search,
+    });
+
     const {
         data,
         refetch,
@@ -52,6 +58,7 @@ export default function SubjectsPage (props: Props) {
             count: serverPagination.rowsPerPage,
             orderBy: serverPagination.orderBy,
             order: serverPagination.order,
+            filter: paginationFilter,
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
@@ -73,7 +80,7 @@ export default function SubjectsPage (props: Props) {
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
-            search: ``,
+            search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
         setTableFilters(tableData?.filters ?? []);
@@ -84,8 +91,10 @@ export default function SubjectsPage (props: Props) {
             count: serverPagination.rowsPerPage,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
         });
     }, [
+        serverPagination.search,
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
@@ -110,6 +119,7 @@ export default function SubjectsPage (props: Props) {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             refetch={refetch}
+            search={serverPagination.search}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />
