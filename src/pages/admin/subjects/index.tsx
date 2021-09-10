@@ -3,7 +3,6 @@ import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
 import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { isActive } from "@/types/graphQL";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -102,7 +101,6 @@ export default function SubjectsPage (props: Props) {
     ]);
 
     const rows = data?.subjectsConnection?.edges
-        .filter((edge) => isActive(edge.node))
         .map((edge) => mapSubjectNodeToSubjectRow(edge.node))
         ?? [];
 

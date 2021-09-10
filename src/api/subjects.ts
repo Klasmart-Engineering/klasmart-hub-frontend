@@ -8,6 +8,7 @@ import {
 import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
+    BooleanFilter,
     Category,
     Organization,
     PageInfo,
@@ -101,10 +102,11 @@ export interface SubjectEdge {
     node: SubjectNode;
 }
 
-export interface SubjectFilter extends PaginationFilter<ProgramFilter> {
-    name?: StringFilter;
+export interface SubjectFilter extends PaginationFilter<SubjectFilter> {
     id?: UuidFilter;
+    name?: StringFilter;
     status?: StatusFilter;
+    system?: BooleanFilter;
     organizationId?: UuidFilter;
 }
 

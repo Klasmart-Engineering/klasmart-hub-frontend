@@ -1,4 +1,5 @@
 import { SubjectFilter } from "@/api/subjects";
+import { Status } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
 
@@ -29,7 +30,27 @@ export const buildOrganizationSubjectSearchFilter = (search: string): SubjectFil
 });
 
 export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter): SubjectFilter => ({
+    status: {
+        operator: `eq`,
+        value: Status.ACTIVE,
+    },
     AND: [
+        {
+            OR: [
+                {
+                    organizationId: {
+                        operator: `eq`,
+                        value: filter.organizationId,
+                    },
+                },
+                {
+                    system: {
+                        operator: `eq`,
+                        value: true,
+                    },
+                },
+            ],
+        },
         {
             AND: [ buildOrganizationSubjectSearchFilter(filter.search) ],
         },
