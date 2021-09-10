@@ -57,6 +57,15 @@ export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter):
     ],
 });
 
+export const buildSubjectIdsFilter = (ids: string[]): SubjectFilter => ({
+    OR: ids.map((id) => ({
+        id: {
+            operator: `eq`,
+            value: id,
+        },
+    })),
+});
+
 export const GET_PAGINATED_ORGANIZATION_SUBJECTS = gql`
     query getOrganizationSubjects(
         $direction: ConnectionDirection!

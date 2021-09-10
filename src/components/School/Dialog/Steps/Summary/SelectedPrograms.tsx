@@ -84,7 +84,6 @@ export default function SelectSchoolPrograms (props: EntityStepContent<School>) 
     }, [ serverPagination.rowsPerPage, serverPagination.search ]);
 
     const rows = data?.programsConnection?.edges
-        .filter((edge) => isActive(edge.node))
         .map((edge) => mapProgramNodeToProgramRow(edge.node))
         ?? [];
 

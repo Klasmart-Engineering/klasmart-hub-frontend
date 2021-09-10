@@ -1,4 +1,5 @@
 
+import { SubjectEdge } from "@/api/subjects";
 import {
     Category,
     Status,
@@ -17,6 +18,35 @@ export const mathId9 = `b00de3cc-aa01-47f5-9f87-850eb70ae009`;
 export const mathId10 = `b00de3cc-aa01-47f5-9f87-850eb70ae010`;
 export const programId1 = `b00de3cc-aa01-47f5-9f87-850eb70aprog`;
 export const categoryId1 = `b00de3cc-aa01-47f5-9f87-850eb70acate`;
+
+export const mockSubjectsStep: SubjectEdge[] = [
+    {
+        node: {
+            id: mathId1,
+            name: `Math Grade 5`,
+            status: Status.ACTIVE,
+            system: false,
+            categories: [
+                {
+                    id: categoryId1,
+                    name: `Algebra`,
+                    status: Status.ACTIVE,
+                    system: false,
+                },
+            ],
+        },
+    },
+    {
+        node: {
+            id: mathId2,
+            name: `Math Grade 6`,
+            status: Status.ACTIVE,
+            system: false,
+            categories: [],
+        },
+    },
+];
+
 export const mockSubjects = {
     totalCount:10,
     pageInfo: {

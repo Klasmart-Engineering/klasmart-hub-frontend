@@ -10,14 +10,12 @@ import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
     BooleanFilter,
     Category,
-    Organization,
     PageInfo,
     PaginationDirection,
     Program,
     Status,
     StatusFilter,
     StringFilter,
-    Subcategory,
     Subject,
     UuidFilter,
 } from "@/types/graphQL";

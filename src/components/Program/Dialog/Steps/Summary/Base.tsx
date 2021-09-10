@@ -1,5 +1,5 @@
-import ProgramInfo from "./ProgramInfo";
-import Subjects from "./Subjects";
+import ProgramInfoStep from "../ProgramInfo";
+import SelectedSubjectsSummary from "./SelectedSubjects";
 import { Program } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
 import {
@@ -11,23 +11,20 @@ import React from "react";
 const useStyles = makeStyles((theme) => createStyles({}));
 
 export default function SummaryStep (props: EntityStepContent<Program>) {
-    const { value, loading } = props;
-
+    const { value } = props;
     const classes = useStyles();
 
     return (
         <>
-            <ProgramInfo
+            <ProgramInfoStep
                 key={`programInfo-${JSON.stringify(value)}`}
                 disabled
                 value={value}
-                loading={loading}
             />
-            <Subjects
-                key={`subjects-${JSON.stringify(value)}`}
+            <SelectedSubjectsSummary
+                key={`selectedPrograms-${JSON.stringify(value)}`}
                 disabled
                 value={value}
-                loading={loading}
             />
         </>
     );
