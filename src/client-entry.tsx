@@ -4,6 +4,7 @@ import "typeface-nanum-square-round";
 import "inter-ui";
 import App from "./app";
 import { cache } from "./cache";
+import { cancelRequestLink } from "./cancelRequest";
 import { getAPIEndpoint } from "./config";
 import {
     createDefaultStore,
@@ -56,8 +57,13 @@ const uploadLink = createUploadLink({
 
 export const client = new ApolloClient({
     credentials: `include`,
-    link: ApolloLink.from([ objectCleanerLink, uploadLink ]),
+    link: ApolloLink.from([
+        objectCleanerLink,
+        cancelRequestLink,
+        uploadLink,
+    ]),
     cache,
+    queryDeduplication: false,
 });
 
 function ClientSide () {

@@ -55,6 +55,9 @@ export default function SchoolsPage (props: Props) {
         },
         skip: !currentOrganization?.organization_id || !canView,
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `SchoolsPage`,
+        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -69,7 +72,6 @@ export default function SchoolsPage (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<SchoolRow>) => {
-        if (loading) return;
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,

@@ -61,6 +61,9 @@ export default function SubjectsPage (props: Props) {
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `SubjectsPage`,
+        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -75,7 +78,6 @@ export default function SubjectsPage (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<SubjectRow>) => {
-        if (loading) return;
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,

@@ -77,6 +77,9 @@ export default function UsersPage () {
             filter: paginationFilter,
         },
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `UsersPage`,
+        },
     });
 
     const pageInfo = usersData?.usersConnection.pageInfo;
@@ -93,14 +96,12 @@ export default function UsersPage () {
     };
 
     const handleTableChange = async (tableData: CursorTableData<UserRow>) => {
-        if (loadingOrganizationMemberships) return;
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
-
         setTableFilters(tableData?.filters ?? []);
     };
 

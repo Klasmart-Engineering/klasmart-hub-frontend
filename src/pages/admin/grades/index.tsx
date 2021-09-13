@@ -65,6 +65,9 @@ export default function GradesPage (props: Props) {
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
+        context: {
+            requestTrackerId: `GradesPage`,
+        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

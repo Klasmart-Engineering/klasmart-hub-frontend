@@ -36,7 +36,7 @@ interface Props {
 
 }
 
-export default function SubjectsPage (props: EntityStepContent<Program>) {
+export default function SelectedSubjectsTable (props: EntityStepContent<Program>) {
     const {
         value,
         disabled,
@@ -67,6 +67,9 @@ export default function SubjectsPage (props: EntityStepContent<Program>) {
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `SelectedSubjectsTable`,
+        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

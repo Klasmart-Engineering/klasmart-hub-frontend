@@ -140,8 +140,8 @@ export default function SchoolTable (props: Props) {
                     cursor={cursor}
                     order={order}
                     orderBy={orderBy}
-                    hasNextPage={hasNextPage}
-                    hasPreviousPage={hasPreviousPage}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
                     startCursor={startCursor}
                     endCursor={endCursor}
                     rowsPerPage={rowsPerPage}

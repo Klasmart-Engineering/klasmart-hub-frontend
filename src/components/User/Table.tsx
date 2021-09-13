@@ -459,8 +459,8 @@ export default function UserTable (props: Props) {
                     rowsPerPage={rowsPerPage}
                     search={search}
                     cursor={cursor}
-                    hasNextPage={hasNextPage}
-                    hasPreviousPage={hasPreviousPage}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
                     startCursor={startCursor}
                     endCursor={endCursor}
                     total={total}
