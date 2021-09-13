@@ -1,7 +1,19 @@
-import UserDialogForm from "./Form";
-import { useCreateOrganizationMembership } from "@/api/organizationMemberships";
+import UserDialogForm, {
+    defaultState,
+    Errors,
+    State,
+} from "./Form";
+import {
+    handleSubmitError,
+    mapFormStateToOrganizationMembership,
+    updatedFormErrors,
+} from "./shared";
+import {
+    CreateOrganizationMembershipRequest,
+    useCreateOrganizationMembership,
+} from "@/api/organizationMemberships";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
+import { ApolloError } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -10,12 +22,21 @@ import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
+import { isEmpty } from "lodash";
 import React,
 {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+
+function mapFormStateToCreateOrganizationMembershipRequest (state: State, organizationId: string): CreateOrganizationMembershipRequest {
+    const membershipInfo = mapFormStateToOrganizationMembership(state);
+    return {
+        organization_id: organizationId,
+        ...membershipInfo,
+    };
+}
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
@@ -25,61 +46,72 @@ interface Props {
 }
 
 export default function CreateUserDialog (props: Props) {
-    const {
-        open,
-        onClose,
-    } = props;
+    const { open, onClose } = props;
     const classes = useStyles();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
+    const [ initialFormState, setInitialFormState ] = useState<State>(defaultState);
+    const [ formState, setFormState ] = useState<State>(defaultState);
     const currentOrganization = useCurrentOrganization();
-    const [ initOrganizationMembership, setInitOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
-    const [ newOrganizationMembership, setNewOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
     const [ createOrganizationMembership ] = useCreateOrganizationMembership();
+    const [ formErrors, setFormErrors ] = useState<Errors>({});
 
     useEffect(() => {
         if (!open) return;
-        setInitOrganizationMembership(buildEmptyOrganizationMembership());
-        setNewOrganizationMembership(buildEmptyOrganizationMembership());
+        setInitialFormState(defaultState);
+        setFormState(defaultState);
+        setFormErrors({});
     }, [ open ]);
+
+    const handleError = (error: ApolloError) => {
+        const {
+            hasExpectedError,
+            newFormErrors,
+            snackbarMessage,
+        } = handleSubmitError({
+            error,
+            localization: {
+                intl,
+                genericErrorMessageId: `createUser_error`,
+            },
+        });
+
+        if (snackbarMessage) {
+            enqueueSnackbar(snackbarMessage, {
+                variant: `error`,
+            });
+        }
+
+        setFormErrors(newFormErrors);
+
+        if (hasExpectedError) {
+            setValid(false);
+        }
+    };
+
+    const onChange = (newFormState: State) => {
+        if (!isEmpty(formErrors)) {
+            const newFormErrors = updatedFormErrors(formState, newFormState, formErrors);
+            setFormErrors(newFormErrors);
+        }
+        setFormState(newFormState);
+    };
 
     const handleCreate = async () => {
         try {
-            const {
-                roles,
-                schoolMemberships,
-                user,
-                shortcode,
-            } = newOrganizationMembership;
+            const variables = mapFormStateToCreateOrganizationMembershipRequest(formState, currentOrganization?.organization_id ?? ``);
             await createOrganizationMembership({
-                variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
-                    organization_role_ids: roles?.map((r) => r.role_id) ?? [],
-                    school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
-                    given_name: user?.given_name,
-                    family_name: user?.family_name,
-                    email: user?.email,
-                    phone: user?.phone,
-                    date_of_birth: user?.date_of_birth ?? ``,
-                    alternate_email: user?.alternate_email ?? ``,
-                    alternate_phone: user?.alternate_phone ?? ``,
-                    gender: user?.gender ?? ``,
-                    shortcode: shortcode ?? ``,
-                },
+                variables,
             });
-            onClose(true);
             enqueueSnackbar(intl.formatMessage({
                 id: `createUser_success`,
             }), {
                 variant: `success`,
             });
+            onClose(true);
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `createUser_error`,
-            }), {
-                variant: `error`,
-            });
+            handleError(error);
         }
     };
 
@@ -109,8 +141,10 @@ export default function CreateUserDialog (props: Props) {
             onClose={() => onClose()}
         >
             <UserDialogForm
-                value={initOrganizationMembership}
-                onChange={setNewOrganizationMembership}
+                initialState={initialFormState}
+                isExistingUser={false}
+                errors={formErrors}
+                onChange={onChange}
                 onValidation={setValid}
             />
         </Dialog>

@@ -6,16 +6,16 @@ export const EDIT_MEMBERSHIP_OF_ORGANIZATION = gql`
         $organization_id: ID!
         $email: String
         $phone: String
-        $given_name: String
-        $family_name: String
+        $given_name: String!
+        $family_name: String!
         $organization_role_ids: [ID!]!
         $school_ids: [ID!]
         $school_role_ids: [ID!]
         $date_of_birth: String
         $alternate_email: String
         $alternate_phone: String
-        $gender: String
-        $shortcode: String
+        $gender: String!
+        $shortcode: String!
     ) {
         organization(organization_id: $organization_id) {
             editMembership(

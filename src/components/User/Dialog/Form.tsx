@@ -1,18 +1,11 @@
-import { useGetOrganizationMemberships } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetSchools } from "@/api/schools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    OrganizationMembership,
-    Status,
-} from "@/types/graphQL";
+import { FormErrors } from "@/types/form";
+import { isActive } from "@/types/graphQL";
 import { roleNameTranslations } from "@/utils/userRoles";
 import { UserGenders } from "@/utils/users";
-import {
-    emailAddressRegex,
-    phoneNumberRegex,
-    useValidations,
-} from "@/utils/validations";
+import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     makeStyles,
@@ -81,7 +74,7 @@ const AccordionSummary = withStyles({
 
 const AccordionDetails = withStyles((theme) => ({}))(MuiAccordionDetails);
 
-const formatDateOfBirth = (date: string): string => {
+export const formatDateOfBirth = (date: string): string => {
     if (date) {
         const mmYYYY = date.split(`-`);
         const [ month, year ] = mmYYYY;
@@ -99,6 +92,10 @@ const genderHandler = (gender: string) => {
         return gender;
     case UserGenders.NOT_SPECIFIED:
         return gender;
+    case `not_specified`:
+        // Required for backwards compatability, as new validation rules mean `_` in Gender are invalid
+        // TODO: remove once UD-852 is implemented
+        return UserGenders.NOT_SPECIFIED;
     case ``:
         return UserGenders.FEMALE;
     default:
@@ -106,15 +103,47 @@ const genderHandler = (gender: string) => {
     }
 };
 
-interface Props {
-    value: OrganizationMembership;
-    onChange: (value: OrganizationMembership) => void;
+export interface State {
+    givenName: string;
+    familyName: string;
+    contactInfo: string;
+    birthday: string;
+    shortcode: string;
+    gender: string;
+    roles: string[];
+    schools: string[];
+    alternativeEmail: string;
+    alternativePhone: string;
+}
+
+export const defaultState: State = {
+    givenName: ``,
+    familyName: ``,
+    contactInfo: ``,
+    birthday: ``,
+    shortcode: ``,
+    gender: UserGenders.FEMALE,
+    roles: [],
+    schools: [],
+    alternativeEmail: ``,
+    alternativePhone: ``,
+};
+
+export interface Errors extends FormErrors<State> {}
+
+export interface Props {
+    initialState: State;
+    errors?: Errors;
+    isExistingUser: boolean;
+    onChange: (value: State) => void;
     onValidation: (valid: boolean) => void;
 }
 
 export default function UserDialogForm (props: Props) {
     const {
-        value,
+        initialState,
+        errors = {},
+        isExistingUser,
         onChange,
         onValidation,
     } = props;
@@ -132,31 +161,30 @@ export default function UserDialogForm (props: Props) {
             organization_id: organizationId,
         },
     });
-    const allSchools = schoolsData?.organization?.schools?.filter((s) => s.status === Status.ACTIVE) ?? [];
-    const allRoles = organizationData?.organization?.roles?.filter((role) => role.status === Status.ACTIVE) ?? [];
-    const [ givenName, setGivenName ] = useState(value.user?.given_name ?? ``);
-    const [ givenNameValid, setGivenNameValid ] = useState(true);
-    const [ familyName, setFamilyName ] = useState(value.user?.family_name ?? ``);
-    const [ familyNameValid, setFamilyNameValid ] = useState(true);
-    const [ schoolIds, setSchoolIds ] = useState(value.schoolMemberships
-        ?.filter((membership) => membership.school?.status === Status.ACTIVE)
-        .map((schoolMembership) => schoolMembership.school_id) ?? []);
-    const [ roleIds, setRoleIds ] = useState(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
-    const [ roleIdsValid, setRoleIdsValid ] = useState(true);
-    const [ contactInfo, setContactInfo ] = useState(value.user?.email ?? value.user?.phone ?? ``);
-    const [ contactInfoIsValid, setContactInfoIsValid ] = useState(true);
-    const [ shortcode, setShortcode ] = useState(value.shortcode ?? ``);
-    const [ shortcodeIsValid, setShortcodeIsValid ] = useState(true);
-    const [ alternativeEmail, setAlternativeEmail ] = useState(value.user?.alternate_email ?? ``);
-    const [ alternativeEmailIsValid, setAlternativeEmailIsValid ] = useState(true);
-    const [ alternativePhone, setAlternativePhone ] = useState(value.user?.alternate_phone ?? ``);
-    const [ alternativePhoneIsValid, setAlternativePhoneIsValid ] = useState(true);
-    const [ radioValue, setRadioValue ] = useState<string | UserGenders>(genderHandler(value.user?.gender ?? ``));
-    const [ gender, setGender ] = useState(value.user?.gender ?? ``);
-    const [ genderIsValid, setGenderIsValid ] = useState(true);
-    const [ birthday, setBirthday ] = useState(formatDateOfBirth(value.user?.date_of_birth ?? ``));
-    const [ birthdayIsValid, setBirthdayIsValid ] = useState(true);
-    const [ expanded, setExpanded ] = useState(!!(value.user?.alternate_email || value.user?.alternate_phone));
+    const allSchools = schoolsData?.organization?.schools?.filter(isActive) ?? [];
+    const allRoles = organizationData?.organization?.roles?.filter(isActive) ?? [];
+
+    const [ givenName, setGivenName ] = useState(initialState.givenName);
+    const [ givenNameValid, setGivenNameValid ] = useState(!errors?.givenName);
+    const [ familyName, setFamilyName ] = useState(initialState.familyName);
+    const [ familyNameValid, setFamilyNameValid ] = useState(!errors?.familyName);
+    const [ schoolIds, setSchoolIds ] = useState(initialState.schools);
+    const [ roleIds, setRoleIds ] = useState(initialState.roles);
+    const [ roleIdsValid, setRoleIdsValid ] = useState(!errors?.roles);
+    const [ contactInfo, setContactInfo ] = useState(initialState.contactInfo);
+    const [ contactInfoIsValid, setContactInfoIsValid ] = useState(!errors?.contactInfo);
+    const [ shortcode, setShortcode ] = useState(initialState.shortcode);
+    const [ shortcodeIsValid, setShortcodeIsValid ] = useState(!errors?.shortcode);
+    const [ alternativeEmail, setAlternativeEmail ] = useState(initialState.alternativeEmail);
+    const [ alternativeEmailIsValid, setAlternativeEmailIsValid ] = useState(!errors?.alternativeEmail);
+    const [ alternativePhone, setAlternativePhone ] = useState(initialState.alternativePhone);
+    const [ alternativePhoneIsValid, setAlternativePhoneIsValid ] = useState(!errors?.alternativePhone);
+    const [ radioValue, setRadioValue ] = useState<string | UserGenders>(genderHandler(initialState.gender));
+    const [ gender, setGender ] = useState(initialState.gender);
+    const [ genderIsValid, setGenderIsValid ] = useState(!errors?.gender);
+    const [ birthday, setBirthday ] = useState(formatDateOfBirth(initialState.birthday));
+    const [ birthdayIsValid, setBirthdayIsValid ] = useState(!errors?.birthday);
+    const [ isAlternativeContactInfoExpanded, setIsAlternativeContactInfoExpanded ] = useState(!!(initialState.alternativeEmail || initialState.alternativePhone));
     const {
         required,
         alphanumeric,
@@ -177,8 +205,6 @@ export default function UserDialogForm (props: Props) {
     const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
     minDateAllowed.setFullYear(currentYear - 100);
 
-    const isExistingUser = !!(value.user_id && value.organization_id);
-
     useEffect(() => {
         onValidation([
             givenNameValid,
@@ -190,6 +216,7 @@ export default function UserDialogForm (props: Props) {
             alternativePhoneIsValid,
             contactInfoIsValid,
             birthdayIsValid,
+            Object.keys(errors).length === 0,
         ].every((valid) => valid));
     }, [
         givenNameValid,
@@ -201,37 +228,25 @@ export default function UserDialogForm (props: Props) {
         alternativePhoneIsValid,
         contactInfoIsValid,
         birthdayIsValid,
+        errors,
     ]);
 
     useEffect(() => {
-        const userId = value.user?.user_id ?? ``;
-        const email = contactInfo && emailAddressRegex.test(contactInfo) ? contactInfo : undefined;
-        const phone = contactInfo && phoneNumberRegex.test(contactInfo) ? contactInfo : undefined;
-        const selectedGender = radioValue === UserGenders.OTHER ? gender : radioValue;
-        const updatedOrganizationMembership: OrganizationMembership = {
-            organization_id: value.organization_id,
-            user_id: userId,
-            user: {
-                user_id: userId,
-                given_name: givenName,
-                family_name: familyName,
-                email,
-                phone,
-                date_of_birth: dateFormatMMYYYY(),
-                gender: selectedGender,
-                alternate_email: alternativeEmail,
-                alternate_phone: alternativePhone,
-            },
-            roles: allRoles.filter((role) => roleIds.includes(role.role_id)),
-            schoolMemberships: allSchools
-                .filter((school) => schoolIds.includes(school.school_id))
-                .map((s) => ({
-                    user_id: userId,
-                    school_id: s.school_id,
-                })),
+        const newState: State = {
+            givenName,
+            familyName,
+            contactInfo,
             shortcode,
+            alternativeEmail,
+            alternativePhone,
+            gender: radioValue === UserGenders.OTHER ? gender : radioValue,
+            roles: allRoles.filter((role) => roleIds.includes(role.role_id)).map(({ role_id }) => role_id),
+            schools: allSchools
+                .filter((school) => schoolIds.includes(school.school_id))
+                .map(({ school_id }) => school_id),
+            birthday: dateFormatMMYYYY(),
         };
-        onChange(updatedOrganizationMembership);
+        onChange(newState);
     }, [
         givenName,
         familyName,
@@ -250,24 +265,22 @@ export default function UserDialogForm (props: Props) {
     ]);
 
     useEffect(() => {
-        setGivenName(value.user?.given_name ?? ``);
-        setFamilyName(value.user?.family_name ?? ``);
-        setSchoolIds(value.schoolMemberships
-            ?.filter((membership) => membership.school?.status === Status.ACTIVE)
-            .map((schoolMembership) => schoolMembership.school_id) ?? []);
-        setRoleIds(value.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.role_id) ?? []);
-        setContactInfo(value.user?.email ?? value.user?.phone ?? ``);
-        setShortcode(value.shortcode ?? ``);
-        setAlternativeEmail(value.user?.alternate_email ?? ``);
-        setAlternativePhone(value.user?.alternate_phone ?? ``);
-        setRadioValue(genderHandler(value.user?.gender ?? ``));
-        setGender(value.user?.gender ?? ``);
-        setExpanded(!!(value.user?.alternate_email || value.user?.alternate_phone));
-        setBirthday(formatDateOfBirth(value.user?.date_of_birth ?? ``));
-    }, [ value ]);
+        setGivenName(initialState.givenName);
+        setFamilyName(initialState.familyName);
+        setSchoolIds(initialState.schools);
+        setRoleIds(initialState.roles);
+        setContactInfo(initialState.contactInfo);
+        setShortcode(initialState.shortcode);
+        setAlternativeEmail(initialState.alternativeEmail);
+        setAlternativePhone(initialState.alternativePhone);
+        setRadioValue(genderHandler(initialState.gender));
+        setGender(initialState.gender);
+        setBirthday(formatDateOfBirth(initialState.birthday));
+        setIsAlternativeContactInfoExpanded(!!(initialState.alternativeEmail || initialState.alternativePhone));
+    }, [ initialState ]);
 
     const handleAccordionChange = (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
-        setExpanded(newExpanded);
+        setIsAlternativeContactInfoExpanded(newExpanded);
     };
 
     const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -331,13 +344,14 @@ export default function UserDialogForm (props: Props) {
         <div className={classes.root}>
             <div className={classes.heading}>
                 <TextField
+                    id={`givenName`}
                     value={givenName}
                     label={intl.formatMessage({
                         id: `createUser_givenNameLabel`,
                     })}
                     variant="outlined"
                     type="text"
-                    autoFocus={!value?.user?.user_id}
+                    autoFocus={isExistingUser}
                     validations={[
                         required(intl.formatMessage({
                             id: `validation.error.attribute.required`,
@@ -356,10 +370,12 @@ export default function UserDialogForm (props: Props) {
                             attribute: attributes.givenName,
                         })),
                     ]}
+                    error={errors?.givenName?.message}
                     onChange={setGivenName}
                     onValidate={setGivenNameValid}
                 />
                 <TextField
+                    id={`familyName`}
                     value={familyName}
                     label={intl.formatMessage({
                         id: `createUser_familyNameLabel`,
@@ -384,10 +400,12 @@ export default function UserDialogForm (props: Props) {
                             attribute: attributes.familyName,
                         })),
                     ]}
+                    error={errors?.familyName?.message}
                     onChange={setFamilyName}
                     onValidate={setFamilyNameValid}
                 />
                 <TextField
+                    id={`contactInfo`}
                     value={contactInfo}
                     variant="outlined"
                     label={intl.formatMessage({
@@ -412,11 +430,13 @@ export default function UserDialogForm (props: Props) {
                             max: 250,
                         })),
                     ]}
+                    error={errors?.contactInfo?.message}
                     disabled={isExistingUser}
                     onChange={setContactInfo}
                     onValidate={setContactInfoIsValid}
                 />
                 <TextField
+                    id={`birthday`}
                     label={intl.formatMessage({
                         id: `user.birthday`,
                     })}
@@ -431,17 +451,25 @@ export default function UserDialogForm (props: Props) {
                             max: `${currentYear}-${currentMonth}`,
                         },
                     }}
-                    validations={[ beforeDate(today), afterDate(minDateAllowed) ]}
+                    validations={[ beforeDate(today), afterDate(minDateAllowed)  ]}
                     onValidate={setBirthdayIsValid}
                     onChange={setBirthday}
                 />
                 <TextField
+                    id={`shortcode`}
                     className={classes.shortCode}
                     value={shortcode}
                     label={attributes.shortCode}
                     variant="outlined"
                     type="text"
                     validations={[
+                        ...isExistingUser ? [
+                            required(intl.formatMessage({
+                                id: `validation.error.attribute.required`,
+                            }, {
+                                attribute: attributes.shortCode,
+                            })),
+                        ]: [],
                         max(16, intl.formatMessage({
                             id: `validation.error.attribute.maxLength`,
                         }, {
@@ -454,6 +482,7 @@ export default function UserDialogForm (props: Props) {
                             attribute: attributes.shortCode,
                         })),
                     ]}
+                    error={errors?.shortcode?.message}
                     onChange={setShortcode}
                     onValidate={setShortcodeIsValid}
                 />
@@ -461,6 +490,7 @@ export default function UserDialogForm (props: Props) {
             <FormControl className={classes.genderContainer}>
                 <FormLabel>{attributes.gender}</FormLabel>
                 <RadioGroup
+                    id={`gender`}
                     aria-label={attributes.gender}
                     name="gender"
                     value={radioValue}
@@ -493,6 +523,7 @@ export default function UserDialogForm (props: Props) {
                 </RadioGroup>
                 {radioValue === UserGenders.OTHER && (
                     <TextField
+                        id={`genderOther`}
                         value={gender}
                         label={intl.formatMessage({
                             id: `user.gender.pleaseSpecify`,
@@ -526,6 +557,7 @@ export default function UserDialogForm (props: Props) {
             <Select
                 multiple
                 fullWidth
+                id={`roles`}
                 label={intl.formatMessage({
                     id: `createUser_rolesLabel`,
                 })}
@@ -555,6 +587,7 @@ export default function UserDialogForm (props: Props) {
             <Select
                 multiple
                 fullWidth
+                id={`schools`}
                 label={intl.formatMessage({
                     id: `createUser_schoolsLabel`,
                 })}
@@ -569,7 +602,7 @@ export default function UserDialogForm (props: Props) {
             />
             <Accordion
                 square
-                expanded={expanded}
+                expanded={isAlternativeContactInfoExpanded}
                 onChange={handleAccordionChange}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -581,6 +614,7 @@ export default function UserDialogForm (props: Props) {
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
                         <TextField
+                            id={`alternativeEmail`}
                             value={alternativeEmail}
                             variant="outlined"
                             label={intl.formatMessage({
@@ -605,6 +639,7 @@ export default function UserDialogForm (props: Props) {
                                     ]
                                     : []),
                             ]}
+                            error={errors?.alternativeEmail?.message}
                             onChange={setAlternativeEmail}
                             onValidate={setAlternativeEmailIsValid}
                         />
@@ -613,6 +648,7 @@ export default function UserDialogForm (props: Props) {
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
                         <TextField
+                            id={`alternativePhone`}
                             value={alternativePhone}
                             variant="outlined"
                             label={intl.formatMessage({
@@ -624,6 +660,7 @@ export default function UserDialogForm (props: Props) {
                                     id: `validation.error.phone.format`,
                                 })),
                             ]}
+                            error={errors?.alternativePhone?.message}
                             onChange={setAlternativePhone}
                             onValidate={setAlternativePhoneIsValid}
                         />

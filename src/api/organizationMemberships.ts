@@ -34,69 +34,69 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     organizationUserStatus?: StringFilter;
 }
 
-interface UpdateOrganizationMembershipRequest {
+export interface UpdateOrganizationMembershipRequest {
     user_id: string;
-    organization_id: string;
-    email?: string | null;
-    phone?: string | null;
-    given_name?: string | null;
-    family_name?: string | null;
-    organization_role_ids?: string[];
-    school_ids?: string[];
-    date_of_birth?: string;
-    alternate_email?: string;
-    alternate_phone?: string;
-    gender?: string;
-    shortcode?: string;
-}
-
-interface UpdateOrganizationMembershipResponse {
-}
-
-export const useUpdateOrganizationMembership = (options?: MutationHookOptions<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>) => {
-    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION, options);
-};
-
-interface DeleteOrganizationMembershipRequest {
-    organization_id: string;
-    user_id: string;
-}
-
-interface DeleteOrganizationMembershipResponse {
-}
-
-export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
-    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, options);
-};
-
-interface CreateOrganizationMembershipRequest {
     organization_id: string;
     email?: string | null;
     phone?: string | null;
     given_name: string;
     family_name: string;
     organization_role_ids: string[];
-    school_ids: string[];
-    date_of_birth: string;
-    alternate_email: string;
-    alternate_phone: string;
+    school_ids?: string[];
+    date_of_birth?: string;
+    alternate_email?: string;
+    alternate_phone?: string;
     gender: string;
     shortcode: string;
 }
 
-interface CreateOrganizationMembershipResponse {
+export interface UpdateOrganizationMembershipResponse {
+}
+
+export const useUpdateOrganizationMembership = (options?: MutationHookOptions<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>) => {
+    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION, options);
+};
+
+export interface DeleteOrganizationMembershipRequest {
+    organization_id: string;
+    user_id: string;
+}
+
+export interface DeleteOrganizationMembershipResponse {
+}
+
+export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
+    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, options);
+};
+
+export interface CreateOrganizationMembershipRequest {
+    organization_id: string;
+    email?: string | null;
+    phone?: string | null;
+    given_name: string;
+    family_name: string;
+    organization_role_ids: string[];
+    school_ids?: string[];
+    date_of_birth?: string;
+    alternate_email?: string;
+    alternate_phone?: string;
+    gender: string;
+    shortcode?: string;
+}
+
+export interface CreateOrganizationMembershipResponse {
 }
 
 export const useCreateOrganizationMembership = (options?: MutationHookOptions<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>) => {
     return useMutation<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>(INVITE_USER_TO_ORGANIZATION, options);
 };
 
-interface GetOrganizationMembershipRequest {
+export interface GetOrganizationMembershipRequest {
     organizationId: string;
     userId: string;
 }
 
-interface GetOrganizationMembershipResponse {
+export interface GetOrganizationMembershipResponse {
     user: {
         membership: OrganizationMembership;
     };

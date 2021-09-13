@@ -15,11 +15,11 @@ import {
     useQuery,
 } from "@apollo/client";
 
-interface GetAllRolesRequest {
+export interface GetAllRolesRequest {
     organization_id: string;
 }
 
-interface GetAllRolesResponse {
+export interface GetAllRolesResponse {
     organization: {
         roles: Role[];
     };

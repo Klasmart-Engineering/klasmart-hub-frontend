@@ -1,3 +1,4 @@
+import { APIErrorCode } from "../api/errors";
 import { ApolloError } from "@apollo/client";
 import { ExportToCsv } from 'export-to-csv';
 import {
@@ -28,49 +29,33 @@ export enum CsvUploadEntityErrorCode {
     ERR_CSV_MISSING_REQUIRED_COLUMN = `ERR_CSV_MISSING_REQUIRED_COLUMN`,
     ERR_CSV_DUPLICATE_COLUMN = `ERR_CSV_DUPLICATE_COLUMN`,
     ERR_CSV_MISSING_REQUIRED = `ERR_CSV_MISSING_REQUIRED`,
-    ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE = `ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE`,
     ERR_CSV_MISSING_REQUIRED_EITHER = `ERR_CSV_MISSING_REQUIRED_EITHER`,
-    ERR_MISSING_REQUIRED_EITHER = `ERR_MISSING_REQUIRED_EITHER`,
     ERR_CSV_DUPLICATE_ENTITY = `ERR_CSV_DUPLICATE_ENTITY`,
-    ERR_DUPLICATE_ENTITY = `ERR_DUPLICATE_ENTITY`,
     ERR_CSV_DUPLICATE_CHILD_ENTITY = `ERR_CSV_DUPLICATE_CHILD_ENTITY`,
     ERR_CSV_NONE_EXIST_ENTITY = `ERR_CSV_NONE_EXIST_ENTITY`,
-    ERR_NON_EXISTENT_ENTITY = `ERR_NON_EXISTENT_ENTITY`,
     ERR_CSV_NONE_EXIST_CHILD_ENTITY = `ERR_CSV_NONE_EXIST_CHILD_ENTITY`,
-    ERR_NON_EXISTENT_CHILD_ENTITY = `ERR_NON_EXISTENT_CHILD_ENTITY`,
     ERR_CSV_INVALID_ENUM = `ERR_CSV_INVALID_ENUM`,
     ERR_CSV_INVALID_MIN = `ERR_CSV_INVALID_MIN`,
-    ERR_INVALID_MIN_LENGTH = `ERR_INVALID_MIN_LENGTH`,
-    ERR_INVALID_MAX_LENGTH = `ERR_INVALID_MAX_LENGTH`,
     ERR_CSV_INVALID_MAX = `ERR_CSV_INVALID_MAX`,
     ERR_CSV_INVALID_BETWEEN = `ERR_CSV_INVALID_BETWEEN`,
     ERR_CSV_INVALID_ALPHA = `ERR_CSV_INVALID_ALPHA`,
-    ERR_INVALID_ALPHANUMERIC_SPECIAL_CHARACTERS = `ERR_INVALID_ALPHANUMERIC_SPECIAL_CHARACTERS`,
-    ERR_INVALID_ALPHABETIC = `ERR_INVALID_ALPHABETIC`,
     ERR_CSV_INVALID_ALPHA_NUM = `ERR_CSV_INVALID_ALPHA_NUM`,
-    ERR_INVALID_ALPHANUMERIC = `ERR_INVALID_ALPHANUMERIC`,
     ERR_CSV_INVALID_DATE_FORMAT = `ERR_CSV_INVALID_DATE_FORMAT`,
-    ERR_INVALID_DATE = `ERR_INVALID_DATE`,
     ERR_CSV_INVALID_BOOLEAN = `ERR_CSV_INVALID_BOOLEAN`,
     ERR_CSV_INVALID_EMAIL = `ERR_CSV_INVALID_EMAIL`,
-    ERR_INVALID_EMAIL = `ERR_INVALID_EMAIL`,
     ERR_CSV_INVALID_PHONE = `ERR_CSV_INVALID_PHONE`,
-    ERR_INVALID_PHONE = `ERR_INVALID_PHONE`,
     ERR_CSV_INVALID_NUMBER = `ERR_CSV_INVALID_NUMBER`,
     ERR_CSV_INVALID_UUID = `ERR_CSV_INVALID_UUID`,
-    ERR_INVALID_UUID = `ERR_INVALID_UUID`,
     ERR_CSV_INVALID_GREATER_THAN_OTHER = `ERR_CSV_INVALID_GREATER_THAN_OTHER`,
     ERR_CSV_INVALID_DIFFERENT = `ERR_CSV_INVALID_DIFFERENT`,
     ERR_CSV_INVALID_UPPERCASE_ALPHA_NUM_WITH_MAX = `ERR_CSV_INVALID_UPPERCASE_ALPHA_NUM_WITH_MAX`,
     ERR_CSV_INVALID_MULTIPLE_EXIST = `ERR_CSV_INVALID_MULTIPLE_EXIST`,
     ERR_CSV_INVALID_MULTIPLE_EXIST_CHILD = `ERR_CSV_INVALID_MULTIPLE_EXIST_CHILD`,
     ERR_CSV_INVALID_LENGTH = `ERR_CSV_INVALID_LENGTH`,
-    UNAUTHORIZED = `UNAUTHORIZED`,
-    UNAUTHORIZED_UPLOAD_TO_ORGANIZATION = `UNAUTHORIZED_UPLOAD_TO_ORGANIZATION`
 }
 
 export interface CsvBadInputErrorDetails {
-    code: CsvUploadEntityErrorCode;
+    code: CsvUploadEntityErrorCode | APIErrorCode;
     message: string;
     row: number;
     column: string;
@@ -102,7 +87,7 @@ export interface CsvBadInputError {
     details: CsvBadInputErrorDetails[];
 }
 
-const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) => {
+export const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) => {
     const {
         name,
         entity,
@@ -129,6 +114,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
     } = error;
     switch (error.code) {
     case CsvUploadEntityErrorCode.ERR_CSV_DUPLICATE_CHILD_ENTITY:
+    case APIErrorCode.ERR_DUPLICATE_CHILD_ENTITY:
         return intl.formatMessage({
             id: `validation.error.entity.duplicateChild`,
         }, {
@@ -139,7 +125,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             parentName: parentName || parent_name,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_DUPLICATE_ENTITY:
-    case CsvUploadEntityErrorCode.ERR_DUPLICATE_ENTITY:
+    case APIErrorCode.ERR_DUPLICATE_ENTITY:
         return intl.formatMessage({
             id: `validation.error.entity.duplicate`,
         }, {
@@ -154,7 +140,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             fileName,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_ALPHA:
-    case CsvUploadEntityErrorCode.ERR_INVALID_ALPHABETIC:
+    case APIErrorCode.ERR_INVALID_ALPHABETIC:
         return intl.formatMessage({
             id: `validation.error.entity.alphabetic`,
         }, {
@@ -162,14 +148,14 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_ALPHA_NUM:
-    case CsvUploadEntityErrorCode.ERR_INVALID_ALPHANUMERIC:
+    case APIErrorCode.ERR_INVALID_ALPHANUMERIC:
         return intl.formatMessage({
             id: `validation.error.entity.alphanumeric`,
         }, {
             entity,
             attribute,
         });
-    case CsvUploadEntityErrorCode.ERR_INVALID_ALPHANUMERIC_SPECIAL_CHARACTERS:
+    case APIErrorCode.ERR_INVALID_ALPHANUMERIC_SPECIAL_CHARACTERS:
         return intl.formatMessage({
             id: `validation.error.entity.alphanumericAndSpecialCharacters`,
         }, {
@@ -193,7 +179,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_DATE_FORMAT:
-    case CsvUploadEntityErrorCode.ERR_INVALID_DATE:
+    case APIErrorCode.ERR_INVALID_DATE:
         return intl.formatMessage({
             id: `validation.error.entity.date`,
         }, {
@@ -210,7 +196,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             other,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_EMAIL:
-    case CsvUploadEntityErrorCode.ERR_INVALID_EMAIL:
+    case APIErrorCode.ERR_INVALID_EMAIL:
         // NB: This code includes `entity` and `attribute` params, but these are not currently used
         return intl.formatMessage({
             id: `validation.error.email.format`,
@@ -232,7 +218,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             other,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_LENGTH:
-    case CsvUploadEntityErrorCode.ERR_INVALID_MAX_LENGTH:
+    case APIErrorCode.ERR_INVALID_MAX_LENGTH:
         return intl.formatMessage({
             id: `validation.error.entity.maxLength`,
         }, {
@@ -248,7 +234,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
             max,
         });
-    case CsvUploadEntityErrorCode.ERR_INVALID_MIN_LENGTH:
+    case APIErrorCode.ERR_INVALID_MIN_LENGTH:
         return intl.formatMessage({
             id: `validation.error.entity.minLength`,
         }, {
@@ -290,7 +276,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_PHONE:
-    case CsvUploadEntityErrorCode.ERR_INVALID_PHONE:
+    case APIErrorCode.ERR_INVALID_PHONE:
         // NB: This code includes `entity` and `attribute` params, but these are not currently used
         return intl.formatMessage({
             id: `validation.error.phone.format`,
@@ -304,7 +290,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             max,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_INVALID_UUID:
-    case CsvUploadEntityErrorCode.ERR_INVALID_UUID:
+    case APIErrorCode.ERR_INVALID_UUID:
         return intl.formatMessage({
             id: `validation.error.entity.uuid`,
         }, {
@@ -312,7 +298,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_MISSING_REQUIRED:
-    case CsvUploadEntityErrorCode.ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE:
+    case APIErrorCode.ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE:
         return intl.formatMessage({
             id: `validation.error.entity.required`,
         }, {
@@ -320,7 +306,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_MISSING_REQUIRED_EITHER:
-    case CsvUploadEntityErrorCode.ERR_MISSING_REQUIRED_EITHER:
+    case APIErrorCode.ERR_MISSING_REQUIRED_EITHER:
         return intl.formatMessage({
             id: `validation.error.entity.eitherRequired`,
         }, {
@@ -330,7 +316,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             otherAttribute: otherAttribute || other_attribute,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_NONE_EXIST_CHILD_ENTITY:
-    case CsvUploadEntityErrorCode.ERR_NON_EXISTENT_CHILD_ENTITY:
+    case APIErrorCode.ERR_NON_EXISTENT_CHILD_ENTITY:
         return intl.formatMessage({
             id: `validation.error.entity.nonExistentChild`,
         }, {
@@ -342,7 +328,7 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             parentName: parentName || parent_name,
         });
     case CsvUploadEntityErrorCode.ERR_CSV_NONE_EXIST_ENTITY:
-    case CsvUploadEntityErrorCode.ERR_NON_EXISTENT_ENTITY:
+    case APIErrorCode.ERR_NON_EXISTENT_ENTITY:
         return intl.formatMessage({
             id: `validation.error.entity.nonExistent`,
         }, {
@@ -350,11 +336,11 @@ const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: IntlShape) 
             name: entityName || name,
             entity,
         });
-    case CsvUploadEntityErrorCode.UNAUTHORIZED:
+    case APIErrorCode.UNAUTHORIZED:
         return intl.formatMessage({
             id: `validation.error.permission.unauthorized`,
         });
-    case CsvUploadEntityErrorCode.UNAUTHORIZED_UPLOAD_TO_ORGANIZATION:
+    case APIErrorCode.UNAUTHORIZED_UPLOAD_TO_ORGANIZATION:
         return intl.formatMessage({
             id: `validation.error.permission.uploadToOrganization`,
         }, {

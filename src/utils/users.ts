@@ -3,7 +3,7 @@ import { Role } from "@/types/graphQL";
 export enum UserGenders {
     MALE = `male`,
     FEMALE = `female`,
-    NOT_SPECIFIED = `not_specified`,
+    NOT_SPECIFIED = `not-specified`,
     OTHER = `other`,
 }
 
