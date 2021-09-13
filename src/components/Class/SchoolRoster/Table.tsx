@@ -32,7 +32,8 @@ const useStyles = makeStyles(() =>
 
 interface ClassRosterRow {
     id: string;
-    username: string | undefined;
+    givenName: string | undefined;
+    familyName: string | undefined;
     role: string;
     email: string;
     phoneNumber: string | null;
@@ -77,7 +78,8 @@ export default function SchoolRoster (props: Props) {
         .filter((student) => student.membership?.status === Status.ACTIVE)
         .map((student) => ({
             id: `${student.user_id}-student`,
-            username: student.family_name ? `${student.given_name} ${student.family_name}` : ``,
+            givenName: student.given_name ?? ``,
+            familyName: student.family_name ?? ``,
             role: `Student`,
             email: student.email,
             phoneNumber: student.phone,
@@ -88,7 +90,8 @@ export default function SchoolRoster (props: Props) {
         .filter((teacher) => teacher.membership?.status === Status.ACTIVE)
         .map((teacher) => ({
             id: `${teacher.user_id}-teacher`,
-            username: teacher.family_name ? `${teacher.given_name} ${teacher.family_name}` : ``,
+            givenName: teacher.given_name ?? ``,
+            familyName: teacher.family_name ?? ``,
             role: `Teacher`,
             email: teacher.email,
             phoneNumber: teacher.phone,
@@ -106,9 +109,16 @@ export default function SchoolRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `username`,
+            id: `givenName`,
             label: intl.formatMessage({
-                id: `schools_userNameLabel`,
+                id: `users_firstName`,
+            }),
+            persistent: true,
+        },
+        {
+            id: `familyName`,
+            label: intl.formatMessage({
+                id: `users_lastName`,
             }),
             persistent: true,
         },
@@ -121,6 +131,7 @@ export default function SchoolRoster (props: Props) {
                 text: role,
                 value: role,
             })),
+            disableSort: true,
         },
         {
             id: `email`,
@@ -134,6 +145,7 @@ export default function SchoolRoster (props: Props) {
             label: intl.formatMessage({
                 id: `schools_phoneLabel`,
             }),
+            disableSort: true,
         },
         {
             id: `organizationRoles`,
