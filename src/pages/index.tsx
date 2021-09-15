@@ -182,11 +182,11 @@ export default function HomePage () {
                                 <Assessment />
                             </Card>
                         </Grid>
-                        <Grid item>
+                        {/* <Grid item>
                             <Card>
                                 <UsageInfo schedule={schedule} />
                             </Card>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Grid>
             </Grid>
