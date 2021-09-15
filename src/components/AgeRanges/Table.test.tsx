@@ -7,7 +7,6 @@ import { mapAgeRangeNodeToAgeRangeRow } from "@/utils/ageRanges";
 import { useGetTableFilters } from "@/utils/filters";
 import { MockedProvider } from "@apollo/client/testing";
 import {
-    act,
     screen,
     waitFor,
 } from "@testing-library/react";
@@ -20,7 +19,6 @@ import {
 import { render } from "@tests/utils/render";
 import { utils } from "kidsloop-px";
 import React from "react";
-import TestRenderer from "react-test-renderer";
 
 const data = {
     ageRangesConnection: {
@@ -84,28 +82,23 @@ test(`Age ranges page renders with correct data`, async () => {
         order="asc"
         orderBy="name"
         rows={rows} />;
-    const { queryAllByText } = render(component);
+    render(component);
 
-    await act(async () => {
-        const title = await screen.findByText(`Age Ranges`);
+    const title = await screen.findByText(`Age Ranges`);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-        });
-
-        await utils.sleep(0);
-
-        for (let i = 0; i < ageRangesEdges.length; i++) {
-            const value = `${ageRangesEdges[i].node?.lowValue} - ${ageRangesEdges[i].node?.highValue} Year(s)`;
-            await waitFor(() => {
-                expect(queryAllByText(value)).toHaveLength(1);
-            });
-        }
+    await waitFor(() => {
+        expect(title).toBeTruthy();
     });
+
+    for (let i = 0; i < ageRangesEdges.length; i++) {
+        const value = `${ageRangesEdges[i].node?.lowValue} - ${ageRangesEdges[i].node?.highValue} Year(s)`;
+        await waitFor(() => {
+            expect(screen.queryAllByText(value)).toHaveLength(1);
+        });
+    }
 });
 
 test(`useGetTableFilters hook should return mapped age range data`, async () => {
-    const { act } = TestRenderer;
 
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
@@ -121,16 +114,14 @@ test(`useGetTableFilters hook should return mapped age range data`, async () => 
         wrapper,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.ageRangesHighValueOptions.length).toEqual(2);
-            expect(result.current.ageRangesLowValueOptions.length).toEqual(3);
-            expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
-            expect(result.current.ageRangesLowValueOptions[0].value).toBe(`0 year`);
-            expect(result.current.ageRangesLowValueOptions[1].value).toBe(`1 year`);
-            expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[0].label).toBe(`0 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[1].label).toBe(`1 Year(s)`);
-        });
+    await waitFor(() => {
+        expect(result.current.ageRangesHighValueOptions).toHaveLength(2);
+        expect(result.current.ageRangesLowValueOptions).toHaveLength(3);
+        expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
+        expect(result.current.ageRangesLowValueOptions[0].value).toBe(`0 year`);
+        expect(result.current.ageRangesLowValueOptions[1].value).toBe(`1 year`);
+        expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
+        expect(result.current.ageRangesLowValueOptions[0].label).toBe(`0 Year(s)`);
+        expect(result.current.ageRangesLowValueOptions[1].label).toBe(`1 Year(s)`);
     });
 });
