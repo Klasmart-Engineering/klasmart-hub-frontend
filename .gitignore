@@ -1,9 +1,11 @@
 **/dist
 **/node_modules
 **/webpack-stats.html
+coverage
 .idea/
 **/.DS_Store
 .vscode
 
 .prettierrc
 .env.local
+coverage

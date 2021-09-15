@@ -1,9 +1,9 @@
-import 'regenerator-runtime/runtime';
+import { fallbackLocale } from '@/locale/locale';
 import {
     MockedProvider,
     MockedResponse,
 } from '@apollo/client/testing';
-import { render } from '@testing-library/react';
+import { render as reactTestingLibraryRender } from '@testing-library/react';
 import React,
 { ReactNode } from 'react';
 import {
@@ -12,9 +12,18 @@ import {
 } from 'react-intl';
 import { RecoilRoot } from 'recoil';
 
-export default (mocks: MockedResponse[], locale: IntlShape, component: ReactNode) => (
-    render(<MockedProvider
-        mocks={mocks}
+export interface RenderOptions {
+    locale?: IntlShape;
+    mockedResponses?: MockedResponse[];
+}
+
+export const render = (component: ReactNode, options: RenderOptions = {}) => {
+    const {
+        locale = fallbackLocale,
+        mockedResponses,
+    } = options;
+    return reactTestingLibraryRender(<MockedProvider
+        mocks={mockedResponses}
         defaultOptions={{
             watchQuery: {
                 fetchPolicy: `no-cache`,
@@ -30,5 +39,5 @@ export default (mocks: MockedResponse[], locale: IntlShape, component: ReactNode
                 {component}
             </RawIntlProvider>
         </RecoilRoot>
-    </MockedProvider>)
-);
+    </MockedProvider>);
+};

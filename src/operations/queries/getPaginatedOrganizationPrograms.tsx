@@ -150,7 +150,7 @@ export const buildProgramFilters = (filters: BaseTableData<ProgramRow>['filters'
 export const GET_PAGINATED_ORGANIZATION_PROGRAMS = gql`
     query getOrganizationPrograms(
         $direction: ConnectionDirection!
-        $count: Int
+        $count: PageSize
         $cursor: String
         $orderBy: [ProgramSortBy!]!
         $order: SortOrder!
@@ -206,7 +206,7 @@ export const GET_PAGINATED_ORGANIZATION_PROGRAMS = gql`
 export const GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST = gql`
     query getOrganizationPrograms(
         $direction: ConnectionDirection!
-        $count: Int
+        $count: PageSize
         $cursor: String
         $orderBy: [ProgramSortBy!]!
         $order: SortOrder!

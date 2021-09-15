@@ -10,11 +10,10 @@ import {
     buildAgeRangeLabel,
     buildEmptyAgeRange,
 } from "@/utils/ageRanges";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { useValidations } from "@/utils/validations";
-import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
-    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import React, {
@@ -36,8 +35,7 @@ export default function EditAgeRangeDialog (props: Props) {
         ageRangeId,
     } = props;
     const intl = useIntl();
-    const prompt = usePrompt();
-    const { required, equals } = useValidations();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const [ editAgeRange ] = useEditAgeRange();
     const [ deleteAgeRange ] = useDeleteAgeRange();
@@ -45,7 +43,7 @@ export default function EditAgeRangeDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
 
-    const { data } = useGetAgeRange({
+    const { data, loading } = useGetAgeRange({
         variables: {
             id: ageRangeId ?? ``,
         },
@@ -54,6 +52,10 @@ export default function EditAgeRangeDialog (props: Props) {
     });
 
     useEffect(() => {
+        if (!open) {
+            setUpdatedAgeRange(buildEmptyAgeRange());
+            return;
+        }
         if (!data?.age_range) return;
         setUpdatedAgeRange(data?.age_range);
     }, [ open, data ]);
@@ -90,30 +92,13 @@ export default function EditAgeRangeDialog (props: Props) {
 
     const handleDelete = async () => {
         const ageRangeName = buildAgeRangeLabel(updatedAgeRange);
+        if (!await deletePrompt({
+            entityName: ageRangeName,
+            title: intl.formatMessage({
+                id: `ageRanges_deleteAgeRangeTitle`,
+            }),
+        })) return;
         try {
-            if (!await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `ageRanges_deleteAgeRangeTitle`,
-                }),
-                okLabel: `Delete`,
-                content: <>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `ageRanges_confirmDelete`,
-                    }, {
-                        ageRangeName,
-                    })}</DialogContentText>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `ageRanges_typeText`,
-                    }, {
-                        ageRangeName,
-                    })} <strong>{ageRangeName}</strong> {intl.formatMessage({
-                        id: `ageRanges_typeEndText`,
-                    })}</DialogContentText>
-                </>,
-                validations: [ required(), equals(ageRangeName) ],
-            })) return;
-
             await deleteAgeRange({
                 variables: {
                     id: updatedAgeRange.id ?? ``,
@@ -173,6 +158,7 @@ export default function EditAgeRangeDialog (props: Props) {
                 <AgeRangeForm
                     key={updatedAgeRange.id}
                     value={updatedAgeRange}
+                    loading={loading}
                     onChange={setUpdatedAgeRange}
                     onValidation={setValid}
                 />

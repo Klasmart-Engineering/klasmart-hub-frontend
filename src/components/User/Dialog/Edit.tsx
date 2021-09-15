@@ -1,11 +1,28 @@
-import UserDialogForm from "./Form";
+import UserDialogForm,
+{
+    defaultState,
+    Errors,
+    State,
+} from "./Form";
 import {
+    handleSubmitError,
+    mapFormStateToOrganizationMembership,
+    updatedFormErrors,
+} from "./shared";
+import {
+    UpdateOrganizationMembershipRequest,
     useDeleteOrganizationMembership,
     useGetOrganizationMembership,
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { buildEmptyOrganizationMembership } from "@/utils/organizationMemberships";
+import {
+    isActive,
+    OrganizationMembership,
+    Status,
+} from "@/types/graphQL";
+import { useDeleteEntityPrompt } from "@/utils/common";
+import { ApolloError } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
@@ -14,6 +31,7 @@ import {
     Dialog,
     useSnackbar,
 } from "kidsloop-px";
+import { isEmpty } from "lodash";
 import React,
 {
     useEffect,
@@ -22,6 +40,31 @@ import React,
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
+
+export function mapOrganizationMembershipToFormState (membership: OrganizationMembership): State {
+    const user = membership.user;
+    return {
+        givenName: user?.given_name ?? ``,
+        familyName: user?.family_name ?? ``,
+        contactInfo: user?.email ?? user?.phone ?? ``,
+        birthday: user?.date_of_birth ?? ``,
+        gender: user?.gender ?? ``,
+        alternativeEmail: user?.alternate_email ?? ``,
+        alternativePhone: user?.alternate_phone ?? ``,
+        shortcode: membership.shortcode ?? ``,
+        schools: membership.schoolMemberships?.filter(schoolMembership => schoolMembership?.school?.status === Status.ACTIVE)?.map(school => school.school_id) ?? [],
+        roles: membership.roles?.filter(isActive)?.map(role => role.role_id) ?? [],
+    };
+}
+
+export function mapFormStateToUpdateOrganizationMembershipRequest (state: State, userId: string, organizationId: string): UpdateOrganizationMembershipRequest {
+    const membershipInfo = mapFormStateToOrganizationMembership(state);
+    return {
+        ...membershipInfo,
+        organization_id: organizationId,
+        user_id: userId,
+    };
+}
 
 interface Props {
     open: boolean;
@@ -37,9 +80,11 @@ export default function EditUserDialog (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
-    const [ initOrganizationMembership, setInitOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
-    const [ editedOrganizationMembership, setEditedOrganizationMembership ] = useState(buildEmptyOrganizationMembership());
+    const [ initialFormState, setInitialFormState ] = useState<State>(defaultState);
+    const [ formState, setFormState ] = useState<State>(defaultState);
+    const [ formErrors, setFormErrors ] = useState<Errors>({});
     const [ valid, setValid ] = useState(true);
     const organization = useCurrentOrganization();
     const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationMembership({
@@ -53,47 +98,66 @@ export default function EditUserDialog (props: Props) {
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
+    const organizationMembership = organizationMembershipData?.user.membership;
+
     useEffect(() => {
         if (!open || !userId || !organization) return;
-        setInitOrganizationMembership(organizationMembershipData?.user.membership ?? buildEmptyOrganizationMembership());
-        setEditedOrganizationMembership(buildEmptyOrganizationMembership());
+        const state = organizationMembership ? mapOrganizationMembershipToFormState(organizationMembership) : defaultState;
+        setInitialFormState(state);
+        setFormState(state);
+        setFormErrors({});
     }, [
         open,
         userId,
-        organization,
+        organization?.organization_id,
     ]);
 
     useEffect(() => {
-        const organizationMembership = organizationMembershipData?.user.membership;
         if (!organizationMembership) return;
-        setInitOrganizationMembership(organizationMembership);
+        const state = mapOrganizationMembershipToFormState(organizationMembership);
+        setInitialFormState(state);
+        setFormState(state);
     }, [ organizationMembershipData ]);
+
+    const onChange = (newFormState: State) => {
+        if (!isEmpty(formErrors)) {
+            const newFormErrors = updatedFormErrors(formState, newFormState, formErrors);
+            setFormErrors(newFormErrors);
+        }
+        setFormState(newFormState);
+    };
+
+    const handleEditError = (error: ApolloError) => {
+        const {
+            hasExpectedError,
+            newFormErrors,
+            snackbarMessage,
+        } = handleSubmitError({
+            error,
+            localization: {
+                intl,
+                genericErrorMessageId: `editDialog_savedError`,
+            },
+        });
+
+        if (snackbarMessage) {
+            enqueueSnackbar(snackbarMessage, {
+                variant: `error`,
+            });
+        }
+
+        setFormErrors(newFormErrors);
+
+        if (hasExpectedError) {
+            setValid(false);
+        }
+    };
 
     const handleEdit = async () => {
         try {
-            const {
-                organization_id,
-                user,
-                roles,
-                schoolMemberships,
-                shortcode,
-            } = editedOrganizationMembership;
+            const variables = mapFormStateToUpdateOrganizationMembershipRequest(formState, userId ?? ``, organization?.organization_id ?? ``);
             await updateOrganizationMembership({
-                variables: {
-                    user_id: userId ?? ``,
-                    organization_id,
-                    organization_role_ids: roles?.map((r) => r.role_id) ?? [],
-                    school_ids: schoolMemberships?.map((s) => s.school_id) ?? [],
-                    given_name: user?.given_name,
-                    family_name: user?.family_name,
-                    email: user?.email,
-                    phone: user?.phone,
-                    date_of_birth: user?.date_of_birth ?? ``,
-                    alternate_email: user?.alternate_email ?? ``,
-                    alternate_phone: user?.alternate_phone ?? ``,
-                    gender: user?.gender ?? ``,
-                    shortcode: shortcode ?? ``,
-                },
+                variables,
             });
             onClose(true);
             enqueueSnackbar(intl.formatMessage({
@@ -102,30 +166,24 @@ export default function EditUserDialog (props: Props) {
                 variant: `success`,
             });
         } catch (error) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `editDialog_savedError`,
-            }), {
-                variant: `error`,
-            });
+            handleEditError(error);
         }
     };
 
     const handleDelete = async () => {
-        if (!userId) return;
+        if (!(userId && organization?.organization_id)) return;
         const { given_name, family_name } = organizationMembershipData?.user.membership.user ?? {};
         const userName = `${given_name} ${family_name}`;
-        if (!confirm(intl.formatMessage({
-            id: `editDialog_deleteConfirm`,
-        }, {
-            userName,
-        }))) return;
-
-        const { organization_id } = editedOrganizationMembership;
-
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `users_deleteTitle`,
+            }),
+            entityName: userName,
+        })) return;
         try {
             await deleteOrganizationMembership({
                 variables: {
-                    organization_id,
+                    organization_id: organization.organization_id,
                     user_id: userId,
                 },
             });
@@ -178,8 +236,10 @@ export default function EditUserDialog (props: Props) {
             onClose={() => onClose()}
         >
             <UserDialogForm
-                value={initOrganizationMembership}
-                onChange={setEditedOrganizationMembership}
+                initialState={initialFormState}
+                isExistingUser={true}
+                errors={formErrors}
+                onChange={onChange}
                 onValidation={setValid}
             />
         </Dialog>

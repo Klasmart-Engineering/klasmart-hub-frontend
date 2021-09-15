@@ -1,6 +1,6 @@
 import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
-import SummaryStep from "./Steps/Summary";
+import SummaryStep from "./Steps/Summary/Base";
 import { useCreateOrUpdatePrograms } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";

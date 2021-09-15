@@ -15,7 +15,7 @@ pipelines:
               - dependecies
             script:
               - npm ci --prefer-offline --no-audit --no-progress --cache .npm
-              - npm test
+              - npm test -- --coverage
               - npm run build:alpha
   custom:
     deploy:

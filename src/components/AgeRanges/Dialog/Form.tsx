@@ -35,6 +35,7 @@ interface Props {
     value: AgeRange;
     onChange: (value: AgeRange) => void;
     onValidation: (valid: boolean) => void;
+    loading?: boolean;
 }
 
 export default function ClassDialogForm (props: Props) {
@@ -42,6 +43,7 @@ export default function ClassDialogForm (props: Props) {
         value,
         onChange,
         onValidation,
+        loading,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -133,6 +135,8 @@ export default function ClassDialogForm (props: Props) {
                             min(0, `Min 0`),
                             max(99, `Max 99`),
                         ]}
+                        loading={loading}
+                        disabled={loading}
                         onChange={setFrom}
                         onValidate={setFromValid}
                     />
@@ -146,6 +150,8 @@ export default function ClassDialogForm (props: Props) {
                         validations={[ required() ]}
                         itemText={({ text }) => text}
                         itemValue={({ value }) => value}
+                        loading={loading}
+                        disabled={loading}
                         onChange={setFromUnit}
                         onValidate={setFromUnitValid}
                     />
@@ -162,6 +168,8 @@ export default function ClassDialogForm (props: Props) {
                             min(1, `Min 1`),
                             max(99, `Max 99`),
                         ]}
+                        loading={loading}
+                        disabled={loading}
                         onChange={setTo}
                         onValidate={setToValid}
                     />
@@ -175,6 +183,8 @@ export default function ClassDialogForm (props: Props) {
                         validations={[ required() ]}
                         itemText={({ text }) => text}
                         itemValue={({ value }) => value}
+                        loading={loading}
+                        disabled={loading}
                         onChange={setToUnit}
                         onValidate={setToUnitValid}
                     />

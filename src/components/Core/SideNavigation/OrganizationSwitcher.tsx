@@ -37,6 +37,14 @@ const useStyles = makeStyles((theme) => createStyles({
         display: `flex`,
         flexDirection: `column`,
     },
+    entityName: {
+        display: `-webkit-box`,
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: `vertical`,
+        overflow: `hidden`,
+        textOverflow: `ellipsis`,
+        wordBreak: `break-word`,
+    },
     organizationSelection: {
         marginLeft: theme.spacing(2),
     },
@@ -170,8 +178,18 @@ export default function OrganizationSwitcher (props: Props) {
                     onClick={() => handleShowOrganizationsChange(!showOrganizations_)}
                 >
                     <ListItemText
-                        primary={currentOrganizationName || `No Organizations Available`}
-                        secondary={translatedRole ?? `No Roles Found`}
+                        primary={currentOrganizationName || intl.formatMessage({
+                            id: `organization.unknown`,
+                        })}
+                        primaryTypographyProps={{
+                            className: clsx(`MuiListItemText-primary`, classes.entityName),
+                        }}
+                        secondary={translatedRole ?? intl.formatMessage({
+                            id: `role.unknown`,
+                        })}
+                        secondaryTypographyProps={{
+                            className: clsx(`MuiListItemText-secondary`, classes.entityName),
+                        }}
                     />
                     <ListItemSecondaryAction>
                         <ArrowDropDown className={clsx(classes.showOrganizationsMenuButton, {

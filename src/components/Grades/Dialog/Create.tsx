@@ -33,7 +33,7 @@ export default function (props: Props) {
     const [ createGrade ] = useCreateUpdateGrade();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
-    const { data: gradesData } = useGetAllGrades({
+    const { data: gradesData, loading } = useGetAllGrades({
         variables: {
             organization_id: organizationId,
         },
@@ -104,6 +104,7 @@ export default function (props: Props) {
             >
                 <GradeForm
                     value={newGrade}
+                    loading={loading}
                     onChange={setNewGrade}
                     onValidation={setValid}
                 />

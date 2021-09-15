@@ -4,6 +4,7 @@ import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
 import {
     useCreateOrUpdateSubjects,
     useDeleteSubject,
+    useGetSubject,
 } from "@/api/subjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
@@ -12,13 +13,11 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
+import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import { buildEmptySubject } from "@/utils/subjects";
-import { useValidations } from "@/utils/validations";
-import { DialogContentText } from "@material-ui/core";
 import {
     Dialog,
-    usePrompt,
     useSnackbar,
 } from "kidsloop-px";
 import React, {
@@ -28,35 +27,45 @@ import React, {
 import { useIntl } from "react-intl";
 
 interface Props {
-    value?: Subject;
+    subjectId?: string;
     open: boolean;
     onClose: (value?: Subject) => void;
 }
 
 export default function EditSubjectDialog (props: Props) {
     const {
-        value,
+        subjectId,
         open,
         onClose,
     } = props;
     const intl = useIntl();
-    const prompt = usePrompt();
-    const { required, equals } = useValidations();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const canDelete = usePermission(`delete_subjects_20447`);
     const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
-    const [ updatedSubject, setUpdatedSubject ] = useState(value ?? buildEmptySubject());
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const [ deleteSubject ] = useDeleteSubject();
     const organizationId = currentOrganization?.organization_id ?? ``;
 
+    const { data, loading } = useGetSubject({
+        variables: {
+            subject_id: subjectId ?? ``,
+        },
+        fetchPolicy: `cache-and-network`,
+        skip: !open || !subjectId,
+    });
+    const [ updatedSubject, setUpdatedSubject ] = useState<Subject>(buildEmptySubject());
+
     useEffect(() => {
-        if (!open) return;
-        setUpdatedSubject(value ?? buildEmptySubject());
-    }, [ open ]);
+        if (!open){
+            setUpdatedSubject(buildEmptySubject());
+            return;
+        }
+        setUpdatedSubject(data?.subject ?? buildEmptySubject());
+    }, [ open, data ]);
 
     const handleSave = async () => {
         try {
@@ -126,36 +135,16 @@ export default function EditSubjectDialog (props: Props) {
     };
 
     const handleDelete = async () => {
+        if (!await deletePrompt({
+            title: intl.formatMessage({
+                id: `subjects_deleteSubjectLabel`,
+            }),
+            entityName: updatedSubject?.name ?? ``,
+        })) return;
         try {
-            if (!await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `subjects_deleteSubjectLabel`,
-                }),
-                okLabel: intl.formatMessage({
-                    id: `generic_deleteLabel`,
-                }),
-                content: <>
-                    <DialogContentText>
-                        {intl.formatMessage({
-                            id: `editDialog_deleteConfirm`,
-                        }, {
-                            userName: value?.name,
-                        })}
-                    </DialogContentText>
-                    <DialogContentText>
-                        {intl.formatMessage({
-                            id: `generic_typeToRemovePrompt`,
-                        }, {
-                            value: <strong>{value?.name}</strong>,
-                        })}
-                    </DialogContentText>
-                </>,
-                validations: [ required(), equals(value?.name) ],
-            })) return;
             await deleteSubject({
                 variables: {
-                    id: value?.id ?? ``,
+                    id: updatedSubject?.id ?? ``,
                 },
             });
             onClose(updatedSubject);
@@ -211,6 +200,7 @@ export default function EditSubjectDialog (props: Props) {
         >
             <SubjectDialogForm
                 value={updatedSubject}
+                loading={loading}
                 onChange={setUpdatedSubject}
                 onValidation={setValid}
             />

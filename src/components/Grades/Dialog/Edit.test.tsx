@@ -1,7 +1,5 @@
 import EditGrade from './Edit';
 import { GET_GRADE } from '@/operations/queries/getGrade';
-import { GET_GRADES } from '@/operations/queries/getGrades';
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
@@ -9,11 +7,10 @@ import {
 } from '@testing-library/react';
 import {
     grade2Id,
-    grades,
     mockGrade,
     mockOrgId,
 } from '@tests/mockDataGrades';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -51,11 +48,12 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Edit grade dialog renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { getByLabelText, getByText } = qlRender(mocks, locale, <EditGrade
+    const { getByLabelText, getByText } = render(<EditGrade
         gradeId={grade2Id}
         open={true}
-        onClose={jest.fn()}/>);
+        onClose={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const title = await getByText(`Edit Grade`);
@@ -74,13 +72,13 @@ test(`Edit grade dialog renders correctly`, async () => {
 });
 
 test(`Edit grade dialog renders correctly with correct data`, async () => {
-    const locale = getLanguage(`en`);
-
     await act(async () => {
-        const { queryByLabelText } = qlRender(mocks, locale, <EditGrade
+        const { queryByLabelText } = render(<EditGrade
             gradeId={grade2Id}
             open={true}
-            onClose={jest.fn()}/>);
+            onClose={jest.fn()}/>, {
+            mockedResponses: mocks,
+        });
 
         await waitFor(() => {
             expect(queryByLabelText(`Grade Name`, {

@@ -36,7 +36,8 @@ export const mapUserRow = (edge: UserEdge) => {
         givenName: user.givenName ?? ``,
         familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
-        contactInfo: user.contactInfo.email ?? user.contactInfo.phone ?? ``,
+        email: user.contactInfo.email ?? ``,
+        phone: user.contactInfo.phone ?? ``,
         roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
         schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
         status: user.organizations?.[0].userStatus,
@@ -76,6 +77,9 @@ export default function UsersPage () {
             filter: paginationFilter,
         },
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `UsersPage`,
+        },
     });
 
     const pageInfo = usersData?.usersConnection.pageInfo;
@@ -92,14 +96,12 @@ export default function UsersPage () {
     };
 
     const handleTableChange = async (tableData: CursorTableData<UserRow>) => {
-        if (loadingOrganizationMemberships) return;
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
-
         setTableFilters(tableData?.filters ?? []);
     };
 
@@ -116,6 +118,7 @@ export default function UsersPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     useEffect(() => {

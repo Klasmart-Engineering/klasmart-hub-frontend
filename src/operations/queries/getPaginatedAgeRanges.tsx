@@ -83,7 +83,7 @@ export const buildAgeRangesFilters = (filters: BaseTableData<AgeRangeRow>['filte
 
 export const GET_PAGINATED_AGE_RANGES = gql`
 query getPaginatedAgeRanges(
-    $count: Int
+    $count: PageSize
     $cursor: String
     $direction: ConnectionDirection!
     $orderBy: [AgeRangeSortBy!]!

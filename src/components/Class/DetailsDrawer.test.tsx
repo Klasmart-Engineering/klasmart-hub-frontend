@@ -1,7 +1,6 @@
 
 import ClassDetailsDrawer from "./DetailsDrawer";
 import { GET_CLASS } from "@/operations/queries/getClass";
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     act,
@@ -13,7 +12,7 @@ import {
     mockOrgId,
     mockUserId,
 } from "@tests/mockDataClasses";
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -57,12 +56,13 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Class details drawer renders with correct information`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender(mocks, locale, <ClassDetailsDrawer
+    const { queryByText } = render(<ClassDetailsDrawer
         open={true}
         classId={mockClassId}
         onClose={(() => jest.fn())}
-    />);
+    />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         await waitFor(() => {

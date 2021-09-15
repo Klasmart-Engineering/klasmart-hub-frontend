@@ -24,7 +24,7 @@ import React,
     useState,
 } from "react";
 
-export default function SelectSchoolPrograms (props: EntityStepContent<School>) {
+export default function SelectedSchoolPrograms (props: EntityStepContent<School>) {
     const {
         value,
         disabled,
@@ -52,6 +52,9 @@ export default function SelectSchoolPrograms (props: EntityStepContent<School>) 
         },
         fetchPolicy: `network-only`,
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `SelectedSchoolPrograms`,
+        },
     });
 
     const onPageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -84,7 +87,6 @@ export default function SelectSchoolPrograms (props: EntityStepContent<School>) 
     }, [ serverPagination.rowsPerPage, serverPagination.search ]);
 
     const rows = data?.programsConnection?.edges
-        .filter((edge) => isActive(edge.node))
         .map((edge) => mapProgramNodeToProgramRow(edge.node))
         ?? [];
 

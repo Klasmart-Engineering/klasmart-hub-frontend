@@ -62,6 +62,9 @@ export default function ClassesPage (props: Props) {
         },
         skip: !currentOrganization?.organization_id || !canView,
         notifyOnNetworkStatusChange: true,
+        context: {
+            requestTrackerId: `ClassesPage`,
+        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -76,7 +79,6 @@ export default function ClassesPage (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<ClassRow>) => {
-        if (loading) return;
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
@@ -99,6 +101,7 @@ export default function ClassesPage (props: Props) {
         serverPagination.order,
         serverPagination.orderBy,
         tableFilters,
+        currentOrganization?.organization_id,
     ]);
 
     const rows = data?.classesConnection?.edges?.map(organizationPaginatedClasses) ?? [];

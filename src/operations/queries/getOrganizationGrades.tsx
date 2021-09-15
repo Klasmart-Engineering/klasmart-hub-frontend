@@ -101,7 +101,7 @@ export const buildGradesFilters = (filters: BaseTableData<GradeRow>['filters'] =
 export const GET_PAGINATED_ORGANIZATION_GRADES = gql`
 query getOrganizationGrades(
     $direction: ConnectionDirection!
-    $count: Int
+    $count: PageSize
     $cursor: String
     $orderBy: [GradeSortBy!]!
     $order: SortOrder!
@@ -146,7 +146,7 @@ query getOrganizationGrades(
 export const GET_PAGINATED_ORGANIZATION_GRADES_LIST = gql`
 query getOrganizationGrades(
     $direction: ConnectionDirection!
-    $count: Int
+    $count: PageSize
     $cursor: String
     $orderBy: [GradeSortBy!]!
     $order: SortOrder!

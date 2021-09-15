@@ -24,7 +24,6 @@ export interface ClassUser {
     date_of_birth: string | null;
     email: string;
     family_name: string;
-    full_name: string;
     given_name: string;
     phone: string | null;
     user_id: string;
@@ -32,8 +31,8 @@ export interface ClassUser {
     role?: string;
     school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
-    subjectsTeaching: Subject[];
-    alternate_phone: string;
+    organizationRoles: string[];
+    contactInfo: string;
 }
 
 interface GetClassRosterRespone {

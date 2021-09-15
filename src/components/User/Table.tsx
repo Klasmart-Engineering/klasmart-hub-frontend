@@ -4,6 +4,12 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
+import { useDeleteEntityPrompt } from "@/utils/common";
+import {
+    buildCsvTemplateOptions,
+    EMPTY_CSV_DATA,
+} from "@/utils/csv";
+import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import { getCustomStatus } from "@/utils/status";
 import {
@@ -11,17 +17,16 @@ import {
     TableProps,
 } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
-import { useUserFilters } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
     createStyles,
-    DialogContentText,
     makeStyles,
     Paper,
     Typography,
 } from "@material-ui/core";
 import {
+    AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -30,7 +35,6 @@ import {
 import clsx from "clsx";
 import {
     CursorTable,
-    usePrompt,
     UserAvatar,
     useSnackbar,
 } from "kidsloop-px";
@@ -69,7 +73,9 @@ export interface UserRow {
     givenName: string;
     familyName: string;
     avatar: string;
-    contactInfo: string;
+    contactInfo?: string;
+    email: string;
+    phone: string;
     roleNames: string[];
     schoolNames: string[];
     status: string;
@@ -100,11 +106,11 @@ export default function UserTable (props: Props) {
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
-    const prompt = usePrompt();
+    const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
-    const { required, equals } = useValidations();
+    const { required } = useValidations();
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedUserId, setSelectedUserId ] = useState<string>();
@@ -112,7 +118,34 @@ export default function UserTable (props: Props) {
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
-    const { userRolesFilterValueOptions } = useUserFilters(currentOrganization?.organization_id ?? ``);
+    const {
+        schoolsFilterValueOptions,
+        userRolesFilterValueOptions,
+    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+        querySchools: true,
+        queryUserRoles: true,
+    });
+
+    const userCsvTemplateHeaders = [
+        `organization_name`,
+        `user_given_name`,
+        `user_family_name`,
+        `user_shortcode`,
+        `user_email`,
+        `user_phone`,
+        `user_date_of_birth`,
+        `user_gender`,
+        `organization_role_name`,
+        `school_name`,
+        `class_name`,
+    ];
+
+    const csvExporter = buildCsvTemplateOptions({
+        filename: intl.formatMessage({
+            id: `entity.user.importTemplate.filename`,
+        }),
+        headers: userCsvTemplateHeaders,
+    });
 
     const editSelectedRow = (row: UserRow) => {
         setSelectedUserId(row.id);
@@ -121,32 +154,11 @@ export default function UserTable (props: Props) {
 
     const deleteSelectedRow = async (row: UserRow) => {
         const userName = `${row.givenName} ${row.familyName}`.trim();
-        if (!await prompt({
-            variant: `error`,
+        if (!await deletePrompt({
             title: intl.formatMessage({
                 id: `users_deleteTitle`,
             }),
-            content: (
-                <>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `generic_deleteText`,
-                    }, {
-                        value: userName,
-                    })}</DialogContentText>
-                    <DialogContentText>{intl.formatMessage({
-                        id: `generic_typeToDeletePrompt`,
-                    }, {
-                        value: <strong>{userName}</strong>,
-                    })}</DialogContentText>
-                </>
-            ),
-            okLabel: intl.formatMessage({
-                id: `generic_deleteLabel`,
-            }),
-            cancelLabel: intl.formatMessage({
-                id: `generic_cancelLabel`,
-            }),
-            validations: [ required(), equals(userName) ],
+            entityName: userName,
         })) return;
         try {
             await deleteOrganizationMembership({
@@ -252,6 +264,11 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_contactInfo`,
             }),
+            render: (row) => (
+                <span>
+                    {row.email || row.phone}
+                </span>
+            ),
         },
         {
             id: `status`,
@@ -355,6 +372,77 @@ export default function UserTable (props: Props) {
                 },
             ],
         },
+        {
+            id: `schoolNames`,
+            label: intl.formatMessage({
+                id: `classes_schoolsNameLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: schoolsFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `email`,
+            label: intl.formatMessage({
+                id: `common.email`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersContainsLabel`,
+                    }),
+                    value: `contains`,
+                    validations: [ required() ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersContainsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `phone`,
+            label: intl.formatMessage({
+                id: `common.phone`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersContainsLabel`,
+                    }),
+                    value: `contains`,
+                    validations: [ required() ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersContainsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
     ];
 
     return (
@@ -371,8 +459,8 @@ export default function UserTable (props: Props) {
                     rowsPerPage={rowsPerPage}
                     search={search}
                     cursor={cursor}
-                    hasNextPage={hasNextPage}
-                    hasPreviousPage={hasPreviousPage}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
                     startCursor={startCursor}
                     endCursor={endCursor}
                     total={total}
@@ -386,7 +474,17 @@ export default function UserTable (props: Props) {
                     }}
                     secondaryActions={[
                         {
-                            label: `Upload CSV`,
+                            label: intl.formatMessage({
+                                id: `entity.user.template.download.button`,
+                            }),
+                            icon: AssignmentReturnedIcon,
+                            disabled: !canCreate,
+                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                        },
+                        {
+                            label: intl.formatMessage({
+                                id: `entity.user.bulkImport.button`,
+                            }),
                             icon: CloudUploadIcon,
                             disabled: !canCreate,
                             onClick: () => setUploadCsvDialogOpen(true),

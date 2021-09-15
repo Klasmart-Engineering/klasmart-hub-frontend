@@ -1,4 +1,3 @@
-import { getLanguage } from "../../../utils/locale";
 import SubjectsForm from './Form';
 import { Status } from "@/types/graphQL";
 import {
@@ -11,7 +10,7 @@ import {
     mockCategories,
     mockOrgId,
 } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import { utils } from 'kidsloop-px';
 import React from 'react';
 
@@ -42,8 +41,7 @@ const formValue = {
 };
 
 test(`Subject form renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { getByLabelText } = qlRender([], locale, <SubjectsForm
+    const { getByLabelText } = render(<SubjectsForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>);
@@ -52,25 +50,22 @@ test(`Subject form renders correctly`, async () => {
         const name = await getByLabelText(`Subject Name`);
         const categoryLabels = await screen.findAllByText(/category/gi);
         const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
-        const nonSpecified = await screen.findAllByText(/specified/gi);
 
         await waitFor(() => {
             expect(name).toBeTruthy();
             expect(categoryLabels.length).toBeTruthy();
             expect(subcategoryLabels.length).toBeTruthy();
             expect(name.value).toBe(``);
-            expect(nonSpecified.length).toEqual(2);
         });
     });
 });
 
 test(`Subjects form updates correct and opens categories selector`, async () => {
-    const locale = getLanguage(`en`);
     const {
         getByLabelText,
         findByText,
         queryAllByText,
-    } = qlRender([], locale, <SubjectsForm
+    } = render(<SubjectsForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>);

@@ -748,8 +748,8 @@
     "programs_programCreateError": "Rất tiếc đã xảy ra sự cố, vui lòng thử lại",
     "programs_programSaveMessage": "Chương trình được lưu thành công",
     "programs_programSaveError": "Rất tiếc đã xảy ra sự cố, vui lòng thử lại",
-    "class_nameLabel": "Tên",
-    "class_roleLabel": "Trường",
+    "class_nameLabel": "User Name",
+    "class_roleLabel": "Participating As",
     "class_emailLabel": "Email",
     "class_phoneLabel": "Số điện thoại",
     "class_removeUserLabel": "Gở bỏ người dùng",
@@ -1049,5 +1049,14 @@
     "teacherFeedback.body.empty": "{count, plural, other {Không có bài đánh giá nào được hoàn thành trong {count} ngày qua}}",
     "common.close": "Đóng",
     "validation.error.spreadsheet.empty": "{fileName} must contain at least one data row.",
-    "classes_editSuccess": "Class has been saved successfully"
+    "classes_editSuccess": "Class has been saved successfully",
+    "generic_filtersContainsLabel": "Contains",
+    "generic_filtersContainsChipLabel": "{column} contains {value}",
+    "organization.unknown": "Unknown organization",
+    "role.unknown": "Unknown role",
+    "entity.user.importTemplate.filename": "kidsloop-users-template",
+    "entity.school.importTemplate.filename": "kidsloop-schools-template",
+    "entity.class.importTemplate.filename": "kidsloop-classes-template",
+    "entity.user.template.download.button": "Download CSV Template File",
+    "entity.user.bulkImport.button": "Upload CSV"
 }

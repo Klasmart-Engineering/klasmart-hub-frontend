@@ -1,16 +1,12 @@
 import EditSubjectDialog from './Edit';
 import { Status } from '@/types/graphQL';
-import { getLanguage } from '@/utils/locale';
-import {
-    act,
-    screen,
-    waitFor,
-} from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import {
     mockCategories,
     mockOrgId,
+    mockSubjects,
 } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -32,35 +28,27 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 const formValue = {
-    id: ``,
-    name: `Math`,
+    id: mockSubjects.edges[0].node.id,
+    name: mockSubjects.edges[0].node.name,
     categories: mockCategories,
     status: Status.ACTIVE,
     system: false,
 };
 
 test(`Subject edit dialog renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         getByText,
         getByLabelText,
-    } = qlRender([], locale, <EditSubjectDialog
-        value={formValue}
+    } = render(<EditSubjectDialog
+        subjectId={formValue.id}
         open={true}
         onClose={jest.fn()}/>);
 
-    await act(async () => {
-        const title = getByText(`Edit Subject`);
-        const name = await getByLabelText(`Subject Name`);
-        const categoryLabels = await screen.findAllByText(/category/gi);
-        const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
+    const title = getByText(`Edit Subject`);
+    const name = await getByLabelText(`Subject Name`);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name).toBeTruthy();
-            expect(categoryLabels.length).toBeTruthy();
-            expect(subcategoryLabels.length).toBeTruthy();
-            expect(name.value).toBe(`Math`);
-        });
+    await waitFor(() => {
+        expect(title).toBeTruthy();
+        expect(name).toBeTruthy();
     });
 });

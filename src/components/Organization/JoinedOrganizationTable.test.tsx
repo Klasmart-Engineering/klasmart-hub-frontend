@@ -2,7 +2,6 @@ import 'regenerator-runtime/runtime';
 import JoinedOrganizationTable from './JoinedOrganizationTable';
 import { LEAVE_MEMBERSHIP } from '@/operations/mutations/leaveMembership';
 import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
@@ -14,7 +13,7 @@ import {
     mockOrgStack,
     mockUserId,
 } from '@tests/mockOrganizationData';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 let deleteCalled = false;
@@ -97,12 +96,13 @@ jest.mock(`@apollo/client/react`, () => {
 });
 
 test(`JoinedOrganizationTable renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         findByText,
         findAllByText,
         findAllByTitle,
-    } = qlRender(mocks, locale, <JoinedOrganizationTable />);
+    } = render(<JoinedOrganizationTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const title = await findByText(`Joined Organizations`);
@@ -124,8 +124,9 @@ test(`JoinedOrganizationTable renders correctly`, async () => {
 });
 
 test(`JoinedOrganizationTable renders correct data`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText } = qlRender(mocks, locale, <JoinedOrganizationTable />);
+    const { findByText } = render(<JoinedOrganizationTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const orgName = await findByText(`KidsLoop Miracle Squad`);
@@ -145,13 +146,14 @@ test(`JoinedOrganizationTable renders correct data`, async () => {
 });
 
 test(`JoinedOrganizationTable updates table correctly after leaving organization.`, async () => {
-    const locale = getLanguage(`en`);
     const {
         findByText,
         findByTitle,
         queryByText,
         queryAllByTitle,
-    } = qlRender(mocks, locale, <JoinedOrganizationTable />);
+    } = render(<JoinedOrganizationTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const orgName = await findByText(`KidsLoop Miracle Squad`);

@@ -51,7 +51,7 @@ export const buildOrganizationSchoolFilter = (filter: SchoolPaginationFilter): S
 export const GET_PAGINATED_ORGANIZATION_SCHOOLS = gql`
     query getOrganizationSchools(
         $direction: ConnectionDirection!
-        $count: Int
+        $count: PageSize
         $cursor: String
         $orderBy: [SchoolSortBy!]!
         $order: SortOrder!

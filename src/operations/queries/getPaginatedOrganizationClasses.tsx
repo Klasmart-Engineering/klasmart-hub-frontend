@@ -178,7 +178,7 @@ export const buildClassesFilters = (filters: BaseTableData<ClassRow>['filters'] 
 export const GET_PAGINATED_ORGANIZATION_CLASSES = gql`
 query getOrganizationClasses(
     $direction: ConnectionDirection!
-    $count: Int
+    $count: PageSize
     $cursor: String
     $orderBy: ClassSortBy!
     $order: SortOrder!

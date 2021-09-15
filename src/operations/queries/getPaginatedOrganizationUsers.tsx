@@ -95,6 +95,51 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
                 OR: values,
             };
         }
+        case `schoolNames`: {
+            const values = filter.values.map((value) => {
+                const organizationSchoolsFilter: UserFilter = {
+                    schoolId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return organizationSchoolsFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `email`: {
+            const values = filter.values.map((value) => {
+                const userEmailFilter: UserFilter = {
+                    email: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return userEmailFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `phone`: {
+            const values = filter.values.map((value) => {
+                const userPhoneFilter: UserFilter = {
+                    phone: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return userPhoneFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         default: return {};
         }
     });
@@ -105,7 +150,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
     
     query getOrganizationUsers(
         $direction: ConnectionDirection!
-            $count: Int
+            $count: PageSize
             $cursor: String
             $order: SortOrder!
             $orderBy: UserSortBy!

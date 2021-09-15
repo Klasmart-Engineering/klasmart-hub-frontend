@@ -50,6 +50,7 @@ interface Props {
     value: Class;
     onChange: (value: Class) => void;
     onValidation: (valid: boolean) => void;
+    loading?: boolean;
 }
 
 export default function ClassDialogForm (props: Props) {
@@ -57,6 +58,7 @@ export default function ClassDialogForm (props: Props) {
         value,
         onChange,
         onValidation,
+        loading,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -67,7 +69,7 @@ export default function ClassDialogForm (props: Props) {
     } = useValidations();
     const canEditSchool = usePermission(`edit_school_20330`);
     const currentOrganization = useCurrentOrganization();
-    const { data } = useGetSchools({
+    const { data, loading: schoolDataLoading } = useGetSchools({
         fetchPolicy: `network-only`,
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
@@ -76,7 +78,7 @@ export default function ClassDialogForm (props: Props) {
     });
     const userId = useReactiveVar(userIdVar);
     const [ isSchoolAdmin, setIsSchoolAdmin ] = useState(false);
-    const { data: user } = useGetUserSchoolMemberships({
+    const { data: user, loading: userDataLoading } = useGetUserSchoolMemberships({
         fetchPolicy: `network-only`,
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
@@ -253,6 +255,8 @@ export default function ClassDialogForm (props: Props) {
                         id: `class_maxCharValidation`,
                     })),
                 ]}
+                loading={loading}
+                disabled={loading}
                 onChange={(value) => setClassName(value)}
                 onValidate={setClassNameValid}
             />
@@ -264,9 +268,10 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={allSchools}
                 value={schoolIds}
-                disabled={!canEditSchool}
+                disabled={!canEditSchool || loading || schoolDataLoading}
                 itemText={(school) => school.school_name ?? ``}
                 itemValue={(school) => school.school_id}
+                loading={loading || schoolDataLoading}
                 onChange={(values) => {
                     setSchoolIds(values);
                 }}
@@ -281,6 +286,8 @@ export default function ClassDialogForm (props: Props) {
                 value={programsIds}
                 itemText={(program) => program.name ?? ``}
                 itemValue={(program) => program.id ?? ``}
+                loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setProgramsIds(values)}
             />
             <Select
@@ -293,6 +300,8 @@ export default function ClassDialogForm (props: Props) {
                 value={gradesIds}
                 itemText={(grade) => grade.name ?? ``}
                 itemValue={(grade) => grade.id ?? ``}
+                loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setGradesIds(values)}
             />
             <Select
@@ -305,6 +314,8 @@ export default function ClassDialogForm (props: Props) {
                 value={ageRangesIds}
                 itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
                 itemValue={(ageRange) => ageRange.id ?? ``}
+                loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setAgeRangesIds(values)}
             />
             <Select
@@ -317,6 +328,8 @@ export default function ClassDialogForm (props: Props) {
                 value={subjectsIds}
                 itemText={(subject) => subject.name ?? ``}
                 itemValue={(subject) => subject.id ?? ``}
+                loading={loading || schoolDataLoading || userDataLoading}
+                disabled={loading || schoolDataLoading || userDataLoading}
                 onChange={(values) => setSubjectsIds(values)}
             />
         </div>

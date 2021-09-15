@@ -7,7 +7,6 @@ import {
     buildOrganizationProgramFilter,
     GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST,
 } from '@/operations/queries/getPaginatedOrganizationPrograms';
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     act,
@@ -20,7 +19,7 @@ import {
     mockSearchClasses,
 } from "@tests/mockDataClasses";
 import { mockProgramsFilterList } from '@tests/mockDataPrograms';
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 const mockQueryVariables = {
@@ -110,8 +109,7 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Class page renders without records`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender([], locale, <ClassesPage />);
+    const { queryByText } = render(<ClassesPage />);
 
     await act(async () => {
         await waitFor(() => {
@@ -122,8 +120,9 @@ test(`Class page renders without records`, async () => {
 });
 
 test(`Class page renders with correct class names`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryByText } = qlRender(mocks, locale, <ClassesPage />);
+    const { queryByText } = render(<ClassesPage />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         await waitFor(() => {
@@ -143,8 +142,9 @@ test(`Class page renders with correct class names`, async () => {
 });
 
 test(`Class page renders with correct program chips`, async () => {
-    const locale = getLanguage(`en`);
-    const { queryAllByText } = qlRender(mocks, locale, <ClassesPage />);
+    const { queryAllByText } = render(<ClassesPage />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         await waitFor(() => {
@@ -165,12 +165,13 @@ test(`Class page renders with correct program chips`, async () => {
 });
 
 test(`Class page results render when searching by name`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryAllByText,
         getByPlaceholderText,
         queryByText,
-    } = qlRender(mocks, locale, <ClassesPage />);
+    } = render(<ClassesPage />, {
+        mockedResponses: mocks,
+    });
 
     fireEvent.change(getByPlaceholderText(`Search`), {
         target: {

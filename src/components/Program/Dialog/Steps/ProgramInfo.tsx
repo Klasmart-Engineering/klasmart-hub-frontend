@@ -44,6 +44,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
         value,
         disabled,
         onChange,
+        loading,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -124,7 +125,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                         id: `programs_programNameLabel`,
                     })}
                     value={programName}
-                    disabled={disabled}
+                    disabled={disabled || loading}
                     hideHelperText={disabled}
                     autoFocus={!value.id}
                     validations={[
@@ -134,6 +135,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                         })),
                         max(35, `The program name has a max length of 35 characters.`),
                     ]}
+                    loading={loading}
                     onChange={setProgramName}
                 />
             </Paper>
@@ -162,9 +164,10 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     ]}
                     itemText={(grade) => grade.name ?? ``}
                     itemValue={(grade) => grade.id ?? ``}
-                    disabled={disabled}
+                    disabled={disabled || loading || gradesLoading}
                     hideHelperText={disabled}
                     validations={[ required(`The Grade is required.`) ]}
+                    loading={loading || gradesLoading}
                     onChange={setGradeIds}
                 />
             </Paper>
@@ -193,9 +196,10 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
                     ]}
                     itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
                     itemValue={(ageRange) => ageRange.id ?? ``}
-                    disabled={disabled}
+                    disabled={disabled || loading || ageRangesLoading}
                     hideHelperText={disabled}
                     validations={[ required(`The Age Range is required.`) ]}
+                    loading={loading || ageRangesLoading}
                     onChange={setAgeRanges}
                 />
             </Paper>

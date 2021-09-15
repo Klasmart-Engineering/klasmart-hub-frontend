@@ -1,3 +1,5 @@
+import { SubjectNode } from "@/api/subjects";
+import { SubjectRow } from "@/components/Subject/Table";
 import {
     Program,
     Status,
@@ -30,3 +32,10 @@ export const mapSubjectsFromPrograms = (programs: Program[]): Subject[] => {
 
     return subjects as Subject[] ?? [];
 };
+
+export const mapSubjectNodeToSubjectRow = (node: SubjectNode): SubjectRow => ({
+    id: node.id,
+    name: node.name,
+    system: node.system,
+    categories: node.categories.map((category) => category.name ?? ``),
+});

@@ -1,15 +1,25 @@
+import { ProgramFilter } from "./programs";
 import { CREATE_OR_UPDATE_SUBJECTS } from "@/operations/mutations/createOrUpdateSubjects";
 import { DELETE_SUBJECT } from "@/operations/mutations/deleteSubject";
 import {
     GET_ALL_SUBJECTS,
     GET_ALL_SUBJECTS_LIST,
 } from "@/operations/queries/getAllSubjects";
+import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { GET_SUBJECT } from "@/operations/queries/getSubject";
 import {
-    Organization,
+    BooleanFilter,
+    Category,
+    PageInfo,
+    PaginationDirection,
     Program,
+    Status,
+    StatusFilter,
+    StringFilter,
     Subject,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -48,11 +58,11 @@ export const useDeleteSubject = (options?: MutationHookOptions<DeleteSubjectResp
 };
 
 interface GetSubjectRequest {
-    id: string;
+    subject_id: string;
 }
 
 interface GetSubjectResponse {
-    organization: Organization;
+    subject: Subject;
 }
 
 export const useGetSubject = (options?: QueryHookOptions<GetSubjectResponse, GetSubjectRequest>) => {
@@ -76,4 +86,46 @@ export const useGetAllSubjects = (options?: QueryHookOptions<GetAllSubjectsRespo
 
 export const useGetAllSubjectsList = (options?: QueryHookOptions<GetAllSubjectsResponse, GetAllSubjectsRequest>) => {
     return useQuery<GetAllSubjectsResponse, GetAllSubjectsRequest>(GET_ALL_SUBJECTS_LIST, options);
+};
+
+export interface SubjectNode {
+    id: string;
+    name: string;
+    status: Status;
+    system: boolean;
+    categories: Category[];
+}
+
+export interface SubjectEdge {
+    node: SubjectNode;
+}
+
+export interface SubjectFilter extends PaginationFilter<SubjectFilter> {
+    id?: UuidFilter;
+    name?: StringFilter;
+    status?: StatusFilter;
+    system?: BooleanFilter;
+    organizationId?: UuidFilter;
+}
+
+interface GetAllSubjectsPaginatedRequest {
+    direction: PaginationDirection;
+    cursor?: string | null;
+    count?: number;
+    search?: string;
+    orderBy?: string;
+    order?: string;
+    filter?: SubjectFilter;
+}
+
+export interface GetAllSubjectsPaginatedResponse {
+    subjectsConnection: {
+        totalCount: number;
+        pageInfo: PageInfo;
+        edges: SubjectEdge[];
+    };
+}
+
+export const useGetAllPaginatedSubjects = (options?: QueryHookOptions<GetAllSubjectsPaginatedResponse, GetAllSubjectsPaginatedRequest>) => {
+    return useQuery<GetAllSubjectsPaginatedResponse, GetAllSubjectsPaginatedRequest>(GET_PAGINATED_ORGANIZATION_SUBJECTS, options);
 };

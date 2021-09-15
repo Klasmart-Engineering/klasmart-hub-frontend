@@ -1,12 +1,11 @@
 import CreateSubjectDialog from './Create';
-import { getLanguage } from '@/utils/locale';
 import {
     act,
     screen,
     waitFor,
 } from '@testing-library/react';
 import { mockOrgId } from '@tests/mockDataSubjects';
-import qlRender from '@tests/utils';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {
@@ -28,11 +27,10 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subject create dialog renders correctly`, async () => {
-    const locale = getLanguage(`en`);
     const {
         queryByText,
         queryByLabelText,
-    } = qlRender([], locale, <CreateSubjectDialog
+    } = render(<CreateSubjectDialog
         open={true}
         onClose={jest.fn()}/>);
 

@@ -2,12 +2,17 @@ import {
     useAddUsersToClass,
     useGetClassRosterEligibleUsers,
 } from "@/api/classRoster";
-import { Status } from "@/types/graphQL";
+import {
+    Role,
+    Status,
+} from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
+import { getCustomRoleName } from "@/utils/userRoles";
 import {
     createStyles,
     makeStyles,
     Paper,
+    Typography,
 } from "@material-ui/core";
 import {
     FullScreenDialog,
@@ -27,10 +32,12 @@ const useStyles = makeStyles(() =>
 
 interface ClassRosterRow {
     id: string;
-    username: string | undefined;
+    givenName: string | undefined;
+    familyName: string | undefined;
     role: string;
     email: string;
     phoneNumber: string | null;
+    organizationRoles: string[];
 }
 
 interface Props {
@@ -71,20 +78,24 @@ export default function SchoolRoster (props: Props) {
         .filter((student) => student.membership?.status === Status.ACTIVE)
         .map((student) => ({
             id: `${student.user_id}-student`,
-            username: student.family_name ? `${student.given_name} ${student.family_name}` : ``,
+            givenName: student.given_name ?? ``,
+            familyName: student.family_name ?? ``,
             role: `Student`,
             email: student.email,
             phoneNumber: student.phone,
+            organizationRoles: student.membership.roles?.map(role => role.role_name ?? ``) ?? [],
         }));
     const teachers = data?.class
         ?.eligibleTeachers?.filter((teacher) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
         .filter((teacher) => teacher.membership?.status === Status.ACTIVE)
         .map((teacher) => ({
             id: `${teacher.user_id}-teacher`,
-            username: teacher.family_name ? `${teacher.given_name} ${teacher.family_name}` : ``,
+            givenName: teacher.given_name ?? ``,
+            familyName: teacher.family_name ?? ``,
             role: `Teacher`,
             email: teacher.email,
             phoneNumber: teacher.phone,
+            organizationRoles: teacher.membership.roles?.map(role => role.role_name ?? ``) ?? [],
         }));
 
     const rows = teachers && students ? [ ...students, ...teachers ] : [];
@@ -98,21 +109,29 @@ export default function SchoolRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `username`,
+            id: `givenName`,
             label: intl.formatMessage({
-                id: `schools_userNameLabel`,
+                id: `users_firstName`,
+            }),
+            persistent: true,
+        },
+        {
+            id: `familyName`,
+            label: intl.formatMessage({
+                id: `users_lastName`,
             }),
             persistent: true,
         },
         {
             id: `role`,
             label: intl.formatMessage({
-                id: `schools_roleLabel`,
+                id: `class_roleLabel`,
             }),
             groups: roles.map((role) => ({
                 text: role,
                 value: role,
             })),
+            disableSort: true,
         },
         {
             id: `email`,
@@ -126,6 +145,24 @@ export default function SchoolRoster (props: Props) {
             label: intl.formatMessage({
                 id: `schools_phoneLabel`,
             }),
+            disableSort: true,
+        },
+        {
+            id: `organizationRoles`,
+            label: intl.formatMessage({
+                id: `organization.roles`,
+            }, {
+                count: 2,
+            }),
+            render: (row) => row?.organizationRoles?.map((role, i) => (
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {getCustomRoleName(intl, role)}
+                </Typography>
+            )),
         },
     ];
 

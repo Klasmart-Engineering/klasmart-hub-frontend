@@ -1,19 +1,16 @@
 import 'regenerator-runtime/runtime';
 import MyOrganizationTable from './MyOrganizationTable';
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
-import { getLanguage } from "@/utils/locale";
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
-    screen,
     waitFor,
 } from '@testing-library/react';
 import {
     mockOrgId,
     mockOrgStack,
 } from '@tests/mockOrganizationData';
-import qlRender from '@tests/utils';
-import { utils } from 'kidsloop-px';
+import { render } from "@tests/utils/render";
 import React from 'react';
 
 const mocks: MockedResponse[] = [
@@ -53,8 +50,9 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`MyOrganizationTable renders correctly`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText, findAllByText } = qlRender(mocks, locale, <MyOrganizationTable />);
+    const { findByText, findAllByText } = render(<MyOrganizationTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const title = await findByText(`My Organizations`);
@@ -76,8 +74,9 @@ test(`MyOrganizationTable renders correctly`, async () => {
 });
 
 test(`MyOrganizationTable renders correct data`, async () => {
-    const locale = getLanguage(`en`);
-    const { findByText } = qlRender(mocks, locale, <MyOrganizationTable />);
+    const { findByText } = render(<MyOrganizationTable />, {
+        mockedResponses: mocks,
+    });
 
     await act(async () => {
         const orgName = await findByText(`KidsLoop Miracle Squad`);

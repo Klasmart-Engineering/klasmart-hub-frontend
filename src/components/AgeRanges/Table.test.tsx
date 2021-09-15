@@ -5,7 +5,6 @@ import {
 } from "@/operations/queries/getPaginatedAgeRanges";
 import { mapAgeRangeNodeToAgeRangeRow } from "@/utils/ageRanges";
 import { useGetTableFilters } from "@/utils/filters";
-import { getLanguage } from "@/utils/locale";
 import { MockedProvider } from "@apollo/client/testing";
 import {
     act,
@@ -18,7 +17,7 @@ import {
     mockOrganizationId,
     mockPaginatedAgeRanges,
 } from "@tests/mockDataAgeRanges";
-import qlRender from "@tests/utils";
+import { render } from "@tests/utils/render";
 import { utils } from "kidsloop-px";
 import React from "react";
 import TestRenderer from "react-test-renderer";
@@ -42,7 +41,7 @@ const mocks = [
             query: GET_PAGINATED_AGE_RANGES,
             variables: {
                 direction: `FORWARD`,
-                count: 100,
+                count: 50,
                 orderBy: [ `lowValueUnit`, `lowValue` ],
                 order: `ASC`,
                 filter: buildOrganizationAgeRangeFilter({
@@ -77,8 +76,6 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Age ranges page renders with correct data`, async () => {
-    const locale = getLanguage(`en`);
-
     const rows =
     data?.ageRangesConnection?.edges
         ?.map((edge) => mapAgeRangeNodeToAgeRangeRow(edge.node)) ?? [];
@@ -87,7 +84,7 @@ test(`Age ranges page renders with correct data`, async () => {
         order="asc"
         orderBy="name"
         rows={rows} />;
-    const { queryAllByText } = qlRender([], locale, component);
+    const { queryAllByText } = render(component);
 
     await act(async () => {
         const title = await screen.findByText(`Age Ranges`);

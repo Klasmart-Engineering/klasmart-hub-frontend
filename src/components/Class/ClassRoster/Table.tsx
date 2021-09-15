@@ -8,14 +8,15 @@ import SchoolRoster from "@/components/Class/SchoolRoster/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { getTableLocalization } from "@/utils/table";
+import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
-    Chip,
     createStyles,
     DialogContentText,
     makeStyles,
     Paper,
+    Typography,
 } from "@material-ui/core";
 import {
     Delete as DeleteIcon,
@@ -41,9 +42,6 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     userName: {
         marginLeft: theme.spacing(2),
-    },
-    chip: {
-        margin: theme.spacing(0.25),
     },
 }));
 
@@ -94,21 +92,23 @@ export default function ClassRoster (props: Props) {
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
             .map((user: ClassUser) => ({
                 ...user,
-                name: `${user.given_name} ${user.family_name}`,
                 role: `Student`,
                 user_id: `${user.user_id}-student`,
-                subjectsTeaching: user.subjectsTeaching,
-                alternate_phone: user.alternate_phone,
+                organizationRoles: user.membership.roles?.map((role) => (
+                    role.role_name ?? ``
+                )) ?? [],
+                contactInfo: user.email || user.phone || ``,
             })),
         teachers: classInfo.teachers
             ?.filter((user) => user?.membership?.status === Status.ACTIVE)
             .map((user: ClassUser) => ({
                 ...user,
-                name: `${user.given_name} ${user.family_name}`,
                 role: `Teacher`,
                 user_id: `${user.user_id}-teacher`,
-                subjectsTeaching: user.subjectsTeaching,
-                alternate_phone: user.alternate_phone,
+                organizationRoles: user.membership.roles?.map((role) => (
+                    role.role_name ?? ``
+                )) ?? [],
+                contactInfo: user.email || user.phone || ``,
             })),
     };
 
@@ -123,9 +123,9 @@ export default function ClassRoster (props: Props) {
             hidden: true,
         },
         {
-            id: `name`,
+            id: `given_name`,
             label: intl.formatMessage({
-                id: `class_nameLabel`,
+                id: `users_firstName`,
             }),
             persistent: true,
             render: (row) => (
@@ -135,12 +135,18 @@ export default function ClassRoster (props: Props) {
                     alignItems="center"
                 >
                     <UserAvatar
-                        name={row.name ?? ``}
+                        name={`${row.given_name} ${row.family_name}`}
                         size="small"
                     />
-                    <span className={classes.userName}>{row.name}</span>
+                    <span className={classes.userName}>{row.given_name}</span>
                 </Box>
             ),
+        },
+        {
+            id: `family_name`,
+            label: intl.formatMessage({
+                id: `users_lastName`,
+            }),
         },
         {
             id: `role`,
@@ -153,31 +159,28 @@ export default function ClassRoster (props: Props) {
             })),
         },
         {
-            id: `email`,
+            id: `contactInfo`,
             label: intl.formatMessage({
-                id: `class_emailLabel`,
+                id: `users_contactInfo`,
             }),
             disableSort: true,
         },
         {
-            id: `alternate_phone`,
+            id: `organizationRoles`,
             label: intl.formatMessage({
-                id: `class_phoneLabel`,
+                id: `organization.roles`,
+            }, {
+                count: 2,
             }),
-        },
-        {
-            id: `subjectsTeaching`,
-            label: `Subjects`,
-            render: (row) => (
-                <>
-                    {row.subjectsTeaching.map((subject, i) => (
-                        <Chip
-                            key={`subject-${i}`}
-                            label={subject.name}
-                            className={classes.chip} />
-                    ))}
-                </>
-            ),
+            render: (row) => row.organizationRoles.map((roleName, i) => (
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {getCustomRoleName(intl, roleName)}
+                </Typography>
+            )),
         },
     ];
 
@@ -251,7 +254,7 @@ export default function ClassRoster (props: Props) {
                     columns={columns}
                     rows={rows}
                     idField="user_id"
-                    orderBy="name"
+                    orderBy="given_name"
                     order="asc"
                     groupBy="role"
                     primaryAction={{

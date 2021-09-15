@@ -88,12 +88,12 @@ export const useDeleteSchool = (options?: MutationHookOptions<DeleteSchoolRespon
     return useMutation<DeleteSchoolResponse, DeleteSchoolRequest>(DELETE_SCHOOL, options);
 };
 
-interface GetSchoolsRequest {
+export interface GetSchoolsRequest {
     organization_id: string;
 }
 
-interface GetSchoolsResponse {
-    organization: Organization;
+export interface GetSchoolsResponse {
+    organization: Pick<Organization, "schools">;
 }
 
 export const useGetSchools = (options?: QueryHookOptions<GetSchoolsResponse, GetSchoolsRequest>) => {
