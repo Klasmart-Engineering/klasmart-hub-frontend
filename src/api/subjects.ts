@@ -106,6 +106,7 @@ export interface SubjectFilter extends PaginationFilter<SubjectFilter> {
     status?: StatusFilter;
     system?: BooleanFilter;
     organizationId?: UuidFilter;
+    categoryId?: UuidFilter;
 }
 
 interface GetAllSubjectsPaginatedRequest {

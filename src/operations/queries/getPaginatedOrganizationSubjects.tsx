@@ -1,11 +1,18 @@
 import { SubjectFilter } from "@/api/subjects";
-import { Status } from "@/types/graphQL";
+import { SubjectRow } from "@/components/Subject/Table";
+import {
+    BooleanOperator,
+    Status,
+    UuidOperator,
+} from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
+import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
 export interface SubjectPaginationFilter {
     organizationId: string;
     search: string;
+    filters: SubjectFilter[];
 }
 
 export const buildOrganizationSubjectSearchFilter = (search: string): SubjectFilter => ({
@@ -52,7 +59,7 @@ export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter):
             ],
         },
         {
-            AND: [ buildOrganizationSubjectSearchFilter(filter.search) ],
+            AND: [ buildOrganizationSubjectSearchFilter(filter.search), ...filter.filters  ],
         },
     ],
 });
@@ -65,6 +72,43 @@ export const buildSubjectIdsFilter = (ids: string[]): SubjectFilter => ({
         },
     })),
 });
+export const buildSubjectsFilters = (filters: BaseTableData<SubjectRow>['filters'] = []): SubjectFilter[] => {
+    return filters.map((filter) => {
+        switch (filter.columnId) {
+        case `system`: {
+            const values = filter.values.map((value) => {
+                const systemFilter: SubjectFilter = {
+                    system: {
+                        operator: filter.operatorValue as BooleanOperator,
+                        value: value === `true` ? true : false,
+                    },
+                };
+                return systemFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `categories`: {
+            const values = filter.values.map((value) => {
+                const categoryFilter: SubjectFilter = {
+                    categoryId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value: value,
+                    },
+                };
+                return categoryFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        default: return {};
+        }
+    });
+};
 
 export const GET_PAGINATED_ORGANIZATION_SUBJECTS = gql`
     query getOrganizationSubjects(

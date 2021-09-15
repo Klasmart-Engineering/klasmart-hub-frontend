@@ -1,7 +1,13 @@
-import { useGetAllPaginatedSubjects } from "@/api/subjects";
+import {
+    SubjectEdge,
+    useGetAllPaginatedSubjects,
+} from "@/api/subjects";
 import SubjectsTable,
 { SubjectRow } from "@/components/Subject/Table";
-import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
+import {
+    buildOrganizationSubjectFilter,
+    buildSubjectsFilters,
+} from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
@@ -48,6 +54,12 @@ export default function SubjectStep (props: EntityStepContent<Program>) {
         orderBy: `name`,
     });
 
+    const paginationFilter = buildOrganizationSubjectFilter({
+        organizationId: currentOrganization?.organization_id ?? ``,
+        search: serverPagination.search,
+        filters: buildSubjectsFilters(tableFilters),
+    });
+
     const {
         data,
         refetch,
@@ -59,10 +71,7 @@ export default function SubjectStep (props: EntityStepContent<Program>) {
             count: serverPagination.rowsPerPage,
             orderBy: serverPagination.orderBy,
             order: serverPagination.order,
-            filter: buildOrganizationSubjectFilter({
-                organizationId: currentOrganization?.organization_id ?? ``,
-                search: serverPagination.search,
-            }),
+            filter: paginationFilter,
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
@@ -121,7 +130,7 @@ export default function SubjectStep (props: EntityStepContent<Program>) {
     ]);
 
     const rows = data?.subjectsConnection?.edges
-        .map((edge) => mapSubjectNodeToSubjectRow(edge.node))
+        .map((edge: SubjectEdge) => mapSubjectNodeToSubjectRow(edge.node))
         ?? [];
 
     return (

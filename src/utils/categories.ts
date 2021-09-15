@@ -15,3 +15,9 @@ export const buildEmptyCategory = (category?: Category): Category => pickBy({
     system: category?.system ?? false,
 }, (value) => value !== undefined)
 ;
+
+export const mapCategoriesToFilterOptions = (categories: Category[]) =>
+    categories.map((category) => ({
+        value: category.id ?? ``,
+        label: category.name ?? ``,
+    })).sort((a, b) => a.label.localeCompare(b.label));

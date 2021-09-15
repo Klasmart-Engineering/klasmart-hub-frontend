@@ -1,7 +1,10 @@
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
-import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
+import {
+    buildOrganizationSubjectFilter,
+    buildSubjectsFilters,
+} from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
@@ -44,6 +47,7 @@ export default function SubjectsPage (props: Props) {
     const paginationFilter = buildOrganizationSubjectFilter({
         organizationId: currentOrganization?.organization_id ?? ``,
         search: serverPagination.search,
+        filters: buildSubjectsFilters(tableFilters),
     });
 
     const {

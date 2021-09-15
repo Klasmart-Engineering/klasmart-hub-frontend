@@ -6,6 +6,7 @@ import {
 } from "@/types/graphQL";
 
 export const mockOrgId = `b19de3cc-aa01-47f5-9f87-850eb70ae073`;
+export const mockOrgId2 = `b19de3cc-aa01-47f5-9f87-850eb70ae079`;
 export const mathId1 = `a00de3cc-aa01-47f5-9f87-850eb70ae001`;
 export const mathId2 = `b00de3cc-aa01-47f5-9f87-850eb70ae002`;
 export const mathId3 = `b00de3cc-aa01-47f5-9f87-850eb70ae003`;

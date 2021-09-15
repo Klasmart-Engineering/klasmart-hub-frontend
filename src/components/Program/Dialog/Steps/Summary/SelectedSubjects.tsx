@@ -3,11 +3,7 @@ import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
 import { buildSubjectIdsFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    Program,
-    Status,
-    Subject,
-} from "@/types/graphQL";
+import { Program } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {

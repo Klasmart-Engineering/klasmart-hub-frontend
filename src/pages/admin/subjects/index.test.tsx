@@ -5,8 +5,8 @@ import {
 } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { MockedResponse } from "@apollo/client/testing";
 import {
-    act,
     fireEvent,
+    screen,
     waitFor,
 } from "@testing-library/react";
 import { mockProgramsFilterList } from '@tests/mockDataPrograms';
@@ -26,6 +26,7 @@ const mockQueryVariables = {
     filter: buildOrganizationSubjectFilter({
         organizationId: mockOrgId,
         search: ``,
+        filters: [],
     }),
 };
 
@@ -37,6 +38,7 @@ const mockSearchQueryVariables = {
     filter: buildOrganizationSubjectFilter({
         organizationId: mockOrgId,
         search: `Mock Subject`,
+        filters: [],
     }),
 };
 
@@ -74,6 +76,7 @@ const mocks: MockedResponse[] = [
                 filter: buildOrganizationSubjectFilter({
                     organizationId: mockOrgId,
                     search: ``,
+                    filters: [],
                 }),
             },
         },
@@ -102,52 +105,48 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subjects page renders without records`, async () => {
-    const { queryByText } = render(<SubjectsPage />);
+    render(<SubjectsPage />);
 
     await waitFor(() => {
-        expect(queryByText(`Subjects`)).toBeTruthy();
-        expect(queryByText(`No records to display`)).toBeTruthy();
+        expect(screen.queryByText(`Subjects`)).toBeTruthy();
+        expect(screen.queryByText(`No records to display`)).toBeTruthy();
     });
 });
 
 test(`Subjects page renders with correct subjects names`, async () => {
-    const { queryByText } = render(<SubjectsPage />, {
+    render(<SubjectsPage />, {
         mockedResponses: mocks,
     });
 
     await waitFor(() => {
-        expect(queryByText(`Subjects`)).toBeTruthy();
-        expect(queryByText(`Math Grade 5`)).toBeTruthy();
-        expect(queryByText(`Math Grade 6`)).toBeTruthy();
-        expect(queryByText(`Math Grade 7`)).toBeTruthy();
-        expect(queryByText(`Math Grade 1`)).toBeTruthy();
-        expect(queryByText(`Math Grade 2`)).toBeTruthy();
-        expect(queryByText(`Math Grade 10`)).toBeTruthy();
-        expect(queryByText(`Math Grade 9`)).toBeTruthy();
-        expect(queryByText(`Math Grade 8`)).toBeTruthy();
-        expect(queryByText(`Math Grade 7`)).toBeTruthy();
-        expect(queryByText(`Math Grade 4`)).toBeTruthy();
+        expect(screen.queryByText(`Subjects`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 5`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 6`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 7`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 1`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 2`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 10`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 9`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 8`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 7`)).toBeTruthy();
+        expect(screen.queryByText(`Math Grade 4`)).toBeTruthy();
     });
 });
 
 test(`Subjects page results render when searching by name`, async () => {
-    const {
-        queryAllByText,
-        getByPlaceholderText,
-        queryByText,
-    } = render(<SubjectsPage />, {
+    render(<SubjectsPage />, {
         mockedResponses: mocks,
     });
 
-    fireEvent.change(getByPlaceholderText(`Search`), {
+    fireEvent.change(screen.getByPlaceholderText(`Search`), {
         target: {
             value: `Mock Subject`,
         },
     });
 
     await waitFor(() => {
-        expect(queryAllByText(`Mock Subject`)).toHaveLength(1);
-        expect(queryByText(`Subject Grade 3`)).toBeFalsy();
+        expect(screen.queryAllByText(`Mock Subject`)).toHaveLength(1);
+        expect(screen.queryByText(`Subject Grade 3`)).toBeFalsy();
     }, {
         timeout: 4000,
     });

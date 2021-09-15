@@ -2,7 +2,9 @@ import ViewSubjectDetailsDrawer from "./DetailsDrawer";
 import { useDeleteSubject } from "@/api/subjects";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
@@ -25,6 +27,7 @@ import {
     CursorTable,
     useSnackbar,
 } from "kidsloop-px";
+import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
@@ -72,6 +75,7 @@ export default function SubjectsTable (props: Props) {
         search,
         order,
         orderBy,
+        hideFilters,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -88,6 +92,73 @@ export default function SubjectsTable (props: Props) {
     const canView = usePermission(`view_subjects_20115`);
     const canEdit = usePermission(`edit_subjects_20337`);
     const canDelete = usePermission(`delete_subjects_20447`);
+    const currentOrganization = useCurrentOrganization();
+    const { required } = useValidations();
+    const { categoriesFilterValueOptions } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+        queryCategories: true,
+    }, hideFilters);
+
+    const filters: TableFilter<SubjectRow>[] = [
+        {
+            id: `categories`,
+            label: intl.formatMessage({
+                id: `subjects_categoriesLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: categoriesFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `system`,
+            label: intl.formatMessage({
+                id: `subjects_systemLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: [
+                        {
+                            label: `System`,
+                            value: `true`,
+                        },
+                        {
+                            label: `Custom`,
+                            value: `false`,
+                        },
+                    ],
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+    ];
 
     const selectIds = (ids: string[]) => {
         if (!ids.length) {
@@ -216,7 +287,7 @@ export default function SubjectsTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
-                    filters={undefined}
+                    filters={!hideFilters ? filters : undefined}
                     showSelectables={showSelectables}
                     idField="id"
                     orderBy={orderBy}

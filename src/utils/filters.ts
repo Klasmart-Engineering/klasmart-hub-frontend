@@ -2,12 +2,14 @@ import {
     mapAgeRangesHighValueToFilter,
     mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
+import { mapCategoriesToFilterOptions } from "./categories";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { mapSubjectsToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
+import { useGetAllCategories } from "@/api/categories";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedProgramsList } from "@/api/programs";
 import { useGetOrganizationRoles } from "@/api/roles";
@@ -30,6 +32,7 @@ interface SelectFilters {
     querySchools?: boolean;
     queryPrograms?: boolean;
     queryUserRoles?: boolean;
+    queryCategories?: boolean;
 }
 
 export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters, skipAll?: boolean) => {
@@ -40,6 +43,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     const [ schoolsFilterValueOptions, setSchoolsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ programsFilterValueOptions, setProgramsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ userRolesFilterValueOptions, setUserRolesFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ categoriesFilterValueOptions, setCategoriesFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const gradeFilter = buildGradeFilter({
         organizationId: orgId ?? ``,
         search: ``,
@@ -90,6 +94,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
             order: `ASC`,
             filter: buildOrganizationAgeRangeFilter({
                 organizationId: orgId ?? ``,
+                filters: [],
             }),
         },
         returnPartialData: true,
@@ -132,6 +137,13 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
             organization_id: orgId ?? ``,
         },
         skip: !orgId || skipAll || !selectedFilters.queryUserRoles,
+    });
+
+    const { data: categoriesData } = useGetAllCategories({
+        variables: {
+            organization_id: orgId ?? ``,
+        },
+        skip: !orgId || skipAll || !selectedFilters.queryCategories,
     });
 
     useEffect(() => {
@@ -188,6 +200,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         setUserRolesFilterValueOptions(mapUserRolesToFilterValueOptions(userRolesData?.organization?.roles ?? []));
     }, [ userRolesData ]);
 
+    useEffect(() => {
+        setCategoriesFilterValueOptions(mapCategoriesToFilterOptions(categoriesData?.organization?.categories ?? []));
+    }, [ categoriesData ]);
+
     return {
         gradeFilterValueOptions,
         subjectFilterValueOptions,
@@ -196,5 +212,6 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         schoolsFilterValueOptions,
         programsFilterValueOptions,
         userRolesFilterValueOptions,
+        categoriesFilterValueOptions,
     };
 };
