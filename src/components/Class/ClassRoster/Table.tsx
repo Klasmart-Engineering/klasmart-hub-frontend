@@ -1,8 +1,8 @@
 import {
     ClassUser,
-    useDeleteClassStudent,
-    useDeleteClassTeacher,
     useGetClassRoster,
+    useRemoveClassStudent,
+    useRemoveClassTeacher,
 } from "@/api/classRoster";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -67,8 +67,8 @@ export default function ClassRoster (props: Props) {
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
     const currentOrganization = useCurrentOrganization();
     const { required, equals } = useValidations();
-    const [ deleteStudent ] = useDeleteClassStudent();
-    const [ deleteTeacher ] = useDeleteClassTeacher();
+    const [ removeStudent ] = useRemoveClassStudent();
+    const [ removeTeacher ] = useRemoveClassTeacher();
     const {
         data,
         refetch,
@@ -190,42 +190,39 @@ export default function ClassRoster (props: Props) {
         const selectedUser = findClass(row);
         if (!selectedUser) return;
 
-        const { name, email } = selectedUser;
+        const userName = `${row.given_name} ${row.family_name}`.trim();
 
-        if (
-            !(await prompt({
-                variant: `error`,
-                title: intl.formatMessage({
-                    id: `class_removeUserLabel`,
-                }),
-                okLabel: intl.formatMessage({
-                    id: `class_removeConfirm`,
-                }),
-                content: (
-                    <>
-                        <DialogContentText>
-                            {intl.formatMessage({
-                                id: `classRoster_deletePrompt`,
-                            }, {
-                                value: name || email,
-                            })}
-                        </DialogContentText>
-                        <DialogContentText>
-                            <FormattedMessage
-                                id="generic_typeToRemovePrompt"
-                                values={{
-                                    value: <strong>{name}</strong>,
-                                }}
-                            />
-                        </DialogContentText>
-                    </>
-                ),
-                validations: [ required(), equals(name || email) ],
-            }))
-        )
-            return;
+        if (!(await prompt({
+            variant: `error`,
+            title: intl.formatMessage({
+                id: `class_removeUserLabel`,
+            }),
+            okLabel: intl.formatMessage({
+                id: `class_removeConfirm`,
+            }),
+            content: (
+                <>
+                    <DialogContentText>
+                        {intl.formatMessage({
+                            id: `classRoster_deletePrompt`,
+                        }, {
+                            value: userName,
+                        })}
+                    </DialogContentText>
+                    <DialogContentText>
+                        <FormattedMessage
+                            id="generic_typeToRemovePrompt"
+                            values={{
+                                value: <strong>{userName}</strong>,
+                            }}
+                        />
+                    </DialogContentText>
+                </>
+            ),
+            validations: [ required(), equals(userName) ],
+        }))) return;
 
-        const deleteProps = {
+        const removeProps = {
             variables: {
                 class_id: classId ?? ``,
                 user_id: selectedUser.user_id.replace(`-student`, ``).replace(`-teacher`, ``),
@@ -233,9 +230,9 @@ export default function ClassRoster (props: Props) {
         };
 
         if (selectedUser.role === `Student`) {
-            await deleteStudent(deleteProps);
+            await removeStudent(removeProps);
         } else {
-            await deleteTeacher(deleteProps);
+            await removeTeacher(removeProps);
         }
 
         refetch();

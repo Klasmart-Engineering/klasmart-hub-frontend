@@ -1,6 +1,6 @@
 import { ADD_USERS_TO_CLASS } from "@/operations/mutations/addUsersToClass";
-import { DELETE_CLASS_STUDENT } from "@/operations/mutations/deleteClassStudent";
-import { DELETE_CLASS_TEACHER } from "@/operations/mutations/deleteClassTeacher";
+import { REMOVE_CLASS_STUDENT } from "@/operations/mutations/deleteClassStudent";
+import { REMOVE_CLASS_TEACHER } from "@/operations/mutations/deleteClassTeacher";
 import { GET_CLASS_ROSTER } from "@/operations/queries/getClassRoster";
 import { GET_ELIGIBLE_USERS } from "@/operations/queries/getEligibleClassUsers";
 import {
@@ -27,7 +27,6 @@ export interface ClassUser {
     given_name: string;
     phone: string | null;
     user_id: string;
-    name: string | null;
     role?: string;
     school_memberships?: SchoolMembership[];
     membership: OrganizationMembership;
@@ -61,7 +60,7 @@ interface AddUsersToClassRequest {
     teacher_ids: string[];
 }
 
-interface DeleteClassUserRequest {
+interface RemoveClassUserRequest {
     class_id: string;
     user_id: string;
 }
@@ -76,12 +75,12 @@ export const useGetClassRosterEligibleUsers = (options?: QueryHookOptions<GetCla
     return useQuery<GetClassRosterEligibleUsersRespone, GetClassRosterEligibleUsersRequest>(GET_ELIGIBLE_USERS, options);
 };
 
-export const useDeleteClassStudent = () => {
-    return useMutation<EmptyResponse, DeleteClassUserRequest>(DELETE_CLASS_STUDENT);
+export const useRemoveClassStudent = () => {
+    return useMutation<EmptyResponse, RemoveClassUserRequest>(REMOVE_CLASS_STUDENT);
 };
 
-export const useDeleteClassTeacher = () => {
-    return useMutation<EmptyResponse, DeleteClassUserRequest>(DELETE_CLASS_TEACHER);
+export const useRemoveClassTeacher = () => {
+    return useMutation<EmptyResponse, RemoveClassUserRequest>(REMOVE_CLASS_TEACHER);
 };
 
 export const useAddUsersToClass = () => {
