@@ -27,7 +27,9 @@ interface Props {
 
 export default function SchoolsPage (props: Props) {
     const currentOrganization = useCurrentOrganization();
-    const canView = usePermission(`view_school_20110`);
+    const canView = usePermission({
+        OR: [ `view_school_20110`, `view_my_school_20119` ],
+    });
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,

@@ -98,9 +98,10 @@ beforeEach(() => {
     mockUsePermission.mockReturnValue(true);
 });
 
-test(`if User doesn't have view_school Permission no rows are shown`, async () => {
+test(`if User doesn't have view_school or view_my_school Permission no rows are shown`, async () => {
+
     mockUsePermission.mockImplementation((perm) => {
-        return perm === `view_school_20110` ? false : true;
+        return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? false : true;
     });
 
     render(<SchoolsPage/>);
@@ -111,7 +112,11 @@ test(`if User doesn't have view_school Permission no rows are shown`, async () =
     }), expect.anything());
 });
 
-test(`if User has view_school Permission the table contains active Schools`, async () => {
+test(`if User has view_school or view_my_school Permission the table contains active Schools`, async () => {
+    
+    mockUsePermission.mockImplementation((perm) => {
+        return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? true : false;
+    });
     render(<SchoolsPage/>);
 
     expect(mockSchoolTable).toHaveBeenLastCalledWith(expect.objectContaining({
