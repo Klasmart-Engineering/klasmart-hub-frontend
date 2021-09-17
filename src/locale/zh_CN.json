@@ -1058,5 +1058,5 @@
     "entity.school.importTemplate.filename": "kidsloop-学校-模板",
     "entity.class.importTemplate.filename": "kidsloop-classes-模板",
     "entity.user.template.download.button": "下载CSV文件模板",
-    "entity.user.bulkImport.button": "Upload CSV"
+    "entity.user.bulkImport.button": "上传CSV"
 }

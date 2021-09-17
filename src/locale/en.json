@@ -1018,7 +1018,7 @@
     "validation.error.attribute.minLength": "{min, plural, one {{attribute} must not be less than {min} character.} other {{attribute} must not be less than {min} characters.}}",
     "common.emailOrPhone": "Email/Phone",
     "validation.error.user.duplicate": "User already exists",
-    "validation.error.shortCode.duplicate": "Short code already exists.",
+    "validation.error.shortCode.duplicate": "Short Code already exists.",
     "uploadCsv_previewNotAvailableMessage": "Preview is not available",
     "validation.error.permission.uploadToOrganization": "Unauthorized to upload {entity} to Organization {organizationName}.",
     "generic_filtersEqualsLabel": "Equals",
