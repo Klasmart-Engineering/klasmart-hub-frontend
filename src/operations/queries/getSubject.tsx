@@ -10,10 +10,12 @@ export const GET_SUBJECT = gql`
                 id
                 name
                 status
+                system
                 subcategories{
                     id
                     name
                     status
+                    system
                 }
             }
         }
