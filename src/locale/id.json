@@ -1058,5 +1058,6 @@
     "entity.school.importTemplate.filename": "template-sekolah-kidsloop",
     "entity.class.importTemplate.filename": "template-kelas-kidsloop",
     "entity.user.template.download.button": "Unduh Berkas Template CSV",
-    "entity.user.bulkImport.button": "Unggah CSV"
+    "entity.user.bulkImport.button": "Unggah CSV",
+    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\"."
 }

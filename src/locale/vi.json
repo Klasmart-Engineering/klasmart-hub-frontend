@@ -1058,5 +1058,6 @@
     "entity.school.importTemplate.filename": "trường-mẫu-kidsloop",
     "entity.class.importTemplate.filename": "lớp-mẫu-kidsloop",
     "entity.user.template.download.button": "Tải xuống tệp mẫu CSV",
-    "entity.user.bulkImport.button": "Tải lên CSV"
+    "entity.user.bulkImport.button": "Tải lên CSV",
+    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\"."
 }

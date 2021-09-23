@@ -340,6 +340,14 @@ export const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: Intl
         return intl.formatMessage({
             id: `validation.error.permission.unauthorized`,
         });
+    case APIErrorCode.UNAUTHORIZED_UPLOAD_CHILD_ENTITY:
+        return intl.formatMessage({
+            id: `validation.error.permission.uploadChildEntity`,
+        }, {
+            entity,
+            parentEntity,
+            parentName,
+        });
     case APIErrorCode.UNAUTHORIZED_UPLOAD_TO_ORGANIZATION:
         return intl.formatMessage({
             id: `validation.error.permission.uploadToOrganization`,

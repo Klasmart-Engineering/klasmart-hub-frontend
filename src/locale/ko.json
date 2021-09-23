@@ -1058,5 +1058,6 @@
     "entity.school.importTemplate.filename": "kidsloop-schools-template",
     "entity.class.importTemplate.filename": "kidsloop-classes-template",
     "entity.user.template.download.button": "CSV 템플릿 파일 다운로드",
-    "entity.user.bulkImport.button": "CSV 파일 업로드"
+    "entity.user.bulkImport.button": "CSV 파일 업로드",
+    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\"."
 }

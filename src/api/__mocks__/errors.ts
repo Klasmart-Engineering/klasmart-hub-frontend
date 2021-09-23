@@ -87,6 +87,12 @@ const mockChildErrors = buildMockErrors([ APIErrorCode.ERR_NON_EXISTENT_CHILD_EN
     `parentName`,
 ]);
 
+const mockChildEntityErrors = buildMockErrors([ APIErrorCode.UNAUTHORIZED_UPLOAD_CHILD_ENTITY ], [
+    `entity`,
+    `parentEntity`,
+    `parentName`,
+]);
+
 const mockOrganizationErrors = buildMockErrors([ APIErrorCode.UNAUTHORIZED_UPLOAD_TO_ORGANIZATION ], [ `entity`, `organizationName` ]);
 
 const mockGenericErrors = buildMockErrors([ APIErrorCode.UNAUTHORIZED ]);
@@ -99,6 +105,7 @@ export const mockErrors: MockErrorCollection = {
     ...mockMinErrors,
     ...mockMaxErrors,
     ...mockChildErrors,
+    ...mockChildEntityErrors,
     ...mockOrganizationErrors,
     ...mockGenericErrors,
 };
