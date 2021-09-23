@@ -18,10 +18,12 @@ import {
     ApolloClient,
     ApolloLink,
 } from "@apollo/client/core";
+import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { ApolloProvider } from "@apollo/client/react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { createUploadLink } from "apollo-upload-client";
+import { sha256 } from 'crypto-hash';
 import {
     AlertDialogProvider,
     ConfirmDialogProvider,
@@ -55,10 +57,15 @@ const uploadLink = createUploadLink({
     uri: `${getAPIEndpoint()}user/`,
 });
 
+const persistedQueryLink = createPersistedQueryLink({
+    sha256,
+});
+
 export const client = new ApolloClient({
     credentials: `include`,
     link: ApolloLink.from([
         objectCleanerLink,
+        persistedQueryLink,
         cancelRequestLink,
         uploadLink,
     ]),
