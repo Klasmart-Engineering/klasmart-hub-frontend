@@ -1,6 +1,9 @@
 import EditSubjectDialog from './Edit';
 import { Status } from '@/types/graphQL';
-import { waitFor } from '@testing-library/react';
+import {
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import {
     mockCategories,
     mockOrgId,
@@ -36,19 +39,13 @@ const formValue = {
 };
 
 test(`Subject edit dialog renders correctly`, async () => {
-    const {
-        getByText,
-        getByLabelText,
-    } = render(<EditSubjectDialog
+    render(<EditSubjectDialog
         subjectId={formValue.id}
         open={true}
         onClose={jest.fn()}/>);
 
-    const title = getByText(`Edit Subject`);
-    const name = await getByLabelText(`Subject Name`);
-
     await waitFor(() => {
-        expect(title).toBeTruthy();
-        expect(name).toBeTruthy();
+        expect(screen.getByText(`Edit Subject`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Subject Name`)).toBeInTheDocument();
     });
 });

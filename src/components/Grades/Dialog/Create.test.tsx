@@ -1,7 +1,7 @@
 import CreateGrade from './Create';
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
+    screen,
     waitFor,
 } from '@testing-library/react';
 import { mockOrgId } from '@tests/mockDataGrades';
@@ -29,24 +29,16 @@ jest.mock(`@/utils/permissions`, () => {
 const mocks: MockedResponse[] = [];
 
 test(`Create grade dialog renders correctly and with empty fields.`, async () => {
-    const { queryByLabelText, queryByText } = render(<CreateGrade
+    render(<CreateGrade
         open={true}
         onClose={jest.fn()}/>, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const title = queryByText(`Create Grade`);
-        const name = queryByLabelText(`Grade Name`);
-        const pFrom = queryByLabelText(`Progress From`);
-        const pTo = queryByLabelText(`Progress To`);
-
-        waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name).toBeTruthy();
-            expect(pFrom).toBeTruthy();
-            expect(pTo).toBeTruthy();
-        });
-
+    await waitFor(() => {
+        expect(screen.queryByText(`Create Grade`)).toBeInTheDocument();
+        expect(screen.queryByLabelText(`Grade Name`)).toBeInTheDocument();
+        expect(screen.queryByLabelText(`Progress From`)).toBeInTheDocument();
+        expect(screen.queryByLabelText(`Progress To`)).toBeInTheDocument();
     });
 });

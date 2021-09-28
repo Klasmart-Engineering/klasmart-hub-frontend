@@ -2,7 +2,6 @@ import 'regenerator-runtime/runtime';
 import Grades from './Table';
 import { NON_SPECIFIED } from "@/types/graphQL";
 import {
-    act,
     screen,
     waitFor,
 } from "@testing-library/react";
@@ -11,7 +10,6 @@ import {
     mockOrgId,
 } from '@tests/mockDataGrades';
 import { render } from "@tests/utils/render";
-import { utils } from "kidsloop-px";
 import React from 'react';
 
 const data = {
@@ -58,21 +56,13 @@ test(`Grades table page renders correctly`, async () => {
         orderBy="name"
         rows={rows}
     />;
-    const { queryAllByText } = render(component);
 
-    await act(async () => {
-        const title = await screen.findByText(`Grades`);
+    render(component);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-        });
-
-        await utils.sleep(0);
-
-        await waitFor(() => {
-            expect(queryAllByText(`Grade 1`)).toBeTruthy();
-            expect(queryAllByText(`Grade 2`)).toBeTruthy();
-            expect(queryAllByText(`Grade 3`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Grades`)).toBeInTheDocument();
+        expect(screen.queryAllByText(`Grade 1`).length).toBeTruthy();
+        expect(screen.queryAllByText(`Grade 2`).length).toBeTruthy();
+        expect(screen.queryAllByText(`Grade 3`).length).toBeTruthy();
     });
 });

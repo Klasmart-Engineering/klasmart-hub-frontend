@@ -9,8 +9,9 @@ import {
 } from '@/operations/queries/getPaginatedOrganizationPrograms';
 import { MockedResponse } from "@apollo/client/testing";
 import {
-    act,
+    cleanup,
     fireEvent,
+    screen,
     waitFor,
 } from "@testing-library/react";
 import {
@@ -108,83 +109,71 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-test(`Class page renders without records`, async () => {
-    const { queryByText } = render(<ClassesPage />);
+afterEach(cleanup);
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryByText(`Classes`)).toBeTruthy();
-            expect(queryByText(`No records to display`)).toBeTruthy();
-        });
-    });
+test(`Class page renders without records`, () => {
+    render(<ClassesPage />);
+
+    expect(screen.queryByText(`Classes`)).toBeInTheDocument();
+    expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
 });
 
 test(`Class page renders with correct class names`, async () => {
-    const { queryByText } = render(<ClassesPage />, {
+    render(<ClassesPage />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryByText(`Classes`)).toBeTruthy();
-            expect(queryByText(`Class 6`)).toBeTruthy();
-            expect(queryByText(`Class 7`)).toBeTruthy();
-            expect(queryByText(`Class 9`)).toBeTruthy();
-            expect(queryByText(`Class Grade 2`)).toBeTruthy();
-            expect(queryByText(`Class Grade 3`)).toBeTruthy();
-            expect(queryByText(`Elem 10`)).toBeTruthy();
-            expect(queryByText(`Elem 8`)).toBeTruthy();
-            expect(queryByText(`Elementary 5`)).toBeTruthy();
-            expect(queryByText(`Grade 1 Class`)).toBeTruthy();
-            expect(queryByText(`Last Class`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Classes`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class 6`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class 7`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class 9`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class Grade 2`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class Grade 3`)).toBeInTheDocument();
+        expect(screen.queryByText(`Elem 10`)).toBeInTheDocument();
+        expect(screen.queryByText(`Elem 8`)).toBeInTheDocument();
+        expect(screen.queryByText(`Elementary 5`)).toBeInTheDocument();
+        expect(screen.queryByText(`Grade 1 Class`)).toBeInTheDocument();
+        expect(screen.queryByText(`Last Class`)).toBeInTheDocument();
     });
 });
 
 test(`Class page renders with correct program chips`, async () => {
-    const { queryAllByText } = render(<ClassesPage />, {
+    render(<ClassesPage />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`ESL`).length).toEqual(2);
-            expect(queryAllByText(`Math`).length).toEqual(4);
-            expect(queryAllByText(`Science`).length).toEqual(3);
-            expect(queryAllByText(`Bada Genius`).length).toEqual(2);
-            expect(queryAllByText(`Bada Math`).length).toEqual(2);
-            expect(queryAllByText(`Bada Read`).length).toEqual(2);
-            expect(queryAllByText(`Bada Rhyme`).length).toEqual(2);
-            expect(queryAllByText(`Bada Sound`).length).toEqual(2);
-            expect(queryAllByText(`Bada STEM`).length).toEqual(2);
-            expect(queryAllByText(`Bada Talk`).length).toEqual(2);
-            expect(queryAllByText(`Bada STEAM 1`).length).toEqual(2);
-            expect(queryAllByText(`None Specified`).length).toEqual(2);
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(`ESL`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Math`)).toHaveLength(4);
+        expect(screen.queryAllByText(`Science`)).toHaveLength(3);
+        expect(screen.queryAllByText(`Bada Genius`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada Math`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada Read`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada Rhyme`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada Sound`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada STEM`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada Talk`)).toHaveLength(2);
+        expect(screen.queryAllByText(`Bada STEAM 1`)).toHaveLength(2);
+        expect(screen.queryAllByText(`None Specified`)).toHaveLength(2);
     });
 });
 
 test(`Class page results render when searching by name`, async () => {
-    const {
-        queryAllByText,
-        getByPlaceholderText,
-        queryByText,
-    } = render(<ClassesPage />, {
+    render(<ClassesPage />, {
         mockedResponses: mocks,
     });
 
-    fireEvent.change(getByPlaceholderText(`Search`), {
+    fireEvent.change(screen.getByPlaceholderText(`Search`), {
         target: {
             value: `Mock Class`,
         },
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`Mock Class`).length).toEqual(1);
-            expect(queryByText(`Class Grade 3`)).toBeFalsy();
-        }, {
-            timeout: 4000,
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(`Mock Class`)).toHaveLength(1);
+        expect(screen.queryByText(`Class Grade 3`)).toBeFalsy();
+    }, {
+        timeout: 4000,
     });
 });

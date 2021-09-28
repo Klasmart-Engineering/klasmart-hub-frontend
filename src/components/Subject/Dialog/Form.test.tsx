@@ -1,7 +1,6 @@
 import SubjectsForm from './Form';
 import { Status } from "@/types/graphQL";
 import {
-    act,
     fireEvent,
     screen,
     waitFor,
@@ -41,88 +40,68 @@ const formValue = {
 };
 
 test(`Subject form renders correctly`, async () => {
-    const { getByLabelText } = render(<SubjectsForm
+    render(<SubjectsForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>);
 
-    await act(async () => {
-        const name = await getByLabelText(`Subject Name`);
-        const categoryLabels = await screen.findAllByText(/category/gi);
-        const subcategoryLabels = await screen.findAllByText(/subcategories/gi);
-
-        await waitFor(() => {
-            expect(name).toBeTruthy();
-            expect(categoryLabels.length).toBeTruthy();
-            expect(subcategoryLabels.length).toBeTruthy();
-            expect(name.value).toBe(``);
-        });
+    await waitFor(() => {
+        expect(screen.getByLabelText(`Subject Name`)).toBeInTheDocument();
+        expect(screen.getAllByText(/category/gi).length).toBeTruthy();
+        expect(screen.getAllByText(/subcategories/gi).length).toBeTruthy();
+        expect(screen.getByLabelText(`Subject Name`).value).toBe(``);
     });
 });
 
 test(`Subjects form updates correct and opens categories selector`, async () => {
-    const {
-        getByLabelText,
-        findByText,
-        queryAllByText,
-    } = render(<SubjectsForm
+    render(<SubjectsForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>);
 
-    await act(async () => {
-        const name = await getByLabelText(`Subject Name`, {
-            selector: `input`,
-        });
+    const name = screen.getByLabelText(`Subject Name`, {
+        selector: `input`,
+    });
 
-        const nonSpec = await screen.getAllByText(/None Specified/gi, {
-            selector: `span`,
-        });
-        fireEvent.change(name, {
-            target: {
-                value: `Test Subject`,
-            },
-        });
+    const nonSpec = screen.getAllByText(/None Specified/gi, {
+        selector: `span`,
+    });
+    fireEvent.change(name, {
+        target: {
+            value: `Test Subject`,
+        },
+    });
 
-        const notFoundInit = await queryAllByText(/Select Category/gi);
+    const notFoundInit = screen.queryAllByText(/Select Category/gi);
 
-        await utils.sleep(0);
+    await utils.sleep(0);
 
-        // Grade name
-        await waitFor(() => {
-            expect(name.value).toBe(`Test Subject`);
-            expect(notFoundInit.length).toBeFalsy();
-        });
+    // Grade name
+    await waitFor(() => {
+        expect(name.value).toBe(`Test Subject`);
+        expect(notFoundInit.length).toBeFalsy();
+    });
 
-        fireEvent.click(nonSpec[0]);
-        await utils.sleep(0);
+    fireEvent.click(nonSpec[0]);
+    await utils.sleep(0);
 
-        const selectTitle = await findByText(`Select Category`);
-        const subTitle = await findByText(`Categories`);
-        const fineMotor = await findByText(/Fine Motor Skills/gi);
-        const createCategoryButton = await screen.findByText(/Programs using/gi, {
+    await waitFor(() => {
+        expect(screen.getByText(`Select Category`)).toBeInTheDocument();
+        expect(screen.getByText(`Categories`)).toBeInTheDocument();
+        expect(screen.getByText(/Fine Motor Skills/gi)).toBeInTheDocument();
+        expect(screen.getByText(/Programs using/gi, {
             selector: `div`,
-        });
+        })).toBeInTheDocument();
+        expect(screen.getByText(`Select`)).toBeInTheDocument();
+        expect(screen.getByText(`Cancel`)).toBeInTheDocument();
+    });
 
-        const selectButton = await findByText(`Select`);
-        const cancelButton = await findByText(`Cancel`);
+    fireEvent(screen.getByText(`Cancel`), new MouseEvent(`click`, {
+        bubbles: true,
+        cancelable: true,
+    }));
 
-        await waitFor(() => {
-            expect(selectTitle).toBeTruthy();
-            expect(subTitle).toBeTruthy();
-            expect(fineMotor).toBeTruthy();
-            expect(createCategoryButton).toBeTruthy();
-            expect(selectButton).toBeTruthy();
-            expect(cancelButton).toBeTruthy();
-        });
-
-        fireEvent(cancelButton, new MouseEvent(`click`, {
-            bubbles: true,
-            cancelable: true,
-        }));
-
-        await waitFor(() => {
-            expect(queryAllByText(/Cancel/gi).length).toBeFalsy();
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(/Cancel/gi).length).toBeFalsy();
     });
 });

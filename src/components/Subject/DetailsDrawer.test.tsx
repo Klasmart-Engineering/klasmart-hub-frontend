@@ -1,22 +1,53 @@
 import DetailsDrawer from './DetailsDrawer';
+import { GET_SUBJECT } from '@/operations/queries/getSubject';
+import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
+    screen,
     waitFor,
 } from '@testing-library/react';
-import { mockSubjects } from '@tests/mockDataSubjects';
+import {
+    mathId1,
+    mockOrgId,
+    mockSubjectDetail,
+} from '@tests/mockDataSubjects';
 import { render } from "@tests/utils/render";
 import React from 'react';
 
-test(`Details drawer component renders and displays correct information`, async () => {
-    const { queryByText } = render(<DetailsDrawer
-        value={mockSubjects[0]}
-        open={true}
-        onClose={jest.fn()}/>);
+const mocks: MockedResponse[] = [
+    {
+        request: {
+            query: GET_SUBJECT,
+            variables: {
+                subject_id: mathId1,
+            },
+        },
+        result: {
+            data: mockSubjectDetail,
+        },
+    },
+];
 
-    await act(async () => {
-        waitFor(() => {
-            expect(queryByText(`Math Grade 5`)).toBeTruthy();
-            expect(queryByText(`Algebra`)).toBeTruthy();
-        });
+jest.mock(`@/store/organizationMemberships`, () => {
+    return {
+        useCurrentOrganization: () => ({
+            organization_id: mockOrgId,
+        }),
+        useCurrentOrganizationMembership: () => ({
+            organization_id: mockOrgId,
+        }),
+    };
+});
+
+test(`Details drawer component renders and displays correct information`, async () => {
+    render(<DetailsDrawer
+        subjectId={mathId1}
+        open={true}
+        onClose={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
+
+    await waitFor(() => {
+        expect(screen.queryByText(`Math Grade 5`)).toBeInTheDocument();
+        expect(screen.queryByText(`Algebra`)).toBeInTheDocument();
     });
 });

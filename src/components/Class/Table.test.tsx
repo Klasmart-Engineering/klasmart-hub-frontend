@@ -16,7 +16,6 @@ import { organizationPaginatedClasses } from "@/utils/classes";
 import { useGetTableFilters } from "@/utils/filters";
 import { MockedProvider } from "@apollo/client/testing/";
 import {
-    act,
     fireEvent,
     screen,
     waitFor,
@@ -135,35 +134,24 @@ const mocks = [
 ];
 
 test(`Class table renders without records`, async () => {
-    const { queryByText } = render(<ClassTable rows={[]}/>);
+    render(<ClassTable rows={[]}/>);
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(screen.queryByText(`Classes`)).toBeTruthy();
-            expect(queryByText(`No records to display`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Classes`)).toBeInTheDocument();
+        expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
     });
 });
 
 test(`Class table renders with records`, async () => {
-    const { queryByText, queryAllByText } = render(<ClassTable rows={rows}/>);
+    render(<ClassTable rows={rows}/>);
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(screen.queryByText(`Classes`)).toBeTruthy();
-            expect(queryByText(`Class Grade 2`)).toBeTruthy();
-        });
-
-        await utils.sleep(0);
-
-        await waitFor(() => {
-            expect(queryAllByText).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Classes`)).toBeInTheDocument();
+        expect(screen.queryByText(`Class Grade 2`)).toBeInTheDocument();
     });
 });
 
 test(`useClassFilters hook should return mapped schools data for filter drop down in classes`, async () => {
-    const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
@@ -178,19 +166,16 @@ test(`useClassFilters hook should return mapped schools data for filter drop dow
         wrapper,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.schoolsFilterValueOptions.length).toEqual(2);
-            expect(result.current.schoolsFilterValueOptions[0].label).toBe(mockSchoolName1);
-            expect(result.current.schoolsFilterValueOptions[1].label).toBe(mockSchoolName2);
-            expect(result.current.schoolsFilterValueOptions[0].value).toBe(mockSchoolId1);
-            expect(result.current.schoolsFilterValueOptions[1].value).toBe(mockSchoolId2);
-        });
+    await waitFor(() => {
+        expect(result.current.schoolsFilterValueOptions).toHaveLength(2);
+        expect(result.current.schoolsFilterValueOptions[0].label).toBe(mockSchoolName1);
+        expect(result.current.schoolsFilterValueOptions[1].label).toBe(mockSchoolName2);
+        expect(result.current.schoolsFilterValueOptions[0].value).toBe(mockSchoolId1);
+        expect(result.current.schoolsFilterValueOptions[1].value).toBe(mockSchoolId2);
     });
 });
 
 test(`useClassFilters hook should return mapped programs data for filter drop down in classes`, async () => {
-    const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
@@ -205,23 +190,20 @@ test(`useClassFilters hook should return mapped programs data for filter drop do
         wrapper,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.programsFilterValueOptions.length).toEqual(4);
-            expect(result.current.programsFilterValueOptions[0].label).toBe(programNameA);
-            expect(result.current.programsFilterValueOptions[0].value).toBe(programIdA);
-            expect(result.current.programsFilterValueOptions[1].label).toBe(programNameB);
-            expect(result.current.programsFilterValueOptions[1].value).toBe(programIdB);
-            expect(result.current.programsFilterValueOptions[2].label).toBe(programNameC);
-            expect(result.current.programsFilterValueOptions[2].value).toBe(programIdC);
-            expect(result.current.programsFilterValueOptions[3].label).toBe(programNameD);
-            expect(result.current.programsFilterValueOptions[3].value).toBe(programIdD);
-        });
+    await waitFor(() => {
+        expect(result.current.programsFilterValueOptions).toHaveLength(4);
+        expect(result.current.programsFilterValueOptions[0].label).toBe(programNameA);
+        expect(result.current.programsFilterValueOptions[0].value).toBe(programIdA);
+        expect(result.current.programsFilterValueOptions[1].label).toBe(programNameB);
+        expect(result.current.programsFilterValueOptions[1].value).toBe(programIdB);
+        expect(result.current.programsFilterValueOptions[2].label).toBe(programNameC);
+        expect(result.current.programsFilterValueOptions[2].value).toBe(programIdC);
+        expect(result.current.programsFilterValueOptions[3].label).toBe(programNameD);
+        expect(result.current.programsFilterValueOptions[3].value).toBe(programIdD);
     });
 });
 
 test(`useClassFilters hook should return mapped grades data for filter drop down in classes`, async () => {
-    const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
@@ -236,47 +218,36 @@ test(`useClassFilters hook should return mapped grades data for filter drop down
         wrapper,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.gradeFilterValueOptions.length).toEqual(2);
-            expect(result.current.gradeFilterValueOptions[0].label).toBe(grade2Name);
-            expect(result.current.gradeFilterValueOptions[0].value).toBe(grade2Id);
-            expect(result.current.gradeFilterValueOptions[1].label).toBe(grade3Name);
-            expect(result.current.gradeFilterValueOptions[1].value).toBe(grade3Id);
-        });
+    await waitFor(() => {
+        expect(result.current.gradeFilterValueOptions).toHaveLength(2);
+        expect(result.current.gradeFilterValueOptions[0].label).toBe(grade2Name);
+        expect(result.current.gradeFilterValueOptions[0].value).toBe(grade2Id);
+        expect(result.current.gradeFilterValueOptions[1].label).toBe(grade3Name);
+        expect(result.current.gradeFilterValueOptions[1].value).toBe(grade3Id);
     });
 });
 
 test(`Class page filter dropdown opens`, async () => {
-    const {
-        queryAllByText,
-        queryByText,
-        getByText,
-        findByText,
-    } = render(<ClassTable rows={[]} />, {
+    render(<ClassTable rows={[]} />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`Schools`).length).toEqual(2);
-            expect(queryByText(`Column`)).toBeFalsy();
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(`Schools`)).toHaveLength(2);
+        expect(screen.queryByText(`Column`)).toBeFalsy();
     });
 
-    fireEvent.click(getByText(`Add Filter`));
+    fireEvent.click(screen.getByText(`Add Filter`));
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`Schools`).length).toEqual(3);
-            expect(queryAllByText(`Schools`, {
-                selector: `span`,
-            }).length).toEqual(1);
-            expect(queryAllByText(`Column`).length).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(`Schools`)).toHaveLength(3);
+        expect(screen.queryAllByText(`Schools`, {
+            selector: `span`,
+        })).toHaveLength(1);
+        expect(screen.queryAllByText(`Column`).length).toBeTruthy();
     });
 
-    const schoolOption = await findByText(`Schools`, {
+    const schoolOption = await screen.findByText(`Schools`, {
         selector: `span `,
     });
 
@@ -287,9 +258,7 @@ test(`Class page filter dropdown opens`, async () => {
         bubbles: true,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(mockDropdownClick).toHaveBeenCalledTimes(1);
-        });
+    await waitFor(() => {
+        expect(mockDropdownClick).toHaveBeenCalledTimes(1);
     });
 });

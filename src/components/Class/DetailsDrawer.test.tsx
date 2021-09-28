@@ -3,7 +3,7 @@ import ClassDetailsDrawer from "./DetailsDrawer";
 import { GET_CLASS } from "@/operations/queries/getClass";
 import { MockedResponse } from "@apollo/client/testing";
 import {
-    act,
+    screen,
     waitFor,
 } from "@testing-library/react";
 import {
@@ -56,7 +56,7 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Class details drawer renders with correct information`, async () => {
-    const { queryByText } = render(<ClassDetailsDrawer
+    render(<ClassDetailsDrawer
         open={true}
         classId={mockClassId}
         onClose={(() => jest.fn())}
@@ -64,28 +64,26 @@ test(`Class details drawer renders with correct information`, async () => {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryByText(`Demo Class`)).toBeTruthy();
-            expect(queryByText(`ESL`)).toBeTruthy();
-            expect(queryByText(`Teachers (1)`)).toBeTruthy();
-            expect(queryByText(`Students (1)`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Demo Class`)).toBeInTheDocument();
+        expect(screen.queryByText(`ESL`)).toBeInTheDocument();
+        expect(screen.queryByText(`Teachers (1)`)).toBeInTheDocument();
+        expect(screen.queryByText(`Students (1)`)).toBeInTheDocument();
+    });
 
-        queryByText(`ESL`)?.click();
+    screen.queryByText(`ESL`)?.click();
 
-        await waitFor(() => {
-            expect(queryByText(`Subjects`)).toBeTruthy();
-            expect(queryByText(`- Language/Literacy`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Subjects`)).toBeInTheDocument();
+        expect(screen.queryByText(`- Language/Literacy`)).toBeInTheDocument();
+    });
 
-        queryByText(`Teachers`)?.click();
-        queryByText(`Students`)?.click();
+    screen.queryByText(`Teachers`)?.click();
+    screen.queryByText(`Students`)?.click();
 
-        await waitFor(() => {
-            expect(queryByText(`Louis Merkel`)).toBeTruthy();
-            expect(queryByText(`George Merkel`)).toBeTruthy();
-            expect(queryByText(`Juan Obrador`)).toBeFalsy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Louis Merkel`)).toBeInTheDocument();
+        expect(screen.queryByText(`George Merkel`)).toBeInTheDocument();
+        expect(screen.queryByText(`Juan Obrador`)).toBeFalsy();
     });
 });

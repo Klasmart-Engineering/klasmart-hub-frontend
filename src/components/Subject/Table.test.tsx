@@ -72,19 +72,19 @@ test(`Subjects table page renders data`, async () => {
         loading={false}
         rows={data.subjectsConnection.edges.filter((edge) => isActive(edge.node)).map((edge) => mapSubjectNodeToSubjectRow(edge.node)) ?? []}
     />;
-    const { queryAllByText } = render(component);
+    render(component);
 
     const title = await screen.findByText(`Subjects`);
 
     await waitFor(() => {
-        expect(title).toBeTruthy();
+        expect(title).toBeInTheDocument();
     });
 
     await utils.sleep(0);
 
     await waitFor(() => {
         for(const mockSubject of mockSubjects.edges){
-            expect(queryAllByText(mockSubject.node.name)).toBeTruthy();
+            expect(screen.queryAllByText(mockSubject.node.name).length).toBeTruthy();
         }
     });
 });

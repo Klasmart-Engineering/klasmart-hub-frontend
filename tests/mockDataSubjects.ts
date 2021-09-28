@@ -1,5 +1,8 @@
 
-import { SubjectEdge } from "@/api/subjects";
+import {
+    GetAllSubjectsPaginatedResponse,
+    SubjectEdge,
+} from "@/api/subjects";
 import {
     Category,
     Status,
@@ -48,8 +51,8 @@ export const mockSubjectsStep: SubjectEdge[] = [
     },
 ];
 
-export const mockSubjects = {
-    totalCount:10,
+export const mockSubjects: GetAllSubjectsPaginatedResponse['subjectsConnection'] = {
+    totalCount: 10,
     pageInfo: {
         hasNextPage: true,
         hasPreviousPage: false,
@@ -272,4 +275,21 @@ export const mockFormInitialValue = {
             system: true,
         },
     ],
+};
+
+export const mockSubjectDetail = {
+    subject: {
+        id: mathId1,
+        name: `Math Grade 5`,
+        status: Status.ACTIVE,
+        categories: [
+            {
+                id: categoryId1,
+                name: `Algebra`,
+                status: Status.ACTIVE,
+                system: false,
+                subcategories: [],
+            },
+        ],
+    },
 };

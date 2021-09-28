@@ -31,5 +31,5 @@ test(`Subjects step renders correctly.`, () => {
     expect(screen.queryByText(`Subjects`)).toBeTruthy();
     expect(screen.queryAllByText(`Name`).length).toBeTruthy();
     expect(screen.queryAllByText(`Categories`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Type`)).toBeTruthy();
+    expect(screen.queryAllByText(`Type`).length).toBeTruthy();
 });

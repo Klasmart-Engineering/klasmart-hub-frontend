@@ -4,7 +4,7 @@ import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFr
 import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
 import { MockedResponse } from "@apollo/client/testing";
 import {
-    act,
+    screen,
     waitFor,
 } from "@testing-library/react";
 import {
@@ -82,11 +82,7 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Class edit component renders with correct information`, async () => {
-    const {
-        queryByText,
-        queryAllByText,
-        getByDisplayValue,
-    } = render(<EditClassDialog
+    render(<EditClassDialog
         open={true}
         classId={mockClassId}
         onClose={(() => jest.fn())}
@@ -94,22 +90,14 @@ test(`Class edit component renders with correct information`, async () => {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        expect(queryByText(`Edit class`)).toBeTruthy();
-        expect(queryAllByText(`Class name`).length).toBeTruthy();
-        await waitFor(() => {
-            expect(getByDisplayValue(`Demo Class`)).toBeInTheDocument();
-        });
-
-        await waitFor(() => {
-            expect(queryByText(`Clapham School1`)).toBeTruthy();
-        });
-
-        await waitFor(() => {
-            expect(queryByText(`ESL`)).toBeTruthy();
-            expect(queryByText(`3 - 4 Year(s)`)).toBeTruthy();
-            expect(queryByText(`PreK-1`)).toBeTruthy();
-            expect(queryByText(`Language/Literacy`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Edit class`)).toBeInTheDocument();
+        expect(screen.queryAllByText(`Class name`).length).toBeTruthy();
+        expect(screen.getByDisplayValue(`Demo Class`)).toBeInTheDocument();
+        expect(screen.queryByText(`Clapham School1`)).toBeInTheDocument();
+        expect(screen.queryByText(`ESL`)).toBeInTheDocument();
+        expect(screen.queryByText(`3 - 4 Year(s)`)).toBeInTheDocument();
+        expect(screen.queryByText(`PreK-1`)).toBeInTheDocument();
+        expect(screen.queryByText(`Language/Literacy`)).toBeInTheDocument();
     });
 });

@@ -58,99 +58,87 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Grades form renders correctly`, async () => {
-    const { getByLabelText } = render(<GradeDialogForm
+    render(<GradeDialogForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const name = await getByLabelText(`Grade Name`);
-        const pFrom = await getByLabelText(`Progress From`);
-        const pTo = await getByLabelText(`Progress To`);
-
-        await waitFor(() => {
-            expect(name).toBeTruthy();
-            expect(pFrom).toBeTruthy();
-            expect(pTo).toBeTruthy();
-            expect(name.value).toBe(``);
-        });
+    await waitFor(() => {
+        expect(screen.getByLabelText(`Grade Name`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Progress From`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Progress To`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Grade Name`)?.value).toBe(``);
     });
 });
 
 test(`Grades form updates correctly`, async () => {
-    const {
-        getByLabelText,
-        getAllByText,
-        getAllByRole,
-    } = render(<GradeDialogForm
+    render(<GradeDialogForm
         value={formValue}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const name = await getByLabelText(`Grade Name`, {
-            selector: `input`,
-        });
-        const pFrom = await getAllByRole(`button`)[0];
-        const pTo = await getAllByRole(`button`)[1];
+    const name = screen.getByLabelText(`Grade Name`, {
+        selector: `input`,
+    });
+    const pFrom = screen.getAllByRole(`button`)[0];
+    const pTo = screen.getAllByRole(`button`)[1];
 
-        fireEvent.change(name, {
-            target: {
-                value: `Test Grade`,
-            },
-        });
+    fireEvent.change(name, {
+        target: {
+            value: `Test Grade`,
+        },
+    });
 
-        await utils.sleep(0);
+    await utils.sleep(0);
 
-        // Grade name
-        await waitFor(() => {
-            expect(name.value).toBe(`Test Grade`);
-        });
+    // Grade name
+    await waitFor(() => {
+        expect(name.value).toBe(`Test Grade`);
+    });
 
-        await fireEvent.mouseDown(pFrom);
-        await utils.sleep(0);
-        const foundFrom = screen.queryByText(/Grade 1/i);
+    fireEvent.mouseDown(pFrom);
+    await utils.sleep(0);
+    const foundFrom = screen.queryByText(/Grade 1/i);
 
-        await utils.sleep(0);
+    await utils.sleep(0);
 
-        // Find grade 1
-        await waitFor(() => {
-            expect(foundFrom).toBeTruthy();
-            expect(screen.queryAllByText(/System Values/i).length).toBeTruthy();
-        });
+    // Find grade 1
+    await waitFor(() => {
+        expect(foundFrom).toBeInTheDocument();
+        expect(screen.queryAllByText(/System Values/i).length).toBeTruthy();
+    });
 
-        await fireEvent.click(foundFrom as HTMLElement);
+    fireEvent.click(foundFrom as HTMLElement);
 
-        await utils.sleep(0);
-        const grade1Found = await getAllByText(/Grade 1/i);
+    await utils.sleep(0);
+    const grade1Found = screen.getAllByText(/Grade 1/i);
 
-        // Grade 1 should be chosen.
-        await waitFor(() => {
-            expect(grade1Found.length).toEqual(1);
-            expect(screen.queryAllByText(/System Values/i).length).toBeFalsy();
-        });
+    // Grade 1 should be chosen.
+    await waitFor(() => {
+        expect(grade1Found).toHaveLength(1);
+        expect(screen.queryAllByText(/System Values/i).length).toBeFalsy();
+    });
 
-        await fireEvent.mouseDown(pTo);
-        await utils.sleep(0);
-        const foundTo = screen.queryByText(/Grade 2/i);
+    fireEvent.mouseDown(pTo);
+    await utils.sleep(0);
+    const foundTo = screen.queryByText(/Grade 2/i);
 
-        await waitFor(() => {
-            expect(foundTo).toBeTruthy();
-            expect(screen.queryAllByText(/System Values/i).length).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(foundTo).toBeInTheDocument();
+        expect(screen.queryAllByText(/System Values/i).length).toBeTruthy();
+    });
 
-        await fireEvent.click(foundTo as HTMLElement);
+    fireEvent.click(foundTo as HTMLElement);
 
-        await utils.sleep(0);
-        const grade2Found = await getAllByText(/Grade 2/i);
+    await utils.sleep(0);
+    const grade2Found = screen.getAllByText(/Grade 2/i);
 
-        await waitFor(() => {
-            expect(grade2Found.length).toEqual(1);
-            expect(screen.queryAllByText(/System Values/i).length).toBeFalsy();
-        });
+    await waitFor(() => {
+        expect(grade2Found).toHaveLength(1);
+        expect(screen.queryAllByText(/System Values/i).length).toBeFalsy();
     });
 });

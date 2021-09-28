@@ -1,6 +1,5 @@
 import CreateSubjectDialog from './Create';
 import {
-    act,
     screen,
     waitFor,
 } from '@testing-library/react';
@@ -27,20 +26,15 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subject create dialog renders correctly`, async () => {
-    const {
-        queryByText,
-        queryByLabelText,
-    } = render(<CreateSubjectDialog
+    render(<CreateSubjectDialog
         open={true}
         onClose={jest.fn()}/>);
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryByText(`Create Subject`)).toBeTruthy();
-            expect(queryByLabelText(`Subject Name`)).toBeTruthy();
-            expect(screen.queryAllByText(/category/gi).length).toBeTruthy();
-            expect(screen.queryAllByText(/subcategories/gi).length).toBeTruthy();
-            expect(queryByLabelText(`Subject Name`)?.value).toBe(``);
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`Create Subject`)).toBeInTheDocument();
+        expect(screen.queryByLabelText(`Subject Name`)).toBeInTheDocument();
+        expect(screen.queryAllByText(/category/gi).length).toBeTruthy();
+        expect(screen.queryAllByText(/subcategories/gi).length).toBeTruthy();
+        expect(screen.queryByLabelText(`Subject Name`)?.value).toBe(``);
     });
 });

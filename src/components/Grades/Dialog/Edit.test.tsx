@@ -2,7 +2,7 @@ import EditGrade from './Edit';
 import { GET_GRADE } from '@/operations/queries/getGrade';
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
+    screen,
     waitFor,
 } from '@testing-library/react';
 import {
@@ -48,43 +48,32 @@ const mocks: MockedResponse[] = [
 ];
 
 test(`Edit grade dialog renders correctly`, async () => {
-    const { getByLabelText, getByText } = render(<EditGrade
+    render(<EditGrade
         gradeId={grade2Id}
         open={true}
         onClose={jest.fn()}/>, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const title = await getByText(`Edit Grade`);
-        const name = await getByLabelText(`Grade Name`);
-        const pFrom = await getByLabelText(`Progress From`);
-        const pTo = await getByLabelText(`Progress To`);
-
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name).toBeTruthy();
-            expect(pFrom).toBeTruthy();
-            expect(pTo).toBeTruthy();
-        });
-
+    await waitFor(() => {
+        expect(screen.getByText(`Edit Grade`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Grade Name`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Progress From`)).toBeInTheDocument();
+        expect(screen.getByLabelText(`Progress To`)).toBeInTheDocument();
     });
 });
 
 test(`Edit grade dialog renders correctly with correct data`, async () => {
-    await act(async () => {
-        const { queryByLabelText } = render(<EditGrade
-            gradeId={grade2Id}
-            open={true}
-            onClose={jest.fn()}/>, {
-            mockedResponses: mocks,
-        });
+    render(<EditGrade
+        gradeId={grade2Id}
+        open={true}
+        onClose={jest.fn()}/>, {
+        mockedResponses: mocks,
+    });
 
-        await waitFor(() => {
-            expect(queryByLabelText(`Grade Name`, {
-                selector: `input`,
-            })?.value).toBe(`Grade 2`);
-        });
-
+    await waitFor(() => {
+        expect(screen.queryByLabelText(`Grade Name`, {
+            selector: `input`,
+        })?.value).toBe(`Grade 2`);
     });
 });

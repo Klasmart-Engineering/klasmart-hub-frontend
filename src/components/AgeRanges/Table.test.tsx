@@ -87,7 +87,7 @@ test(`Age ranges page renders with correct data`, async () => {
     const title = await screen.findByText(`Age Ranges`);
 
     await waitFor(() => {
-        expect(title).toBeTruthy();
+        expect(title).toBeInTheDocument();
     });
 
     for (let i = 0; i < ageRangesEdges.length; i++) {

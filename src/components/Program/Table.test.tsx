@@ -10,7 +10,6 @@ import { isUuid } from "@/utils/pagination";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import { MockedProvider } from "@apollo/client/testing/";
 import {
-    act,
     screen,
     waitFor,
 } from "@testing-library/react";
@@ -26,9 +25,7 @@ import {
     programs,
 } from '@tests/mockDataPrograms';
 import { render } from "@tests/utils/render";
-import { utils } from "kidsloop-px";
 import React from "react";
-import TestRenderer from 'react-test-renderer';
 
 test(`should return an empty array`, () => {
     const rows = [].map(mapProgramNodeToProgramRow);
@@ -104,27 +101,18 @@ test(`Programs table page renders data`, async () => {
         loading={false}
         rows={data.programsConnection.edges.filter((edge) => isActive(edge.node)).map((edge) => mapProgramNodeToProgramRow(edge.node)) ?? []}
     />;
-    const { queryAllByText } = render(component);
 
-    await act(async () => {
-        const title = await screen.findByText(`Programs`);
+    render(component);
 
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-        });
-
-        await utils.sleep(0);
-
-        await waitFor(() => {
-            expect(queryAllByText(`Bada Read`)).toBeTruthy();
-            expect(queryAllByText(`Bada Rhyme`)).toBeTruthy();
-            expect(queryAllByText(`Bada Sound`)).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.getByText(`Programs`)).toBeInTheDocument();
+        expect(screen.queryAllByText(`Bada Read`).length).toBeTruthy();
+        expect(screen.queryAllByText(`Bada Rhyme`).length).toBeTruthy();
+        expect(screen.queryAllByText(`Bada Sound`).length).toBeTruthy();
     });
 });
 
 test(`useGetTableFilters hook should return mapped age range data`, async () => {
-    const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
@@ -137,16 +125,15 @@ test(`useGetTableFilters hook should return mapped age range data`, async () => 
     }), {
         wrapper,
     });
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.ageRangesHighValueOptions.length).toEqual(2);
-            expect(result.current.ageRangesLowValueOptions.length).toEqual(3);
-            expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
-            expect(result.current.ageRangesLowValueOptions[0].value).toBe(`0 year`);
-            expect(result.current.ageRangesLowValueOptions[1].value).toBe(`1 year`);
-            expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[0].label).toBe(`0 Year(s)`);
-            expect(result.current.ageRangesLowValueOptions[1].label).toBe(`1 Year(s)`);
-        });
+
+    await waitFor(() => {
+        expect(result.current.ageRangesHighValueOptions).toHaveLength(2);
+        expect(result.current.ageRangesLowValueOptions).toHaveLength(3);
+        expect(result.current.ageRangesHighValueOptions[0].value).toBe(`5 year`);
+        expect(result.current.ageRangesLowValueOptions[0].value).toBe(`0 year`);
+        expect(result.current.ageRangesLowValueOptions[1].value).toBe(`1 year`);
+        expect(result.current.ageRangesHighValueOptions[0].label).toBe(`5 Year(s)`);
+        expect(result.current.ageRangesLowValueOptions[0].label).toBe(`0 Year(s)`);
+        expect(result.current.ageRangesLowValueOptions[1].label).toBe(`1 Year(s)`);
     });
 });
