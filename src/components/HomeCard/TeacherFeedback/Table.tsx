@@ -99,8 +99,8 @@ export const mapAssessmentForStudentToTeacherFeedbackRow = (item: AssessmentForS
         feedback: lastTeacherComment?.comment ?? ``,
         files: item.student_attachments ?? [],
         score: item.score,
-        teacherName: `${lastTeacherComment.teacher.given_name} ${lastTeacherComment.teacher.family_name}`.trim(),
-        teacherAvatar: lastTeacherComment.teacher.avatar,
+        teacherName: lastTeacherComment ? `${lastTeacherComment.teacher.given_name} ${lastTeacherComment.teacher.family_name}`.trim() : ``,
+        teacherAvatar: lastTeacherComment?.teacher.avatar ?? ``,
         title: item.title,
         type: mapAssessmentScheduleServerToClientType(item.schedule.type),
     };
