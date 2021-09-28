@@ -26,6 +26,7 @@ import {
     StringFilter,
     Subject,
     User,
+    UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
 import { PaginationFilter } from "@/utils/pagination";
@@ -220,7 +221,7 @@ export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
     status?: StatusFilter;
     organizationId?: UuidFilter;
     system?: BooleanFilter;
-    schoolId?: UuidFilter;
+    schoolId?: UuidExclusiveFilter;
     ageRangeUnitFrom?: UuidFilter;
     ageRangeValueFrom?: NumberFilter;
     ageRangeUnitTo?: UuidFilter;

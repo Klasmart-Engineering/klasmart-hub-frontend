@@ -1,7 +1,10 @@
 import { UserFilter } from "@/api/organizationMemberships";
 import { UserRow } from "@/components/User/Table";
 import { ROLE_SUMMARY_NODE_FIELDS } from "@/operations/fragments";
-import { UuidOperator } from "@/types/graphQL";
+import {
+    UuidExclusiveOperator,
+    UuidOperator,
+} from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
 import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
@@ -99,7 +102,7 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
             const values = filter.values.map((value) => {
                 const organizationSchoolsFilter: UserFilter = {
                     schoolId: {
-                        operator: filter.operatorValue as UuidOperator,
+                        operator: filter.operatorValue as UuidExclusiveOperator,
                         value,
                     },
                 };

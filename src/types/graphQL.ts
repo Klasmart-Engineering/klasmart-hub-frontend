@@ -267,6 +267,8 @@ export interface Branding {
 
 export type UuidOperator = `eq` | `neq`;
 
+export type UuidExclusiveOperator = `eq` | `neq` | `isNull`;
+
 export type StringOperator = `eq` | `neq` | `contains`;
 
 export type BooleanOperator = `eq`;
@@ -283,6 +285,10 @@ export interface AgeRangeValue {
 export interface UuidFilter {
     operator: UuidOperator;
     value: string;
+}
+export interface UuidExclusiveFilter {
+    operator: UuidExclusiveOperator;
+    value?: string;
 }
 
 export interface StringFilter {

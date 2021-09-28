@@ -11,6 +11,7 @@ import {
     OrganizationMembership,
     SortOrder,
     StringFilter,
+    UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
 import { PaginationFilter } from "@/utils/pagination";
@@ -30,7 +31,7 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     phone?: StringFilter;
     organizationId?: UuidFilter;
     roleId?: UuidFilter;
-    schoolId?: UuidFilter;
+    schoolId?: UuidExclusiveFilter;
     organizationUserStatus?: StringFilter;
 }
 
