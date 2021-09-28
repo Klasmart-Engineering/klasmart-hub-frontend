@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => createStyles({
 export interface GradeRow {
     id: string;
     name: string;
+    system: boolean;
     progressFrom?: string;
     progressTo?: string;
 }
@@ -222,13 +223,13 @@ export default function GradeTable (props: Props) {
                         onClick: () => setOpenCreateDialog(true),
                         disabled: !canCreate,
                     }}
-                    rowActions={() => [
+                    rowActions={(row) => [
                         {
                             label: intl.formatMessage({
                                 id: `grades_editLabel`,
                             }),
                             icon: EditIcon,
-                            disabled: !canEdit,
+                            disabled: !canEdit  || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
@@ -236,7 +237,7 @@ export default function GradeTable (props: Props) {
                                 id: `grades_deleteLabel`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !canDelete,
+                            disabled: !canDelete  || row.system,
                             onClick: handleDeleteRowClick,
                         },
                     ]}

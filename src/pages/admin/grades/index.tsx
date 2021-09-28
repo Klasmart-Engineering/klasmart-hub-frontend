@@ -111,6 +111,7 @@ export default function GradesPage (props: Props) {
     data?.gradesConnection?.edges?.map((edge) => ({
         id: edge.node.id ?? ``,
         name: edge.node.name ?? ``,
+        system: edge.node.system,
         progressFrom: edge.node.fromGrade?.name ?? NON_SPECIFIED,
         progressTo: edge.node.toGrade?.name ?? NON_SPECIFIED,
     })) ?? [];

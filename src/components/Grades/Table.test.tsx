@@ -49,6 +49,7 @@ test(`Grades table page renders correctly`, async () => {
         name: edge.name ?? ``,
         progressFrom: edge.progress_from_grade?.name ?? NON_SPECIFIED,
         progressTo: edge.progress_to_grade?.name ?? NON_SPECIFIED,
+        system: edge.system ?? false,
     })) ?? [];
 
     const component = <Grades
