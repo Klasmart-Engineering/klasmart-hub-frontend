@@ -1,3 +1,4 @@
+import FeedbackComment from "./FeedbackComment";
 import {
     AssessmentForStudent,
     useRestAPI,
@@ -10,7 +11,6 @@ import {
     Box,
     createStyles,
     Fade,
-    Link,
     makeStyles,
     Popover,
     Typography,
@@ -24,7 +24,6 @@ import {
     SentimentVeryDissatisfied,
     SentimentVerySatisfied,
 } from "@material-ui/icons";
-import clsx from "clsx";
 import {
     Button,
     FileCounterIconButton,
@@ -71,18 +70,6 @@ const useStyles = makeStyles((theme) => {
         teacherAvatar: {
             marginRight: theme.spacing(1),
         },
-        feedbackText: {
-            display: `inline-block`,
-        },
-        feedbackShort: {
-            display: `-webkit-inline-box`,
-            lineClamp: 2,
-            boxOrient: `vertical`,
-            overflow: `hidden`,
-            textOverflow: `ellipsis`,
-            cursor: `pointer`,
-            verticalAlign: `bottom`,
-        },
         moreFeedbackPopover: {
             transform: `translate(${theme.spacing(-2)}px, ${theme.spacing(-2)}px)`,
         },
@@ -111,7 +98,7 @@ interface FileItem {
     name: string;
 }
 
-interface TeacherFeedbackRow {
+export interface TeacherFeedbackRow {
     id: string;
     title: string;
     type: string;
@@ -143,8 +130,8 @@ export default function TeacherFeedback (props: Props) {
     const [ totalCount, setTotalCount ] = useState(0);
     const moreFeedbackOpen = Boolean(moreFeedbackAnchorEl);
 
-    const handleMoreFeedbackOpen = (event: React.MouseEvent<HTMLElement>, row: TeacherFeedbackRow) => {
-        setSelectedRow(row);
+    const handleMoreFeedbackOpen = (event: React.MouseEvent<HTMLElement>, id: string) => {
+        setSelectedRow(rows.find(row => row.id === id));
         const anchorEl = event.currentTarget;
         setMoreFeedbackAnchorEl(anchorEl);
         setMoreFeedbackWidth(anchorEl.clientWidth);
@@ -253,18 +240,10 @@ export default function TeacherFeedback (props: Props) {
                     </Typography>
                 );
                 return (
-                    <Typography
-                        variant="body2"
-                        className={clsx(classes.clickable, classes.feedbackText)}
-                        onClick={(event) => handleMoreFeedbackOpen(event, row)}
-                    >
-                        <div className={classes.feedbackShort}>{row.feedback}</div>
-                        <Link href={undefined}>
-                            {` ... ${intl.formatMessage({
-                                id: `teacherFeedback.column.feedback.showMore`,
-                            })}`}
-                        </Link>
-                    </Typography>
+                    <FeedbackComment
+                        id={row.id}
+                        feedback={row.feedback}
+                        handleMoreFeedbackOpen={handleMoreFeedbackOpen}/>
                 );
             },
         },
