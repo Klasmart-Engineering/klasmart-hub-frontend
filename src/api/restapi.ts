@@ -1,3 +1,4 @@
+import "regenerator-runtime/runtime";
 import { getCmsApiEndpoint } from "../config";
 import { Store } from "../store/store";
 import {
