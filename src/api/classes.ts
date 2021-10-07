@@ -8,7 +8,6 @@ import { EDIT_CLASS_SUBJECTS } from "@/operations/mutations/editClassSubjects";
 import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
 import { UPLOAD_CLASSES_CSV } from "@/operations/mutations/uploadClassesCsv";
-import { GET_ALL_CLASSES } from "@/operations/queries/getAllClasses";
 import { GET_CLASS } from "@/operations/queries/getClass";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
 import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
@@ -147,18 +146,6 @@ export const useEditClassAgeRanges = (options?: MutationHookOptions<
     EditClassAgeRangesRequest
 >) => {
     return useMutation<EditClassAgeRangesResponse, EditClassAgeRangesRequest>(EDIT_CLASS_AGE_RANGES, options);
-};
-
-interface GetAllClassesRequest {
-    organization_id: string;
-}
-
-interface GetAllClassesResponse {
-    organization: Organization;
-}
-
-export const useGetAllClasses = (options?: QueryHookOptions<GetAllClassesResponse, GetAllClassesRequest>) => {
-    return useQuery<GetAllClassesResponse, GetAllClassesRequest>(GET_ALL_CLASSES, options);
 };
 
 interface GetMyClassesRequest { }
