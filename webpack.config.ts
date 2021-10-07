@@ -112,6 +112,11 @@ const webpackConfig: Configuration = {
         new HtmlWebpackPlugin({
             template: isDev ? `src/index.html` : `src/index_prod.html`,
             ...brandingOptions.webpack.html,
+            newRelicAccountID: `3286825`,
+            newRelicAgentID: `322534635`,
+            newRelicTrustKey: `3286825`,
+            newRelicLicenseKey: `NRJS-eff8c9c844416a5083f`,
+            newRelicApplicationID: `322534635`,
         }),
         // @ts-ignore
         new UnusedWebpackPlugin({

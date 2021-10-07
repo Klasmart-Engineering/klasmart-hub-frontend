@@ -4,9 +4,7 @@ import {
     postAuthorizationRoute,
     ui,
 } from "./reducers";
-import LogRocket from "logrocket";
 import {
-    applyMiddleware,
     combineReducers,
     createStore,
     Store as ReduxStore,
@@ -31,7 +29,7 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export function createDefaultStore () {
-    const store = createStore(persistedReducer, applyMiddleware(LogRocket.reduxMiddleware()));
+    const store = createStore(persistedReducer);
     const persistor = persistStore(store);
     return {
         store,
