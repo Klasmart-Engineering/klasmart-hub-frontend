@@ -502,7 +502,7 @@ const csvTemplateDefaultOptions: CsvTemplateOptions = {
     decimalSeparator: `.`,
     showLabels: true,
     useTextFile: false,
-    useBom: true,
+    useBom: false,
     useKeysAsHeaders: false,
     headers: [],
 };
