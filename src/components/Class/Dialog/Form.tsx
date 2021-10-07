@@ -237,6 +237,7 @@ export default function ClassDialogForm (props: Props) {
         <div className={classes.root}>
             <TextField
                 fullWidth
+                id="class-dialog-name"
                 value={className}
                 label={intl.formatMessage({
                     id: `class_classNameLabel`,
@@ -263,6 +264,7 @@ export default function ClassDialogForm (props: Props) {
             <Select
                 fullWidth
                 multiple
+                id="class-dialog-school"
                 label={intl.formatMessage({
                     id: `class_schoolsLabel`,
                 })}

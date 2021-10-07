@@ -4,7 +4,8 @@ import { LEAVE_MEMBERSHIP } from '@/operations/mutations/leaveMembership';
 import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
+    fireEvent,
+    screen,
     waitFor,
     waitForElementToBeRemoved,
 } from '@testing-library/react';
@@ -96,92 +97,50 @@ jest.mock(`@apollo/client/react`, () => {
 });
 
 test(`JoinedOrganizationTable renders correctly`, async () => {
-    const {
-        findByText,
-        findAllByText,
-        findAllByTitle,
-    } = render(<JoinedOrganizationTable />, {
+    render(<JoinedOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const title = await findByText(`Joined Organizations`);
-        const name = await findAllByText(`Organization Name`);
-        const phone = await findAllByText(`Phone Number`);
-        const email = await findAllByText(`Organization Owner's Email`);
-        const roles = await findAllByText(`Your Role`);
-        const rows = await findAllByTitle(`More actions`);
+    expect(screen.queryByText(`Joined Organizations`)).toBeTruthy();
+    expect(screen.queryAllByText(`Organization Name`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Phone Number`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Organization Owner's Email`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Your Role`).length).toBeTruthy();
 
-        await waitFor(async () => {
-            expect(title).toBeTruthy();
-            expect(name.length).toBeTruthy();
-            expect(phone.length).toBeTruthy();
-            expect(email.length).toBeTruthy();
-            expect(roles.length).toBeTruthy();
-            expect(rows.length).toEqual(1);
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByTitle(`More actions`)).toHaveLength(1);
     });
 });
 
 test(`JoinedOrganizationTable renders correct data`, async () => {
-    const { findByText } = render(<JoinedOrganizationTable />, {
+    render(<JoinedOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const orgName = await findByText(`KidsLoop Miracle Squad`);
-        const orgPhone = await findByText(`1112223344`);
-        const ownerEmail = await findByText(`owneremail@testing.com`);
-        const role1 = await findByText(`Organization Admin`);
-        const role2 = await findByText(`School Admin`);
-
-        await waitFor(async () => {
-            expect(orgName).toBeTruthy();
-            expect(orgPhone).toBeTruthy();
-            expect(ownerEmail).toBeTruthy();
-            expect(role1).toBeTruthy();
-            expect(role2).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`KidsLoop Miracle Squad`)).toBeTruthy();
+        expect(screen.queryByText(`1112223344`)).toBeTruthy();
+        expect(screen.queryByText(`owneremail@testing.com`)).toBeTruthy();
+        expect(screen.queryByText(`Organization Admin`)).toBeTruthy();
+        expect(screen.queryByText(`School Admin`)).toBeTruthy();
     });
 });
 
 test(`JoinedOrganizationTable updates table correctly after leaving organization.`, async () => {
-    const {
-        findByText,
-        findByTitle,
-        queryByText,
-        queryAllByTitle,
-    } = render(<JoinedOrganizationTable />, {
+    render(<JoinedOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const orgName = await findByText(`KidsLoop Miracle Squad`);
-        const moreActions = await findByTitle(`More actions`);
+    await waitFor(() => {
+        expect(screen.queryByText(`KidsLoop Miracle Squad`)).toBeTruthy();
+    });
 
-        await waitFor(async () => {
-            expect(orgName).toBeTruthy();
-        });
+    fireEvent.click(await screen.findByTitle(`More actions`));
+    fireEvent.click(await screen.findByText(`Leave Organization`));
 
-        await waitFor(() => {
-            moreActions.click();
-        });
+    await waitForElementToBeRemoved(() => screen.queryByText(`KidsLoop Miracle Squad`));
 
-        const leaveSpan = queryByText(`Leave Organization`);
-
-        await waitFor(async () => {
-            expect(leaveSpan).toBeTruthy();
-        });
-
-        await waitFor(() => {
-            leaveSpan?.click();
-        });
-
-        await waitForElementToBeRemoved(() => queryByText(`KidsLoop Miracle Squad`));
-        const rowsUpdate = queryAllByTitle(`More actions`);
-
-        await waitFor(() => {
-            expect(rowsUpdate.length).toEqual(0);
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByTitle(`More actions`)).toHaveLength(0);
     });
 });

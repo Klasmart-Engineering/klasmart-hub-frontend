@@ -124,6 +124,7 @@ export default function ClassDialogForm (props: Props) {
                 >
                     <TextField
                         fullWidth
+                        id="age-range-from"
                         value={from}
                         label={intl.formatMessage({
                             id: `ageRanges_formFrom`,
@@ -158,6 +159,7 @@ export default function ClassDialogForm (props: Props) {
                     <Box flex="0 0 64px"/>
                     <TextField
                         fullWidth
+                        id="age-range-to"
                         value={to}
                         label={intl.formatMessage({
                             id: `ageRanges_formTo`,

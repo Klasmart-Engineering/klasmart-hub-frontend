@@ -18,8 +18,6 @@ import {
 } from '@tests/mockDataUsers';
 import { render } from "@tests/utils/render";
 import React from 'react';
-import { act } from 'react-dom/test-utils';
-import TestRenderer from 'react-test-renderer';
 
 const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     id: edge.node.id,
@@ -60,8 +58,10 @@ test(`Users table page renders correctly`, async () => {
     />;
     render(component);
 
-    expect(await screen.findByText(`Users`)).toBeInTheDocument();
-    expect(await screen.findByText(`John`)).toBeInTheDocument();
+    await waitFor(() => {
+        expect(screen.queryByText(`Users`)).toBeInTheDocument();
+        expect(screen.queryByText(`John`)).toBeInTheDocument();
+    });
 });
 
 const mocks = [
@@ -79,7 +79,6 @@ const mocks = [
 ];
 
 test(`useGetTableFilters hook should return mapped user roles data for filter drop down in users`, async () => {
-    const { act } = TestRenderer;
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
@@ -94,14 +93,12 @@ test(`useGetTableFilters hook should return mapped user roles data for filter dr
         wrapper,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(result.current.userRolesFilterValueOptions.length).toEqual(5);
-            expect(result.current.userRolesFilterValueOptions[0].label).toBe(`Test Organization Admin`);
-            expect(result.current.userRolesFilterValueOptions[1].label).toBe(`Test School Admin`);
-            expect(result.current.userRolesFilterValueOptions[0].value).toBe(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
-            expect(result.current.userRolesFilterValueOptions[1].value).toBe(`87aca549-fdb6-4a63-97d4-d563d4a4690b`);
-        });
+    await waitFor(() => {
+        expect(result.current.userRolesFilterValueOptions).toHaveLength(5);
+        expect(result.current.userRolesFilterValueOptions[0].label).toBe(`Test Organization Admin`);
+        expect(result.current.userRolesFilterValueOptions[1].label).toBe(`Test School Admin`);
+        expect(result.current.userRolesFilterValueOptions[0].value).toBe(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+        expect(result.current.userRolesFilterValueOptions[1].value).toBe(`87aca549-fdb6-4a63-97d4-d563d4a4690b`);
     });
 });
 
@@ -111,34 +108,27 @@ test(`User page filter dropdown opens`, async () => {
         orderBy="name"
         rows={[]}
     />;
-    const {
-        queryAllByText,
-        queryByText,
-        getByText,
-        findByText,
-    } = render(component, {
+
+    render(component, {
         mockedResponses: mocks,
     });
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`Organization Roles`).length).toEqual(2);
-            expect(queryByText(`Column`)).toBeFalsy();
-        });
+
+    await waitFor(() => {
+        expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(2);
+        expect(screen.queryByText(`Column`)).toBeFalsy();
     });
 
-    fireEvent.click(getByText(`Add Filter`));
+    fireEvent.click(screen.getByText(`Add Filter`));
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(queryAllByText(`Organization Roles`).length).toEqual(3);
-            expect(queryAllByText(`Organization Roles`, {
-                selector: `span`,
-            }).length).toEqual(1);
-            expect(queryAllByText(`Column`).length).toEqual(2);
-        });
+    await waitFor(() => {
+        expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
+        expect(screen.queryAllByText(`Organization Roles`, {
+            selector: `span`,
+        })).toHaveLength(1);
+        expect(screen.queryAllByText(`Column`)).toHaveLength(2);
     });
 
-    const rolesOption = await findByText(`Organization Roles`, {
+    const rolesOption = await screen.findByText(`Organization Roles`, {
         selector: `span `,
     });
 
@@ -149,9 +139,7 @@ test(`User page filter dropdown opens`, async () => {
         bubbles: true,
     });
 
-    await act(async () => {
-        await waitFor(() => {
-            expect(mockDropdownClick).toHaveBeenCalledTimes(1);
-        });
+    await waitFor(() => {
+        expect(mockDropdownClick).toHaveBeenCalledTimes(1);
     });
 });

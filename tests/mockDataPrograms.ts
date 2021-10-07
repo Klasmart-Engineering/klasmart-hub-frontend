@@ -352,3 +352,305 @@ export const mockProgramsFilterList = {
         totalCount: 4,
     },
 };
+
+export const mockProgramDetailsDrawer = {
+    program:{
+        id: programIdA,
+        name: programNameA,
+        status: Status.ACTIVE,
+        age_ranges:[
+            {
+                high_value:6,
+                high_value_unit:`year`,
+                id:`fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
+                low_value:5,
+                low_value_unit:`year`,
+                name:`5 - 6 year(s)`,
+                status:`active`,
+                system:true,
+            },
+            {
+                high_value:7,
+                high_value_unit:`year`,
+                id:`145edddc-2019-43d9-97e1-c5830e7ed689`,
+                low_value:6,
+                low_value_unit:`year`,
+                name:`6 - 7 year(s)`,
+                status:`active`,
+                system:true,
+            },
+            {
+                high_value:8,
+                high_value_unit:`year`,
+                id:`21f1da64-b6c8-4e74-9fef-09d08cfd8e6c`,
+                low_value:7,
+                low_value_unit:`year`,
+                name:`7 - 8 year(s)`,
+                status:`active`,
+                system:true,
+            },
+        ],
+        grades:[
+            {
+                id:`100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
+                name:`Grade 1`,
+                status:`active`,
+                system:true,
+            },
+            {
+                id:`9d3e591d-06a6-4fc4-9714-cf155a15b415`,
+                name:`Grade 2`,
+                status:`active`,
+                system:true,
+            },
+        ],
+        subjects:[
+            {
+                categories:[
+                    {
+                        id:`e08f3578-a7d4-4cac-b028-ef7a8c93f53f`,
+                        name:`Cognitive Skills`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`b32321db-3b4a-4b1e-8db9-c485d045bf01`,
+                                name:`Logic & Memory`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                    {
+                        id:`551e59bd-7472-4dcd-b334-778d66fcdfa9`,
+                        name:`Category 1`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`ed85cf65-9ff7-4f9a-8b8a-5bf2a7402360`,
+                                name:`Sub 1`,
+                                status:`active`,
+                            },
+                            {
+                                id:`6fb79402-2fb6-4415-874c-338c949332ed`,
+                                name:`Art`,
+                                status:`active`,
+                            },
+                            {
+                                id:`e2190c0c-918d-4a05-a045-6696ae31d5c4`,
+                                name:`Click`,
+                                status:`active`,
+                            },
+                            {
+                                id:`852c3495-1ced-4580-a584-9d475217f3d5`,
+                                name:`Character Education`,
+                                status:`active`,
+                            },
+                            {
+                                id:`9c30644b-0e9c-43aa-a19a-442e9f6aa6ae`,
+                                name:`Body Coordination`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                ],
+                id:`0e73997e-e2fb-4119-a56e-509dc09c163d`,
+                name:`Test 1`,
+                status:`active`,
+                system:false,
+            },
+            {
+                categories:[
+                    {
+                        id:`1080d319-8ce7-4378-9c71-a5019d6b9386`,
+                        name:`Speech & Language Skills`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`cd06e622-a323-40f3-8409-5384395e00d2`,
+                                name:`Science`,
+                                status:`active`,
+                            },
+                            {
+                                id:`81b09f61-4509-4ce0-b099-c208e62870f9`,
+                                name:`Math`,
+                                status:`active`,
+                            },
+                            {
+                                id:`39ac1475-4ade-4d0b-b79a-f31256521297`,
+                                name:`Coding`,
+                                status:`active`,
+                            },
+                            {
+                                id:`2d1152a3-fb03-4c4e-aeba-98856c3241bd`,
+                                name:`Vocabulary`,
+                                status:`active`,
+                            },
+                            {
+                                id:`43c9d2c5-7a23-42c9-8ad9-1132fb9c3853`,
+                                name:`Colors`,
+                                status:`active`,
+                            },
+                            {
+                                id:`8d49bbbb-b230-4d5a-900b-cde6283519a3`,
+                                name:`Numbers`,
+                                status:`active`,
+                            },
+                            {
+                                id:`ed88dcc7-30e4-4ec7-bccd-34aaacb47139`,
+                                name:`Shapes`,
+                                status:`active`,
+                            },
+                            {
+                                id:`1cb17f8a-d516-498c-97ea-8ad4d7a0c018`,
+                                name:`Letters`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                    {
+                        id:`f9d82bdd-4ee2-49dd-a707-133407cdef19`,
+                        name:`Fine Motor Skills`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`963729a4-7853-49d2-b75d-2c61d291afee`,
+                                name:`Sensory`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                    {
+                        id:`a1c26321-e3a7-4ff2-9f1c-bb1c5e420fb7`,
+                        name:`Gross Motor Skills`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`f78c01f9-4b8a-480c-8c4b-80d1ec1747a7`,
+                                name:`Complex Movements`,
+                                status:`active`,
+                            },
+                            {
+                                id:`f5a1e3a6-c0b1-4b2f-991f-9df7897dac67`,
+                                name:`Physical Skills`,
+                                status:`active`,
+                            },
+                            {
+                                id:`bd7adbd0-9ce7-4c50-aa8e-85b842683fb5`,
+                                name:`Simple Movements`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                    {
+                        id:`c12f363a-633b-4080-bd2b-9ced8d034379`,
+                        name:`Cognitive Skills`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`cd06e622-a323-40f3-8409-5384395e00d2`,
+                                name:`Science`,
+                                status:`active`,
+                            },
+                            {
+                                id:`81b09f61-4509-4ce0-b099-c208e62870f9`,
+                                name:`Math`,
+                                status:`active`,
+                            },
+                            {
+                                id:`39ac1475-4ade-4d0b-b79a-f31256521297`,
+                                name:`Coding`,
+                                status:`active`,
+                            },
+                            {
+                                id:`2d1152a3-fb03-4c4e-aeba-98856c3241bd`,
+                                name:`Vocabulary`,
+                                status:`active`,
+                            },
+                            {
+                                id:`43c9d2c5-7a23-42c9-8ad9-1132fb9c3853`,
+                                name:`Colors`,
+                                status:`active`,
+                            },
+                            {
+                                id:`8d49bbbb-b230-4d5a-900b-cde6283519a3`,
+                                name:`Numbers`,
+                                status:`active`,
+                            },
+                            {
+                                id:`ed88dcc7-30e4-4ec7-bccd-34aaacb47139`,
+                                name:`Shapes`,
+                                status:`active`,
+                            },
+                            {
+                                id:`1cb17f8a-d516-498c-97ea-8ad4d7a0c018`,
+                                name:`Letters`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                    {
+                        id:`e06ad483-085c-4869-bd88-56d17c7810a0`,
+                        name:`Personal Development`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`ba77f705-9087-4424-bff9-50fcd0b1731e`,
+                                name:`Social Skills`,
+                                status:`active`,
+                            },
+                            {
+                                id:`824bb6cb-0169-4335-b7a5-6ece2b929da3`,
+                                name:`Emotional Skills`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                ],
+                id:`7cf8d3a3-5493-46c9-93eb-12f220d101d0`,
+                name:`Math`,
+                status:`active`,
+                system:true,
+            },
+            {
+                categories:[
+                    {
+                        id:`551e59bd-7472-4dcd-b334-778d66fcdfa9`,
+                        name:`Category 1`,
+                        status:`active`,
+                        subcategories:[
+                            {
+                                id:`ed85cf65-9ff7-4f9a-8b8a-5bf2a7402360`,
+                                name:`Sub 1`,
+                                status:`active`,
+                            },
+                            {
+                                id:`6fb79402-2fb6-4415-874c-338c949332ed`,
+                                name:`Art`,
+                                status:`active`,
+                            },
+                            {
+                                id:`e2190c0c-918d-4a05-a045-6696ae31d5c4`,
+                                name:`Click`,
+                                status:`active`,
+                            },
+                            {
+                                id:`852c3495-1ced-4580-a584-9d475217f3d5`,
+                                name:`Character Education`,
+                                status:`active`,
+                            },
+                            {
+                                id:`9c30644b-0e9c-43aa-a19a-442e9f6aa6ae`,
+                                name:`Body Coordination`,
+                                status:`active`,
+                            },
+                        ],
+                    },
+                ],
+                id:`8cce1e5f-3d05-490e-9466-bc11f24d5bed`,
+                name:`PTSubCatagory1`,
+                status:`active`,
+                system:false,
+            },
+        ],
+        system:false,
+    },
+};

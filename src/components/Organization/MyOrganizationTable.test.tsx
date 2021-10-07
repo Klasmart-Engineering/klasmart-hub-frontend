@@ -4,6 +4,7 @@ import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganizat
 import { MockedResponse } from '@apollo/client/testing';
 import {
     act,
+    screen,
     waitFor,
 } from '@testing-library/react';
 import {
@@ -49,50 +50,30 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-test(`MyOrganizationTable renders correctly`, async () => {
-    const { findByText, findAllByText } = render(<MyOrganizationTable />, {
+test(`MyOrganizationTable renders correctly`, () => {
+    render(<MyOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const title = await findByText(`My Organizations`);
-        const name = await findAllByText(`Organization Name`);
-        const phone = await findAllByText(`Phone Number`);
-        const email = await findAllByText(`Email`);
-        const roles = await findAllByText(`Role(s)`);
-        const status = await findAllByText(`Status`);
-
-        await waitFor(() => {
-            expect(title).toBeTruthy();
-            expect(name.length).toBeTruthy();
-            expect(phone.length).toBeTruthy();
-            expect(email.length).toBeTruthy();
-            expect(roles.length).toBeTruthy();
-            expect(status.length).toBeTruthy();
-        });
-    });
+    expect(screen.queryByText(`My Organizations`)).toBeInTheDocument();
+    expect(screen.queryAllByText(`Organization Name`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Phone Number`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Email`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Role(s)`).length).toBeTruthy();
+    expect(screen.queryAllByText(`Status`).length).toBeTruthy();
 });
 
 test(`MyOrganizationTable renders correct data`, async () => {
-    const { findByText } = render(<MyOrganizationTable />, {
+    render(<MyOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    await act(async () => {
-        const orgName = await findByText(`KidsLoop Miracle Squad`);
-        const orgPhone = await findByText(`1112223344`);
-        const ownerEmail = await findByText(`test@testing.com`);
-        const role1 = await findByText(`Organization Admin`);
-        const role2 = await findByText(`School Admin`);
-        const status = await findByText(`Active`);
-
-        await waitFor(async () => {
-            expect(orgName).toBeTruthy();
-            expect(orgPhone).toBeTruthy();
-            expect(ownerEmail).toBeTruthy();
-            expect(role1).toBeTruthy();
-            expect(role2).toBeTruthy();
-            expect(status).toBeTruthy();
-        });
+    await waitFor(() => {
+        expect(screen.queryByText(`KidsLoop Miracle Squad`)).toBeInTheDocument();
+        expect(screen.queryByText(`1112223344`)).toBeInTheDocument();
+        expect(screen.queryByText(`test@testing.com`)).toBeInTheDocument();
+        expect(screen.queryByText(`Organization Admin`)).toBeInTheDocument();
+        expect(screen.queryByText(`School Admin`)).toBeInTheDocument();
+        expect(screen.queryByText(`Active`)).toBeInTheDocument();
     });
 });

@@ -14,7 +14,6 @@ import {
     mockSubjects,
 } from '@tests/mockDataSubjects';
 import { render } from "@tests/utils/render";
-import { utils } from 'kidsloop-px';
 import React from 'react';
 
 const inputSearch = `Maths`;
@@ -65,7 +64,6 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Subjects table page renders data`, async () => {
-
     const component = <SubjectsTable
         order="asc"
         orderBy="name"
@@ -74,13 +72,7 @@ test(`Subjects table page renders data`, async () => {
     />;
     render(component);
 
-    const title = await screen.findByText(`Subjects`);
-
-    await waitFor(() => {
-        expect(title).toBeInTheDocument();
-    });
-
-    await utils.sleep(0);
+    expect(screen.queryByText(`Subjects`)).toBeInTheDocument();
 
     await waitFor(() => {
         for(const mockSubject of mockSubjects.edges){
