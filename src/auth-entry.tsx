@@ -1,5 +1,6 @@
 import SiteLoading from "@/components/Utility/SiteLoading";
 import { getAuthEndpoint } from "@/config";
+import HealthPage from "@/pages/health";
 import VersionPage from "@/pages/version";
 import { history } from "@/utils/history";
 import { refreshToken } from "@/utils/redirectIfUnauthorized";
@@ -25,6 +26,12 @@ export default function AuthEntry () {
                     path="/version"
                 >
                     <VersionPage />
+                </Route>
+                <Route
+                    exact
+                    path="/health"
+                >
+                    <HealthPage />
                 </Route>
                 <Route>
                     <ProtectedEntry />
