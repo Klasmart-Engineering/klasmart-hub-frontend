@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'webpack-dev-server';
+import pkg from "./package.json";
+import { execSync } from "child_process";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import { config } from "dotenv";
 import Dotenv from "dotenv-webpack";
@@ -92,6 +94,11 @@ const webpackConfig: Configuration = {
         path: path.resolve(__dirname, `dist`),
     },
     plugins: [
+        new EnvironmentPlugin({
+            VERSION: pkg.version,
+            GIT_COMMIT: execSync(`git rev-parse HEAD`).toString().trim().slice(0, 7),
+        }),
+
         // @ts-ignore
         // new BundleAnalyzerPlugin(),
         // @ts-ignore

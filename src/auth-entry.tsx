@@ -1,5 +1,7 @@
-import { getAuthEndpoint } from "./config";
 import SiteLoading from "@/components/Utility/SiteLoading";
+import { getAuthEndpoint } from "@/config";
+import VersionPage from "@/pages/version";
+import { history } from "@/utils/history";
 import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import queryString from "querystring";
 import React,
@@ -8,8 +10,31 @@ import React,
     useEffect,
     useState,
 } from "react";
+import {
+    Route,
+    Router,
+    Switch,
+} from "react-router-dom";
 
-export default function Entry () {
+export default function AuthEntry () {
+    return (
+        <Router history={history}>
+            <Switch>
+                <Route
+                    exact
+                    path="/version"
+                >
+                    <VersionPage />
+                </Route>
+                <Route>
+                    <ProtectedEntry />
+                </Route>
+            </Switch>
+        </Router>
+    );
+}
+
+function ProtectedEntry () {
     const [ isAwaitingAuthtoken, setIsAwaitingAuthtoken ] = useState(true);
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ EntryComponent, setEntryComponent ] = useState(<SiteLoading />);

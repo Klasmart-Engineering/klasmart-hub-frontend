@@ -7,7 +7,6 @@ import {
     State,
 } from './store/store';
 import { themeProvider } from "./themeProvider";
-import { history } from './utils/history';
 import { getLanguage } from "./utils/locale";
 import {
     ApolloClient,
@@ -34,7 +33,6 @@ import {
     Provider,
     useSelector,
 } from "react-redux";
-import { Router } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -102,16 +100,14 @@ export default function ClientEntry () {
     const { store, persistor } = createDefaultStore();
 
     return (
-        <Router history={history}>
-            <RecoilRoot>
-                <Provider store={store}>
-                    <PersistGate
-                        loading={null}
-                        persistor={persistor}>
-                        <ClientSide />
-                    </PersistGate>
-                </Provider>
-            </RecoilRoot>
-        </Router>
+        <RecoilRoot>
+            <Provider store={store}>
+                <PersistGate
+                    loading={null}
+                    persistor={persistor}>
+                    <ClientSide />
+                </PersistGate>
+            </Provider>
+        </RecoilRoot>
     );
 }
