@@ -89,12 +89,6 @@ export default function ClassDialogForm (props: Props) {
 
     const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_name) ?? [];
 
-    useEffect(() => {
-        if (!user) return;
-        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === `School Admin` && role.system_role);
-        setIsSchoolAdmin(isUserSchoolAdmin);
-    }, [ user ]);
-
     const [ allSchools, setAllSchools ] = useState<School[]>([]);
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
     const [ programsIds, setProgramsIds ] = useState<string[]>([]);
@@ -208,8 +202,14 @@ export default function ClassDialogForm (props: Props) {
     }, [ classNameValid ]);
 
     useEffect(() => {
+        if (!user) return;
+        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === `School Admin` && role.system_role);
+        setIsSchoolAdmin(isUserSchoolAdmin);
+    }, [ user ]);
+
+    useEffect(() => {
         const schools = data?.organization?.schools?.filter((s) => {
-            if (isSchoolAdmin) {
+            if (isSchoolAdmin && !value?.class_id) {
                 return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_name);
             }
 
@@ -231,7 +231,7 @@ export default function ClassDialogForm (props: Props) {
             setAllAgeRanges(mapAgeRangesFromPrograms(programs));
             setAgeRangesIds(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
         }
-    }, [ data ]);
+    }, [ data, isSchoolAdmin ]);
 
     return (
         <div className={classes.root}>
