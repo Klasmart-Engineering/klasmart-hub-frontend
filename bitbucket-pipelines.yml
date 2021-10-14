@@ -12,11 +12,11 @@ pipelines:
             name: Test & Build
             caches:
               - node
-              - dependecies
             script:
-              - npm ci --prefer-offline --no-audit --no-progress --cache .npm
+              - npm ci --no-audit --no-progress
+              - cp deploy/config/internal/.env.alpha ./.env
               - npm test -- --coverage
-              - npm run build:alpha
+              - npm run build
   custom:
     deploy:
     - variables:
@@ -27,9 +27,9 @@ pipelines:
         name: 'Build NPM'
         image: node:lts
         script:
-          - npm i
-          - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.bitbucket  
-          - npm run build:bitbucket
+          - npm ci
+          - cp deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env  
+          - npm run build
         caches:
           - nodemodules
         artifacts:
@@ -66,4 +66,3 @@ pipelines:
 definitions:
   caches:
     nodemodules: ./node_modules
-    dependecies: .npm

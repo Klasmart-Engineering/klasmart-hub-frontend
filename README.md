@@ -27,8 +27,8 @@ Since the content of the `Assessment v3.pdf` is often out of date, if you have a
 
 - Map `fe.alpha.kidsloop.net` to `localhost` by [editing your hosts file](https://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/)
 - Configure environment variables
-  - Create `.env.local` (which is gitignored)
-  - Copy the contents of `.env.example` into `.env.local`, making changes as required
+  - Create `.env` (which is gitignored)
+  - Copy the contents of `.env.example` into `.env`, make changes as required
 
 ### Run locally
 

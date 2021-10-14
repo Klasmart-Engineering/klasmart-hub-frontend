@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import 'webpack-dev-server';
+import "webpack-dev-server";
 import pkg from "./package.json";
 import { execSync } from "child_process";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
@@ -18,23 +17,23 @@ config({
     path: process.env.ENV_PATH,
 });
 
-const modes = [
+const modes: Required<Configuration["mode"]>[] = [
     `development`,
     `production`,
     `none`,
-] as const;
-type Mode = typeof modes[number]
+];
 
-const dirtyNodeEnv = process.env.NODE_ENV as Mode;
+const dirtyNodeEnv = process.env.NODE_ENV as Configuration["mode"];
 const nodeEnv = (modes.includes(dirtyNodeEnv) ? dirtyNodeEnv : undefined) ?? `production`;
 const isDev = nodeEnv === `development`;
+
 const { loadBrandingOptions } = require(`kidsloop-branding`);
 
 const brandingOptions = loadBrandingOptions(process.env.BRAND);
 
 const webpackConfig: Configuration = {
     mode: nodeEnv,
-    devtool: isDev ? `eval-cheap-module-source-map`: undefined,
+    devtool: isDev ? `eval-cheap-module-source-map` : `source-map`,
     entry: {
         hubui: `./src/client-entry.tsx`,
     },
@@ -98,42 +97,30 @@ const webpackConfig: Configuration = {
             VERSION: pkg.version,
             GIT_COMMIT: execSync(`git rev-parse HEAD`).toString().trim().slice(0, 7),
         }),
-
-        // @ts-ignore
-        // new BundleAnalyzerPlugin(),
-        // @ts-ignore
         new CleanWebpackPlugin(),
-        // @ts-ignore
-        process.env.ENV_PATH
-            ? new Dotenv({
-                path: process.env.ENV_PATH,
-            })
-            : new EnvironmentPlugin({
-                CMS_API_ENDPOINT: process.env.CMS_API_ENDPOINT,
-                CMS_SITE_ENDPOINT: process.env.CMS_SITE_ENDPOINT,
-                API_ENDPOINT: process.env.API_ENDPOINT,
-                AUTH_ENDPOINT: process.env.AUTH_ENDPOINT,
-                LIVE_ENDPOINT: process.env.LIVE_ENDPOINT,
-                COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
-            }),
+        new Dotenv(),
         new HtmlWebpackPlugin({
-            template: isDev ? `src/index.html` : `src/index_prod.html`,
+            template: `src/index.html`,
             ...brandingOptions.webpack.html,
-            newRelicAccountID: `3286825`,
-            newRelicAgentID: `322534635`,
-            newRelicTrustKey: `3286825`,
-            newRelicLicenseKey: `NRJS-eff8c9c844416a5083f`,
-            newRelicApplicationID: `322534635`,
+            ...isDev
+                ? {}
+                : {
+                    newRelicAccountID: `3286825`,
+                    newRelicAgentID: `322534635`,
+                    newRelicTrustKey: `3286825`,
+                    newRelicLicenseKey: `NRJS-eff8c9c844416a5083f`,
+                    newRelicApplicationID: `322534635`,
+                },
         }),
-        // @ts-ignore
-        new UnusedWebpackPlugin({
-            // Source directories
-            directories: [ path.join(__dirname, `src`) ],
-            // Exclude patterns
-            exclude: [ `/assets/*`, `*.test.*` ],
-            // Root directory (optional)
-            root: __dirname,
-        }),
+        // new UnusedWebpackPlugin({
+        //     // Source directories
+        //     directories: [ path.join(__dirname, `src`) ],
+        //     // Exclude patterns
+        //     exclude: [ `/assets/*`, `*.test.*` ],
+        //     // Root directory (optional)
+        //     root: __dirname,
+        // }),
+        // new BundleAnalyzerPlugin(),
     ],
     devServer: {
         host: `fe.alpha.kidsloop.net`,
