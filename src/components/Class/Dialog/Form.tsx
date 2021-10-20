@@ -87,7 +87,7 @@ export default function ClassDialogForm (props: Props) {
         skip: !currentOrganization?.organization_id || !userId,
     });
 
-    const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_name) ?? [];
+    const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_id) ?? [];
 
     const [ allSchools, setAllSchools ] = useState<School[]>([]);
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
@@ -210,7 +210,7 @@ export default function ClassDialogForm (props: Props) {
     useEffect(() => {
         const schools = data?.organization?.schools?.filter((s) => {
             if (isSchoolAdmin && !value?.class_id) {
-                return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_name);
+                return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_id);
             }
 
             return s.status === Status.ACTIVE;
