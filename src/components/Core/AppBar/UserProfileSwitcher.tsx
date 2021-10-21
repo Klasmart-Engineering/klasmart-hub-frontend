@@ -1,17 +1,16 @@
 import {
-    myUsersSampleResponse,
     switchUser,
+    useGetMe,
     useGetMyUsers,
+    UserEdge,
 } from "@/api/users";
 import { userIdVar } from "@/cache";
 import {
     Status,
-    User,
+    StringOperator,
 } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
 import {
-    Avatar,
-    Chip,
     createStyles,
     List,
     ListItem,
@@ -24,38 +23,77 @@ import {
     useSnackbar,
 } from "kidsloop-px";
 import React,
-{
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+{ useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
+export interface UserProfile {
+    id: string;
+    givenName: string;
+    familyName: string;
+    avatar: string;
+    email: string;
+    phone: string;
+    status: Status;
+    dateOfBirth: string;
+}
+
+export const mapUserProfile = (edge: UserEdge): UserProfile => {
+    const user = edge.node;
+    return {
+        id: user.id,
+        givenName: user.givenName ?? ``,
+        familyName: user.familyName ?? ``,
+        avatar: user.avatar ?? ``,
+        email: user.contactInfo.email ?? ``,
+        phone: user.contactInfo.phone ?? ``,
+        dateOfBirth: user.dateOfBirth ?? ``,
+        status: user.status ?? Status.INACTIVE,
+    };
+};
+
 interface Props {
-    // users: User[];
 }
 
 export default function UserProfileSwitcher (props: Props) {
-    // const { users } = props;
     const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
     const selectedUserId = useReactiveVar(userIdVar);
-    const { loading, data } = useGetMyUsers();
 
-    const [ users, setUsers ] = useState<User[]>([]);
+    const { data: currentUserData } = useGetMe();
 
-    const url = useMemo(() => {
-        const url = new URL(window.location.href);
-        return url;
-    }, []);
+    const EMAIL_FILTER = {
+        operator: `eq` as StringOperator,
+        value: currentUserData?.me.email ?? ``,
+    };
+
+    const PHONE_FILTER = {
+        operator: `eq` as StringOperator,
+        value: currentUserData?.me.phone ?? ``,
+    };
+
+    const CONTACT_INFO_FILTER = currentUserData?.me.email ? {
+        email: EMAIL_FILTER,
+    }: {
+        phone: PHONE_FILTER,
+    };
+
+    const [ getMyUsers, { data: usersData } ] = useGetMyUsers({
+        variables: {
+            filter: CONTACT_INFO_FILTER,
+        },
+        context: {
+            requestTrackerId: `UserProfileSwitcher`,
+        },
+    });
 
     useEffect(() => {
-        if (data) {
-            setUsers(data.my_users.filter(user => user.memberships?.some(membership => membership.status === Status.ACTIVE)));
-        }
-    }, [ data ]);
+        getMyUsers();
+    }, []);
+
+    const users = usersData?.usersConnection.edges?.map(mapUserProfile);
+    const isActiveUsers = users?.filter(user => user.status === Status.ACTIVE);
 
     const switchUsers = async (userId: string) => {
         try {
@@ -68,8 +106,6 @@ export default function UserProfileSwitcher (props: Props) {
 
     function handleClick (userId: string) {
         switchUsers(userId).then((response) => {
-            console.log(`switchUser response: `, response);
-            console.log(`update switchUser: `, userId);
             if (response) {
                 userIdVar(userId);
                 history.push(`/`);
@@ -83,16 +119,15 @@ export default function UserProfileSwitcher (props: Props) {
 
     return (
         <List dense>
-            {users?.filter((user => user.user_id !== selectedUserId)).map((user) => {
-                const givenName = user.given_name ?? ``;
-                const familyName = user.family_name ?? ``;
+            {isActiveUsers?.filter((user => user.id !== selectedUserId)).map((user) => {
+                const givenName = user.givenName ?? ``;
+                const familyName = user.familyName ?? ``;
                 const fullName = givenName + ` ` + familyName;
-                const username = user.username ?? ``;
-                const userName = fullName === ` ` ? username ?? `Name undefined` : fullName;
+                const userName = fullName === ` ` ? `Name undefined` : fullName;
                 return <ListItem
-                    key={user.user_id}
+                    key={user.id}
                     button
-                    onClick={() => handleClick(user.user_id)}
+                    onClick={() => handleClick(user.id)}
                 >
                     <ListItemAvatar>
                         <UserAvatar name={userName}/>
@@ -101,7 +136,8 @@ export default function UserProfileSwitcher (props: Props) {
                         primary={userName}
                         secondary={userName === `Name undefined` ?
                             `Please update your profile` :
-                            user.date_of_birth ? `Birthday: ` + user.date_of_birth : `` }
+                            user.dateOfBirth ? `Birthday: ` + user.dateOfBirth : ``
+                        }
                     />
                 </ListItem>;})}
         </List>

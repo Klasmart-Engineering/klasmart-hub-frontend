@@ -1,19 +1,30 @@
 import { gql } from "@apollo/client";
 
 export const GET_MY_USERS = gql`
-    query {
-        my_users {
-            user_id
-            full_name
-            given_name
-            family_name
-            email
-            phone
-            date_of_birth
-            avatar
-            username
-            memberships {
-                status
+    query getOrganizationUsers( $filter: UserFilter) {
+        usersConnection(
+            direction: FORWARD
+            sort: { field: [givenName], order: ASC }
+            filter: $filter
+        ) 
+        {
+            edges {
+                node {
+                    id
+                    givenName
+                    familyName
+                    avatar
+                    contactInfo {
+                        email
+                        phone
+                    }
+                    status
+                    organizations {
+                        userStatus
+                        joinDate
+                    }
+                    dateOfBirth
+                }
             }
         }
     }

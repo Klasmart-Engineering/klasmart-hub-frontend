@@ -1,11 +1,18 @@
+import { UserFilter } from "./organizationMemberships";
 import { getAuthEndpoint } from "@/config";
 import { UPLOAD_USERS_CSV } from "@/operations/mutations/uploadUsersCsv";
 import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
 import { GET_USER } from "@/operations/queries/getUser";
-import { User } from "@/types/graphQL";
+import { ME } from "@/operations/queries/me";
+import {
+    SortOrder,
+    Status,
+    User,
+} from "@/types/graphQL";
 import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import {
     QueryHookOptions,
+    useLazyQuery,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -58,12 +65,6 @@ export async function switchUser (userId: string, retry = true): Promise<boolean
     }
 }
 
-interface GetMyUsersRequest {}
-
-interface GetMyUsersResponse {
-    my_users: User[];
-}
-
 interface UploadCsvResponse {
     filename?: string;
     minetype?: string;
@@ -75,8 +76,38 @@ interface UploadUserCsvRequest {
     isDryRun: boolean;
 }
 
+interface GetMyUsersRequest {
+    filter: UserFilter;
+}
+
+export interface UserNode {
+    id: string;
+    avatar: string | null;
+    givenName: string | null;
+    familyName: string | null;
+    contactInfo: {
+        email: string;
+        phone: string;
+    };
+    status: Status;
+    organizations: {
+        userStatus: Status;
+    }[];
+    dateOfBirth: string;
+}
+
+export interface UserEdge {
+    node: UserNode;
+}
+
+export interface GetMyUsersResponse {
+    usersConnection: {
+        edges: UserEdge[];
+    };
+}
+
 export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {
-    return useQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
+    return useLazyQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
 };
 
 interface GetUserRequest {
@@ -93,4 +124,24 @@ export const useGetUser = (options?: QueryHookOptions<GetUserResponse, GetUserRe
 
 export const useUploadUserCsv = () => {
     return useMutation<UploadCsvResponse, UploadUserCsvRequest>(UPLOAD_USERS_CSV);
+};
+
+interface GetMeRequest {
+    user_id: string;
+}
+
+interface GetMeResponse {
+    me: {
+        avatar: string | null;
+        email: string;
+        phone: string;
+        user_id: string;
+        username: string;
+        given_name: string;
+        family_name: string;
+    };
+}
+
+export const useGetMe = (options?: QueryHookOptions<GetMeResponse, GetMeRequest>) => {
+    return useQuery<GetMeResponse, GetMeRequest>(ME, options);
 };

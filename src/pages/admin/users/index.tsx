@@ -31,6 +31,7 @@ import React,
 
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
+    const organizationUserIsActive = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations[0];
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
@@ -40,8 +41,8 @@ export const mapUserRow = (edge: UserEdge) => {
         phone: user.contactInfo.phone ?? ``,
         roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
         schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
-        status: user.organizations?.[0].userStatus,
-        joinDate: new Date(user.organizations?.[0].joinDate),
+        status: organizationUserIsActive.userStatus ?? Status.INACTIVE,
+        joinDate: new Date(organizationUserIsActive.joinDate),
     };
 };
 
