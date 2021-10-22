@@ -1059,5 +1059,6 @@
     "entity.class.importTemplate.filename": "kidsloop-classes-template",
     "entity.user.template.download.button": "Download CSV Template File",
     "entity.user.bulkImport.button": "Upload CSV",
-    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\"."
+    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\".",
+    "roles_deleteRoleTitle": "Users with {custom_role}"
 }

@@ -1059,5 +1059,6 @@
     "entity.class.importTemplate.filename": "kidsloop-classes-模板",
     "entity.user.template.download.button": "下载CSV文件模板",
     "entity.user.bulkImport.button": "上传CSV",
-    "validation.error.permission.uploadChildEntity": "Unauthorized to upload {entity} to {parentEntity} \"{parentName}\"."
+    "validation.error.permission.uploadChildEntity": "未授权上传{entity}到{parentEntity}。\"{parentName}\"。",
+    "roles_deleteRoleTitle": "拥有{custom_role}的用户"
 }

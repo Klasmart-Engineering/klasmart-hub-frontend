@@ -2,6 +2,7 @@ import english from "./en.json";
 import spanish from "./es.json";
 import indonesian from "./id.json";
 import korean from "./ko.json";
+import thai from "./th.json";
 import vietnamese from "./vi.json";
 import chinese from "./zh_CN.json";
 import { Language } from "kidsloop-px/dist/types/components/LanguageSelect";
@@ -17,6 +18,7 @@ export const localeCodes = [
     `vi`,
     `id`,
     `es`,
+    `th`,
 ];
 export const LANGUAGES_LABEL: Language[] = [
     {
@@ -42,6 +44,10 @@ export const LANGUAGES_LABEL: Language[] = [
     {
         code: `id`,
         text: `bahasa Indonesia`,
+    },
+    {
+        code: `th`,
+        text: `ภาษาไทย`,
     },
 ];
 
@@ -81,6 +87,11 @@ export function getIntl (locale: string) {
         return createIntl({
             locale: `id`,
             messages: indonesian,
+        }, intlCache);
+    case `th`:
+        return createIntl({
+            locale: `th`,
+            messages: thai,
         }, intlCache);
     }
 }
