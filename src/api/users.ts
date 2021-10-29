@@ -107,7 +107,7 @@ export interface GetMyUsersResponse {
 }
 
 export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {
-    return useLazyQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
+    return useQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
 };
 
 interface GetUserRequest {

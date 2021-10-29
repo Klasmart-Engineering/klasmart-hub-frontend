@@ -41,6 +41,7 @@ export interface UserProfile {
 
 export const mapUserProfile = (edge: UserEdge): UserProfile => {
     const user = edge.node;
+    const activeOrganizationUser = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations[0];
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
@@ -49,7 +50,7 @@ export const mapUserProfile = (edge: UserEdge): UserProfile => {
         email: user.contactInfo.email ?? ``,
         phone: user.contactInfo.phone ?? ``,
         dateOfBirth: user.dateOfBirth ?? ``,
-        status: user.status ?? Status.INACTIVE,
+        status: activeOrganizationUser.userStatus ?? Status.INACTIVE,
     };
 };
 
@@ -79,18 +80,12 @@ export default function UserProfileSwitcher (props: Props) {
         phone: PHONE_FILTER,
     };
 
-    const [ getMyUsers, { data: usersData } ] = useGetMyUsers({
+    const { data: usersData } = useGetMyUsers({
         variables: {
             filter: CONTACT_INFO_FILTER,
         },
-        context: {
-            requestTrackerId: `UserProfileSwitcher`,
-        },
+        fetchPolicy: `no-cache`,
     });
-
-    useEffect(() => {
-        getMyUsers();
-    }, []);
 
     const users = usersData?.usersConnection.edges?.map(mapUserProfile);
     const isActiveUsers = users?.filter(user => user.status === Status.ACTIVE);
