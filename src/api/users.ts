@@ -76,34 +76,10 @@ interface UploadUserCsvRequest {
     isDryRun: boolean;
 }
 
-interface GetMyUsersRequest {
-    filter: UserFilter;
-}
+interface GetMyUsersRequest {}
 
-export interface UserNode {
-    id: string;
-    avatar: string | null;
-    givenName: string | null;
-    familyName: string | null;
-    contactInfo: {
-        email: string;
-        phone: string;
-    };
-    status: Status;
-    organizations: {
-        userStatus: Status;
-    }[];
-    dateOfBirth: string;
-}
-
-export interface UserEdge {
-    node: UserNode;
-}
-
-export interface GetMyUsersResponse {
-    usersConnection: {
-        edges: UserEdge[];
-    };
+interface GetMyUsersResponse {
+    my_users: User[];
 }
 
 export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, GetMyUsersRequest>) => {
