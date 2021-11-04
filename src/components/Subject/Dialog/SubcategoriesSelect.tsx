@@ -85,22 +85,26 @@ export default function SubcategoriesSelectDialog (props: Props) {
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
     const { data: subjectsData } = useGetAllSubjects({
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
     const { data: categoriesData } = useGetAllCategories({
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
     const { data: subcategoriesData, refetch: refetchSubcategories } = useGetAllSubcategories({
         nextFetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
 
     const programs = (programsData?.organization.programs ?? []).filter(isActive);

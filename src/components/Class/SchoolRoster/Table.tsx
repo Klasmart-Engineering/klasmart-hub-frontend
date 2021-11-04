@@ -71,6 +71,7 @@ export default function SchoolRoster (props: Props) {
             organization_id: organizationId,
         },
         fetchPolicy: `network-only`,
+        skip: !classId || !organizationId,
     });
 
     const students = data?.class

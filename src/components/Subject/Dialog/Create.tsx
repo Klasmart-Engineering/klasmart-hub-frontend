@@ -49,6 +49,7 @@ export default function CreateSubjectDialog (props: Props) {
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
 
     useEffect(() => {

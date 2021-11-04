@@ -132,6 +132,7 @@ export default function NextClass (props: Props) {
             class_id: nextClass?.class_id ?? ``,
             organization_id: organizationId,
         },
+        skip: !nextClass?.class_id || !organizationId,
     });
 
     function goLive () {

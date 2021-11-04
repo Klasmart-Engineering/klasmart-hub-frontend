@@ -100,8 +100,8 @@ export default function CreateSchoolDialog (props: Props) {
                 error: [
                     required()(newSchool?.school_name),
                     letternumeric()(newSchool?.school_name),
-                    max(120)(newSchool?.school_name),
-                    max(10)(newSchool?.shortcode?.length),
+                    max(120)(newSchool?.school_name ?? ``),
+                    max(10)(newSchool?.shortcode?.length ?? ``),
                     alphanumeric()(newSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },

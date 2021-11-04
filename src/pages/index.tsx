@@ -72,10 +72,11 @@ export default function HomePage () {
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
 
     const userId = useReactiveVar(userIdVar);
-    const { data: userData, loading: userDataLoading } = useGetUser({
+    const { data: userData } = useGetUser({
         variables: {
             user_id: userId,
         },
+        skip: !userId,
     });
 
     useEffect(() => {

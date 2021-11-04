@@ -77,6 +77,7 @@ export default function UsersPage () {
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
         },
+        skip: !organizationId,
         notifyOnNetworkStatusChange: true,
     });
 

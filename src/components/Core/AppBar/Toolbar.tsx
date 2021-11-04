@@ -1,13 +1,7 @@
 import UserProfileMenu from "./UserProfileMenu";
-import { useGetOrganizationMemberships } from "@/api/organizations";
-import { useGetUser } from "@/api/users";
+import { useGetMe } from "@/api/users";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
-import { userIdVar } from "@/cache";
-import {
-    useCurrentOrganization,
-    useOrganizationStack,
-} from "@/store/organizationMemberships";
-import { useReactiveVar } from "@apollo/client/react";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AppBar,
     Box,
@@ -81,15 +75,9 @@ export default function Toolbar (props: Props) {
     const location = useLocation();
     const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
-    const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-    });
+    const { data: userData } = useGetMe();
     const currentOrganization = useCurrentOrganization();
     const organizationLogo = currentOrganization?.branding?.iconImageURL;
-
     const showSiteLogo = !organizationLogo && currentOrganization;
 
     const contentTabs: Tab[] = [
@@ -168,7 +156,7 @@ export default function Toolbar (props: Props) {
                         display="flex"
                         order={2}
                     >
-                        <UserProfileMenu user={userData?.user} />
+                        <UserProfileMenu user={userData?.me} />
                     </Box>
                 </Grid>
             </AppToolbar>

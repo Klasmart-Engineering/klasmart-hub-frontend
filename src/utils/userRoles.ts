@@ -51,6 +51,7 @@ export const useIsSuperAdmin = () => {
         variables: {
             user_id: userId,
         },
+        skip: !userId,
     });
     const currentOrganization = useCurrentOrganization();
     const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === currentOrganization?.organization_id);

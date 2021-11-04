@@ -137,6 +137,7 @@ export default function DeleteRoleDialog (props: Props) {
         variables: {
             organization_id: organizationId,
         },
+        skip: !organizationId,
     });
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteRole ] = useDeleteRole();

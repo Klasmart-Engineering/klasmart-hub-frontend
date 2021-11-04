@@ -113,8 +113,8 @@ export default function EditSchoolDialog (props: Props) {
                 error: [
                     required()(editedSchool?.school_name),
                     letternumeric()(editedSchool?.school_name),
-                    max(120)(editedSchool?.school_name),
-                    max(10)(editedSchool?.shortcode),
+                    max(120)(editedSchool?.school_name ?? ``),
+                    max(10)(editedSchool?.shortcode ?? ``),
                     alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },

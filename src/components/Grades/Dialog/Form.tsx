@@ -68,6 +68,7 @@ export default function GradeDialogForm (props: Props) {
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !currentOrganization?.organization_id,
     });
 
     const allGrades = gradesData?.organization.grades.filter(isActive) ?? [];

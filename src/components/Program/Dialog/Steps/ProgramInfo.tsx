@@ -61,11 +61,13 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !currentOrganization?.organization_id,
     });
     const { data: gradesData, loading: gradesLoading } = useGetAllGrades({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
         },
+        skip: !currentOrganization?.organization_id,
     });
 
     const [ loaded, setLoaded ] = useState<boolean>(false);
