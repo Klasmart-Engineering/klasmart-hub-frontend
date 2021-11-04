@@ -52,9 +52,6 @@ export default function SelectedSchoolPrograms (props: EntityStepContent<School>
         },
         fetchPolicy: `network-only`,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `SelectedSchoolPrograms`,
-        },
     });
 
     const onPageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

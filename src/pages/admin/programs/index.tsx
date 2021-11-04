@@ -66,9 +66,6 @@ export default function ProgramsPage (props: Props) {
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `ProgramsPage`,
-        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

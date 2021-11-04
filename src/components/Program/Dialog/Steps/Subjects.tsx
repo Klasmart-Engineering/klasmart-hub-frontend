@@ -75,9 +75,6 @@ export default function SubjectStep (props: EntityStepContent<Program>) {
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `SubjectsStep`,
-        },
     });
 
     const selectedIds = value.subjects?.map((subject) => subject.id ?? ``) ?? [];

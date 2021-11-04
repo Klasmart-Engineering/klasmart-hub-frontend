@@ -55,11 +55,10 @@ export const client = new ApolloClient({
     link: ApolloLink.from([
         objectCleanerLink,
         persistedQueryLink,
-        cancelRequestLink,
         uploadLink,
     ]),
     cache,
-    queryDeduplication: false,
+    queryDeduplication: true,
 });
 
 export function ClientSide () {

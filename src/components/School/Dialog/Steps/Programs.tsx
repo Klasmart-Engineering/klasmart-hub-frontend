@@ -76,9 +76,6 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
         skip: !currentOrganization?.organization_id,
         fetchPolicy: `cache-and-network`,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `ProgramsStep`,
-        },
     });
 
     const selectedIds = value?.programs?.map((program) => program.id ?? ``) ?? [];

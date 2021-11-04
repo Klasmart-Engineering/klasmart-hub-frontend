@@ -63,9 +63,6 @@ export default function SelectedSubjectsTable (props: EntityStepContent<Program>
         },
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `SelectedSubjectsTable`,
-        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

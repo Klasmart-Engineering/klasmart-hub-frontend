@@ -62,9 +62,6 @@ export default function ClassesPage (props: Props) {
         },
         skip: !currentOrganization?.organization_id || !canView,
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `ClassesPage`,
-        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

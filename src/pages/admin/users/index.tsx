@@ -78,9 +78,6 @@ export default function UsersPage () {
             filter: paginationFilter,
         },
         notifyOnNetworkStatusChange: true,
-        context: {
-            requestTrackerId: `UsersPage`,
-        },
     });
 
     const pageInfo = usersData?.usersConnection.pageInfo;

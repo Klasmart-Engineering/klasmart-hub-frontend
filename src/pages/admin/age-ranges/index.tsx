@@ -56,9 +56,6 @@ export default function AgeRangesPage () {
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
-        context: {
-            requestTrackerId: `AgeRangesPage`,
-        },
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {

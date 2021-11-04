@@ -54,9 +54,6 @@ const mocks: MockedResponse[] = [
                 order: `ASC`,
                 filter: paginationFilter,
             },
-            context: {
-                requestTrackerId: `GradesPage`,
-            },
         },
         result: {
             data: mockPaginatedGrades,
