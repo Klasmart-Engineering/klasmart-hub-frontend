@@ -183,6 +183,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                         name
                         userStatus
                         joinDate
+                        userShortCode
                     }
                     schools {
                         id
@@ -196,6 +197,8 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                         email
                         phone
                     }
+                    dateOfBirth
+                    gender
                 }
             }
         }

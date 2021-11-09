@@ -1,6 +1,7 @@
 import { CREATE_NEW_ROLE } from "@/operations/mutations/createNewRole";
 import { DELETE_ROLE } from "@/operations/mutations/deleteRole";
 import { EDIT_ROLE } from "@/operations/mutations/editRole";
+import { REPLACE_ROLE } from "@/operations/mutations/replaceRole";
 import { GET_ORGANIZATION_ROLES } from "@/operations/queries/getOrganizationRoles";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
@@ -71,6 +72,20 @@ interface DeleteRoleResponse {
 
 export const useDeleteRole = (options?: MutationHookOptions<DeleteRoleResponse, DeleteRoleRequest>) => {
     return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, options);
+};
+
+interface ReplaceRoleRequest {
+    oldRoleId: string;
+    newRoleId: string;
+    organizationId: string;
+}
+
+interface ReplaceRoleResponse {
+    role: Role;
+}
+
+export const useReplaceRole = (options?: MutationHookOptions<ReplaceRoleResponse, ReplaceRoleRequest>) => {
+    return useMutation<ReplaceRoleResponse, ReplaceRoleRequest>(REPLACE_ROLE, options);
 };
 
 interface GetRolePermissionsRequest {

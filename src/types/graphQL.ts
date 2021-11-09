@@ -92,6 +92,7 @@ export interface User {
     address?: string | null;
     date_of_birth?: string | null;
     gender?: string | null;
+    shortcode?: string | null;
     alternate_email?: string | null;
     alternate_phone?: string | null;
 }

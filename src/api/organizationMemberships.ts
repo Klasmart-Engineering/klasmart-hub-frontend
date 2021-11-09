@@ -139,6 +139,7 @@ export interface UserNode {
     familyName: string | null;
     organizations: {
         userStatus: string;
+        userShortCode: string;
         joinDate: string;
     }[];
     roles: RoleSummaryNode[];
@@ -147,6 +148,8 @@ export interface UserNode {
         name: string;
         status: string;
     }[];
+    dateOfBirth: string;
+    gender: string;
 }
 
 export interface UserEdge {
