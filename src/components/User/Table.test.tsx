@@ -102,44 +102,392 @@ test(`useGetTableFilters hook should return mapped user roles data for filter dr
     });
 });
 
-test(`User page filter dropdown opens`, async () => {
-    const component = <UsersTable
-        order="asc"
-        orderBy="name"
-        rows={[]}
-    />;
+const defaultProps = {
+    order: `asc`,
+    orderBy: `givenName`,
+    rows: rows,
+};
 
-    render(component, {
-        mockedResponses: mocks,
+describe(`Users Table`, () => {
+    describe(`Render`, () => {
+        test(`default props`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component);
+
+            await waitFor(() => {
+                expect(screen.queryByText(`John`)).toBeInTheDocument();
+            });
+        });
     });
 
-    await waitFor(() => {
-        expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(2);
-        expect(screen.queryByText(`Column`)).toBeFalsy();
-    });
+    describe(`Interact`, () => {
+        test(`add filter`, async () => {
+            const component = <UsersTable {...defaultProps} />;
 
-    fireEvent.click(screen.getByText(`Add Filter`));
+            render(component, {
+                mockedResponses: mocks,
+            });
 
-    await waitFor(() => {
-        expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
-        expect(screen.queryAllByText(`Organization Roles`, {
-            selector: `span`,
-        })).toHaveLength(1);
-        expect(screen.queryAllByText(`Column`)).toHaveLength(2);
-    });
+            fireEvent.click(screen.getByText(`Add Filter`));
 
-    const rolesOption = await screen.findByText(`Organization Roles`, {
-        selector: `span `,
-    });
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+                expect(screen.queryAllByText(`Column`)).toHaveLength(2);
+            });
 
-    const mockDropdownClick = jest.fn();
-    rolesOption.addEventListener(`click`, mockDropdownClick);
+            const valueSelectInput = screen.getByTestId(`ValuesSelectTextInput`) as HTMLInputElement;
+            expect(valueSelectInput.value).toEqual(``);
 
-    fireEvent.click(rolesOption, {
-        bubbles: true,
-    });
+            fireEvent.mouseDown(screen.getAllByRole(`button`, {
+                hidden: true,
+            })[6]);
 
-    await waitFor(() => {
-        expect(mockDropdownClick).toHaveBeenCalledTimes(1);
+            await waitFor(() => {
+                expect(screen.getByRole(`listbox`, {
+                    hidden: true,
+                })).not.toBeNull();
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            const valueOptions = screen.getAllByRole(`option`, {
+                hidden: true,
+            });
+            fireEvent.click(valueOptions[2]);
+
+            await waitFor(() => {
+                expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
+
+            await waitFor(() => {
+                expect(screen.getByTestId(`roleNamesChipLabel`)).toHaveTextContent(`Organization Roles equals "Test Organization Admin"`);
+            });
+        });
+
+        test(`edit filter`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component, {
+                mockedResponses: mocks,
+            });
+
+            fireEvent.click(screen.getByText(`Add Filter`));
+
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+                expect(screen.queryAllByText(`Column`)).toHaveLength(2);
+            });
+
+            let valueSelectInput = screen.getByTestId(`ValuesSelectTextInput`) as HTMLInputElement;
+            expect(valueSelectInput.value).toEqual(``);
+
+            fireEvent.mouseDown(screen.getAllByRole(`button`, {
+                hidden: true,
+            })[6]);
+
+            await waitFor(() => {
+                expect(screen.getByRole(`listbox`, {
+                    hidden: true,
+                })).not.toBeNull();
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            let valueOptions = screen.getAllByRole(`option`, {
+                hidden: true,
+            });
+            fireEvent.click(valueOptions[2]);
+
+            await waitFor(() => {
+                expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
+
+            await waitFor(() => {
+                expect(screen.getByTestId(`roleNamesChipLabel`)).toHaveTextContent(`Organization Roles equals "Test Organization Admin"`);
+            });
+
+            fireEvent.click(screen.getByTestId(`roleNamesChipLabel`));
+
+            valueSelectInput = screen.getByTestId(`ValuesSelectTextInput`) as HTMLInputElement;
+            expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+
+            fireEvent.mouseDown(screen.getAllByRole(`button`, {
+                hidden: true,
+            })[8]);
+
+            await waitFor(() => {
+                expect(screen.getByRole(`listbox`, {
+                    hidden: true,
+                })).not.toBeNull();
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            valueOptions = screen.getAllByRole(`option`, {
+                hidden: true,
+            });
+            fireEvent.click(valueOptions[2]);
+            fireEvent.click(valueOptions[3]);
+
+            await waitFor(() => {
+                expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690b`);
+                expect(screen.queryAllByText(`Test School Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            fireEvent.click(screen.getByText(`Save Filter`));
+
+            await waitFor(() => {
+                expect(screen.getByTestId(`roleNamesChipLabel`)).toHaveTextContent(`Organization Roles equals "Test School Admin"`);
+            });
+        });
+
+        test(`remove filter`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component, {
+                mockedResponses: mocks,
+            });
+
+            fireEvent.click(screen.getByText(`Add Filter`));
+
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+                expect(screen.queryAllByText(`Column`)).toHaveLength(2);
+            });
+
+            const valueSelectInput = screen.getByTestId(`ValuesSelectTextInput`) as HTMLInputElement;
+            expect(valueSelectInput.value).toEqual(``);
+
+            fireEvent.mouseDown(screen.getAllByRole(`button`, {
+                hidden: true,
+            })[6]);
+
+            await waitFor(() => {
+                expect(screen.getByRole(`listbox`, {
+                    hidden: true,
+                })).not.toBeNull();
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            const valueOptions = screen.getAllByRole(`option`, {
+                hidden: true,
+            });
+            fireEvent.click(valueOptions[2]);
+
+            await waitFor(() => {
+                expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
+
+            await waitFor(() => {
+                expect(screen.getByTestId(`roleNamesChipLabel`)).toHaveTextContent(`Organization Roles equals "Test Organization Admin"`);
+            });
+
+            const deleteIcon = document.querySelector(`.MuiChip-deleteIcon`) as HTMLElement;
+
+            await waitFor(() => {
+                fireEvent.click(deleteIcon);
+            });
+
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+                expect(screen.queryAllByText(`equals`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+                expect(screen.queryAllByText(`"Test Organization Admin"`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+            });
+        });
+
+        test(`clear all filters`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component, {
+                mockedResponses: mocks,
+            });
+
+            fireEvent.click(screen.getByText(`Add Filter`));
+
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`)).toHaveLength(3);
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+                expect(screen.queryAllByText(`Column`)).toHaveLength(2);
+            });
+
+            const valueSelectInput = screen.getByTestId(`ValuesSelectTextInput`) as HTMLInputElement;
+            expect(valueSelectInput.value).toEqual(``);
+
+            fireEvent.mouseDown(screen.getAllByRole(`button`, {
+                hidden: true,
+            })[6]);
+
+            await waitFor(() => {
+                expect(screen.getByRole(`listbox`, {
+                    hidden: true,
+                })).not.toBeNull();
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            const valueOptions = screen.getAllByRole(`option`, {
+                hidden: true,
+            });
+            fireEvent.click(valueOptions[2]);
+
+            await waitFor(() => {
+                expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
+                expect(screen.queryAllByText(`Test Organization Admin`, {
+                    selector: `span`,
+                })).toHaveLength(1);
+            });
+
+            fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
+
+            await waitFor(() => {
+                expect(screen.getByTestId(`roleNamesChipLabel`)).toHaveTextContent(`Organization Roles equals "Test Organization Admin"`);
+            });
+
+            fireEvent.click(screen.getByTestId(`clearFilters`));
+
+            await waitFor(() => {
+                expect(screen.queryAllByText(`Organization Roles`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+                expect(screen.queryAllByText(`equals`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+                expect(screen.queryAllByText(`"Test Organization Admin"`, {
+                    selector: `span`,
+                })).toHaveLength(0);
+            });
+        });
+
+        test(`input search text`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component);
+
+            const searchInput = screen.getByPlaceholderText(`Search`) as HTMLInputElement;
+
+            fireEvent.change(searchInput, {
+                target: {
+                    value: `Mike Portnoy`,
+                },
+            });
+
+            await waitFor(() => {
+                expect(searchInput.value).toEqual(`Mike Portnoy`);
+            });
+        });
+
+        test(`clear search text`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component);
+
+            const searchInput = screen.getByPlaceholderText(`Search`) as HTMLInputElement;
+
+            fireEvent.change(searchInput, {
+                target: {
+                    value: ``,
+                },
+            });
+
+            await waitFor(() => {
+                expect(searchInput.value).toEqual(``);
+            });
+        });
+
+        test(`sort givenName asc to desc`, async () => {
+            const component = <UsersTable {...defaultProps} />;
+
+            render(component);
+
+            let userRows = screen.getAllByTestId(`tableRow`, {
+                exact: false,
+            });
+
+            expect(userRows).toHaveLength(2);
+            expect(userRows[0]).toHaveTextContent(`Andrew`);
+            expect(userRows[1]).toHaveTextContent(`John`);
+
+            fireEvent.click(screen.getByTestId(`givenNameSortHandler`));
+
+            await waitFor(() => {
+                userRows = screen.getAllByTestId(`tableRow`, {
+                    exact: false,
+                });
+                expect(userRows).toHaveLength(2);
+                expect(userRows[0]).toHaveTextContent(`John`);
+                expect(userRows[1]).toHaveTextContent(`Andrew`);
+            });
+        });
+
+        test(`sort givenName desc to asc`, async () => {
+            const mockedProps = {
+                ...defaultProps,
+                order: `desc`,
+            };
+
+            const component = <UsersTable {...mockedProps} />;
+
+            render(component);
+
+            let userRows = screen.getAllByTestId(`tableRow`, {
+                exact: false,
+            });
+
+            expect(userRows).toHaveLength(2);
+            expect(userRows[0]).toHaveTextContent(`John`);
+            expect(userRows[1]).toHaveTextContent(`Andrew`);
+
+            fireEvent.click(screen.getByTestId(`givenNameSortHandler`));
+
+            await waitFor(() => {
+                userRows = screen.getAllByTestId(`tableRow`, {
+                    exact: false,
+                });
+                expect(userRows).toHaveLength(2);
+                expect(userRows[0]).toHaveTextContent(`Andrew`);
+                expect(userRows[1]).toHaveTextContent(`John`);
+            });
+        });
     });
 });
