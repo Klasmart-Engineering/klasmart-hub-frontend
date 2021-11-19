@@ -106,6 +106,7 @@ export default function HomePage () {
         end_at_le: twoWeeksFromTodayTimestamp,
         time_zone_offset: timeZoneOffset,
         order_by: `start_at`,
+        time_boundary: `union`,
     }, {
         queryOptions: {
             enabled: !!organizationId,
