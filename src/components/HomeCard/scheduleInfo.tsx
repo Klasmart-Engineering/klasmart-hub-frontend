@@ -7,6 +7,7 @@ import { history } from "@/utils/history";
 import {
     Box,
     Button,
+    CircularProgress,
     Grid,
     Typography,
 } from "@material-ui/core";
@@ -16,6 +17,7 @@ import {
 } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React from "react";
+import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import {
     FormattedDate,
     FormattedMessage,
@@ -118,14 +120,27 @@ const classTypeTranslationKey = (type: EventClassType) => {
     }
 };
 
-export default function ScheduleInfoShort ({ schedule }: {
+interface Props {
     schedule?: SchedulePayload[];
-}) {
+    scrollCallback: () => void;
+    loading: boolean;
+}
+
+export default function ScheduleInfoShort (props: Props) {
+    const {
+        schedule,
+        scrollCallback,
+        loading,
+    } = props;
     const classes = useStyles();
     const yesterday = new Date().setDate(new Date().getDate() - 1) / 1000;
     const now = new Date();
     const timeZoneOffset = now.getTimezoneOffset() * 60000;
-
+    const SCHEDULE_PAGINATION_DELAY = 1000;
+    const scrollRef = useBottomScrollListener<HTMLDivElement>(scrollCallback, {
+        offset: window.innerHeight / 2, // detect scrolling with an offset of half of the screen height from the bottom
+        debounce: SCHEDULE_PAGINATION_DELAY,
+    });
     const scheduledClass = schedule
         ?.map((e) => ({
             ...e,
@@ -179,6 +194,7 @@ export default function ScheduleInfoShort ({ schedule }: {
                 justify="space-between"
             >
                 <Grid
+                    ref={scrollRef}
                     item
                     xs
                     className={classes.cardBodyInner}>
@@ -252,6 +268,15 @@ export default function ScheduleInfoShort ({ schedule }: {
                                     </Box>
                                 </Box>
                             ))}
+                            {loading && (
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            )}
                         </>
                     ) : (
                         <Typography

@@ -1,4 +1,3 @@
-import { useRestAPI } from "@/api/restapi";
 import { useGetUser } from "@/api/users";
 import { userIdVar } from "@/cache";
 import Assessment from "@/components/HomeCard/Assessments";
@@ -6,7 +5,6 @@ import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
 import ScheduleInfoShort from "@/components/HomeCard/scheduleInfo";
 import TeacherFeedback from "@/components/HomeCard/TeacherFeedback/Table";
-import UsageInfo from "@/components/HomeCard/usageInfo";
 import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
 import YourClasses from "@/components/HomeCard/yourClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -14,6 +12,7 @@ import { User } from "@/types/graphQL";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
 import { useReactiveVar } from "@apollo/client/react";
+import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import {
     Box,
     Container,
@@ -26,6 +25,7 @@ import {
     useTheme,
 } from "@material-ui/core/styles";
 import { Card } from "kidsloop-px";
+import { clamp } from "lodash";
 import React, {
     useEffect,
     useState,
@@ -57,11 +57,10 @@ const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 export default function HomePage () {
     const classes = useStyles();
-    const restApi = useRestAPI();
     const theme = useTheme();
 
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
-    const [ scheduleLoading, setScheduleLoading ] = useState(true);
+    const [ page, setPage ] = useState(1);
 
     const [ userInfo, setUserInfo ] = useState<User>();
     const [ userRoles, setUserRoles ] = useState<any | undefined>(``);
@@ -79,6 +78,9 @@ export default function HomePage () {
         skip: !userId,
     });
 
+    const SCHEDULE_PAGE_SIZE = 20;
+    const SCHEDULE_PAGE_START = 1;
+
     useEffect(() => {
         if (!userData) return;
         const user = userData?.user;
@@ -90,33 +92,43 @@ export default function HomePage () {
         setUserInfo(user);
     }, [ userData ]);
 
-    async function getScheduleListNextTwoWeeks () {
-        setScheduleLoading(true);
-        try {
-            const organizationId = currentOrganization?.organization_id ?? ``;
-            const responseSchedule = await restApi.getSchedulesTimeView({
-                org_id: organizationId,
-                view_type: `full_view`,
-                start_at_ge: todayTimestamp,
-                end_at_le: twoWeeksFromTodayTimestamp,
-                time_zone_offset: timeZoneOffset,
-            });
-            responseSchedule.sort((a, b) => {
-                const startDiff = a.start_at - b.start_at;
-                if (startDiff === 0) return a.title.localeCompare(b.title);
-                return startDiff;
-            });
-            setSchedule(responseSchedule);
-        } catch (e) {
-            console.error(e);
-        }
-        setScheduleLoading(false);
-    }
+    const organizationId = currentOrganization?.organization_id ?? ``;
+    const {
+        data: schedulesData,
+        isFetching: isSchedulesFetching,
+    } = usePostSchedulesTimeViewList({
+        org_id: organizationId,
+        view_type: `full_view`,
+        page,
+        page_size: SCHEDULE_PAGE_SIZE,
+        time_at: 0, // any time is ok together with view_type=`full_view`,
+        start_at_ge: todayTimestamp,
+        end_at_le: twoWeeksFromTodayTimestamp,
+        time_zone_offset: timeZoneOffset,
+        order_by: `start_at`,
+    }, {
+        queryOptions: {
+            enabled: !!organizationId,
+        },
+    });
+
+    const fetchMoreSchedulesOnScroll = () => {
+        if (!schedulesData?.data.length || isSchedulesFetching) return;
+        const lastPage = Math.floor((schedulesData?.total ?? 0) / SCHEDULE_PAGE_SIZE + 1);
+        const newPage = clamp(page + 1, SCHEDULE_PAGE_START, lastPage);
+        if (newPage === page) return;
+        setPage(newPage);
+    };
 
     useEffect(() => {
-        if (!currentOrganization) return;
-        getScheduleListNextTwoWeeks();
-    }, [ currentOrganization ]);
+        if (!currentOrganization || !schedulesData?.data.length) return;
+        schedulesData.data.sort((a, b) => {
+            const startDiff = a.start_at - b.start_at;
+            if (startDiff === 0) return a.title.localeCompare(b.title);
+            return startDiff;
+        });
+        setSchedule([ ...schedule, ...schedulesData.data ]);
+    }, [ currentOrganization, schedulesData ]);
 
     return (
         <Container
@@ -137,7 +149,11 @@ export default function HomePage () {
                     md={6}
                 >
                     <Card>
-                        <ScheduleInfoShort schedule={schedule} />
+                        <ScheduleInfoShort
+                            schedule={schedule}
+                            scrollCallback={fetchMoreSchedulesOnScroll}
+                            loading={isSchedulesFetching}
+                        />
                     </Card>
                 </Grid>
                 <Grid

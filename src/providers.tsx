@@ -2,6 +2,7 @@ import App from "./app";
 import { cache } from "./cache";
 import { cancelRequestLink } from "./cancelRequest";
 import { getAPIEndpoint } from "./config";
+import CmsApiClientProvider from "./providers/CmsApiClientProvider";
 import {
     createDefaultStore,
     State,
@@ -14,6 +15,7 @@ import {
 } from "@apollo/client/core";
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { ApolloProvider } from "@apollo/client/react";
+import { ReactQueryDevtools } from "@kidsloop/cms-api-client";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { createUploadLink } from "apollo-upload-client";
@@ -76,22 +78,25 @@ export function ClientSide () {
     const locale = getLanguage(languageCode);
 
     return (
-        <ApolloProvider client={client}>
-            <RawIntlProvider value={locale}>
-                <ThemeProvider theme={themeProvider()}>
-                    <ConfirmDialogProvider>
-                        <PromptDialogProvider>
-                            <AlertDialogProvider>
-                                <SnackbarProvider closeButtonLabel="Dismiss">
-                                    <CssBaseline />
-                                    <App />
-                                </SnackbarProvider>
-                            </AlertDialogProvider>
-                        </PromptDialogProvider>
-                    </ConfirmDialogProvider>
-                </ThemeProvider>
-            </RawIntlProvider>
-        </ApolloProvider>
+        <CmsApiClientProvider>
+            <ApolloProvider client={client}>
+                <RawIntlProvider value={locale}>
+                    <ThemeProvider theme={themeProvider()}>
+                        <ConfirmDialogProvider>
+                            <PromptDialogProvider>
+                                <AlertDialogProvider>
+                                    <SnackbarProvider closeButtonLabel="Dismiss">
+                                        <CssBaseline />
+                                        <App />
+                                    </SnackbarProvider>
+                                </AlertDialogProvider>
+                            </PromptDialogProvider>
+                        </ConfirmDialogProvider>
+                    </ThemeProvider>
+                </RawIntlProvider>
+            </ApolloProvider>
+            {process.env.NODE_ENV === `development` && <ReactQueryDevtools />}
+        </CmsApiClientProvider>
     );
 }
 
