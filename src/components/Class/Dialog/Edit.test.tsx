@@ -1,7 +1,7 @@
 import EditClassDialog from "@/components/Class/Dialog/Edit";
 import { GET_CLASS } from "@/operations/queries/getClass";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
-import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
+import { GET_USER_NODE_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserNodeSchoolMemberships";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     screen,
@@ -13,8 +13,8 @@ import {
     mockOrgId,
     mockSchoolsData,
     mockUserId,
-    mockUserSchoolMemberships,
 } from "@tests/mockDataClasses";
+import { mockUserNode } from "@tests/mockUsers";
 import { render } from "@tests/utils/render";
 import React from 'react';
 
@@ -69,14 +69,15 @@ const mocks: MockedResponse[] = [
     },
     {
         request: {
-            query: GET_USER_SCHOOL_MEMBERSHIPS,
+            query: GET_USER_NODE_SCHOOL_MEMBERSHIPS,
             variables: {
-                organization_id: mockOrgId,
-                user_id: mockUserId,
+                id: mockUserId,
             },
         },
         result: {
-            data: mockUserSchoolMemberships,
+            data: {
+                userNode: mockUserNode,
+            },
         },
     },
 ];

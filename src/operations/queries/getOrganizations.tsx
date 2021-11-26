@@ -24,6 +24,7 @@ export const GET_ORGANIZATION_MEMBERSHIPS = gql`
                 roles {
                     role_id
                     role_name
+                    status
                 }
             }
         }

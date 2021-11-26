@@ -1,5 +1,5 @@
-import EditDialog from "./Edit";
-import { commonDialogTests } from "./shared.test";
+import EditDialog,
+{ mapUserNodeToFormState } from "./Edit";
 import { mockGetOrganizationMembership } from "@/api/__mocks__/organizationMemberships";
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
 import { mockUseGetSchools } from "@/api/__mocks__/schools";
@@ -8,11 +8,14 @@ import {
     DeleteOrganizationMembershipResponse,
     UpdateOrganizationMembershipRequest,
     UpdateOrganizationMembershipResponse,
-    useGetOrganizationMembership,
+    useGetOrganizationUserNode,
 } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetSchools } from "@/api/schools";
-import { mapOrganizationMembershipToFormState } from "@/components/User/Dialog/Edit";
+import {
+    GetUserNodeRequest,
+    GetUserNodeResponse,
+} from "@/api/users";
 import {
     defaultState,
     formatDateOfBirth,
@@ -31,7 +34,10 @@ import {
 import { isActive } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { UserGenders } from "@/utils/users";
-import { MutationTuple } from "@apollo/client";
+import {
+    MutationTuple,
+    QueryResult,
+} from "@apollo/client";
 import {
     getElementError,
     screen,
@@ -52,8 +58,7 @@ import {
 import {
     mockOrganizationMembership2,
     mockOrganizationMemberships,
-    mockSchoolMemberships,
-    mockUser,
+    mockUserNode,
 } from "@tests/mockUsers";
 import { waitForButtonToLoad } from "@tests/waitFor";
 import { utils } from 'kidsloop-px';
@@ -87,6 +92,7 @@ jest.mock(`@/store/organizationMemberships`, () => {
 jest.mock(`@/api/organizationMemberships`, () => {
     return {
         useGetOrganizationMembership: jest.fn(),
+        useGetOrganizationUserNode: jest.fn(),
         useDeleteOrganizationMembership: () => [ mockDeleteOrganizationMembership ],
         useUpdateOrganizationMembership: () => [ mockUpdateOrganizationMembership ],
     };
@@ -110,81 +116,71 @@ jest.mock(`@/utils/common`, () => {
     };
 });
 
-let mockUseGetOrganizationMembership = (useGetOrganizationMembership as jest.MockedFunction<typeof useGetOrganizationMembership>);
+let mockUseGetOrganizationUserNode = (useGetOrganizationUserNode as jest.MockedFunction<typeof useGetOrganizationUserNode>);
 
 beforeAll(() => {
     (useGetSchools as jest.MockedFunction<typeof useGetSchools>).mockReturnValue(mockUseGetSchools);
     (useGetOrganizationRoles as jest.MockedFunction<typeof useGetOrganizationRoles>).mockReturnValue(mockGetOrganizationRoles);
-    mockUseGetOrganizationMembership = mockUseGetOrganizationMembership.mockReturnValue(mockGetOrganizationMembership);
+    mockUseGetOrganizationUserNode = mockUseGetOrganizationUserNode.mockReturnValue(mockGetOrganizationMembership);
 });
-
-const defaultMembership = {
-    organization_id: mockOrg.organization_id,
-    user_id: mockUser.user_id,
-};
 
 const mockOrganizationMembership = mockOrganizationMemberships[0];
 
 describe(`mapOrganizationMembershipToFormState`, () => {
     test(`inactive schools are ignored`, () => {
-        expect(mapOrganizationMembershipToFormState({
-            ...defaultMembership,
-            schoolMemberships: mockSchoolMemberships,
-        }).schools).toEqual([ schoolA.school_id, schoolC.school_id ]);
+        expect(mapUserNodeToFormState(mockUserNode).schools)
+            .toEqual([ schoolA.school_id ]);
     });
 
     test(`inactive roles are ignored`, () => {
-        expect(mapOrganizationMembershipToFormState({
-            ...defaultMembership,
-            roles: mockOrganizationMembership.roles,
-        }).roles).toEqual(mockOrganizationMembership.roles.filter(isActive).map(role => role.role_id));
+        expect(mapUserNodeToFormState(mockUserNode).roles)
+            .toEqual(mockUserNode.roles?.filter(isActive).map(role => role.id));
     });
 
     test(`maps properties when all are specified`, () => {
         const expected: State = {
-            alternativeEmail: mockUser.alternate_email,
-            alternativePhone: mockUser.alternate_phone,
-            birthday: mockUser.date_of_birth,
-            contactInfo: mockUser.email,
-            familyName: mockUser.family_name,
-            gender: mockUser.gender,
-            givenName: mockUser.given_name,
-            roles: mockOrganizationMembership.roles.filter(isActive).map(role => role.role_id),
-            schools: mockUser.school_memberships.filter(isActive).map(schoolMembership => schoolMembership.school_id),
-            shortcode: mockOrganizationMembership.shortcode,
+            alternativeEmail: mockUserNode.alternateContactInfo?.email ?? ``,
+            alternativePhone: mockUserNode.alternateContactInfo?.phone ?? ``,
+            birthday: mockUserNode.dateOfBirth ?? ``,
+            contactInfo: mockUserNode.contactInfo?.email ?? ``,
+            familyName: mockUserNode.familyName ?? ``,
+            gender: mockUserNode.gender ?? ``,
+            givenName: mockUserNode.givenName ?? ``,
+            roles: mockUserNode.roles?.filter(isActive).map(role => role.id ?? ``) ?? [],
+            schools: mockUserNode.schools?.filter(isActive).map(school => school.id ?? ``) ?? [],
+            shortcode: mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
         };
-        expect(mapOrganizationMembershipToFormState(mockOrganizationMembership)).toEqual(expected);
+        expect(mapUserNodeToFormState(mockUserNode)).toEqual(expected);
     });
 
     test(`maps to defaults when the minimum is specified`, () => {
-        expect(mapOrganizationMembershipToFormState({
-            ...defaultMembership,
-            user: {
-                user_id: defaultMembership.user_id,
-                gender: UserGenders.FEMALE,
-            },
+        expect(mapUserNodeToFormState({
+            id: ``,
+            givenName: ``,
+            familyName: ``,
+            gender: `female`,
         })).toEqual(defaultState);
     });
 });
 
-describe(`form`, () => {
+describe(`user edit form`, () => {
     const originalConsoleError = global.console.error;
     const mockOnClose = jest.fn();
 
     const render = () => {
-        const renderResult = renderWithIntl(<EditDialog
+        const view = renderWithIntl(<EditDialog
             open
-            userId={mockUser.user_id}
+            userId={mockUserNode.id}
             onClose={mockOnClose}/>);
 
         const submitButton = screen.getByText(mockIntl.formatMessage({
             id: `editDialog_save`,
         })).closest(`button`);
         if (submitButton === null) {
-            throw getElementError(`Unable to find submitButton`, renderResult.container);
+            throw getElementError(`Unable to find submitButton`, view.container);
         }
         return {
-            ...renderResult,
+            ...view,
             submitButton,
         };
     };
@@ -200,33 +196,18 @@ describe(`form`, () => {
         global.console.error = originalConsoleError;
     });
 
-    commonDialogTests({
-        type: `Edit`,
-        mockApi: mockUpdateOrganizationMembership,
-        translations: {
-            submitButton: `editDialog_save`,
-            cancelButton: `editDialog_cancel`,
-            genericError: `editDialog_savedError`,
-        },
-        mockOnClose,
-        render,
-    });
-
     describe(`edit`, () => {
         test(`loads the OrganizationMembership into the form state`, () => {
             render();
-
-            expect(inputs.givenName()).toHaveValue(mockOrganizationMembership.user.given_name);
-            expect(inputs.familyName()).toHaveValue(mockOrganizationMembership.user.family_name);
-            expect(inputs.contactInfo()).toHaveValue(mockOrganizationMembership.user.email);
-            expect(inputs.birthday()).toHaveValue(formatDateOfBirth(mockOrganizationMembership.user.date_of_birth));
-            expect(inputs.shortcode()).toHaveValue(mockOrganizationMembership.shortcode);
-
-            expect(inputs.schools()).toHaveTextContent([ schoolA.school_name, schoolC.school_name ].join(`, `));
-            expect(inputs.roles()).toHaveTextContent([ mockRoles.organizationAdmin.role_name, mockRoles.customRole.role_name ].join(`, `));
-
-            expect(inputs.alternativeEmail()).toHaveValue(mockOrganizationMembership.user.alternate_email);
-            expect(inputs.alternativePhone()).toHaveValue(mockOrganizationMembership.user.alternate_phone);
+            expect(inputs.givenName()).toHaveValue(mockUserNode.givenName);
+            expect(inputs.familyName()).toHaveValue(mockUserNode.familyName);
+            expect(inputs.contactInfo()).toHaveValue(mockUserNode.contactInfo?.email);
+            expect(inputs.birthday()).toHaveValue(formatDateOfBirth(mockUserNode.dateOfBirth as string));
+            expect(inputs.shortcode()).toHaveValue(mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode);
+            expect(inputs.schools()).toHaveTextContent(schoolA.school_name as string);
+            expect(inputs.roles()).toHaveTextContent(mockRoles.organizationAdmin.role_name as string);
+            expect(inputs.alternativeEmail()).toHaveValue(mockUserNode.alternateContactInfo?.email);
+            expect(inputs.alternativePhone()).toHaveValue(mockUserNode.alternateContactInfo?.phone);
         });
 
         test(`disables the contactInfo field`, () => {
@@ -242,14 +223,15 @@ describe(`form`, () => {
         ])(`gender=%s is pre-selected`, (gender, radio) => {
             const genderedMembership = cloneDeep(mockOrganizationMembership);
             genderedMembership.user.gender = gender;
-            mockUseGetOrganizationMembership.mockReturnValue({
+            mockUseGetOrganizationUserNode.mockReturnValue({
                 data: {
-                    user: {
-                        membership: genderedMembership,
+                    userNode: {
+                        ...mockUserNode,
+                        gender,
                     },
                 },
                 loading: false,
-            });
+            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
 
             render();
 
@@ -257,17 +239,16 @@ describe(`form`, () => {
         });
 
         test(`an 'other' gender pre-selects the 'other' option and fills the text input`, () => {
-            const customGender = `Non-binary`;
-            const genderedMembership = cloneDeep(mockOrganizationMembership);
-            genderedMembership.user.gender = customGender;
-            mockUseGetOrganizationMembership.mockReturnValue({
+            const customGender = `non-binary`;
+            mockUseGetOrganizationUserNode.mockReturnValue({
                 data: {
-                    user: {
-                        membership: genderedMembership,
+                    userNode: {
+                        ...mockUserNode,
+                        gender: customGender,
                     },
                 },
                 loading: false,
-            });
+            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
 
             render();
 
@@ -346,7 +327,7 @@ describe(`form`, () => {
                 title: mockIntl.formatMessage({
                     id: `users_deleteTitle`,
                 }),
-                entityName: `${mockOrganizationMembership.user.given_name} ${mockOrganizationMembership.user.family_name}`,
+                entityName: `${mockUserNode.givenName} ${mockUserNode.familyName}`,
             });
 
             expect(mockDeleteOrganizationMembership).toHaveBeenCalledTimes(1);
@@ -423,7 +404,6 @@ describe(`form`, () => {
             open
             onClose={mockOnClose} />));
 
-        expect(inputs.givenName()).toHaveValue(mockOrganizationMembership.user.given_name);
+        expect(inputs.givenName()).toHaveValue(mockUserNode.givenName);
     });
-
 });

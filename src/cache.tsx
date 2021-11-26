@@ -43,11 +43,7 @@ export const cacheConfig: InMemoryCacheConfig = {
         },
         RoleSummaryNode: {
             // Same Role could be assigned on the Organization or School level
-            keyFields: [
-                `id`,
-                `schoolId`,
-                `organizationId`,
-            ],
+            keyFields: [ `id`, `organizationId` ],
         },
         Query: {
             fields: {

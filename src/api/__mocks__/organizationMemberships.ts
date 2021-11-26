@@ -1,15 +1,13 @@
 import {
-    GetOrganizationMembershipRequest,
-    GetOrganizationMembershipResponse,
-} from "@/api/organizationMemberships";
+    GetUserNodeRequest,
+    GetUserNodeResponse,
+} from "../users";
 import { QueryResult } from "@apollo/client";
-import { mockOrganizationMemberships } from "@tests/mockUsers";
+import { mockUserNode } from "@tests/mockUsers";
 
 export const mockGetOrganizationMembership = {
     data: {
-        user: {
-            membership: mockOrganizationMemberships[0],
-        },
+        userNode: mockUserNode,
     },
     loading: false,
-} as unknown as QueryResult<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>;
+} as unknown as QueryResult<GetUserNodeResponse, GetUserNodeRequest>;

@@ -7,6 +7,7 @@ import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPagi
 import { GET_SCHOOL } from "@/operations/queries/getSchool";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
+    BaseEntity,
     Organization,
     Program,
     School,
@@ -40,6 +41,12 @@ interface CreateSchoolResponse {
     organization: {
         createSchool: School;
     };
+}
+
+export interface SchoolSummaryNode extends BaseEntity {
+    name: string;
+    status: Status;
+    organizationId?: string;
 }
 
 export const useCreateSchool = (options?: MutationHookOptions<CreateSchoolResponse, CreateSchoolRequest>) => {

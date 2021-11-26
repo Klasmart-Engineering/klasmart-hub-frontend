@@ -4,12 +4,15 @@ import { EDIT_ROLE } from "@/operations/mutations/editRole";
 import { REPLACE_ROLE } from "@/operations/mutations/replaceRole";
 import { GET_ORGANIZATION_ROLES } from "@/operations/queries/getOrganizationRoles";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
+import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
+    BaseEntity,
     Organization,
     Role,
 } from "@/types/graphQL";
 import {
+    InternalRefetchQueriesInclude,
     MutationHookOptions,
     QueryHookOptions,
     useMutation,
@@ -26,12 +29,10 @@ export interface GetAllRolesResponse {
     };
 }
 
-export interface RoleSummaryNode {
-    id: string;
-    name: string;
-    status: string;
-    organizationId: string | null;
-    schoolId: string | null;
+export interface RoleSummaryNode extends BaseEntity {
+    name?: string;
+    organizationId?: string | null;
+    schoolId?: string | null;
 }
 
 export const useGetOrganizationRoles = (options?: QueryHookOptions<GetAllRolesResponse, GetAllRolesRequest>) => {
@@ -59,7 +60,11 @@ interface CreateRoleRequest {
 }
 
 export const useCreateRole = (options?: MutationHookOptions<CreateRoleResponse, CreateRoleRequest>) => {
-    return useMutation<CreateRoleResponse, CreateRoleRequest>(CREATE_NEW_ROLE, options);
+    const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
+    return useMutation<CreateRoleResponse, CreateRoleRequest>(CREATE_NEW_ROLE, {
+        ...options,
+        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+    });
 };
 
 interface DeleteRoleRequest {
@@ -71,7 +76,11 @@ interface DeleteRoleResponse {
 }
 
 export const useDeleteRole = (options?: MutationHookOptions<DeleteRoleResponse, DeleteRoleRequest>) => {
-    return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, options);
+    const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
+    return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, {
+        ...options,
+        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+    });
 };
 
 interface ReplaceRoleRequest {
@@ -85,7 +94,11 @@ interface ReplaceRoleResponse {
 }
 
 export const useReplaceRole = (options?: MutationHookOptions<ReplaceRoleResponse, ReplaceRoleRequest>) => {
-    return useMutation<ReplaceRoleResponse, ReplaceRoleRequest>(REPLACE_ROLE, options);
+    const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
+    return useMutation<ReplaceRoleResponse, ReplaceRoleRequest>(REPLACE_ROLE, {
+        ...options,
+        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+    });
 };
 
 interface GetRolePermissionsRequest {
@@ -117,5 +130,9 @@ interface EditRoleResponse {
 }
 
 export const useEditRole = (options?: MutationHookOptions<EditRoleResponse, EditRoleRequest>) => {
-    return useMutation<EditRoleResponse, EditRoleRequest>(EDIT_ROLE, options);
+    const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
+    return useMutation<EditRoleResponse, EditRoleRequest>(EDIT_ROLE, {
+        ...options,
+        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+    });
 };

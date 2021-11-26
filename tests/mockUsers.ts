@@ -1,3 +1,8 @@
+import {
+    mockSchoolName1,
+    mockSchoolName2,
+} from "./mockDataSchools";
+import { UserNode } from "@/api/users";
 import { PickRequired } from "@/types/generics";
 import {
     OrganizationMembership,
@@ -124,6 +129,54 @@ export const mockOrganizationMemberships: MockOrganizationMembership[] = [
         schoolMemberships: mockSchoolMemberships,
     },
 ];
+
+export const mockUserNode: UserNode = {
+    id: mockUserId,
+    givenName: `John`,
+    familyName: `Doe`,
+    gender: `male`,
+    dateOfBirth: `01-1995`,
+    contactInfo: {
+        email: `test@test.com`,
+        phone: null,
+    },
+    alternateContactInfo: {
+        email: `alt@alttest.com`,
+        phone: `111-111-2222`,
+    },
+    organizationMembershipsConnection: {
+        edges: [
+            {
+                node: {
+                    shortCode: `abc123`,
+                    userId: mockUserId,
+                },
+            },
+        ],
+    },
+    roles: [
+        {
+            id: mockRoles.organizationAdmin.role_id,
+            name: mockRoles.organizationAdmin.role_name as string,
+            organizationId: mockOrg.organization_id,
+            status: Status.ACTIVE,
+        },
+    ],
+    schools: [
+        {
+            id: schoolA.school_id,
+            name: schoolA.school_name as string,
+            organizationId: mockOrg.organization_id,
+            status: Status.ACTIVE,
+        },
+        {
+            id: schoolB.school_id,
+            name: schoolB.school_name as string,
+            organizationId: mockOrg.organization_id,
+            status: Status.INACTIVE,
+        },
+    ],
+};
 
 export const mockOrganizationMembership2: MockOrganizationMembership = {
     organization_id: mockOrg.organization_id,

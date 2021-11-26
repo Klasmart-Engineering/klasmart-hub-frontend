@@ -1,7 +1,10 @@
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
 import { PRIMARY_THEME_COLOR } from "@/themeProvider";
-import { OrganizationMembership } from "@/types/graphQL";
+import {
+    OrganizationMembership,
+    Status,
+} from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     getHighestRole,
@@ -117,7 +120,8 @@ export default function OrganizationSwitcher (props: Props) {
     };
 
     const sortedRoleNames = currentOrganizationMembership?.roles
-        ?.map((r) => r.role_name)
+        ?.filter((r) => r.status === Status.ACTIVE)
+        .map((r) => r.role_name)
         .filter((roleName): roleName is string => !!roleName);
     const highestRole = getHighestRole(sortedRoleNames ?? []);
     const translatedRole = highestRole

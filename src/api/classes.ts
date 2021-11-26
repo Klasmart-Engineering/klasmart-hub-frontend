@@ -11,7 +11,6 @@ import { UPLOAD_CLASSES_CSV } from "@/operations/mutations/uploadClassesCsv";
 import { GET_CLASS } from "@/operations/queries/getClass";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
 import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
-import { GET_USER_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserSchoolMemberships";
 import {
     BooleanFilter,
     Class,
@@ -235,10 +234,6 @@ export interface GetAllClassesPaginatedResponse {
         edges: ClassEdge[];
     };
 }
-
-export const useGetUserSchoolMemberships = (options?: QueryHookOptions<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>) => {
-    return useQuery<GetUserSchoolMembershipsResponse, GetUserSchoolMembershipsRequest>(GET_USER_SCHOOL_MEMBERSHIPS, options);
-};
 
 interface UploadClassesCsvResponse {
     filename?: string;

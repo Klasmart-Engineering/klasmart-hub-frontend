@@ -1,15 +1,21 @@
+import {
+    GetUserNodeRequest,
+    GetUserNodeResponse,
+    UserNode,
+} from "./users";
 import { RoleSummaryNode } from "@/api/roles";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS } from "@/operations/queries/getAllUserPermissions";
-import { GET_ORGANIZATION_USER } from "@/operations/queries/getOrganizationUser";
+import { GET_ORGANIZATION_USER_NODE } from "@/operations/queries/getOrganizationUserNode";
 import { GET_ORGANIZATION_USERS } from "@/operations/queries/getOrganizationUsers";
 import { GET_PAGINATED_ORGANIZATION_USERS } from "@/operations/queries/getPaginatedOrganizationUsers";
 import {
     Organization,
     OrganizationMembership,
     SortOrder,
+    Status,
     StringFilter,
     UuidExclusiveFilter,
     UuidFilter,
@@ -103,8 +109,14 @@ export interface GetOrganizationMembershipResponse {
     };
 }
 
-export const useGetOrganizationMembership = (options?: QueryHookOptions<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>) => {
-    return useQuery<GetOrganizationMembershipResponse, GetOrganizationMembershipRequest>(GET_ORGANIZATION_USER, options);
+export interface GetOrganizationUserNodeResponse {
+    userNode: {
+        membership: OrganizationMembership;
+    };
+}
+
+export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetUserNodeResponse, GetUserNodeRequest>) => {
+    return useQuery<GetUserNodeResponse, GetUserNodeRequest>(GET_ORGANIZATION_USER_NODE, options);
 };
 
 interface GetOrganizationMembershipsRequest {
@@ -128,28 +140,26 @@ interface GetOrganizationMembershipsRequest2 {
     filter?: UserFilter;
 }
 
-export interface UserNode {
-    id: string;
-    avatar: string | null;
-    contactInfo: {
-        email: string | null;
-        phone: string | null;
+export interface OrganizationMembershipConnectionNode {
+    userId?: string;
+    organizationId?: string;
+    status?: Status;
+    shortCode?: string;
+    joinTimestamp?: string;
+    user?: UserNode;
+}
+
+export interface OrganizationMembershipsConnection {
+    totalCount?: number;
+    pageInfo?: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string;
+        endCursor: string;
     };
-    givenName: string | null;
-    familyName: string | null;
-    organizations: {
-        userStatus: string;
-        userShortCode: string;
-        joinDate: string;
+    edges: {
+        node: OrganizationMembershipConnectionNode;
     }[];
-    roles: RoleSummaryNode[];
-    schools: {
-        id: string;
-        name: string;
-        status: string;
-    }[];
-    dateOfBirth: string;
-    gender: string;
 }
 
 export interface UserEdge {

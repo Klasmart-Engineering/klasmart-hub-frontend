@@ -535,27 +535,27 @@ export const mockSearchClasses = {
 };
 
 export const mockUserSchoolMemberships = {
-    user: {
-        user_id: mockUserId,
-        membership: {
-            roles: [
-                {
-                    role_id: `7e958466-08ba-46a9-8370-d824897e690e`,
-                    role_name: `School Admin`,
-                    system_role: true,
-                },
-                {
-                    role_id: `87aca549-fdb6-4a63-97d4-d563d4a4690a`,
-                    role_name: `Organization Admin`,
-                    system_role: true,
-                },
-            ],
-            schoolMemberships: [
-                {
-                    school_id: `f7ef44ee-6576-4f65-9c14-e82060dfde23`,
-                    school_name: `Clapham School1`,
-                },
-            ],
-        },
+    userNode: {
+        roles: [
+            {
+                id: `7e958466-08ba-46a9-8370-d824897e690e`,
+                name: `School Admin`,
+                schoolId: `f7ef44ee-6576-4f65-9c14-e82060dfde23`,
+                status: Status.ACTIVE,
+            },
+            {
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4690a`,
+                name: `Organization Admin`,
+                schoolId: `f7ef44ee-6576-4f65-9c14-e82060dfde23`,
+                status: Status.ACTIVE,
+            },
+        ],
+        schools: [
+            {
+                id: `f7ef44ee-6576-4f65-9c14-e82060dfde23`,
+                name: `Clapham School1`,
+                status: Status.ACTIVE,
+            },
+        ],
     },
 };

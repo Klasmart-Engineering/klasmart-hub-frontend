@@ -1,4 +1,4 @@
-import { User } from "@/types/graphQL";
+import { UserNode } from "@/api/users";
 import {
     Box,
     lighten,
@@ -9,8 +9,7 @@ import {
     makeStyles,
     useTheme,
 } from "@material-ui/core/styles";
-import React,
-{ useState } from "react";
+import React from "react";
 import {
     FormattedDate,
     FormattedMessage,
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    user?: User | null;
+    user?: UserNode;
 }
 
 export default function WelcomeMessage (props: Props) {
@@ -56,7 +55,7 @@ export default function WelcomeMessage (props: Props) {
                 className={classes.welcomeTitle}
             >
                 <span>👋 </span>
-                {(user?.username || user?.given_name)
+                {(user?.givenName)
                     ? (
                         <FormattedMessage
                             id="home_welcomeLabel"
@@ -65,7 +64,7 @@ export default function WelcomeMessage (props: Props) {
                                     <span style={{
                                         color: theme.palette.primary.main !== theme.palette.primary.contrastText ? lighten(theme.palette.primary.contrastText, 0.4) : theme.palette.primary.main,
                                     }}>
-                                        {user?.username ?? user.given_name}
+                                        {user.givenName}
                                     </span>
                                 ),
                             }}

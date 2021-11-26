@@ -1,17 +1,9 @@
-import { useGetOrganizationRoles } from "@/api/roles";
-import { useGetUser } from "@/api/users";
+import { RoleSummaryNode } from "@/api/roles";
+import { useGetUserNode } from "@/api/users";
 import { userIdVar } from "@/cache";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    orderedSystemRoleNames,
-    Role,
-} from "@/types/graphQL";
+import { orderedSystemRoleNames } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import {
-    useEffect,
-    useState,
-} from "react";
 import { IntlShape } from "react-intl";
 
 export const roleNameTranslations: { [key: string]: string } = {
@@ -47,15 +39,16 @@ export const getHighestRole = (roles: string[]) => {
 
 export const useIsSuperAdmin = () => {
     const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-        skip: !userId,
-    });
     const currentOrganization = useCurrentOrganization();
-    const selectedMembershipOrganization = userData?.user?.memberships?.find((membership) => membership.organization_id === currentOrganization?.organization_id);
-    return!!selectedMembershipOrganization?.roles?.find((role) => role.role_name === `Super Admin`);
+    const { data: userData } = useGetUserNode({
+        variables: {
+            id: userId,
+            organizationId: currentOrganization?.organization_id ?? ``,
+        },
+        skip: !userId || !currentOrganization?.organization_id,
+    });
+    const roles = userData?.userNode?.roles?.filter((role: RoleSummaryNode) => role.organizationId === currentOrganization?.organization_id);
+    return!!roles?.find((role) => role.name === `Super Admin`);
 };
 
 export const getCustomRoleName = (intl: IntlShape, roleName: string) => {

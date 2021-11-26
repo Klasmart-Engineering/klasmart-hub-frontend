@@ -1,5 +1,7 @@
-import { useGetUser } from "@/api/users";
-import { userIdVar } from "@/cache";
+import {
+    useGetMyUser,
+    UserNode,
+} from "@/api/users";
 import Assessment from "@/components/HomeCard/Assessments";
 import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
@@ -8,10 +10,8 @@ import TeacherFeedback from "@/components/HomeCard/TeacherFeedback/Table";
 import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
 import YourClasses from "@/components/HomeCard/yourClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { User } from "@/types/graphQL";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
-import { useReactiveVar } from "@apollo/client/react";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import {
     Box,
@@ -58,37 +58,21 @@ const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 export default function HomePage () {
     const classes = useStyles();
     const theme = useTheme();
-
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ page, setPage ] = useState(1);
-
-    const [ userInfo, setUserInfo ] = useState<User>();
-    const [ userRoles, setUserRoles ] = useState<any | undefined>(``);
-
+    const [ userInfo, setUserInfo ] = useState<UserNode>();
     const currentOrganization = useCurrentOrganization();
-
     const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
-
-    const userId = useReactiveVar(userIdVar);
-    const { data: userData } = useGetUser({
-        variables: {
-            user_id: userId,
-        },
-        skip: !userId,
-    });
+    const canViewClasses = usePermission(`view_my_classes_20118`);
+    const { data: userData } = useGetMyUser();
 
     const SCHEDULE_PAGE_SIZE = 20;
     const SCHEDULE_PAGE_START = 1;
 
     useEffect(() => {
         if (!userData) return;
-        const user = userData?.user;
-        user.memberships?.forEach((membership) => {
-            membership.roles?.forEach((role) => {
-                setUserRoles([ ...userRoles, role.role_name ]);
-            });
-        });
+        const user = userData?.myUser.node;
         setUserInfo(user);
     }, [ userData ]);
 
@@ -208,13 +192,11 @@ export default function HomePage () {
                     </Grid>
                 </Grid>
             </Grid>
-            {(userRoles?.includes(`Student`) ||
-                userRoles?.includes(`Teacher`) ||
-                userRoles?.includes(`Parent`)) && (
+            {canViewClasses &&
                 <Box mt={4}>
                     <YourClasses />
                 </Box>
-            )}
+            }
             {/* TODO : Find a way to display : "As a student, show my Teachers."" (priority low)
             <Box mt={4}>
                 <YourTeachers />

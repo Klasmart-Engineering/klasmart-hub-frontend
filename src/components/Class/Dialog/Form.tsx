@@ -1,5 +1,5 @@
-import { useGetUserSchoolMemberships } from "@/api/classes";
 import { useGetSchools } from "@/api/schools";
+import { useGetUserNodeSchoolMemberships } from "@/api/users";
 import { userIdVar } from "@/cache";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
@@ -77,17 +77,14 @@ export default function ClassDialogForm (props: Props) {
         skip: !currentOrganization?.organization_id,
     });
     const userId = useReactiveVar(userIdVar);
-    const [ isSchoolAdmin, setIsSchoolAdmin ] = useState(false);
-    const { data: user, loading: userDataLoading } = useGetUserSchoolMemberships({
-        fetchPolicy: `network-only`,
+    const { data: userData, loading: userDataLoading } = useGetUserNodeSchoolMemberships({
+        fetchPolicy: `cache-first`,
         variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-            user_id: userId,
+            id: userId,
         },
-        skip: !currentOrganization?.organization_id || !userId,
+        skip: !userId,
+        notifyOnNetworkStatusChange: true,
     });
-
-    const schoolMemberships = user?.user.membership?.schoolMemberships?.map((schoolMembership) => schoolMembership?.school?.school_id) ?? [];
 
     const [ allSchools, setAllSchools ] = useState<School[]>([]);
     const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
@@ -202,22 +199,15 @@ export default function ClassDialogForm (props: Props) {
     }, [ classNameValid ]);
 
     useEffect(() => {
-        if (!user) return;
-        const isUserSchoolAdmin = !!user?.user.membership?.roles?.find(role => role.role_name === `School Admin` && role.system_role);
-        setIsSchoolAdmin(isUserSchoolAdmin);
-    }, [ user ]);
-
-    useEffect(() => {
         const schools = data?.organization?.schools?.filter((s) => {
-            if (isSchoolAdmin && !value?.class_id) {
-                return s.status === Status.ACTIVE && schoolMemberships.includes(s.school_id);
+            if (!value?.class_id) {
+                return s.status === Status.ACTIVE && userData?.userNode?.schools?.map(school => school.id).includes(s.school_id);
             }
 
             return s.status === Status.ACTIVE;
         }) ?? [];
 
         const programs = mapProgramsFromSchools(schools, value.schools?.map((school) => school.school_id) ?? []);
-
         setAllSchools(schools);
         setAllPrograms(programs);
         setSchoolIds(value.schools?.map((school) => school.school_id) ?? []);
@@ -231,7 +221,7 @@ export default function ClassDialogForm (props: Props) {
             setAllAgeRanges(mapAgeRangesFromPrograms(programs));
             setAgeRangesIds(value.age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? []);
         }
-    }, [ data, isSchoolAdmin ]);
+    }, [ data, userData ]);
 
     return (
         <div className={classes.root}>

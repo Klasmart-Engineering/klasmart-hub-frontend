@@ -1,18 +1,17 @@
-import { UserFilter } from "./organizationMemberships";
+import { OrganizationMembershipsConnection } from "./organizationMemberships";
+import { RoleSummaryNode } from "./roles";
+import { SchoolSummaryNode } from "./schools";
 import { getAuthEndpoint } from "@/config";
 import { UPLOAD_USERS_CSV } from "@/operations/mutations/uploadUsersCsv";
 import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
-import { GET_USER } from "@/operations/queries/getUser";
+import { GET_USER_NODE } from "@/operations/queries/getUserNode";
+import { GET_USER_NODE_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserNodeSchoolMemberships";
 import { ME } from "@/operations/queries/me";
-import {
-    SortOrder,
-    Status,
-    User,
-} from "@/types/graphQL";
+import { MY_USER } from "@/operations/queries/myUser";
+import { User } from "@/types/graphQL";
 import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import {
     QueryHookOptions,
-    useLazyQuery,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -86,25 +85,57 @@ export const useGetMyUsers = (options?: QueryHookOptions<GetMyUsersResponse, Get
     return useQuery<GetMyUsersResponse, GetMyUsersRequest>(GET_MY_USERS, options);
 };
 
-interface GetUserRequest {
-    user_id: string;
+export interface GetUserNodeRequest {
+    id: string;
+    organizationId?: string;
 }
 
-interface GetUserResponse {
-    user: User;
+export interface GetUserNodeResponse {
+    userNode: UserNode;
 }
 
-export const useGetUser = (options?: QueryHookOptions<GetUserResponse, GetUserRequest>) => {
-    return useQuery<GetUserResponse, GetUserRequest>(GET_USER, options);
+export const useGetUserNode = (options?: QueryHookOptions<GetUserNodeResponse, GetUserNodeRequest>) => {
+    return useQuery<GetUserNodeResponse, GetUserNodeRequest>(GET_USER_NODE, options);
+};
+
+export const useGetUserNodeSchoolMemberships = (options?: QueryHookOptions<GetUserNodeResponse, GetUserNodeRequest>) => {
+    return useQuery<GetUserNodeResponse, GetUserNodeRequest>(GET_USER_NODE_SCHOOL_MEMBERSHIPS, options);
 };
 
 export const useUploadUserCsv = () => {
     return useMutation<UploadCsvResponse, UploadUserCsvRequest>(UPLOAD_USERS_CSV);
 };
 
+export interface UserNode {
+    id: string;
+    givenName: string | null;
+    familyName: string | null;
+    contactInfo?: {
+        email: string | null;
+        phone: string | null;
+    };
+    alternateContactInfo?: {
+        email: string | null;
+        phone: string | null;
+    };
+    organizations?: {
+        userStatus: string;
+        userShortCode: string;
+        joinDate: string;
+    }[];
+    roles?: RoleSummaryNode[];
+    schools?: SchoolSummaryNode[];
+    dateOfBirth?: string;
+    gender?: string;
+    avatar?: string;
+    organizationMembershipsConnection?: OrganizationMembershipsConnection;
+}
+
 interface GetMeRequest {
     user_id: string;
 }
+
+interface GetMyUserRequest {}
 
 interface GetMeResponse {
     me: {
@@ -118,6 +149,16 @@ interface GetMeResponse {
     };
 }
 
+interface GetMyUserResponse {
+    myUser: {
+        node: UserNode;
+    };
+}
+
 export const useGetMe = (options?: QueryHookOptions<GetMeResponse, GetMeRequest>) => {
     return useQuery<GetMeResponse, GetMeRequest>(ME, options);
+};
+
+export const useGetMyUser = (options?: QueryHookOptions<GetMyUserResponse, GetMyUserRequest>) => {
+    return useQuery<GetMyUserResponse, GetMyUserRequest>(MY_USER, options);
 };

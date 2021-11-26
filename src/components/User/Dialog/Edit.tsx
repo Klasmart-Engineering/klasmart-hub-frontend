@@ -12,13 +12,13 @@ import {
 import {
     UpdateOrganizationMembershipRequest,
     useDeleteOrganizationMembership,
-    useGetOrganizationMembership,
+    useGetOrganizationUserNode,
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
+import { UserNode } from "@/api/users";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     isActive,
-    OrganizationMembership,
     Status,
 } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
@@ -41,19 +41,18 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export function mapOrganizationMembershipToFormState (membership: OrganizationMembership): State {
-    const user = membership.user;
+export function mapUserNodeToFormState (user: UserNode): State {
     return {
-        givenName: user?.given_name ?? ``,
-        familyName: user?.family_name ?? ``,
-        contactInfo: user?.email ?? user?.phone ?? ``,
-        birthday: user?.date_of_birth ?? ``,
+        givenName: user?.givenName ?? ``,
+        familyName: user?.familyName ?? ``,
+        contactInfo: user?.contactInfo?.email ?? user?.contactInfo?.phone ?? ``,
+        birthday: user?.dateOfBirth ?? ``,
         gender: user?.gender ?? ``,
-        alternativeEmail: user?.alternate_email ?? ``,
-        alternativePhone: user?.alternate_phone ?? ``,
-        shortcode: membership.shortcode ?? ``,
-        schools: membership.schoolMemberships?.filter(schoolMembership => schoolMembership?.school?.status === Status.ACTIVE)?.map(school => school.school_id) ?? [],
-        roles: membership.roles?.filter(isActive)?.map(role => role.role_id) ?? [],
+        alternativeEmail: user?.alternateContactInfo?.email ?? ``,
+        alternativePhone: user?.alternateContactInfo?.phone ?? ``,
+        shortcode: user.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
+        schools: user.schools?.filter(school => school?.status === Status.ACTIVE)?.map(school => school.id ?? ``) ?? [],
+        roles: user.roles?.filter(isActive)?.map(role => role.id ?? ``) ?? [],
     };
 }
 
@@ -87,22 +86,21 @@ export default function EditUserDialog (props: Props) {
     const [ formErrors, setFormErrors ] = useState<Errors>({});
     const [ valid, setValid ] = useState(true);
     const organization = useCurrentOrganization();
-    const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationMembership({
+    const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationUserNode({
         fetchPolicy: `cache-and-network`,
         variables: {
-            organizationId: organization?.organization_id ?? ``,
-            userId: userId ?? ``,
+            id: userId ?? ``,
+            organizationId: organization?.organization_id,
         },
         skip: !open || !organization?.organization_id || !userId,
     });
+
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
 
-    const organizationMembership = organizationMembershipData?.user.membership;
-
     useEffect(() => {
         if (!open || !userId || !organization) return;
-        const state = organizationMembership ? mapOrganizationMembershipToFormState(organizationMembership) : defaultState;
+        const state = organizationMembershipData?.userNode ? mapUserNodeToFormState(organizationMembershipData.userNode) : defaultState;
         setInitialFormState(state);
         setFormState(state);
         setFormErrors({});
@@ -113,8 +111,8 @@ export default function EditUserDialog (props: Props) {
     ]);
 
     useEffect(() => {
-        if (!organizationMembership) return;
-        const state = mapOrganizationMembershipToFormState(organizationMembership);
+        if (!organizationMembershipData) return;
+        const state = mapUserNodeToFormState(organizationMembershipData.userNode);
         setInitialFormState(state);
         setFormState(state);
     }, [ organizationMembershipData ]);
@@ -172,8 +170,8 @@ export default function EditUserDialog (props: Props) {
 
     const handleDelete = async () => {
         if (!(userId && organization?.organization_id)) return;
-        const { given_name, family_name } = organizationMembershipData?.user.membership.user ?? {};
-        const userName = `${given_name} ${family_name}`;
+        const { givenName, familyName } = organizationMembershipData?.userNode ?? {};
+        const userName = `${givenName} ${familyName}`;
         if (!await deletePrompt({
             title: intl.formatMessage({
                 id: `users_deleteTitle`,

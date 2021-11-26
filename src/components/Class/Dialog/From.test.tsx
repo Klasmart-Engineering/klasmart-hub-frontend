@@ -1,6 +1,6 @@
 import ClassDialogForm from './Form';
 import { GET_SCHOOLS_FROM_ORGANIZATION } from '@/operations/queries/getSchoolsFromOrganization';
-import { GET_USER_SCHOOL_MEMBERSHIPS } from '@/operations/queries/getUserSchoolMemberships';
+import { GET_USER_NODE_SCHOOL_MEMBERSHIPS } from '@/operations/queries/getUserNodeSchoolMemberships';
 import { buildEmptyClass } from '@/utils/classes';
 import { MockedResponse } from '@apollo/client/testing';
 import {
@@ -56,10 +56,9 @@ const mocks: MockedResponse[] = [
     },
     {
         request: {
-            query: GET_USER_SCHOOL_MEMBERSHIPS,
+            query: GET_USER_NODE_SCHOOL_MEMBERSHIPS,
             variables: {
-                organization_id: mockOrgId,
-                user_id: mockUserId,
+                id: mockUserId,
             },
         },
         result: {
