@@ -56,6 +56,7 @@ export default function AgeRangesPage () {
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
+        fetchPolicy: `no-cache`,
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
@@ -113,7 +114,6 @@ export default function AgeRangesPage () {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             search={serverPagination.search}
-            refetch={refetch}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />

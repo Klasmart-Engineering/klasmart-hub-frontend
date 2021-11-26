@@ -5,13 +5,11 @@ import {
     useGetAgeRange,
 } from "@/api/ageRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { AgeRange } from "@/types/graphQL";
 import {
     buildAgeRangeLabel,
     buildEmptyAgeRange,
 } from "@/utils/ageRanges";
 import { useDeleteEntityPrompt } from "@/utils/common";
-import { useValidations } from "@/utils/validations";
 import {
     Dialog,
     useSnackbar,
@@ -24,7 +22,7 @@ import { useIntl } from "react-intl";
 
 interface Props {
     open: boolean;
-    onClose: (updatedAgeRange?: AgeRange) => void;
+    onClose: () => void;
     ageRangeId?: string;
 }
 
@@ -74,7 +72,7 @@ export default function EditAgeRangeDialog (props: Props) {
                     high_value_unit: updatedAgeRange.high_value_unit,
                 },
             });
-            onClose(updatedAgeRange);
+            onClose();
 
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_editSuccess`,
@@ -104,7 +102,7 @@ export default function EditAgeRangeDialog (props: Props) {
                     id: updatedAgeRange.id ?? ``,
                 },
             });
-            onClose(updatedAgeRange);
+            onClose();
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_deleteSuccess`,
             }), {

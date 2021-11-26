@@ -252,22 +252,14 @@ export default function (props: Props) {
             </Paper>
             <CreateAgeRangeDialog
                 open={openCreateDialog}
-                onClose={(ageRange) => {
-                    if (ageRange) {
-                        refetch?.();
-                        refetchAgeRanges();
-                    }
+                onClose={() => {
                     setOpenCreateDialog(false);
                 }}
             />
             <EditAgeRangeDialog
                 open={openEditDialog}
                 ageRangeId={selectedAgeRangeId}
-                onClose={(ageRange) => {
-                    if (ageRange) {
-                        refetch?.();
-                        refetchAgeRanges();
-                    }
+                onClose={() => {
                     setSelectedAgeRangeId(undefined);
                     setOpenEditDialog(false);
                 }}

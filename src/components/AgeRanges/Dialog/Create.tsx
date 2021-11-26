@@ -1,7 +1,6 @@
 import AgeRangeForm from "./Form";
 import { useCreateAgeRange } from "@/api/ageRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { AgeRange } from "@/types/graphQL";
 import { buildEmptyAgeRange } from "@/utils/ageRanges";
 import {
     Dialog,
@@ -15,7 +14,7 @@ import { useIntl } from "react-intl";
 
 interface Props {
     open: boolean;
-    onClose: (newAgeRange?: AgeRange) => void;
+    onClose: () => void;
 }
 
 export default function CreateAgeRangeDialog (props: Props) {
@@ -47,7 +46,7 @@ export default function CreateAgeRangeDialog (props: Props) {
                     high_value_unit: newAgeRange.high_value_unit,
                 },
             });
-            onClose(newAgeRange);
+            onClose();
 
             enqueueSnackbar(intl.formatMessage({
                 id: `ageRanges_createSuccess`,

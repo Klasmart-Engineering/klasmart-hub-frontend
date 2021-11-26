@@ -65,15 +65,24 @@ export const useGetAllAgeRanges = (options?: QueryHookOptions<GetAgeRangesRespon
 };
 
 export const useCreateAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, CreateAgeRangeRequest>) => {
-    return useMutation<EmptyAgeRangeResponse, CreateAgeRangeRequest>(CREATE_AGE_RANGE, options);
+    return useMutation<EmptyAgeRangeResponse, CreateAgeRangeRequest>(CREATE_AGE_RANGE, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_AGE_RANGES ],
+    });
 };
 
 export const useEditAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, EditAgeRangeRequest>) => {
-    return useMutation<EmptyAgeRangeResponse, EditAgeRangeRequest>(EDIT_AGE_RANGE, options);
+    return useMutation<EmptyAgeRangeResponse, EditAgeRangeRequest>(EDIT_AGE_RANGE, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_AGE_RANGES ],
+    });
 };
 
 export const useDeleteAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, DeleteAgeRangeRequest>) => {
-    return useMutation<EmptyAgeRangeResponse, DeleteAgeRangeRequest>(DELETE_AGE_RANGE, options);
+    return useMutation<EmptyAgeRangeResponse, DeleteAgeRangeRequest>(DELETE_AGE_RANGE, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_AGE_RANGES ],
+    });
 };
 
 export interface GetPaginatedOrganizationAgeRangesResponse {
