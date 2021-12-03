@@ -2,8 +2,9 @@ import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary/Base";
 import {
+    ProgramNode,
     useCreateOrUpdatePrograms,
-    useGetProgram,
+    useGetProgramNode,
 } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
@@ -62,7 +63,7 @@ export default function CreateProgramDialog (props: Props) {
         max,
     } = useValidations();
     const currentOrganization = useCurrentOrganization();
-    const { data, loading: programsLoading } = useGetProgram({
+    const { data, loading: programsLoading } = useGetProgramNode({
         variables: {
             id: programId ?? ``,
         },
@@ -73,10 +74,10 @@ export default function CreateProgramDialog (props: Props) {
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
-    const [ updatedProgram, setUpdatedProgram ] = useState<Program>(buildEmptyProgram());
+    const [ updatedProgram, setUpdatedProgram ] = useState<ProgramNode>(buildEmptyProgram());
     const [ loading, setLoading ] = useState<boolean>(true);
 
-    const handleValue = (value: Program) => {
+    const handleValue = (value: ProgramNode) => {
         if (isEqual(value, updatedProgram)) return;
         setUpdatedProgram(value);
     };
@@ -87,7 +88,7 @@ export default function CreateProgramDialog (props: Props) {
             return;
         }
         setStepIndex(INITIAL_STEP_INDEX);
-        setUpdatedProgram(data?.program ?? buildEmptyProgram());
+        setUpdatedProgram(data?.programNode ?? buildEmptyProgram());
         setLoading(programsLoading);
     }, [ open, data ]);
 
@@ -114,7 +115,7 @@ export default function CreateProgramDialog (props: Props) {
                     letternumeric()(updatedProgram?.name),
                     max(35)(updatedProgram?.name),
                     required()(updatedProgram?.grades),
-                    required()(updatedProgram?.age_ranges),
+                    required()(updatedProgram?.ageRanges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -149,7 +150,7 @@ export default function CreateProgramDialog (props: Props) {
         const {
             id,
             name,
-            age_ranges,
+            ageRanges,
             grades,
             subjects,
         } = updatedProgram;
@@ -161,7 +162,7 @@ export default function CreateProgramDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            age_ranges: age_ranges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
+                            age_ranges: ageRanges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                             subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
                         },

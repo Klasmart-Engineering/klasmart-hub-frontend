@@ -1,5 +1,6 @@
 import { useGetAllAgeRanges } from "@/api/ageRanges";
 import { useGetAllGrades } from "@/api/grades";
+import { ProgramNode } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AgeRange,
@@ -8,7 +9,6 @@ import {
     isCustomValue,
     isNonSpecified,
     isOtherSystemValue,
-    Program,
     sortEntitiesByName,
     useHandleUpdateNonSpecified,
 } from "@/types/graphQL";
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export default function ProgramInfoStep (props: EntityStepContent<Program>) {
+export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) {
     const {
         value,
         disabled,
@@ -56,7 +56,7 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
     const currentOrganization = useCurrentOrganization();
     const [ programName, setProgramName ] = useState(value.name ?? ``);
     const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-    const [ ageRanges, setAgeRanges ] = useState(value.age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
+    const [ ageRanges, setAgeRanges ] = useState(value.ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
     const { data: ageRangesData, loading: ageRangesLoading } = useGetAllAgeRanges({
         variables: {
             organization_id: currentOrganization?.organization_id ?? ``,
@@ -88,11 +88,11 @@ export default function ProgramInfoStep (props: EntityStepContent<Program>) {
         const {
             name,
             grades,
-            age_ranges,
+            ageRanges,
         } = value;
         setProgramName(name ?? ``);
         setGradeIds(grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-        setAgeRanges(age_ranges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
+        setAgeRanges(ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
         setLoaded(true);
     }, [
         value,

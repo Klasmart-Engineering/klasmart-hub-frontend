@@ -1,5 +1,5 @@
 import DetailsDrawer from './DetailsDrawer';
-import { GET_PROGRAM } from '@/operations/queries/getProgram';
+import { GET_PROGRAM_NODE } from '@/operations/queries/getProgramNode';
 import { MockedResponse } from '@apollo/client/testing';
 import {
     screen,
@@ -17,7 +17,7 @@ import React from 'react';
 const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_PROGRAM,
+            query: GET_PROGRAM_NODE,
             variables: {
                 id: programIdA,
             },

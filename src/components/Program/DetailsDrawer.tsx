@@ -1,9 +1,9 @@
-import { useGetProgram } from "@/api/programs";
 import {
-    isActive,
-    Program,
-} from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
+    ProgramNode,
+    useGetProgramNode,
+} from "@/api/programs";
+import { isActive } from "@/types/graphQL";
+import { buildAgeRangeEdgeLabel } from "@/utils/ageRanges";
 import { buildEmptyProgram } from "@/utils/programs";
 import {
     Box,
@@ -48,21 +48,21 @@ export default function ViewProgramDetailsDrawer (props: Props) {
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const { data: programData } = useGetProgram({
+    const { data: programData } = useGetProgramNode({
         variables: {
             id: programId ?? ``,
         },
         fetchPolicy: `cache-and-network`,
         skip: !open || !programId,
     });
-    const [ program, setProgram ] = useState<Program>(buildEmptyProgram());
+    const [ program, setProgram ] = useState<ProgramNode>(buildEmptyProgram());
 
     useEffect(() => {
         if (!open) {
             setProgram(buildEmptyProgram());
             return;
         }
-        setProgram(programData?.program ?? buildEmptyProgram());
+        setProgram(programData?.programNode ?? buildEmptyProgram());
     }, [ open, programData ]);
 
     return (
@@ -75,11 +75,11 @@ export default function ViewProgramDetailsDrawer (props: Props) {
                         id: `programs_ageRanges`,
                     }),
                     content: (
-                        <Box px={1.5}>{program?.age_ranges?.filter(isActive).map((ageRange) => (
+                        <Box px={1.5}>{program?.ageRanges?.filter(isActive).map((ageRange) => (
                             <Chip
                                 key={ageRange.id}
                                 className={classes.chip}
-                                label={buildAgeRangeLabel(ageRange)}
+                                label={buildAgeRangeEdgeLabel(ageRange)}
                             />
                         ))}</Box>
                     ),

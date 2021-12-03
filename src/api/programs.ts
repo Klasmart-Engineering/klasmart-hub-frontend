@@ -8,7 +8,7 @@ import {
     GET_PAGINATED_ORGANIZATION_PROGRAMS,
     GET_PAGINATED_ORGANIZATION_PROGRAMS_LIST,
 } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import { GET_PROGRAM } from "@/operations/queries/getProgram";
+import { GET_PROGRAM_NODE } from "@/operations/queries/getProgramNode";
 import {
     AgeRangeFilter,
     BaseEntity,
@@ -135,16 +135,16 @@ export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     ageRangeTo?: AgeRangeFilter;
 }
 
-interface GetProgramRequest {
+interface GetProgramNodeRequest {
     id: string;
 }
 
-interface GetProgramResponse {
-    program: Program;
+interface GetProgramNodeResponse {
+    programNode: ProgramNode;
 }
 
-export const useGetProgram = (options?: QueryHookOptions<GetProgramResponse, GetProgramRequest>) => {
-    return useQuery<GetProgramResponse, GetProgramRequest>(GET_PROGRAM, options);
+export const useGetProgramNode = (options?: QueryHookOptions<GetProgramNodeResponse, GetProgramNodeRequest>) => {
+    return useQuery<GetProgramNodeResponse, GetProgramNodeRequest>(GET_PROGRAM_NODE, options);
 };
 
 interface GetAllProgramsRequest {

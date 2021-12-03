@@ -14,10 +14,10 @@ import {
 } from "@/types/graphQL";
 import { isEqual } from "lodash";
 
-export const buildEmptyProgram = (): Program => ({
+export const buildEmptyProgram = (): ProgramNode => ({
     id: ``,
     name: ``,
-    age_ranges: [],
+    ageRanges: [],
     grades: [],
     subjects: [],
     status: Status.ACTIVE,

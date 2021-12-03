@@ -1,6 +1,6 @@
 import ProgramInfoStep from "../ProgramInfo";
 import SelectedSubjectsSummary from "./SelectedSubjects";
-import { Program } from "@/types/graphQL";
+import { ProgramNode } from "@/api/programs";
 import { EntityStepContent } from "@/utils/entitySteps";
 import {
     createStyles,
@@ -10,7 +10,7 @@ import React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function SummaryStep (props: EntityStepContent<Program>) {
+export default function SummaryStep (props: EntityStepContent<ProgramNode>) {
     const { value } = props;
     const classes = useStyles();
 
