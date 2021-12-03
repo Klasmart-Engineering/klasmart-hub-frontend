@@ -38,7 +38,7 @@ export const useGetOrganization = (options?: QueryHookOptions<GetOrganizationRes
 interface GetOrganizationsRequest {}
 
 interface GetOrganizationsResponse {
-    me: User;
+    me?: User;
 }
 
 export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {

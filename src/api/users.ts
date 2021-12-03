@@ -113,7 +113,7 @@ interface GetMeRequest {
 interface GetMyUserRequest {}
 
 interface GetMeResponse {
-    me: {
+    me?: {
         avatar: string | null;
         email: string;
         phone: string;

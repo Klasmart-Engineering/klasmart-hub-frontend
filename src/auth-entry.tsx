@@ -46,8 +46,12 @@ function ProtectedEntry () {
     const [ EntryComponent, setEntryComponent ] = useState(<SiteLoading />);
 
     const initAuth = async () => {
-        const hasAuthToken = await authClient.refreshToken();
-        setIsAuthenticated(!!hasAuthToken);
+        try {
+            const authToken = await authClient.refreshToken();
+            setIsAuthenticated(!!authToken?.id);
+        } catch (err) {
+            setIsAuthenticated(false);
+        }
         setIsAwaitingAuthtoken(false);
     };
 

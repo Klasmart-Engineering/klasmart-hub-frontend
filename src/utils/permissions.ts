@@ -659,7 +659,7 @@ function buildPermissionCondition (permissionOption: PermissionOption): Permissi
 }
 
 const permissionsInOrganization = (organizationId: string, data: GetOrganizationMembershipsPermissionsResponse | undefined) => {
-    return new Set((data?.me.memberships ?? [])
+    return new Set((data?.me?.memberships ?? [])
         .filter((membership) => membership.organization_id === organizationId)
         .flatMap((membership) => (membership.roles ?? [])
             .flatMap((role) => role.permissions.map((permission) => permission.permission_id as PermissionId))));

@@ -3,7 +3,6 @@ import {
     GetUserNodeResponse,
     UserNode,
 } from "./users";
-import { RoleSummaryNode } from "@/api/roles";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
@@ -187,7 +186,7 @@ interface GetOrganizationMembershipsPermissionsRequest {
 }
 
 export interface GetOrganizationMembershipsPermissionsResponse {
-    me: {
+    me?: {
         memberships: OrganizationMembership[];
     };
 }

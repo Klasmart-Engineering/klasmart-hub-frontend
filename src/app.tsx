@@ -23,13 +23,13 @@ export default function App (props: Props) {
     } = useGetOrganizationMemberships();
 
     useEffect(() => {
-        if (!userData) return;
+        if (!userData?.me) return;
         userIdVar(userData.me.user_id);
     }, [ userData ]);
 
     useEffect(() => {
         if (organizationsLoading) return;
-        const memberships = organizationsData?.me.memberships?.filter((membership): membership is OrganizationMembership => !!membership);
+        const memberships = organizationsData?.me?.memberships?.filter((membership): membership is OrganizationMembership => !!membership);
         setOrganizationMembershipStack((membershipStack) => {
             const updatedMemberships = memberships
                 ?.sort((a, b) => {

@@ -1,5 +1,6 @@
 import { getAuthEndpoint } from "@/config";
 import { REQUEST_RETRY_COUNT_MAX } from "@/config/variables";
+import { redirectToAuth } from "@/utils/routing";
 import axios,
 { AxiosError } from "axios";
 
@@ -11,12 +12,12 @@ const authInstance = axios.create({
 export interface RefreshData {
     email: string;
     exp: number;
-    id: string;
+    id?: string;
     iss: string;
 }
 
 const refreshToken = async () => {
-    const resp = await authInstance.get<RefreshData>(`/refresh`);
+    const resp = await authInstance.get<RefreshData | undefined>(`/refresh`);
     return resp.data;
 };
 
@@ -60,7 +61,7 @@ const retryHandler = async (error: AxiosError) => {
         return error.config.adapter?.(error.config);
     } catch (err) {
         await authClient.signOut();
-        throw err;
+        redirectToAuth();
     }
 };
 
