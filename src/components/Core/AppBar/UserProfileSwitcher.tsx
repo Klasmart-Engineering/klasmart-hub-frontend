@@ -1,8 +1,5 @@
-import {
-    myUsersSampleResponse,
-    switchUser,
-    useGetMyUsers,
-} from "@/api/users";
+import { authClient } from "@/api/auth/client";
+import { useGetMyUsers } from "@/api/users";
 import { userIdVar } from "@/cache";
 import {
     Status,
@@ -10,8 +7,6 @@ import {
 } from "@/types/graphQL";
 import { useReactiveVar } from "@apollo/client";
 import {
-    Avatar,
-    Chip,
     createStyles,
     List,
     ListItem,
@@ -26,7 +21,6 @@ import {
 import React,
 {
     useEffect,
-    useMemo,
     useState,
 } from "react";
 import { useHistory } from "react-router-dom";
@@ -34,51 +28,34 @@ import { useHistory } from "react-router-dom";
 const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
-    // users: User[];
 }
 
 export default function UserProfileSwitcher (props: Props) {
-    // const { users } = props;
     const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
     const selectedUserId = useReactiveVar(userIdVar);
-    const { loading, data } = useGetMyUsers();
-
+    const { data: myUsersData } = useGetMyUsers();
     const [ users, setUsers ] = useState<User[]>([]);
 
-    const url = useMemo(() => {
-        const url = new URL(window.location.href);
-        return url;
-    }, []);
-
     useEffect(() => {
-        if (data) {
-            setUsers(data.my_users.filter(user => user.memberships?.some(membership => membership.status === Status.ACTIVE)));
-        }
-    }, [ data ]);
+        if (!myUsersData) return;
+        setUsers(myUsersData.my_users.filter(user => user.memberships?.some(membership => membership.status === Status.ACTIVE)));
+    }, [ myUsersData ]);
 
-    const switchUsers = async (userId: string) => {
+    async function handleClick (userId: string) {
         try {
-            const response = await switchUser(userId);
+            const response = await authClient.switchUser({
+                user_id: userId,
+            });
+            window.location.reload(); // TODO: Dirty fix - remove and improve handling in the future
+            userIdVar(userId);
+            // history.push(`/`);
             return response;
         } catch (error) {
-            console.log(`Error switching user: `, error);
+            enqueueSnackbar(`Error switching users. Please try again later.`, {
+                variant: `error`,
+            });
         }
-    };
-
-    function handleClick (userId: string) {
-        switchUsers(userId).then((response) => {
-            console.log(`switchUser response: `, response);
-            console.log(`update switchUser: `, userId);
-            if (response) {
-                userIdVar(userId);
-                history.push(`/`);
-            } else {
-                enqueueSnackbar(`Error switching users. Please try again later.`, {
-                    variant: `error`,
-                });
-            }
-        });
     }
 
     return (

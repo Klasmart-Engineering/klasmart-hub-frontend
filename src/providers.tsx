@@ -1,31 +1,20 @@
-import App from "./app";
-import { cache } from "./cache";
-import { cancelRequestLink } from "./cancelRequest";
-import { getAPIEndpoint } from "./config";
-import CmsApiClientProvider from "./providers/CmsApiClientProvider";
+import App from "@/app";
+import CmsApiClientProvider from "@/providers/CmsApiClientProvider";
+import UserServiceProvider from "@/providers/UserServiceProvider";
 import {
     createDefaultStore,
     State,
-} from './store/store';
-import { themeProvider } from "./themeProvider";
-import { getLanguage } from "./utils/locale";
-import {
-    ApolloClient,
-    ApolloLink,
-} from "@apollo/client/core";
-import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
-import { ApolloProvider } from "@apollo/client/react";
+} from '@/store/store';
+import { themeProvider } from "@/themeProvider";
+import { getLanguage } from "@/utils/locale";
 import { ReactQueryDevtools } from "@kidsloop/cms-api-client";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { createUploadLink } from "apollo-upload-client";
-import { sha256 } from 'crypto-hash';
 import {
     AlertDialogProvider,
     ConfirmDialogProvider,
     PromptDialogProvider,
     SnackbarProvider,
-    utils,
 } from "kidsloop-px";
 import React,
 { useMemo } from 'react';
@@ -37,31 +26,6 @@ import {
 } from "react-redux";
 import { RecoilRoot } from 'recoil';
 import { PersistGate } from 'redux-persist/integration/react';
-
-const objectCleanerLink = new ApolloLink((operation, forward) => {
-    operation.variables = utils.trimStrings(operation.variables); // clean request data
-    return forward(operation).map((value) => utils.trimStrings(value)); // clean response data
-});
-
-const uploadLink = createUploadLink({
-    credentials: `include`,
-    uri: `${getAPIEndpoint()}user/`,
-});
-
-const persistedQueryLink = createPersistedQueryLink({
-    sha256,
-});
-
-export const client = new ApolloClient({
-    credentials: `include`,
-    link: ApolloLink.from([
-        objectCleanerLink,
-        persistedQueryLink,
-        uploadLink,
-    ]),
-    cache,
-    queryDeduplication: true,
-});
 
 export function ClientSide () {
     const memos = useMemo(() => {
@@ -79,7 +43,7 @@ export function ClientSide () {
 
     return (
         <CmsApiClientProvider>
-            <ApolloProvider client={client}>
+            <UserServiceProvider>
                 <RawIntlProvider value={locale}>
                     <ThemeProvider theme={themeProvider()}>
                         <ConfirmDialogProvider>
@@ -94,7 +58,7 @@ export function ClientSide () {
                         </ConfirmDialogProvider>
                     </ThemeProvider>
                 </RawIntlProvider>
-            </ApolloProvider>
+            </UserServiceProvider>
             {process.env.NODE_ENV === `development` && <ReactQueryDevtools />}
         </CmsApiClientProvider>
     );
@@ -108,7 +72,8 @@ export default function ClientEntry () {
             <Provider store={store}>
                 <PersistGate
                     loading={null}
-                    persistor={persistor}>
+                    persistor={persistor}
+                >
                     <ClientSide />
                 </PersistGate>
             </Provider>
