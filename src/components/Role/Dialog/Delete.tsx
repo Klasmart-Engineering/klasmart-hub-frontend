@@ -295,13 +295,15 @@ export default function DeleteRoleDialog (props: Props) {
                 return;
             }
 
-            await replaceRole({
-                variables: {
-                    oldRoleId: row.id,
-                    newRoleId: roleId,
-                    organizationId,
-                },
-            });
+            if (rows.length) {
+                await replaceRole({
+                    variables: {
+                        oldRoleId: row.id,
+                        newRoleId: roleId,
+                        organizationId,
+                    },
+                });
+            }
 
             await deleteRole({
                 variables: {
