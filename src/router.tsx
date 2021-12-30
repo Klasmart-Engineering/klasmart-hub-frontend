@@ -20,18 +20,24 @@ import OrganizationContentPage from "@/pages/library/organization-content";
 import ReportsPage from "@/pages/reports";
 import SchedulePage from "@/pages/schedule";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
-import React from "react";
+import { redirectIfUnauthorized } from "@/utils/redirectIfUnauthorized";
+import React,
+{ useEffect } from "react";
 import { isIE } from "react-device-detect";
 import {
     Redirect,
     Route,
     Switch,
+    useLocation,
 } from "react-router-dom";
 
 interface Props {
 }
 
 export default function Router (props: Props)  {
+    const location = useLocation().pathname;
+    useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
+
     return isIE
         ? <BrowserList />
         : <Switch>

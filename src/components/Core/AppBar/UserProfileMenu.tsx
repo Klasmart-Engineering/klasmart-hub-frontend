@@ -1,11 +1,15 @@
 import UserProfileSwitcher from "./UserProfileSwitcher";
-import { authClient } from "@/api/auth/client";
 import StyledButton from "@/components/styled/button";
-import { getCookieDomain } from "@/config";
+import {
+    getAuthEndpoint,
+    getCookieDomain,
+} from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import { useOrganizationStack } from "@/store/organizationMemberships";
+import {
+    useCurrentOrganization,
+    useOrganizationStack,
+} from "@/store/organizationMemberships";
 import { User } from "@/types/graphQL";
-import { redirectToAuth } from "@/utils/routing";
 import {
     Box,
     ButtonBase,
@@ -24,6 +28,7 @@ import {
     LanguageSelect,
     UserAvatar,
 } from "kidsloop-px";
+import queryString from "querystring";
 import React,
 {
     useEffect,
@@ -34,14 +39,15 @@ import {
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
-    userEmail: {
-        color: theme.palette.grey[600],
-    },
-    userProfileMenu: {
-        borderRadius: `50%`,
-    },
-}));
+const useStyles = makeStyles((theme) =>
+    createStyles({
+        userEmail: {
+            color: theme.palette.grey[600],
+        },
+        userProfileMenu: {
+            borderRadius: `50%`,
+        },
+    }));
 
 const StyledMenu = withStyles({
     paper: {
@@ -70,6 +76,7 @@ interface Props {
 export default function UserProfileMenu (props: Props) {
     const { user } = props;
     const classes = useStyles();
+    const intl = useIntl();
 
     const [ , setOrganizationStack ] = useOrganizationStack();
 
@@ -77,12 +84,13 @@ export default function UserProfileMenu (props: Props) {
     const [ userName, setUserName ] = useState<string>(``);
 
     useEffect(() => {
-        if (!user) return;
-        const givenName = user.given_name ?? ``;
-        const familyName = user.family_name ?? ``;
-        const fullName = `${givenName} ${familyName}`.trim();
-        const username = user.username ?? ``;
-        setUserName(!fullName ? (username ?? `Name undefined`) : fullName);
+        if (user) {
+            const givenName = user.given_name ?? ``;
+            const familyName = user.family_name ?? ``;
+            const fullName = givenName + ` ` + familyName;
+            const username = user.username ?? ``;
+            setUserName(fullName === ` ` ? username ?? `Name undefined` : fullName);
+        }
     }, [ user ]);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -94,9 +102,19 @@ export default function UserProfileMenu (props: Props) {
 
     async function handleSignOut () {
         try {
+            const headers = new Headers();
+            headers.append(`Accept`, `application/json`);
+            headers.append(`Content-Type`, `application/json`);
             setOrganizationStack([]);
-            await authClient.signOut();
-            redirectToAuth();
+            await fetch(`${getAuthEndpoint()}signout`, {
+                credentials: `include`,
+                headers,
+                method: `GET`,
+            });
+            const stringifiedQuery = queryString.stringify({
+                continue: window.location.href,
+            });
+            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
         } catch (e) {
             console.error(e);
         }

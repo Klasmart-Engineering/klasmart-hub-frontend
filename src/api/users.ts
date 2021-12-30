@@ -1,6 +1,7 @@
 import { OrganizationMembershipsConnection } from "./organizationMemberships";
 import { RoleSummaryNode } from "./roles";
 import { SchoolSummaryNode } from "./schools";
+import { getAuthEndpoint } from "@/config";
 import { UPLOAD_USERS_CSV } from "@/operations/mutations/uploadUsersCsv";
 import { GET_MY_USERS } from "@/operations/queries/getMyUsers";
 import { GET_USER_NODE } from "@/operations/queries/getUserNode";
@@ -8,6 +9,7 @@ import { GET_USER_NODE_SCHOOL_MEMBERSHIPS } from "@/operations/queries/getUserNo
 import { ME } from "@/operations/queries/me";
 import { MY_USER } from "@/operations/queries/myUser";
 import { User } from "@/types/graphQL";
+import { refreshToken } from "@/utils/redirectIfUnauthorized";
 import {
     QueryHookOptions,
     useMutation,
@@ -38,6 +40,29 @@ export const myUsersSampleResponse = {
         ],
     },
 };
+
+export async function switchUser (userId: string, retry = true): Promise<boolean> {
+    try {
+        const headers = new Headers();
+        headers.append(`Accept`, `application/json`);
+        headers.append(`Content-Type`, `application/json`);
+        const response = await fetch(`${getAuthEndpoint()}switch`, {
+            body: JSON.stringify({
+                user_id: userId,
+            }),
+            credentials: `include`,
+            headers,
+            method: `POST`,
+        });
+        await response.text();
+        window.location.reload(); // TODO: Dirty fix - remove and improve handling in the future
+        return response.ok;
+    } catch(e) {
+        if(!retry) { return false; }
+        await refreshToken();
+        return switchUser(userId, false);
+    }
+}
 
 interface UploadCsvResponse {
     filename?: string;

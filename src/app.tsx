@@ -1,8 +1,8 @@
 import { useGetOrganizationMemberships } from "@/api/organizations";
-import { useGetMe } from "@/api/users";
-import { userIdVar } from "@/cache";
 import Layout from "@/layout";
+import { ActionTypes } from "@/store/actions";
 import { useOrganizationStack } from "@/store/organizationMemberships";
+import { Store } from "@/store/store";
 import {
     isActive,
     OrganizationMembership,
@@ -10,22 +10,41 @@ import {
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
+import {
+    isEdge,
+    isIE,
+    isIOS,
+    isMobile,
+    isMobileSafari,
+} from "react-device-detect";
+import { useStore } from "react-redux";
 
 interface Props {
 }
 
 export default function App (props: Props) {
     const [ , setOrganizationMembershipStack ] = useOrganizationStack();
-    const { data: userData } = useGetMe();
+
+    const store = useStore<Store>();
+    useEffect(() => {
+        const userInformation = {
+            isEdge,
+            isIE,
+            isIOS,
+            isMobile,
+            isMobileSafari,
+        };
+
+        store.dispatch({
+            type: ActionTypes.USER_AGENT,
+            payload: userInformation,
+        });
+    }, []);
+
     const {
         data: organizationsData,
         loading: organizationsLoading,
     } = useGetOrganizationMemberships();
-
-    useEffect(() => {
-        if (!userData?.me) return;
-        userIdVar(userData.me.user_id);
-    }, [ userData ]);
 
     useEffect(() => {
         if (organizationsLoading) return;

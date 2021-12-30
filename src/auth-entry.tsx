@@ -1,9 +1,10 @@
-import { authClient } from "./api/auth/client";
-import { redirectToAuth } from "./utils/routing";
 import SiteLoading from "@/components/Utility/SiteLoading";
+import { getAuthEndpoint } from "@/config";
 import HealthPage from "@/pages/health";
 import VersionPage from "@/pages/version";
 import { history } from "@/utils/history";
+import { refreshToken } from "@/utils/redirectIfUnauthorized";
+import queryString from "querystring";
 import React,
 {
     Suspense,
@@ -45,9 +46,13 @@ function ProtectedEntry () {
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ EntryComponent, setEntryComponent ] = useState(<SiteLoading />);
 
+    const stringifiedQuery = queryString.stringify({
+        continue: window.location.href,
+    });
+
     const initAuth = async () => {
         try {
-            const authToken = await authClient.refreshToken();
+            const authToken = await refreshToken();
             setIsAuthenticated(!!authToken?.id);
         } catch (err) {
             setIsAuthenticated(false);
@@ -62,7 +67,7 @@ function ProtectedEntry () {
     useEffect(() => {
         if (isAwaitingAuthtoken) return;
         if (!isAuthenticated) {
-            redirectToAuth();
+            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
             return;
         }
         const Providers = React.lazy(() => import(`@/providers`));
