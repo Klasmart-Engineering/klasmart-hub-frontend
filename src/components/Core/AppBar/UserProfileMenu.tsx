@@ -195,6 +195,7 @@ export default function UserProfileMenu (props: Props) {
                             >
                                 <StyledButton
                                     extendedOnly
+                                    data-testid="logout-button"
                                     style={{
                                         backgroundColor: `#fff`,
                                         border: `1px solid #dadce0`,
