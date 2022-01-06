@@ -3,6 +3,7 @@ import {
     buildAgeRangeLabel,
 } from "./ageRanges";
 import { ClassEdge } from "@/api/classes";
+import { ClassForm } from "@/components/Class/Dialog/Form";
 import { ClassDetails } from "@/components/Class/Table";
 import {
     Class,
@@ -18,6 +19,28 @@ export const buildEmptyClass = (): Class => ({
     subjects: [],
     grades: [],
     age_ranges: [],
+});
+
+export const buildEmptyClassForm = (): ClassForm => ({
+    id: ``,
+    name: ``,
+    schools: [],
+    status: Status.ACTIVE,
+    programs: [],
+    subjects: [],
+    grades: [],
+    ageRanges: [],
+});
+
+export const mapClassToForm = (classData: Class): ClassForm => ({
+    id: classData.class_id,
+    name: classData.class_name ?? ``,
+    schools: classData.schools,
+    status: Status.ACTIVE,
+    programs: classData.programs,
+    subjects: classData.subjects?.map(subject => subject.id ?? ``) ?? [],
+    grades: classData.grades?.map(grade => grade.id ?? ``) ?? [],
+    ageRanges: classData.age_ranges?.map(ageRange => ageRange.id ?? ``) ?? [],
 });
 
 export const buildEmptyClassDetails = (): ClassDetails => ({

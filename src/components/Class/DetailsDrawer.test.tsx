@@ -12,6 +12,7 @@ import {
     mockOrgId,
     mockUserId,
 } from "@tests/mockDataClasses";
+import { inputSearch } from "@tests/mockDataPrograms";
 import { render } from "@tests/utils/render";
 import React from 'react';
 
@@ -66,12 +67,12 @@ test(`Class details drawer renders with correct information`, async () => {
 
     await waitFor(() => {
         expect(screen.queryByText(`Demo Class`)).toBeInTheDocument();
-        expect(screen.queryByText(`ESL`)).toBeInTheDocument();
+        expect(screen.queryByText(inputSearch)).toBeInTheDocument();
         expect(screen.queryByText(`Teachers (1)`)).toBeInTheDocument();
         expect(screen.queryByText(`Students (1)`)).toBeInTheDocument();
     });
 
-    screen.queryByText(`ESL`)?.click();
+    screen.queryByText(inputSearch)?.click();
 
     await waitFor(() => {
         expect(screen.queryByText(`Subjects`)).toBeInTheDocument();

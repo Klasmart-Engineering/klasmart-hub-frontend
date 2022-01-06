@@ -1,3 +1,14 @@
+import { ageRangeId2 } from "./mockDataAgeRanges";
+import { grade2Id } from "./mockDataGrades";
+import {
+    inputSearch,
+    programIdA,
+} from "./mockDataPrograms";
+import {
+    mockSchoolId2,
+    mockSchoolName2,
+} from "./mockDataSchools";
+import { mathId1 } from "./mockDataSubjects";
 import { Status } from "@/types/graphQL";
 
 export const mockOrgId = `999c1f10-8be7-4501-a541-5cf0d5382025`;
@@ -10,18 +21,18 @@ export const mockClass = {
         class_name: `Demo Class`,
         age_ranges: [
             {
-                id: `7965d220-619d-400f-8cab-42bd98c7d23c`,
+                id: ageRangeId2,
             },
         ],
         grades: [
             {
-                id: `0ecb8fa9-d77e-4dd3-b220-7e79704f1b03`,
+                id: grade2Id,
             },
         ],
         programs: [
             {
-                id: `75004121-0c0d-486c-ba65-4c57deacb44b`,
-                name: `ESL`,
+                id: programIdA,
+                name: inputSearch,
                 subjects: [
                     {
                         id: `20d6ca2f-13df-4a7a-8dcb-955908db7baa`,
@@ -32,8 +43,8 @@ export const mockClass = {
         ],
         schools:[
             {
-                school_id: `f7ef44ee-6576-4f65-9c14-e82060dfde23`,
-                school_name: `Clapham School1`,
+                school_id: mockSchoolId2,
+                school_name: mockSchoolName2,
                 programs: [
                     {
                         id: `75004121-0c0d-486c-ba65-4c57deacb44b`,
@@ -53,7 +64,7 @@ export const mockClass = {
         ],
         subjects: [
             {
-                id: `20d6ca2f-13df-4a7a-8dcb-955908db7baa`,
+                id: mathId1,
             },
         ],
         teachers: [

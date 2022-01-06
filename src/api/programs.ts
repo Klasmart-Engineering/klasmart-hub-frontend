@@ -133,6 +133,7 @@ export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     subjectId?: UuidFilter;
     ageRangeFrom?: AgeRangeFilter;
     ageRangeTo?: AgeRangeFilter;
+    schoolId?: UuidFilter;
 }
 
 interface GetProgramNodeRequest {

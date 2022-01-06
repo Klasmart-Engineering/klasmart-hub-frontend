@@ -4,7 +4,10 @@ import {
     Status,
     UuidOperator,
 } from "@/types/graphQL";
-import { isUuid } from "@/utils/pagination";
+import {
+    isUuid,
+    PaginationFilter,
+} from "@/utils/pagination";
 import { gql } from "@apollo/client";
 import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
@@ -71,6 +74,22 @@ export const buildProgramIdsFilter = (ids: string[]): ProgramFilter => ({
         },
     })),
 });
+
+export const buildSchoolIdFilter = (schoolIds: string[]): PaginationFilter<ProgramFilter> => {
+    const values = schoolIds.map((value) => {
+        const schoolIdFilter: ProgramFilter = {
+            schoolId: {
+                operator: `eq`,
+                value,
+            },
+        };
+        return schoolIdFilter;
+    });
+
+    return {
+        OR: values,
+    };
+};
 
 export const buildProgramFilters = (filters: BaseTableData<ProgramRow>['filters'] = []): ProgramFilter[] => {
     return filters.map((filter) => {

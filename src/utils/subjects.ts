@@ -1,4 +1,7 @@
-import { SubjectNode } from "@/api/subjects";
+import {
+    SubjectEdge,
+    SubjectNode,
+} from "@/api/subjects";
 import { SubjectRow } from "@/components/Subject/Table";
 import {
     Program,
@@ -23,6 +26,13 @@ export const mapSubjectsToFilterValueOptions = (subjects: Subject[]) => (
     subjects.map(subject => ({
         value: subject.id ?? ``,
         label: subject.name ?? ``,
+    }))
+);
+
+export const mapSubjectEdgesToFilterValueOptions = (subjects: SubjectEdge[]) => (
+    subjects.map(subject => ({
+        value: subject.node.id ?? ``,
+        label: subject.node.name ?? ``,
     }))
 );
 

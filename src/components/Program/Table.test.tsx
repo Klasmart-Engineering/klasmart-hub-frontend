@@ -22,6 +22,7 @@ import {
     programIdB,
     programIdC,
     programIdD,
+    programNameA,
     programs,
 } from '@tests/mockDataPrograms';
 import { render } from "@tests/utils/render";
@@ -106,7 +107,7 @@ test(`Programs table page renders data`, async () => {
 
     await waitFor(() => {
         expect(screen.getByText(`Programs`)).toBeInTheDocument();
-        expect(screen.queryAllByText(`Bada Read`).length).toBeTruthy();
+        expect(screen.queryAllByText(programNameA).length).toBeTruthy();
         expect(screen.queryAllByText(`Bada Rhyme`).length).toBeTruthy();
         expect(screen.queryAllByText(`Bada Sound`).length).toBeTruthy();
     });

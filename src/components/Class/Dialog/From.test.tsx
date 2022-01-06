@@ -1,7 +1,7 @@
 import ClassDialogForm from './Form';
-import { GET_SCHOOLS_FROM_ORGANIZATION } from '@/operations/queries/getSchoolsFromOrganization';
-import { GET_USER_NODE_SCHOOL_MEMBERSHIPS } from '@/operations/queries/getUserNodeSchoolMemberships';
-import { buildEmptyClass } from '@/utils/classes';
+import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from '@/operations/queries/getPaginatedOrganizationSchools';
+import { Status } from '@/types/graphQL';
+import { buildEmptyClassForm } from '@/utils/classes';
 import { MockedResponse } from '@apollo/client/testing';
 import {
     fireEvent,
@@ -10,10 +10,12 @@ import {
 } from "@testing-library/react";
 import {
     mockOrgId,
-    mockSchoolsData,
     mockUserId,
-    mockUserSchoolMemberships,
 } from '@tests/mockDataClasses';
+import {
+    mockSchoolName2,
+    mockSchoolsData,
+} from '@tests/mockDataSchools';
 import { render } from "@tests/utils/render";
 import React from 'react';
 
@@ -45,31 +47,27 @@ jest.mock(`@apollo/client`, () => {
 const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_SCHOOLS_FROM_ORGANIZATION,
+            query: GET_PAGINATED_ORGANIZATION_SCHOOLS,
             variables: {
-                organization_id: mockOrgId,
+                direction: `FORWARD`,
+                count: 50,
+                filter: {
+                    status: {
+                        operator: `eq`,
+                        value: Status.ACTIVE,
+                    },
+                },
             },
         },
         result: {
             data: mockSchoolsData,
         },
     },
-    {
-        request: {
-            query: GET_USER_NODE_SCHOOL_MEMBERSHIPS,
-            variables: {
-                id: mockUserId,
-            },
-        },
-        result: {
-            data: mockUserSchoolMemberships,
-        },
-    },
 ];
 
 test(`Class dialog form renders correctly`, async () => {
     render(<ClassDialogForm
-        value={buildEmptyClass()}
+        value={buildEmptyClassForm()}
         onChange={jest.fn()}
         onValidation={jest.fn()}/>, {
         mockedResponses: mocks,
@@ -96,7 +94,5 @@ test(`Class dialog form renders correctly`, async () => {
 
     fireEvent.mouseDown(await screen.findByLabelText(`Schools (optional)`));
 
-    await waitFor(() => {
-        expect(screen.queryByText(`Clapham School1`)).toBeInTheDocument();
-    });
+    expect(await screen.findByText(mockSchoolName2)).toBeInTheDocument();
 });

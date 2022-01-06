@@ -1,4 +1,5 @@
-import ClassDialogForm from "./Form";
+import ClassDialogForm,
+{ ClassForm } from "./Form";
 import {
     useDeleteClass,
     useEditClassAgeRanges,
@@ -10,8 +11,10 @@ import {
     useUpdateClass,
 } from "@/api/classes";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Class } from "@/types/graphQL";
-import { buildEmptyClass } from "@/utils/classes";
+import {
+    buildEmptyClassForm,
+    mapClassToForm,
+} from "@/utils/classes";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import {
@@ -27,7 +30,7 @@ import { useIntl } from "react-intl";
 
 interface Props {
     open: boolean;
-    onClose: (value?: Class) => void;
+    onClose: (value?: ClassForm) => void;
     classId?: string;
 }
 
@@ -39,7 +42,7 @@ export default function EditClassDialog (props: Props) {
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [ editedClass, setEditedClass ] = useState(buildEmptyClass());
+    const [ editedClass, setEditedClass ] = useState(buildEmptyClassForm());
     const [ valid, setValid ] = useState(true);
     const [ updateClass ] = useUpdateClass();
     const [ deleteClass ] = useDeleteClass();
@@ -51,9 +54,13 @@ export default function EditClassDialog (props: Props) {
     const currentOrganization = useCurrentOrganization();
     const canEditSchool = usePermission(`edit_school_20330`);
     const deletePrompt = useDeleteEntityPrompt();
-    const [ initClass, setInitClass ] = useState<Class>(buildEmptyClass());
+    const [ initClass, setInitClass ] = useState<ClassForm>(buildEmptyClassForm());
 
-    const { data, loading } = useGetClass({
+    const {
+        data,
+        loading,
+        refetch,
+    } = useGetClass({
         variables: {
             id: classId ?? ``,
             organizationId: currentOrganization?.organization_id ?? ``,
@@ -64,30 +71,30 @@ export default function EditClassDialog (props: Props) {
 
     useEffect(() => {
         if (!open || !data?.class) {
-            setInitClass(buildEmptyClass());
+            setInitClass(buildEmptyClassForm());
             return;
         }
 
-        setInitClass(data?.class ?? buildEmptyClass());
-        setEditedClass(data?.class ?? buildEmptyClass());
+        setInitClass(data?.class ? mapClassToForm(data.class) : buildEmptyClassForm());
+        setEditedClass(data?.class ? mapClassToForm(data.class) :  buildEmptyClassForm());
     }, [ open, data ]);
 
     const handleEdit = async () => {
         try {
             const {
-                class_id,
-                class_name,
+                id,
+                name,
                 schools,
                 programs,
                 subjects,
                 grades,
-                age_ranges,
+                ageRanges,
             } = editedClass;
 
             const response = await updateClass({
                 variables: {
-                    class_id,
-                    class_name: class_name ?? ``,
+                    class_id: id,
+                    class_name: name ?? ``,
                 },
             });
 
@@ -100,7 +107,7 @@ export default function EditClassDialog (props: Props) {
             if (canEditSchool) {
                 await editSchools({
                     variables: {
-                        class_id,
+                        class_id: id,
                         school_ids: schools?.map((school) => school.school_id) ?? [],
                     },
                 });
@@ -116,24 +123,27 @@ export default function EditClassDialog (props: Props) {
             await editSubjects({
                 variables: {
                     class_id: classId,
-                    subject_ids: subjects?.map((subject) => subject.id ?? ``) ?? [],
+                    subject_ids: subjects ?? [],
                 },
             });
 
             await editGrades({
                 variables: {
                     class_id: classId,
-                    grade_ids: grades?.map((grade) => grade.id ?? ``) ?? [],
+                    grade_ids: grades ?? [],
                 },
             });
 
             await editAgeRanges({
                 variables: {
                     class_id: classId,
-                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? [],
+                    age_range_ids: ageRanges ?? [],
                 },
             });
 
+            // Update cache. Since multiple mutation queries may occur, refetch needs to be
+            // called manually instead of calling if from updateCache method.
+            refetch();
             onClose(editedClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_editSuccess`,
@@ -154,12 +164,12 @@ export default function EditClassDialog (props: Props) {
             title: intl.formatMessage({
                 id: `class_deleteClassTitle`,
             }),
-            entityName: editedClass.class_name ?? ``,
+            entityName: editedClass.name ?? ``,
         })) return;
         try {
             await deleteClass({
                 variables: {
-                    class_id: editedClass.class_id,
+                    class_id: editedClass.id,
                 },
             });
             onClose(editedClass);
@@ -213,7 +223,7 @@ export default function EditClassDialog (props: Props) {
             onClose={() => onClose()}
         >
             <ClassDialogForm
-                key={initClass?.class_id}
+                key={initClass?.id}
                 value={initClass}
                 loading={loading}
                 onChange={(value) => setEditedClass(value)}

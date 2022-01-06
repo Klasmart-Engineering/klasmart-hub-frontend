@@ -102,6 +102,17 @@ export const mapAgeRangesLowValueToFilter = (edges: AgeRangeEdge[]) => (
     })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
 );
 
+export const mapAgeRangesToFilter = (edges: AgeRangeEdge[]) => (
+    edges.map((edge) => ({
+        value: edge.node?.id ?? ``,
+        label: buildAgeRangeLabel({
+            high_value: edge.node?.highValue,
+            high_value_unit: edge.node?.highValueUnit,
+            low_value: edge.node?.lowValue,
+            low_value_unit: edge.node?.lowValueUnit,
+        }),
+    })));
+
 export const mapAgeRangesHighValueToFilter = (edges: AgeRangeEdge[]) => (
     edges.filter(edge => edge.node?.name !== NON_SPECIFIED)
         .sort((a, b) => a.node?.highValueUnit?.localeCompare(b.node?.highValueUnit ?? ``) || (a.node?.highValue ?? 0) - (b.node?.highValue ?? 0))

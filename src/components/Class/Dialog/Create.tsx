@@ -1,4 +1,5 @@
-import ClassDialogForm from "./Form";
+import ClassDialogForm,
+{ ClassForm } from "./Form";
 import {
     useCreateClass,
     useEditClassAgeRanges,
@@ -7,8 +8,7 @@ import {
     useEditClassSubjects,
 } from "@/api/classes";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Class } from "@/types/graphQL";
-import { buildEmptyClass } from "@/utils/classes";
+import { buildEmptyClassForm } from "@/utils/classes";
 import {
     Dialog,
     useSnackbar,
@@ -22,7 +22,7 @@ import { useIntl } from "react-intl";
 
 interface Props {
     open: boolean;
-    onClose: (value?: Class) => void;
+    onClose: (value?: ClassForm) => void;
 }
 
 export default function CreateClassDialog (props: Props) {
@@ -31,7 +31,7 @@ export default function CreateClassDialog (props: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
-    const [ newClass, setNewClass ] = useState(buildEmptyClass());
+    const [ newClass, setNewClass ] = useState(buildEmptyClassForm());
     const [ createClass ] = useCreateClass();
     const [ createPrograms ] = useEditClassPrograms();
     const [ createSubjects ] = useEditClassSubjects();
@@ -40,23 +40,23 @@ export default function CreateClassDialog (props: Props) {
 
     useEffect(() => {
         if (!open) return;
-        setNewClass(buildEmptyClass());
+        setNewClass(buildEmptyClassForm());
     }, [ open ]);
 
     const handleCreate = async () => {
         try {
             const {
-                class_name,
+                name,
                 schools,
                 programs,
                 subjects,
                 grades,
-                age_ranges,
+                ageRanges,
             } = newClass;
 
             const variables = {
                 organization_id: currentOrganization?.organization_id ?? ``,
-                class_name: class_name ?? ``,
+                class_name: name ?? ``,
                 school_ids: schools?.map((school) => school.school_id) ?? [],
             };
 
@@ -80,21 +80,21 @@ export default function CreateClassDialog (props: Props) {
             await createSubjects({
                 variables: {
                     class_id: classId,
-                    subject_ids: subjects?.map((subject) => subject.id ?? ``) ?? [],
+                    subject_ids: subjects ?? [],
                 },
             });
 
             await createGrades({
                 variables: {
                     class_id: classId,
-                    grade_ids: grades?.map((grade) => grade.id ?? ``) ?? [],
+                    grade_ids: grades ?? [],
                 },
             });
 
             await createAgeRanges({
                 variables: {
                     class_id: classId,
-                    age_range_ids: age_ranges?.map((ageRange) => ageRange.id ?? ``) ?? [],
+                    age_range_ids: ageRanges ?? [],
                 },
             });
 

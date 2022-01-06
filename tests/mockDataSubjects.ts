@@ -22,12 +22,13 @@ export const mathId9 = `b00de3cc-aa01-47f5-9f87-850eb70ae009`;
 export const mathId10 = `b00de3cc-aa01-47f5-9f87-850eb70ae010`;
 export const programId1 = `b00de3cc-aa01-47f5-9f87-850eb70aprog`;
 export const categoryId1 = `b00de3cc-aa01-47f5-9f87-850eb70acate`;
+export const subjectA = `Math Grade 5`;
 
 export const mockSubjectsStep: SubjectEdge[] = [
     {
         node: {
             id: mathId1,
-            name: `Math Grade 5`,
+            name: subjectA,
             status: Status.ACTIVE,
             system: false,
             categories: [
@@ -63,7 +64,7 @@ export const mockSubjects: GetAllSubjectsPaginatedResponse['subjectsConnection']
         {
             node: {
                 id: mathId1,
-                name: `Math Grade 5`,
+                name: subjectA,
                 status: Status.ACTIVE,
                 system: false,
                 categories: [
@@ -292,4 +293,18 @@ export const mockSubjectDetail = {
             },
         ],
     },
+};
+
+export const mockSubjectsConnection = {
+    subjectsConnection: {
+        totalCount: 2,
+        pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            endCursor: `eyJjbGFzc19pZCI6Ijc0NWU3OTYwLTUzZDEtNGM0Mi1iYzE1LWI4ZDBiOGY0OWFiOCIsImNsYXNzX25hbWUiOiJKdW5pb3IifQ==`,
+        },
+        edges: mockSubjectsStep,
+    },
+
 };

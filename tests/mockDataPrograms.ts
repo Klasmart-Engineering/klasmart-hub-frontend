@@ -15,7 +15,7 @@ export const programNameD = `Science`;
 export const programA = {
     node: {
         id: programIdA,
-        name: `Bada Read`,
+        name: programNameA,
         status: Status.ACTIVE,
         system: true,
         ageRanges: [
@@ -310,6 +310,19 @@ export const programs: ProgramEdge[] = [
     programC,
     programD,
 ];
+
+export const mockProgramsConnection = {
+    programsConnection: {
+        edges: programs,
+        pageInfo: {
+            endCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+        },
+        totalCount: 4,
+    },
+};
 
 export const mockProgramsFilterList = {
     programsConnection: {
