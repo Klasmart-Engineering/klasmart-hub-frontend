@@ -10,6 +10,7 @@ pipelines:
       - parallel:
         - step:
             name: Test & Build
+            size: 2x
             caches:
               - node
             script:

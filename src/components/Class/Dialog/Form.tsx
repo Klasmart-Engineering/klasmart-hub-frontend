@@ -1,14 +1,7 @@
-import { useGetAllPaginatedPrograms } from "@/api/programs";
-import { useGetPaginatedSchools } from "@/api/schools";
 import { buildSchoolIdFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import {
-    Program,
-    School,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { useGetClassFormValues } from "@/utils/classFormDropdownValues";
 import { usePermission } from "@/utils/permissions";
-import { mapSchoolNodeToSchool } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
     createStyles,
@@ -38,8 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface ClassForm {
     id: string;
     name?: string | null;
-    schools?: School[] | null;
-    programs?: Program[] | null;
+    schools?: string[];
+    programs?: string[];
     ageRanges?: string[];
     subjects?: string[];
     grades?: string[];
@@ -68,130 +61,87 @@ export default function ClassDialogForm (props: Props) {
         max,
     } = useValidations();
     const canEditSchool = usePermission(`edit_school_20330`);
-    const {
-        data,
-        loading: schoolDataLoading,
-    } = useGetPaginatedSchools({
-        fetchPolicy: `cache-first`,
-        variables: {
-            direction: `FORWARD`,
-            count: 50,
-            filter: {
-                status: {
-                    operator: `eq`,
-                    value: Status.ACTIVE,
-                },
-            },
-        },
-    });
-
-    const [ allSchools, setAllSchools ] = useState<School[]>([]);
-    const [ allPrograms, setAllPrograms ] = useState<Program[]>([]);
-    const [ programsIds, setProgramsIds ] = useState<string[]>(value?.programs?.map(program => program.id as string) ?? []);
-    const [ gradesIds, setGradesIds ] = useState<string[]>(value?.grades ?? []);
-    const [ subjectsIds, setSubjectsIds ] = useState<string[]>(value.subjects ?? []);
-    const [ ageRangesIds, setAgeRangesIds ] = useState<string[]>(value.ageRanges ?? []);
+    const [ schoolIds, setSchoolIds ] = useState<string[]>(value?.schools ?? []);
+    const [ programIds, setProgramIds ] = useState<string[]>(value?.programs ?? []);
+    const [ gradeIds, setGradeIds ] = useState<string[]>(value?.grades ?? []);
+    const [ subjectIds, setSubjectIds ] = useState<string[]>(value.subjects ?? []);
+    const [ ageRangeIds, setAgeRangeIds ] = useState<string[]>(value.ageRanges ?? []);
     const [ className, setClassName ] = useState(value.name ?? ``);
-    const [ schoolIds, setSchoolIds ] = useState<string[]>(value?.schools?.map(school => school.school_id) ?? []);
     const [ classNameValid, setClassNameValid ] = useState(true);
-
-    const {
-        data: programsData,
-        refetch: refetchPrograms,
-        loading: programsLoading,
-    } = useGetAllPaginatedPrograms({
-        variables: {
-            direction: `FORWARD`,
-            count: 50,
-            order: `ASC`,
-            orderBy: `name`,
-            filter: buildSchoolIdFilter(schoolIds),
-        },
-        skip: !schoolIds.length,
-        notifyOnNetworkStatusChange: true,
-        fetchPolicy: `no-cache`,
-    });
 
     const {
         gradeValueOptions,
         subjectValueOptions,
-        ageRangesValueOptions,
+        ageRangeValueOptions,
+        programValueOptions,
+        schoolValueOptions,
         gradesLoading,
         subjectsLoading,
         ageRangesLoading,
-    } = useGetClassFormValues(programsIds);
+        programsLoading,
+        schoolsLoading,
+        refetchPrograms,
+    } = useGetClassFormValues(programIds, schoolIds);
 
     useEffect(() => {
         const updatedClass: ClassForm = {
             id: value.id,
             name: className,
-            schools: allSchools.filter((school) => schoolIds.includes(school.school_id)),
-            programs: allPrograms.filter((program) => programsIds.includes(program.id ?? ``)),
-            grades: gradesIds,
-            subjects: subjectsIds,
-            ageRanges: ageRangesIds,
+            schools: schoolIds,
+            programs: programIds,
+            grades: gradeIds,
+            subjects: subjectIds,
+            ageRanges: ageRangeIds,
         };
 
         onChange(updatedClass);
     }, [
         className,
         schoolIds,
-        allPrograms,
-        programsIds,
-        gradesIds,
-        subjectsIds,
-        ageRangesIds,
+        programIds,
+        gradeIds,
+        subjectIds,
+        ageRangeIds,
     ]);
 
-    const resetIds = () => {
+    useEffect(() => {
         if (!gradesLoading) {
-            const updateGradesIds = value.grades?.filter((value: string) => gradeValueOptions.find((grade) =>
-                grade.value === value)) ?? [];
-            setGradesIds(updateGradesIds);
+            const updateGradesIds = value.grades?.filter((value: string) =>
+                gradeValueOptions.find((grade) => grade.value === value)) ?? [];
+            setGradeIds(updateGradesIds);
         }
+    }, [ gradeValueOptions ]);
 
+    useEffect(() => {
         if (!subjectsLoading) {
             const updateSubjectsIds = value.subjects?.filter((value: string) =>
                 subjectValueOptions.find((subject) => subject.value === value)) ?? [];
-            setSubjectsIds(updateSubjectsIds);
-        }
 
-        if (!ageRangesLoading) {
-            const updateAgeRangeIds = value.ageRanges?.filter((value: string) =>
-                ageRangesValueOptions.find((ageRange) => ageRange.value === value)) ?? [];
-            setAgeRangesIds(updateAgeRangeIds);
+            setSubjectIds(updateSubjectsIds);
         }
-    };
+    }, [ subjectValueOptions ]);
 
     useEffect(() => {
-        resetIds();
-    }, [
-        ageRangesValueOptions,
-        subjectValueOptions,
-        gradeValueOptions,
-    ]);
+        if (!ageRangesLoading) {
+            const updateAgeRangeIds = value.ageRanges?.filter((value: string) =>
+                ageRangeValueOptions.find((ageRange) => ageRange.value === value)) ?? [];
+            setAgeRangeIds(updateAgeRangeIds);
+        }
+    }, [ ageRangeValueOptions ]);
+
+    useEffect(() => {
+        if (!programsLoading) {
+            const programIds = value.programs?.filter((value: string) =>
+                programValueOptions.find((program) => program.value === value)) ?? [];
+            setProgramIds(programIds);
+        }
+    }, [ programValueOptions ]);
 
     useEffect(() => {
         onValidation([ classNameValid ].every((value) => value));
     }, [ classNameValid ]);
 
-    useEffect(() => {
-        const schools = data?.schoolsConnection?.edges.map(edge => mapSchoolNodeToSchool(edge.node)) ?? [];
-        setAllSchools(schools);
-        setSchoolIds(value.schools?.map((school) => school.school_id) ?? []);
-    }, [ data ]);
-
-    useEffect(() => {
-        const programs = programsData?.programsConnection.edges.map(edge => ({
-            id: edge.node.id,
-            name: edge.node.name,
-        })) ?? [];
-        setAllPrograms([ ...allPrograms, ...programs ]);
-    }, [ programsData ]);
-
     const schoolOnChange = (values: string[]) => {
-        setProgramsIds([]);
-        setAllPrograms([]);
         const programFilter = buildSchoolIdFilter(values);
         setSchoolIds(values);
         refetchPrograms({
@@ -234,12 +184,12 @@ export default function ClassDialogForm (props: Props) {
                 label={intl.formatMessage({
                     id: `class_schoolsLabel`,
                 })}
-                items={allSchools}
+                items={schoolValueOptions}
                 value={schoolIds}
-                disabled={!canEditSchool || loading || schoolDataLoading}
-                itemText={(school) => school.school_name ?? ``}
-                itemValue={(school) => school.school_id}
-                loading={loading || schoolDataLoading}
+                disabled={!canEditSchool || loading || schoolsLoading}
+                itemText={(school) => school.label ?? ``}
+                itemValue={(school) => school.value}
+                loading={loading || schoolsLoading}
                 onChange={schoolOnChange}
             />
             <Select
@@ -248,54 +198,54 @@ export default function ClassDialogForm (props: Props) {
                 label={intl.formatMessage({
                     id: `class_programLabel`,
                 })}
-                items={allPrograms}
-                value={programsIds}
-                itemText={(program) => program.name ?? ``}
-                itemValue={(program) => program.id ?? ``}
-                loading={loading || schoolDataLoading || programsLoading}
-                disabled={loading || schoolDataLoading }
-                onChange={(values) => setProgramsIds(values)}
+                items={programValueOptions}
+                value={programIds}
+                itemText={(program) => program.label ?? ``}
+                itemValue={(program) => program.value ?? ``}
+                loading={loading || schoolsLoading || programsLoading}
+                disabled={loading || schoolsLoading }
+                onChange={(values) => setProgramIds(values)}
             />
             <Select
                 fullWidth
-                multiple={programsIds.length > 0}
+                multiple={programIds.length > 0}
                 label={intl.formatMessage({
                     id: `class_gradeLabel`,
                 })}
                 items={gradeValueOptions}
-                value={gradesIds}
+                value={gradeIds}
                 itemText={(grade) => grade.label ?? ``}
                 itemValue={(grade) => grade.value ?? ``}
-                loading={loading || schoolDataLoading }
-                onChange={(values) => setGradesIds(values)}
+                loading={loading || schoolsLoading }
+                onChange={(values) => setGradeIds(values)}
             />
             <Select
                 fullWidth
-                multiple={programsIds.length > 0}
+                multiple={programIds.length > 0}
                 label={intl.formatMessage({
                     id: `class_ageRangeLabel`,
                 })}
-                items={ageRangesValueOptions}
-                value={ageRangesIds}
+                items={ageRangeValueOptions}
+                value={ageRangeIds}
                 itemText={(ageRange) => ageRange.label}
                 itemValue={(ageRange) => ageRange.value ?? ``}
-                loading={loading || schoolDataLoading }
-                disabled={loading || schoolDataLoading }
-                onChange={(values) => setAgeRangesIds(values)}
+                loading={loading || schoolsLoading }
+                disabled={loading || schoolsLoading }
+                onChange={(values) => setAgeRangeIds(values)}
             />
             <Select
                 fullWidth
-                multiple={programsIds.length > 0}
+                multiple={programIds.length > 0}
                 label={intl.formatMessage({
                     id: `class_subjectsLabel`,
                 })}
                 items={subjectValueOptions}
-                value={subjectsIds}
+                value={subjectIds}
                 itemText={(subject) => subject.label ?? ``}
                 itemValue={(subject) => subject.value ?? ``}
-                loading={loading || schoolDataLoading }
-                disabled={loading || schoolDataLoading }
-                onChange={(values) => setSubjectsIds(values)}
+                loading={loading || schoolsLoading }
+                disabled={loading || schoolsLoading }
+                onChange={(values) => setSubjectIds(values)}
             />
         </div>
     );

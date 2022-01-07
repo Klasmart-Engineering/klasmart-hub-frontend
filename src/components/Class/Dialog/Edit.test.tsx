@@ -11,10 +11,7 @@ import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPag
 import { Status } from "@/types/graphQL";
 import { buildProgramIdFilter } from "@/utils/sharedFilters";
 import { MockedResponse } from "@apollo/client/testing";
-import {
-    screen,
-    waitFor,
-} from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import {
     ageRangeId2,
     mockPaginatedAgeRanges,
@@ -178,21 +175,21 @@ test(`Class edit component renders with correct information`, async () => {
 
     expect(screen.queryByText(`Edit class`)).toBeInTheDocument();
     expect(screen.queryAllByText(`Class name`).length).toBeTruthy();
+    expect(await screen.findByDisplayValue(`Demo Class`)).toBeInTheDocument();
+    expect(await screen.findByText(mockSchoolName2)).toBeInTheDocument();
+    expect(await screen.findByText(programNameA)).toBeInTheDocument();
+    expect(await screen.findByText(`1 - 5 Year(s)`)).toBeInTheDocument();
+    expect(await screen.findByText(grade2Name)).toBeInTheDocument();
+    expect(await screen.findByText(subjectA)).toBeInTheDocument();
 
-    await waitFor(() => {
-        expect(screen.getByDisplayValue(`Demo Class`)).toBeInTheDocument();
-        expect(screen.queryByText(mockSchoolName2)).toBeInTheDocument();
-        expect(screen.getByTestId(`Schools (optional)SelectTextInput`)?.value).toBe(mockSchoolId2);
-        expect(screen.queryByText(programNameA)).toBeInTheDocument();
-        expect(screen.getByTestId(`Program (optional)SelectTextInput`)?.value).toBe(programIdA);
-    });
-
-    await waitFor(() => {
-        expect(screen.queryByText(`1 - 5 Year(s)`)).toBeInTheDocument();
-        expect(screen.getByTestId(`Age range (optional)SelectTextInput`)?.value).toBe(ageRangeId2);
-        expect(screen.queryByText(grade2Name)).toBeInTheDocument();
-        expect(screen.getByTestId(`Grade (optional)SelectTextInput`)?.value).toBe(grade2Id);
-        expect(screen.queryByText(subjectA)).toBeInTheDocument();
-        expect(screen.getByTestId(`Subjects (optional)SelectTextInput`)?.value).toBe(mathId1);
-    });
+    const schools = await screen.findByTestId(`Schools (optional)SelectTextInput`);
+    expect(schools?.value).toBe(mockSchoolId2);
+    const programs = await screen.findByTestId(`Program (optional)SelectTextInput`);
+    expect(programs?.value).toBe(programIdA);
+    const ageRanges = await screen.findByTestId(`Age range (optional)SelectTextInput`);
+    expect(ageRanges?.value).toBe(ageRangeId2);
+    const grades = await screen.findByTestId(`Grade (optional)SelectTextInput`);
+    expect(grades?.value).toBe(grade2Id);
+    const subjects = await screen.findByTestId(`Subjects (optional)SelectTextInput`);
+    expect(subjects?.value).toBe(mathId1);
 });

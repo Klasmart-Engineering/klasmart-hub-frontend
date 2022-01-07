@@ -57,7 +57,7 @@ export default function CreateClassDialog (props: Props) {
             const variables = {
                 organization_id: currentOrganization?.organization_id ?? ``,
                 class_name: name ?? ``,
-                school_ids: schools?.map((school) => school.school_id) ?? [],
+                school_ids: schools ?? [],
             };
 
             const response = await createClass({
@@ -73,7 +73,7 @@ export default function CreateClassDialog (props: Props) {
             await createPrograms({
                 variables: {
                     class_id: classId,
-                    program_ids: programs?.map((program) => program.id ?? ``) ?? [],
+                    program_ids: programs ?? [],
                 },
             });
 

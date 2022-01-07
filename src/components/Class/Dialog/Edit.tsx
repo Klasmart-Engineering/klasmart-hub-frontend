@@ -42,7 +42,6 @@ export default function EditClassDialog (props: Props) {
     } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const [ editedClass, setEditedClass ] = useState(buildEmptyClassForm());
     const [ valid, setValid ] = useState(true);
     const [ updateClass ] = useUpdateClass();
     const [ deleteClass ] = useDeleteClass();
@@ -76,7 +75,6 @@ export default function EditClassDialog (props: Props) {
         }
 
         setInitClass(data?.class ? mapClassToForm(data.class) : buildEmptyClassForm());
-        setEditedClass(data?.class ? mapClassToForm(data.class) :  buildEmptyClassForm());
     }, [ open, data ]);
 
     const handleEdit = async () => {
@@ -89,7 +87,7 @@ export default function EditClassDialog (props: Props) {
                 subjects,
                 grades,
                 ageRanges,
-            } = editedClass;
+            } = initClass;
 
             const response = await updateClass({
                 variables: {
@@ -108,7 +106,7 @@ export default function EditClassDialog (props: Props) {
                 await editSchools({
                     variables: {
                         class_id: id,
-                        school_ids: schools?.map((school) => school.school_id) ?? [],
+                        school_ids: schools ?? [],
                     },
                 });
             }
@@ -116,7 +114,7 @@ export default function EditClassDialog (props: Props) {
             await editPrograms({
                 variables: {
                     class_id: classId,
-                    program_ids: programs?.map((program) => program.id ?? ``) ?? [],
+                    program_ids: programs ?? [],
                 },
             });
 
@@ -144,7 +142,7 @@ export default function EditClassDialog (props: Props) {
             // Update cache. Since multiple mutation queries may occur, refetch needs to be
             // called manually instead of calling if from updateCache method.
             refetch();
-            onClose(editedClass);
+            onClose(initClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_editSuccess`,
             }), {
@@ -164,15 +162,15 @@ export default function EditClassDialog (props: Props) {
             title: intl.formatMessage({
                 id: `class_deleteClassTitle`,
             }),
-            entityName: editedClass.name ?? ``,
+            entityName: initClass.name ?? ``,
         })) return;
         try {
             await deleteClass({
                 variables: {
-                    class_id: editedClass.id,
+                    class_id: initClass.id,
                 },
             });
-            onClose(editedClass);
+            onClose(initClass);
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedMessage`,
             }), {
@@ -226,7 +224,7 @@ export default function EditClassDialog (props: Props) {
                 key={initClass?.id}
                 value={initClass}
                 loading={loading}
-                onChange={(value) => setEditedClass(value)}
+                onChange={(value) => setInitClass(value)}
                 onValidation={setValid} />
         </Dialog>
     );

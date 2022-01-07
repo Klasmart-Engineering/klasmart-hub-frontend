@@ -35,9 +35,9 @@ export const buildEmptyClassForm = (): ClassForm => ({
 export const mapClassToForm = (classData: Class): ClassForm => ({
     id: classData.class_id,
     name: classData.class_name ?? ``,
-    schools: classData.schools,
+    schools: classData.schools?.map(school => school.school_id ?? ``) ?? [],
     status: Status.ACTIVE,
-    programs: classData.programs,
+    programs: classData.programs?.map(program => program.id ?? ``) ?? [],
     subjects: classData.subjects?.map(subject => subject.id ?? ``) ?? [],
     grades: classData.grades?.map(grade => grade.id ?? ``) ?? [],
     ageRanges: classData.age_ranges?.map(ageRange => ageRange.id ?? ``) ?? [],
