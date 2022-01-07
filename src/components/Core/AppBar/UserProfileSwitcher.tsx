@@ -89,7 +89,7 @@ export default function UserProfileSwitcher (props: Props) {
                 const fullName = givenName + ` ` + familyName;
                 const username = user.username ?? ``;
                 const userName = fullName === ` ` ? username ?? `Name undefined` : fullName;
-                const dataTestId = 'switch-profile' + user.user_id;
+                const dataTestId = 'switch-profile-icon';
                 return <ListItem
                     key={user.user_id}
                     button
