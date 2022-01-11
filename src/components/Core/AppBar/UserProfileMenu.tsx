@@ -126,6 +126,7 @@ export default function UserProfileMenu (props: Props) {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
+                data-testid="profile-icon"
                 className={classes.userProfileMenu}
                 onClick={handleMenu}
             >
