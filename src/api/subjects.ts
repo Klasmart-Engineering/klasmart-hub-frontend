@@ -43,7 +43,10 @@ interface CreateOrUpdateSubjectsResponse {
 }
 
 export const useCreateOrUpdateSubjects = (options?: MutationHookOptions<CreateOrUpdateSubjectsResponse, CreateOrUpdateSubjectsRequest>) => {
-    return useMutation<CreateOrUpdateSubjectsResponse, CreateOrUpdateSubjectsRequest>(CREATE_OR_UPDATE_SUBJECTS, options);
+    return useMutation<CreateOrUpdateSubjectsResponse, CreateOrUpdateSubjectsRequest>(CREATE_OR_UPDATE_SUBJECTS, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SUBJECTS ],
+    });
 };
 
 interface DeleteSubjectRequest {
@@ -54,7 +57,10 @@ interface DeleteSubjectResponse {
 }
 
 export const useDeleteSubject = (options?: MutationHookOptions<DeleteSubjectResponse, DeleteSubjectRequest>) => {
-    return useMutation<DeleteSubjectResponse, DeleteSubjectRequest>(DELETE_SUBJECT, options);
+    return useMutation<DeleteSubjectResponse, DeleteSubjectRequest>(DELETE_SUBJECT, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SUBJECTS ],
+    });
 };
 
 interface GetSubjectRequest {

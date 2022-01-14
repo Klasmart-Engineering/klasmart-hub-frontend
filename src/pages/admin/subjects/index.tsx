@@ -119,7 +119,6 @@ export default function SubjectsPage (props: Props) {
             order={serverToTableOrder(serverPagination.order)}
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
-            refetch={refetch}
             search={serverPagination.search}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}

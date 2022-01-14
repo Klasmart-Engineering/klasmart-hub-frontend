@@ -28,7 +28,10 @@ interface CreateOrUpdateCategoriesResponse {
 }
 
 export const useCreateOrUpdateCategories = (options?: MutationHookOptions<CreateOrUpdateCategoriesResponse, CreateOrUpdateCategoriesRequest>) => {
-    return useMutation<CreateOrUpdateCategoriesResponse, CreateOrUpdateCategoriesRequest>(CREATE_OR_UPDATE_CATEGORIES, options);
+    return useMutation<CreateOrUpdateCategoriesResponse, CreateOrUpdateCategoriesRequest>(CREATE_OR_UPDATE_CATEGORIES, {
+        ...options,
+        refetchQueries: [ GET_ALL_CATEGORIES ],
+    });
 };
 
 interface DeleteCategoryRequest {
@@ -39,7 +42,10 @@ interface DeleteCategoryResponse {
 }
 
 export const useDeleteCategory = (options?: MutationHookOptions<DeleteCategoryResponse, DeleteCategoryRequest>) => {
-    return useMutation<DeleteCategoryResponse, DeleteCategoryRequest>(DELETE_CATEGORY, options);
+    return useMutation<DeleteCategoryResponse, DeleteCategoryRequest>(DELETE_CATEGORY, {
+        ...options,
+        refetchQueries: [ GET_ALL_CATEGORIES ],
+    });
 };
 
 interface GetAllCategoriesRequest {

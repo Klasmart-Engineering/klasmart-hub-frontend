@@ -91,7 +91,7 @@ export default function CategorySelectDialog (props: Props) {
         },
         skip: !organizationId,
     });
-    const { data: categoriesData, refetch: refetchCategories } = useGetAllCategories({
+    const { data: categoriesData } = useGetAllCategories({
         nextFetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
@@ -136,7 +136,6 @@ export default function CategorySelectDialog (props: Props) {
                     ],
                 },
             });
-            await refetchCategories();
             enqueueSnackbar(intl.formatMessage({
                 id: `categories_categoryCreateMessage`,
             }), {
@@ -186,7 +185,6 @@ export default function CategorySelectDialog (props: Props) {
                     id: row.id,
                 },
             });
-            await refetchCategories();
             if (updatedCategory?.id === row.id) setUpdatedCategory((category) => category?.id === row.id ? category : undefined);
             enqueueSnackbar(intl.formatMessage({
                 id: `categories_categoryCreateError`,

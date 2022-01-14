@@ -24,7 +24,10 @@ interface CreateOrUpdateSubcategoriesResponse {
 }
 
 export const useCreateOrUpdateSubcategories = (options?: MutationHookOptions<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>) => {
-    return useMutation<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>(CREATE_OR_UPDATE_SUBCATEGORIES, options);
+    return useMutation<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>(CREATE_OR_UPDATE_SUBCATEGORIES, {
+        ...options,
+        refetchQueries: [ GET_ALL_SUBCATEGORIES ],
+    });
 };
 
 interface DeleteSubcategoryRequest {
@@ -35,7 +38,10 @@ interface DeleteSubcategoryResponse {
 }
 
 export const useDeleteSubcategory = (options?: MutationHookOptions<DeleteSubcategoryResponse, DeleteSubcategoryRequest>) => {
-    return useMutation<DeleteSubcategoryResponse, DeleteSubcategoryRequest>(DELETE_SUBCATEGORY, options);
+    return useMutation<DeleteSubcategoryResponse, DeleteSubcategoryRequest>(DELETE_SUBCATEGORY, {
+        ...options,
+        refetchQueries: [ GET_ALL_SUBCATEGORIES ],
+    });
 };
 
 interface GetAllSubcategoriesRequest {

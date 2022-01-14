@@ -99,7 +99,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
         },
         skip: !organizationId,
     });
-    const { data: subcategoriesData, refetch: refetchSubcategories } = useGetAllSubcategories({
+    const { data: subcategoriesData } = useGetAllSubcategories({
         nextFetchPolicy: `network-only`,
         variables: {
             organization_id: organizationId,
@@ -144,7 +144,6 @@ export default function SubcategoriesSelectDialog (props: Props) {
                     ],
                 },
             });
-            await refetchSubcategories();
             enqueueSnackbar(intl.formatMessage({
                 id: `subcategories_subcategoryCreateMessage`,
             }), {
@@ -194,7 +193,6 @@ export default function SubcategoriesSelectDialog (props: Props) {
                     id: row.id,
                 },
             });
-            await refetchSubcategories();
             setUpdatedSubcategories((subcategories) => subcategories?.filter((subcategory) => subcategory.id !== row.id));
             enqueueSnackbar(intl.formatMessage({
                 id: `subcategories_subcategoryDeleteMessage`,

@@ -70,7 +70,6 @@ export default function SubjectsTable (props: Props) {
         onPageChange,
         rowsPerPage,
         onTableChange,
-        refetch,
         showSelectables,
         search,
         order,
@@ -268,7 +267,6 @@ export default function SubjectsTable (props: Props) {
                     id: row.id,
                 },
             });
-            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `subjects_subjectDeleteMessage`,
             }), {
@@ -365,16 +363,14 @@ export default function SubjectsTable (props: Props) {
             />
             <CreateSubjectDialog
                 open={openCreateDialog}
-                onClose={(subject) => {
-                    if (subject) refetch?.();
+                onClose={() => {
                     setOpenCreateDialog(false);
                 }}
             />
             <EditSubjectDialog
                 open={openEditDialog}
                 subjectId={selectedSubjectId}
-                onClose={(subject) => {
-                    if (subject) refetch?.();
+                onClose={() => {
                     setSelectedSubjectId(undefined);
                     setOpenEditDialog(false);
                 }}
