@@ -103,7 +103,6 @@ export default function SchoolsPage (props: Props) {
         <SchoolTable
             rows={rows}
             loading={loading}
-            refetch={refetch}
             order={serverToTableOrder(serverPagination.order)}
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}

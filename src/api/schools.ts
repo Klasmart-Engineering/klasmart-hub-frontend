@@ -50,7 +50,10 @@ export interface SchoolSummaryNode extends BaseEntity {
 }
 
 export const useCreateSchool = (options?: MutationHookOptions<CreateSchoolResponse, CreateSchoolRequest>) => {
-    return useMutation<CreateSchoolResponse, CreateSchoolRequest>(CREATE_SCHOOL, options);
+    return useMutation<CreateSchoolResponse, CreateSchoolRequest>(CREATE_SCHOOL, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SCHOOLS ],
+    });
 };
 
 interface UpdateSchoolRequest {
@@ -67,7 +70,10 @@ interface UpdateSchoolResponse {
 }
 
 export const useUpdateSchool = (options?: MutationHookOptions<UpdateSchoolResponse, UpdateSchoolRequest>) => {
-    return useMutation<UpdateSchoolResponse, UpdateSchoolRequest>(EDIT_SCHOOL, options);
+    return useMutation<UpdateSchoolResponse, UpdateSchoolRequest>(EDIT_SCHOOL, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SCHOOLS ],
+    });
 };
 
 interface EditSchoolProgramsRequest {
@@ -92,7 +98,10 @@ interface DeleteSchoolResponse {
 }
 
 export const useDeleteSchool = (options?: MutationHookOptions<DeleteSchoolResponse, DeleteSchoolRequest>) => {
-    return useMutation<DeleteSchoolResponse, DeleteSchoolRequest>(DELETE_SCHOOL, options);
+    return useMutation<DeleteSchoolResponse, DeleteSchoolRequest>(DELETE_SCHOOL, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SCHOOLS ],
+    });
 };
 
 export interface GetSchoolsRequest {
@@ -130,7 +139,9 @@ interface UploadSchoolsCsvRequest {
 }
 
 export const useUploadSchoolsCsv = () => {
-    return useMutation<UploadSchoolsCsvResponse, UploadSchoolsCsvRequest>(UPLOAD_SCHOOLS_CSV);
+    return useMutation<UploadSchoolsCsvResponse, UploadSchoolsCsvRequest>(UPLOAD_SCHOOLS_CSV, {
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_SCHOOLS ],
+    });
 };
 
 interface GetPaginatedSchoolsRequest {

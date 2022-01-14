@@ -54,7 +54,6 @@ export default function SchoolTable (props: Props) {
         rowsPerPage,
         search,
         cursor,
-        refetch,
         total,
         hasNextPage,
         hasPreviousPage,
@@ -113,7 +112,6 @@ export default function SchoolTable (props: Props) {
                     school_id: row.id,
                 },
             });
-            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `schools_deleteSuccess`,
             }), {
@@ -204,27 +202,24 @@ export default function SchoolTable (props: Props) {
 
             <CreateSchoolDialog
                 open={openCreateDialog}
-                onClose={(value) => {
+                onClose={() => {
                     setOpenCreateDialog(false);
-                    if (value) refetch?.();
                 }}
             />
 
             <EditSchoolDialog
                 open={openEditDialog}
                 schoolId={selectedSchoolId}
-                onClose={(value) => {
+                onClose={() => {
                     setSelectedSchoolId(undefined);
                     setOpenEditDialog(false);
-                    if (value) refetch?.();
                 }}
             />
 
             <UploadSchoolCsvDialog
                 open={uploadCsvDialogOpen}
-                onClose={(value) => {
+                onClose={() => {
                     setUploadCsvDialogOpen(false);
-                    if (value) refetch?.();
                 }}
             />
         </>
