@@ -75,7 +75,6 @@ export default function ProgramTable (props: Props) {
         rowsPerPage,
         onTableChange,
         search,
-        refetch,
         showSelectables,
         order,
         orderBy,
@@ -347,7 +346,6 @@ export default function ProgramTable (props: Props) {
                     id: row.id,
                 },
             });
-            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `programs_deleteSuccess`,
             }), {
@@ -450,16 +448,14 @@ export default function ProgramTable (props: Props) {
             />
             <CreateProgramDialog
                 open={openCreateDialog}
-                onClose={(program) => {
-                    if (program) refetch?.();
+                onClose={() => {
                     setOpenCreateDialog(false);
                 }}
             />
             <EditProgramDialog
                 open={openEditDialog}
                 programId={selectedProgramId}
-                onClose={(program) => {
-                    if (program) refetch?.();
+                onClose={() => {
                     setSelectedProgramId(undefined);
                     setOpenEditDialog(false);
                 }}

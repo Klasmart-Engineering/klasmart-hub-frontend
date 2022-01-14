@@ -49,7 +49,10 @@ interface CreateOrUpdateProgramsResponse {
 }
 
 export const useCreateOrUpdatePrograms = (options?: MutationHookOptions<CreateOrUpdateProgramsResponse, CreateOrUpdateProgramsRequest>) => {
-    return useMutation<CreateOrUpdateProgramsResponse, CreateOrUpdateProgramsRequest>(CREATE_OR_UPDATE_PROGRAMS, options);
+    return useMutation<CreateOrUpdateProgramsResponse, CreateOrUpdateProgramsRequest>(CREATE_OR_UPDATE_PROGRAMS, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_PROGRAMS ],
+    });
 };
 
 interface DeleteProgramRequest {
@@ -60,7 +63,10 @@ interface DeleteProgramResponse {
 }
 
 export const useDeleteProgram = (options?: MutationHookOptions<DeleteProgramResponse, DeleteProgramRequest>) => {
-    return useMutation<DeleteProgramResponse, DeleteProgramRequest>(DELETE_PROGRAM, options);
+    return useMutation<DeleteProgramResponse, DeleteProgramRequest>(DELETE_PROGRAM, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_PROGRAMS ],
+    });
 };
 
 interface EditProgramAgeRangesRequest {

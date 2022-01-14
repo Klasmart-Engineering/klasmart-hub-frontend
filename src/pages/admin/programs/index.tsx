@@ -123,7 +123,6 @@ export default function ProgramsPage (props: Props) {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             search={serverPagination.search}
-            refetch={refetch}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />
