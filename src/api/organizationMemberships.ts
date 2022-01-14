@@ -60,7 +60,10 @@ export interface UpdateOrganizationMembershipResponse {
 }
 
 export const useUpdateOrganizationMembership = (options?: MutationHookOptions<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>) => {
-    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION, options);
+    return useMutation<UpdateOrganizationMembershipResponse, UpdateOrganizationMembershipRequest>(EDIT_MEMBERSHIP_OF_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
 };
 
 export interface DeleteOrganizationMembershipRequest {
@@ -72,7 +75,10 @@ export interface DeleteOrganizationMembershipResponse {
 }
 
 export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
-    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, options);
+    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
 };
 
 export interface CreateOrganizationMembershipRequest {
@@ -94,7 +100,10 @@ export interface CreateOrganizationMembershipResponse {
 }
 
 export const useCreateOrganizationMembership = (options?: MutationHookOptions<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>) => {
-    return useMutation<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>(INVITE_USER_TO_ORGANIZATION, options);
+    return useMutation<CreateOrganizationMembershipResponse, CreateOrganizationMembershipRequest>(INVITE_USER_TO_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
 };
 
 export interface GetOrganizationMembershipRequest {

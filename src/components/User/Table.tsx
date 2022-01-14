@@ -167,7 +167,6 @@ export default function UserTable (props: Props) {
                     user_id: row.id,
                 },
             });
-            await refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `editDialog_deleteSuccess`,
             }), {
@@ -532,17 +531,15 @@ export default function UserTable (props: Props) {
             <EditUserDialog
                 open={editDialogOpen}
                 userId={selectedUserId}
-                onClose={(value) => {
+                onClose={() => {
                     setSelectedUserId(undefined);
                     setEditDialogOpen(false);
-                    if (value) refetch?.();
                 }}
             />
             <CreateUserDialog
                 open={createDialogOpen}
-                onClose={(value) => {
+                onClose={() => {
                     setCreateDialogOpen(false);
-                    if (value) refetch?.();
                 }}
             />
             <UploadUserCsvDialog
