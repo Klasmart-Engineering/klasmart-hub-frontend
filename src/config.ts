@@ -9,3 +9,5 @@ export const getAPIEndpoint = () => process.env.API_ENDPOINT ?? ``;
 export const getLiveEndpoint = () => process.env.LIVE_ENDPOINT ?? ``;
 
 export const getCookieDomain = () => process.env.COOKIE_DOMAIN ?? ``;
+
+export const getReportsEndpoint = () => process.env.REPORTS_ENDPOINT ?? ``;

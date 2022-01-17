@@ -1,8 +1,8 @@
 import App from "./app";
 import { cache } from "./cache";
-import { cancelRequestLink } from "./cancelRequest";
 import { getAPIEndpoint } from "./config";
-import CmsApiClientProvider from "./providers/CmsApiClientProvider";
+import CmsApiClientProvider from "./providers/CmsApiClient";
+import ReportsApiClientProvider from "./providers/ReportsApiClient";
 import {
     createDefaultStore,
     State,
@@ -15,7 +15,8 @@ import {
 } from "@apollo/client/core";
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { ApolloProvider } from "@apollo/client/react";
-import { ReactQueryDevtools } from "@kidsloop/cms-api-client";
+import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kidsloop/cms-api-client";
+import { ReactQueryDevtools as ReportsReactQueryDevtools } from "@kidsloop/reports-api-client";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { createUploadLink } from "apollo-upload-client";
@@ -78,25 +79,28 @@ export function ClientSide () {
     const locale = getLanguage(languageCode);
 
     return (
-        <CmsApiClientProvider>
-            <ApolloProvider client={client}>
-                <RawIntlProvider value={locale}>
-                    <ThemeProvider theme={themeProvider()}>
-                        <ConfirmDialogProvider>
-                            <PromptDialogProvider>
-                                <AlertDialogProvider>
-                                    <SnackbarProvider closeButtonLabel="Dismiss">
-                                        <CssBaseline />
-                                        <App />
-                                    </SnackbarProvider>
-                                </AlertDialogProvider>
-                            </PromptDialogProvider>
-                        </ConfirmDialogProvider>
-                    </ThemeProvider>
-                </RawIntlProvider>
-            </ApolloProvider>
-            {process.env.NODE_ENV === `development` && <ReactQueryDevtools />}
-        </CmsApiClientProvider>
+        <ReportsApiClientProvider>
+            <CmsApiClientProvider>
+                <ApolloProvider client={client}>
+                    <RawIntlProvider value={locale}>
+                        <ThemeProvider theme={themeProvider()}>
+                            <ConfirmDialogProvider>
+                                <PromptDialogProvider>
+                                    <AlertDialogProvider>
+                                        <SnackbarProvider closeButtonLabel="Dismiss">
+                                            <CssBaseline />
+                                            <App />
+                                        </SnackbarProvider>
+                                    </AlertDialogProvider>
+                                </PromptDialogProvider>
+                            </ConfirmDialogProvider>
+                        </ThemeProvider>
+                    </RawIntlProvider>
+                </ApolloProvider>
+                {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
+            </CmsApiClientProvider>
+            {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left"/>}
+        </ReportsApiClientProvider>
     );
 }
 

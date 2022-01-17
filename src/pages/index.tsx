@@ -1,3 +1,4 @@
+import HomeWidgets from "./dashboard";
 import {
     useGetMyUser,
     UserNode,
@@ -15,6 +16,7 @@ import { usePermission } from "@/utils/permissions";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import {
     Box,
+    CircularProgress,
     Container,
     Grid,
 } from "@material-ui/core";
@@ -28,6 +30,7 @@ import { Card } from "kidsloop-px";
 import { clamp } from "lodash";
 import React, {
     useEffect,
+    useMemo,
     useState,
 } from "react";
 
@@ -48,6 +51,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: `flex`,
         flexDirection: `column`,
     },
+    pageLoading: {
+        display: `flex`,
+        margin: `auto`,
+        height: `100% !important`,
+    },
 }));
 
 const now = new Date();
@@ -60,9 +68,8 @@ export default function HomePage () {
     const theme = useTheme();
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ page, setPage ] = useState(1);
-    const [ userInfo, setUserInfo ] = useState<UserNode>();
     const currentOrganization = useCurrentOrganization();
-    const permissionAttendLiveAsTeacher = usePermission(`attend_live_class_as_a_teacher_186`);
+    const { hasPermission: permissionAttendLiveAsTeacher = false, loading: loadingPermissionAttendLiveAsTeacher } = usePermission(`attend_live_class_as_a_teacher_186`, true);
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
     const canViewClasses = usePermission(`view_my_classes_20118`);
     const { data: userData } = useGetMyUser();
@@ -70,11 +77,8 @@ export default function HomePage () {
     const SCHEDULE_PAGE_SIZE = 20;
     const SCHEDULE_PAGE_START = 1;
 
-    useEffect(() => {
-        if (!userData) return;
-        const user = userData?.myUser.node;
-        setUserInfo(user);
-    }, [ userData ]);
+    const canViewNewReports = useMemo(() => permissionAttendLiveAsTeacher && process.env.SHOW_REPORT_CARDS === `true`, [ permissionAttendLiveAsTeacher ]);
+    const userInfo = useMemo(() => userData?.myUser.node, [ userData ]);
 
     const organizationId = currentOrganization?.organization_id ?? ``;
     const {
@@ -114,6 +118,13 @@ export default function HomePage () {
         });
         setSchedule([ ...schedule, ...schedulesData.data ]);
     }, [ currentOrganization, schedulesData ]);
+
+    if (loadingPermissionAttendLiveAsTeacher)
+        return <CircularProgress
+            color="primary"
+            className={classes.pageLoading}/>;
+
+    if (canViewNewReports) return <HomeWidgets />;
 
     return (
         <Container
@@ -197,10 +208,6 @@ export default function HomePage () {
                     <YourClasses />
                 </Box>
             }
-            {/* TODO : Find a way to display : "As a student, show my Teachers."" (priority low)
-            <Box mt={4}>
-                <YourTeachers />
-            </Box>*/}
         </Container>
     );
 }
