@@ -1,8 +1,8 @@
 import { PaginationFilter } from "./pagination";
-import { SubjectFilter } from "@/api/subjects";
+import { ProgramFilter } from "@/api/programs";
 import { Status } from "@/types/graphQL";
 
-export const buildProgramIdFilter = (programIds: string[]): PaginationFilter<SubjectFilter> => {
+export const buildProgramIdFilter = (programIds: string[]): PaginationFilter<ProgramFilter> => {
     const values = programIds.map((value) => {
         const programIdFilter = {
             programId: {
@@ -16,7 +16,7 @@ export const buildProgramIdFilter = (programIds: string[]): PaginationFilter<Sub
     return {
         AND: [
             {
-                OR: values as SubjectFilter[],
+                OR: values as ProgramFilter[],
             },
             {
                 status: {
