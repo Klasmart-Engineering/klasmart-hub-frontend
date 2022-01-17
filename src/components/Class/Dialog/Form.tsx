@@ -1,3 +1,4 @@
+import { CLASS_NAME_LENGTH_MAX } from "@/config/index";
 import { buildSchoolIdFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { Status } from "@/types/graphQL";
 import { useGetClassFormValues } from "@/utils/classFormDropdownValues";
@@ -168,8 +169,10 @@ export default function ClassDialogForm (props: Props) {
                     letternumeric(intl.formatMessage({
                         id: `classNameValidations_letternumeric`,
                     })),
-                    max(35, intl.formatMessage({
-                        id: `class_maxCharValidation`,
+                    max(CLASS_NAME_LENGTH_MAX, intl.formatMessage({
+                        id: `validation.error.class.name.maxLength`,
+                    }, {
+                        value: CLASS_NAME_LENGTH_MAX,
                     })),
                 ]}
                 loading={loading}

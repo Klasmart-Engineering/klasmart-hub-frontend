@@ -1,3 +1,14 @@
+import {
+    ORGANIZATION_ADDRESS1_LENGTH_MAX,
+    ORGANIZATION_ADDRESS1_LENGTH_MIN,
+    ORGANIZATION_ADDRESS2_LENGTH_MAX,
+    ORGANIZATION_NAME_LENGTH_MAX,
+    ORGANIZATION_NAME_LENGTH_MIN,
+    ORGANIZATION_PHONE_LENGTH_MAX,
+    ORGANIZATION_PHONE_LENGTH_MIN,
+    ORGANIZATION_SHORTCODE_LENGTH_MAX,
+    ORGANIZATION_SHORTCODE_LENGTH_MIN,
+} from "@/config/index";
 import { Organization } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import Grid from "@material-ui/core/Grid";
@@ -149,11 +160,15 @@ export default function OrganizationInfo (props: Props) {
                         validations={[
                             required(),
                             alphanumeric(),
-                            min(3, intl.formatMessage({
-                                id: `addOrganization_shortCodeMinError`,
+                            min(ORGANIZATION_SHORTCODE_LENGTH_MIN, intl.formatMessage({
+                                id: `validation.error.organization.shortcode.minLength`,
+                            }, {
+                                value: ORGANIZATION_SHORTCODE_LENGTH_MIN,
                             })),
-                            max(10, intl.formatMessage({
-                                id: `addOrganization_shortCodeMaxError`,
+                            max(ORGANIZATION_SHORTCODE_LENGTH_MAX, intl.formatMessage({
+                                id: `validation.error.organization.shortcode.maxLength`,
+                            }, {
+                                value: ORGANIZATION_SHORTCODE_LENGTH_MAX,
                             })),
                         ]}
                         id="shortCode"
@@ -191,11 +206,15 @@ export default function OrganizationInfo (props: Props) {
                         validations={[
                             required(),
                             letternumeric(),
-                            min(3, intl.formatMessage({
-                                id: `addOrganization_orgNameMinError`,
+                            min(ORGANIZATION_NAME_LENGTH_MIN, intl.formatMessage({
+                                id: `validation.error.organization.name.minLength`,
+                            }, {
+                                value: ORGANIZATION_NAME_LENGTH_MIN,
                             })),
-                            max(30, intl.formatMessage({
-                                id: `addOrganization_orgNameMaxError`,
+                            max(ORGANIZATION_NAME_LENGTH_MAX, intl.formatMessage({
+                                id: `validation.error.organization.name.maxLength`,
+                            }, {
+                                value: ORGANIZATION_NAME_LENGTH_MAX,
                             })),
                         ]}
                         id="orgName"
@@ -248,12 +267,16 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             required(),
-                            min(10, intl.formatMessage({
-                                id: `addOrganization_phoneMinError`,
+                            min(ORGANIZATION_PHONE_LENGTH_MIN, intl.formatMessage({
+                                id: `validation.error.organization.phone.minLength`,
+                            }, {
+                                value: ORGANIZATION_PHONE_LENGTH_MIN,
                             })),
                             phone(),
-                            max(15, intl.formatMessage({
-                                id: `addOrganization_phoneMaxError`,
+                            max(ORGANIZATION_PHONE_LENGTH_MAX, intl.formatMessage({
+                                id: `validation.error.organization.phone.maxLength`,
+                            }, {
+                                value: ORGANIZATION_PHONE_LENGTH_MAX,
                             })),
                         ]}
                         id="phoneNumber"
@@ -292,11 +315,15 @@ export default function OrganizationInfo (props: Props) {
                         validations={[
                             required(),
                             letternumeric(),
-                            min(3, intl.formatMessage({
-                                id: `addOrganization_address1MinError`,
+                            min(ORGANIZATION_ADDRESS1_LENGTH_MIN, intl.formatMessage({
+                                id: `validation.error.organization.address1.minLength`,
+                            }, {
+                                value: ORGANIZATION_ADDRESS1_LENGTH_MIN,
                             })),
-                            max(60, intl.formatMessage({
-                                id: `addOrganization_address1MaxError`,
+                            max(ORGANIZATION_ADDRESS1_LENGTH_MAX, intl.formatMessage({
+                                id: `validation.error.organization.address1.maxLength`,
+                            }, {
+                                value: ORGANIZATION_ADDRESS1_LENGTH_MAX,
                             })),
                         ]}
                         id="addressOne"
@@ -313,8 +340,10 @@ export default function OrganizationInfo (props: Props) {
                         className={classes.formInput}
                         validations={[
                             letternumeric(),
-                            max(60, intl.formatMessage({
-                                id: `addOrganization_address2MaxError`,
+                            max(ORGANIZATION_ADDRESS2_LENGTH_MAX, intl.formatMessage({
+                                id: `validation.error.organization.address2.maxLength`,
+                            }, {
+                                value: ORGANIZATION_ADDRESS2_LENGTH_MAX,
                             })),
                         ]}
                         id="addressTwo"

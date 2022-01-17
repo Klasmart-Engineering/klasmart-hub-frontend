@@ -3,6 +3,11 @@ import {
     RoleInfo,
 } from "@/components/Role/Dialog/CreateEdit";
 import { RoleRow } from "@/components/Role/Table";
+import {
+    ROLE_DESCRIPTION_LENGTH_MAX,
+    ROLE_NAME_LENGTH_MAX,
+    ROLE_NAME_LENGTH_MIN,
+} from "@/config/index";
 import { Status } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {
@@ -133,8 +138,16 @@ export default function RoleInfoCard (props: Props) {
                                     type="text"
                                     validations={[
                                         required(),
-                                        min(2),
-                                        max(20),
+                                        min(ROLE_NAME_LENGTH_MIN, intl.formatMessage({
+                                            id: `validation.error.role.name.minLength`,
+                                        }, {
+                                            value: ROLE_NAME_LENGTH_MIN,
+                                        })),
+                                        max(ROLE_NAME_LENGTH_MAX, intl.formatMessage({
+                                            id: `validation.error.role.name.maxLength`,
+                                        }, {
+                                            value: ROLE_NAME_LENGTH_MAX,
+                                        })),
                                         letternumeric(),
                                         ...roles
                                             .filter((role) => role.status === Status.ACTIVE)
@@ -154,7 +167,14 @@ export default function RoleInfoCard (props: Props) {
                                     })}
                                     variant="standard"
                                     type="text"
-                                    validations={[ max(30), letternumeric() ]}
+                                    validations={[
+                                        max(ROLE_DESCRIPTION_LENGTH_MAX, intl.formatMessage({
+                                            id: `validation.error.role.description.maxLength`,
+                                        }, {
+                                            value: ROLE_DESCRIPTION_LENGTH_MAX,
+                                        })),
+                                        letternumeric(),
+                                    ]}
                                     onChange={handleRoleDescriptionChange}
                                     onValidate={setRoleDescriptionIsValid}
                                 />
