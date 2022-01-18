@@ -60,7 +60,6 @@ export default function GradeTable (props: Props) {
         rowsPerPage,
         onTableChange,
         search,
-        refetch,
         showSelectables,
         order,
         orderBy,
@@ -188,7 +187,6 @@ export default function GradeTable (props: Props) {
                     id: row.id,
                 },
             });
-            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `grades_deleteSuccess`,
             }), {
@@ -267,20 +265,14 @@ export default function GradeTable (props: Props) {
             </Paper>
             <CreateGradeDialog
                 open={openCreateDialog}
-                onClose={(grade) => {
-                    if (grade) {
-                        refetch?.();
-                    }
+                onClose={() => {
                     setOpenCreateDialog(false);
                 }}
             />
             <EditGradeDialog
                 open={openEditDialog}
                 gradeId={selectedGradeId}
-                onClose={(grade) => {
-                    if (grade) {
-                        refetch?.();
-                    }
+                onClose={() => {
                     setSelectedGradeId(undefined);
                     setOpenEditDialog(false);
                 }}

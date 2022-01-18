@@ -95,7 +95,10 @@ export interface GetOrganizationGradesRequestPaginated {
 }
 
 export const useCreateUpdateGrade = (options?: MutationHookOptions<CreateUpdateGradeResponse, CreateUpdateGradeRequest>) => {
-    return useMutation<CreateUpdateGradeResponse, CreateUpdateGradeRequest>(CREATE_UPDATE_GRADES, options);
+    return useMutation<CreateUpdateGradeResponse, CreateUpdateGradeRequest>(CREATE_UPDATE_GRADES, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_GRADES ],
+    });
 };
 
 interface DeleteGradeRequest {
@@ -107,7 +110,10 @@ interface DeleteGradeResponse {
 }
 
 export const useDeleteGrade = (options?: MutationHookOptions<DeleteGradeResponse, DeleteGradeRequest>) => {
-    return useMutation<DeleteGradeResponse, DeleteGradeRequest>(DELETE_GRADE, options);
+    return useMutation<DeleteGradeResponse, DeleteGradeRequest>(DELETE_GRADE, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_GRADES ],
+    });
 };
 
 interface GetAllGradesRequest {
