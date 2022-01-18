@@ -145,6 +145,7 @@
     "react-minimal-pie-chart": "^8.2.0",
     "react-player": "^2.9.0",
     "react-redux": "^7.2.3",
+    "react-resize-detector": "^7.0.0",
     "react-router-dom": "^5.2.0",
     "react-use-localstorage": "^3.5.3",
     "recharts": "^2.0.9",

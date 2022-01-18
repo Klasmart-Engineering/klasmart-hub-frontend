@@ -1,5 +1,4 @@
 import "react-grid-layout/css/styles.css";
-import { UserNode } from "@/api/users";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetDashboardWelcomeBanner from "@/components/Dashboard/WidgetManagement/WidgetDashboardWelcomeBanner";
 import WidgetGrid from "@/components/Dashboard/WidgetManagement/WidgetGrid";
@@ -13,6 +12,7 @@ import {
 } from "@material-ui/core/styles";
 import React from "react";
 import { Layout } from "react-grid-layout";
+import ReactResizeDetector from 'react-resize-detector';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -69,13 +69,21 @@ export default function HomeWidgets (props: Props) {
                 <Container
                     maxWidth="xl"
                 >
-                    <WidgetGrid
-                        layouts={{
-                            lg: lgLayout,
-                            md: mdLayout,
-                            sm: smLayout,
-                        }}
-                        isDraggable={false} />
+                    <ReactResizeDetector
+                        handleWidth
+                        handleHeight
+                    >
+                        {() =>
+                            <WidgetGrid
+                                layouts={{
+                                    lg: lgLayout,
+                                    md: mdLayout,
+                                    sm: smLayout,
+                                }}
+                                isDraggable={false}
+                            />
+                        }
+                    </ReactResizeDetector>;
                 </Container>
             </Box>
         </Box>
