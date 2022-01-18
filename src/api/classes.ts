@@ -69,7 +69,10 @@ interface DeleteClassRequest {
 interface DeleteClassResponse { }
 
 export const useDeleteClass = (options?: MutationHookOptions<DeleteClassResponse, DeleteClassRequest>) => {
-    return useMutation<DeleteClassResponse, DeleteClassRequest>(DELETE_CLASS, options);
+    return useMutation<DeleteClassResponse, DeleteClassRequest>(DELETE_CLASS, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_CLASSES ],
+    });
 };
 
 interface CreateClassRequest {

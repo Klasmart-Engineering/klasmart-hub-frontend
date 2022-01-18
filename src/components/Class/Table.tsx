@@ -371,7 +371,6 @@ export default function ClassesTable (props: Props) {
                     class_id: row.id,
                 },
             });
-            refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `classes_classDeletedMessage`,
             }), {
