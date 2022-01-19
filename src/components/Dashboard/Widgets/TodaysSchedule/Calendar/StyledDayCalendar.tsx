@@ -12,6 +12,9 @@ interface Props {
     theme: Theme;
 }
 
+const SIZE_OF_HORIZONTAL_CALENDAR_SCALE = 5000;
+const SIZE_OF_VERTICAL_CALENDAR_SCALE = 2000;
+
 const StyledDayCalendar = styled(Calendar)((props: Props) => {
     const { theme } = props;
     return ({
@@ -75,7 +78,7 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
         },
         '&.rbc-calendar--vertical': {
             '& .rbc-time-column': {
-                minHeight: `500%`,
+                minHeight: SIZE_OF_VERTICAL_CALENDAR_SCALE,
             },
             '& .rbc-time-content': {
                 overflowY: `scroll`,
@@ -100,6 +103,13 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
             },
             '& .rbc-day-slot .rbc-events-container': {
                 marginRight: 0,
+            },
+            '& .rbc-time-header.rbc-overflowing': {
+                marginRight: `0!important`,
+                '& .rbc-time-header-content': {
+                    borderLeft: 0,
+                    paddingLeft: theme.spacing(1),
+                },
             },
             '& .rbc-event': {
                 '& p': {
@@ -172,7 +182,7 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
             },
             '& .rbc-time-column': {
                 flexDirection: `row`,
-                minWidth: `300%`,
+                minWidth: SIZE_OF_HORIZONTAL_CALENDAR_SCALE,
             },
             '& .rbc-time-view': {
                 flexDirection: `row`,

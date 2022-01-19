@@ -49,14 +49,16 @@ export default function TodaysSchedule () {
     useEffect(() => {
         const eventSchedule: DailyCalendarEvent[] | undefined = schedulesData?.data?.map<DailyCalendarEvent>((scheduleItem) => {
             const classIdentity = retrieveClassTypeIdentityOrDefault(scheduleItem.class_type);
+            const unixItemStartAt = scheduleItem.start_at * MILLISECONDS_IN_A_SECOND;
+            const unixItemEndArt = scheduleItem.end_at * MILLISECONDS_IN_A_SECOND;
 
             // todo: Add intl translation when available
             return {
                 title: classIdentity.intlKey,
                 subtitle: scheduleItem.title,
-                start: new Date((scheduleItem.start_at * MILLISECONDS_IN_A_SECOND)),
-                end: new Date(scheduleItem.end_at * MILLISECONDS_IN_A_SECOND),
-                allDay: scheduleItem.start_at <= unixStartOfDay && scheduleItem.end_at >= unixEndOfDay,
+                start: new Date(unixItemStartAt),
+                end: new Date(unixItemEndArt),
+                allDay: unixItemStartAt <= unixStartOfDay && unixItemEndArt >= unixEndOfDay,
                 backgroundColor: classIdentity.color,
                 icon: classIdentity.icon,
             };

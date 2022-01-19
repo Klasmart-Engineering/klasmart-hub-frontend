@@ -52,8 +52,8 @@ export default function HomeWidgets (props: Props) {
 
     const smLayout: Layout[] = [
         /* eslint-disable */
-        { i: WidgetType.SCHEDULE,           x: 0, y: 4, h: 3, w: 12 },
-        { i: WidgetType.NEXTCLASS,          x: 0, y: 0, h: 4, w: 12 },
+        { i: WidgetType.SCHEDULE,           x: 0, y: 4, h: 4, w: 12 },
+        { i: WidgetType.NEXTCLASS,          x: 0, y: 0, h: 3, w: 12 },
         { i: WidgetType.ATTENDANCERATE,     x: 0, y: 8, h: 3, w: 12 },
         { i: WidgetType.PENDINGASSESSMENTS, x: 0, y: 12, h: 3, w: 12 },
         { i: WidgetType.TEACHERLOAD,        x: 0, y: 16, h: 3, w: 12 },
