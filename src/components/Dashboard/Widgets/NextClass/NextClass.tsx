@@ -254,7 +254,7 @@ export default function NextClass () {
             label="Next Class"
             loading={isSchedulesFetching}
             link={{
-                url: `admin/classes`,
+                url: `schedule`,
                 label: `View all classes`,
             }}
         >
