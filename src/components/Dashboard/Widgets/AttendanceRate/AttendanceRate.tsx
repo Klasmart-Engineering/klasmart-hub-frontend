@@ -15,6 +15,7 @@ import {
     makeStyles,
 } from "@material-ui/core/styles";
 import { FiberManualRecord } from "@material-ui/icons";
+import { useWidth } from "kidsloop-px";
 import React,
 { useMemo } from "react";
 
@@ -24,8 +25,14 @@ const useStyles = makeStyles((theme: Theme) =>
             width: `100%`,
             height: `90%`,
             display: `grid`,
+        },
+        rootDesktop: {
             gridTemplateColumns: `65% 35%`,
             gridTemplateRows: `100%`,
+        },
+        rootMobile: {
+            gridTemplateColumns: `100%`,
+            gridTemplateRows: `70% 30%`,
         },
         titleWrapper: {
             display: `flex`,
@@ -47,7 +54,7 @@ export default function AttendanceRateWidget () {
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
-
+    const width = useWidth();
     const {
         data,
         isFetching,
@@ -61,6 +68,8 @@ export default function AttendanceRateWidget () {
         if (!data) return [];
         return attendanceRateDataFormatter(data, theme);
     }, [ data ]);
+
+    const defaultView = width !== `xs`;
 
     return (
         <WidgetWrapper
@@ -79,16 +88,19 @@ export default function AttendanceRateWidget () {
                 <Typography className={classes.title}>Last 7 days</Typography>
             </div>
 
-            {data && <div className={classes.root}>
+            {data && <div
+                className={`${classes.root} ${defaultView ? classes.rootDesktop : classes.rootMobile}`} >
                 <DonutWithText
                     data={formattedData}
                     options={{
-                        pieSize: 100,
-                        radiusWidth: 24,
+                        pieSize: defaultView ? 100 : 70,
+                        radiusWidth: defaultView? 24 : 16,
                         padAngle: 0,
                     }}
                 />
-                <Legend data={formattedData} />
+                <Legend
+                    data={formattedData}
+                    format={defaultView ? `desktop` : `mobile`}/>
             </div>
             }
         </WidgetWrapper>

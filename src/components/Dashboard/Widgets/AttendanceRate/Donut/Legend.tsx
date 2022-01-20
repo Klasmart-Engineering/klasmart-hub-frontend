@@ -11,6 +11,7 @@ import React from "react";
 
 type Props = {
     data: Data[];
+    format: "desktop" | "mobile";
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -19,42 +20,61 @@ const useStyles = makeStyles((theme: Theme) =>
             display: `flex`,
             flexDirection: `column`,
             justifyContent: `space-evenly`,
-            paddingLeft: 50,
+        },
+        rootDesktop: {
+            flexDirection: `column`,
+        },
+        rootMobile: {
+            flexDirection: `row`,
         },
         container: {
             display: `flex`,
-            flexDirection: `column`,
             alignItems: `left`,
             width: `100%`,
+            flexDirection: `column`,
         },
         title: {
             color: theme.palette.grey[700],
-            fontSize: 12,
             marginRight: 10,
         },
-
+        titleDesktop: {
+            fontSize: `1em`,
+            textAlign: `left`,
+        },
+        titleMobile: {
+            fontSize: `0.8em`,
+            textAlign: `center`,
+        },
         percentage: {
-            fontSize: 32,
             fontWeight: 400,
+        },
+        percentageDesktop: {
+            fontSize: `2em`,
+            textAlign: `left`,
+        },
+        percentageMobile: {
+            fontSize: `1.8em`,
+            textAlign: `center`,
         },
     }));
 
 export default function Legend (props: Props) {
     const classes = useStyles();
-    const { data } = props;
+    const { data, format } = props;
 
     return (
-        <div className={classes.root}>
+        <div
+            className={`${classes.root} ${format === `desktop` ? classes.rootDesktop : classes.rootMobile}`}>
             {data && data.map(item => {
                 return (
                     <div
                         key={item.label}
                         className={classes.container}>
-                        <Typography className={classes.title}>
+                        <Typography className={`${classes.title} ${format === `desktop` ? classes.titleDesktop : classes.titleMobile}`}>
                             {item.label}
                         </Typography>
                         <Typography
-                            className={classes.percentage}
+                            className={`${classes.percentage} ${format === `desktop` ? classes.percentageDesktop : classes.percentageMobile}`}
                             style={{
                                 color: item.color,
                             }}>
