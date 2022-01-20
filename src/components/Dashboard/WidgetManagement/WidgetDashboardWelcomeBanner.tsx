@@ -1,14 +1,14 @@
+import LastUpdatedMessage from "./LastUpdatedMessage";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
 import {
     alpha,
     Box,
     Container,
-    Theme,
-} from "@material-ui/core";
-import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
+    Theme,
+    Typography,
+} from "@material-ui/core";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -19,10 +19,20 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     pageHeader: {
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
+    welcomeTitle: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(4),
+    },
+    lastUpdatedText:{
+        fontWeight: `bold`,
+        color: theme.palette.grey[500],
+        "& span":{
+            fontWeight: `normal`,
+        },
+    },
 }));
 
-interface Props {
-}
+interface Props {}
 
 export default function WidgetDashboardWelcomeBanner (props: Props) {
     const classes = useStyles();
@@ -37,7 +47,20 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center">
-                    <WidgetDashboardWelcomeMessage />
+                    <Box>
+                        <Typography
+                            variant="h4"
+                            className={classes.welcomeTitle}
+                        >
+                            <WidgetDashboardWelcomeMessage />
+                        </Typography>
+                        <Typography
+                            variant="subtitle2"
+                            className={classes.lastUpdatedText}
+                        >
+                            <LastUpdatedMessage/>
+                        </Typography>
+                    </Box>
                 </Box>
             </Container>
         </Box>

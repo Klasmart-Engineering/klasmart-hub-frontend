@@ -1,35 +1,23 @@
-import {
-    useGetMyUser,
-    UserNode,
-} from "@/api/users";
-import {
-    Box,
-    lighten,
-    Typography,
-} from "@material-ui/core";
+import { useGetMyUser } from "@/api/users";
 import {
     createStyles,
     makeStyles,
-    useTheme,
-} from "@material-ui/core/styles";
+} from "@material-ui/core";
 import React from "react";
-import {
-    FormattedDate,
-    FormattedMessage,
-} from "react-intl";
+import { FormattedMessage } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
-    welcomeTitle: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(4),
-    },
+const useStyles = makeStyles(() => createStyles({
     welcomeTitleGivenName: {
         fontWeight: `bold`,
-        fontSize: `1em`,
-        marginBottom: 0,
-        marginTop: theme.spacing(1),
     },
 }));
+
+enum TimeOfDayId {
+    MORNING = `home.banner.welcome.morning`,
+    AFTERNOON = `home.banner.welcome.afternoon`,
+    EVENING = `home.banner.welcome.evening`,
+    UNKNOWN = `home.banner.welcome.generic`
+}
 
 interface Props {}
 
@@ -38,31 +26,30 @@ export default function WidgetDashboardWelcomeMessage (props: Props) {
     const { data: userData } = useGetMyUser();
     const givenName = userData?.myUser.node.givenName;
 
-    return (
-        <Box>
-            <Typography
-                variant="h4"
-                className={classes.welcomeTitle}
-            >
-                {(givenName)
-                    ? (
-                        <FormattedMessage
-                            id="home_welcomeLabel"
-                            values={{
-                                userName: (
-                                    <span className={classes.welcomeTitleGivenName}>
-                                        {givenName}
-                                    </span>
-                                ),
-                            }}
-                        />
-                    ) : (
-                        <FormattedMessage
-                            id="home_welcomeGenericLabel"
-                        />
-                    )
-                }
-            </Typography>
-        </Box>
-    );
+    const getTimeOfDayId = () => {
+        const now = new Date();
+        const time = `${String(now.getHours()).padStart(2, `0`)}:${String(now.getMinutes()).padStart(2, `0`)}`;
+
+        if (time >= `05:00` && time <= `11:59`) return TimeOfDayId.MORNING;
+        if (time >= `12:00` && time <= `16:59`) return  TimeOfDayId.AFTERNOON;
+        if (time >= `17:00` && time <= `23:59`) return TimeOfDayId.EVENING;
+        if (time >= `00:00` && time <= `04:59`) return TimeOfDayId.EVENING;
+
+        return TimeOfDayId.UNKNOWN;
+    };
+
+    const timeOfDayId = getTimeOfDayId();
+
+    if (!givenName || timeOfDayId === TimeOfDayId.UNKNOWN) return <FormattedMessage id={TimeOfDayId.UNKNOWN}/>;
+
+    return <FormattedMessage
+        id={timeOfDayId}
+        values={{
+            givenName: (
+                <span className={classes.welcomeTitleGivenName}>
+                    {givenName}
+                </span>
+            ),
+        }}
+    />;
 }
