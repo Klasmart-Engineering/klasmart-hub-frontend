@@ -135,6 +135,10 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
+const now = new Date();
+const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
+const maxDays = 14;
+
 export default function NextClass () {
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const classes = useStyles();
@@ -142,38 +146,32 @@ export default function NextClass () {
     const restApi = useRestAPI();
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
-    const [ page, setPage ] = useState(1);
-
-    const currentOrganization = useCurrentOrganization();
-
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
     const [ nextClassRoster, setNextClassRoster ] = useState<{
         students: ClassUser[];
         teachers: ClassUser[];
     }>();
     const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
+
+    const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
 
-    const now = new Date();
     const secondsBeforeClassCanStart = 900;
 
-    const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-    const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
-    const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
-
-    const SCHEDULE_PAGE_SIZE = 20;
+    const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
+    const unixEndOfDateRange = new Date(now.getFullYear(), now.getMonth(), now.getDate() + maxDays, 23, 59, 59).getTime();
 
     const {
         data: schedulesData,
         isFetching: isSchedulesFetching,
+        error: isScheduleError,
+        refetch,
     } = usePostSchedulesTimeViewList({
         org_id: organizationId,
         view_type: `full_view`,
-        page,
-        page_size: SCHEDULE_PAGE_SIZE,
         time_at: 0, // any time is ok together with view_type=`full_view`,
-        start_at_ge: todayTimestamp,
-        end_at_le: twoWeeksFromTodayTimestamp,
+        start_at_ge: (unixStartOfDay / 1000),
+        end_at_le: (unixEndOfDateRange / 1000),
         time_zone_offset: timeZoneOffset,
         order_by: `start_at`,
         time_boundary: `union`,
@@ -222,14 +220,16 @@ export default function NextClass () {
     }, [ nextClass ]);
 
     useEffect(() => {
-        if (!currentOrganization || !schedulesData?.data.length) return;
+        if (!schedulesData?.data.length) { setSchedule([]); return;}
+
         schedulesData.data.sort((a, b) => {
             const startDiff = a.start_at - b.start_at;
             if (startDiff === 0) return a.title.localeCompare(b.title);
             return startDiff;
         });
-        setSchedule([ ...schedule, ...schedulesData.data ]);
-    }, [ currentOrganization, schedulesData ]);
+
+        setSchedule([ ...schedulesData.data ]);
+    }, [ schedulesData ]);
 
     useEffect(() => {
         if (timeBeforeClass > secondsBeforeClassCanStart || !nextClass) return;
@@ -253,6 +253,9 @@ export default function NextClass () {
         <WidgetWrapper
             label="Next Class"
             loading={isSchedulesFetching}
+            error={isScheduleError}
+            noData={false}
+            reload={refetch}
             link={{
                 url: `schedule`,
                 label: `View all classes`,
@@ -442,7 +445,6 @@ export default function NextClass () {
                         <Typography color="primary">
                             <FormattedMessage id="nextClass_noClass" />
                         </Typography>
-
                     </div>
                 )}
             </Box>
