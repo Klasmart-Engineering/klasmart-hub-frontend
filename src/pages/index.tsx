@@ -69,7 +69,7 @@ export default function HomePage () {
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ page, setPage ] = useState(1);
     const currentOrganization = useCurrentOrganization();
-    const { hasPermission: permissionAttendLiveAsTeacher = false, loading: loadingPermissionAttendLiveAsTeacher } = usePermission(`attend_live_class_as_a_teacher_186`, true);
+    const { hasPermission: permissionViewMyClassUser = false, loading: loadingPermissionViewMyClassUser } = usePermission(`view_my_class_users_40112`, true);
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
     const canViewClasses = usePermission(`view_my_classes_20118`);
     const { data: userData } = useGetMyUser();
@@ -77,7 +77,7 @@ export default function HomePage () {
     const SCHEDULE_PAGE_SIZE = 20;
     const SCHEDULE_PAGE_START = 1;
 
-    const canViewNewReports = useMemo(() => permissionAttendLiveAsTeacher && process.env.SHOW_REPORT_CARDS === `true`, [ permissionAttendLiveAsTeacher ]);
+    const canViewNewReports = useMemo(() => permissionViewMyClassUser && process.env.SHOW_REPORT_CARDS === `true`, [ permissionViewMyClassUser ]);
     const userInfo = useMemo(() => userData?.myUser.node, [ userData ]);
 
     const organizationId = currentOrganization?.organization_id ?? ``;
@@ -119,7 +119,7 @@ export default function HomePage () {
         setSchedule([ ...schedule, ...schedulesData.data ]);
     }, [ currentOrganization, schedulesData ]);
 
-    if (loadingPermissionAttendLiveAsTeacher)
+    if (loadingPermissionViewMyClassUser)
         return <CircularProgress
             color="primary"
             className={classes.pageLoading}/>;
@@ -174,7 +174,7 @@ export default function HomePage () {
                                 </Card>
                             </Grid>
                         )}
-                        {permissionAttendLiveAsTeacher && (
+                        {permissionViewMyClassUser && (
                             <Grid
                                 item
                                 style={{
