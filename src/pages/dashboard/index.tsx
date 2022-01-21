@@ -83,10 +83,9 @@ export default function HomeWidgets (props: Props) {
                                 isDraggable={false}
                             />
                         }
-                    </ReactResizeDetector>;
+                    </ReactResizeDetector>
                 </Container>
             </Box>
         </Box>
-
     );
 }
