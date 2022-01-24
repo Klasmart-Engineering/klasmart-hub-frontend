@@ -17,6 +17,7 @@ import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import {
     Box,
     createStyles,
+    darken,
     Divider,
     Fab,
     Grid,
@@ -103,9 +104,10 @@ const useStyles = makeStyles((theme) => createStyles({
     },
     liveButton: {
         padding: `2.5rem`,
-    },
-    liveButtonText:{
-        color: theme.palette.getContrastText(theme.palette.primary.main),
+        color: theme.palette.common.white,
+        "&:hover": {
+            backgroundColor: darken(theme.palette.primary.main, 0.2),
+        },
     },
     warningText: {
         color: theme.palette.error.main,
@@ -340,12 +342,12 @@ export default function NextClass () {
                                         onClick={() => goLive()}
                                     >
                                         {timeBeforeClass < secondsBeforeClassCanStart ? (
-                                            <Typography className={classes.liveButtonText}>
+                                            <Typography>
                                                 <FormattedMessage id="live_liveButton" />
                                             </Typography>
 
                                         ) : (
-                                            <Typography className={classes.liveButtonText}>
+                                            <Typography>
                                                 <FormattedRelativeTime
                                                     value={timeBeforeClass}
                                                     updateIntervalInSeconds={1}
