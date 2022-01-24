@@ -127,7 +127,9 @@ export default function DailySchedule (props: Props) {
             style={{
                 width:`100%`,
                 height:`100%`,
-            }}>
+            }}
+            onMouseLeave={() => eventFocused && setEventFocused(false)}
+        >
             <StyledDayCalendar
                 className={clsx({
                     [`rbc-calendar--event-focused`]: eventFocused,

@@ -13,7 +13,7 @@ import React from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     calendarLabel: {
-        padding: theme.spacing(0, 1, .8, 1),
+        padding: theme.spacing(.25, 1),
         color: `white`,
         border: `1px solid rgba(255, 255, 255, 0.25)`,
         borderRadius: 15,
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     title: {
         fontWeight: `bold`,
-        paddingLeft: theme.spacing(.5),
+        paddingLeft: theme.spacing(.8),
         whiteSpace: `nowrap`,
         overflow: `hidden`,
         textOverflow: `ellipsis`,
@@ -75,7 +75,10 @@ export default function DailyScheduleEvent (props: Props) {
                 }
                 <Typography className={classes.title}>{ event.title }</Typography>
             </Box>
-            <Typography className={classes.subtitle}>{ event.subtitle }</Typography>
+            {
+                event.subtitle &&
+                    <Typography className={classes.subtitle}>{ event.subtitle }</Typography>
+            }
         </div>
     );
 }

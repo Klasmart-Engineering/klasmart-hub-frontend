@@ -31,6 +31,7 @@ export default function TodaysSchedule () {
         data: schedulesData,
         isFetching: isSchedulesFetching,
         isError: isScheduleError,
+        refetch,
     } = usePostSchedulesTimeViewList({
         org_id: organizationId,
         view_type: `full_view`,
@@ -52,10 +53,8 @@ export default function TodaysSchedule () {
             const unixItemStartAt = scheduleItem.start_at * MILLISECONDS_IN_A_SECOND;
             const unixItemEndArt = scheduleItem.end_at * MILLISECONDS_IN_A_SECOND;
 
-            // todo: Add intl translation when available
             return {
-                title: classIdentity.intlKey,
-                subtitle: scheduleItem.title,
+                title: scheduleItem.title,
                 start: new Date(unixItemStartAt),
                 end: new Date(unixItemEndArt),
                 allDay: unixItemStartAt <= unixStartOfDay && unixItemEndArt >= unixEndOfDay,
@@ -72,6 +71,8 @@ export default function TodaysSchedule () {
         <WidgetWrapper
             label="Schedule"
             error={isScheduleError}
+            noData={false}
+            reload={refetch}
             loading={isSchedulesFetching}
             link={{
                 url: `schedule`,

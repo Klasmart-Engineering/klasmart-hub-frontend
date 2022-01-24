@@ -11,7 +11,7 @@ type ScheduleOrientationMode = `horizontal` | `vertical`;
 interface DailyCalendarEvent extends Event {
     icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
     backgroundColor?: string;
-    subtitle: string;
+    subtitle?: string;
 }
 
 interface DailyCalendarEventWrapperProps extends EventWrapperProps {
@@ -72,7 +72,7 @@ const saveInitialPositions = (el: HTMLElement) => {
 
 // Horizontally we will overlap times to ensure decent spacing we need to determine how many events are stacked via the top value and move it up in equal amounts
 const calculateHorizontalOverlap = (top: string): number => {
-    const eventHeightAllowance = 32;
+    const eventHeightAllowance = 30;
     const percentage = parseInt(top) / 100;
     return -eventHeightAllowance*percentage;
 };

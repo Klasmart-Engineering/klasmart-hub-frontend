@@ -37,6 +37,8 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
             '& .rbc-event, .rbc-day-slot .rbc-background-event': {
                 border: `none`,
                 background: `none`,
+                minWidth: 0,
+                minHeight: 0,
                 padding: 0,
                 '& .rbc-event-label': {
                     display: `none`,
@@ -61,7 +63,7 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
             },
             '& .rbc-time-content .rbc-event': {
                 opacity: 1,
-                transition: `.5s opacity`,
+                transition: `opacity .5s ease, min-width .5s ease, min-height .5s ease`,
                 borderRadius: `0!important`,
             },
             '&.rbc-calendar--event-focused .rbc-time-content .rbc-event': {
@@ -123,6 +125,9 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
                     borderBottomLeftRadius: 0,
                     borderBottomRightRadius: 0,
                 },
+            },
+            '& .rbc-time-content .rbc-event:hover, & .rbc-time-content .rbc-event:focus, & .rbc-time-content .rbc-event:focus-within': {
+                minHeight: theme.spacing(10),
             },
         },
         '&.rbc-calendar--horizontal': {
@@ -206,6 +211,9 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                 },
+            },
+            '& .rbc-time-content .rbc-event:hover, & .rbc-time-content .rbc-event:focus, & .rbc-time-content .rbc-event:focus-within': {
+                minWidth: theme.spacing(20),
             },
         },
     });}, {
