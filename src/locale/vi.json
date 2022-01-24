@@ -1058,7 +1058,7 @@
     "home.nextClass.containerUrlLabel": "View all classes",
     "home.nextClass.title": "Your next live class is",
     "home.nextClass.noClass": "You don't have any upcoming live class scheduled!",
-    "home.nextClass.teachersTitle": "{home.nextClass.teachersTitle, plural, one {Teacher} other {Teachers}}",
+    "home.nextClass.teachersTitle": "{count, plural, one {Teacher} other {Teachers}}",
     "home.nextClass.alreadyStarted": "Class already started",
     "home.nextClass.startsSoon": "Class starts soon",
     "home.nextClass.goLive": "Join Now",
