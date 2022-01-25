@@ -3,7 +3,7 @@ import {
     useGetPaginatedAgeRangesList,
 } from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
-import { AgeRangeRow } from "@/components/AgeRange/Table";
+import { AgeRangeRow } from "@/components/AgeRanges/Table";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     AgeRange,
@@ -142,7 +142,7 @@ export const useAgeRangesFilters = (orgId: string, skip?: boolean) => {
             }),
         },
         returnPartialData: true,
-        fetchPolicy: `no-cache`,
+        fetchPolicy: `cache-first`,
         skip: !orgId || skip,
     });
 

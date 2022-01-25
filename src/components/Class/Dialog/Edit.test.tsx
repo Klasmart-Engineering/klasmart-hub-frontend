@@ -39,7 +39,7 @@ import {
 } from "@tests/mockDataSchools";
 import {
     mathId1,
-    mockSubjectsConnection,
+    mockSubjects,
     subjectA,
 } from "@tests/mockDataSubjects";
 import { render } from "@tests/utils/render";
@@ -159,7 +159,9 @@ const mocks: MockedResponse[] = [
             },
         },
         result: {
-            data: mockSubjectsConnection,
+            data: {
+                subjectsConnection: mockSubjects,
+            },
         },
     },
 ];

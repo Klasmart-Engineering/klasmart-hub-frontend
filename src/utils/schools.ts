@@ -2,13 +2,14 @@ import {
     SchoolEdge,
     SchoolNode,
 } from "@/api/schools";
+import { SchoolStepper } from "@/components/School/Dialog/Steps/shared";
 import { SchoolRow } from "@/components/School/Table";
 import {
-    School,
+    SchoolDeprecated,
     Status,
 } from "@/types/graphQL";
 
-export const buildEmptySchool = (school?: School): School => ({
+export const buildEmptySchool = (school?: SchoolDeprecated): SchoolDeprecated => ({
     school_id: school?.school_id ?? ``,
     school_name: school?.school_name ?? ``,
     classes: school?.classes ?? [],
@@ -18,11 +19,20 @@ export const buildEmptySchool = (school?: School): School => ({
     status: school?.status,
 });
 
-export const mapSchoolNodeToSchool = (node: SchoolNode): School => ({
-    school_id: node.id,
-    school_name: node.name,
-    status: node.status,
-    shortcode: node.shortCode,
+export const buildEmptySchoolNode = (): SchoolStepper => ({
+    id: ``,
+    name: ``,
+    status: Status.ACTIVE,
+    shortcode: ``,
+    programIds: [],
+});
+
+export const mapSchoolNodeToSchoolStepper = (node: SchoolNode, programIds?: string[]): SchoolStepper => ({
+    id: node?.id ?? ``,
+    name: node?.name ?? ``,
+    status: node?.status ?? Status.ACTIVE,
+    shortcode: node?.shortCode ?? ``,
+    programIds: programIds ?? [],
 });
 
 export const mapSchoolNodeToSchoolRow = (node: SchoolNode): SchoolRow => ({

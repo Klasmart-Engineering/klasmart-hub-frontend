@@ -55,7 +55,7 @@ export const mockSubjectsStep: SubjectEdge[] = [
 export const mockSubjects: GetAllSubjectsPaginatedResponse['subjectsConnection'] = {
     totalCount: 10,
     pageInfo: {
-        hasNextPage: true,
+        hasNextPage: false,
         hasPreviousPage: false,
         startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
         endCursor: `eyJjbGFzc19pZCI6Ijc0NWU3OTYwLTUzZDEtNGM0Mi1iYzE1LWI4ZDBiOGY0OWFiOCIsImNsYXNzX25hbWUiOiJKdW5pb3IifQ==`,
@@ -295,16 +295,39 @@ export const mockSubjectDetail = {
     },
 };
 
-export const mockSubjectsConnection = {
-    subjectsConnection: {
-        totalCount: 2,
-        pageInfo: {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
-            endCursor: `eyJjbGFzc19pZCI6Ijc0NWU3OTYwLTUzZDEtNGM0Mi1iYzE1LWI4ZDBiOGY0OWFiOCIsImNsYXNzX25hbWUiOiJKdW5pb3IifQ==`,
-        },
-        edges: mockSubjectsStep,
+export const mockSubjectsFilterList: GetAllSubjectsPaginatedResponse['subjectsConnection'] = {
+    totalCount: 2,
+    pageInfo: {
+        hasNextPage: true,
+        hasPreviousPage: false,
+        startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+        endCursor: `eyJjbGFzc19pZCI6Ijc0NWU3OTYwLTUzZDEtNGM0Mi1iYzE1LWI4ZDBiOGY0OWFiOCIsImNsYXNzX25hbWUiOiJKdW5pb3IifQ==`,
     },
-
+    edges:[
+        {
+            node: {
+                id: mathId1,
+                name: `Math Grade 5`,
+                status: Status.ACTIVE,
+                system: false,
+                categories: [
+                    {
+                        id: categoryId1,
+                        name: `Algebra`,
+                        status: Status.ACTIVE,
+                        system: false,
+                    },
+                ],
+            },
+        },
+        {
+            node: {
+                id: mathId2,
+                name: `Math Grade 6`,
+                status: Status.ACTIVE,
+                system: false,
+                categories: [],
+            },
+        },
+    ],
 };

@@ -1,15 +1,13 @@
 import {
     buildEmptySchool,
-    mapSchoolNodeToSchool,
     mapSchoolNodeToSchoolRow,
+    mapSchoolNodeToSchoolStepper,
     sortSchoolNames,
 } from "./schools";
 import { SchoolNode } from "@/api/schools";
+import { SchoolStepper } from "@/components/School/Dialog/Steps/shared";
 import { SchoolRow } from "@/components/School/Table";
-import {
-    School,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { schoolB } from "@tests/mocks/mockSchools";
 
 describe(`schools utilities functions`, () => {
@@ -49,13 +47,14 @@ describe(`schools utilities functions`, () => {
             status: Status.ACTIVE,
             shortCode: `4L5QHEV0NO`,
         };
-        const school: School = {
-            school_id: `8850c355-84eb-4244-b7f3-cd4aa1f85973`,
-            school_name: `awdawd`,
+        const school: SchoolStepper = {
+            id: `8850c355-84eb-4244-b7f3-cd4aa1f85973`,
+            name: `awdawd`,
             status: Status.ACTIVE,
             shortcode: `4L5QHEV0NO`,
+            programIds: [],
         };
-        expect(mapSchoolNodeToSchool(schoolNode)).toStrictEqual(school);
+        expect(mapSchoolNodeToSchoolStepper(schoolNode)).toStrictEqual(school);
     });
 
     test(`mapSchoolNodeToSchoolRow`, () => {

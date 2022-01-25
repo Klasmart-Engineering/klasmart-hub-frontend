@@ -1,4 +1,4 @@
-import { School } from "@/types/graphQL";
+import { SchoolStepper } from "./shared";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
 import {
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export default function SchoolInfoStep (props: EntityStepContent<School>) {
+export default function SchoolInfoStep (props: EntityStepContent<SchoolStepper>) {
     const {
         value,
         disabled,
@@ -35,22 +35,22 @@ export default function SchoolInfoStep (props: EntityStepContent<School>) {
         letternumeric,
         max,
     } = useValidations();
-    const [ schoolName, setSchoolName ] = useState(value.school_name ?? ``);
+    const [ schoolName, setSchoolName ] = useState(value.name ?? ``);
     const [ shortCode, setShortCode ] = useState(value.shortcode ?? ``);
 
     useEffect(() => {
         const {
-            school_name,
+            name,
             shortcode,
         } = value;
-        setSchoolName(school_name ?? ``);
+        setSchoolName(name ?? ``);
         setShortCode(shortcode ?? ``);
     }, [ value ]);
 
     useEffect(() => {
         onChange?.({
             ...value,
-            school_name: schoolName,
+            name: schoolName,
             shortcode: shortCode,
         });
     }, [ schoolName, shortCode ]);
@@ -60,13 +60,14 @@ export default function SchoolInfoStep (props: EntityStepContent<School>) {
             <Paper className={classes.paper}>
                 <TextField
                     fullWidth
+                    id={`schoolName`}
                     label={intl.formatMessage({
                         id: `schools_schoolNameLabel`,
                     })}
                     value={schoolName}
                     disabled={disabled}
                     hideHelperText={disabled}
-                    autoFocus={!value.school_id}
+                    autoFocus={!value.id}
                     validations={[
                         required(`The school name is required.`),
                         letternumeric(intl.formatMessage({
@@ -84,6 +85,7 @@ export default function SchoolInfoStep (props: EntityStepContent<School>) {
             <Paper className={classes.paper}>
                 <TextField
                     fullWidth
+                    id={`shortCode`}
                     label={intl.formatMessage({
                         id: `schools_shortCodeLabel`,
                     })}

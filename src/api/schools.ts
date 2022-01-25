@@ -1,16 +1,18 @@
+import { ProgramEdge } from "./programs";
 import { DELETE_SCHOOL } from "@/operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "@/operations/mutations/editSchool";
 import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms";
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
 import { UPLOAD_SCHOOLS_CSV } from "@/operations/mutations/uploadSchoolsCsv";
 import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { GET_SCHOOL } from "@/operations/queries/getSchool";
+import { GET_SCHOOL_NODE } from "@/operations/queries/getSchoolNode";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     BaseEntity,
     Organization,
+    PageInfo,
     Program,
-    School,
+    SchoolDeprecated,
     Status,
     StringFilter,
     UuidFilter,
@@ -39,7 +41,7 @@ interface CreateSchoolRequest {
 
 interface CreateSchoolResponse {
     organization: {
-        createSchool: School;
+        createSchool: SchoolDeprecated;
     };
 }
 
@@ -65,7 +67,7 @@ interface UpdateSchoolRequest {
 interface UpdateSchoolResponse {
     school: {
         school_id: string;
-        set: School[];
+        set: SchoolDeprecated[];
     };
 }
 
@@ -116,16 +118,18 @@ export const useGetSchools = (options?: QueryHookOptions<GetSchoolsResponse, Get
     return useQuery<GetSchoolsResponse, GetSchoolsRequest>(GET_SCHOOLS_FROM_ORGANIZATION, options);
 };
 
-interface GetSchoolRequest {
-    school_id: string;
+interface GetSchoolNodeRequest {
+    id: string;
+    programCount?: number;
+    programCursor?: string;
 }
 
-interface GetSchoolResponse {
-    school: School;
+interface GetSchoolNodeResponse {
+    schoolNode: SchoolNode;
 }
 
-export const useGetSchool = (options?: QueryHookOptions<GetSchoolResponse, GetSchoolRequest>) => {
-    return useQuery<GetSchoolResponse, GetSchoolRequest>(GET_SCHOOL, options);
+export const useGetSchoolNode = (options?: QueryHookOptions<GetSchoolNodeResponse, GetSchoolNodeRequest>) => {
+    return useQuery<GetSchoolNodeResponse, GetSchoolNodeRequest>(GET_SCHOOL_NODE, options);
 };
 
 interface UploadSchoolsCsvResponse {
@@ -158,6 +162,11 @@ export interface SchoolNode {
     name: string;
     status: Status;
     shortCode: string;
+    programsConnection?: {
+        edges: ProgramEdge[];
+        pageInfo: PageInfo;
+        total?: number;
+    };
 }
 
 export interface SchoolEdge {

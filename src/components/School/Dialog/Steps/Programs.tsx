@@ -1,3 +1,4 @@
+import { SchoolStepper } from "./shared";
 import { useGetAllPaginatedPrograms } from "@/api/programs";
 import ProgramsTable,
 { ProgramRow } from "@/components/Program/Table";
@@ -6,10 +7,7 @@ import {
     buildProgramFilters,
 } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    isActive,
-    School,
-} from "@/types/graphQL";
+import { isActive } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
@@ -37,7 +35,9 @@ import React,
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function ProgramsStep (props: EntityStepContent<School>) {
+interface Props extends EntityStepContent<SchoolStepper> {}
+
+export default function ProgramsStep (props: Props) {
     const {
         value,
         disabled,
@@ -78,8 +78,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
         notifyOnNetworkStatusChange: true,
     });
 
-    const selectedIds = value?.programs?.map((program) => program.id ?? ``) ?? [];
-
+    const selectedIds = value.programIds ?? [];
     const selectedProgramsError = required()(selectedIds);
 
     const handleTableChange = async (tableData: CursorTableData<ProgramRow>) => {
@@ -107,9 +106,7 @@ export default function ProgramsStep (props: EntityStepContent<School>) {
     const handleSelected = (ids: string[]) => {
         onChange?.({
             ...value,
-            programs: ids.map((id) => ({
-                id: id ?? ``,
-            })),
+            programIds: ids,
         });
     };
 

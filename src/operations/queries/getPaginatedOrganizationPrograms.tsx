@@ -66,6 +66,13 @@ export const buildOrganizationProgramFilter = (filter: ProgramPaginationFilter):
     ],
 });
 
+export const buildSchoolProgramFilter = (schoolId: string): ProgramFilter => ({
+    schoolId: {
+        operator: `eq`,
+        value: schoolId,
+    },
+});
+
 export const buildProgramIdsFilter = (ids: string[]): ProgramFilter => ({
     OR: ids.map((id) => ({
         id: {

@@ -1,4 +1,3 @@
-import { ProgramEdge } from "@/api/programs";
 import {
     Dispatch,
     SetStateAction,
@@ -124,7 +123,7 @@ export interface SchoolMembership {
     join_timestamp?: string | null;
     status?: Status | null;
     user?: User | null;
-    school?: School | null;
+    school?: SchoolDeprecated | null;
     roles?: Role[] | null;
 }
 
@@ -140,7 +139,7 @@ export interface Organization {
     students?: Student[] | null;
     primary_contact?: User | null;
     classes?: Class[] | null;
-    schools?: School[] | null;
+    schools?: SchoolDeprecated[] | null;
     memberships?: OrganizationMembership[] | null;
     createRole?: Role;
     ageRanges?: AgeRange[] | null;
@@ -188,7 +187,7 @@ export interface Teacher {
 export interface Class {
     class_id: string;
     class_name?: string | null;
-    schools?: School[] | null;
+    schools?: SchoolDeprecated[] | null;
     age_ranges?: AgeRange[] | null;
     programs?: Program[] | null;
     subjects?: Subject[] | null;
@@ -199,7 +198,7 @@ export interface Class {
     organization?: Organization[] | null;
 }
 
-export interface School {
+export interface SchoolDeprecated {
     school_id: string;
     school_name?: string | null;
     shortcode?: string | null;
@@ -210,14 +209,10 @@ export interface School {
     memberships?: SchoolMembership[] | null;
 }
 
-export interface SchoolState extends School {
-    programIds: string[];
-}
-
 export interface SchoolMembership {
     user_id: string;
     school_id: string;
-    school?: School | null;
+    school?: SchoolDeprecated | null;
     roles?: Role[] | null;
     user?: User | null;
     status?: Status | null;

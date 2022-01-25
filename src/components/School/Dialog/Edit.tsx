@@ -1,16 +1,17 @@
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
+import { SchoolStepper } from "./Steps/shared";
 import SummaryStep from "./Steps/Summary/Base";
+import { ProgramEdge } from "@/api/programs";
 import {
     useEditSchoolPrograms,
-    useGetSchool,
+    useGetSchoolNode,
     useUpdateSchool,
 } from "@/api/schools";
 import {
-    School,
-    Status,
-} from "@/types/graphQL";
-import { buildEmptySchool } from "@/utils/schools";
+    buildEmptySchoolNode,
+    mapSchoolNodeToSchoolStepper,
+} from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -47,8 +48,10 @@ const INITIAL_STEP_INDEX = 2;
 interface Props {
     open: boolean;
     schoolId?: string;
-    onClose: (value?: School) => void;
+    onClose: (value?: SchoolStepper) => void;
 }
+
+const mapProgramEdgesToIds = (programEdges: ProgramEdge[]) => programEdges.map(edge => edge.node.id);
 
 export default function EditSchoolDialog (props: Props) {
     const {
@@ -66,32 +69,46 @@ export default function EditSchoolDialog (props: Props) {
     } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const [ updateSchool ] = useUpdateSchool();
-    const { data: schoolData } = useGetSchool({
+    const {
+        data: schoolNodeData,
+        refetch,
+    } = useGetSchoolNode({
         variables: {
-            school_id: schoolId ?? ``,
+            id: schoolId ?? ``,
+            programCount: 50,
         },
         fetchPolicy: `cache-and-network`,
         skip: !open || !schoolId,
     });
+
     const [ editSchoolPrograms ] = useEditSchoolPrograms();
-    const [ editedSchool, setEditedSchool ] = useState(buildEmptySchool());
+    const [ editedSchool, setEditedSchool ] = useState(buildEmptySchoolNode());
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
 
-    const handleChange = (value: School) => {
+    const handleChange = (value: SchoolStepper) => {
         if (isEqual(value, editedSchool)) return;
         setEditedSchool(value);
     };
 
     useEffect(() => {
         if (!open) {
-            setEditedSchool(buildEmptySchool());
+            setEditedSchool(buildEmptySchoolNode());
             return;
         }
-        setEditedSchool(schoolData?.school ?? buildEmptySchool());
+
+        const programIds = !schoolNodeData?.schoolNode.programsConnection?.pageInfo?.hasPreviousPage ? [ ...mapProgramEdgesToIds(schoolNodeData?.schoolNode.programsConnection?.edges ?? []) ] :
+            [ ...editedSchool.programIds, ...mapProgramEdgesToIds(schoolNodeData?.schoolNode.programsConnection?.edges ?? []) ];
+        const schoolFormData = schoolNodeData?.schoolNode ? mapSchoolNodeToSchoolStepper(schoolNodeData?.schoolNode, programIds) : buildEmptySchoolNode();
+        setEditedSchool(schoolFormData);
         setStepIndex(INITIAL_STEP_INDEX);
-    }, [ schoolData, open ]);
+
+        if (!schoolNodeData?.schoolNode.programsConnection?.pageInfo?.hasNextPage) return;
+        refetch({
+            programCursor: schoolNodeData?.schoolNode.programsConnection?.pageInfo.endCursor,
+        });
+    }, [ schoolNodeData, open ]);
 
     useEffect(() => {
         if (!steps_.length) return;
@@ -111,9 +128,9 @@ export default function EditSchoolDialog (props: Props) {
                     />
                 ),
                 error: [
-                    required()(editedSchool?.school_name),
-                    letternumeric()(editedSchool?.school_name),
-                    max(120)(editedSchool?.school_name ?? ``),
+                    required()(editedSchool?.name),
+                    letternumeric()(editedSchool?.name),
+                    max(120)(editedSchool?.name ?? ``),
                     max(10)(editedSchool?.shortcode ?? ``),
                     alphanumeric()(editedSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
@@ -128,7 +145,7 @@ export default function EditSchoolDialog (props: Props) {
                         onChange={handleChange}
                     />
                 ),
-                error: [ required()(editedSchool?.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(editedSchool?.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -149,25 +166,27 @@ export default function EditSchoolDialog (props: Props) {
     const handleSave = async () => {
         if (!schoolId) return;
         const {
-            school_id,
-            school_name,
+            id,
+            name,
             shortcode,
+            programIds,
         } = editedSchool;
         try {
             await updateSchool({
                 variables: {
-                    school_id,
-                    school_name: school_name ?? ``,
+                    school_id: id,
+                    school_name: name ?? ``,
                     shortcode: shortcode ?? undefined,
                 },
             });
             await editSchoolPrograms({
                 variables: {
-                    school_id,
-                    program_ids: editedSchool.programs?.map((program) => program?.id).filter((id): id is string => !!id) ?? [],
+                    school_id: id,
+                    program_ids: programIds,
                 },
             });
             onClose(editedSchool);
+            setEditedSchool(buildEmptySchoolNode());
             enqueueSnackbar(intl.formatMessage({
                 id: `schools_editSuccess`,
             }), {

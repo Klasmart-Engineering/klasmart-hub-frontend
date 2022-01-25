@@ -1,16 +1,13 @@
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
+import { SchoolStepper } from "./Steps/shared";
 import SummaryStep from "./Steps/Summary/Base";
 import {
     useCreateSchool,
     useEditSchoolPrograms,
 } from "@/api/schools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    School,
-    SchoolState,
-} from "@/types/graphQL";
-import { buildEmptySchool } from "@/utils/schools";
+import { buildEmptySchoolNode } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -46,7 +43,7 @@ const INITIAL_STEP_INDEX = 0;
 
 interface Props {
     open: boolean;
-    onClose: (value?: School) => void;
+    onClose: (value?: SchoolStepper) => void;
 }
 
 export default function CreateSchoolDialog (props: Props) {
@@ -66,19 +63,19 @@ export default function CreateSchoolDialog (props: Props) {
         letternumeric,
         max,
     } = useValidations();
-    const [ newSchool, setNewSchool ] = useState<School>(buildEmptySchool());
+    const [ newSchool, setNewSchool ] = useState<SchoolStepper>(buildEmptySchoolNode());
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ steps_, setSteps ] = useState<Step[]>([]);
 
-    const handleChange = (value: School) => {
+    const handleChange = (value: SchoolStepper) => {
         if (isEqual(value, newSchool)) return;
         setNewSchool(value);
     };
 
     useEffect(() => {
         if (!open) return;
-        setNewSchool(buildEmptySchool());
+        setNewSchool(buildEmptySchoolNode());
         setStepIndex(INITIAL_STEP_INDEX);
     }, [ open ]);
 
@@ -98,9 +95,9 @@ export default function CreateSchoolDialog (props: Props) {
                     onChange={handleChange}
                 />,
                 error: [
-                    required()(newSchool?.school_name),
-                    letternumeric()(newSchool?.school_name),
-                    max(120)(newSchool?.school_name ?? ``),
+                    required()(newSchool?.name),
+                    letternumeric()(newSchool?.name),
+                    max(120)(newSchool?.name ?? ``),
                     max(10)(newSchool?.shortcode?.length ?? ``),
                     alphanumeric()(newSchool?.shortcode),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
@@ -115,7 +112,7 @@ export default function CreateSchoolDialog (props: Props) {
                         onChange={handleChange}
                     />
                 ),
-                error: [ required()(newSchool.programs) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(newSchool.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -134,14 +131,15 @@ export default function CreateSchoolDialog (props: Props) {
 
     const handleCreate = async () => {
         const {
-            school_name,
+            name,
             shortcode,
+            programIds,
         } = newSchool;
         try {
             const createdSchoolResp = await createSchool({
                 variables: {
                     organization_id: currentOrganization?.organization_id ?? ``,
-                    school_name: school_name ?? ``,
+                    school_name: name ?? ``,
                     shortcode: shortcode ?? undefined,
                 },
             });
@@ -150,7 +148,7 @@ export default function CreateSchoolDialog (props: Props) {
             await editSchoolPrograms({
                 variables: {
                     school_id: schoolId,
-                    program_ids: newSchool.programs?.map((program) => program.id ?? ``) ?? [],
+                    program_ids: programIds,
                 },
             });
             onClose(newSchool);

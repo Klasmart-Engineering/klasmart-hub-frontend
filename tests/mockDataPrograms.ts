@@ -440,3 +440,33 @@ export const mockProgramDetailsDrawer = {
         system:false,
     },
 };
+
+export const mockProgramsSchoolTable = {
+    programsConnection: {
+        edges: [
+            programA,
+            programB,
+            programC,
+        ],
+        pageInfo: {
+            endCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+        },
+        totalCount: 3,
+    },
+};
+
+export const mockProgramsSchoolSummary = {
+    programsConnection: {
+        edges: [ programA, programB ],
+        pageInfo: {
+            endCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: `eyJpZCI6ImZiZTc1OGY2LWI3ODUtNDlkZS1iNTVlLWI5ZDQxNzM0ZTIyYyIsIm5hbWUiOiJUZXN0IFByb2dyYW0ifQ==`,
+        },
+        totalCount: 2,
+    },
+};

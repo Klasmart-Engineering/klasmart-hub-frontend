@@ -137,6 +137,7 @@ export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     system?: BooleanFilter;
     gradeId?: UuidFilter;
     subjectId?: UuidFilter;
+    schoolId?: UuidFilter;
     ageRangeFrom?: AgeRangeFilter;
     ageRangeTo?: AgeRangeFilter;
     schoolId?: UuidFilter;
@@ -166,7 +167,7 @@ export const useGetAllPrograms = (options?: QueryHookOptions<GetAllProgramsRespo
     return useQuery<GetAllProgramsResponse, GetAllProgramsRequest>(GET_ALL_PROGRAMS, options);
 };
 
-interface GetAllProgramsPaginatedRequest {
+export interface GetAllProgramsPaginatedRequest {
     direction: PaginationDirection;
     cursor?: string | null;
     count?: number;

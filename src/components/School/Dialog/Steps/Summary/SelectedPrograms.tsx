@@ -2,11 +2,6 @@ import { useGetAllPaginatedPrograms } from "@/api/programs";
 import ProgramsTable,
 { ProgramRow } from "@/components/Program/Table";
 import { buildProgramIdsFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import {
-    isActive,
-    School,
-} from "@/types/graphQL";
-import { EntityStepContent } from "@/utils/entitySteps";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -24,10 +19,15 @@ import React,
     useState,
 } from "react";
 
-export default function SelectedSchoolPrograms (props: EntityStepContent<School>) {
+interface Props {
+    programIds?: string[];
+    disabled?: boolean;
+}
+
+export default function SelectedSchoolPrograms (props: Props) {
     const {
-        value,
         disabled,
+        programIds,
     } = props;
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -35,8 +35,7 @@ export default function SelectedSchoolPrograms (props: EntityStepContent<School>
         orderBy: `name`,
         search: ``,
     });
-    const paginationFilter = buildProgramIdsFilter(value?.programs?.map((program) => program.id ?? ``) ?? []);
-
+    const paginationFilter = buildProgramIdsFilter(programIds ?? []);
     const {
         data,
         refetch,
