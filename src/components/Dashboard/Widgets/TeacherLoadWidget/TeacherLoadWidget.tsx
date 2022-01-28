@@ -76,7 +76,7 @@ export default function TeacherLoadWidget () {
     const organizationId = currentOrganization?.organization_id ?? ``;
     const now = new Date();
     const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
-    const unixEndOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+    const unixNext7daysIncludeToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59).getTime();
     const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
     const [ totalClasses, setTotalClasses ] = useState<(number)>(0);
@@ -102,7 +102,7 @@ export default function TeacherLoadWidget () {
         view_type: `full_view`,
         time_at: 0, // any time is ok together with view_type=`full_view`,
         start_at_ge: (unixStartOfDay / 1000),
-        end_at_le: (unixEndOfDay / 1000),
+        end_at_le: (unixNext7daysIncludeToday / 1000),
         time_zone_offset: timeZoneOffset,
         order_by: `start_at`,
         time_boundary: `union`,
