@@ -8,6 +8,6 @@ interface ParamTypes {
 
 export const history = createHashHistory();
 
-export function ParameterHOC() {
+export function ParameterHOC () {
     return useParams<ParamTypes>();
 }

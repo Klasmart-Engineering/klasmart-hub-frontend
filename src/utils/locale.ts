@@ -1,8 +1,12 @@
-import { fallbackLocale, getIntl, localeCodes } from "../locale/locale";
+import {
+    fallbackLocale,
+    getIntl,
+    localeCodes,
+} from "../locale/locale";
 
 const localeCache = new Map<string, ReturnType<typeof getIntl>>();
 
-export function getDefaultLanguageCode() {
+export function getDefaultLanguageCode () {
     const languages = navigator.languages || [
         (navigator as any).language,
         (navigator as any).browerLanguage,
@@ -14,10 +18,10 @@ export function getDefaultLanguageCode() {
             return language;
         }
     }
-    return "en";
+    return `en`;
 }
 
-export function getLanguage(languageCode: string) {
+export function getLanguage (languageCode: string) {
     let language = localeCache.get(languageCode);
     if (language !== undefined) { return language; }
     language = getIntl(languageCode);

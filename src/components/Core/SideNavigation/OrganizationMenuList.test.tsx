@@ -74,12 +74,12 @@ describe(`OrganizationMenuList`, () => {
             const { container } = render(<OrganizationMenuList
                 onOrganizationChange={defaultMockOnOrganizationsChange}
             />);
-            expect(container.querySelectorAll(`*[class*="selectedOrganization"]`).length).toBe(1);
+            expect(container.querySelectorAll(`*[class*="selectedOrganization"]`)).toHaveLength(1);
             expect(screen.getByText(mockOrgStack[0].organization.organization_name)).toBeInTheDocument();
             expect(screen.getByText(mockOrgStack[1].organization.organization_name)).toBeInTheDocument();
             expect(screen.getAllByText(fallbackLocale.formatMessage({
                 id: `roles_typeOrganizationAdmin`,
-            })).length).toBe(2);
+            }))).toHaveLength(2);
         });
     });
 

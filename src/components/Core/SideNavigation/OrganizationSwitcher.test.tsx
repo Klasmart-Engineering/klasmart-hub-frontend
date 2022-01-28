@@ -18,7 +18,7 @@ describe(`OrganizationSwitcher`, () => {
                 showOrganizations={defaultMockShowOrganizations}
                 onShowOrganizationsChange={defaultMockOnShowOrganizationsChange}
             />);
-            expect(container.getElementsByClassName(`MuiAvatar-root`).length).toEqual(1);
+            expect(container.getElementsByClassName(`MuiAvatar-root`)).toHaveLength(1);
             expect(screen.getByText(fallbackLocale.formatMessage({
                 id: `organization.unknown`,
             }))).toBeInTheDocument();

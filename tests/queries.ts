@@ -1,12 +1,10 @@
 import {
     buildQueries,
-    queryHelpers,
-} from "@testing-library/dom";
-import {
     getByLabelText,
     getElementError,
     Matcher,
     MatcherOptions,
+    queryHelpers,
     screen,
 } from "@testing-library/react";
 

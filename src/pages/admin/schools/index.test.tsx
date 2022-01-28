@@ -113,7 +113,7 @@ test(`if User doesn't have view_school or view_my_school Permission no rows are 
 });
 
 test(`if User has view_school or view_my_school Permission the table contains active Schools`, async () => {
-    
+
     mockUsePermission.mockImplementation((perm) => {
         return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? true : false;
     });

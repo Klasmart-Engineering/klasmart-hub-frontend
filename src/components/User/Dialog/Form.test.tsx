@@ -14,8 +14,10 @@ import {
     withMockIntl,
 } from "@/locale/__mocks__/locale";
 import { UserGenders } from "@/utils/users";
-import { screen } from "@testing-library/dom";
-import { fireEvent } from "@testing-library/react";
+import {
+    fireEvent,
+    screen,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
     deselectAll,

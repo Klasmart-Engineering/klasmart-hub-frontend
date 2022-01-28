@@ -1,13 +1,17 @@
+import StyledTextField from "../components/styled/textfield";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import { ContentCopy as CopyIcon } from "@styled-icons/material/ContentCopy";
 import { useSnackbar } from "kidsloop-px";
-import React, { useEffect, useRef } from "react";
+import React,
+{
+    useEffect,
+    useRef,
+} from "react";
 import { useIntl } from "react-intl";
-import StyledTextField from "../components/styled/textfield";
 
-export default function InviteButton({ url }: { url: string }): JSX.Element {
+export default function InviteButton ({ url }: { url: string }): JSX.Element {
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
     const textField = useRef<HTMLInputElement>(null);
@@ -19,47 +23,61 @@ export default function InviteButton({ url }: { url: string }): JSX.Element {
 
     useEffect(() => {
         if (!textField.current) { return; }
-        textField.current.addEventListener("click", selectShareLinkText);
-        return textField.current.removeEventListener("click", selectShareLinkText);
-    }, [textField.current]);
+        textField.current.addEventListener(`click`, selectShareLinkText);
+        return textField.current.removeEventListener(`click`, selectShareLinkText);
+    }, [ textField.current ]);
 
     return (
         <>
             <Grid
                 container
+                item
                 direction="row"
                 justify="space-between"
                 alignItems="center"
-                item
                 xs={12}
-                style={{ paddingTop: 8, flexGrow: 0 }}
+                style={{
+                    paddingTop: 8,
+                    flexGrow: 0,
+                }}
             >
                 <StyledTextField
                     fullWidth
                     margin="dense"
                     inputRef={textField}
                     value={url}
-                    inputProps={{ style: { verticalAlign: "center", fontFamily: "monospace" } }}
+                    inputProps={{
+                        style: {
+                            verticalAlign: `center`,
+                            fontFamily: `monospace`,
+                        },
+                    }}
                     InputProps={{
                         endAdornment:
-                            <Tooltip placement="bottom" title="Copy to clipboard">
+                            <Tooltip
+                                placement="bottom"
+                                title="Copy to clipboard">
                                 <IconButton
                                     aria-label="copy"
                                     onClick={() => {
                                         if (!textField.current) { return; }
                                         textField.current.select();
-                                        document.execCommand("copy");
-                                        enqueueSnackbar(intl.formatMessage({ id: "copy_clipboard" }));
+                                        document.execCommand(`copy`);
+                                        enqueueSnackbar(intl.formatMessage({
+                                            id: `copy_clipboard`,
+                                        }));
                                     }}
                                 >
-                                    <CopyIcon size="1rem" color="#0E78D5" />
+                                    <CopyIcon
+                                        size="1rem"
+                                        color="#0E78D5" />
                                 </IconButton>
                             </Tooltip>,
                         readOnly: true,
                         style: {
-                            backgroundColor: "rgba(240, 240, 240, 0.8)",
+                            backgroundColor: `rgba(240, 240, 240, 0.8)`,
                             borderRadius: 12,
-                            fontSize: "1em",
+                            fontSize: `1em`,
                         },
                     }}
                 />

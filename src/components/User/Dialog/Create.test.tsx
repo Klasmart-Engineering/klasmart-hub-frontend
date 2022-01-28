@@ -179,8 +179,8 @@ describe(`submitting the form`, () => {
             id: `createUser_success`,
         }));
 
-        expect(mockOnClose).toBeCalledTimes(1);
-        expect(mockOnClose).toBeCalledWith(true);
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
+        expect(mockOnClose).toHaveBeenCalledWith(true);
         expect(global.console.error).not.toHaveBeenCalled();
     });
 });
