@@ -5,8 +5,10 @@ import { Group } from "@visx/group";
 import { ParentSize } from '@visx/responsive';
 import { Text } from "@visx/text";
 import React from "react";
+import { useIntl } from "react-intl";
 
 export default function DonutWithText (props: Props) {
+    const intl = useIntl();
     const {
         data,
         options: {
@@ -36,23 +38,20 @@ export default function DonutWithText (props: Props) {
                             }}/>
                         <Text
                             textAnchor="middle"
-                            dy={-25}
+                            dy={0}
+                            width={radiusWidth}
                             fontSize={12}
                             fontFamily={`Arial, Helvetica, sans-serif`}
                             fill="#6D8199">
-                Students with
+                            {
+                                intl.formatMessage({
+                                    id: `home.attendance.pie.low`,
+                                })
+                            }
                         </Text>
                         <Text
                             textAnchor="middle"
-                            dy={-10}
-                            fontSize={12}
-                            fontFamily={`Arial, Helvetica, sans-serif`}
-                            fill="#6D8199">
-                low attendance
-                        </Text>
-                        <Text
-                            textAnchor="middle"
-                            dy={30}
+                            dy={40}
                             fontSize={36}
                             fontFamily={`Arial, Helvetica, sans-serif`}
                             fill={`#EF0261`}>

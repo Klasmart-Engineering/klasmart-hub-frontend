@@ -13,6 +13,10 @@ import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
 import React,
 { useMemo } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles(((theme: Theme) => createStyles({
     widgetContent: {
@@ -74,6 +78,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
 })));
 
 export default function ContentStatusWidget () {
+    const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
@@ -98,22 +103,30 @@ export default function ContentStatusWidget () {
             error={error}
             noData={!data?.successful}
             reload={refetch}
-            label="Content Status"
+            label={
+                intl.formatMessage({
+                    id: `home.contentStatus.containerTitleLabel`,
+                })
+            }
             link={{
                 url: `library/organization-content`,
-                label: `View all content status`,
+                label: intl.formatMessage({
+                    id: `home.contentStatus.containerUrlLabel`,
+                }),
             }}>
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.titleBullet}/>
-                    <Typography className={classes.title}>All Time</Typography>
+                    <Typography className={classes.title}>
+                        <FormattedMessage id="home.contentStatus.timeFrame" />
+                    </Typography>
                 </div>
                 <ul className={classes.list}>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Learning material
+                            <FormattedMessage id="home.contentStatus.learningMaterialLabel" />
                         </Typography>
                         <Typography
                             className={classes.count}>
@@ -123,14 +136,14 @@ export default function ContentStatusWidget () {
                             variant="caption"
                             className={classes.caption}
                             color="textSecondary">
-                                This week
+                            <FormattedMessage id="home.contentStatus.timeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Total Approved
+                            <FormattedMessage id="home.contentStatus.totalApprovedLabel" />
                         </Typography>
                         <Typography
                             className={classes.count}>
@@ -139,13 +152,16 @@ export default function ContentStatusWidget () {
                         <Typography
                             variant="caption"
                             className={classes.caption}
-                            color="textSecondary">This week
+                            color="textSecondary">
+                            <FormattedMessage id="home.contentStatus.timeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
-                            className={classes.body2}>Total Pending</Typography>
+                            className={classes.body2}>
+                            <FormattedMessage id="home.contentStatus.totalPendingLabel" />
+                        </Typography>
                         <Typography
                             className={clsx(classes.count, classes.countNegative)}>
                             {formattedData?.pending}
@@ -153,14 +169,14 @@ export default function ContentStatusWidget () {
                         <Typography
                             variant="caption"
                             className={classes.caption}>
-                                This week
+                            <FormattedMessage id="home.contentStatus.timeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Total Rejected
+                            <FormattedMessage id="home.contentStatus.totalRejectedLabel" />
                         </Typography>
                         <Typography
                             className={clsx(classes.count, classes.countNegative)}>
@@ -169,7 +185,7 @@ export default function ContentStatusWidget () {
                         <Typography
                             variant="caption"
                             className={classes.caption}>
-                                This week
+                            <FormattedMessage id="home.contentStatus.timeFrame" />
                         </Typography>
                     </li>
                 </ul>

@@ -12,7 +12,8 @@ import {
 import Card from '@material-ui/core/Card';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import React from 'react';
+import React,
+{ ReactElement } from 'react';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     cardWrapper: {

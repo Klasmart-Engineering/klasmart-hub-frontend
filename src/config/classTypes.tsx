@@ -12,11 +12,14 @@ import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
 import LiveTvIcon from '@material-ui/icons/LiveTv';
 import LocalLibraryOutlinedIcon from '@material-ui/icons/LocalLibraryOutlined';
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
+import React,
+{ ReactElement } from "react";
+import { FormattedMessage } from "react-intl";
 
 type ClassType = "live" | "study" | "homefun" | "class" | "task";
 
 interface ClassTypeIdentity {
-    intlKey: string;
+    intlKey: string | ReactElement;
     color: string;
     icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
     aliases?: (string|ScheduleClassType)[];
@@ -24,29 +27,29 @@ interface ClassTypeIdentity {
 
 const classTypeIdentities : Record<string | ClassType, ClassTypeIdentity> = {
     live : {
-        intlKey: `Live`,
+        intlKey: <FormattedMessage id="class.type.live" />,
         color: THEME_COLOR_CLASS_TYPE_LIVE,
         icon: LiveTvIcon,
         aliases: [ `onlineclass` ],
     },
     study : {
-        intlKey: `Study`,
+        intlKey: <FormattedMessage id="class.type.study" />,
         color: THEME_COLOR_CLASS_TYPE_STUDY,
         icon: LocalLibraryOutlinedIcon,
     },
     homefun : {
-        intlKey: `Home Fun`,
+        intlKey: <FormattedMessage id="class.type.homeFun" />,
         color: THEME_COLOR_CLASS_TYPE_STUDY,
         icon: LocalLibraryOutlinedIcon,
         aliases: [ `homework` ],
     },
     task : {
-        intlKey: `Task`,
+        intlKey: <FormattedMessage id="class.type.task" />,
         color: THEME_COLOR_CLASS_TYPE_TASK,
         icon: AssignmentOutlinedIcon,
     },
     class : {
-        intlKey: `Class`,
+        intlKey: <FormattedMessage id="class.type.class" />,
         color: THEME_COLOR_CLASS_TYPE_CLASS,
         icon: SchoolOutlinedIcon,
         aliases: [ `offlineclass` ],

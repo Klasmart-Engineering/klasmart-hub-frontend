@@ -13,6 +13,10 @@ import React,
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles(((theme: Theme) => createStyles({
     widgetContent: {
@@ -71,6 +75,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
 })));
 
 export default function TeacherLoadWidget () {
+    const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
@@ -131,14 +136,20 @@ export default function TeacherLoadWidget () {
 
     return (
         <WidgetWrapper
-            label="Teacher Load"
+            label={
+                intl.formatMessage({
+                    id: `home.teacherLoad.containerTitleLabel`,
+                })
+            }
             loading={isTeacherDataFetching || isSchedulesFetching}
             error={isTeacherDataError || isScheduleError}
             noData={!teacherData?.successful || !schedulesData?.data}
             reload={reload}
             link={{
                 url: `reports`,
-                label: `View all Teacher Load`,
+                label: intl.formatMessage({
+                    id: `home.teacherLoad.containerUrlLabel`,
+                }),
             }}>
             <div className={classes.widgetContent}>
                 <ul className={classes.list}>
@@ -146,7 +157,7 @@ export default function TeacherLoadWidget () {
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Total Classes
+                            <FormattedMessage id="home.teacherLoad.totalClassesLabel" />
                         </Typography>
                         <Typography
                             className={classes.count}>
@@ -156,14 +167,14 @@ export default function TeacherLoadWidget () {
                             variant="caption"
                             className={classes.caption}
                             color="textSecondary">
-                                All time
+                            <FormattedMessage id="home.teacherLoad.totalClassesTimeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Total Students
+                            <FormattedMessage id="home.teacherLoad.totalStudentsLabel" />
                         </Typography>
                         <Typography
                             className={classes.count}>
@@ -173,14 +184,14 @@ export default function TeacherLoadWidget () {
                             variant="caption"
                             className={classes.caption}
                             color="textSecondary">
-                                All time
+                            <FormattedMessage id="home.teacherLoad.totalStudentsTimeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
                             className={classes.body2}>
-                                Upcoming classes
+                            <FormattedMessage id="home.teacherLoad.upcomingClassesLabel" />
                         </Typography>
                         <Typography
                             className={classes.count}>
@@ -190,7 +201,7 @@ export default function TeacherLoadWidget () {
                             variant="caption"
                             className={classes.caption}
                             color="textSecondary">
-                                Next 7 days
+                            <FormattedMessage id="home.teacherLoad.upcomingClassesTimeFrame" />
                         </Typography>
                     </li>
                 </ul>

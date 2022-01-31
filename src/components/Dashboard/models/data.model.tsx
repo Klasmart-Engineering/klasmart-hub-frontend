@@ -1,5 +1,6 @@
 import { SvgIconTypeMap } from "@material-ui/core";
 import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import { ReactElement } from "react";
 
 export interface ClassAttendanceRateGroupDataFormatted {
     label: string; // label for data
@@ -17,8 +18,14 @@ export interface ContentTeacherFormatted {
 }
 export interface PendingAssignmentInfoFormatted {
     color: string;
-    intlKey: string;
+    intlKey: string | ReactElement;
     icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
     classType: string;
     count: number;
+}
+
+export interface ClassAttendanceLegendLabels {
+    high: string;
+    medium: string;
+    low: string;
 }

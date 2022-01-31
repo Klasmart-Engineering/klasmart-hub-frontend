@@ -17,6 +17,10 @@ import { makeStyles } from "@material-ui/styles";
 import { sumBy } from "lodash";
 import React,
 { useMemo } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
     widgetContent: {
@@ -69,6 +73,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
 }));
 
 export default function PendingAssessmentsWidget () {
+    const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
@@ -95,15 +100,23 @@ export default function PendingAssessmentsWidget () {
             error={error}
             noData={!data?.successful}
             reload={refetch}
-            label="Pending Assessments"
+            label={
+                intl.formatMessage({
+                    id: `home.pendingAssessments.containerTitleLabel`,
+                })
+            }
             link={{
                 url: `assessments`,
-                label: `View all assessments`,
+                label: intl.formatMessage({
+                    id: `home.pendingAssessments.containerUrlLabel`,
+                }),
             }}>
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.bullet}/>
-                    <Typography className={classes.title}>All Time</Typography>
+                    <Typography className={classes.title}>
+                        <FormattedMessage id="home.pendingAssessments.title" />
+                    </Typography>
                 </div>
                 {formattedData &&
                     <List>

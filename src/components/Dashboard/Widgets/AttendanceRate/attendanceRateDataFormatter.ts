@@ -1,22 +1,25 @@
 
-import { ClassAttendanceRateGroupDataFormatted } from "@/components/Dashboard/models/data.model";
+import {
+    ClassAttendanceLegendLabels,
+    ClassAttendanceRateGroupDataFormatted,
+} from "@/components/Dashboard/models/data.model";
 import { ClassAttendanceRateGroupResponse } from "@kidsloop/reports-api-client";
 import { Theme } from "@material-ui/core";
 
-export default function attendanceRateDataFormatter (data: ClassAttendanceRateGroupResponse, theme: Theme): ClassAttendanceRateGroupDataFormatted[] {
+export default function attendanceRateDataFormatter (data: ClassAttendanceRateGroupResponse, theme: Theme, dataLabels:ClassAttendanceLegendLabels): ClassAttendanceRateGroupDataFormatted[] {
     const formattedData: ClassAttendanceRateGroupDataFormatted[] = [
         {
-            label: `High attendance`,
+            label: dataLabels.high,
             color: theme.palette.info.main,
             value: 0,
         },
         {
-            label: `Medium attendance`,
+            label: dataLabels.medium,
             color: theme.palette.warning.main,
             value: 0,
         },
         {
-            label: `Low attendance`,
+            label: dataLabels.low,
             color: theme.palette.error.light,
             value: 0,
             count: 0,

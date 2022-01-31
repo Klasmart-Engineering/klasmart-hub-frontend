@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import ReplayIcon from '@material-ui/icons/Replay';
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 
 const ReloadIcon = styled(ReplayIcon)(() => ({
     "&.reload-transform": {
@@ -66,8 +67,12 @@ export default function WidgetWrapperError (props: Props) {
                         alt=""
                         className={classes.image}/>
                     <div className={classes.textLayout}>
-                        <div className={classes.title}>Oops!</div>
-                        <div className={classes.subtitle}>The data cannot be loaded, please try again later!</div>
+                        <div className={classes.title}>
+                            <FormattedMessage id="home.common.error.generic.title" />
+                        </div>
+                        <div className={classes.subtitle}>
+                            <FormattedMessage id="home.common.error.generic.description" />
+                        </div>
                     </div>
                 </div>
                 <Button

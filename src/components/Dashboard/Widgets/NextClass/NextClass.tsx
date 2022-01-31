@@ -39,6 +39,7 @@ import {
     FormattedMessage,
     FormattedRelativeTime,
     FormattedTime,
+    useIntl,
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 
@@ -142,10 +143,11 @@ const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
 
 export default function NextClass () {
-    const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
+    const intl = useIntl();
     const classes = useStyles();
     const theme = useTheme();
     const restApi = useRestAPI();
+    const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
@@ -253,14 +255,20 @@ export default function NextClass () {
 
     return (
         <WidgetWrapper
-            label="Next Class"
+            label={
+                intl.formatMessage({
+                    id: `home.nextClass.containerTitleLabel`,
+                })
+            }
             loading={isSchedulesFetching}
             error={isScheduleError}
             noData={false}
             reload={refetch}
             link={{
                 url: `schedule`,
-                label: `View all classes`,
+                label: intl.formatMessage({
+                    id: `home.nextClass.containerUrlLabel`,
+                }),
             }}
         >
             <Box className={classes.nextClassCard}>
@@ -272,7 +280,7 @@ export default function NextClass () {
                             <Typography
                                 className={classes.nextClassCardTitleIntro}
                                 variant="caption">
-                                <FormattedMessage id="nextClass_title" />
+                                <FormattedMessage id="home.nextClass.title" />
                             </Typography>
                             <Typography className={classes.nextClassCardTitle}>
                                 <VideoCallIcon className={classes.nextClassIcon} />
@@ -282,10 +290,10 @@ export default function NextClass () {
 
                             <Typography className={classes.warningText} >
                                 {timeBeforeClass < 0 ? (
-                                    <FormattedMessage id="nextClass_alreadyStarted" />
+                                    <FormattedMessage id="home.nextClass.alreadyStarted" />
                                 ) : (
                                     timeBeforeClass < secondsBeforeClassCanStart && (
-                                        <FormattedMessage id="nextClass_startsSoon" />
+                                        <FormattedMessage id="home.nextClass.startsSoon" />
                                     )
                                 )}
                                 {timeBeforeClass < secondsBeforeClassCanStart && (
@@ -343,7 +351,7 @@ export default function NextClass () {
                                     >
                                         {timeBeforeClass < secondsBeforeClassCanStart ? (
                                             <Typography>
-                                                <FormattedMessage id="live_liveButton" />
+                                                <FormattedMessage id="home.nextClass.goLive" />
                                             </Typography>
 
                                         ) : (
@@ -366,7 +374,7 @@ export default function NextClass () {
                                 <Box>
                                     <Typography className={classes.teachersTitle}>
                                         <FormattedMessage
-                                            id="nextClass_teachersTitle"
+                                            id="home.nextClass.teachersTitle"
                                             values={{
                                                 count: nextClassRoster?.teachers.length,
                                             }}
@@ -445,7 +453,7 @@ export default function NextClass () {
                             src={scheduleSvg}
                             alt=""/>
                         <Typography color="primary">
-                            <FormattedMessage id="nextClass_noClass" />
+                            <FormattedMessage id="home.common.noData.schedule.title" />
                         </Typography>
                     </div>
                 )}

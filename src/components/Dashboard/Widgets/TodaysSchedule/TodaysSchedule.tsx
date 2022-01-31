@@ -14,6 +14,10 @@ import React,
     useEffect,
     useState,
 } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 // event unix dates are in seconds, we need to multiply by seconds
 const MILLISECONDS_IN_A_SECOND = 1000;
@@ -21,6 +25,7 @@ const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 export default function TodaysSchedule () {
+    const intl = useIntl();
     const [ events, setEvents ] = useState<DailyCalendarEvent[]>([]);
     const currentOrganization = useCurrentOrganization();
     const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
@@ -69,14 +74,20 @@ export default function TodaysSchedule () {
 
     return (
         <WidgetWrapper
-            label="Schedule"
+            label={
+                intl.formatMessage({
+                    id: `home.schedule.containerTitleLabel`,
+                })
+            }
             error={isScheduleError}
             noData={false}
             reload={refetch}
             loading={isSchedulesFetching}
             link={{
                 url: `schedule`,
-                label: `View full schedule`,
+                label: intl.formatMessage({
+                    id: `home.schedule.containerUrlLabel`,
+                }),
             }}
         >
             <Box

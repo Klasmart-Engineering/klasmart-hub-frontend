@@ -5,6 +5,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
+import { FormattedMessage } from "react-intl";
 
 const useStyles = makeStyles((theme:Theme) => createStyles({
     container: {
@@ -36,7 +37,11 @@ export default function WidgetWrapperNoData () {
                 alt=""
                 className={classes.image}
             />
-            <div className={classes.message}>There is no data available</div>
+            <div className={classes.message}>
+                <FormattedMessage
+                    id="home.common.noData.generic.title"
+                />
+            </div>
         </div>
     );
 }

@@ -1,5 +1,5 @@
-
 import attendanceRateDataFormatter from "./attendanceRateDataFormatter";
+import { ClassAttendanceLegendLabels } from "@/components/Dashboard/models/data.model";
 import DonutWithText from "@/components/Dashboard/Widgets/AttendanceRate/Donut/DonutWithText";
 import Legend from "@/components/Dashboard/Widgets/AttendanceRate/Donut/Legend";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
@@ -18,6 +18,10 @@ import { FiberManualRecord } from "@material-ui/icons";
 import { useWidth } from "kidsloop-px";
 import React,
 { useMemo } from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -50,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 export default function AttendanceRateWidget () {
+    const intl = useIntl();
     const theme = useTheme();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
@@ -64,9 +69,21 @@ export default function AttendanceRateWidget () {
         org: organizationId,
     });
 
+    const dataLabels: ClassAttendanceLegendLabels = {
+        high: intl.formatMessage({
+            id: `home.attendance.legendHigh`,
+        }),
+        medium: intl.formatMessage({
+            id: `home.attendance.legendMedium`,
+        }),
+        low: intl.formatMessage({
+            id: `home.attendance.legendLow`,
+        }),
+    };
+
     const formattedData = useMemo(() => {
         if (!data) return [];
-        return attendanceRateDataFormatter(data, theme);
+        return attendanceRateDataFormatter(data, theme, dataLabels);
     }, [ data ]);
 
     const defaultView = width !== `xs`;
@@ -77,15 +94,23 @@ export default function AttendanceRateWidget () {
             error={error}
             noData={!data?.successful}
             reload={refetch}
-            label="Attendance"
+            label={
+                intl.formatMessage({
+                    id: `home.attendance.containerTitleLabel`,
+                })
+            }
             link={{
                 url: `reports`,
-                label: `View all Attendance`,
+                label: intl.formatMessage({
+                    id: `home.attendance.containerUrlLabel`,
+                }),
             }}
         >
             <div className={classes.titleWrapper}>
                 <FiberManualRecord className={classes.icon}/>
-                <Typography className={classes.title}>Last 7 days</Typography>
+                <Typography className={classes.title}>
+                    <FormattedMessage id="home.attendance.title" />
+                </Typography>
             </div>
 
             {data && <div

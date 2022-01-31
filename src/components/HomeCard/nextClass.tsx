@@ -284,7 +284,7 @@ export default function NextClass (props: Props) {
                             <Box>
                                 <Typography className={classes.nextClassCardTitle2}>
                                     <FormattedMessage
-                                        id="nextClass_teachersTitle"
+                                        id="home.nextClass.teachersTitle"
                                         values={{
                                             count: nextClassRoster?.teachers.length,
                                         }}
