@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.29.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.29.0%0D2.28.2) (2022-02-01)
+
+
+### ✨ Features
+
+* replace hard coded english with translations ([c7f323e](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c7f323e296ac2eef369f210882558c83576067a9)), closes [feat/DT-398](https://calmisland.atlassian.net/browse/DT-398) [feat/DT-398](https://calmisland.atlassian.net/browse/DT-398) [feat/DT-398](https://calmisland.atlassian.net/browse/DT-398)
+
 ### [2.28.2](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.28.2%0D2.28.1) (2022-01-28)
 
 
