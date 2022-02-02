@@ -1,10 +1,8 @@
 import { authClient } from "@/api/auth/client";
 import { getReportsEndpoint } from "@/config";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kidsloop/reports-api-client";
-import { AxiosError } from "axios";
 import React,
 {
-    useCallback,
     useEffect,
     useState,
 } from "react";
@@ -25,6 +23,8 @@ export default function ReportsApiClientProvider (props: Props) {
 
     const STALE_TIME = 60 * 1000; // 60 seconds
     const REQUEST_RETRY_MAX_COUNT = 3; // 3
+
+    const USE_MOCK_DATA = process.env.USE_MOCK_REPORTS_DATA === `true`;
 
     useEffect(() => {
         let timeTilExpiry = STALE_TIME;
@@ -53,6 +53,7 @@ export default function ReportsApiClientProvider (props: Props) {
                     },
                 },
             }}
+            mock={USE_MOCK_DATA}
         >
             {children}
         </KLReportsApiClientProvider>
