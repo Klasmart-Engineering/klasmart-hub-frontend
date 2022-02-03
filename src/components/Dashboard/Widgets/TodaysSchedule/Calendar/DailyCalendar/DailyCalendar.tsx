@@ -87,8 +87,7 @@ export default function DailySchedule (props: Props) {
         const calendarEl = calendarRef.current;
         if (calendarEl === undefined) return;
         insertAllDayLabel(calendarEl, intl.formatMessage({
-            id: `calendar_allDayLabel`,
-            defaultMessage: `All Day`,
+            id: `home.schedule.allDayLabel`,
         }));
 
         if(!enableTimeMarker) return;
