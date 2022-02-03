@@ -658,7 +658,7 @@
     "genericValidations_required": "Dibutuhkan",
     "genericValidations_phoneInvalid": "Nomor telepon tidak valid",
     "genericValidations_minChar": "Isian minimum terdiri dari {min} karakter",
-    "genericValidations_maxChar": "Isian maksimum terdiri dari {min} karakter",
+    "genericValidations_maxChar": "Isian maksimum terdiri dari {max} karakter",
     "genericValidations_emailInvalid": "Alamat email tidak valid",
     "genericValidations_equals": "Isian tidak sesuai",
     "genericValidations_alphanumeric": "Isian harus alfanumerik",
@@ -1090,5 +1090,10 @@
     "home.common.noData.schedule.title": "No scheduled class",
     "home.attendance.pie.low": "Students with low attendance",
     "class.type.task": "Task",
-    "nextClass_noClass": "Anda tidak memiliki jadwal kelas live."
+    "nextClass_noClass": "Anda tidak memiliki jadwal kelas live.",
+    "home.skillCoverage.title": "Skill Coverage",
+    "newHome.dashboardNotice.title": "New KidsLoop homepage!",
+    "newHome.dashboardNotice.subtitle": "The dashboard below is using sample data for demonstration purposes. You can switch to the original view at any time.",
+    "home.dashboardNotice.title": "Check out our new KidsLoop homepage!",
+    "home.dashboardNotice.switchViewButton": "Switch View"
 }

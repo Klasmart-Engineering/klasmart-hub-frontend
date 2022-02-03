@@ -1090,5 +1090,10 @@
     "home.common.noData.schedule.title": "暂无课程安排",
     "home.attendance.pie.low": "Students with low attendance",
     "class.type.task": "Task",
-    "nextClass_noClass": "您没有任何即将到来的直播课程安排!"
+    "nextClass_noClass": "您没有任何即将到来的直播课程安排!",
+    "home.skillCoverage.title": "Skill Coverage",
+    "newHome.dashboardNotice.title": "New KidsLoop homepage!",
+    "newHome.dashboardNotice.subtitle": "The dashboard below is using sample data for demonstration purposes. You can switch to the original view at any time.",
+    "home.dashboardNotice.title": "Check out our new KidsLoop homepage!",
+    "home.dashboardNotice.switchViewButton": "Switch View"
 }
