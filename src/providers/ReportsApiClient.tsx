@@ -6,7 +6,7 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { useCookies } from "react-cookie";
+import Cookies from "universal-cookie";
 
 const AUTH_HEADER = `authorization`;
 const ACCESS_TOKEN_COOKIE = `access`;
@@ -18,23 +18,28 @@ interface Props {
 export default function ReportsApiClientProvider (props: Props) {
     const { children } = props;
     const reportsServiceEndpoint = getReportsEndpoint();
-    const [ cookies ] = useCookies([ ACCESS_TOKEN_COOKIE ]);
+    const cookies = new Cookies();
+    const [ accessToken, setAccessToken ] = useState(cookies.get(ACCESS_TOKEN_COOKIE));
     const [ currentDate, setCurrentDate ] = useState(Date.now());
 
     const STALE_TIME = 60 * 1000; // 60 seconds
     const REQUEST_RETRY_MAX_COUNT = 3; // 3
-
     const USE_MOCK_DATA = process.env.USE_MOCK_REPORTS_DATA === `true`;
 
     useEffect(() => {
         let timeTilExpiry = STALE_TIME;
         const getTokenExpiry = async () => {
+            const updatedCookie = new Cookies();
+            setAccessToken(updatedCookie.get(ACCESS_TOKEN_COOKIE));
             const { exp } = await authClient.refreshToken();
-            if (exp) timeTilExpiry = exp - (currentDate / 1000);
+            if (exp) timeTilExpiry = (exp - (Math.floor(currentDate / 1000))) * 1000;
+            const setDate = () => {
+                setCurrentDate(Date.now());
+            };
+            const timeOut = setTimeout(setDate, timeTilExpiry + 1000);
+            return () => clearTimeout(timeOut);
         };
         getTokenExpiry();
-        const timeOut = setTimeout(() => setCurrentDate(Date.now()), timeTilExpiry);
-        return () => clearTimeout(timeOut);
     }, [ currentDate ]);
 
     return (
@@ -42,7 +47,7 @@ export default function ReportsApiClientProvider (props: Props) {
             config={{
                 baseURL: reportsServiceEndpoint,
                 headers: {
-                    [AUTH_HEADER]: cookies.access,
+                    [AUTH_HEADER]: accessToken,
                 },
             }}
             queryOptions={{
