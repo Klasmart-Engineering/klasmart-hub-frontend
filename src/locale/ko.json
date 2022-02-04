@@ -1092,8 +1092,8 @@
     "class.type.task": "할 일",
     "nextClass_noClass": "앞으로 스케줄된 라이브 수업이 없습니다!",
     "home.skillCoverage.title": "카테고리별 학습 결과",
-    "newHome.dashboardNotice.title": "New KidsLoop homepage!",
-    "newHome.dashboardNotice.subtitle": "The dashboard below is using sample data for demonstration purposes. You can switch to the original view at any time.",
-    "home.dashboardNotice.title": "Check out our new KidsLoop homepage!",
-    "home.dashboardNotice.switchViewButton": "Switch View"
+    "newHome.dashboardNotice.title": "새로운 키즈룹 홈페이지!",
+    "newHome.dashboardNotice.subtitle": "아래 대시보드는 데모용으로 샘플 데이터를 사용하고 있습니다. 언제든지 원래 보기로 전환할 수 있습니다.",
+    "home.dashboardNotice.title": "새로운 키즈룹 홈페이지를 확인하세요!",
+    "home.dashboardNotice.switchViewButton": "보기 전환"
 }
