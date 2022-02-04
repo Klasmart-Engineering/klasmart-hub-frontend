@@ -20,8 +20,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
     welcomeTitle: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(4),
+        marginBottom: theme.spacing(1),
     },
     lastUpdatedText:{
         fontWeight: `bold`,
@@ -40,7 +39,8 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
     return (
         <Box
             className={classes.pageHeader}
-            paddingY={2} >
+            paddingY={2}
+            paddingX={2} >
             <Container
                 maxWidth="xl">
                 <Box

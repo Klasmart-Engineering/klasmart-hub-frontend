@@ -12,6 +12,7 @@ const { persistAtom } = recoilPersist();
 export const organizationMembershipStackState = atom<OrganizationMembership[]>({
     key: `organizationStackState`,
     default: [],
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     effects_UNSTABLE: [ persistAtom ],
 });
 export const useOrganizationStack = () => useRecoilState(organizationMembershipStackState);

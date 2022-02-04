@@ -16,7 +16,9 @@ import { Assessment as AssessmentIcon } from '@material-ui/icons';
 import { sumBy } from "lodash";
 import React,
 {
+    useCallback,
     useEffect,
+    useRef,
     useState,
 } from "react";
 import {
@@ -57,15 +59,19 @@ export default function AssessmentPieChart (props: Props) {
     const [ loading, setLoading ] = useState(false);
     const currentOrganization = useCurrentOrganization();
     const [ statusGroups, setStatusGroups ] = useState<DataEntry[]>([]);
+    const mountedRef = useRef(true);
 
     const allStatusCount = sumBy(statusGroups, (group) => group.value);
 
-    const fetchStatusGroups = async () => {
+    const fetchStatusGroups = useCallback(async () => {
         setLoading(true);
         try {
             const resp = await restApi.getAssessmentsSummary({
                 org_id: currentOrganization?.organization_id ?? ``,
             });
+
+            if (!mountedRef.current) return null;
+
             const groups: DataEntry[] = Object
                 .entries(resp ?? {})
                 .map(([ status, count ] : [ AssessmentStatus, number ]) => ({
@@ -78,10 +84,14 @@ export default function AssessmentPieChart (props: Props) {
             console.error(err);
         }
         setLoading(false);
-    };
+    }, [ mountedRef ]);
+
     useEffect(() => {
         fetchStatusGroups();
-    }, [ currentOrganization ]);
+        return () => {
+            mountedRef.current = false;   // clean up function
+        };
+    }, [ currentOrganization, fetchStatusGroups ]);
 
     return (
         <div className={classes.root}>
