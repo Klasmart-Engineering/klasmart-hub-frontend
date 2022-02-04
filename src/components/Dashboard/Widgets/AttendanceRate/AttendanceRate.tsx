@@ -84,7 +84,7 @@ export default function AttendanceRateWidget () {
     const formattedData = useMemo(() => {
         if (!data) return [];
         return attendanceRateDataFormatter(data, theme, dataLabels);
-    }, [ data ]);
+    }, [ data, dataLabels ]);
 
     const defaultView = width !== `xs`;
 
