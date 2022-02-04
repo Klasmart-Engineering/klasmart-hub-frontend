@@ -58,7 +58,63 @@ export default function ReportsApiClientProvider (props: Props) {
                     },
                 },
             }}
-            mock={USE_MOCK_DATA}
+            requestInterceptors={USE_MOCK_DATA ? [
+                {
+                    onFulfilled: ((config) => {
+                        const BASE_URL = `/reportsMockData`;
+                        switch (config.params.repid) {
+                        case `clsattendrategrp`:
+                            return {
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/clsattendrategrp.json`,
+                            };
+                        case `pendingassignment`:
+                            return {
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/pendingassignment.json`,
+                            };
+                        case `clsteacher`:
+                            return {
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/clsteacher.json`,
+                            };
+                        case `contentteacher`:
+                            return {
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/contentteacher.json`,
+                            };
+                        default:
+                            return config;
+                        }
+                    }),
+                },
+            ] : undefined}
+            responseInterceptors={USE_MOCK_DATA ? [
+                {
+                    onFulfilled: ((config) => {
+                        const now = Date.now();
+                        const thirtyMinutes = 1000 * 60 * 30;
+                        const expiryTime = Date.now() + thirtyMinutes;
+
+                        const baseResponseMock = {
+                            lastupdate: Math.floor(now / 1000),
+                            expiry: Math.floor(expiryTime / 1000),
+                            successful: true,
+                        };
+                        return {
+                            ...config,
+                            data: {
+                                ...config.data,
+                                ...baseResponseMock,
+                            },
+                        };
+                    }),
+                },
+            ] : undefined}
         >
             {children}
         </KLReportsApiClientProvider>
