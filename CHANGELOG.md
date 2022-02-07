@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.30.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.30.0%0D2.29.0) (2022-02-07)
+
+
+### 🐛 Bug Fixes
+
+* added labels to memo call to update translations ([11a3714](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/11a3714ddfbef91810887d66b811a8636f982d97)), closes [fix/DT-593](https://calmisland.atlassian.net/browse/DT-593)
+* replace schedule i18n key ([3784e37](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/3784e3737859580f70603a612f71cb08c49534c1)), closes [feat/DT-398](https://calmisland.atlassian.net/browse/DT-398)
+* **reports:** fix bug on token access refresh for api ([d64091f](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d64091f32d9fd54ad72b2d21c6af7a4d6b8686cf))
+
+
+### ✨ Features
+
+* dashboard toggle for mock data users ([25f6339](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/25f6339fbe0f67ac12445b1fecabcbd79866df53))
+* **DT-515:** added mock data interceptor ([c158732](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c158732753cfdd704cec096286412fe086ca9c37)), closes [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515)
+* **DT-515:** enabling dummy data toggle ([85b7f23](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/85b7f23cc2abf592f3f5b7063cae71e10e2b2b10)), closes [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515) [DT-515](https://calmisland.atlassian.net/browse/DT-515)
+
 ## [2.29.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.29.0%0D2.28.2) (2022-02-01)
 
 
