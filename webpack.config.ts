@@ -2,6 +2,7 @@ import "webpack-dev-server";
 import pkg from "./package.json";
 import { execSync } from "child_process";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 import { config } from "dotenv";
 import Dotenv from "dotenv-webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
@@ -96,6 +97,14 @@ const webpackConfig: Configuration = {
         new EnvironmentPlugin({
             VERSION: pkg.version,
             GIT_COMMIT: execSync(`git rev-parse HEAD`).toString().trim().slice(0, 7),
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: `public`,
+                    to: ``, // not `dist` as it will then be place at `dist/dist`
+                },
+            ],
         }),
         new CleanWebpackPlugin(),
         new Dotenv(),
