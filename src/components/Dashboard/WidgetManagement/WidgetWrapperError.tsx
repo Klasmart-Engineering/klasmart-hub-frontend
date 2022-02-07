@@ -83,7 +83,9 @@ export default function WidgetWrapperError (props: Props) {
                         fontSize="small"
                         className="reload-transform" />}
                     onClick={() => props.reload()}
-                >Try again</Button>
+                >
+                    <FormattedMessage id="home.common.error.action" />
+                </Button>
             </div>
         </>
     );
