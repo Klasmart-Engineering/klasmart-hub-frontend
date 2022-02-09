@@ -1096,5 +1096,12 @@
     "newHome.dashboardNotice.subtitle": "El siguiente panel utiliza datos de muestra con fines de demostración. Puede cambiar a la vista original en cualquier momento.",
     "home.dashboardNotice.title": "¡Vea nuestra nueva página de inicio de KidsLoop!",
     "home.dashboardNotice.switchViewButton": "Cambiar vista",
-    "home.common.error.action": "Intentar otra vez"
+    "home.common.error.action": "Intentar otra vez",
+    "user.inactivate.confirm": "Are you sure you want to mark \"{userName}\" as an inactive user?",
+    "common.action.inactive": "Mark Inactive",
+    "user.inactivate.title": "Mark User Inactive",
+    "user.inactivate.details": "The user will lose access to your organization, but user data will be maintained until the user is deleted.",
+    "user.inactivate.action.success": "User has been marked inactive",
+    "common.action.reactivate": "Reactivate",
+    "user.reactivate.action.success": "User has been reactivated successfully"
 }
