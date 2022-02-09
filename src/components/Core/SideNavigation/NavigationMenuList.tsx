@@ -21,16 +21,12 @@ import {
     Event,
     Grade,
     Group,
-    Help,
     Home,
     Inbox,
     LibraryBooks,
-    Lock,
     MenuBook,
     Person,
-    PhoneAndroid,
     School,
-    Security,
     SvgIconComponent,
     TableChart,
 } from "@material-ui/icons";
@@ -275,43 +271,46 @@ export default function NavigationMenuList (props: Props) {
                 },
             ],
         },
-        {
-            header: intl.formatMessage({
-                id: `navMenu_generalLabel`,
-            }),
-            items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_billingTitle`,
-                    }),
-                    icon: CreditCard,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_dataSecurityTitle`,
-                    }),
-                    icon: Lock,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_devicesTitle`,
-                    }),
-                    icon: PhoneAndroid,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_securityTitle`,
-                    }),
-                    icon: Security,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_supportTitle`,
-                    }),
-                    icon: Help,
-                },
-            ],
-        },
+        /**
+         * Leaving general section commented for future use.
+         */
+        // {
+        //     header: intl.formatMessage({
+        //         id: `navMenu_generalLabel`,
+        //     }),
+        //     items: [
+        //         {
+        //             text: intl.formatMessage({
+        //                 id: `navMenu_billingTitle`,
+        //             }),
+        //             icon: CreditCard,
+        //         },
+        //         {
+        //             text: intl.formatMessage({
+        //                 id: `navMenu_dataSecurityTitle`,
+        //             }),
+        //             icon: Lock,
+        //         },
+        //         {
+        //             text: intl.formatMessage({
+        //                 id: `navMenu_devicesTitle`,
+        //             }),
+        //             icon: PhoneAndroid,
+        //         },
+        //         {
+        //             text: intl.formatMessage({
+        //                 id: `navMenu_securityTitle`,
+        //             }),
+        //             icon: Security,
+        //         },
+        //         {
+        //             text: intl.formatMessage({
+        //                 id: `navMenu_supportTitle`,
+        //             }),
+        //             icon: Help,
+        //         },
+        //     ],
+        // },
     ];
 
     function isLinkSelected (item: MenuItem) {
