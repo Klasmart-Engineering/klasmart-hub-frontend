@@ -78,6 +78,10 @@ export default function DailySchedule (props: Props) {
         },
     };
 
+    const allDayLabel =intl.formatMessage({
+        id: `home.schedule.allDayLabel`,
+    });
+
     const min = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     const max = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
     const calendarRef = useRef<HTMLDivElement>();
@@ -86,9 +90,7 @@ export default function DailySchedule (props: Props) {
     useEffect(() => {
         const calendarEl = calendarRef.current;
         if (calendarEl === undefined) return;
-        insertAllDayLabel(calendarEl, intl.formatMessage({
-            id: `home.schedule.allDayLabel`,
-        }));
+        insertAllDayLabel(calendarEl, allDayLabel);
 
         if(!enableTimeMarker) return;
         const insertMarkerTimer = setTimeout(() => {
@@ -98,7 +100,7 @@ export default function DailySchedule (props: Props) {
         return () => {
             clearTimeout(insertMarkerTimer);
         };
-    }, []);
+    }, [ allDayLabel ]);
 
     useEffect(() => {
         const calendarEl = calendarRef.current;
