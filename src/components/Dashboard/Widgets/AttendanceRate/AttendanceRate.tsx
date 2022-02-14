@@ -1,3 +1,5 @@
+
+import { WidgetType } from "../../models/widget.model";
 import attendanceRateDataFormatter from "./attendanceRateDataFormatter";
 import { ClassAttendanceLegendLabels } from "@/components/Dashboard/models/data.model";
 import DonutWithText from "@/components/Dashboard/Widgets/AttendanceRate/Donut/DonutWithText";
@@ -105,6 +107,7 @@ export default function AttendanceRateWidget () {
                     id: `home.attendance.containerUrlLabel`,
                 }),
             }}
+            id={WidgetType.ATTENDANCERATE}
         >
             <div className={classes.titleWrapper}>
                 <FiberManualRecord className={classes.icon}/>

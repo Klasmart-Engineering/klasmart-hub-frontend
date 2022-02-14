@@ -1,23 +1,13 @@
-import AttendanceRateWidget from "../Widgets/AttendanceRate/AttendanceRate";
-import ContentStatusWidget from "../Widgets/ContentStatus/ContentStatus";
-import NextClassWidget from "../Widgets/NextClass/NextClass";
-import PendingAssessmentsWidget from "../Widgets/PendingAssessments/PendingAssessments";
-import TeacherLoadWidget from "../Widgets/TeacherLoadWidget/TeacherLoadWidget";
-import TodaysScheduleWidget from "../Widgets/TodaysSchedule/TodaysSchedule";
-import {
-    Widget,
-    WidgetType,
-} from "@/components/Dashboard/models/widget.model";
+import { Layout } from "./widgetCustomisation/defaultWidgets";
+import WidgetContext from "./widgetCustomisation/widgetContext";
 import { styled } from "@mui/material";
 import React,
 {
-    ReactElement,
+    useContext,
     useEffect,
     useState,
 } from "react";
 import {
-    Layout,
-    Layouts,
     Responsive,
     ResponsiveProps,
     WidthProvider,
@@ -33,24 +23,31 @@ const GridStyleOverride = styled(Responsive)<{ component?: React.ElementType }>(
 const ResponsiveGridLayout = WidthProvider(GridStyleOverride);
 
 interface Props {
-    layouts: { [P: string]: Layout[] };
     isDraggable: boolean;
 }
 
 export default function WidgetGrid (props: Props) {
-    const [ layoutArray, setLayoutArray ] = useState<Layout[]>([]);
+    const [ layoutArray, setLayoutArray ] = useState<Layout[]>([] as Layout[]);
     const [ breakpoint, setBreakpoint ] = useState<string>(`lg`);
+    const {
+        widgets,
+        loadWidgets,
+        reorderWidgets,
+        layouts,
+        editing,
+    } = useContext(WidgetContext);
 
-    const { layouts, isDraggable } = props;
+    useEffect(() => {
+        loadWidgets();
+        setLayoutArray(layouts[breakpoint]);
+    }, [ editing ]);
 
-    const widgetMap:{ [P: string]: ReactElement } = {
-        [WidgetType.SCHEDULE]: <TodaysScheduleWidget />,
-        [WidgetType.NEXTCLASS]: <NextClassWidget />,
-        [WidgetType.ATTENDANCERATE]: <AttendanceRateWidget />,
-        [WidgetType.PENDINGASSESSMENTS]: <PendingAssessmentsWidget />,
-        [WidgetType.TEACHERLOAD]: <TeacherLoadWidget />,
-        [WidgetType.CONTENTSTATUS]: <ContentStatusWidget />,
-    };
+    useEffect(() => {
+        // dispatch resize everytime the grid updates
+        window.dispatchEvent(new Event(`resize`));
+    });
+
+    const { isDraggable } = props;
 
     const responsiveProps: ResponsiveProps = {
         autoSize: true,
@@ -59,21 +56,19 @@ export default function WidgetGrid (props: Props) {
         rowHeight: 100,
         isDraggable: isDraggable,
         isBounded: true,
-        onBreakpointChange:(newBreakpoint: string, newCols: number) => {
+        onBreakpointChange:(newBreakpoint: string) => {
             setBreakpoint(newBreakpoint);
         },
-        onLayoutChange: (currentLayout: Layout[], allLayouts: Layouts) => {
+        onLayoutChange: () => {
             setLayoutArray(layouts[breakpoint]);
+        },
+        onDragStop (layout: Layout[]) {
+            reorderWidgets(layout);
         },
     };
 
-    useEffect(() => {
-        // dispatch resize everytime the grid updates
-        window.dispatchEvent(new Event(`resize`));
-    });
-
     return (
-        <ResponsiveGridLayout
+        layouts.lg.length > 0 ? <ResponsiveGridLayout
             className="layout"
             layouts={layouts}
             {...responsiveProps}
@@ -89,9 +84,10 @@ export default function WidgetGrid (props: Props) {
             }}>
             {
                 layoutArray.map((layout:Layout) => {
-                    return <div key={layout.i}>{widgetMap[layout.i]}</div>;
+                    return <div key={layout.i}>{widgets[layout.i]}</div>;
                 })
             }
-        </ResponsiveGridLayout>
+        </ResponsiveGridLayout> : !editing &&
+            <div>There are currently no widgets added to the dashboard, please use the Customize button to add some widgets</div>
     );
 }

@@ -1,3 +1,4 @@
+import { WidgetType } from "../../models/widget.model";
 import {
     ClassUser,
     useGetClassRoster,
@@ -272,6 +273,7 @@ export default function NextClass () {
                     id: `home.nextClass.containerUrlLabel`,
                 }),
             }}
+            id={WidgetType.NEXTCLASS}
         >
             <Box className={classes.nextClassCard}>
                 {nextClass ? (

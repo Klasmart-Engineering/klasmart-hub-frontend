@@ -1,20 +1,25 @@
+import { WidgetType } from './models/widget.model';
+import WidgetContext from './WidgetManagement/widgetCustomisation/widgetContext';
 import WidgetWrapperError from './WidgetManagement/WidgetWrapperError';
 import WidgetWrapperNoData from './WidgetManagement/WidgetWrapperNoData';
+import { Cancel } from '@mui/icons-material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
     Box,
+    Card,
     CircularProgress,
+    IconButton,
     Link,
-    Theme,
     Typography,
 } from '@mui/material';
-import Card from '@mui/material/Card';
+import { Theme } from '@mui/material/styles';
 import {
     ClassNameMap,
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React from 'react';
+import React,
+{ useContext } from 'react';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     cardWrapper: {
@@ -43,11 +48,34 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         fontWeight: `bold`,
         color: theme.palette.grey[600],
     },
+    titleEditing: {
+        fontSize: 14,
+        fontWeight: `bold`,
+        color: theme.palette.grey[100],
+    },
     titleLink: {
         display: `flex`,
         alignItems: `center`,
         fontSize: 12,
         color: theme.palette.grey[500],
+    },
+    removeWidget: {
+        color: theme.palette.error.light,
+        height: `20px`,
+        width: `20px`,
+        position: `absolute`,
+        top: `20px`,
+        right: `-10px`,
+        backgroundColor: theme.palette.grey[100],
+        borderRadius: `50%`,
+        "&:hover": {
+            backgroundColor: theme.palette.grey[100],
+        },
+    },
+    icon: {
+        height: `35px`,
+        width: `35px`,
+
     },
 }));
 
@@ -62,9 +90,10 @@ export type BaseWidgetProps = {
     link?: LinkProps;
     overrideLink?: React.ReactNode;
     loading: boolean;
-    error: any;
-    noData: boolean;
-    reload: () => any | Promise<any>;
+    error?: any;
+    noData?: boolean;
+    reload?: () => any | Promise<any>;
+    id: WidgetType;
 }
 
 export default function WidgetWrapper (props: BaseWidgetProps) {
@@ -75,6 +104,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
         link,
         overrideLink,
         reload,
+        id,
     } = props;
 
     return (
@@ -83,7 +113,9 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                 classes={classes}
                 label={label}
                 link={link}
-                overrideLink={overrideLink} />
+                overrideLink={overrideLink}
+                id={id}
+            />
             <Card
                 className={classes.card}
             >
@@ -102,7 +134,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                         : props.error ?
                             <WidgetWrapperError reload={reload}/>
                             : props.noData ?
-                                <WidgetWrapperNoData></WidgetWrapperNoData>
+                                <WidgetWrapperNoData/>
                                 :
                                 children
                     }
@@ -117,6 +149,7 @@ type CardAnnotationProps = {
     label: string;
     link?: LinkProps;
     overrideLink? : React.ReactNode;
+    id: WidgetType;
 }
 
 function CardAnnotation ({
@@ -124,16 +157,24 @@ function CardAnnotation ({
     label,
     link,
     overrideLink,
+    id,
 }: CardAnnotationProps) {
+    const {
+        editing,
+        widgets,
+        layouts,
+        removeWidget,
+    } = useContext(WidgetContext);
+
     return (
         <Box className={classes.titleContainer}>
-            <Typography className={classes.title}>{ label }</Typography>
+            <Typography className={editing? classes.titleEditing : classes.title}>{ label }</Typography>
             {
-                link && !overrideLink && (
+                !editing && link && !overrideLink && (
                     <Link
                         className={classes.titleLink}
                         href={`#${location.pathname}${link.url}`}
-                        color="secondary"
+                        color="primary"
                     >
                         { link.label} <PlayArrowIcon />
                     </Link>
@@ -141,9 +182,20 @@ function CardAnnotation ({
             }
 
             {
-                overrideLink && (
+                !editing && overrideLink && (
                     <Box>
                         { overrideLink }
+                    </Box>
+                )
+            }
+            {
+                editing && (
+                    <Box >
+                        <IconButton
+                            className={classes.removeWidget}
+                            onClick={() => removeWidget(id, widgets, layouts)}>
+                            <Cancel className={classes.icon} />
+                        </IconButton>
                     </Box>
                 )
             }

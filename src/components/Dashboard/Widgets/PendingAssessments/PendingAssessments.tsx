@@ -1,4 +1,5 @@
 
+import { WidgetType } from "../../models/widget.model";
 import pendingAssesmentsDataFormatter from "./pendingAssesmentsDataFormatter";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
@@ -104,7 +105,9 @@ export default function PendingAssessmentsWidget () {
                 label: intl.formatMessage({
                     id: `home.pendingAssessments.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.PENDINGASSESSMENTS}
+        >
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.bullet}/>

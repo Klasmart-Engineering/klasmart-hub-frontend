@@ -1,5 +1,6 @@
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { WidgetType } from "../../models/widget.model";
 import DailyCalendar from "@/components/Dashboard/Widgets/TodaysSchedule/Calendar/DailyCalendar/DailyCalendar";
 import { DailyCalendarEvent } from "@/components/Dashboard/Widgets/TodaysSchedule/Calendar/DailyCalendar/DailyCalenderHelper";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
@@ -89,6 +90,7 @@ export default function TodaysSchedule () {
                     id: `home.schedule.containerUrlLabel`,
                 }),
             }}
+            id={WidgetType.SCHEDULE}
         >
             <Box
                 display="flex"

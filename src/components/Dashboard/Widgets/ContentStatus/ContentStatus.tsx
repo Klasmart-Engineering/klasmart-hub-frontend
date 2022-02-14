@@ -1,4 +1,5 @@
 
+import { WidgetType } from "../../models/widget.model";
 import contentStatusDataFormatter from "./contentStatusDataFormatter";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -110,7 +111,9 @@ export default function ContentStatusWidget () {
                 label: intl.formatMessage({
                     id: `home.contentStatus.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.CONTENTSTATUS}
+        >
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.titleBullet}/>

@@ -1,5 +1,5 @@
-import Dashboard from "../components/Dashboard/dashboard";
-import WidgetDashboard from "../components/Dashboard/widget-dashboard";
+import Dashboard from "../components/Dashboard/Dashboard";
+import WidgetDashboard from "../components/Dashboard/WidgetDashboard";
 import DashboardNotice from "@/components/Dashboard/DashboardNotice";
 import {
     DashboardMode,

@@ -1,3 +1,4 @@
+import { WidgetType } from "../../models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
@@ -152,7 +153,9 @@ export default function TeacherLoadWidget () {
                 label: intl.formatMessage({
                     id: `home.teacherLoad.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.TEACHERLOAD}
+        >
             <div className={classes.widgetContent}>
                 <ul className={classes.list}>
                     <li className={classes.listItem}>
