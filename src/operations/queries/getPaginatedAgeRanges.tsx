@@ -31,7 +31,7 @@ export const buildOrganizationAgeRangeFilter = (filter: AgeRangePaginationFilter
                 },
             ],
         },
-        ...filter.filters?.length > 0 ? filter.filters : [],
+        ...(filter.filters?.length > 0 ? filter.filters : []),
     ],
 });
 

@@ -5,7 +5,6 @@ import {
 import { useRestAPI } from "@/api/restapi";
 import scheduleSvg from "@/assets/img/schedule.svg";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import StyledFAB from "@/components/styled/fabButton";
 import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
@@ -14,19 +13,21 @@ import {
     SchedulePayload,
 } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
+import VideoCallIcon from '@mui/icons-material/VideoCall';
 import {
     Box,
-    createStyles,
     darken,
     Divider,
     Fab,
     Grid,
-    makeStyles,
     Tooltip,
     Typography,
     useTheme,
-} from "@material-ui/core";
-import VideoCallIcon from '@material-ui/icons/VideoCall';
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import jwtDecode from "jwt-decode";
 import { UserAvatar } from "kidsloop-px";
 import React,
@@ -104,8 +105,10 @@ const useStyles = makeStyles((theme) => createStyles({
         },
     },
     liveButton: {
-        padding: `2.5rem`,
+        padding: theme.spacing(5),
         color: theme.palette.common.white,
+        backgroundColor: theme.palette.primary.main,
+        borderRadius: `100%`,
         "&:hover": {
             backgroundColor: darken(theme.palette.primary.main, 0.2),
         },
@@ -133,11 +136,7 @@ const useStyles = makeStyles((theme) => createStyles({
         },
     },
     avatar: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
-        color: `white`,
         marginRight: theme.spacing(1),
-        fontSize: 10,
     },
 }));
 
@@ -315,7 +314,7 @@ export default function NextClass () {
                             <Grid
                                 container
                                 alignItems="center"
-                                justify="space-between"
+                                justifyContent="space-between"
                                 className={classes.nextClassTimeWrapper}>
                                 <Grid item>
                                     <div className={classes.nextClassTime}>
@@ -341,12 +340,9 @@ export default function NextClass () {
                                     </div>
                                 </Grid>
                                 <Grid
-                                    item
-                                    style={{
-                                        marginLeft: theme.spacing(4),
-                                    }}
-                                >
+                                    item>
                                     <Fab
+                                        variant="circular"
                                         color="primary"
                                         className={classes.liveButton}
                                         disabled={liveToken === ``}
@@ -383,7 +379,9 @@ export default function NextClass () {
                                             }}
                                         />
                                     </Typography>
-                                    <Grid container>
+                                    <Grid
+                                        container
+                                        alignItems="baseline">
                                         {nextClassRoster?.teachers.map((user, i) => {
                                             const maxTeachers = 2;
 
@@ -427,6 +425,7 @@ export default function NextClass () {
                                                                         <UserAvatar
                                                                             name={`${user.given_name} ${user.family_name}`}
                                                                             className={classes.avatar}
+                                                                            size="small"
                                                                         />
                                                                         <Typography variant="caption">
                                                                             {user.given_name}
@@ -436,7 +435,9 @@ export default function NextClass () {
                                                                 )}
                                                                 {i === nextClassRoster?.teachers.length - 1 && (
                                                                     <Tooltip title={maxTeachersList.map((user) => `${user.given_name} ${user.family_name}`).join(`, `)}>
-                                                                        <span> + {maxTeachersList.length}</span>
+                                                                        <Typography variant="caption">
+                                                                            <span> + {maxTeachersList.length}</span>
+                                                                        </Typography>
                                                                     </Tooltip>
                                                                 )}
                                                             </Box>

@@ -15,11 +15,11 @@ import {
 import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
+import { Paper } from "@mui/material";
 import {
     createStyles,
     makeStyles,
-    Paper,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Select,
     TextField,
@@ -118,93 +118,91 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
     useHandleUpdateNonSpecified(gradeIds, setGradeIds, allGrades);
     useHandleUpdateNonSpecified(ageRanges, setAgeRanges, allAgeRanges);
 
-    return (
-        <>
-            <Paper className={classes.paper}>
-                <TextField
-                    fullWidth
-                    label={intl.formatMessage({
-                        id: `programs_programNameLabel`,
-                    })}
-                    value={programName}
-                    disabled={disabled || loading}
-                    hideHelperText={disabled}
-                    autoFocus={!value.id}
-                    validations={[
-                        required(`The program name is required.`),
-                        letternumeric(intl.formatMessage({
-                            id: `programNameValidations_letternumeric`,
-                        })),
-                        max(35, `The program name has a max length of 35 characters.`),
-                    ]}
-                    loading={loading}
-                    onChange={setProgramName}
-                />
-            </Paper>
-            <Paper className={classes.paper}>
-                <Select
-                    multiple
-                    fullWidth
-                    label={intl.formatMessage({
-                        id: `programs_grades`,
-                    })}
-                    value={gradeIds}
-                    items={customGrades.sort((sortEntitiesByName))}
-                    sections={[
-                        ...nonSpecifiedGrade ? [
-                            {
-                                items: [ nonSpecifiedGrade ],
-                                ignoreSelectAll: true,
-                            },
-                        ] : [],
+    return <>
+        <Paper className={classes.paper}>
+            <TextField
+                fullWidth
+                label={intl.formatMessage({
+                    id: `programs_programNameLabel`,
+                })}
+                value={programName}
+                disabled={disabled || loading}
+                hideHelperText={disabled}
+                autoFocus={!value.id}
+                validations={[
+                    required(`The program name is required.`),
+                    letternumeric(intl.formatMessage({
+                        id: `programNameValidations_letternumeric`,
+                    })),
+                    max(35, `The program name has a max length of 35 characters.`),
+                ]}
+                loading={loading}
+                onChange={setProgramName}
+            />
+        </Paper>
+        <Paper className={classes.paper}>
+            <Select
+                multiple
+                fullWidth
+                label={intl.formatMessage({
+                    id: `programs_grades`,
+                })}
+                value={gradeIds}
+                items={customGrades.sort((sortEntitiesByName))}
+                sections={[
+                    ...(nonSpecifiedGrade ? [
                         {
-                            header: intl.formatMessage({
-                                id: `programs_systemValuesLabel`,
-                            }),
-                            items: systemGrades.sort((sortEntitiesByName)),
+                            items: [ nonSpecifiedGrade ],
+                            ignoreSelectAll: true,
                         },
-                    ]}
-                    itemText={(grade) => grade.name ?? ``}
-                    itemValue={(grade) => grade.id ?? ``}
-                    disabled={disabled || loading || gradesLoading}
-                    hideHelperText={disabled}
-                    validations={[ required(`The Grade is required.`) ]}
-                    loading={loading || gradesLoading}
-                    onChange={setGradeIds}
-                />
-            </Paper>
-            <Paper className={classes.paper}>
-                <Select
-                    multiple
-                    fullWidth
-                    label={intl.formatMessage({
-                        id: `programs_ageRanges`,
-                    })}
-                    value={ageRanges}
-                    items={customAgeRanges}
-                    sections={[
-                        ...nonSpecifiedAgeRange ? [
-                            {
-                                items: [ nonSpecifiedAgeRange ],
-                                ignoreSelectAll: true,
-                            },
-                        ] : [],
+                    ] : []),
+                    {
+                        header: intl.formatMessage({
+                            id: `programs_systemValuesLabel`,
+                        }),
+                        items: systemGrades.sort((sortEntitiesByName)),
+                    },
+                ]}
+                itemText={(grade) => grade.name ?? ``}
+                itemValue={(grade) => grade.id ?? ``}
+                disabled={disabled || loading || gradesLoading}
+                hideHelperText={disabled}
+                validations={[ required(`The Grade is required.`) ]}
+                loading={loading || gradesLoading}
+                onChange={setGradeIds}
+            />
+        </Paper>
+        <Paper className={classes.paper}>
+            <Select
+                multiple
+                fullWidth
+                label={intl.formatMessage({
+                    id: `programs_ageRanges`,
+                })}
+                value={ageRanges}
+                items={customAgeRanges}
+                sections={[
+                    ...(nonSpecifiedAgeRange ? [
                         {
-                            header: intl.formatMessage({
-                                id: `programs_systemValuesLabel`,
-                            }),
-                            items: systemAgeRanges,
+                            items: [ nonSpecifiedAgeRange ],
+                            ignoreSelectAll: true,
                         },
-                    ]}
-                    itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
-                    itemValue={(ageRange) => ageRange.id ?? ``}
-                    disabled={disabled || loading || ageRangesLoading}
-                    hideHelperText={disabled}
-                    validations={[ required(`The Age Range is required.`) ]}
-                    loading={loading || ageRangesLoading}
-                    onChange={setAgeRanges}
-                />
-            </Paper>
-        </>
-    );
+                    ] : []),
+                    {
+                        header: intl.formatMessage({
+                            id: `programs_systemValuesLabel`,
+                        }),
+                        items: systemAgeRanges,
+                    },
+                ]}
+                itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
+                itemValue={(ageRange) => ageRange.id ?? ``}
+                disabled={disabled || loading || ageRangesLoading}
+                hideHelperText={disabled}
+                validations={[ required(`The Age Range is required.`) ]}
+                loading={loading || ageRangesLoading}
+                onChange={setAgeRanges}
+            />
+        </Paper>
+    </>;
 }

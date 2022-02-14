@@ -90,12 +90,12 @@ export default function EditAgeRangeDialog (props: Props) {
 
     const handleDelete = async () => {
         const ageRangeName = buildAgeRangeLabel(updatedAgeRange);
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             entityName: ageRangeName,
             title: intl.formatMessage({
                 id: `ageRanges_deleteAgeRangeTitle`,
             }),
-        })) return;
+        }))) return;
         try {
             await deleteAgeRange({
                 variables: {

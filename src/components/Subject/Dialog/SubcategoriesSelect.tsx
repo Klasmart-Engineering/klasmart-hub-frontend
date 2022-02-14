@@ -14,16 +14,18 @@ import {
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {
-    Chip,
-    createStyles,
-    DialogContentText,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Chip,
+    DialogContentText,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     Dialog,
     PageTable,
@@ -159,7 +161,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
     };
 
     const deleteSubcategory = async (row: SubcategoryRow) => {
-        if (!await prompt({
+        if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
                 id: `generic_confirmDelete`,
@@ -186,7 +188,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                 id: `generic_deleteLabel`,
             }),
             validations: [ equals(row.name) ],
-        })) return;
+        }))) return;
         try {
             await deleteSubcategoryReq({
                 variables: {

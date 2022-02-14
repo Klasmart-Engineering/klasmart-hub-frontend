@@ -6,12 +6,12 @@ import {
     useDashboardMode,
 } from "@/store/useDashboardMode";
 import { usePermission } from "@/utils/permissions";
+import CachedIcon from '@mui/icons-material/Cached';
+import { CircularProgress } from "@mui/material";
 import {
-    CircularProgress,
     createStyles,
     makeStyles,
-} from "@material-ui/core";
-import CachedIcon from '@material-ui/icons/Cached';
+} from '@mui/styles';
 import React,
 {
     useEffect,

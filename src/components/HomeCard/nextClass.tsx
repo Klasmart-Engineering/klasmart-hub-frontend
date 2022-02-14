@@ -16,12 +16,12 @@ import {
     Grid,
     Tooltip,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    useTheme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import jwtDecode from "jwt-decode";
 import { UserAvatar } from "kidsloop-px";
 import React,
@@ -222,7 +222,7 @@ export default function NextClass (props: Props) {
                         <Grid
                             container
                             alignItems="center"
-                            justify="space-between">
+                            justifyContent="space-between">
                             <Grid item>
                                 <Typography style={{
                                     fontWeight: `bold`,

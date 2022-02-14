@@ -1,7 +1,7 @@
 import JoinedOrganizationTable from "@/components/Organization/JoinedOrganizationTable";
 import MyOrganizationTable from "@/components/Organization/MyOrganizationTable";
-import { Box } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({

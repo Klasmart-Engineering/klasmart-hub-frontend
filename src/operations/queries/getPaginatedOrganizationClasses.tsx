@@ -12,14 +12,12 @@ export interface ClassPaginationFilter {
 }
 
 export const buildOrganizationClassesSearchFilter = (search: string): ClassesFilter => ({
-    ...isUuid(search)
-        ? {
+    ...(isUuid(search) ? {
             id: {
                 operator: `eq`,
                 value: search,
             },
-        }
-        : {
+        } : {
             OR: [
                 {
                     name: {
@@ -29,7 +27,7 @@ export const buildOrganizationClassesSearchFilter = (search: string): ClassesFil
                     },
                 },
             ],
-        },
+        }),
 });
 
 export const buildOrganizationClassesFilter = (filter: ClassPaginationFilter): ClassesFilter => ({

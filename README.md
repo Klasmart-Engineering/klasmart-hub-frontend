@@ -8,10 +8,10 @@ In `Assessment v3.pdf`, we will provide only 2~3 pages and 9~14 pages of UI.
 
 Since the content of the `Assessment v3.pdf` is often out of date, if you have any questions, please ask to Isu and Adrien using Slack channel.
 
-## Core design library: Material UI document
+## Core design library: MUI
 
-- Component Demo: https://material-ui.com/components/buttons/
-- Icons: https://material-ui.com/components/material-icons/
+- Component Demo: https://mui.com/components/buttons/
+- Icons: https://mui.com/components/material-icons/
 
 ## Building and Deploying
 
@@ -19,8 +19,8 @@ Since the content of the `Assessment v3.pdf` is often out of date, if you have a
 
 #### Installation
 
-- Install Node.js v14.x.x
-- Install Npm v6.x.x
+- Install Node.js v16.x.x (preferable v16.13.0 LTS)
+- Run `npm -v` and make sure you are on the latest stable npm version - at least 8.x.x (if not run `npm install -g npm@latest`)
 - Install the dependencies: `npm install`
 
 #### Configuration

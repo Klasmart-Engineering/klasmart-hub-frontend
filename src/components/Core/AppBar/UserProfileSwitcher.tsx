@@ -12,13 +12,15 @@ import { useReactiveVar } from "@apollo/client";
 import {
     Avatar,
     Chip,
-    createStyles,
     List,
     ListItem,
     ListItemAvatar,
     ListItemText,
+} from "@mui/material";
+import {
+    createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     UserAvatar,
     useSnackbar,

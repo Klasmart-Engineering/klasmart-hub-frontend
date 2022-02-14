@@ -1,10 +1,12 @@
 import PrimaryLogo from "@branding/assets/img/primary_logo.svg";
 import {
     Box,
-    createStyles,
     Fade,
+} from "@mui/material";
+import {
+    createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({

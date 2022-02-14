@@ -7,15 +7,15 @@ import {
     green,
     orange,
     red,
-} from "@material-ui/core/colors";
+} from "@mui/material/colors";
 import {
     createTheme,
     darken,
     lighten,
+    PaletteOptions,
     responsiveFontSizes,
     Theme,
-} from "@material-ui/core/styles";
-import { PaletteOptions } from "@material-ui/core/styles/createPalette";
+} from "@mui/material/styles";
 import { utils } from "kidsloop-px";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
@@ -86,43 +86,78 @@ export function themeProvider () {
     const organizationColor = previewOrganizationColor ?? organizationPrimaryColor;
     const organizationToolbarColor = lighten(organizationColor, 0.9);
 
-    const overrides = {
-        MuiAppBar: {
-            colorPrimary: {
-                color: `#000`,
-                backgroundColor: themeMode === `light` ? organizationToolbarColor : `#041125`,
+    const breakpointOverrides = {
+        breakpoints: {
+            values: {
+                xs: 0,
+                sm: 600,
+                md: 960,
+                lg: 1200,
+                xl: 1920,
             },
         },
-        MuiTable: {
-            root: {
-                backgroundColor: themeMode === `light` ? `#fff` : `#05152e`,
+    };
+
+    const componentOverrides = {
+        components: {
+            MuiCssBaseline: {
+                styleOverrides: {
+                    body: {
+                        fontSize: `0.875rem`,
+                        lineHeight: 1.43,
+                        fontWeight: 500,
+                    },
+                },
             },
-        },
-        MuiTableCell: {
-            stickyHeader: {
-                backgroundColor: themeMode === `light` ? `#fafafa` : `#041125`,
+            MuiAppBar: {
+                styleOverrides: {
+                    colorPrimary: {
+                        color: `#000`,
+                        backgroundColor: themeMode === `light` ? organizationToolbarColor : `#041125`,
+                    },
+                },
             },
-        },
-        MuiTabs: {
-            root: {
-                backgroundColor: themeMode === `light` ? `#FFF` : `#030D1C`,
+            MuiTable: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: themeMode === `light` ? `#fff` : `#05152e`,
+                    },
+                },
             },
-        },
-        MuiTab: {
-            root: {
-                backgroundColor: themeMode === `light` ? `#fafafa` : `#030D1C !important`,
+            MuiTableCell: {
+                styleOverrides: {
+                    stickyHeader: {
+                        backgroundColor: themeMode === `light` ? `#fafafa` : `#041125`,
+                    },
+                },
             },
-        },
-        MuiToggleButton: {
-            root: {
-                color: themeMode === `light` ? `#1B365D` : `#FFF`,
-                backgroundColor: themeMode === `light` ? `#FFF` : `#1B365D`,
-                "&:hover": {
-                    "-webkit-transition": `all .4s ease`,
-                    color: themeMode === `light` ? `#FFF` : `#030D1C`,
-                    backgroundColor: themeMode === `light` ? `#1B365D` : `#FFF`,
-                    "box-shadow": `0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)`,
-                    transition: `all .4s ease`,
+            MuiTabs: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: themeMode === `light` ? `#FFF` : `#030D1C`,
+                    },
+                },
+            },
+            MuiTab: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: themeMode === `light` ? `#fafafa` : `#030D1C !important`,
+                    },
+                },
+            },
+            MuiToggleButton: {
+                styleOverrides: {
+                    root: {
+                        color: themeMode === `light` ? `#1B365D` : `#FFF`,
+                        backgroundColor: themeMode === `light` ? `#FFF` : `#1B365D`,
+                        "&:hover": {
+                            "-webkit-transition": `all .4s ease`,
+                            color: themeMode === `light` ? `#FFF` : `#030D1C`,
+                            backgroundColor: themeMode === `light` ? `#1B365D` : `#FFF`,
+                            "box-shadow": `0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)`,
+                            transition: `all .4s ease`,
+                        },
+                    },
                 },
             },
         },
@@ -168,23 +203,25 @@ export function themeProvider () {
 
     let theme: Theme;
     if (themeMode === `light`) {
-        palette.type = `light`;
+        palette.mode = `light`;
         palette.background = {
             default: `#FFF`,
         };
         theme = createTheme({
-            overrides,
+            ...componentOverrides,
+            ...breakpointOverrides,
             palette,
             typography,
         });
     } else {
-        palette.type = `dark`;
+        palette.mode = `dark`;
         theme = createTheme({
-            overrides,
+            ...componentOverrides,
+            ...breakpointOverrides,
             palette,
             typography,
         });
     }
 
-    return theme = responsiveFontSizes(theme);
+    return responsiveFontSizes(theme);
 }

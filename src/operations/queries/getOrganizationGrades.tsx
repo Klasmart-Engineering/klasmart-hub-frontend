@@ -12,24 +12,22 @@ export interface GradePaginationFilter {
 }
 
 export const buildGradeSearchFilter = (search: string): GradeFilter => ({
-    ...isUuid(search)
-        ? {
+    ...(isUuid(search) ? {
             id: {
                 operator: `eq`,
                 value: search,
             },
-        } :
-        {
-            OR: [
-                {
-                    name: {
-                        operator: `contains`,
-                        value: search,
-                        caseInsensitive: true,
-                    },
+        } : {
+        OR: [
+            {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
                 },
-            ],
-        },
+            },
+        ],
+    }),
 });
 
 export const buildGradeFilter = (filter: GradePaginationFilter): GradeFilter => ({

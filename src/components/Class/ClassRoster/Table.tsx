@@ -11,17 +11,19 @@ import { getTableLocalization } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
-    Box,
-    createStyles,
-    DialogContentText,
-    makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
-import {
     Delete as DeleteIcon,
     PersonAdd as PersonAddIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Box,
+    DialogContentText,
+    Paper,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     FullScreenDialog,
     PageTable,

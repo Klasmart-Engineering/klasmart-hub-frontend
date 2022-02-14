@@ -5,11 +5,11 @@ import WidgetGrid from "@/components/Dashboard/WidgetManagement/WidgetGrid";
 import {
     Box,
     Container,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import React from "react";
 import { Layout } from "react-grid-layout";
 import ReactResizeDetector from 'react-resize-detector';

@@ -20,23 +20,25 @@ import {
 import { handleError } from "@/utils/images";
 import { getTableLocalization } from "@/utils/table";
 import {
-    Badge,
-    Box,
-    Chip,
-    createStyles,
-    DialogContentText,
-    Divider,
-    Link,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     CreateNewFolder as CreateNewFolderIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     ExitToApp as ExitToAppIcon,
     Share as ShareIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Badge,
+    Box,
+    Chip,
+    DialogContentText,
+    Divider,
+    Link,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     PageTable,

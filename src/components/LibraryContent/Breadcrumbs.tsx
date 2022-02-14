@@ -1,14 +1,16 @@
 import { useRestAPI } from "@/api/restapi";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { Home as HomeIcon } from "@mui/icons-material";
 import {
     Breadcrumbs,
-    createStyles,
     Link,
-    makeStyles,
     Typography,
-} from "@material-ui/core";
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { Home as HomeIcon } from "@material-ui/icons";
+} from "@mui/material";
+import { Breakpoint } from '@mui/material/styles';
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import { useWidth } from "kidsloop-px";
 import React, {
     useEffect,

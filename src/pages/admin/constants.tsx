@@ -12,7 +12,7 @@ import {
     LastPage,
     SaveAlt,
     Search,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import React,
 { forwardRef } from "react";
 

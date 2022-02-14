@@ -1,8 +1,5 @@
-import {
-    LinearProgress,
-    Theme,
-    withStyles,
-} from "@material-ui/core";
+import { LinearProgress, Theme } from "@mui/material";
+import withStyles from '@mui/styles/withStyles';
 import React from "react";
 
 type Props = {

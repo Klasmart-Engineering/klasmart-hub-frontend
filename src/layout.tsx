@@ -1,11 +1,11 @@
 import Toolbar from "./components/Core/AppBar/Toolbar";
 import SideNavigationDrawer from "./components/Core/SideNavigation/Drawer";
 import Router from "./router";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import { useWidth } from "kidsloop-px";
 import React,
 {

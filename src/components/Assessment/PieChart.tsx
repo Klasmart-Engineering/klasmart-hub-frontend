@@ -3,16 +3,18 @@ import PieChart from "@/components/Charts/Pie";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { AssessmentStatus } from "@/types/objectTypes";
 import { getStatusLabel } from "@/utils/assessments";
+import { Assessment as AssessmentIcon } from '@mui/icons-material';
 import {
     CircularProgress,
-    createStyles,
     lighten,
-    makeStyles,
     Theme,
     Typography,
     useTheme,
-} from "@material-ui/core";
-import { Assessment as AssessmentIcon } from '@material-ui/icons';
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import { sumBy } from "lodash";
 import React,
 {

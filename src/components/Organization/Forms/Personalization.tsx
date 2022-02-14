@@ -5,12 +5,12 @@ import { Organization } from "@/types/graphQL";
 import {
     FormHelperText,
     Grid,
-} from "@material-ui/core";
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import {
     Button,
     ColorPicker,
@@ -141,149 +141,147 @@ export default function Personalization (props: Props) {
         return () => setPreviewOrganizationColor(undefined);
     }, []);
 
-    return (
-        <>
+    return <>
+        <Grid
+            item
+            xs={12}
+            justifyContent="space-between"
+            className={classes.cardBody}
+        >
             <Grid
-                item
-                xs={12}
-                justify="space-between"
-                className={classes.cardBody}
+                container
+                className={classes.cardBodyRow}
             >
                 <Grid
-                    container
-                    className={classes.cardBodyRow}
+                    item
+                    xs={12}
+                    sm={4}
                 >
-                    <Grid
-                        item
-                        xs={12}
-                        sm={4}
-                    >
-                        <FormattedMessage
-                            id="addOrganization_logo"
-                        />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12}
-                        sm={8}
-                    >
-                        <Grid
-                            container
-                            className={classes.logoPicker}
-                        >
-                            <OrganizationAvatar
-                                name={organizationName}
-                                size="large"
-                                color={previewOrganizationColor}
-                                src={organizationLogoPreview ?? undefined}
-                            />
-                            <div className={classes.fileInputControls}>
-                                {!organizationLogoPreview ? (
-                                    <FileInputButton
-                                        label={intl.formatMessage({
-                                            id: `addOrganization_selectImageLabel`,
-                                        })}
-                                        accept={[
-                                            `image/jpg`,
-                                            `image/jpeg`,
-                                            `image/png`,
-                                        ]}
-                                        errorMessages={{
-                                            noFileError: intl.formatMessage({
-                                                id: `addOrganization_noFileFound`,
-                                            }),
-                                            fileSizeTooBigError: intl.formatMessage({
-                                                id: `addOrganization_imagePickerImageTooLargeError`,
-                                            }, {
-                                                fileSize: `2MB`,
-                                            }),
-                                            wrongFileTypeUploadError: intl.formatMessage({
-                                                id: `addOrganization_imagePickerWrongFormatError`,
-                                            }),
-                                        }}
-                                        onFileChange={onImageChange}
-                                        onError={setImageSelectError}
-                                    />
-                                ) : (
-                                    <Button
-                                        label={intl.formatMessage({
-                                            id: `addOrganization_removeImageLabel`,
-                                        })}
-                                        variant="outlined"
-                                        color="error"
-                                        size="large"
-                                        onClick={removeLogoPreview}
-                                    />
-                                )}
-                            </div>
-                            <div className={classes.imageSelectErrorMessage}>
-                                <FormHelperText error>
-                                    {imageSelectError ?? ` `}
-                                </FormHelperText>
-                            </div>
-                        </Grid>
-                    </Grid>
+                    <FormattedMessage
+                        id="addOrganization_logo"
+                    />
                 </Grid>
                 <Grid
-                    container
-                    className={classes.cardBodyRow}
+                    item
+                    xs={12}
+                    sm={8}
                 >
                     <Grid
-                        item
-                        xs={12}
-                        sm={4}
+                        container
+                        className={classes.logoPicker}
                     >
-                        <FormattedMessage
-                            id="addOrganization_organizationColorLabel"
+                        <OrganizationAvatar
+                            name={organizationName}
+                            size="large"
+                            color={previewOrganizationColor}
+                            src={organizationLogoPreview ?? undefined}
                         />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12}
-                        sm={4}
-                    >
-                        <ColorPicker
-                            hideHelperText
-                            fullWidth
-                            value={previewOrganizationColor}
-                            label="Color"
-                            variant="standard"
-                            defaultButtonLabel="Default"
-                            defaultColor={THEME_PRIMARY_COLOR}
-                            onChange={handleColorChange}
-                        />
+                        <div className={classes.fileInputControls}>
+                            {!organizationLogoPreview ? (
+                                <FileInputButton
+                                    label={intl.formatMessage({
+                                        id: `addOrganization_selectImageLabel`,
+                                    })}
+                                    accept={[
+                                        `image/jpg`,
+                                        `image/jpeg`,
+                                        `image/png`,
+                                    ]}
+                                    errorMessages={{
+                                        noFileError: intl.formatMessage({
+                                            id: `addOrganization_noFileFound`,
+                                        }),
+                                        fileSizeTooBigError: intl.formatMessage({
+                                            id: `addOrganization_imagePickerImageTooLargeError`,
+                                        }, {
+                                            fileSize: `2MB`,
+                                        }),
+                                        wrongFileTypeUploadError: intl.formatMessage({
+                                            id: `addOrganization_imagePickerWrongFormatError`,
+                                        }),
+                                    }}
+                                    onFileChange={onImageChange}
+                                    onError={setImageSelectError}
+                                />
+                            ) : (
+                                <Button
+                                    label={intl.formatMessage({
+                                        id: `addOrganization_removeImageLabel`,
+                                    })}
+                                    variant="outlined"
+                                    color="error"
+                                    size="large"
+                                    onClick={removeLogoPreview}
+                                />
+                            )}
+                        </div>
+                        <div className={classes.imageSelectErrorMessage}>
+                            <FormHelperText error>
+                                {imageSelectError ?? ` `}
+                            </FormHelperText>
+                        </div>
                     </Grid>
                 </Grid>
             </Grid>
-            <ImagePicker
-                isZoomDisabled={false}
-                isRotationDisabled={false}
-                imageToBeCropped={imageToBeCropped}
-                dialogTitle={intl.formatMessage({
-                    id: `addOrganization_imagePickerDialogTitle`,
-                })}
-                isCropperOpen={isCropperOpen}
-                zoomLabel={intl.formatMessage({
-                    id: `addOrganization_imagePickerZoomLabel`,
-                })}
-                rotateLabel={intl.formatMessage({
-                    id: `addOrganization_imagePickerRotateLabel`,
-                })}
-                cancelLabel={intl.formatMessage({
-                    id: `addOrganization_imagePickerCancelLabel`,
-                })}
-                okLabel={intl.formatMessage({
-                    id: `addOrganization_imagePickerOkLabel`,
-                })}
-                aspect={1 / 1}
-                onCancelCrop={() => setIsCropperOpen(false)}
-                onImageCropComplete={(image) => {
-                    setOrganizationLogoPreview(image.base64);
-                    setTempOrganizationLogo(image);
-                    setIsCropperOpen(false);
-                }}
-                onError={setImageSelectError}
-            />
-        </>
-    );
+            <Grid
+                container
+                className={classes.cardBodyRow}
+            >
+                <Grid
+                    item
+                    xs={12}
+                    sm={4}
+                >
+                    <FormattedMessage
+                        id="addOrganization_organizationColorLabel"
+                    />
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    sm={4}
+                >
+                    <ColorPicker
+                        hideHelperText
+                        fullWidth
+                        value={previewOrganizationColor}
+                        label="Color"
+                        variant="standard"
+                        defaultButtonLabel="Default"
+                        defaultColor={THEME_PRIMARY_COLOR}
+                        onChange={handleColorChange}
+                    />
+                </Grid>
+            </Grid>
+        </Grid>
+        <ImagePicker
+            isZoomDisabled={false}
+            isRotationDisabled={false}
+            imageToBeCropped={imageToBeCropped}
+            dialogTitle={intl.formatMessage({
+                id: `addOrganization_imagePickerDialogTitle`,
+            })}
+            isCropperOpen={isCropperOpen}
+            zoomLabel={intl.formatMessage({
+                id: `addOrganization_imagePickerZoomLabel`,
+            })}
+            rotateLabel={intl.formatMessage({
+                id: `addOrganization_imagePickerRotateLabel`,
+            })}
+            cancelLabel={intl.formatMessage({
+                id: `addOrganization_imagePickerCancelLabel`,
+            })}
+            okLabel={intl.formatMessage({
+                id: `addOrganization_imagePickerOkLabel`,
+            })}
+            aspect={1 / 1}
+            onCancelCrop={() => setIsCropperOpen(false)}
+            onImageCropComplete={(image) => {
+                setOrganizationLogoPreview(image.base64);
+                setTempOrganizationLogo(image);
+                setIsCropperOpen(false);
+            }}
+            onError={setImageSelectError}
+        />
+    </>;
 }

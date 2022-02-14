@@ -8,7 +8,7 @@ import {
     Widget,
     WidgetType,
 } from "@/components/Dashboard/models/widget.model";
-import { styled } from "@material-ui/core";
+import { styled } from "@mui/material";
 import React,
 {
     ReactElement,

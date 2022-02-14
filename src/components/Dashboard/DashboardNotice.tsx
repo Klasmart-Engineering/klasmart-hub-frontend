@@ -1,12 +1,14 @@
 import {
     Box,
     Button,
-    createStyles,
     darken,
-    makeStyles,
     Theme,
     Typography,
-} from '@material-ui/core';
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React from "react";
 
 type NoticeButtonProps = {

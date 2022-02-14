@@ -2,10 +2,12 @@ import { AgeRange } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
+    Typography,
+} from "@mui/material";
+import {
     createStyles,
     makeStyles,
-    Typography,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Select,
     TextField,

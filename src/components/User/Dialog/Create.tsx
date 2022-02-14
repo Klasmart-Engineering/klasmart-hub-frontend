@@ -17,7 +17,7 @@ import { ApolloError } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Dialog,
     useSnackbar,

@@ -26,7 +26,7 @@ import { ApolloError } from "@apollo/client";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Dialog,
     useSnackbar,
@@ -172,12 +172,12 @@ export default function EditUserDialog (props: Props) {
         if (!(userId && organization?.organization_id)) return;
         const { givenName, familyName } = organizationMembershipData?.userNode ?? {};
         const userName = `${givenName} ${familyName}`;
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `users_deleteTitle`,
             }),
             entityName: userName,
-        })) return;
+        }))) return;
         try {
             await deleteOrganizationMembership({
                 variables: {

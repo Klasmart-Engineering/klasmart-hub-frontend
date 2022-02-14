@@ -8,11 +8,11 @@ import {
     buildDefaultAssessmentStatusTabs,
     getStatusLabel,
 } from "@/utils/assessments";
+import { Box } from "@mui/material";
 import {
-    Box,
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     PageTable,
     UserAvatar,

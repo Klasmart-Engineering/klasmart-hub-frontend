@@ -11,7 +11,7 @@ import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Select,
     TextField,

@@ -7,7 +7,7 @@ import { retrieveClassTypeIdentityOrDefault } from "@/config/classTypes";
 import { WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH } from "@/config/index";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client/dist/api/schedule";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import React,
 {

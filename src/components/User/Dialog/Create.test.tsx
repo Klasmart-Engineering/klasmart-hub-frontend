@@ -194,9 +194,9 @@ test(`clears the form after closing and reopening the dialog`, async () => {
         open={false}
         onClose={mockOnClose} />));
 
-    await waitForElementToBeRemoved(screen.getByRole(`presentation`, {
+    await waitForElementToBeRemoved(screen.getAllByRole(`presentation`, {
         hidden: true,
-    }));
+    })[0]);
 
     rerender(withMockIntl(<CreateDialog
         open

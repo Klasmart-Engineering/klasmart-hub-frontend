@@ -8,13 +8,15 @@ import { Status } from "@/types/graphQL";
 import { removeOrganizationMembership } from "@/utils/organizationMemberships";
 import { getTableLocalization } from "@/utils/table";
 import { useReactiveVar } from "@apollo/client/react";
+import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
+import {
+    Paper,
+    Typography,
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
-import { ExitToApp as ExitToAppIcon } from "@material-ui/icons";
+} from '@mui/styles';
 import {
     PageTable,
     useConfirm,
@@ -92,7 +94,7 @@ export default function JoinedOrganizationTable (props: Props) {
     const handleLeaveOrganizationRowClick = async (row: JoinedOrganizationRow) => {
         const membership = memberships.find((membership) => membership.organization_id === row.id);
         if (!membership) return;
-        if (!await confirm({
+        if (!(await confirm({
             variant: `warning`,
             title: intl.formatMessage({
                 id: `allOrganization_leaveOrganizationButton`,
@@ -110,7 +112,7 @@ export default function JoinedOrganizationTable (props: Props) {
             cancelLabel: intl.formatMessage({
                 id: `allOrganization_cancelButton`,
             }),
-        })) return;
+        }))) return;
         try {
             await leaveMembership({
                 variables: {

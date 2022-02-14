@@ -1,19 +1,19 @@
 import { Group } from "@/components/Role/Dialog/CreateEdit";
 import { formatPermissionName } from "@/utils/validations";
+import { ArrowDropDown } from "@mui/icons-material";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     CardHeader,
     Divider,
-} from "@material-ui/core";
-import Card from "@material-ui/core/Card";
+} from "@mui/material";
+import Card from "@mui/material/Card";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
-import { ArrowDropDown } from "@material-ui/icons";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+} from '@mui/styles';
 import React,
 { useEffect } from "react";
 

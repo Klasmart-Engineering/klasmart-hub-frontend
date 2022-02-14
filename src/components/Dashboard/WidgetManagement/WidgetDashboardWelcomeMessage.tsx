@@ -2,7 +2,7 @@ import { useGetMyUser } from "@/api/users";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import React from "react";
 import { FormattedMessage } from "react-intl";
 

@@ -12,17 +12,19 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    Chip,
-    createStyles,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     ViewList as ViewListIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Chip,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     CursorTable,
     useSnackbar,
@@ -255,12 +257,12 @@ export default function SubjectsTable (props: Props) {
     };
 
     const handleDeleteRowClick = async (row: SubjectRow) => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `subjects_deleteSubjectLabel`,
             }),
             entityName: row.name,
-        })) return;
+        }))) return;
         try {
             await deleteSubject({
                 variables: {

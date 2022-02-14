@@ -1,10 +1,10 @@
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import { Fab } from "kidsloop-px";
 import React from "react";
 import {
@@ -59,7 +59,7 @@ export default function RoleStepperButtons (props: Props) {
         <Grid
             container
             item
-            justify="flex-end"
+            justifyContent="flex-end"
             wrap="nowrap">
             <div>
                 <Button

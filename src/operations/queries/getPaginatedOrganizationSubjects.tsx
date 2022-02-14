@@ -16,14 +16,12 @@ export interface SubjectPaginationFilter {
 }
 
 export const buildOrganizationSubjectSearchFilter = (search: string): SubjectFilter => ({
-    ...isUuid(search)
-        ? {
+    ...(isUuid(search) ? {
             id: {
                 operator: `eq`,
                 value: search,
             },
-        }
-        : {
+        } : {
             OR: [
                 {
                     name: {
@@ -33,7 +31,7 @@ export const buildOrganizationSubjectSearchFilter = (search: string): SubjectFil
                     },
                 },
             ],
-        },
+        }),
 });
 
 export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter): SubjectFilter => ({

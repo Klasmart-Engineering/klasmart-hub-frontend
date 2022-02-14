@@ -8,22 +8,24 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { mapAssessmentScheduleServerToClientType } from "@/utils/assessments";
 import { getTableLocalization } from "@/utils/table";
 import {
-    Box,
-    createStyles,
-    Fade,
-    makeStyles,
-    Popover,
-    Typography,
-    useTheme,
-} from "@material-ui/core";
-import {
     HelpOutline,
     SentimentDissatisfied,
     SentimentSatisfied,
     SentimentSatisfiedAlt,
     SentimentVeryDissatisfied,
     SentimentVerySatisfied,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Box,
+    Fade,
+    Popover,
+    Typography,
+    useTheme,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     Button,
     FileCounterIconButton,
@@ -71,7 +73,7 @@ const useStyles = makeStyles((theme) => {
             marginRight: theme.spacing(1),
         },
         moreFeedbackPopover: {
-            transform: `translate(${theme.spacing(-2)}px, ${theme.spacing(-2)}px)`,
+            transform: `translate(${theme.spacing(-2)}, ${theme.spacing(-2)})`,
         },
     });
 });

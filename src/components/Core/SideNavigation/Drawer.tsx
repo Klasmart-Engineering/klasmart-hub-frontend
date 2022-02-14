@@ -3,11 +3,13 @@ import OrganizationMenuList from "./OrganizationMenuList";
 import OrganizationSwitcher from "./OrganizationSwitcher";
 import { MOBILE_WIDTHS } from "@/layout";
 import {
-    createStyles,
     Drawer,
-    makeStyles,
     useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import { useWidth } from "kidsloop-px";
 import React,

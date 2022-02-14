@@ -4,16 +4,10 @@ import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/Progr
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useGetPendingAssignments } from "@kidsloop/reports-api-client";
-import {
-    createStyles,
-    List,
-    ListItem,
-    SvgIcon,
-    Theme,
-    Typography,
-} from "@material-ui/core";
-import { FiberManualRecord } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
+import { List, ListItem, SvgIcon, Theme, Typography } from "@mui/material";
+import createStyles from '@mui/styles/createStyles';
+import { FiberManualRecord } from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
 import { sumBy } from "lodash";
 import React,
 { useMemo } from "react";

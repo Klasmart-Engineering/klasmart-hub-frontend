@@ -4,8 +4,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
     styled,
     Theme,
-} from "@material-ui/core";
-import { blue } from "@material-ui/core/colors";
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
 import { Calendar } from "react-big-calendar";
 
 interface Props {
@@ -114,6 +114,8 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
                 },
             },
             '& .rbc-event': {
+                border: `none`,
+                backgroundColor: `none`,
                 '& p': {
                     whiteSpace: `normal`,
                 },
@@ -203,6 +205,8 @@ const StyledDayCalendar = styled(Calendar)((props: Props) => {
                 },
             },
             '& .rbc-event': {
+                border: `none`,
+                backgroundColor: `none`,
                 '&.rbc-event-continues-earlier .rbc-custom-label': {
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,

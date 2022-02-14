@@ -7,26 +7,28 @@ import FolderIcon from "@/assets/img/folder.svg";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
 import {
-    Badge,
-    Box,
-    CircularProgress,
-    createStyles,
-    fade,
-    makeStyles,
-    Tooltip,
-    Typography,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Check as CheckIcon,
     Home as HomeIcon,
     OpenWith as OpenWithIcon,
     Remove as RemoveIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import {
     TreeItem,
     TreeView,
-} from "@material-ui/lab";
+} from "@mui/lab";
+import {
+    alpha,
+    Badge,
+    Box,
+    CircularProgress,
+    Tooltip,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     Dialog,
@@ -76,7 +78,7 @@ const useStyles = makeStyles((theme) => createStyles({
         pointerEvents: `auto`,
     },
     disabledText: {
-        color: fade(theme.palette.common.black, 0.33),
+        color: alpha(theme.palette.common.black, 0.33),
     },
     enabledText: {
         color: `initial`,

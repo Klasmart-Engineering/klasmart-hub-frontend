@@ -4,11 +4,11 @@ import {
     Box,
     Grid,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import { Card } from "kidsloop-px";
 import { uniqBy } from "lodash";
 import React,

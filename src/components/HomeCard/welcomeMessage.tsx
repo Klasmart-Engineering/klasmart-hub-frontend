@@ -3,12 +3,12 @@ import {
     Box,
     lighten,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    useTheme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import React from "react";
 import {
     FormattedDate,

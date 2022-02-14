@@ -4,11 +4,13 @@ import {
     alpha,
     Box,
     Container,
-    createStyles,
-    makeStyles,
     Theme,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

@@ -5,25 +5,24 @@ import {
     getCookieDomain,
 } from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import {
-    useCurrentOrganization,
-    useOrganizationStack,
-} from "@/store/organizationMemberships";
+import { useOrganizationStack } from "@/store/organizationMemberships";
 import { User } from "@/types/graphQL";
 import {
     Box,
     ButtonBase,
-    createStyles,
     Divider,
     Grid,
     List,
     ListItem,
-    makeStyles,
     Popover,
     PopoverProps,
     Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
     withStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     LanguageSelect,
     UserAvatar,
@@ -56,7 +55,6 @@ const StyledMenu = withStyles({
 })((props: PopoverProps) => (
     <Popover
         elevation={0}
-        getContentAnchorEl={null}
         anchorOrigin={{
             vertical: `bottom`,
             horizontal: `right`,
@@ -172,7 +170,7 @@ export default function UserProfileMenu (props: Props) {
                         <Grid
                             container
                             direction="row"
-                            justify="center"
+                            justifyContent="center"
                             alignItems="center"
                             spacing={1}
                         >

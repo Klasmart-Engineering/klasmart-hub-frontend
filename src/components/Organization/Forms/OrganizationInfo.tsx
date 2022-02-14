@@ -11,12 +11,12 @@ import {
 } from "@/config/index";
 import { Organization } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import { TextField } from "kidsloop-px";
 import React,
 {
@@ -128,7 +128,7 @@ export default function OrganizationInfo (props: Props) {
     return (
         <Grid
             container
-            justify="space-between"
+            justifyContent="space-between"
             className={classes.cardBody}
         >
             <Grid

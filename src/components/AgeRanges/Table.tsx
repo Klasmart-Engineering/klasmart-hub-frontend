@@ -11,15 +11,15 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    createStyles,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import { Paper } from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     CursorTable,
     useSnackbar,
@@ -166,12 +166,12 @@ export default function (props: Props) {
 
     const handleDeleteRowClick = async (row: AgeRangeRow) => {
         const entityName = row.ageRange;
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             entityName,
             title: intl.formatMessage({
                 id: `ageRanges_deleteAgeRangeTitle`,
             }),
-        })) return;
+        }))) return;
         try {
             await deleteAgeRange({
                 variables: {

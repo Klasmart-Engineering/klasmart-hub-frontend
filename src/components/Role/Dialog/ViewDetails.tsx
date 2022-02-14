@@ -13,25 +13,23 @@ import {
     sectionHandler,
     uniquePermissions,
 } from "@/utils/permissions";
+import CloseIcon from "@mui/icons-material/Close";
+import { LinearProgress } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Dialog from "@mui/material/Dialog";
+import Grid from "@mui/material/Grid";
+import Grow from "@mui/material/Grow";
+import IconButton from "@mui/material/IconButton";
+import { Theme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import { TransitionProps } from "@mui/material/transitions";
+import Typography from "@mui/material/Typography";
 import {
     createStyles,
-    LinearProgress,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Dialog from "@material-ui/core/Dialog";
-import Grid from "@material-ui/core/Grid";
-import Grow from "@material-ui/core/Grow";
-import IconButton from "@material-ui/core/IconButton";
-import {
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import { TransitionProps } from "@material-ui/core/transitions";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
+} from '@mui/styles';
 import React, {
     useEffect,
     useState,
@@ -146,6 +144,7 @@ export default function ViewRoleDetailsDialog (props: Props) {
                         edge="start"
                         color="inherit"
                         aria-label="close"
+                        size="large"
                         onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
@@ -169,7 +168,7 @@ export default function ViewRoleDetailsDialog (props: Props) {
             <Grid
                 container
                 direction="row"
-                justify="center"
+                justifyContent="center"
                 spacing={2}
                 className={classes.menuContainer}>
                 {rolePermissionsLoading ? (

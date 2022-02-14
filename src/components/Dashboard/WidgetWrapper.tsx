@@ -1,19 +1,20 @@
 import WidgetWrapperError from './WidgetManagement/WidgetWrapperError';
 import WidgetWrapperNoData from './WidgetManagement/WidgetWrapperNoData';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
     Box,
     CircularProgress,
-    createStyles,
     Link,
-    makeStyles,
     Theme,
     Typography,
-} from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import { ClassNameMap } from '@material-ui/core/styles/withStyles';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import React,
-{ ReactElement } from 'react';
+} from '@mui/material';
+import Card from '@mui/material/Card';
+import {
+    ClassNameMap,
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     cardWrapper: {

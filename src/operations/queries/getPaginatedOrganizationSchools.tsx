@@ -9,14 +9,12 @@ export interface SchoolPaginationFilter {
 }
 
 export const buildOrganizationSchoolSearchFilter = (search: string): SchoolFilter => ({
-    ...isUuid(search)
-        ? {
+    ...(isUuid(search) ? {
             schoolId: {
                 operator: `eq`,
                 value: search,
             },
-        }
-        : {
+        } : {
             OR: [
                 {
                     name: {
@@ -33,7 +31,7 @@ export const buildOrganizationSchoolSearchFilter = (search: string): SchoolFilte
                     },
                 },
             ],
-        },
+        }),
 });
 
 export const buildOrganizationSchoolFilter = (filter: SchoolPaginationFilter): SchoolFilter => ({

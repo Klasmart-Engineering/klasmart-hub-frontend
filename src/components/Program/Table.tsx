@@ -12,17 +12,19 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    Chip,
-    createStyles,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     ViewList as ViewListIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Chip,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     CursorTable,
     useSnackbar,
@@ -334,12 +336,12 @@ export default function ProgramTable (props: Props) {
     };
 
     const handleDeleteRowClick = async (row: ProgramRow) => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `programs_deleteProgramLabel`,
             }),
             entityName: row.name,
-        })) return;
+        }))) return;
         try {
             await deleteProgram({
                 variables: {

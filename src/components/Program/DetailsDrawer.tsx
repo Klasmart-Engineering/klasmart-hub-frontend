@@ -8,9 +8,11 @@ import { buildEmptyProgram } from "@/utils/programs";
 import {
     Box,
     Chip,
+} from "@mui/material";
+import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import { Drawer } from "kidsloop-px";
 import React,
 {

@@ -1,10 +1,12 @@
 import { ContentItemDetails } from "@/types/objectTypes";
 import {
-    createStyles,
-    makeStyles,
     TextField,
     Theme,
-} from "@material-ui/core";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
 {
     useEffect,

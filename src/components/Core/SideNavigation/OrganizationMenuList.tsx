@@ -6,14 +6,16 @@ import {
     roleNameTranslations,
 } from "@/utils/userRoles";
 import {
-    createStyles,
     lighten,
     List,
     ListItem,
     ListItemAvatar,
     ListItemText,
+} from "@mui/material";
+import {
+    createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import clsx from "clsx";
 import { OrganizationAvatar } from "kidsloop-px";
 import React from "react";

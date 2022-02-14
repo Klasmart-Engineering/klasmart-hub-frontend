@@ -9,19 +9,21 @@ import {
 import { buildEmptyCategory } from "@/utils/categories";
 import { useValidations } from "@/utils/validations";
 import {
-    Box,
-    Chip,
-    createStyles,
-    FormHelperText,
-    makeStyles,
-    Theme,
-    Typography,
-} from "@material-ui/core";
-import {
     Add,
     ArrowDropDown,
     Delete,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Box,
+    Chip,
+    FormHelperText,
+    Theme,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     Button,
@@ -254,10 +256,10 @@ export default function SubjectDialogForm (props: Props) {
                             <IconButton
                                 icon={Delete}
                                 tooltip="Remove"
+                                size="medium"
                                 onClick={() => {
                                     setSubjectCategories((subjectCategories) => [ ...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length) ]);
-                                }}
-                            />
+                                }} />
                         </Box>}
                     </Box>
                     <CategorySelectDialog

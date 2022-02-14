@@ -9,11 +9,13 @@ import {
 import { getTableLocalization } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import {
-    createStyles,
-    makeStyles,
     Paper,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     FullScreenDialog,
     PageTable,

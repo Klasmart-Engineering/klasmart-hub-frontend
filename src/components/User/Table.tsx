@@ -19,19 +19,21 @@ import {
 import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
-    Box,
-    createStyles,
-    makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
-import {
     AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     PersonAdd as PersonAddIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Box,
+    Paper,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     CursorTable,
@@ -154,12 +156,12 @@ export default function UserTable (props: Props) {
 
     const deleteSelectedRow = async (row: UserRow) => {
         const userName = `${row.givenName} ${row.familyName}`.trim();
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `users_deleteTitle`,
             }),
             entityName: userName,
-        })) return;
+        }))) return;
         try {
             await deleteOrganizationMembership({
                 variables: {

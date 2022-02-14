@@ -16,14 +16,12 @@ export interface ProgramQueryFilter {
 }
 
 export const buildOrganizationUserSearchFilter = (search: string): UserFilter => ({
-    ...isUuid(search)
-        ? {
+    ...(isUuid(search) ? {
             userId: {
                 operator: `eq`,
                 value: search,
             },
-        }
-        : {
+        } : {
             OR: [
                 {
                     givenName: {
@@ -54,7 +52,7 @@ export const buildOrganizationUserSearchFilter = (search: string): UserFilter =>
                     },
                 },
             ],
-        },
+        }),
 });
 
 export const buildOrganizationUserFilter = (filter: ProgramQueryFilter): UserFilter => ({

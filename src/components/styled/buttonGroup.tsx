@@ -1,23 +1,23 @@
 import StyledButton from "./button";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import SendIcon from "@mui/icons-material/Send";
 import Button,
-{ ButtonProps } from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Grid from "@material-ui/core/Grid";
-import Grow from "@material-ui/core/Grow";
-import Hidden from "@material-ui/core/Hidden";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
+{ ButtonProps } from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grid from "@mui/material/Grid";
+import Grow from "@mui/material/Grow";
+import Hidden from "@mui/material/Hidden";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-    withStyles,
-} from "@material-ui/core/styles";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import SendIcon from "@material-ui/icons/Send";
+} from '@mui/styles';
+import withStyles from '@mui/styles/withStyles';
 import React,
 {
     useRef,

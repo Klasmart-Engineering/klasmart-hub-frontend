@@ -15,14 +15,14 @@ import {
     Divider,
     Grid,
     LinearProgress,
-} from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+} from "@mui/material";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+} from '@mui/styles';
 import { TextField } from "kidsloop-px";
 import React,
 {

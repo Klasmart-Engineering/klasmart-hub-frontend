@@ -89,7 +89,7 @@ export default function EditSubjectDialog (props: Props) {
                 });
                 return buildEmptyCategory({
                     ...category,
-                    subcategories: [ ...systemSubcategories, ...subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? [] ],
+                    subcategories: [ ...systemSubcategories, ...(subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? []) ],
                 });
             }));
 
@@ -113,7 +113,7 @@ export default function EditSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? [] ].map((category) => category.id).filter((id): id is string => !!id),
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id).filter((id): id is string => !!id),
                         },
                     ],
                 },
@@ -135,12 +135,12 @@ export default function EditSubjectDialog (props: Props) {
     };
 
     const handleDelete = async () => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `subjects_deleteSubjectLabel`,
             }),
             entityName: updatedSubject?.name ?? ``,
-        })) return;
+        }))) return;
         try {
             await deleteSubject({
                 variables: {

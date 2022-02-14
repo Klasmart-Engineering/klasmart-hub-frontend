@@ -3,15 +3,15 @@ import {
     Subcategory,
 } from '@/types/graphQL';
 import { buildNewSubcategory } from "@/utils/subcategories";
-import { TextField } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
-import { SvgIconComponent } from "@material-ui/icons";
+import { SvgIconComponent } from "@mui/icons-material";
+import { TextField } from '@mui/material';
 import Autocomplete,
 {
     AutocompleteChangeDetails,
     AutocompleteChangeReason,
-} from '@material-ui/lab/Autocomplete';
+} from '@mui/material/Autocomplete';
+import Grid from '@mui/material/Grid';
+import makeStyles from '@mui/styles/makeStyles';
 import { IconButton } from 'kidsloop-px';
 import { isEqual } from 'lodash';
 import React,
@@ -175,11 +175,11 @@ export default function SubsubcategoryComboBox (props: Props) {
                                 className={classes.icon}
                                 disabled={action.disabled}
                                 icon={action.icon}
+                                size="medium"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     action.onClick?.(subcategory);
-                                }}
-                            />
+                                }} />
                         </Grid>
                     ))}
                 </Grid>

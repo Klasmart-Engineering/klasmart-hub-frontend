@@ -1,6 +1,10 @@
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Stepper from "@material-ui/core/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React from "react";
 
 interface Props {
@@ -8,10 +12,17 @@ interface Props {
     steps: string[];
 }
 
-export default function RoleStepper ({ activeStep, steps }: Props) {
+const useStyles = makeStyles((theme) =>
+    createStyles({
+        stepper: {
+            padding: theme.spacing(3),
+        },
+    }));
 
+export default function RoleStepper ({ activeStep, steps }: Props) {
+    const classes = useStyles();
     return (
-        <div>
+        <div className={classes.stepper}>
             <Stepper activeStep={activeStep}>
                 {steps.map((label) => {
                     const stepProps: { completed?: boolean } = {};

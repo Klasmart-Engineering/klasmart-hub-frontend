@@ -4,7 +4,7 @@ import {
     ClassAttendanceRateGroupDataFormatted,
 } from "@/components/Dashboard/models/data.model";
 import { ClassAttendanceRateGroupResponse } from "@kidsloop/reports-api-client";
-import { Theme } from "@material-ui/core";
+import { Theme } from "@mui/material";
 
 export default function attendanceRateDataFormatter (data: ClassAttendanceRateGroupResponse, theme: Theme, dataLabels:ClassAttendanceLegendLabels): ClassAttendanceRateGroupDataFormatted[] {
     const formattedData: ClassAttendanceRateGroupDataFormatted[] = [

@@ -3,21 +3,23 @@ import { useRestAPI } from "@/api/restapi";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { ContentItemDetails } from "@/types/objectTypes";
+import { Info as InfoIcon } from "@mui/icons-material";
 import {
+    alpha,
     Avatar,
     Box,
-    createStyles,
     Divider,
-    fade,
     FormControlLabel,
-    makeStyles,
     Paper,
     Radio,
     RadioGroup,
     Toolbar,
     Tooltip,
-} from "@material-ui/core";
-import { Info as InfoIcon } from "@material-ui/icons";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     FullScreenDialog,
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => createStyles({
         position: `absolute`,
     },
     disabledOverlay: {
-        backgroundColor: fade(theme.palette.grey[500], 0.66),
+        backgroundColor: alpha(theme.palette.grey[500], 0.66),
         width: `100%`,
         height: `100%`,
         position: `absolute`,

@@ -396,9 +396,9 @@ describe(`user edit form`, () => {
             open={false}
             onClose={mockOnClose} />));
 
-        await waitForElementToBeRemoved(screen.getByRole(`presentation`, {
+        await waitForElementToBeRemoved(screen.getAllByRole(`presentation`, {
             hidden: true,
-        }));
+        })[0]);
 
         rerender(withMockIntl(<EditDialog
             open

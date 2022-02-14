@@ -16,7 +16,7 @@ import {
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";

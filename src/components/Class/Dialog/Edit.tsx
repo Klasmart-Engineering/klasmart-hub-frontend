@@ -158,12 +158,12 @@ export default function EditClassDialog (props: Props) {
     };
 
     const handleDelete = async () => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `class_deleteClassTitle`,
             }),
             entityName: initClass.name ?? ``,
-        })) return;
+        }))) return;
         try {
             await deleteClass({
                 variables: {

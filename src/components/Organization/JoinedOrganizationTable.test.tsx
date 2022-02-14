@@ -108,7 +108,7 @@ test(`JoinedOrganizationTable renders correctly`, async () => {
     expect(screen.queryAllByText(`Your Role`).length).toBeTruthy();
 
     await waitFor(() => {
-        expect(screen.queryAllByTitle(`More actions`)).toHaveLength(1);
+        expect(screen.queryAllByTestId(`MoreVertIcon`)).toHaveLength(1);
     });
 });
 
@@ -135,12 +135,12 @@ test(`JoinedOrganizationTable updates table correctly after leaving organization
         expect(screen.queryByText(`KidsLoop Miracle Squad`)).toBeTruthy();
     });
 
-    fireEvent.click(await screen.findByTitle(`More actions`));
+    fireEvent.click(await screen.findByTestId(`MoreVertIcon`));
     fireEvent.click(await screen.findByText(`Leave Organization`));
 
     await waitForElementToBeRemoved(() => screen.queryByText(`KidsLoop Miracle Squad`));
 
     await waitFor(() => {
-        expect(screen.queryAllByTitle(`More actions`)).toHaveLength(0);
+        expect(screen.queryAllByTestId(`MoreVertIcon`)).toHaveLength(0);
     });
 });

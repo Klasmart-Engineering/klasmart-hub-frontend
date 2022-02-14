@@ -6,7 +6,7 @@ import { newLibraryContent } from "@/utils/libraryContents";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Dialog,
     usePrompt,

@@ -14,13 +14,13 @@ import { buildEmptyOrganization } from "@/utils/organization";
 import {
     Box,
     Grid,
-} from "@material-ui/core";
-import Container from "@material-ui/core/Container";
+} from "@mui/material";
+import Container from "@mui/material/Container";
+import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import {
     Button,
     Card,
@@ -140,20 +140,20 @@ export default function EditOrganizationPage () {
                         primaryColor: primaryColor ?? undefined,
                     },
                 }),
-                ...organizationLogo === null ? [
+                ...(organizationLogo === null ? [
                     deleteBrandingImage({
                         variables: {
                             organizationId,
                         },
                     }),
-                ] : [] as Promise<any>[],
-                ...primaryColor === null ? [
+                ] : [] as Promise<any>[]),
+                ...(primaryColor === null ? [
                     deleteBrandingPrimaryColor({
                         variables: {
                             organizationId,
                         },
                     }),
-                ] : [] as Promise<any>[],
+                ] : [] as Promise<any>[]),
             ]);
             await refetchMemberships();
             history.goBack();
@@ -191,7 +191,7 @@ export default function EditOrganizationPage () {
                         <Grid container>
                             <Grid
                                 container
-                                justify="space-between"
+                                justifyContent="space-between"
                                 alignItems="center"
                                 className={classes.cardHead}
                             >
@@ -211,7 +211,7 @@ export default function EditOrganizationPage () {
                             />
                             <Grid
                                 container
-                                justify="flex-end"
+                                justifyContent="flex-end"
                                 alignItems="center"
                                 className={classes.cardFooter}
                             >

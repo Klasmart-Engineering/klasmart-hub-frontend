@@ -2,19 +2,21 @@ import UserProfileMenu from "./UserProfileMenu";
 import { useGetMe } from "@/api/users";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import {
     AppBar,
     Box,
     Button,
-    createStyles,
     Grid,
-    makeStyles,
     Theme,
     Toolbar as AppToolbar,
     useMediaQuery,
     useTheme,
-} from "@material-ui/core";
-import { Menu as MenuIcon } from "@material-ui/icons";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     IconButton,
@@ -121,7 +123,7 @@ export default function Toolbar (props: Props) {
                 <Grid
                     container
                     direction="row"
-                    justify="space-between"
+                    justifyContent="space-between"
                     alignItems="center"
                     style={{
                         minHeight,
@@ -137,8 +139,8 @@ export default function Toolbar (props: Props) {
                         <IconButton
                             className={classes.menuButton}
                             icon={MenuIcon}
-                            onClick={() => onMenuButtonClick()}
-                        />
+                            size="medium"
+                            onClick={() => onMenuButtonClick()} />
                         {showSiteLogo && (
                             <Button
                                 className={classes.logo}

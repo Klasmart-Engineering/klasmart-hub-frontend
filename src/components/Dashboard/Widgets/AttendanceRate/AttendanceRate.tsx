@@ -5,16 +5,16 @@ import Legend from "@/components/Dashboard/Widgets/AttendanceRate/Donut/Legend";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useGetClassAttendanceRateGroup } from "@kidsloop/reports-api-client";
+import { FiberManualRecord } from "@mui/icons-material";
 import {
     Theme,
     Typography,
     useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
-import { FiberManualRecord } from "@material-ui/icons";
+} from '@mui/styles';
 import { useWidth } from "kidsloop-px";
 import React,
 { useMemo } from "react";

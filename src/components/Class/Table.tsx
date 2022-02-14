@@ -20,19 +20,21 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    Chip,
-    createStyles,
-    Link,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     ViewList as ViewListIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Chip,
+    Link,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     CursorTable,
@@ -359,12 +361,12 @@ export default function ClassesTable (props: Props) {
     ];
 
     const handleDeleteRowClick = async (row: ClassRow) => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `class_deleteClassTitle`,
             }),
             entityName: row.name,
-        })) return;
+        }))) return;
         try {
             await deleteClass({
                 variables: {

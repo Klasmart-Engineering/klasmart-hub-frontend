@@ -10,18 +10,20 @@ import {
     getHighestRole,
     roleNameTranslations,
 } from "@/utils/userRoles";
+import { ArrowDropDown } from "@mui/icons-material";
 import {
     Box,
     ButtonBase,
-    createStyles,
     darken,
     List,
     ListItem,
     ListItemSecondaryAction,
     ListItemText,
+} from "@mui/material";
+import {
+    createStyles,
     makeStyles,
-} from "@material-ui/core";
-import { ArrowDropDown } from "@material-ui/icons";
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     OrganizationAvatar,

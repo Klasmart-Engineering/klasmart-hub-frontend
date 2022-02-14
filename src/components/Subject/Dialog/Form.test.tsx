@@ -64,7 +64,7 @@ test(`Subjects form updates correct and opens categories selector`, async () => 
     });
 
     const nonSpec = screen.getAllByText(/None Specified/gi, {
-        selector: `span`,
+        selector: `p`,
     });
     fireEvent.change(name, {
         target: {

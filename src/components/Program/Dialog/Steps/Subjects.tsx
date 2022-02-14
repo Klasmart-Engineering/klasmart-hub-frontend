@@ -20,11 +20,11 @@ import {
     tableToServerOrder,
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
+import { FormHelperText } from "@mui/material";
 import {
     createStyles,
-    FormHelperText,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";

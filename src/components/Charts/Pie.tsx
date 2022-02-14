@@ -1,7 +1,7 @@
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import React from "react";
 import { PieChart as MinimalPieChart } from "react-minimal-pie-chart";
 import { DataEntry } from "react-minimal-pie-chart/types/commonTypes";

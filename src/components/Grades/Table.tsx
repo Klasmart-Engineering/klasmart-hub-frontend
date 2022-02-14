@@ -11,15 +11,15 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    createStyles,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import { Paper } from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     CursorTable,
     useSnackbar,
@@ -174,12 +174,12 @@ export default function GradeTable (props: Props) {
 
     const handleDeleteRowClick = async (row: GradeRow) => {
         const entityName = row.name;
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             entityName,
             title: intl.formatMessage({
                 id: `grades_deleteGradePrompt`,
             }),
-        })) return;
+        }))) return;
 
         try {
             await deleteGrade({

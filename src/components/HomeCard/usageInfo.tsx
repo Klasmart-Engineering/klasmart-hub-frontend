@@ -1,19 +1,19 @@
 import { SchedulePayload } from "@/types/objectTypes";
+import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import LiveTvIcon from "@mui/icons-material/LiveTv";
 import {
     Box,
     Grid,
     Typography,
     useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
+import { SvgIconProps } from '@mui/material/SvgIcon';
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
-import { SvgIconProps } from '@material-ui/core/SvgIcon';
-import AssignmentReturnedIcon from "@material-ui/icons/AssignmentReturned";
-import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
-import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
-import LiveTvIcon from "@material-ui/icons/LiveTv";
+} from '@mui/styles';
 import React,
 {
     useEffect,
@@ -182,70 +182,68 @@ export default function UsageInfo ({ schedule }: {
         setUsageInfoData(tempUsageInfoData);
     }, [ schedule ]);
 
-    return (
-        <>
-            <Grid container>
-                <Grid
-                    container
-                    justify="space-between"
-                    alignItems="center"
-                    className={classes.cardHead}
-                >
-                    <Grid item>
-                        <Typography className={classes.cardTitle}>
-                            <FormattedMessage id="usageInfo_title" />
+    return <>
+        <Grid container>
+            <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                className={classes.cardHead}
+            >
+                <Grid item>
+                    <Typography className={classes.cardTitle}>
+                        <FormattedMessage id="usageInfo_title" />
+                    </Typography>
+                </Grid>
+
+            </Grid>
+            <Grid
+                container
+                justifyContent="space-between"
+                className={classes.cardBody}>
+                {usageInfoData.map((item) => (
+                    <Grid
+                        key={item.type}
+                        item
+                        xs
+                        className={classes.usageInfoItem}>
+                        <Box mb={1}>
+                            {item.icon}
+                            <Typography variant="body2">
+                                <FormattedMessage id={item.type} />
+                            </Typography>
+                            <Typography
+                                variant="h4"
+                                className={classes.usageInfoValue}>{item.attended}</Typography>
+                        </Box>
+
+                        <Box className={classes.completeBar}>
+                            <Box
+                                className={classes.completeBarIndicator}
+                                style={{
+                                    width: (item.attended / item.total) * 100 + `%`,
+                                }}
+                            />
+                            {(item.attended / item.total * 100 === 100) && <Box
+                                className={classes.completeBarIndicatorIcon}
+                            >
+                                <CheckRoundedIcon fontSize="small" />
+                            </Box>}
+                        </Box>
+
+                        <Typography
+                            variant="caption"
+                            className={classes.usageInfoTotal}
+                        >
+                            <FormattedMessage
+                                id={item.totalType}
+                                values={{
+                                    total: item.total,
+                                }} />
                         </Typography>
                     </Grid>
-
-                </Grid>
-                <Grid
-                    container
-                    justify="space-between"
-                    className={classes.cardBody}>
-                    {usageInfoData.map((item) => (
-                        <Grid
-                            key={item.type}
-                            item
-                            xs
-                            className={classes.usageInfoItem}>
-                            <Box mb={1}>
-                                {item.icon}
-                                <Typography variant="body2">
-                                    <FormattedMessage id={item.type} />
-                                </Typography>
-                                <Typography
-                                    variant="h4"
-                                    className={classes.usageInfoValue}>{item.attended}</Typography>
-                            </Box>
-
-                            <Box className={classes.completeBar}>
-                                <Box
-                                    className={classes.completeBarIndicator}
-                                    style={{
-                                        width: (item.attended / item.total) * 100 + `%`,
-                                    }}
-                                />
-                                {(item.attended / item.total * 100 === 100) && <Box
-                                    className={classes.completeBarIndicatorIcon}
-                                >
-                                    <CheckRoundedIcon fontSize="small" />
-                                </Box>}
-                            </Box>
-
-                            <Typography
-                                variant="caption"
-                                className={classes.usageInfoTotal}
-                            >
-                                <FormattedMessage
-                                    id={item.totalType}
-                                    values={{
-                                        total: item.total,
-                                    }} />
-                            </Typography>
-                        </Grid>
-                    ))}
-                </Grid>
+                ))}
             </Grid>
-        </>
-    );
+        </Grid>
+    </>;
 }

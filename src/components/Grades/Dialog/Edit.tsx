@@ -81,12 +81,12 @@ export default function (props: Props) {
     };
 
     const handleDelete = async () => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             entityName: updatedGrade.name ?? ``,
             title: intl.formatMessage({
                 id: `grades_deleteGradePrompt`,
             }),
-        })) return;
+        }))) return;
         try {
             await deleteGrade({
                 variables: {

@@ -6,21 +6,21 @@ import { isActive } from "@/types/graphQL";
 import { roleNameTranslations } from "@/utils/userRoles";
 import { UserGenders } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Theme } from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core";
-import MuiAccordion from "@material-ui/core/Accordion";
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import { withStyles } from "@material-ui/core/styles";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+} from '@mui/styles';
+import withStyles from '@mui/styles/withStyles';
 import {
     Select,
     TextField,
@@ -463,13 +463,13 @@ export default function UserDialogForm (props: Props) {
                     variant="outlined"
                     type="text"
                     validations={[
-                        ...isExistingUser ? [
+                        ...(isExistingUser ? [
                             required(intl.formatMessage({
                                 id: `validation.error.attribute.required`,
                             }, {
                                 attribute: attributes.shortCode,
                             })),
-                        ]: [],
+                        ] : []),
                         max(16, intl.formatMessage({
                             id: `validation.error.attribute.maxLength`,
                         }, {

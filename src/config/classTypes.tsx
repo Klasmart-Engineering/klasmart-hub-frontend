@@ -6,12 +6,12 @@ import {
     THEME_COLOR_CLASS_TYPE_TASK,
 } from "@/config/index";
 import { ScheduleClassType } from '@kidsloop/cms-api-client';
-import { SvgIconTypeMap } from '@material-ui/core';
-import { OverridableComponent } from '@material-ui/core/OverridableComponent';
-import AssignmentOutlinedIcon from '@material-ui/icons/AssignmentOutlined';
-import LiveTvIcon from '@material-ui/icons/LiveTv';
-import LocalLibraryOutlinedIcon from '@material-ui/icons/LocalLibraryOutlined';
-import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import LocalLibraryOutlinedIcon from "@mui/icons-material/LocalLibraryOutlined";
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import { SvgIconTypeMap } from '@mui/material';
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 import React,
 { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";

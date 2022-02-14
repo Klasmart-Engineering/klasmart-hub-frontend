@@ -3,6 +3,11 @@ import {
     MockedProvider,
     MockedResponse,
 } from '@apollo/client/testing';
+import {
+    createTheme,
+    StyledEngineProvider,
+    ThemeProvider,
+} from '@mui/material/styles';
 import { render as reactTestingLibraryRender } from '@testing-library/react';
 import React,
 { ReactNode } from 'react';
@@ -16,6 +21,8 @@ export interface RenderOptions {
     locale?: IntlShape;
     mockedResponses?: MockedResponse[];
 }
+
+const theme = createTheme();
 
 export const render = (component: ReactNode, options: RenderOptions = {}) => {
     const {
@@ -36,7 +43,11 @@ export const render = (component: ReactNode, options: RenderOptions = {}) => {
     >
         <RecoilRoot>
             <RawIntlProvider value={locale}>
-                {component}
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={theme}>
+                        {component}
+                    </ThemeProvider>
+                </StyledEngineProvider>
             </RawIntlProvider>
         </RecoilRoot>
     </MockedProvider>);

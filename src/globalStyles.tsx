@@ -1,7 +1,5 @@
-import {
-    createStyles,
-    Theme,
-} from "@material-ui/core";
+import { Theme } from "@mui/material";
+import createStyles from '@mui/styles/createStyles';
 
 export default (theme: Theme) => createStyles({
     primaryText: {
@@ -28,6 +26,10 @@ export default (theme: Theme) => createStyles({
     },
     clickable: {
         cursor: `pointer`,
+        textDecoration: `none`,
+        '&:hover': {
+            textDecoration: `underline`,
+        },
     },
     fontWeightBold: {
         fontWeight: `bold`,

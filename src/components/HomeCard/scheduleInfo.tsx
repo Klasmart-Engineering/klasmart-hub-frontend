@@ -10,11 +10,11 @@ import {
     CircularProgress,
     Grid,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import clsx from "clsx";
 import React from "react";
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
@@ -166,7 +166,7 @@ export default function ScheduleInfoShort (props: Props) {
         <Grid container>
             <Grid
                 container
-                justify="space-between"
+                justifyContent="space-between"
                 alignItems="center"
                 className={classes.cardHead}
             >
@@ -191,7 +191,7 @@ export default function ScheduleInfoShort (props: Props) {
             </Grid>
             <Grid
                 container
-                justify="space-between"
+                justifyContent="space-between"
             >
                 <Grid
                     ref={scrollRef}
@@ -224,7 +224,7 @@ export default function ScheduleInfoShort (props: Props) {
                                                             [classes.classItemLive]: item.class_type === `OnlineClass`,
                                                         })}
                                                         alignItems="center"
-                                                        justify="space-between"
+                                                        justifyContent="space-between"
                                                     >
                                                         <Grid item>
                                                             <Grid

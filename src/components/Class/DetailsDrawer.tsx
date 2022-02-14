@@ -5,20 +5,22 @@ import {
     Student,
     Teacher,
 } from "@/types/graphQL";
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
     Box,
-    createStyles,
     List,
     ListItem,
     ListItemText,
-    makeStyles,
     Typography,
-} from "@material-ui/core";
-import MuiAccordion from "@material-ui/core/Accordion";
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import { withStyles } from "@material-ui/core/styles";
-import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
+} from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import {
+    createStyles,
+    makeStyles,
+    withStyles,
+} from '@mui/styles';
 import {
     Drawer,
     UserAvatar,

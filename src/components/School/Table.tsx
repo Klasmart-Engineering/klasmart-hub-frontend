@@ -10,16 +10,16 @@ import {
     TableProps,
 } from "@/utils/table";
 import {
-    createStyles,
-    makeStyles,
-    Paper,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import { Paper } from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import {
     CursorTable,
     useSnackbar,
@@ -100,12 +100,12 @@ export default function SchoolTable (props: Props) {
     };
 
     const deleteSelectedRow = async (row: SchoolRow) => {
-        if (!await deletePrompt({
+        if (!(await deletePrompt({
             title: intl.formatMessage({
                 id: `schools_deleteTitleLabel`,
             }),
             entityName: row.name,
-        })) return;
+        }))) return;
         try {
             await deleteSchool({
                 variables: {

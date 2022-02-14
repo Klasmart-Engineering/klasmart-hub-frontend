@@ -7,8 +7,7 @@ import { useValidations } from "@/utils/validations";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Select,
     TextField,

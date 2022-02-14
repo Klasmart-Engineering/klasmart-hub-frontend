@@ -17,7 +17,7 @@ import {
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core";
+} from '@mui/styles';
 import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";

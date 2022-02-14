@@ -3,17 +3,17 @@ import AssessmentPieChart from "@/components/Assessment/PieChart";
 import { history } from "@/utils/history";
 import { usePermission } from "@/utils/permissions";
 import {
+    DonutLarge as DonutLargeIcon,
+    List as ListIcon,
+}  from "@mui/icons-material";
+import {
     Box,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-} from "@material-ui/core/styles";
-import {
-    DonutLarge as DonutLargeIcon,
-    List as ListIcon,
-}  from "@material-ui/icons";
+} from '@mui/styles';
 import {
     Button,
     IconButton,
@@ -60,58 +60,56 @@ export default function Assessments () {
         setChart((status) => !status);
     };
 
-    return (
-        <>
-            <Box
-                className={classes.cardHead}
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-            >
-                <Typography className={classes.cardTitle}>
-                    <FormattedMessage id="assessment_assessmentsTitle" />
-                </Typography>
-                {showChart
-                    ? <IconButton
-                        className={classes.listChartToggleButton}
-                        tooltip={intl.formatMessage({
-                            id: `assessment_viewAsList`,
-                        })}
-                        icon={ListIcon}
-                        onClick={handleToggleChart}
-                    />
-                    : <IconButton
-                        className={classes.listChartToggleButton}
-                        tooltip={intl.formatMessage({
-                            id: `assessment_viewAsChart`,
-                        })}
-                        icon={DonutLargeIcon}
-                        onClick={handleToggleChart}
-                    />
-                }
-                <Box flex="1" />
-                {permissionAccessAssessments && (
-                    <Button
-                        label={intl.formatMessage({
-                            id: `assessment_viewAssessmentsLabel`,
-                        })}
-                        color="primary"
-                        onClick={() => history.push(`/assessments`)}
-                    />
-                )}
-            </Box>
-            <Box
-                className={classes.cardBody}
-                display="flex"
-                flexDirection="column"
-                flex="1"
-                justifyContent={showChart && `center`}
-            >
-                {showChart
-                    ? <AssessmentPieChart/>
-                    : <AssessmentTable />
-                }
-            </Box>
-        </>
-    );
+    return <>
+        <Box
+            className={classes.cardHead}
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+        >
+            <Typography className={classes.cardTitle}>
+                <FormattedMessage id="assessment_assessmentsTitle" />
+            </Typography>
+            {showChart
+                ? <IconButton
+                    className={classes.listChartToggleButton}
+                    tooltip={intl.formatMessage({
+                        id: `assessment_viewAsList`,
+                    })}
+                    icon={ListIcon}
+                    size="medium"
+                    onClick={handleToggleChart} />
+                : <IconButton
+                    className={classes.listChartToggleButton}
+                    tooltip={intl.formatMessage({
+                        id: `assessment_viewAsChart`,
+                    })}
+                    icon={DonutLargeIcon}
+                    size="medium"
+                    onClick={handleToggleChart} />
+            }
+            <Box flex="1" />
+            {permissionAccessAssessments && (
+                <Button
+                    label={intl.formatMessage({
+                        id: `assessment_viewAssessmentsLabel`,
+                    })}
+                    color="primary"
+                    onClick={() => history.push(`/assessments`)}
+                />
+            )}
+        </Box>
+        <Box
+            className={classes.cardBody}
+            display="flex"
+            flexDirection="column"
+            flex="1"
+            justifyContent={showChart && `center`}
+        >
+            {showChart
+                ? <AssessmentPieChart/>
+                : <AssessmentTable />
+            }
+        </Box>
+    </>;
 }

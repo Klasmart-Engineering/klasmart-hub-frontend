@@ -3,11 +3,13 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import { useClassTeacherLoad } from "@kidsloop/reports-api-client";
 import {
-    createStyles,
     Theme,
     Typography,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from "@mui/styles";
 import React,
 {
     useEffect,

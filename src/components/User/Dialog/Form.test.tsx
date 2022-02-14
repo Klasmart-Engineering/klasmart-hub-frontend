@@ -227,7 +227,7 @@ export const enter = {
 };
 
 export const buttons = {
-    close: () => screen.getByTitle(`Close dialog`),
+    close: () => screen.getByTestId(`CloseIcon`),
 };
 
 test(`givenName, familyName, contactInfo and roles are required`, async () => {

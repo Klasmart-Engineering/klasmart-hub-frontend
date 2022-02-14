@@ -1,17 +1,6 @@
 import { usePermission } from "@/utils/permissions";
 import { useIsSuperAdmin } from "@/utils/userRoles";
 import {
-    createStyles,
-    Divider,
-    lighten,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader,
-    makeStyles,
-} from "@material-ui/core";
-import {
     Assessment,
     AssignmentInd,
     Business,
@@ -29,7 +18,20 @@ import {
     School,
     SvgIconComponent,
     TableChart,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Divider,
+    lighten,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import React,
 { Fragment } from "react";
@@ -97,7 +99,7 @@ export default function NavigationMenuList (props: Props) {
                 },
             ],
         },
-        ...isSuperAdmin ? [
+        ...(isSuperAdmin ? [
             {
                 header: intl.formatMessage({
                     id: `navMenu_superAdminLabel`,
@@ -136,8 +138,8 @@ export default function NavigationMenuList (props: Props) {
                     },
                 ],
             },
-        ] : [],
-        ...usePermission(`library_200`) ? [
+        ] : []),
+        ...(usePermission(`library_200`) ? [
             {
                 items: [
                     {
@@ -149,7 +151,7 @@ export default function NavigationMenuList (props: Props) {
                     },
                 ],
             },
-        ] : [],
+        ] : []),
         {
             items: [
                 {
@@ -166,7 +168,7 @@ export default function NavigationMenuList (props: Props) {
                 id: `navMenu_manageLabel`,
             }),
             items: [
-                ...usePermission(`organizational_profile_10100`) ? [
+                ...(usePermission(`organizational_profile_10100`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_organizationTitle`,
@@ -174,8 +176,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: Business,
                         link: `/admin/organizations`,
                     },
-                ] : [],
-                ...usePermission(`view_user_page_40101`) ? [
+                ] : []),
+                ...(usePermission(`view_user_page_40101`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_usersTitle`,
@@ -183,8 +185,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: Group,
                         link: `/admin/users`,
                     },
-                ] : [],
-                ...usePermission(`view_roles_and_permissions_30110`) ? [
+                ] : []),
+                ...(usePermission(`view_roles_and_permissions_30110`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_groupsTitle`,
@@ -192,8 +194,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: AssignmentInd,
                         link: `/admin/roles`,
                     },
-                ] : [],
-                ...usePermission(`define_school_program_page_20101`) ? [
+                ] : []),
+                ...(usePermission(`define_school_program_page_20101`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_schoolsTitle`,
@@ -201,8 +203,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: School,
                         link: `/admin/schools`,
                     },
-                ] : [],
-                ...usePermission(`define_program_page_20105`) ? [
+                ] : []),
+                ...(usePermission(`define_program_page_20105`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_programsTitle`,
@@ -210,8 +212,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: LibraryBooks,
                         link: `/admin/programs`,
                     },
-                ] : [],
-                ...usePermission(`define_class_page_20104`) ? [
+                ] : []),
+                ...(usePermission(`define_class_page_20104`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_classesTitle`,
@@ -219,8 +221,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: Class,
                         link: `/admin/classes`,
                     },
-                ] : [],
-                ...usePermission(`define_subject_page_20106`) ? [
+                ] : []),
+                ...(usePermission(`define_subject_page_20106`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_subjectsTitle`,
@@ -228,8 +230,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: MenuBook,
                         link: `/admin/subjects`,
                     },
-                ] : [],
-                ...usePermission(`define_grade_page_20103`) ? [
+                ] : []),
+                ...(usePermission(`define_grade_page_20103`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_gradesTitle`,
@@ -237,8 +239,8 @@ export default function NavigationMenuList (props: Props) {
                         icon: Grade,
                         link: `/admin/grades`,
                     },
-                ] : [],
-                ...usePermission(`define_age_ranges_page_20102`) ? [
+                ] : []),
+                ...(usePermission(`define_age_ranges_page_20102`) ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_ageRangesTitle`,
@@ -246,8 +248,7 @@ export default function NavigationMenuList (props: Props) {
                         icon: ChildCare,
                         link: `/admin/age-ranges`,
                     },
-                ]
-                    : [],
+                ] : []),
             ],
         },
         {

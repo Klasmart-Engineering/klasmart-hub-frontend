@@ -1,11 +1,13 @@
 import { TeacherFeedbackRow } from "./Table";
 import globalStyles from "@/globalStyles";
 import {
-    createStyles,
     Link,
-    makeStyles,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import React,
 {

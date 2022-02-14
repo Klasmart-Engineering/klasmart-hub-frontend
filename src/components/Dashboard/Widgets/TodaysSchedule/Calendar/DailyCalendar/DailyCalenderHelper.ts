@@ -1,5 +1,5 @@
-import { SvgIconTypeMap } from "@material-ui/core";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { scaleUtc } from "@visx/scale";
 import {
     Event,

@@ -14,17 +14,19 @@ import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
-    createStyles,
-    DialogContentText,
-    makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    DialogContentText,
+    Paper,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     PageTable,
@@ -113,7 +115,7 @@ export default function MyOrganizationTable (props: Props) {
         const membership = organizationOwnerships.find((membership) => membership.organization_id === row.id);
         if (!membership) return;
         const organizationName = membership.organization?.organization_name;
-        if (!await prompt({
+        if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
                 id: `allOrganization_deleteButton`,
@@ -137,7 +139,7 @@ export default function MyOrganizationTable (props: Props) {
                 id: `allOrganization_cancelButton`,
             }),
             validations: [ required(), equals(organizationName) ],
-        })) return;
+        }))) return;
         try {
             await deleteOrganization({
                 variables: {

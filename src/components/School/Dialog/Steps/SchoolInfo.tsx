@@ -1,11 +1,11 @@
 import { SchoolStepper } from "./shared";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { useValidations } from "@/utils/validations";
+import { Paper } from "@mui/material";
 import {
     createStyles,
     makeStyles,
-    Paper,
-} from "@material-ui/core";
+} from '@mui/styles';
 import { TextField } from "kidsloop-px";
 import React,
 {

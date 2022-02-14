@@ -1,8 +1,8 @@
+import SendIcon from "@mui/icons-material/Send";
 import Button,
-{ ButtonProps } from "@material-ui/core/Button";
-import Hidden from "@material-ui/core/Hidden";
-import { withStyles } from "@material-ui/core/styles";
-import SendIcon from "@material-ui/icons/Send";
+{ ButtonProps } from "@mui/material/Button";
+import Hidden from "@mui/material/Hidden";
+import withStyles from '@mui/styles/withStyles';
 import React from "react";
 
 interface Props extends ButtonProps {
@@ -39,34 +39,32 @@ export default function StyledButton (props: Props) {
         typeof child !== `string` ? sibling = child : {}
     ));
 
-    return (
-        extendedOnly ?
-            <StyledBtn
-                style={{
-                    minWidth: 120,
-                }}
-                {...other}>
-                { children || <SendIcon />}
-            </StyledBtn> :
-            <>
-                <Hidden smDown>
-                    <StyledBtn
-                        style={{
-                            minWidth: 120,
-                        }}
-                        {...other}>
-                        { children || <SendIcon />}
-                    </StyledBtn>
-                </Hidden>
-                <Hidden mdUp>
-                    <StyledBtn
-                        style={{
-                            minWidth: 80,
-                        }}
-                        {...other}>
-                        { sibling || <SendIcon /> }
-                    </StyledBtn>
-                </Hidden>
-            </>
-    );
+    return extendedOnly ?
+        <StyledBtn
+            style={{
+                minWidth: 120,
+            }}
+            {...other}>
+            { children || <SendIcon />}
+        </StyledBtn> :
+        <>
+            <Hidden xlDown>
+                <StyledBtn
+                    style={{
+                        minWidth: 120,
+                    }}
+                    {...other}>
+                    { children || <SendIcon />}
+                </StyledBtn>
+            </Hidden>
+            <Hidden mdUp>
+                <StyledBtn
+                    style={{
+                        minWidth: 80,
+                    }}
+                    {...other}>
+                    { sibling || <SendIcon /> }
+                </StyledBtn>
+            </Hidden>
+        </>;
 }

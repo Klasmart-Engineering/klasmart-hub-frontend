@@ -12,21 +12,19 @@ import {
     sectionHandler,
     uniquePermissions,
 } from "@/utils/permissions";
+import { LinearProgress } from "@mui/material";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Dialog from "@mui/material/Dialog";
+import Grid from "@mui/material/Grid";
+import Grow from "@mui/material/Grow";
+import { Theme } from "@mui/material/styles";
+import { TransitionProps } from "@mui/material/transitions";
+import Typography from "@mui/material/Typography";
 import {
     createStyles,
-    LinearProgress,
-} from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Dialog from "@material-ui/core/Dialog";
-import Grid from "@material-ui/core/Grid";
-import Grow from "@material-ui/core/Grow";
-import {
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
-import { TransitionProps } from "@material-ui/core/transitions";
-import Typography from "@material-ui/core/Typography";
+} from '@mui/styles';
 import { xor } from "lodash";
 import React,
 {
@@ -351,47 +349,45 @@ export default function CreateAndEditRoleDialog (props: Props) {
                 />
             );
         case 1:
-            return (
-                <>
-                    <RolePermissionsActionsCard
-                        roles={roles.filter((role) => role.role_id !== row.id)}
-                        roleId={roleId}
-                        actions={[
+            return <>
+                <RolePermissionsActionsCard
+                    roles={roles.filter((role) => role.role_id !== row.id)}
+                    roleId={roleId}
+                    actions={[
+                        {
+                            text: intl.formatMessage({
+                                id: `rolesInfoCard_clearLabel`,
+                            }),
+                            disabled: false,
+                            onClick: handleClear,
+                        },
+                        ...(isEditing ? [
                             {
                                 text: intl.formatMessage({
-                                    id: `rolesInfoCard_clearLabel`,
+                                    id: `rolesInfoCard_resetLabel`,
                                 }),
-                                disabled: false,
-                                onClick: handleClear,
+                                disabled: resetToDefaultIsDisabled,
+                                onClick: handleResetToDefault,
                             },
-                            ...isEditing ? [
-                                {
-                                    text: intl.formatMessage({
-                                        id: `rolesInfoCard_resetLabel`,
-                                    }),
-                                    disabled: resetToDefaultIsDisabled,
-                                    onClick: handleResetToDefault,
-                                },
-                            ] : [],
-                        ]}
-                        textFieldLabel={intl.formatMessage({
-                            id: `rolesInfoCard_copyLabel`,
-                        })}
-                        handleCopyFromRoleReset={handleCopyFromRoleReset}
-                        replayButtonIsVisible={replayButtonIsVisible}
-                        onChange={copyRoleHandler}
+                        ] : []),
+                    ]}
+                    textFieldLabel={intl.formatMessage({
+                        id: `rolesInfoCard_copyLabel`,
+                    })}
+                    handleCopyFromRoleReset={handleCopyFromRoleReset}
+                    replayButtonIsVisible={replayButtonIsVisible}
+                    onChange={copyRoleHandler}
+                />
+                {permissionCategories.map((permissionsCategory) => (
+                    <PermissionsCard
+                        key={permissionsCategory.category}
+                        category={permissionsCategory.category}
+                        groups={permissionsCategory.groups}
+                        checkedPermissions={checkedPermissions}
+                        setCheckedPermissions={setCheckedPermissions}
                     />
-                    {permissionCategories.map((permissionsCategory) => (
-                        <PermissionsCard
-                            key={permissionsCategory.category}
-                            category={permissionsCategory.category}
-                            groups={permissionsCategory.groups}
-                            checkedPermissions={checkedPermissions}
-                            setCheckedPermissions={setCheckedPermissions}
-                        />
-                    ))}
-                </>
-            );
+                ))}
+            </>;
         case 2:
             return (
                 <>
@@ -489,7 +485,7 @@ export default function CreateAndEditRoleDialog (props: Props) {
             <Grid
                 container
                 direction="row"
-                justify="center"
+                justifyContent="center"
                 spacing={2}
                 className={classes.menuContainer}>
                 {getStepContent(activeStep)}

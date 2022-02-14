@@ -1,5 +1,5 @@
 import { useValidations } from "@/utils/validations";
-import { DialogContentText } from "@material-ui/core";
+import { DialogContentText } from "@mui/material";
 import { usePrompt } from "kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";

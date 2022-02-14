@@ -82,7 +82,7 @@ export default function CreateSubjectDialog (props: Props) {
                 });
                 return buildEmptyCategory({
                     ...category,
-                    subcategories: [ ...systemSubcategories, ...subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? [] ],
+                    subcategories: [ ...systemSubcategories, ...(subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? []) ],
                 });
             }));
 
@@ -106,7 +106,7 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? [] ].map((category) => category.id).filter((id): id is string => !!id),
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id).filter((id): id is string => !!id),
                         },
                     ],
                 },

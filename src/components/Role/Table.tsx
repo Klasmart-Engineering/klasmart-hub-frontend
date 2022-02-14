@@ -17,18 +17,18 @@ import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { systemRoles } from "@/utils/userRoles";
 import {
-    Link,
-    Paper,
-} from "@material-ui/core";
-import {
-    createStyles,
-    makeStyles,
-} from "@material-ui/core/styles";
-import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
+import {
+    Link,
+    Paper,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import clsx from "clsx";
 import {
     PageTable,

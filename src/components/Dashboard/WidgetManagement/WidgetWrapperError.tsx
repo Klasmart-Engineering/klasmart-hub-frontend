@@ -1,12 +1,9 @@
 import OopsSvg from "@/assets/img/oops.svg";
-import {
-    createStyles,
-    styled,
-    Theme,
-} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import ReplayIcon from '@material-ui/icons/Replay';
-import { makeStyles } from "@material-ui/styles";
+import { styled, Theme } from "@mui/material";
+import createStyles from '@mui/styles/createStyles';
+import Button from "@mui/material/Button";
+import ReplayIcon from '@mui/icons-material/Replay';
+import { makeStyles } from "@mui/styles";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 

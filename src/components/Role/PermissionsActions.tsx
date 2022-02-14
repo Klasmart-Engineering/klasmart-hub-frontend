@@ -1,20 +1,20 @@
 import { Role } from "@/components/Role/Dialog/CreateEdit";
 import { Status } from "@/types/graphQL";
+import { Replay as ReplayIcon } from "@mui/icons-material";
 import {
     IconButton,
     MenuItem,
     TextField,
-} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+} from "@mui/material";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { Theme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 import {
     createStyles,
     makeStyles,
-    Theme,
-} from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import { Replay as ReplayIcon } from "@material-ui/icons";
+} from '@mui/styles';
 import React,
 { ChangeEvent } from "react";
 import { FormattedMessage } from "react-intl";
@@ -114,7 +114,9 @@ export default function RolePermissionsActionsCard (props: Props) {
                             variant="outlined"
                             InputProps={{
                                 endAdornment: replayButtonIsVisible && (
-                                    <IconButton onClick={handleCopyFromRoleReset}>
+                                    <IconButton
+                                        size="large"
+                                        onClick={handleCopyFromRoleReset}>
                                         <ReplayIcon />
                                     </IconButton>
                                 ),

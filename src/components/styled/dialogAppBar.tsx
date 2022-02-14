@@ -1,16 +1,18 @@
 import RoleStepperButtons from "../Role/Stepper/StepperButtons";
-import AppBar from "@material-ui/core/AppBar";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import AppBar from "@mui/material/AppBar";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import {
+    Theme,
+    useTheme,
+} from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import {
     createStyles,
     makeStyles,
-    Theme,
-    useTheme,
-} from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
+} from '@mui/styles';
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -55,45 +57,43 @@ export default function DialogAppBar (props: Props) {
         createOrEditTitle,
     } = props;
 
-    return (
-        <>
-            <AppBar
-                color="primary"
-                className={classes.appBar}>
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="close"
-                        onClick={handleClose}
+    return <>
+        <AppBar
+            color="primary"
+            className={classes.appBar}>
+            <Toolbar>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="close"
+                    size="large"
+                    onClick={handleClose}>
+                    <CloseIcon />
+                </IconButton>
+                <Grid
+                    container
+                    item
+                    wrap="nowrap">
+                    <Typography
+                        id="nav-menu-title"
+                        variant="h6"
                     >
-                        <CloseIcon />
-                    </IconButton>
-                    <Grid
-                        container
-                        item
-                        wrap="nowrap">
-                        <Typography
-                            id="nav-menu-title"
-                            variant="h6"
-                        >
-                            {createOrEditTitle}
-                        </Typography>
-                    </Grid>
-                    {toolbarBtn ? toolbarBtn : null}
-                    {steps?.length && (
-                        <RoleStepperButtons
-                            steps={steps}
-                            activeStep={activeStep}
-                            handleBack={handleBack}
-                            handleNext={handleNext}
-                            handleReset={handleReset}
-                            roleInfoStepIsValid={roleInfoStepIsValid}
-                            permissionsStepIsValid={permissionsStepIsValid}
-                        />
-                    )}
-                </Toolbar>
-            </AppBar>
-        </>
-    );
+                        {createOrEditTitle}
+                    </Typography>
+                </Grid>
+                {toolbarBtn ? toolbarBtn : null}
+                {steps?.length && (
+                    <RoleStepperButtons
+                        steps={steps}
+                        activeStep={activeStep}
+                        handleBack={handleBack}
+                        handleNext={handleNext}
+                        handleReset={handleReset}
+                        roleInfoStepIsValid={roleInfoStepIsValid}
+                        permissionsStepIsValid={permissionsStepIsValid}
+                    />
+                )}
+            </Toolbar>
+        </AppBar>
+    </>;
 }

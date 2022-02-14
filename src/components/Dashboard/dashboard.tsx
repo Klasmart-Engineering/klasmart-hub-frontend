@@ -1,7 +1,4 @@
-import {
-    useGetMyUser,
-    UserNode,
-} from "@/api/users";
+import { useGetMyUser } from "@/api/users";
 import Assessment from "@/components/HomeCard/Assessments";
 import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
@@ -17,13 +14,13 @@ import {
     Box,
     Container,
     Grid,
-} from "@material-ui/core";
+    Theme,
+    useTheme,
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
-    Theme,
-    useTheme,
-} from "@material-ui/core/styles";
+} from '@mui/styles';
 import { Card } from "kidsloop-px";
 import { clamp } from "lodash";
 import React, {

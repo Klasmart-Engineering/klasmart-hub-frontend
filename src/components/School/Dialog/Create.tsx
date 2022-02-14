@@ -11,10 +11,12 @@ import { buildEmptySchoolNode } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
+    Toolbar,
+} from "@mui/material";
+import {
     createStyles,
     makeStyles,
-    Toolbar,
-} from "@material-ui/core";
+} from '@mui/styles';
 import {
     Button,
     FullScreenDialog,
