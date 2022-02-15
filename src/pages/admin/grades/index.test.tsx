@@ -65,7 +65,7 @@ test(`Grades page loads correctly without data`, () => {
     render(<GradesPage />);
 
     expect(screen.queryByText(`Grades`)).toBeInTheDocument();
-    expect(screen.queryByText(`No data found`)).toBeInTheDocument();
+    expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
 });
 
 test(`Grades page loads correctly with data`, async () => {
