@@ -297,6 +297,13 @@ export const codeToTranslatedError = (error: CsvBadInputErrorDetails, intl: Intl
             entity,
             attribute,
         });
+    case APIErrorCode.ERR_INVALID_USERNAME:
+        return intl.formatMessage({
+            id: `validation.error.username.format`,
+        }, {
+            entity,
+            attribute,
+        });
     case CsvUploadEntityErrorCode.ERR_CSV_MISSING_REQUIRED:
     case APIErrorCode.ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE:
         return intl.formatMessage({

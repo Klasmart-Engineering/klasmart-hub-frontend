@@ -977,6 +977,7 @@
     "validation.error.spreadsheet.duplicateColumn": "Duplicate column {columnName}.",
     "validation.error.file.type": "File must be in {fileType} format.",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} must only contain letters, numbers, space and & / , - . '",
+    "validation.error.username.format": "{entity} {attribute} must only contain letters, numbers, space and & / , - _ . '",
     "validation.error.permission.unauthorized": "You are unauthorized to perform this action.",
     "validation.error.entity.minLength": "{min, plural, one {{entity} {attribute} must not be less than {min} character.} other {{entity} {attribute} must not be less than {min} characters.}}",
     "validation.error.attribute.required": "{attribute} is required.",

@@ -977,6 +977,7 @@
     "validation.error.spreadsheet.duplicateColumn": "Cột trùng lặp {columnName}.",
     "validation.error.file.type": "Tệp phải ở định dạng {fileType}",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} chỉ được chứa chữ cái, số, dấu cách và & / , - . '",
+    "validation.error.username.format":"{entity} {attribute} chỉ được chứa chữ cái, số, dấu cách và & / , - _ . '",
     "validation.error.permission.unauthorized": "Bạn không được phép thực hiện hành động này.",
     "validation.error.entity.minLength": "{min, plural, other {{attribute} không được ít hơn {min} kí tự.\\n {entity} {attribute} không được ít hơn {min} kí tự.}}",
     "validation.error.attribute.required": "{attribute} là bắt buộc.",

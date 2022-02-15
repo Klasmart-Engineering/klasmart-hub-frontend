@@ -977,6 +977,7 @@
     "validation.error.spreadsheet.duplicateColumn": "重复列{columnName}。",
     "validation.error.file.type": "文件必须是{fileType}格式。",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute}只能包含字母、数字、空格和 & / , - 。'",
+    "validation.error.username.format":"{entity} {attribute}只能包含字母、数字、空格和 & / , - _ 。'",
     "validation.error.permission.unauthorized": "您未经授权执行此操作。",
     "validation.error.entity.minLength": "{min, plural, other {{entity} {attribute} 不能少于{min} 个字符}}",
     "validation.error.attribute.required": "{attribute}是必填项",

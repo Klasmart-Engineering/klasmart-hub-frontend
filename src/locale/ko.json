@@ -977,6 +977,7 @@
     "validation.error.spreadsheet.duplicateColumn": "중복 열 {columnName}.",
     "validation.error.file.type": "파일은 {fileType} 형식이어야 합니다.",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute}에는 문자, 숫자, 공백 및 & / , - . '만 포함해야 합니다.",
+    "validation.error.username.format":"{entity} {attribute}에는 문자, 숫자, 공백 및 & / , - _ . '만 포함해야 합니다.",
     "validation.error.permission.unauthorized": "이 작업을 수행할 권한이 없습니다.",
     "validation.error.entity.minLength": "{min, plural, other {{entity} {attribute}에는 글자 수가 {min}보다 많아야 합니다.}}",
     "validation.error.attribute.required": "{attribute}이(가) 필요합니다.",

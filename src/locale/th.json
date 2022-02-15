@@ -977,6 +977,7 @@
     "validation.error.spreadsheet.duplicateColumn": "คอลัมน์ซ้ำ {columnName}",
     "validation.error.file.type": "ไฟล์ต้องอยู่ในรูปแบบ {fileType}",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} ต้องประกอบด้วยตัวอักษร ตัวเลข ช่องว่าง และ & / , - เท่านั้น '",
+    "validation.error.username.format":"{entity} {attribute} ต้องประกอบด้วยตัวอักษร ตัวเลข ช่องว่าง และ & / , - _ เท่านั้น '",
     "validation.error.permission.unauthorized": "คุณไม่ได้รับอนุญาตให้ดำเนินการนี้",
     "validation.error.entity.minLength": "{min, plural, other {{entity} {attribute} ต้องไม่น้อยกว่า {min} อักขระ}}",
     "validation.error.attribute.required": "{attribute}",

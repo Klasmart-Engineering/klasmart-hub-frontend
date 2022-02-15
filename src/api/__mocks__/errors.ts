@@ -53,6 +53,7 @@ const mockAttributeErrors = buildMockErrors([
     APIErrorCode.ERR_INVALID_EMAIL,
     APIErrorCode.ERR_INVALID_PHONE,
     APIErrorCode.ERR_INVALID_UUID,
+    APIErrorCode.ERR_INVALID_USERNAME,
     APIErrorCode.ERR_MISSING_REQUIRED_ENTITY_ATTRIBUTE,
 ], [ `entity`, `attribute` ]);
 
