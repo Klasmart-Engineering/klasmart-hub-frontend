@@ -1,3 +1,4 @@
+import StudentNextClass from "../Widgets/Student/NextClass/NextClass";
 import LastUpdatedMessage from "./LastUpdatedMessage";
 import WidgetContext from "./widgetCustomisation/widgetContext";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
@@ -159,6 +160,12 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                         }
                     </Box> */}
                 </Box>
+                {
+                    //todo: include this in student-focused dashboard
+                    // <Box paddingY={2}>
+                    //     <StudentNextClass />
+                    // </Box>
+                }
             </Container>
         </Box>
 
