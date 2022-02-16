@@ -90,7 +90,8 @@ const webpackConfig: Configuration = {
         },
     },
     output: {
-        filename: `[name].js`,
+        filename: `[name].[contenthash].js`,
+        chunkFilename: `bundles/[name].[contenthash].js`,
         path: path.resolve(__dirname, `dist`),
     },
     plugins: [
@@ -131,6 +132,25 @@ const webpackConfig: Configuration = {
         // }),
         // new BundleAnalyzerPlugin(),
     ],
+    optimization: {
+        moduleIds: `deterministic`,
+        runtimeChunk: `single`,
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name (module: { context: { match: (arg0: RegExp) => any[] } }) {
+
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                        // npm package names are URL-safe, but some servers don't like @ symbols
+                        return `${packageName.replace(`@`, ``)}`;
+                    },
+                    chunks: `all`,
+                },
+            },
+            chunks: `all`,
+        },
+    },
     devServer: {
         host: `fe.alpha.kidsloop.net`,
         port: 8080,
