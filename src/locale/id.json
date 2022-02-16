@@ -977,7 +977,6 @@
     "validation.error.spreadsheet.duplicateColumn": "Kolom duplikat dengan {columnName} .",
     "validation.error.file.type": "Berkas harus dalam format {fileType}",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} hanya boleh berisi huruf, angka, spasi dan & / , - . '",
-    "validation.error.username.format":"{entity} {attribute} hanya boleh berisi huruf, angka, spasi dan & / , - _ . '",
     "validation.error.permission.unauthorized": "Anda tidak punya akses untuk melakukan tindakan ini.",
     "validation.error.entity.minLength": "{min, plural, other {{entity} {attribute} tidak boleh kurang dari {min} karakter.}}",
     "validation.error.attribute.required": "{attribute} diperlukan.",
@@ -1130,5 +1129,8 @@
     "home.student.teacherFeedbackWidget.containerUrlLabel": "View all feedback",
     "home.student.teacherFeedbackWidget.today": "Today",
     "home.student.teacherFeedbackWidget.yesterday": "Yesterday",
-    "validation.error.username.format": "{entity} {attribute} hanya boleh berisi huruf, angka, spasi dan & / , - _ . ‘"
+    "validation.error.username.format": "{entity} {attribute} hanya boleh berisi huruf, angka, spasi dan & / , - _ . ‘",
+    "home.student.attendanceWidget.containerTitleLabel": "Attendance",
+    "home.student.attendanceWidget.containerUrlLabel": "View all attendances",
+    "home.student.attendanceWidget.legend": "Average attendance for 1 week"
 }

@@ -7,10 +7,13 @@ export interface Widget {
 }
 
 export enum WidgetType {
-    SCHEDULE = `0`,
-    NEXTCLASS = `1`,
-    ATTENDANCERATE = `2`,
-    PENDINGASSESSMENTS = `3`,
-    TEACHERLOAD = `4`,
-    CONTENTSTATUS = `5`,
+    // TEACHER
+    SCHEDULE = `101`,
+    NEXTCLASS = `102`,
+    ATTENDANCERATE = `103`,
+    PENDINGASSESSMENTS = `104`,
+    TEACHERLOAD = `105`,
+    CONTENTSTATUS = `106`,
+    //STUDENT
+    STUDENTATTENDANCE = `201`,
 }

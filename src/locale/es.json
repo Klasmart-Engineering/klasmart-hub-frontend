@@ -977,7 +977,6 @@
     "validation.error.spreadsheet.duplicateColumn": "Columna {columnName} duplicada.",
     "validation.error.file.type": "El archivo debe estar en formato {fileType}",
     "validation.error.entity.alphanumericAndSpecialCharacters": "{entity} {attribute} solo puede contener letras, números, espacios y  & / , - . '",
-    "validation.error.username.format": "{entity} {attribute} solo puede contener letras, números, espacios y  & / , - _ . '",
     "validation.error.permission.unauthorized": "No está autorizado para realizar esta acción.",
     "validation.error.entity.minLength": "{min, plural, one {{entity} {attribute} no puede tener menos de {min} carácter.} other {{entity} {attribute} no puede tener menos de {min} caracteres.}}",
     "validation.error.attribute.required": "{attribute} es necesario.",
@@ -1130,5 +1129,8 @@
     "home.student.teacherFeedbackWidget.containerUrlLabel": "View all feedback",
     "home.student.teacherFeedbackWidget.today": "Today",
     "home.student.teacherFeedbackWidget.yesterday": "Yesterday",
-    "validation.error.username.format": "{entity} {attribute} solo puede contener letras, números, espacios y  & / , - _ . ‘"
+    "validation.error.username.format": "{entity} {attribute} solo puede contener letras, números, espacios y  & / , - _ . ‘",
+    "home.student.attendanceWidget.containerTitleLabel": "Attendance",
+    "home.student.attendanceWidget.containerUrlLabel": "View all attendances",
+    "home.student.attendanceWidget.legend": "Average attendance for 1 week"
 }
