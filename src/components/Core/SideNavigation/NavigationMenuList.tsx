@@ -84,91 +84,105 @@ export default function NavigationMenuList (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const location = useLocation();
-    const isSuperAdmin = useIsSuperAdmin();
-
-    const menuSections: MenuSection[] = [
-        {
-            items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_home`,
-                    }),
-                    icon: Home,
-                    link: `/`,
-                    exact: true,
-                },
-            ],
-        },
-        ...(isSuperAdmin ? [
+    const homeSection: MenuSection = {
+        items: [
             {
-                header: intl.formatMessage({
-                    id: `navMenu_superAdminLabel`,
+                text: intl.formatMessage({
+                    id: `navMenu_home`,
                 }),
-                items: [
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_superOrganization`,
-                        }),
-                        icon: Business,
-                    },
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_superContentLibrary`,
-                        }),
-                        icon: Inbox,
-                        link: `/super-admin/content-library`,
-                    },
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_accounts`,
-                        }),
-                        icon: Person,
-                    },
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_superBilling`,
-                        }),
-                        icon: CreditCard,
-                    },
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_metricsAndReport`,
-                        }),
-                        icon: TableChart,
-                    },
-                ],
+                icon: Home,
+                link: `/`,
+                exact: true,
             },
-        ] : []),
-        ...(usePermission(`library_200`) ? [
+        ],
+    };
+
+    const superAdminSection: MenuSection = {
+        header: intl.formatMessage({
+            id: `navMenu_superAdminLabel`,
+        }),
+        items: useIsSuperAdmin() ? [
             {
-                items: [
-                    {
-                        text: intl.formatMessage({
-                            id: `navMenu_contentLibraryTitle`,
-                        }),
-                        icon: Inbox,
-                        link: `/library`,
-                    },
-                ],
+                text: intl.formatMessage({
+                    id: `navMenu_superOrganization`,
+                }),
+                icon: Business,
             },
-        ] : []),
-        {
-            items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_scheduleTitle`,
-                    }),
-                    icon: Event,
-                    link: `/schedule`,
-                },
-            ],
-        },
-        {
-            header: intl.formatMessage({
-                id: `navMenu_manageLabel`,
-            }),
-            items: [
-                ...(usePermission(`organizational_profile_10100`) ? [
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_superContentLibrary`,
+                }),
+                icon: Inbox,
+                link: `/super-admin/content-library`,
+            },
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_accounts`,
+                }),
+                icon: Person,
+            },
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_superBilling`,
+                }),
+                icon: CreditCard,
+            },
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_metricsAndReport`,
+                }),
+                icon: TableChart,
+            },
+        ] : [],
+    };
+
+    const librarySection = {
+        items: usePermission(`library_200`) ? [
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_contentLibraryTitle`,
+                }),
+                icon: Inbox,
+                link: `/library`,
+            },
+        ] : [],
+    };
+
+    const scheduleSection = {
+        items: [
+            {
+                text: intl.formatMessage({
+                    id: `navMenu_scheduleTitle`,
+                }),
+                icon: Event,
+                link: `/schedule`,
+            },
+        ],
+    };
+
+    const managePermissions = {
+        viewOrganizations: usePermission(`organizational_profile_10100`),
+        viewUsers: usePermission(`view_user_page_40101`),
+        viewRoles: usePermission(`view_roles_and_permissions_30110`),
+        viewSchools: usePermission(`define_school_program_page_20101`),
+        viewPrograms: usePermission(`define_program_page_20105`),
+        viewClasses: usePermission(`define_class_page_20104`),
+        viewSubjects: usePermission(`define_subject_page_20106`),
+        viewGrades: usePermission(`define_grade_page_20103`),
+        viewAgeRanges: usePermission(`define_age_ranges_page_20102`),
+    };
+    const givenManagePermissionsValues = Object.values(managePermissions).filter((permission) => permission);
+    const manageSection = {
+        ...givenManagePermissionsValues.length > 1 // show header when users has 2 or more permissions
+            ? {
+                header: intl.formatMessage({
+                    id: `navMenu_manageLabel`,
+                }),
+            }
+            : {},
+        items: [
+            ...managePermissions.viewOrganizations
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_organizationTitle`,
@@ -176,8 +190,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: Business,
                         link: `/admin/organizations`,
                     },
-                ] : []),
-                ...(usePermission(`view_user_page_40101`) ? [
+                ]
+                : [],
+            ...managePermissions.viewUsers
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_usersTitle`,
@@ -185,8 +201,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: Group,
                         link: `/admin/users`,
                     },
-                ] : []),
-                ...(usePermission(`view_roles_and_permissions_30110`) ? [
+                ]
+                : [],
+            ...managePermissions.viewRoles
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_groupsTitle`,
@@ -194,8 +212,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: AssignmentInd,
                         link: `/admin/roles`,
                     },
-                ] : []),
-                ...(usePermission(`define_school_program_page_20101`) ? [
+                ]
+                : [],
+            ...managePermissions.viewSchools
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_schoolsTitle`,
@@ -203,8 +223,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: School,
                         link: `/admin/schools`,
                     },
-                ] : []),
-                ...(usePermission(`define_program_page_20105`) ? [
+                ]
+                : [],
+            ...managePermissions.viewPrograms
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_programsTitle`,
@@ -212,8 +234,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: LibraryBooks,
                         link: `/admin/programs`,
                     },
-                ] : []),
-                ...(usePermission(`define_class_page_20104`) ? [
+                ]
+                : [],
+            ...managePermissions.viewClasses
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_classesTitle`,
@@ -221,8 +245,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: Class,
                         link: `/admin/classes`,
                     },
-                ] : []),
-                ...(usePermission(`define_subject_page_20106`) ? [
+                ]
+                : [],
+            ...managePermissions.viewSubjects
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_subjectsTitle`,
@@ -230,8 +256,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: MenuBook,
                         link: `/admin/subjects`,
                     },
-                ] : []),
-                ...(usePermission(`define_grade_page_20103`) ? [
+                ]
+                : [],
+            ...managePermissions.viewGrades
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_gradesTitle`,
@@ -239,8 +267,10 @@ export default function NavigationMenuList (props: Props) {
                         icon: Grade,
                         link: `/admin/grades`,
                     },
-                ] : []),
-                ...(usePermission(`define_age_ranges_page_20102`) ? [
+                ]
+                : [],
+            ...managePermissions.viewAgeRanges
+                ? [
                     {
                         text: intl.formatMessage({
                             id: `navMenu_ageRangesTitle`,
@@ -248,70 +278,58 @@ export default function NavigationMenuList (props: Props) {
                         icon: ChildCare,
                         link: `/admin/age-ranges`,
                     },
-                ] : []),
-            ],
-        },
-        {
-            header: intl.formatMessage({
-                id: `navMenu_dataLabel`,
-            }),
-            items: [
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_analyticsAndReportsTitle`,
-                    }),
-                    icon: TableChart,
-                    link: `/reports`,
-                },
-                {
-                    text: intl.formatMessage({
-                        id: `navMenu_assessmentsTitle`,
-                    }),
-                    icon: Assessment,
-                    link: `/assessments`,
-                },
-            ],
-        },
-        /**
-         * Leaving general section commented for future use.
-         */
-        // {
-        //     header: intl.formatMessage({
-        //         id: `navMenu_generalLabel`,
-        //     }),
-        //     items: [
-        //         {
-        //             text: intl.formatMessage({
-        //                 id: `navMenu_billingTitle`,
-        //             }),
-        //             icon: CreditCard,
-        //         },
-        //         {
-        //             text: intl.formatMessage({
-        //                 id: `navMenu_dataSecurityTitle`,
-        //             }),
-        //             icon: Lock,
-        //         },
-        //         {
-        //             text: intl.formatMessage({
-        //                 id: `navMenu_devicesTitle`,
-        //             }),
-        //             icon: PhoneAndroid,
-        //         },
-        //         {
-        //             text: intl.formatMessage({
-        //                 id: `navMenu_securityTitle`,
-        //             }),
-        //             icon: Security,
-        //         },
-        //         {
-        //             text: intl.formatMessage({
-        //                 id: `navMenu_supportTitle`,
-        //             }),
-        //             icon: Help,
-        //         },
-        //     ],
-        // },
+                ]
+                : [],
+        ],
+    };
+
+    const dataPermissions = {
+        viewReports: usePermission(`reports_600`),
+        viewAssessments: usePermission(`assessments_page_406`),
+    };
+    const givenDataPermissionsValues = Object.values(dataPermissions).filter((permission) => permission);
+    const dataSection = {
+        ...givenDataPermissionsValues.length > 1
+            ? {
+                header: intl.formatMessage({
+                    id: `navMenu_dataLabel`,
+                }),
+            }
+            : {},
+        items: [
+            ...( dataPermissions.viewReports
+                ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_analyticsAndReportsTitle`,
+                        }),
+                        icon: TableChart,
+                        link: `/reports`,
+                    },
+                ]
+                : []),
+            ...( dataPermissions.viewAssessments
+                ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_assessmentsTitle`,
+                        }),
+                        icon: Assessment,
+                        link: `/assessments`,
+                    },
+                ]
+                : []),
+
+        ],
+    };
+
+    const menuSections: MenuSection[] = [
+        ...homeSection.items.length ? [ homeSection ] : [],
+        ...superAdminSection.items.length ? [ superAdminSection ] : [],
+        ...librarySection.items.length ? [ librarySection ] : [],
+        ...scheduleSection.items.length ? [ scheduleSection ] : [],
+        ...manageSection.items.length ? [ manageSection ] : [],
+        ...dataSection.items.length ? [ dataSection ] : [],
     ];
 
     function isLinkSelected (item: MenuItem) {
@@ -320,34 +338,38 @@ export default function NavigationMenuList (props: Props) {
         return location.pathname.startsWith(item.link);
     }
 
-    return <>
-        {menuSections.map((section, i) => (
-            <Fragment key={`section-${i}`}>
-                {i !== 0 && <Divider />}
-                <List dense>
-                    {section.header &&
-                        <ListSubheader className={classes.sectionHeader}>
-                            {section.header}
-                        </ListSubheader>
-                    }
-                    {section.items.map((item, j) => (
-                        <ListItem
-                            key={`item-${i}-${j}`}
-                            button
-                            color="primary"
-                            disabled={!item.link}
-                            component={Link}
-                            to={item.link ?? ``}
-                            className={clsx(classes.defaultLink, {
-                                [classes.selectedLink]: isLinkSelected(item),
-                            })}
-                        >
-                            <ListItemIcon><item.icon /></ListItemIcon>
-                            <ListItemText primary={item.text} />
-                        </ListItem>
-                    ))}
-                </List>
-            </Fragment>
-        ))}
-    </>;
+    return (
+        <>
+            {menuSections.map((section, i) => (
+                <Fragment key={`section-${i}`}>
+                    {i !== 0 && <Divider />}
+                    <List dense>
+                        {section.header && (
+                            <ListSubheader className={classes.sectionHeader}>
+                                {section.header}
+                            </ListSubheader>
+                        )}
+                        {section.items.map((item, j) => (
+                            <ListItem
+                                key={`item-${i}-${j}`}
+                                button
+                                color="primary"
+                                disabled={!item.link}
+                                component={Link}
+                                to={item.link ?? ``}
+                                className={clsx(classes.defaultLink, {
+                                    [classes.selectedLink]: isLinkSelected(item),
+                                })}
+                            >
+                                <ListItemIcon>
+                                    <item.icon />
+                                </ListItemIcon>
+                                <ListItemText primary={item.text} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </Fragment>
+            ))}
+        </>
+    );
 }
