@@ -54,11 +54,9 @@ const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), n
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 interface Props {
-    permissionViewMyClassUser: boolean;
 }
 
 export default function Dashboard (props: Props) {
-    const { permissionViewMyClassUser } = props;
     const classes = useStyles();
     const theme = useTheme();
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
@@ -66,6 +64,7 @@ export default function Dashboard (props: Props) {
     const currentOrganization = useCurrentOrganization();
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
     const canViewClasses = usePermission(`view_my_classes_20118`);
+    const permissionViewMyClassUser = usePermission(`view_my_class_users_40112`, true);
     const { data: userData } = useGetMyUser();
 
     const SCHEDULE_PAGE_SIZE = 20;

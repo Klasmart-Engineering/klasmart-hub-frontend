@@ -1,11 +1,10 @@
-import Dashboard from "../components/Dashboard/Dashboard";
-import WidgetDashboard from "../components/Dashboard/WidgetDashboard";
+import Dashboard from "@/components/Dashboard/Dashboard";
 import DashboardNotice from "@/components/Dashboard/DashboardNotice";
+import WidgetDashboard from "@/components/Dashboard/WidgetDashboard";
 import {
     DashboardMode,
     useDashboardMode,
 } from "@/store/useDashboardMode";
-import { usePermission } from "@/utils/permissions";
 import CachedIcon from '@mui/icons-material/Cached';
 import { CircularProgress } from "@mui/material";
 import {
@@ -15,7 +14,7 @@ import {
 import React,
 {
     useEffect,
-    useMemo,
+    useState,
 } from "react";
 import { useIntl } from "react-intl";
 
@@ -30,29 +29,22 @@ const useStyles = makeStyles(() => createStyles({
 export default function HomePage () {
     const intl = useIntl();
     const classes = useStyles();
-    const { hasPermission: permissionViewMyClassUser = false, loading: loadingPermissionViewMyClassUser } = usePermission(`view_my_class_users_40112`, true);
-    const canTeacherViewWidgetDashboard = useMemo(() => permissionViewMyClassUser && process.env.SHOW_REPORT_CARDS === `true`, [ permissionViewMyClassUser ]);
-    const showDashboardNotice = canTeacherViewWidgetDashboard && process.env.USE_MOCK_REPORTS_DATA === `true`;
-    const [ dashboardMode, setDashboardMode ] = useDashboardMode();
+    const [ showDashboardNotice, setShowDashboardNotice ] = useState(false);
+    const {
+        dashboardMode,
+        setToWidgetDashboard,
+        setToOriginalDashboard,
+        loading,
+        hasPermissionToViewWidgetDashboard,
+    } = useDashboardMode();
 
     useEffect(() => {
-        if (loadingPermissionViewMyClassUser) return;
+        if(process.env.USE_MOCK_REPORTS_DATA !== `true` || loading) return;
 
-        switch (dashboardMode) {
-        case undefined:
-            setDashboardMode(canTeacherViewWidgetDashboard ? DashboardMode.WIDGET : DashboardMode.ORIGINAL);
-            break;
-        case DashboardMode.WIDGET:
-            if (!canTeacherViewWidgetDashboard)
-                setDashboardMode(DashboardMode.ORIGINAL);
-            break;
-        default:
-            break;
-        }
+        setShowDashboardNotice(hasPermissionToViewWidgetDashboard);
+    }, [ loading ]);
 
-    }, [ loadingPermissionViewMyClassUser ]);
-
-    if (loadingPermissionViewMyClassUser)
+    if (loading)
         return <CircularProgress
             color="primary"
             className={classes.pageLoading}/>;
@@ -78,7 +70,7 @@ export default function HomePage () {
                             }),
                             icon: <CachedIcon />,
                             onClick: () => {
-                                setDashboardMode(DashboardMode.ORIGINAL);
+                                setToOriginalDashboard();
                             },
                         }} />
                 }
@@ -101,10 +93,12 @@ export default function HomePage () {
                             id: `home.dashboardNotice.switchViewButton`,
                         }),
                         icon: <CachedIcon />,
-                        onClick: () => { setDashboardMode(DashboardMode.WIDGET); },
+                        onClick: () => {
+                            setToWidgetDashboard();
+                        },
                     }} />
             }
-            <Dashboard permissionViewMyClassUser={permissionViewMyClassUser} />
+            <Dashboard />
         </>
     );
 }
