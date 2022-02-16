@@ -1,4 +1,16 @@
-import { AgeRangeNode } from "./programs";
+import { GetPaginatedOrganizationAgeRangesResponse } from "./ageRanges";
+import { GetOrganizationGradesResponsePaginated } from "./grades";
+import {
+    GetOrganizationMembershipsResponse2,
+    UserEdge,
+    UserFilter,
+} from "./organizationMemberships";
+import {
+    AgeRangeNode,
+    GetAllProgramsPaginatedResponse,
+} from "./programs";
+import { GetPaginatedSchoolsRequestResponse } from "./schools";
+import { GetAllSubjectsPaginatedResponse } from "./subjects";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
 import { EDIT_CLASS_AGE_RANGES } from "@/operations/mutations/editClassAgeRanges";
@@ -8,7 +20,20 @@ import { EDIT_CLASS_SUBJECTS } from "@/operations/mutations/editClassSubjects";
 import { EDIT_CLASS_SCHOOLS } from "@/operations/mutations/editSchools";
 import { UPDATE_CLASS } from "@/operations/mutations/updateClass";
 import { UPLOAD_CLASSES_CSV } from "@/operations/mutations/uploadClassesCsv";
-import { GET_CLASS } from "@/operations/queries/getClass";
+import {
+    GET_CLASS_NODE,
+    GET_CLASS_NODE_AGE_RANGES_CONNECTION,
+    GET_CLASS_NODE_CONNECTIONS,
+    GET_CLASS_NODE_GRADES_CONNECTION,
+    GET_CLASS_NODE_PROGRAMS_CONNECTION,
+    GET_CLASS_NODE_SCHOOLS_CONNECTION,
+    GET_CLASS_NODE_SUBJECTS_CONNECTION,
+} from "@/operations/queries/getClassNode";
+import { GET_CLASS_NODE_SUMMARY } from "@/operations/queries/getClassNodeSummary";
+import {
+    GET_PAGINATED_ELIGIBLE_STUDENTS,
+    GET_PAGINATED_ELIGIBLE_TEACHERS,
+} from "@/operations/queries/getEligibleUsers";
 import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
 import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
 import {
@@ -31,6 +56,7 @@ import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
+    useLazyQuery,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -165,15 +191,6 @@ export const useGetMyClasses = (options?: QueryHookOptions<GetMyClassesResponse,
     return useQuery<GetMyClassesResponse, GetMyClassesRequest>(GET_MY_CLASSES, options);
 };
 
-interface GetUserSchoolMembershipsRequest {
-    user_id: string;
-    organization_id: string;
-}
-
-interface GetUserSchoolMembershipsResponse {
-    user: User;
-}
-
 interface ClassSchoolNode {
     id: string;
     name: string;
@@ -189,15 +206,55 @@ interface ClassProgramNode {
     grades?: Grade[];
 }
 
+interface SummaryNode {
+    totalCount: number;
+    pageInfo: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string;
+        endCursor: string;
+    };
+    edges: {
+        node: {
+            id: string;
+        };
+    }[];
+}
+
 export interface ClassNode {
     id: string;
     name: string;
     status: Status;
-    ageRanges: AgeRangeNode[];
-    subjects: Subject[];
-    grades: Grade[];
-    schools: ClassSchoolNode[];
-    programs: ClassProgramNode[];
+    ageRanges?: AgeRangeNode[];
+    subjects?: Subject[];
+    grades?: Grade[];
+    schools?: ClassSchoolNode[];
+    programs?: ClassProgramNode[];
+    schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
+    studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
+    teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
+    subjectsConnection?: GetAllSubjectsPaginatedResponse[`subjectsConnection`];
+    programsConnection?: GetAllProgramsPaginatedResponse[`programsConnection`];
+    gradesConnection?: GetOrganizationGradesResponsePaginated[`gradesConnection`];
+    ageRangesConnection?: GetPaginatedOrganizationAgeRangesResponse[`ageRangesConnection`];
+}
+
+export interface ClassNodeConnections {
+    id: string;
+    name: string;
+    status: Status;
+    ageRanges?: AgeRangeNode[];
+    subjects?: Subject[];
+    grades?: Grade[];
+    schools?: ClassSchoolNode[];
+    programs?: ClassProgramNode[];
+    schoolsConnection?: SummaryNode;
+    studentsConnection?: SummaryNode;
+    teachersConnection?: SummaryNode;
+    subjectsConnection?: SummaryNode;
+    programsConnection?: SummaryNode;
+    gradesConnection?: SummaryNode;
+    ageRangesConnection?: SummaryNode;
 }
 
 export interface ClassEdge {
@@ -248,17 +305,75 @@ interface UploadClassesCsvRequest {
     file: File;
 }
 
-interface GetClassRequest {
+export interface GetClassNodeRequest {
     id: string;
-    organizationId: string;
+    count?: number;
+    rosterCount?: number;
+    programsCount?: number;
+    subjectsCount?: number;
+    orderBy?: string;
+    order?: string;
+    direction?: string;
+    showStudents?: boolean;
+    showTeachers?: boolean;
+    cursor?: string;
+    filter?: UserFilter;
 }
 
-interface GetClassResponse {
-    class: Class;
+export interface GetEligibleClassUsersRequest {
+    classId: string;
+    direction?: string;
+    count?: number;
+    cursor?: string;
+    order?: string;
+    orderBy?: string;
+    filter?: UserFilter;
 }
 
-export const useGetClass = (options?: QueryHookOptions<GetClassResponse, GetClassRequest>) => {
-    return useQuery<GetClassResponse, GetClassRequest>(GET_CLASS, options);
+export interface GetEligibleClassStudentsResponse {
+    eligibleStudentsConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: UserEdge[];
+    };
+}
+
+export interface GetEligibleClassTeachersResponse {
+    eligibleTeachersConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: UserEdge[];
+    };
+}
+
+export interface GetClassNodeResponse {
+    classNode: ClassNode;
+}
+
+export interface GetClassNodeConnectionsResponse {
+    classNode: ClassNodeConnections;
+}
+
+export const useGetClassNode = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE, options);
+};
+
+export const useGetClassNodeConnections = (options?: QueryHookOptions<GetClassNodeConnectionsResponse, GetClassNodeRequest>) => {
+    return useQuery<GetClassNodeConnectionsResponse, GetClassNodeRequest>(GET_CLASS_NODE_CONNECTIONS, options);
+};
+
+export const useGetClassNodeSummary = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_SUMMARY, options);
 };
 
 export const useUploadClassesCsv = () => {
@@ -267,4 +382,32 @@ export const useUploadClassesCsv = () => {
 
 export const useGetAllPaginatedClasses = (options?: QueryHookOptions<GetAllClassesPaginatedResponse, GetAllClassesPaginatedRequest>) => {
     return useQuery<GetAllClassesPaginatedResponse, GetAllClassesPaginatedRequest>(GET_PAGINATED_ORGANIZATION_CLASSES, options);
+};
+
+export const useGetClassNodeSchoolsLazy = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useLazyQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_SCHOOLS_CONNECTION, options);
+};
+
+export const useGetClassNodeProgramsLazy = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useLazyQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_PROGRAMS_CONNECTION, options);
+};
+
+export const useGetClassNodeGradesLazy = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useLazyQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_GRADES_CONNECTION, options);
+};
+
+export const useGetClassNodeAgeRangesLazy = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useLazyQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_AGE_RANGES_CONNECTION, options);
+};
+
+export const useGetClassNodeSubjectsLazy = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
+    return useLazyQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_SUBJECTS_CONNECTION, options);
+};
+
+export const useGetPaginatedElgibleStudents = (options?: QueryHookOptions<GetEligibleClassStudentsResponse, GetEligibleClassUsersRequest>) => {
+    return useQuery<GetEligibleClassStudentsResponse, GetEligibleClassUsersRequest>(GET_PAGINATED_ELIGIBLE_STUDENTS, options);
+};
+
+export const useGetPaginatedElgibleTeachers = (options?: QueryHookOptions<GetEligibleClassTeachersResponse, GetEligibleClassUsersRequest>) => {
+    return useQuery<GetEligibleClassTeachersResponse, GetEligibleClassUsersRequest>(GET_PAGINATED_ELIGIBLE_TEACHERS, options);
 };

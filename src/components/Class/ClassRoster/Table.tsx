@@ -1,13 +1,19 @@
 import {
-    ClassUser,
-    useGetClassRoster,
+    ClassUserRow,
+    useGetClassNodeRoster,
     useRemoveClassStudent,
     useRemoveClassTeacher,
 } from "@/api/classRoster";
+import { UserNode } from "@/api/users";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Status } from "@/types/graphQL";
-import { getTableLocalization } from "@/utils/table";
+import { buildClassNodeUserSearchFilter } from "@/operations/queries/getClassNodeRoster";
+import {
+    DEFAULT_ROWS_PER_PAGE,
+    getTableLocalization,
+    pageChangeToDirection,
+    ServerCursorPagination,
+    tableToServerOrder,
+} from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
@@ -25,12 +31,17 @@ import {
     makeStyles,
 } from '@mui/styles';
 import {
+    CursorTable,
     FullScreenDialog,
-    PageTable,
     usePrompt,
     UserAvatar,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React,
 { useState } from "react";
 import {
@@ -55,6 +66,18 @@ interface Props {
     organizationId: string;
 }
 
+const mapUserRow = (edge: { node: UserNode }, role: string): ClassUserRow => ({
+    givenName: edge.node.givenName ?? ``,
+    familyName: edge.node.familyName ?? ``,
+    role,
+    id: `${edge.node.id}-${role}`,
+    organizationRoles: edge.node.roles?.map((role) => (
+        role.name ?? ``
+    )) ?? [],
+    dateOfBirth: edge.node.dateOfBirth ?? null,
+    contactInfo: edge.node.contactInfo?.email || edge.node.contactInfo?.phone || ``,
+});
+
 export default function ClassRoster (props: Props) {
     const {
         open,
@@ -67,65 +90,51 @@ export default function ClassRoster (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
-    const currentOrganization = useCurrentOrganization();
     const { required, equals } = useValidations();
     const [ removeStudent ] = useRemoveClassStudent();
     const [ removeTeacher ] = useRemoveClassTeacher();
+    const [ subgroupBy, setSubgroupBy ] = useState(`Student`);
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
+        search: ``,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+        order: `ASC`,
+        orderBy: `familyName`,
+    });
+
     const {
-        data,
+        data: rosterData,
+        loading,
         refetch,
-    } = useGetClassRoster({
+    } = useGetClassNodeRoster({
         fetchPolicy: `network-only`,
         variables: {
-            class_id: classId ?? ``,
-            organization_id: currentOrganization?.organization_id ?? ``,
+            id: classId ?? ``,
+            count: serverPagination.rowsPerPage,
+            orderBy: serverPagination.orderBy,
+            order: serverPagination.order,
+            direction: `FORWARD`,
+            showStudents: true,
+            showTeachers: false,
+            filter: buildClassNodeUserSearchFilter(serverPagination.search),
         },
         skip: !classId,
     });
 
-    let classInfo = data?.class || {
-        class_name: ``,
-        students: [],
-        teachers: [],
-    };
-
-    classInfo = {
-        students: classInfo.students
-            ?.filter((user) => user?.membership?.status === Status.ACTIVE)
-            .map((user: ClassUser) => ({
-                ...user,
-                role: `Student`,
-                user_id: `${user.user_id}-student`,
-                organizationRoles: user.membership.roles?.map((role) => (
-                    role.role_name ?? ``
-                )) ?? [],
-                contactInfo: user.email || user.phone || ``,
-            })),
-        teachers: classInfo.teachers
-            ?.filter((user) => user?.membership?.status === Status.ACTIVE)
-            .map((user: ClassUser) => ({
-                ...user,
-                role: `Teacher`,
-                user_id: `${user.user_id}-teacher`,
-                organizationRoles: user.membership.roles?.map((role) => (
-                    role.role_name ?? ``
-                )) ?? [],
-                contactInfo: user.email || user.phone || ``,
-            })),
-    };
-
-    const rows: ClassUser[] = [ ...classInfo.students, ...classInfo.teachers ];
+    const rows = subgroupBy === `Student` ?
+        rosterData?.classNode?.studentsConnection?.edges.map((edge) => mapUserRow(edge, subgroupBy)) ?? [] :
+        rosterData?.classNode?.teachersConnection?.edges.map((edge) => mapUserRow(edge, subgroupBy)) ?? [];
     const roles = [ `Student`, `Teacher` ];
-    const columns: TableColumn<ClassUser>[] = [
+
+    const columns: TableColumn<ClassUserRow>[] = [
         {
-            id: `user_id`,
+            id: `id`,
             label: intl.formatMessage({
                 id: `generic_idLabel`,
             }),
             hidden: true,
         },
         {
-            id: `given_name`,
+            id: `givenName`,
             label: intl.formatMessage({
                 id: `users_firstName`,
             }),
@@ -137,15 +146,15 @@ export default function ClassRoster (props: Props) {
                     alignItems="center"
                 >
                     <UserAvatar
-                        name={`${row.given_name} ${row.family_name}`}
+                        name={`${row.givenName} ${row.familyName}`}
                         size="small"
                     />
-                    <span className={classes.userName}>{row.given_name}</span>
+                    <span className={classes.userName}>{row.givenName}</span>
                 </Box>
             ),
         },
         {
-            id: `family_name`,
+            id: `familyName`,
             label: intl.formatMessage({
                 id: `users_lastName`,
             }),
@@ -186,13 +195,8 @@ export default function ClassRoster (props: Props) {
         },
     ];
 
-    const findClass = (row: ClassUser) => rows.find((user) => user.user_id === row.user_id);
-
-    const handleRemoveUser = async (row: ClassUser) => {
-        const selectedUser = findClass(row);
-        if (!selectedUser) return;
-
-        const userName = `${row.given_name} ${row.family_name}`.trim();
+    const handleRemoveUser = async (row: ClassUserRow) => {
+        const userName = `${row.givenName} ${row.familyName}`.trim();
 
         if (!(await prompt({
             variant: `error`,
@@ -227,11 +231,11 @@ export default function ClassRoster (props: Props) {
         const removeProps = {
             variables: {
                 class_id: classId ?? ``,
-                user_id: selectedUser.user_id.replace(`-student`, ``).replace(`-teacher`, ``),
+                user_id: row.id.replace(`-Student`, ``).replace(`-Teacher`, ``),
             },
         };
 
-        if (selectedUser.role === `Student`) {
+        if (subgroupBy === `Student`) {
             await removeStudent(removeProps);
         } else {
             await removeTeacher(removeProps);
@@ -240,22 +244,68 @@ export default function ClassRoster (props: Props) {
         refetch();
     };
 
+    const handleTableChange = (tableData: CursorTableData<ClassUserRow>) => {
+        setSubgroupBy(tableData?.subgroupBy ?? `Student`);
+        setServerPagination({
+            order: tableToServerOrder(tableData.order),
+            orderBy: tableData.orderBy,
+            search: tableData.search,
+            rowsPerPage: tableData.rowsPerPage,
+        });
+        refetch({
+            showStudents: tableData?.subgroupBy === `Student`,
+            showTeachers: tableData?.subgroupBy === `Teacher`,
+        });
+    };
+
+    const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
+        const direction = pageChangeToDirection(pageChange);
+        await refetch({
+            count,
+            cursor,
+            direction,
+        });
+    };
+
     return (
         <FullScreenDialog
             open={open}
-            title={data?.class?.class_name ?? ``}
+            title={rosterData?.classNode?.name ?? ``}
             onClose={() => {
                 onClose();
             }}
         >
             <Paper className={classes.root}>
-                <PageTable
+                <CursorTable
+                    hideAllGroupTab
+                    hasNextPage={subgroupBy === `Student` ?
+                        rosterData?.classNode?.studentsConnection?.pageInfo.hasNextPage :
+                        rosterData?.classNode?.teachersConnection?.pageInfo.hasNextPage
+                    }
+                    hasPreviousPage={subgroupBy === `Student` ?
+                        rosterData?.classNode?.studentsConnection?.pageInfo.hasPreviousPage :
+                        rosterData?.classNode?.teachersConnection?.pageInfo.hasPreviousPage
+                    }
+                    total={subgroupBy === `Student` ?
+                        rosterData?.classNode?.studentsConnection?.totalCount :
+                        rosterData?.classNode?.teachersConnection?.totalCount
+                    }
+                    startCursor={subgroupBy === `Student` ?
+                        rosterData?.classNode?.studentsConnection?.pageInfo.startCursor :
+                        rosterData?.classNode?.teachersConnection?.pageInfo.startCursor
+                    }
+                    endCursor={subgroupBy === `Student` ?
+                        rosterData?.classNode?.studentsConnection?.pageInfo.endCursor :
+                        rosterData?.classNode?.teachersConnection?.pageInfo.endCursor
+                    }
+                    loading={loading}
                     columns={columns}
                     rows={rows}
-                    idField="user_id"
-                    orderBy="given_name"
+                    idField="id"
+                    orderBy="givenName"
                     order="asc"
                     groupBy="role"
+                    subgroupBy={subgroupBy}
                     primaryAction={{
                         label: `Add User`,
                         icon: PersonAddIcon,
@@ -288,6 +338,8 @@ export default function ClassRoster (props: Props) {
                             }),
                         },
                     })}
+                    onChange={handleTableChange}
+                    onPageChange={handlePageChange}
                 />
             </Paper>
 
@@ -296,8 +348,6 @@ export default function ClassRoster (props: Props) {
                     open={schoolRosterDialogOpen}
                     refetchClassRoster={refetch}
                     classId={classId}
-                    existingStudents={classInfo.students.map((user: ClassUser) => user.user_id)}
-                    existingTeachers={classInfo.teachers.map((user: ClassUser) => user.user_id)}
                     organizationId={organizationId}
                     onClose={() => {
                         refetch();

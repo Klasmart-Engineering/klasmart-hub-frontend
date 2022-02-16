@@ -1,3 +1,4 @@
+import { GetAllSubjectsPaginatedResponse } from "./subjects";
 import { CREATE_OR_UPDATE_PROGRAMS } from "@/operations/mutations/createOrUpdatePrograms";
 import { DELETE_PROGRAM } from "@/operations/mutations/deleteProgram";
 import { EDIT_PROGRAM_AGE_RANGES } from "@/operations/mutations/editProgramAgeRanges";
@@ -123,6 +124,7 @@ export interface ProgramNode {
     ageRanges: AgeRangeNode[];
     subjects: Subject[];
     grades: Grade[];
+    subjectsConnection?: GetAllSubjectsPaginatedResponse[`subjectsConnection`];
 }
 
 export interface ProgramEdge {
@@ -140,7 +142,6 @@ export interface ProgramFilter extends PaginationFilter<ProgramFilter> {
     schoolId?: UuidFilter;
     ageRangeFrom?: AgeRangeFilter;
     ageRangeTo?: AgeRangeFilter;
-    schoolId?: UuidFilter;
 }
 
 interface GetProgramNodeRequest {

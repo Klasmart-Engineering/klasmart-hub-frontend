@@ -36,3 +36,26 @@ export const USER_FIELDS = gql`
         }
     }
 `;
+
+export const USER_NODE_FIELDS = gql`
+    fragment UserFields on UserConnectionNode {
+        id
+        givenName
+        familyName
+        dateOfBirth
+        contactInfo {
+            email
+            phone
+        }
+        alternateContactInfo {
+            email
+            phone
+        }
+        roles {
+            id
+            name
+            organizationId
+            schoolId
+          }
+    }
+`;

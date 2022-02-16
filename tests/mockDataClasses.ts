@@ -570,3 +570,201 @@ export const mockUserSchoolMemberships = {
         ],
     },
 };
+
+export const mockClassRoster = {
+    classNode: {
+        name: `Demo Class`,
+        programs: [
+            {
+                id: programIdA,
+                name: inputSearch,
+                status: Status.ACTIVE,
+            },
+        ],
+        studentsConnection: {
+            edges: [
+                {
+                    node: {
+                        givenName: `Louis`,
+                        familyName: `Merkel`,
+                    },
+                },
+                {
+                    node: {
+                        givenName: `George`,
+                        familyName: `Merkel`,
+                    },
+                },
+            ],
+            totalCount: 2,
+        },
+        teachersConnection: {
+            edges: [
+                {
+                    node: {
+                        givenName: `Juan`,
+                        familyName: `Obrador`,
+                    },
+                },
+                {
+                    node: {
+                        givenName: `Mike`,
+                        familyName: `Dane`,
+                    },
+                },
+            ],
+            totalCount: 2,
+        },
+    },
+};
+
+export const mockClassConnections = {
+    classNode: {
+        id: mockClassId,
+        name: `Demo Class`,
+        status: Status.ACTIVE,
+        schoolsConnection: {
+            edges: [
+                {
+                    node: {
+                        id: mockSchoolId2,
+                    },
+                },
+            ],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                endCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+                startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            },
+            totalCount: 1,
+        },
+        programsConnection: {
+            edges: [
+                {
+                    node: {
+                        id: programIdA,
+                    },
+                },
+            ],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                endCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+                startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            },
+            totalCount: 1,
+        },
+        gradesConnection: {
+            edges: [
+                {
+                    node: {
+                        id: grade2Id,
+                    },
+                },
+            ],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                endCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+                startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            },
+            totalCount: 1,
+        },
+        ageRangesConnection: {
+            edges: [
+                {
+                    node: {
+                        id: ageRangeId2,
+                    },
+                },
+            ],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                endCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+                startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            },
+            totalCount: 1,
+        },
+        subjectsConnection: {
+            edges: [
+                {
+                    node: {
+                        id: mathId1,
+                    },
+                },
+            ],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                endCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+                startCursor: `eyJjbGFzc19pZCI6IjdkOWMxZjEwLThiZTctNDUwMS1hNTQxLTVjZjBkNTM4MjAyNSIsImNsYXNzX25hbWUiOiJDbGFzcyA2In0=`,
+            },
+            totalCount: 1,
+        },
+    },
+};
+
+export const mockClassSummary = {
+    classNode: {
+        name: `Demo Class`,
+        programsConnection: {
+            edges: [
+                {
+                    node: {
+                        id: programIdA,
+                        name: inputSearch,
+                        status: Status.ACTIVE,
+                        subjectsConnection: {
+                            totalCount: 1,
+                            edges: [
+                                {
+                                    node: {
+                                        id: ``,
+                                        name: `Language/Literacy`,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            ],
+            totalCount: 1,
+        },
+        studentsConnection: {
+            edges: [
+                {
+                    node: {
+                        givenName: `Louis`,
+                        familyName: `Merkel`,
+                    },
+                },
+                {
+                    node: {
+                        givenName: `George`,
+                        familyName: `Merkel`,
+                    },
+                },
+            ],
+            totalCount: 2,
+        },
+        teachersConnection: {
+            edges: [
+                {
+                    node: {
+                        givenName: `Juan`,
+                        familyName: `Obrador`,
+                    },
+                },
+                {
+                    node: {
+                        givenName: `Mike`,
+                        familyName: `Dane`,
+                    },
+                },
+            ],
+            totalCount: 2,
+        },
+    },
+};

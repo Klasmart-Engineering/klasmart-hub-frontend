@@ -1,50 +1,94 @@
+import { ROLE_SUMMARY_NODE_FIELDS } from "../fragments";
 import { gql } from "@apollo/client";
 
-export const GET_ELIGIBLE_USERS = gql`
-    query class($class_id: ID!, $organization_id: ID!) {
-        class(class_id: $class_id) {
-            eligibleTeachers {
-                school_memberships {
-                    school_id
-                    user {
-                        membership(organization_id: $organization_id) {
-                            status
-                        }
-                        user_id
-                        user_name
-                        given_name
-                        family_name
-                    }
-                }
+export const GET_PAGINATED_ELIGIBLE_STUDENTS = gql`
+    ${ROLE_SUMMARY_NODE_FIELDS}
+    
+    query getEligibleStudents(
+        $classId: ID!
+        $direction: ConnectionDirection!
+        $count: PageSize
+        $cursor: String
+        $order: SortOrder!
+        $orderBy: UserSortBy!
+        $filter: EligibleMembersFilter
+    ) {
+        eligibleStudentsConnection(
+            classId: $classId
+            direction: $direction
+            directionArgs: { count: $count, cursor: $cursor }
+            filter: $filter
+            sort: { field: [$orderBy], order: $order }
+        ) {
+            totalCount
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
             }
-            eligibleStudents {
-                school_memberships {
-                    school_id
-                    user {
-                        membership(organization_id: $organization_id) {
-                            status
-                        }
-                        user_id
-                        user_name
-                        given_name
-                        family_name
+            edges {
+                node {
+                    id
+                    givenName
+                    familyName
+                    avatar
+                    status
+                    roles {
+                        ...RoleSummaryNodeFields
+                    }
+                    contactInfo {
+                        email
+                        phone
                     }
                 }
             }
         }
-    }
+    }    
 `;
 
-export interface EligibleUser {
-    user_id: string;
-    given_name: string;
-    family_name: string;
-    school_memberships: [];
-}
-
-export interface EligibleUsers {
-    class: {
-        eligibleTeachers: EligibleUser[];
-        eligibleStudents: EligibleUser[];
-    };
-}
+export const GET_PAGINATED_ELIGIBLE_TEACHERS = gql`
+    ${ROLE_SUMMARY_NODE_FIELDS}
+    
+    query getEligibleTeachers(
+        $classId: ID!
+        $direction: ConnectionDirection!
+        $count: PageSize
+        $cursor: String
+        $order: SortOrder!
+        $orderBy: UserSortBy!
+        $filter: EligibleMembersFilter
+    ) {
+        eligibleTeachersConnection(
+            classId: $classId
+            direction: $direction
+            directionArgs: { count: $count, cursor: $cursor }
+            filter: $filter
+            sort: { field: [$orderBy], order: $order }
+        ) {
+            totalCount
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+            edges {
+                node {
+                    id
+                    givenName
+                    familyName
+                    avatar
+                    status
+                    roles {
+                        ...RoleSummaryNodeFields
+                    }
+                    contactInfo {
+                        email
+                        phone
+                    }
+                }
+            }
+        }
+    }    
+`;

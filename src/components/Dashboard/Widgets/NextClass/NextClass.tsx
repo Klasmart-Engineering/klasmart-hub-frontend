@@ -1,18 +1,11 @@
 import { WidgetType } from "../../models/widget.model";
-import {
-    ClassUser,
-    useGetClassRoster,
-} from "@/api/classRoster";
+import { useGetClassNodeRoster } from "@/api/classRoster";
 import { useRestAPI } from "@/api/restapi";
 import scheduleSvg from "@/assets/img/schedule.svg";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Status } from "@/types/graphQL";
-import {
-    LivePreviewJWT,
-    SchedulePayload,
-} from "@/types/objectTypes";
+import { SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import {
@@ -21,7 +14,6 @@ import {
     Divider,
     Fab,
     Grid,
-    Tooltip,
     Typography,
     useTheme,
 } from "@mui/material";
@@ -29,7 +21,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import jwtDecode from "jwt-decode";
 import { UserAvatar } from "kidsloop-px";
 import React,
 {
@@ -152,14 +143,9 @@ export default function NextClass () {
     const restApi = useRestAPI();
     const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
     const [ liveToken, setLiveToken ] = useState(``);
-    const [ shareLink, setShareLink ] = useState(``);
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
-    const [ nextClassRoster, setNextClassRoster ] = useState<{
-        students: ClassUser[];
-        teachers: ClassUser[];
-    }>();
+    const [ maxTeachers, _ ] = useState(2);
     const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
-
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
 
@@ -188,12 +174,18 @@ export default function NextClass () {
         },
     });
 
-    const { data: dataClassRoster } = useGetClassRoster({
+    const { data: rosterData } = useGetClassNodeRoster({
+        fetchPolicy: `no-cache`,
         variables: {
-            class_id: nextClass?.class_id ?? ``,
-            organization_id: organizationId,
+            id: nextClass?.class_id ?? ``,
+            count: maxTeachers,
+            orderBy: `familyName`,
+            order: `ASC`,
+            direction: `FORWARD`,
+            showStudents: false,
+            showTeachers: true,
         },
-        skip: !nextClass?.class_id || !organizationId,
+        skip: !nextClass?.class_id,
     });
 
     function goLive () {
@@ -210,16 +202,6 @@ export default function NextClass () {
         if (!scheduledClass) return;
         setNextClass(scheduledClass[0]);
     }, [ schedule ]);
-
-    useEffect(() => {
-        if (!dataClassRoster?.class) return;
-        const eligibleStudents = dataClassRoster.class.students.filter((user) => user?.membership?.status === Status.ACTIVE);
-        const eligibleTeachers = dataClassRoster.class.teachers.filter((user) => user?.membership?.status === Status.ACTIVE);
-        setNextClassRoster({
-            students: eligibleStudents,
-            teachers: eligibleTeachers,
-        });
-    }, [ dataClassRoster ]);
 
     useEffect(() => {
         if (!nextClass) return;
@@ -250,9 +232,6 @@ export default function NextClass () {
                 return;
             }
             setLiveToken(json.token);
-
-            const token: LivePreviewJWT = jwtDecode(json.token);
-            setShareLink(token?.roomid);
         })();
     }, [ timeBeforeClass ]);
 
@@ -368,7 +347,7 @@ export default function NextClass () {
                             </Grid>
                         </Grid>
 
-                        {nextClassRoster && nextClassRoster.teachers.length !== 0 && (
+                        {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (
                             <Grid
                                 item
                                 xs={12}>
@@ -377,76 +356,59 @@ export default function NextClass () {
                                         <FormattedMessage
                                             id="home.nextClass.teachersTitle"
                                             values={{
-                                                count: nextClassRoster?.teachers.length,
+                                                count: rosterData?.classNode.teachersConnection?.totalCount || 0,
                                             }}
                                         />
                                     </Typography>
                                     <Grid
                                         container
                                         alignItems="baseline">
-                                        {nextClassRoster?.teachers.map((user, i) => {
-                                            const maxTeachers = 2;
-
-                                            if (nextClassRoster?.teachers.length <= maxTeachers) {
-                                                return (
-                                                    <Grid
-                                                        key={user.user_id}
-                                                        item
-                                                        className={classes.teacher}>
+                                        {rosterData?.classNode.teachersConnection?.edges.map((edge, i) => {
+                                            return (
+                                                <Grid
+                                                    key={edge.node.id}
+                                                    item
+                                                    className={classes.teacher}>
+                                                    {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection?.totalCount <= maxTeachers &&
+                                                    <Box
+                                                        display="flex"
+                                                        flexDirection="row"
+                                                        alignItems="center"
+                                                        className="singleTeacher"
+                                                    >
+                                                        <UserAvatar
+                                                            name={`${edge.node.givenName} ${edge.node.familyName}`}
+                                                            className={classes.avatar}
+                                                            size="small"
+                                                        />
+                                                        <span>{edge.node.givenName} {edge.node.familyName}</span>
+                                                    </Box>}
+                                                    {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection?.totalCount > maxTeachers &&
                                                         <Box
                                                             display="flex"
                                                             flexDirection="row"
-                                                            alignItems="center"
-                                                            className="singleTeacher"
+                                                            paddingRight="1em"
+                                                            paddingBottom="1em"
                                                         >
                                                             <UserAvatar
-                                                                name={`${user.given_name} ${user.family_name}`}
+                                                                name={`${edge.node.givenName} ${edge.node.familyName}`}
                                                                 className={classes.avatar}
                                                                 size="small"
                                                             />
-                                                            <span>{user.given_name} {user.family_name}</span>
-                                                        </Box>
-                                                    </Grid>
-                                                );
-                                            } else {
-                                                if (i <= maxTeachers || i === (nextClassRoster?.teachers.length - 1)) {
-                                                    const maxTeachersList = [ ...nextClassRoster?.teachers ].slice(-Math.abs(nextClassRoster?.teachers.length - maxTeachers));
-                                                    return (
-                                                        <Grid
-                                                            key={user.user_id}
-                                                            item
-                                                            className={classes.teacher}>
-                                                            <Box>
-                                                                {i < maxTeachers && (
-                                                                    <div style={{
-                                                                        display: `flex`,
-                                                                        flexDirection: `row`,
-                                                                        paddingRight: `1em`,
-                                                                        paddingBottom: `1em`,
-                                                                    }}>
-                                                                        <UserAvatar
-                                                                            name={`${user.given_name} ${user.family_name}`}
-                                                                            className={classes.avatar}
-                                                                            size="small"
-                                                                        />
-                                                                        <Typography variant="caption">
-                                                                            {user.given_name}
-                                                                        </Typography>
-                                                                    </div>
+                                                            <Typography variant="caption">
+                                                                {edge.node.givenName}
+                                                            </Typography>
+                                                            {i === maxTeachers - 1 &&  <Typography variant="caption">
+                                                                <span style={{
+                                                                    display: `inline-block`,
+                                                                    paddingLeft: `1em`,
+                                                                }}> + {rosterData?.classNode.teachersConnection?.totalCount - maxTeachers}</span>
 
-                                                                )}
-                                                                {i === nextClassRoster?.teachers.length - 1 && (
-                                                                    <Tooltip title={maxTeachersList.map((user) => `${user.given_name} ${user.family_name}`).join(`, `)}>
-                                                                        <Typography variant="caption">
-                                                                            <span> + {maxTeachersList.length}</span>
-                                                                        </Typography>
-                                                                    </Tooltip>
-                                                                )}
-                                                            </Box>
-                                                        </Grid>
-                                                    );
-                                                }
-                                            }
+                                                            </Typography>}
+                                                        </Box>
+                                                    }
+                                                </Grid>
+                                            );
                                         })}
                                     </Grid>
                                 </Box>

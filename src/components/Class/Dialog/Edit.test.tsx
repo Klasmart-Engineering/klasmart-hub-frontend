@@ -1,5 +1,5 @@
 import EditClassDialog from "@/components/Class/Dialog/Edit";
-import { GET_CLASS } from "@/operations/queries/getClass";
+import { GET_CLASS_NODE_CONNECTIONS } from "@/operations/queries/getClassNode";
 import { GET_PAGINATED_ORGANIZATION_GRADES_LIST } from "@/operations/queries/getOrganizationGrades";
 import { GET_PAGINATED_AGE_RANGES } from "@/operations/queries/getPaginatedAgeRanges";
 import {
@@ -9,6 +9,10 @@ import {
 import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { GET_PAGINATED_ORGANIZATION_SUBJECTS } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { Status } from "@/types/graphQL";
+import {
+    mapEdgeToIdString,
+    useGetClassFormSelectedValues,
+} from "@/utils/classFormSelectedValues";
 import { buildProgramIdFilter } from "@/utils/sharedFilters";
 import { MockedResponse } from "@apollo/client/testing";
 import { screen } from "@testing-library/react";
@@ -17,7 +21,7 @@ import {
     mockPaginatedAgeRanges,
 } from "@tests/mockDataAgeRanges";
 import {
-    mockClass,
+    mockClassConnections,
     mockClassId,
     mockOrgId,
     mockUserId,
@@ -73,14 +77,13 @@ jest.mock(`@/utils/permissions`, () => {
 const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_CLASS,
+            query: GET_CLASS_NODE_CONNECTIONS,
             variables: {
                 id: mockClassId,
-                organizationId: mockOrgId,
             },
         },
         result: {
-            data: mockClass,
+            data: mockClassConnections,
         },
     },
     {
@@ -165,6 +168,30 @@ const mocks: MockedResponse[] = [
         },
     },
 ];
+
+jest.mock(`@/utils/classFormSelectedValues`, () => {
+    return {
+        ...jest.requireActual(`@/utils/classFormSelectedValues`),
+        useGetClassFormSelectedValues: jest.fn(),
+    };
+});
+
+beforeAll(() => {
+    (useGetClassFormSelectedValues as jest.MockedFunction<typeof useGetClassFormSelectedValues>).mockReturnValue({
+        data: {
+            id: mockClassConnections.classNode.id,
+            name: mockClassConnections.classNode.name,
+            status: mockClassConnections.classNode.status,
+            schools: mockClassConnections.classNode.schoolsConnection.edges.map(mapEdgeToIdString),
+            programs: mockClassConnections.classNode.programsConnection.edges.map(mapEdgeToIdString),
+            subjects: mockClassConnections.classNode.subjectsConnection.edges.map(mapEdgeToIdString),
+            grades: mockClassConnections.classNode.gradesConnection.edges.map(mapEdgeToIdString),
+            ageRanges: mockClassConnections.classNode.ageRangesConnection.edges.map(mapEdgeToIdString),
+        },
+        refetch: jest.fn(),
+        loading: false,
+    });
+});
 
 test(`Class edit component renders with correct information`, async () => {
     render(<EditClassDialog

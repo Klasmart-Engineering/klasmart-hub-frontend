@@ -116,7 +116,6 @@ export default function ClassDialogForm (props: Props) {
         if (!subjectsLoading) {
             const updateSubjectsIds = value.subjects?.filter((value: string) =>
                 subjectValueOptions.find((subject) => subject.value === value)) ?? [];
-
             setSubjectIds(updateSubjectsIds);
         }
     }, [ subjectValueOptions ]);

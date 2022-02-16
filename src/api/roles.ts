@@ -5,12 +5,18 @@ import { REPLACE_ROLE } from "@/operations/mutations/replaceRole";
 import { GET_ORGANIZATION_ROLES } from "@/operations/queries/getOrganizationRoles";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
 import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
+import { GET_PAGINATED_ORGANIZATION_ROLES } from "@/operations/queries/getPaginatedOrganizationRoles";
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
-    BaseEntity,
+    BooleanFilter,
+    Direction,
     Organization,
     Role,
+    Status,
+    StringFilter,
+    UuidFilter,
 } from "@/types/graphQL";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     InternalRefetchQueriesInclude,
     MutationHookOptions,
@@ -29,14 +35,56 @@ export interface GetAllRolesResponse {
     };
 }
 
-export interface RoleSummaryNode extends BaseEntity {
-    name?: string;
-    organizationId?: string | null;
-    schoolId?: string | null;
+export interface RoleFilter extends PaginationFilter<RoleFilter> {
+    id?: UuidFilter;
+    name?: StringFilter;
+    system?: BooleanFilter;
+}
+
+export interface RoleNode {
+    id: string;
+    name: string;
+    system: boolean;
+    status?: Status;
+}
+
+export interface RoleEdge {
+    node: RoleNode;
+}
+
+export interface GetOrganizationPaginatedRolesRequest {
+    direction?: Direction;
+    count?: number;
+    filter?: RoleFilter;
+}
+
+export interface GetOrganizationPaginatedRolesResponse {
+    rolesConnection: {
+        totalCount: number;
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            startCursor: string;
+            endCursor: string;
+        };
+        edges: RoleEdge[];
+    };
+}
+
+export interface RoleSummaryNode {
+    id: string;
+    name: string;
+    status: string;
+    organizationId: string | null;
+    schoolId: string | null;
 }
 
 export const useGetOrganizationRoles = (options?: QueryHookOptions<GetAllRolesResponse, GetAllRolesRequest>) => {
     return useQuery<GetAllRolesResponse, GetAllRolesRequest>(GET_ORGANIZATION_ROLES, options);
+};
+
+export const useGetPaginatedOrganizationRoles = (options?: QueryHookOptions<GetOrganizationPaginatedRolesResponse, GetOrganizationPaginatedRolesRequest>) => {
+    return useQuery<GetOrganizationPaginatedRolesResponse, GetOrganizationPaginatedRolesRequest>(GET_PAGINATED_ORGANIZATION_ROLES, options);
 };
 
 export const useGetOrganizationRolesPermissions = (organizationId: string) => {

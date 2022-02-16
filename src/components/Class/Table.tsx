@@ -642,6 +642,8 @@ export default function ClassesTable (props: Props) {
             <ClassDetailsDrawer
                 open={detailsDrawerOpen}
                 classId={selectedClassId}
+                setClassRosterDialogOpen={setClassRosterDialogOpen}
+                setSelectedClassId={setSelectedClassId}
                 onClose={() => {
                     setSelectedClassId(undefined);
                     setDetailsDrawerOpen(false);

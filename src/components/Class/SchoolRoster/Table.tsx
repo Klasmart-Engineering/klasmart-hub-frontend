@@ -1,12 +1,16 @@
 import {
-    useAddUsersToClass,
-    useGetClassRosterEligibleUsers,
-} from "@/api/classRoster";
+    useGetPaginatedElgibleStudents,
+    useGetPaginatedElgibleTeachers,
+} from "@/api/classes";
+import { useAddUsersToClass } from "@/api/classRoster";
+import { buildOrganizationUserSearchFilter } from "@/operations/queries/getPaginatedOrganizationUsers";
 import {
-    Role,
-    Status,
-} from "@/types/graphQL";
-import { getTableLocalization } from "@/utils/table";
+    DEFAULT_ROWS_PER_PAGE,
+    getTableLocalization,
+    pageChangeToDirection,
+    ServerCursorPagination,
+    tableToServerOrder,
+} from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import {
     Paper,
@@ -17,12 +21,20 @@ import {
     makeStyles,
 } from '@mui/styles';
 import {
+    CursorTable,
     FullScreenDialog,
-    PageTable,
 } from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+import {
+    Order,
+    TableColumn,
+} from "kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React,
-{ useState } from "react";
+{
+    useEffect,
+    useState,
+} from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles(() =>
@@ -47,8 +59,6 @@ interface Props {
     onClose: () => void;
     classId: string;
     organizationId: string;
-    existingStudents: string[];
-    existingTeachers: string[];
     refetchClassRoster: () => void;
 }
 
@@ -57,51 +67,56 @@ export default function SchoolRoster (props: Props) {
         open,
         onClose,
         classId,
-        organizationId,
-        existingStudents,
-        existingTeachers,
         refetchClassRoster,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
     const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
     const [ addUsersToClass ] = useAddUsersToClass();
-
-    const { data } =  useGetClassRosterEligibleUsers({
-        variables: {
-            class_id: classId,
-            organization_id: organizationId,
-        },
-        fetchPolicy: `network-only`,
-        skip: !classId || !organizationId,
+    const [ subgroupBy, setSubgroupBy ] = useState(`Student`);
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
+        search: ``,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+        order: `ASC`,
+        orderBy: `givenName`,
     });
 
-    const students = data?.class
-        ?.eligibleStudents?.filter((student) => existingStudents.indexOf(`${student.user_id}-student`) === -1)
-        .filter((student) => student.membership?.status === Status.ACTIVE)
-        .map((student) => ({
-            id: `${student.user_id}-student`,
-            givenName: student.given_name ?? ``,
-            familyName: student.family_name ?? ``,
-            role: `Student`,
-            email: student.email,
-            phoneNumber: student.phone,
-            organizationRoles: student.membership.roles?.map(role => role.role_name ?? ``) ?? [],
-        }));
-    const teachers = data?.class
-        ?.eligibleTeachers?.filter((teacher) => existingTeachers.indexOf(`${teacher.user_id}-teacher` as string) === -1)
-        .filter((teacher) => teacher.membership?.status === Status.ACTIVE)
-        .map((teacher) => ({
-            id: `${teacher.user_id}-teacher`,
-            givenName: teacher.given_name ?? ``,
-            familyName: teacher.family_name ?? ``,
-            role: `Teacher`,
-            email: teacher.email,
-            phoneNumber: teacher.phone,
-            organizationRoles: teacher.membership.roles?.map(role => role.role_name ?? ``) ?? [],
-        }));
+    const paginationFilter = buildOrganizationUserSearchFilter(serverPagination.search);
+    const {
+        data: studentsData,
+        refetch: refetchStudents,
+        loading: loadingStudents,
+    } = useGetPaginatedElgibleStudents({
+        variables: {
+            classId: classId,
+            direction: `FORWARD`,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        },
+        notifyOnNetworkStatusChange: true,
+        fetchPolicy: `no-cache`,
+        skip: !classId || !open || subgroupBy !== `Student`,
+    });
 
-    const rows = teachers && students ? [ ...students, ...teachers ] : [];
+    const {
+        data: teachersData,
+        refetch: refetchTeachers,
+        loading: loadingTeachers,
+    } = useGetPaginatedElgibleTeachers({
+        variables: {
+            classId: classId,
+            direction: `FORWARD`,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        },
+        notifyOnNetworkStatusChange: true,
+        skip: !classId || !open || subgroupBy !== `Teacher`,
+    });
+
     const roles = [ `Student`, `Teacher` ];
     const columns: TableColumn<ClassRosterRow>[] = [
         {
@@ -174,23 +189,67 @@ export default function SchoolRoster (props: Props) {
             return;
         }
 
-        let studentIds = selectedIds.filter((id: string) => id.match(/-student/gi));
-        studentIds = [ ...existingStudents, ...studentIds ].map((id: string) => (id.replace(`-student`, ``)));
-
-        let teacherIds = selectedIds.filter((id: string) => id.match(/-teacher/gi));
-        teacherIds = [ ...existingTeachers, ...teacherIds ].map((id: string) => (id.replace(`-teacher`, ``)));
+        const studentIds = selectedIds.filter((id: string) => id.match(/-student/gi)).map((id: string) => (id.replace(/-student/gi, ``)));
+        const teacherIds = selectedIds.filter((id: string) => id.match(/-teacher/gi)).map((id: string) => (id.replace(/-teacher/gi, ``)));
 
         await addUsersToClass({
             variables: {
-                class_id: classId,
-                student_ids: studentIds,
-                teacher_ids: teacherIds,
+                classId,
+                studentIds,
+                teacherIds,
             },
         });
 
         refetchClassRoster();
         onClose();
     };
+
+    useEffect(() => {
+        const refetch = subgroupBy === `Student` ? refetchStudents : refetchTeachers;
+        refetch({
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        });
+    }, [
+        serverPagination.search,
+        serverPagination.order,
+        serverPagination.orderBy,
+        serverPagination.rowsPerPage,
+        subgroupBy,
+    ]);
+
+    const handleTableChange = (tableData: CursorTableData<ClassRosterRow>) => {
+        setSubgroupBy(tableData?.subgroupBy as string);
+        setServerPagination({
+            order: tableToServerOrder(tableData.order),
+            orderBy: tableData.orderBy,
+            search: tableData.search,
+            rowsPerPage: tableData.rowsPerPage,
+        });
+    };
+
+    const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
+        const direction = pageChangeToDirection(pageChange);
+        const refetch = subgroupBy === `Student` ? refetchStudents : refetchTeachers;
+        await refetch({
+            count,
+            cursor,
+            direction,
+        });
+    };
+
+    const data = subgroupBy === `Student` ? studentsData?.eligibleStudentsConnection : teachersData?.eligibleTeachersConnection;
+    const rows = data?.edges.map((edge) => ({
+        id: `${edge.node.id}-${subgroupBy}`,
+        givenName: edge.node.givenName ?? ``,
+        familyName: edge.node.familyName ?? ``,
+        role: subgroupBy,
+        email: edge.node.contactInfo?.email ?? ``,
+        phoneNumber: edge.node.contactInfo?.phone ?? ``,
+        organizationRoles: edge.node.roles?.map(role => role.name ?? ``) ?? [],
+    })) ?? [];
 
     return (
         <FullScreenDialog
@@ -210,13 +269,42 @@ export default function SchoolRoster (props: Props) {
             }}
         >
             <Paper className={classes.root}>
-                <PageTable
+                <CursorTable
+                    hideAllGroupTab
+                    hideSelectAll
                     selectedRows={selectedIds}
                     columns={columns}
                     rows={rows}
                     idField="id"
                     groupBy="role"
                     showSelectables={true}
+                    loading={subgroupBy === `Student` ?
+                        loadingStudents :
+                        loadingTeachers
+                    }
+                    orderBy="givenName"
+                    order="asc"
+                    subgroupBy={subgroupBy}
+                    hasNextPage={subgroupBy === `Student` ?
+                        studentsData?.eligibleStudentsConnection.pageInfo.hasNextPage :
+                        teachersData?.eligibleTeachersConnection.pageInfo.hasNextPage
+                    }
+                    hasPreviousPage={subgroupBy === `Student` ?
+                        studentsData?.eligibleStudentsConnection.pageInfo.hasPreviousPage :
+                        teachersData?.eligibleTeachersConnection.pageInfo.hasPreviousPage
+                    }
+                    total={subgroupBy === `Student` ?
+                        studentsData?.eligibleStudentsConnection.totalCount :
+                        teachersData?.eligibleTeachersConnection.totalCount
+                    }
+                    startCursor={subgroupBy === `Student` ?
+                        studentsData?.eligibleStudentsConnection.pageInfo.startCursor :
+                        teachersData?.eligibleTeachersConnection.pageInfo.startCursor
+                    }
+                    endCursor={subgroupBy === `Student` ?
+                        studentsData?.eligibleStudentsConnection.pageInfo.endCursor :
+                        teachersData?.eligibleTeachersConnection.pageInfo.endCursor
+                    }
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
@@ -235,6 +323,8 @@ export default function SchoolRoster (props: Props) {
                         },
                     })}
                     onSelected={(rows) => setSelectedIds(rows as string[])}
+                    onChange={handleTableChange}
+                    onPageChange={handlePageChange}
                 />
             </Paper>
         </FullScreenDialog>

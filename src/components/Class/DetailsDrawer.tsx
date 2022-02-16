@@ -1,18 +1,15 @@
-import { useGetClass } from "@/api/classes";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    Status,
-    Student,
-    Teacher,
-} from "@/types/graphQL";
+import { useGetClassNodeSummary } from "@/api/classes";
+import { UserNode } from "@/api/users";
+import globalStyles from "@/globalStyles";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
     Box,
+    Link,
     List,
     ListItem,
     ListItemText,
     Typography,
-} from "@mui/material";
+} from '@mui/material';
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -21,15 +18,15 @@ import {
     makeStyles,
     withStyles,
 } from '@mui/styles';
+import clsx from "clsx";
 import {
     Drawer,
     UserAvatar,
-} from "kidsloop-px";
-import React,
-{
+} from 'kidsloop-px';
+import React, {
     useEffect,
     useState,
-} from "react";
+} from 'react';
 import { useIntl } from "react-intl";
 
 const Accordion = withStyles({
@@ -67,33 +64,45 @@ const AccordionDetails = withStyles((theme) => ({
     },
 }))(MuiAccordionDetails);
 
-const useStyles = makeStyles((theme) => createStyles({
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: theme.typography.fontWeightRegular,
-    },
-    avatar: {
-        marginRight: theme.spacing(2),
-    },
-    subjectHeader: {
-        fontSize: `0.8em`,
-        padding: theme.spacing(0, 2),
-        textTransform: `uppercase`,
-        color: theme.palette.grey[600],
-    },
-    accordionDetails: {
-        padding: 0,
-        color: theme.palette.common.black,
-        "& .MuiList-padding": {
-            paddingTop: 0,
+const useStyles = makeStyles((theme) => {
+    const { clickable, primaryText } = globalStyles(theme);
+    return createStyles({
+        clickable,
+        primaryText,
+        link: {
+            margin: `12px 0`,
+            padding: `0 16px`,
+            display: `inline-block`,
         },
-    },
-}));
+        heading: {
+            fontSize: theme.typography.pxToRem(15),
+            fontWeight: theme.typography.fontWeightRegular,
+        },
+        avatar: {
+            marginRight: theme.spacing(2),
+        },
+        subjectHeader: {
+            fontSize: `0.8em`,
+            padding: theme.spacing(0, 2),
+            textTransform: `uppercase`,
+            color: theme.palette.grey[600],
+        },
+        accordionDetails: {
+            padding: 0,
+            color: theme.palette.common.black,
+            "& .MuiList-padding": {
+                paddingTop: 0,
+            },
+        },
+    });
+});
 
 interface Props {
     open: boolean;
     onClose: () => void;
     classId?: string;
+    setSelectedClassId?: (id: string) => void;
+    setClassRosterDialogOpen?: (open: boolean) => void;
 }
 
 export default function ClassDetailsDrawer (props: Props) {
@@ -101,31 +110,33 @@ export default function ClassDetailsDrawer (props: Props) {
         open,
         onClose,
         classId,
+        setSelectedClassId,
+        setClassRosterDialogOpen,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const currentOrganization = useCurrentOrganization();
-    const [ students, setStudents ] = useState<Student[]>([]);
-    const [ teachers, setTeachers ] = useState<Teacher[]>([]);
-    const { data } = useGetClass({
+    const [ students, setStudents ] = useState<UserNode[]>([]);
+    const [ teachers, setTeachers ] = useState<UserNode[]>([]);
+    const { data, loading } = useGetClassNodeSummary({
         variables: {
             id: classId ?? ``,
-            organizationId: currentOrganization?.organization_id ?? ``,
+            rosterCount: 10,
+            programsCount: 50,
+            subjectsCount: 50,
         },
-        fetchPolicy: `network-only`,
-        skip: !open || !classId || !currentOrganization?.organization_id,
+        fetchPolicy: `cache-first`,
+        skip: !open || !classId,
     });
 
     useEffect(() => {
-        setStudents(data?.class?.students?.filter(student => student.membership?.status === Status.ACTIVE) ?? []);
-        setTeachers(data?.class?.teachers?.filter(teacher => teacher.membership?.status === Status.ACTIVE) ?? []);
+        setStudents(data?.classNode?.studentsConnection?.edges.map(edge => edge.node) ?? []);
+        setTeachers(data?.classNode?.teachersConnection?.edges.map(edge => edge.node) ?? []);
     }, [ data ]);
 
     return (
         <Drawer
-            key={data?.class?.class_id}
-            open={open}
-            title={data?.class?.class_name ?? ``}
+            open={open && !loading}
+            title={data?.classNode?.name ?? ``}
             sections={[
                 {
                     header: intl.formatMessage({
@@ -133,13 +144,13 @@ export default function ClassDetailsDrawer (props: Props) {
                     }),
                     content: (
                         <>
-                            {data?.class?.programs?.map((program) => (
-                                <Accordion key={program.id}>
+                            {data?.classNode?.programsConnection?.edges.map((edge) => (
+                                <Accordion key={edge.node.id}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel-content"
                                     >
-                                        <Typography className={classes.heading}>{program.name}</Typography>
+                                        <Typography className={classes.heading}>{edge.node.name}</Typography>
                                     </AccordionSummary>
                                     <Typography
                                         variant="caption"
@@ -152,9 +163,9 @@ export default function ClassDetailsDrawer (props: Props) {
                                     </Typography>
                                     <AccordionDetails className={classes.accordionDetails}>
                                         <List dense>
-                                            {program?.subjects?.map((subject) => (
-                                                <ListItem key={subject.id}>
-                                                    <ListItemText primary={`- ${subject.name}`} />
+                                            {edge.node.subjectsConnection?.edges.map((edge) => (
+                                                <ListItem key={edge.node.id}>
+                                                    <ListItemText primary={`- ${edge.node.name}`} />
                                                 </ListItem>
                                             ))}
                                         </List>
@@ -182,7 +193,7 @@ export default function ClassDetailsDrawer (props: Props) {
                                         {intl.formatMessage({
                                             id: `class_tableTeachers`,
                                         }, {
-                                            length: teachers.length,
+                                            length: data?.classNode.teachersConnection?.totalCount ?? 0,
                                         })}
                                     </Typography>
                                 </AccordionSummary>
@@ -197,16 +208,29 @@ export default function ClassDetailsDrawer (props: Props) {
                                                     alignItems="center"
                                                 >
                                                     <UserAvatar
-                                                        name={`${teacher.given_name} ${teacher.family_name}`}
+                                                        name={`${teacher.givenName} ${teacher.familyName}`}
                                                         className={classes.avatar}
                                                         size="small"
                                                     />
-                                                    <span>{teacher.given_name} {teacher.family_name}</span>
+                                                    <span>{teacher.givenName} {teacher.familyName}</span>
                                                 </Box>
                                             </ListItem>
                                         ))}
                                     </List>
                                 </AccordionDetails>
+                                <Link
+                                    href={undefined}
+                                    className={clsx(classes.clickable, classes.primaryText, classes.link)}
+                                    onClick={() => {
+                                        setSelectedClassId?.(classId ?? ``);
+                                        setClassRosterDialogOpen?.(true);
+                                        onClose();
+                                    }}
+                                >
+                                    <span>{intl.formatMessage({
+                                        id: `class_classRosterHeader`,
+                                    })}</span>
+                                </Link>
                             </Accordion>
 
                             <Accordion>
@@ -221,7 +245,7 @@ export default function ClassDetailsDrawer (props: Props) {
                                         {intl.formatMessage({
                                             id: `class_tableStudents`,
                                         }, {
-                                            length: students.length,
+                                            length: data?.classNode.studentsConnection?.totalCount ?? 0,
                                         })}
                                     </Typography>
                                 </AccordionSummary>
@@ -235,16 +259,29 @@ export default function ClassDetailsDrawer (props: Props) {
                                                     alignItems="center"
                                                 >
                                                     <UserAvatar
-                                                        name={`${student.given_name} ${student.family_name}`}
+                                                        name={`${student.givenName} ${student.familyName}`}
                                                         className={classes.avatar}
                                                         size="small"
                                                     />
-                                                    <span>{student.given_name} {student.family_name}</span>
+                                                    <span>{student.givenName} {student.familyName}</span>
                                                 </Box>
                                             </ListItem>
                                         ))}
                                     </List>
                                 </AccordionDetails>
+                                <Link
+                                    href={undefined}
+                                    className={clsx(classes.clickable, classes.primaryText, classes.link)}
+                                    onClick={() => {
+                                        setSelectedClassId?.(classId ?? ``);
+                                        setClassRosterDialogOpen?.(true);
+                                        onClose();
+                                    }}
+                                >
+                                    <span>{intl.formatMessage({
+                                        id: `class_classRosterHeader`,
+                                    })}</span>
+                                </Link>
                             </Accordion>
                         </>
                     ),

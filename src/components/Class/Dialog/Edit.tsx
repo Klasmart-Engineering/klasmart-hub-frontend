@@ -7,14 +7,10 @@ import {
     useEditClassPrograms,
     useEditClassSchools,
     useEditClassSubjects,
-    useGetClass,
     useUpdateClass,
 } from "@/api/classes";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    buildEmptyClassForm,
-    mapClassToForm,
-} from "@/utils/classes";
+import { buildEmptyClassForm } from "@/utils/classes";
+import { useGetClassFormSelectedValues } from "@/utils/classFormSelectedValues";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
 import {
@@ -50,32 +46,23 @@ export default function EditClassDialog (props: Props) {
     const [ editSubjects ] = useEditClassSubjects();
     const [ editGrades ] = useEditClassGrades();
     const [ editAgeRanges ] = useEditClassAgeRanges();
-    const currentOrganization = useCurrentOrganization();
     const canEditSchool = usePermission(`edit_school_20330`);
     const deletePrompt = useDeleteEntityPrompt();
     const [ initClass, setInitClass ] = useState<ClassForm>(buildEmptyClassForm());
-
     const {
         data,
-        loading,
         refetch,
-    } = useGetClass({
-        variables: {
-            id: classId ?? ``,
-            organizationId: currentOrganization?.organization_id ?? ``,
-        },
-        fetchPolicy: `cache-and-network`,
-        skip: !open || !classId || !currentOrganization?.organization_id,
-    });
+        loading,
+    } = useGetClassFormSelectedValues(classId);
 
     useEffect(() => {
-        if (!open || !data?.class) {
+        if (!open || !data.id || data?.id !== classId) {
             setInitClass(buildEmptyClassForm());
             return;
         }
 
-        setInitClass(data?.class ? mapClassToForm(data.class) : buildEmptyClassForm());
-    }, [ open, data ]);
+        setInitClass(data ? data : buildEmptyClassForm());
+    }, [ open, data.id ]);
 
     const handleEdit = async () => {
         try {

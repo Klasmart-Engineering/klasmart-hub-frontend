@@ -1,14 +1,14 @@
 
 import ClassDetailsDrawer from "./DetailsDrawer";
-import { GET_CLASS } from "@/operations/queries/getClass";
+import { GET_CLASS_NODE_SUMMARY } from "@/operations/queries/getClassNodeSummary";
 import { MockedResponse } from "@apollo/client/testing";
 import {
     screen,
     waitFor,
 } from "@testing-library/react";
 import {
-    mockClass,
     mockClassId,
+    mockClassSummary,
     mockOrgId,
     mockUserId,
 } from "@tests/mockDataClasses";
@@ -44,14 +44,16 @@ jest.mock(`@/utils/permissions`, () => {
 const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_CLASS,
+            query: GET_CLASS_NODE_SUMMARY,
             variables: {
                 id: mockClassId,
-                organizationId: mockOrgId,
+                rosterCount: 10,
+                programsCount: 50,
+                subjectsCount: 50,
             },
         },
         result: {
-            data: mockClass,
+            data: mockClassSummary,
         },
     },
 ];
@@ -67,9 +69,9 @@ test(`Class details drawer renders with correct information`, async () => {
 
     await waitFor(() => {
         expect(screen.queryByText(`Demo Class`)).toBeInTheDocument();
-        expect(screen.queryByText(inputSearch)).toBeInTheDocument();
-        expect(screen.queryByText(`Teachers (1)`)).toBeInTheDocument();
-        expect(screen.queryByText(`Students (1)`)).toBeInTheDocument();
+        expect(screen.queryByText(`Programs`)).toBeInTheDocument();
+        expect(screen.queryByText(`Teachers (2)`)).toBeInTheDocument();
+        expect(screen.queryByText(`Students (2)`)).toBeInTheDocument();
     });
 
     screen.queryByText(inputSearch)?.click();
@@ -85,6 +87,6 @@ test(`Class details drawer renders with correct information`, async () => {
     await waitFor(() => {
         expect(screen.queryByText(`Louis Merkel`)).toBeInTheDocument();
         expect(screen.queryByText(`George Merkel`)).toBeInTheDocument();
-        expect(screen.queryByText(`Juan Obrador`)).toBeFalsy();
+        expect(screen.queryByText(`Juan Obrador`)).toBeInTheDocument();
     });
 });

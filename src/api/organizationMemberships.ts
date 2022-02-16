@@ -38,6 +38,7 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     roleId?: UuidFilter;
     schoolId?: UuidExclusiveFilter;
     organizationUserStatus?: StringFilter;
+    classId?: UuidFilter;
 }
 
 export interface UpdateOrganizationMembershipRequest {

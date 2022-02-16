@@ -1,20 +1,12 @@
-import {
-    ClassUser,
-    useGetClassRoster,
-} from "@/api/classRoster";
+import { useGetClassNodeRoster } from "@/api/classRoster";
 import { useRestAPI } from "@/api/restapi";
 import StyledFAB from "@/components/styled/fabButton";
 import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Status } from "@/types/graphQL";
-import {
-    LivePreviewJWT,
-    SchedulePayload,
-} from "@/types/objectTypes";
+import { SchedulePayload } from "@/types/objectTypes";
 import {
     Box,
     Grid,
-    Tooltip,
     Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -22,7 +14,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import jwtDecode from "jwt-decode";
 import { UserAvatar } from "kidsloop-px";
 import React,
 {
@@ -112,27 +103,26 @@ export default function NextClass (props: Props) {
     const theme = useTheme();
     const restApi = useRestAPI();
     const [ liveToken, setLiveToken ] = useState(``);
-    const [ shareLink, setShareLink ] = useState(``);
-
     const currentOrganization = useCurrentOrganization();
-
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
-    const [ nextClassRoster, setNextClassRoster ] = useState<{
-        students: ClassUser[];
-        teachers: ClassUser[];
-    }>();
     const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
+    const [ maxTeachers, _ ] = useState(3);
     const organizationId = currentOrganization?.organization_id ?? ``;
-
     const now = new Date().getTime() / 1000;
     const secondsBeforeClassCanStart = 900;
 
-    const { data: dataClassRoster } = useGetClassRoster({
+    const { data: rosterData } = useGetClassNodeRoster({
+        fetchPolicy: `network-only`,
         variables: {
-            class_id: nextClass?.class_id ?? ``,
-            organization_id: organizationId,
+            id: nextClass?.class_id ?? ``,
+            count: maxTeachers,
+            orderBy: `familyName`,
+            order: `ASC`,
+            direction: `FORWARD`,
+            showStudents: false,
+            showTeachers: true,
         },
-        skip: !nextClass?.class_id || !organizationId,
+        skip: !nextClass?.class_id,
     });
 
     function goLive () {
@@ -151,16 +141,6 @@ export default function NextClass (props: Props) {
     }, [ schedule ]);
 
     useEffect(() => {
-        if (!dataClassRoster?.class) return;
-        const eligibleStudents = dataClassRoster.class.students.filter((user) => user?.membership?.status === Status.ACTIVE);
-        const eligibleTeachers = dataClassRoster.class.teachers.filter((user) => user?.membership?.status === Status.ACTIVE);
-        setNextClassRoster({
-            students: eligibleStudents,
-            teachers: eligibleTeachers,
-        });
-    }, [ dataClassRoster ]);
-
-    useEffect(() => {
         if (!nextClass) return;
         setTimeBeforeClass(nextClass?.start_at - new Date().getTime() / 1000);
     }, [ nextClass ]);
@@ -177,9 +157,6 @@ export default function NextClass (props: Props) {
                     return;
                 }
                 setLiveToken(json.token);
-
-                const token: LivePreviewJWT = jwtDecode(json.token);
-                setShareLink(token?.roomid);
             })();
         }
     }, [ timeBeforeClass ]);
@@ -275,7 +252,7 @@ export default function NextClass (props: Props) {
                         </Grid>
                     </Grid>
 
-                    {nextClassRoster && nextClassRoster.teachers.length !== 0 && (
+                    {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (
                         <Grid
                             item
                             xs={12}
@@ -286,20 +263,18 @@ export default function NextClass (props: Props) {
                                     <FormattedMessage
                                         id="home.nextClass.teachersTitle"
                                         values={{
-                                            count: nextClassRoster?.teachers.length,
+                                            count: rosterData?.classNode.teachersConnection?.totalCount ?? 0,
                                         }}
                                     />
                                 </Typography>
                                 <Grid container>
-                                    {nextClassRoster?.teachers.map((user, i) => {
-                                        const maxTeachers = 3;
-
-                                        if (nextClassRoster?.teachers.length <= maxTeachers) {
-                                            return (
-                                                <Grid
-                                                    key={user.user_id}
-                                                    item
-                                                    className={classes.teacher}>
+                                    {rosterData?.classNode.teachersConnection?.edges.map((edge, i) => {
+                                        return (
+                                            <Grid
+                                                key={edge.node.id}
+                                                item
+                                                className={classes.teacher}>
+                                                {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection?.totalCount <= maxTeachers &&
                                                     <Box
                                                         display="flex"
                                                         flexDirection="row"
@@ -307,39 +282,27 @@ export default function NextClass (props: Props) {
                                                         className="singleTeacher"
                                                     >
                                                         <UserAvatar
-                                                            name={`${user.given_name} ${user.family_name}`}
+                                                            name={`${edge.node.givenName} ${edge.node.familyName}`}
                                                             className={classes.avatar}
                                                             size="small"
                                                         />
-                                                        <span>{user.given_name} {user.family_name}</span>
-                                                    </Box>
-                                                </Grid>
-                                            );
-                                        } else {
-                                            if (i <= maxTeachers || i === (nextClassRoster?.teachers.length - 1)) {
-                                                const maxTeachersList = [ ...nextClassRoster?.teachers ].slice(-Math.abs(nextClassRoster?.teachers.length - maxTeachers));
-                                                return (
-                                                    <Grid
-                                                        key={user.user_id}
-                                                        item
-                                                        className={classes.teacher}>
-                                                        <Box>
-                                                            {i < maxTeachers && (
-                                                                <UserAvatar
-                                                                    name={`${user.given_name} ${user.family_name}`}
-                                                                    className={classes.avatar}
-                                                                />
-                                                            )}
-                                                            {i === nextClassRoster?.teachers.length - 1 && (
-                                                                <Tooltip title={maxTeachersList.map((user) => `${user.given_name} ${user.family_name}`).join(`, `)}>
-                                                                    <span> + {maxTeachersList.length}</span>
-                                                                </Tooltip>
-                                                            )}
+                                                        <span>{edge.node.givenName} {edge.node.familyName}</span>
+                                                    </Box>}
+                                                {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection?.totalCount > maxTeachers &&
+                                                        <Box
+                                                            display="flex"
+                                                            flexDirection="row"
+                                                            alignItems="center"
+                                                        >
+                                                            <UserAvatar
+                                                                name={`${edge.node.givenName} ${edge.node.familyName}`}
+                                                                className={classes.avatar}
+                                                            />
+                                                            {i === maxTeachers - 1 &&  <span> + {rosterData?.classNode.teachersConnection?.totalCount - maxTeachers}</span>}
                                                         </Box>
-                                                    </Grid>
-                                                );
-                                            }
-                                        }
+                                                }
+                                            </Grid>
+                                        );
                                     })}
                                 </Grid>
                             </Box>

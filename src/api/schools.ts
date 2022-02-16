@@ -21,6 +21,7 @@ import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
+    useLazyQuery,
     useMutation,
     useQuery,
 } from "@apollo/client";
@@ -188,4 +189,8 @@ export interface GetPaginatedSchoolsRequestResponse {
 
 export const useGetPaginatedSchools = (options?: QueryHookOptions<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>) => {
     return useQuery<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>(GET_PAGINATED_ORGANIZATION_SCHOOLS, options);
+};
+
+export const useGetPaginatedSchoolsLazy = (options?: QueryHookOptions<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>) => {
+    return useLazyQuery<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>(GET_PAGINATED_ORGANIZATION_SCHOOLS, options);
 };
