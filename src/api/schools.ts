@@ -148,7 +148,7 @@ export const useUploadSchoolsCsv = () => {
     });
 };
 
-interface GetPaginatedSchoolsRequest {
+export interface GetPaginatedSchoolsRequest {
     direction: `FORWARD` | `BACKWARD`;
     cursor?: string;
     count?: number;

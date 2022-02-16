@@ -2,7 +2,7 @@ import EditDialog,
 { mapUserNodeToFormState } from "./Edit";
 import { mockGetOrganizationMembership } from "@/api/__mocks__/organizationMemberships";
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
-import { mockUseGetSchools } from "@/api/__mocks__/schools";
+import { mockUseGetPaginatedSchools } from "@/api/__mocks__/schools";
 import {
     DeleteOrganizationMembershipRequest,
     DeleteOrganizationMembershipResponse,
@@ -11,7 +11,7 @@ import {
     useGetOrganizationUserNode,
 } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
-import { useGetSchools } from "@/api/schools";
+import { useGetPaginatedSchools } from "@/api/schools";
 import {
     GetUserNodeRequest,
     GetUserNodeResponse,
@@ -33,6 +33,7 @@ import {
 } from "@/locale/__mocks__/locale";
 import { isActive } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { usePermission } from "@/utils/permissions";
 import { UserGenders } from "@/utils/users";
 import {
     MutationTuple,
@@ -48,13 +49,11 @@ import {
     expectSnackbarError,
     expectSnackbarSuccess,
 } from "@tests/expect";
+import { mockSchoolsData } from "@tests/mockDataSchools";
 import { mockOrg } from "@tests/mockOrganizationData";
 import { mockRoles } from "@tests/mockRoles";
 import { mockEnqueueSnackbar } from "@tests/mocks";
-import {
-    schoolA,
-    schoolC,
-} from "@tests/mocks/mockSchools";
+import { schoolA } from "@tests/mocks/mockSchools";
 import {
     mockOrganizationMembership2,
     mockOrganizationMemberships,
@@ -100,7 +99,7 @@ jest.mock(`@/api/organizationMemberships`, () => {
 
 jest.mock(`@/api/schools`, () => {
     return {
-        useGetSchools: jest.fn(),
+        useGetPaginatedSchools: jest.fn(),
     };
 });
 
@@ -116,12 +115,26 @@ jest.mock(`@/utils/common`, () => {
     };
 });
 
+jest.mock(`@/utils/permissions`, () => {
+    return {
+        usePermission: jest.fn(),
+    };
+});
+
+const mockUsePermission = usePermission as jest.MockedFunction<
+    typeof usePermission
+>;
+
 let mockUseGetOrganizationUserNode = (useGetOrganizationUserNode as jest.MockedFunction<typeof useGetOrganizationUserNode>);
 
 beforeAll(() => {
-    (useGetSchools as jest.MockedFunction<typeof useGetSchools>).mockReturnValue(mockUseGetSchools);
+    (useGetPaginatedSchools as jest.MockedFunction<typeof useGetPaginatedSchools>).mockReturnValue(mockUseGetPaginatedSchools);
     (useGetOrganizationRoles as jest.MockedFunction<typeof useGetOrganizationRoles>).mockReturnValue(mockGetOrganizationRoles);
     mockUseGetOrganizationUserNode = mockUseGetOrganizationUserNode.mockReturnValue(mockGetOrganizationMembership);
+});
+
+beforeEach(() => {
+    mockUsePermission.mockReturnValue(true);
 });
 
 const mockOrganizationMembership = mockOrganizationMemberships[0];
@@ -171,7 +184,7 @@ describe(`user edit form`, () => {
         const view = renderWithIntl(<EditDialog
             open
             userId={mockUserNode.id}
-            onClose={mockOnClose}/>);
+            onClose={mockOnClose} />);
 
         const submitButton = screen.getByText(mockIntl.formatMessage({
             id: `editDialog_save`,
@@ -204,7 +217,6 @@ describe(`user edit form`, () => {
             expect(inputs.contactInfo()).toHaveValue(mockUserNode.contactInfo?.email);
             expect(inputs.birthday()).toHaveValue(formatDateOfBirth(mockUserNode.dateOfBirth as string));
             expect(inputs.shortcode()).toHaveValue(mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode);
-            expect(inputs.schools()).toHaveTextContent(schoolA.school_name as string);
             expect(inputs.roles()).toHaveTextContent(mockRoles.organizationAdmin.role_name as string);
             expect(inputs.alternativeEmail()).toHaveValue(mockUserNode.alternateContactInfo?.email);
             expect(inputs.alternativePhone()).toHaveValue(mockUserNode.alternateContactInfo?.phone);
@@ -278,7 +290,7 @@ describe(`user edit form`, () => {
                 gender: mockOrganizationMembership2.user.gender,
                 given_name: mockOrganizationMembership2.user.given_name,
                 organization_role_ids: mockOrganizationMembership2.roles.filter(isActive).map(role => role.role_id),
-                school_ids: [ schoolC.school_id ],
+                school_ids: [ mockSchoolsData.schoolsConnection.edges[1].node.id ],
                 shortcode: mockOrganizationMembership2.shortcode,
             };
 

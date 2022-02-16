@@ -4,15 +4,16 @@ import Form,
     Props,
 } from "./Form";
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
-import { mockUseGetSchools } from "@/api/__mocks__/schools";
+import { mockUseGetPaginatedSchools } from "@/api/__mocks__/schools";
 import { APIErrorCode } from "@/api/errors";
 import { useGetOrganizationRoles } from "@/api/roles";
-import { useGetSchools } from "@/api/schools";
+import { useGetPaginatedSchools } from "@/api/schools";
 import {
     mockIntl,
     renderWithIntl,
     withMockIntl,
 } from "@/locale/__mocks__/locale";
+import { usePermission } from "@/utils/permissions";
 import { UserGenders } from "@/utils/users";
 import {
     fireEvent,
@@ -30,12 +31,9 @@ import {
     expectInputNotToHaveError,
     expectInputToHaveError,
 } from "@tests/expect";
+import { mockSchoolsData } from "@tests/mockDataSchools";
 import { mockOrg } from "@tests/mockOrganizationData";
 import { mockRoles } from "@tests/mockRoles";
-import {
-    schoolA,
-    schoolC,
-} from "@tests/mocks/mockSchools";
 import {
     getAccordionByLabelText,
     getFormControl,
@@ -52,7 +50,7 @@ jest.mock(`@/store/organizationMemberships`, () => {
 
 jest.mock(`@/api/schools`, () => {
     return {
-        useGetSchools: jest.fn(),
+        useGetPaginatedSchools: jest.fn(),
     };
 });
 
@@ -62,14 +60,25 @@ jest.mock(`@/api/roles`, () => {
     };
 });
 
+jest.mock(`@/utils/permissions`, () => {
+    return {
+        usePermission: jest.fn(),
+    };
+});
+
+const mockUsePermission = usePermission as jest.MockedFunction<
+    typeof usePermission
+>;
+
 beforeAll(() => {
-    (useGetSchools as jest.MockedFunction<typeof useGetSchools>).mockReturnValue(mockUseGetSchools);
+    (useGetPaginatedSchools as jest.MockedFunction<typeof useGetPaginatedSchools>).mockReturnValue(mockUseGetPaginatedSchools);
     (useGetOrganizationRoles as jest.MockedFunction<typeof useGetOrganizationRoles>).mockReturnValue(mockGetOrganizationRoles);
 });
 
 beforeEach(() => {
     mockOnChange.mockClear();
     mockOnValidation.mockClear();
+    mockUsePermission.mockReturnValue(true);
 });
 
 const mockOnChange = jest.fn();
@@ -470,17 +479,16 @@ test(`multiple schools selected in initial state`, () => {
     render({
         initialState: {
             ...defaultState,
-            schools: [ schoolA.school_id, schoolC.school_id ],
+            schools: [ mockSchoolsData.schoolsConnection.edges[0].node.id, mockSchoolsData.schoolsConnection.edges[1].node.id ],
         },
     });
-
-    expect(screen.getByText([ schoolA.school_name, schoolC.school_name ].join(`, `))).toBeInTheDocument();
+    expect(screen.getByText([ mockSchoolsData.schoolsConnection.edges[0].node.name, mockSchoolsData.schoolsConnection.edges[1].node.name ].join(`, `))).toBeInTheDocument();
 });
 
-test(`schools use 'school_id' as the value of the <Select>`, async () => {
+test(`schools use 'id' as the value of the <Select>`, async () => {
     render();
 
-    const schools = [ schoolA.school_id ];
+    const schools = [ mockSchoolsData.schoolsConnection.edges[0].node.id ];
 
     await enter.schools(schools);
 
@@ -489,12 +497,12 @@ test(`schools use 'school_id' as the value of the <Select>`, async () => {
     }));
 });
 
-test(`schools use 'school_name' as the text of the <Select>`, () => {
+test(`schools use 'name' as the text of the <Select>`, () => {
     render();
 
     userEvent.click(inputs.schools());
 
-    expect(screen.getByText(schoolA.school_name as string)).toBeInTheDocument();
+    expect(screen.getByText(mockSchoolsData.schoolsConnection.edges[0].node.name as string)).toBeInTheDocument();
 });
 
 test(`multiple roles selected in initial state`, () => {
@@ -526,4 +534,14 @@ test(`roles use 'role_name' as the text of the <Select>`, () => {
     userEvent.click(inputs.roles());
 
     expect(screen.getByText(mockRoles.student.role_name as string)).toBeInTheDocument();
+});
+
+test(`if the user has no full permissions some roles are restricted`, () => {
+    mockUsePermission.mockReturnValue(false);
+    render();
+
+    userEvent.click(inputs.roles());
+
+    expect(screen.queryByText(mockRoles.organizationAdmin.role_name as string)).not.toBeInTheDocument();
+    expect(screen.queryByText(mockRoles.customRole.role_name as string)).not.toBeInTheDocument();
 });

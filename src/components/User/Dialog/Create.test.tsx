@@ -1,13 +1,13 @@
 import CreateDialog from "./Create";
 import { commonDialogTests } from "./shared.test";
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
-import { mockUseGetSchools } from "@/api/__mocks__/schools";
+import { mockUseGetPaginatedSchools } from "@/api/__mocks__/schools";
 import {
     CreateOrganizationMembershipRequest,
     CreateOrganizationMembershipResponse,
 } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
-import { useGetSchools } from "@/api/schools";
+import { useGetPaginatedSchools } from "@/api/schools";
 import {
     enter,
     inputs,
@@ -17,6 +17,7 @@ import {
     renderWithIntl,
     withMockIntl,
 } from "@/locale/__mocks__/locale";
+import { usePermission } from "@/utils/permissions";
 import { UserGenders } from "@/utils/users";
 import { MutationTuple } from "@apollo/client";
 import {
@@ -58,7 +59,7 @@ jest.mock(`@/api/organizationMemberships`, () => {
 
 jest.mock(`@/api/schools`, () => {
     return {
-        useGetSchools: jest.fn(),
+        useGetPaginatedSchools: jest.fn(),
     };
 });
 
@@ -67,6 +68,16 @@ jest.mock(`@/api/roles`, () => {
         useGetOrganizationRoles: jest.fn(),
     };
 });
+
+jest.mock(`@/utils/permissions`, () => {
+    return {
+        usePermission: jest.fn(),
+    };
+});
+
+const mockUsePermission = usePermission as jest.MockedFunction<
+    typeof usePermission
+>;
 
 const validOrganizationMembership = {
     organization_id: mockOrg.organization_id,
@@ -103,9 +114,7 @@ const fillValidForm = async () => {
 };
 
 beforeAll(() => {
-    (
-        useGetSchools as jest.MockedFunction<typeof useGetSchools>
-    ).mockReturnValue(mockUseGetSchools);
+    (useGetPaginatedSchools as jest.MockedFunction<typeof useGetPaginatedSchools>).mockReturnValue(mockUseGetPaginatedSchools);
     (
         useGetOrganizationRoles as jest.MockedFunction<
             typeof useGetOrganizationRoles
@@ -117,6 +126,7 @@ beforeEach(() => {
     mockOnClose.mockClear();
     mockCreateOrganizationMembership.mockClear();
     mockEnqueueSnackbar.mockClear();
+    mockUsePermission.mockReturnValue(true);
 });
 
 commonDialogTests({

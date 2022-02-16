@@ -116,7 +116,8 @@ export default function UserTable (props: Props) {
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
     const [ selectedUserId, setSelectedUserId ] = useState<string>();
-    const canCreate = usePermission(`create_users_40220`);
+    const createUsersPermissions = usePermission(`create_users_40220`);
+    const createMySchoolsUsersPermissions = usePermission(`create_my_school_users_40221`);
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
@@ -470,7 +471,7 @@ export default function UserTable (props: Props) {
                             id: `users_createUser`,
                         }),
                         icon: PersonAddIcon,
-                        disabled: !canCreate,
+                        disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
                         onClick: () => setCreateDialogOpen(true),
                     }}
                     secondaryActions={[
@@ -479,7 +480,7 @@ export default function UserTable (props: Props) {
                                 id: `entity.user.template.download.button`,
                             }),
                             icon: AssignmentReturnedIcon,
-                            disabled: !canCreate,
+                            disabled: !createUsersPermissions,
                             onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
                         },
                         {
@@ -487,7 +488,7 @@ export default function UserTable (props: Props) {
                                 id: `entity.user.bulkImport.button`,
                             }),
                             icon: CloudUploadIcon,
-                            disabled: !canCreate,
+                            disabled: !createUsersPermissions,
                             onClick: () => setUploadCsvDialogOpen(true),
                         },
                     ]}
