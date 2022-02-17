@@ -1,21 +1,21 @@
-
 import NextClassThumb from "@/assets/img/mock/next_class_thumb.png";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@/config/index";
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import LiveTvIcon from '@material-ui/icons/LiveTv';
 import {
     Box,
     Chip,
-    createStyles,
     darken,
     Divider,
     Fab,
     Grid,
-    lighten,
     Theme,
     Typography,
-} from "@material-ui/core";
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import LiveTvIcon from '@material-ui/icons/LiveTv';
-import { makeStyles } from "@material-ui/styles";
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from "@mui/styles";
 import clsx from "clsx";
 import { UserAvatar } from "kidsloop-px";
 import React  from "react";

@@ -1,5 +1,6 @@
 import alex from "@/assets/img/teacher_alex.png";
 import christina from "@/assets/img/teacher_christina.png";
+import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import {
     Theme,
@@ -128,28 +129,29 @@ export default function TreacherFeedbackWidget () {
                 label: intl.formatMessage({
                     id: `home.student.teacherFeedbackWidget.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.FEEDBACK}>
             <div className={classes.widgetContent}>
                 {data.map((item, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className={classes.feedbackOuterWrapper}>
-                                <div className={classes.iconWrapper}>
-                                    <div className={classes.icon}>
-                                        <img src={item.image}/>
-                                    </div>
-                                </div>
-                                <div className={classes.feedbackInnerWrapper}>
-                                    <div className={classes.feedbackHeader}>
-                                        <Typography className={classes.name}><b>{item.teacher}</b>, {item.class}</Typography>
-                                        <Typography className={classes.date}>{formatDate(item.date)}</Typography>
-                                    </div>
-                                    <Typography className={classes.feedback}>{item.feedback}</Typography>
+                    return (
+                        <div
+                            key={index}
+                            className={classes.feedbackOuterWrapper}>
+                            <div className={classes.iconWrapper}>
+                                <div className={classes.icon}>
+                                    <img src={item.image}/>
                                 </div>
                             </div>
-                        );
-                    })}
+                            <div className={classes.feedbackInnerWrapper}>
+                                <div className={classes.feedbackHeader}>
+                                    <Typography className={classes.name}><b>{item.teacher}</b>, {item.class}</Typography>
+                                    <Typography className={classes.date}>{formatDate(item.date)}</Typography>
+                                </div>
+                                <Typography className={classes.feedback}>{item.feedback}</Typography>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </WidgetWrapper>
     );

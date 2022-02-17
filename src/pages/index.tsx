@@ -1,6 +1,7 @@
 import Dashboard from "@/components/Dashboard/Dashboard";
 import DashboardNotice from "@/components/Dashboard/DashboardNotice";
 import WidgetDashboard from "@/components/Dashboard/WidgetDashboard";
+import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
 import {
     DashboardMode,
     useDashboardMode,
@@ -36,20 +37,21 @@ export default function HomePage () {
         setToOriginalDashboard,
         loading,
         hasPermissionToViewWidgetDashboard,
+        view,
     } = useDashboardMode();
 
     useEffect(() => {
         if(process.env.USE_MOCK_REPORTS_DATA !== `true` || loading) return;
 
         setShowDashboardNotice(hasPermissionToViewWidgetDashboard);
-    }, [ loading ]);
+    }, [ loading, view ]);
 
     if (loading)
         return <CircularProgress
             color="primary"
             className={classes.pageLoading}/>;
 
-    if(dashboardMode === DashboardMode.WIDGET) {
+    if(dashboardMode === DashboardMode.WIDGET && (view === WidgetView.STUDENT || view === WidgetView.TEACHER)) {
         return (
             <>
                 {showDashboardNotice &&
@@ -74,7 +76,7 @@ export default function HomePage () {
                             },
                         }} />
                 }
-                <WidgetDashboard />
+                <WidgetDashboard view={view} />
             </>
         );
     }

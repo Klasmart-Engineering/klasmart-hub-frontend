@@ -98,7 +98,6 @@ export default function StudentAttendanceWidget (props: Props) {
 
     return (
         <WidgetWrapper
-            id={WidgetType.ATTENDANCERATE}
             loading={false}
             error={undefined}
             noData={false}
@@ -113,7 +112,8 @@ export default function StudentAttendanceWidget (props: Props) {
                 label: intl.formatMessage({
                     id: `home.student.attendanceWidget.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.STUDENTATTENDANCE}>
             <Box className={classes.widgetContent}>
                 <Box className={classes.banner}>
                     <div className="bannerLeft">

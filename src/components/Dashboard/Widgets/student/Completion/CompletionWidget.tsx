@@ -1,3 +1,4 @@
+import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
@@ -145,7 +146,7 @@ export default function CompletionWidget () {
         <WidgetWrapper
             label={
                 intl.formatMessage({
-                    id: `home.student.completionWidget.containerUrlLabel`,
+                    id: `home.student.completionWidget.containerTitleLabel`,
                 })
             }
             loading={false}
@@ -157,7 +158,8 @@ export default function CompletionWidget () {
                 label: intl.formatMessage({
                     id: `home.student.completionWidget.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.COMPLETION}>
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.titleBullet}/>

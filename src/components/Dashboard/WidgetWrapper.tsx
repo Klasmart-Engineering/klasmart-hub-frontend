@@ -1,14 +1,11 @@
 import { WidgetType } from './models/widget.model';
-import WidgetContext from './WidgetManagement/widgetCustomisation/widgetContext';
 import WidgetWrapperError from './WidgetManagement/WidgetWrapperError';
 import WidgetWrapperNoData from './WidgetManagement/WidgetWrapperNoData';
-import { Cancel } from '@mui/icons-material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
     Box,
     Card,
     CircularProgress,
-    IconButton,
     Link,
     Typography,
 } from '@mui/material';
@@ -18,8 +15,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React,
-{ useContext } from 'react';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     cardWrapper: {
@@ -58,19 +54,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         alignItems: `center`,
         fontSize: 12,
         color: theme.palette.grey[500],
-    },
-    removeWidget: {
-        color: theme.palette.error.light,
-        height: `20px`,
-        width: `20px`,
-        position: `absolute`,
-        top: `20px`,
-        right: `-10px`,
-        backgroundColor: theme.palette.grey[100],
-        borderRadius: `50%`,
-        "&:hover": {
-            backgroundColor: theme.palette.grey[100],
-        },
     },
     icon: {
         height: `35px`,
@@ -157,20 +140,13 @@ function CardAnnotation ({
     label,
     link,
     overrideLink,
-    id,
 }: CardAnnotationProps) {
-    const {
-        editing,
-        widgets,
-        layouts,
-        removeWidget,
-    } = useContext(WidgetContext);
 
     return (
         <Box className={classes.titleContainer}>
-            <Typography className={editing? classes.titleEditing : classes.title}>{ label }</Typography>
+            <Typography className={classes.title}>{ label }</Typography>
             {
-                !editing && link && !overrideLink && (
+                link && !overrideLink && (
                     <Link
                         className={classes.titleLink}
                         href={`#${location.pathname}${link.url}`}
@@ -180,22 +156,10 @@ function CardAnnotation ({
                     </Link>
                 )
             }
-
             {
-                !editing && overrideLink && (
+                overrideLink && (
                     <Box>
                         { overrideLink }
-                    </Box>
-                )
-            }
-            {
-                editing && (
-                    <Box >
-                        <IconButton
-                            className={classes.removeWidget}
-                            onClick={() => removeWidget(id, widgets, layouts)}>
-                            <Cancel className={classes.icon} />
-                        </IconButton>
                     </Box>
                 )
             }

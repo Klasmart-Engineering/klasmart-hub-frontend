@@ -1,6 +1,6 @@
 import StudentNextClass from "../Widgets/Student/NextClass/NextClass";
+import { WidgetView } from "./defaultWidgets";
 import LastUpdatedMessage from "./LastUpdatedMessage";
-import WidgetContext from "./widgetCustomisation/widgetContext";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
 import {
     alpha,
@@ -14,8 +14,7 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React,
-{ useContext } from "react";
+import React from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -54,25 +53,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
-interface Props {}
+interface Props {
+    view: WidgetView;
+}
 
 export default function WidgetDashboardWelcomeBanner (props: Props) {
+    const { view } = props;
     const classes = useStyles();
-    const {
-        editing,
-        layouts,
-        widgets,
-        saveWidgets,
-        resetWidgets,
-        cancelEditing,
-        editWidgets,
-    } = useContext(WidgetContext);
 
     return (
         <Box
-            className={clsx(classes.root, {
-                [classes.rootEditing] : editing,
-            })}
+            className={clsx(classes.root)}
             paddingY={5}
         >
             <Container
@@ -81,90 +72,27 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center">
-                    { !editing ?
-                        <Box>
-                            <Typography
-                                variant="h4"
-                                className={classes.welcomeTitle}
-                            >
-                                <WidgetDashboardWelcomeMessage />
-                            </Typography>
-                            <Typography
-                                variant="subtitle2"
-                                className={classes.lastUpdatedText}
-                            >
-                                <LastUpdatedMessage/>
-                            </Typography>
-                        </Box>
-                        :
-                        <Box className={classes.flexAndSpacing}>
+                    <Box>
+                        <Typography
+                            variant="h4"
+                            className={classes.welcomeTitle}
+                        >
+                            <WidgetDashboardWelcomeMessage />
+                        </Typography>
+                        <Typography
+                            variant="subtitle2"
+                            className={classes.lastUpdatedText}
+                        >
+                            <LastUpdatedMessage/>
+                        </Typography>
+                    </Box>
 
-                            {/* <Typography
-                                variant="h4"
-                                className={classes.customizeTitle}
-                            >
-                              Customize
-                            </Typography>
-                            <PillButton
-                                variant="contained"
-                                color="primary"
-                                aria-label="customize widgets"
-                                startIcon={
-                                    <LibraryAddIcon
-                                        size="1rem"
-                                        color="white" />
-                                }
-                                onClick={() => { cancelEditing(); }}
-                            >
-                                Add Widget
-                            </PillButton> */}
-                        </Box>
-                    }
-                    {/* <Box>
-                        { !editing ?
-                            <PillButton
-                                variant="contained"
-                                color="primary"
-                                aria-label="customize widgets"
-                                startIcon={
-                                    <EditIcon
-                                        size="1rem"
-                                        color="white" />
-                                }
-                                onClick={() => { editWidgets(); }}
-                            >
-                                Customize
-                            </PillButton>
-                            :
-                            <Box className={classes.flexAndSpacing}>
-                                <Box paddingRight={3}>
-                                    <Button
-                                        className={classes.whiteButton}
-                                        startIcon={
-                                            <RefreshIcon
-                                                size="1rem"
-                                                color="white" />
-                                        }
-                                        onClick={() => { resetWidgets(); }}
-                                    >Reset to default</Button>
-                                </Box>
-                                <Button
-                                    className={classes.whiteButton}
-                                    variant="outlined"
-                                    onClick={() => { cancelEditing(); }}>Cancel</Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => { saveWidgets(widgets, layouts); }}>Save</Button>
-                            </Box>
-                        }
-                    </Box> */}
                 </Box>
                 {
-                    //todo: include this in student-focused dashboard
-                    // <Box paddingY={2}>
-                    //     <StudentNextClass />
-                    // </Box>
+                    view === WidgetView.STUDENT &&
+                    <Box paddingY={2}>
+                        <StudentNextClass />
+                    </Box>
                 }
             </Container>
         </Box>

@@ -1,4 +1,5 @@
 
+import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { FiberManualRecord } from "@mui/icons-material";
@@ -128,7 +129,8 @@ export default function AchievementWidget () {
                 label: intl.formatMessage({
                     id: `home.student.achievementWidget.containerUrlLabel`,
                 }),
-            }}>
+            }}
+            id={WidgetType.ACHIEVEMENT}>
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.bullet}/>

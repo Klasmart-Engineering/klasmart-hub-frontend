@@ -1,10 +1,14 @@
-import { Layout } from "./widgetCustomisation/defaultWidgets";
-import WidgetContext from "./widgetCustomisation/widgetContext";
+import getLayouts, {
+    Layout,
+    Layouts,
+    Widgets,
+    WidgetView,
+} from "./defaultWidgets";
 import { styled } from "@mui/material";
 import React,
 {
-    useContext,
     useEffect,
+    useMemo,
     useState,
 } from "react";
 import {
@@ -23,38 +27,34 @@ const GridStyleOverride = styled(Responsive)<{ component?: React.ElementType }>(
 const ResponsiveGridLayout = WidthProvider(GridStyleOverride);
 
 interface Props {
-    isDraggable: boolean;
+    view: WidgetView;
 }
 
 export default function WidgetGrid (props: Props) {
     const [ layoutArray, setLayoutArray ] = useState<Layout[]>([] as Layout[]);
     const [ breakpoint, setBreakpoint ] = useState<string>(`lg`);
-    const {
-        widgets,
-        loadWidgets,
-        reorderWidgets,
-        layouts,
-        editing,
-    } = useContext(WidgetContext);
+    const [ layouts, setLayouts ] = useState<Layouts>({} as Layouts);
+    const [ widgets, setWidgets ] = useState<Widgets>({} as Widgets);
+    const { view } = props;
 
     useEffect(() => {
-        loadWidgets();
-        setLayoutArray(layouts[breakpoint]);
-    }, [ editing ]);
+        const { layouts: initialLayout, widgets: initialWidget } = getLayouts(view);
+        setLayouts(initialLayout);
+        setWidgets(initialWidget);
+        setLayoutArray(initialLayout[breakpoint]);
+    }, [ view ]);
 
     useEffect(() => {
         // dispatch resize everytime the grid updates
         window.dispatchEvent(new Event(`resize`));
     });
 
-    const { isDraggable } = props;
-
     const responsiveProps: ResponsiveProps = {
         autoSize: true,
         isResizable: false,
         margin: [ 15, 15 ],
         rowHeight: 100,
-        isDraggable: isDraggable,
+        isDraggable: false,
         isBounded: true,
         onBreakpointChange:(newBreakpoint: string) => {
             setBreakpoint(newBreakpoint);
@@ -62,32 +62,28 @@ export default function WidgetGrid (props: Props) {
         onLayoutChange: () => {
             setLayoutArray(layouts[breakpoint]);
         },
-        onDragStop (layout: Layout[]) {
-            reorderWidgets(layout);
-        },
     };
 
-    return (
-        layouts.lg.length > 0 ? <ResponsiveGridLayout
-            className="layout"
-            layouts={layouts}
-            {...responsiveProps}
-            breakpoints={{
-                lg: 1200,
-                md: 768,
-                sm: 480,
-            }}
-            cols={{
-                lg: 12,
-                md: 12,
-                sm: 12,
-            }}>
-            {
-                layoutArray.map((layout:Layout) => {
-                    return <div key={layout.i}>{widgets[layout.i]}</div>;
-                })
-            }
-        </ResponsiveGridLayout> : !editing &&
-            <div>There are currently no widgets added to the dashboard, please use the Customize button to add some widgets</div>
-    );
+    const widgetArray = useMemo(() => {
+        return layoutArray && layoutArray.map((layout:Layout) => {
+            return <div key={layout.i}>{widgets[layout.i]}</div>;
+        });
+    }, [ view, layoutArray ]);
+
+    return <ResponsiveGridLayout
+        className="layout"
+        layouts={layouts}
+        {...responsiveProps}
+        breakpoints={{
+            lg: 1200,
+            md: 768,
+            sm: 480,
+        }}
+        cols={{
+            lg: 12,
+            md: 12,
+            sm: 12,
+        }}>
+        {widgetArray}
+    </ResponsiveGridLayout>;
 }
