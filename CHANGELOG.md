@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.31.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.31.0%0D2.30.1) (2022-02-17)
+
+
+### 🐛 Bug Fixes
+
+* **dashboard-toggle:** created recoilFamily state to resolve multiple users individual local storage dashboard preference ([6aee986](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/6aee986d4eb612346e214ab5b56a88640100d325))
+* enable language switch for the all day label ([90c4505](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/90c4505dd7dc9fbd2e3e5bf7551e49ce5f159db1)), closes [fix/DT-599](https://calmisland.atlassian.net/browse/DT-599)
+* teachers images added using git lfs ([7fd6772](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/7fd67721b39df5d1a9cd52136c3378001d1c2418))
+
+
+### 📦 Refactor
+
+* migrate to use classNode ([3b1287c](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/3b1287c68889ecefef2b91442265e9f21275d358))
+* **school:** migrated to use schoolsConnection ([9a4b169](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/9a4b1698f8df5b10cbb854495047bb02153c504c)), closes [AD-2023-school-admin-create-users-v2](https://calmisland.atlassian.net/browse/AD-2023-school-admin-create-users-v2) [AD-2023](https://calmisland.atlassian.net/browse/AD-2023)
+
+
+### ✨ Features
+
+* dynamically show sections in side panel ([76ed447](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/76ed447b6b25f6f85550c820fe0e29a695bda154)), closes [AD-1794](https://calmisland.atlassian.net/browse/AD-1794)
+* enable teacher scaffolding for  .id,.vn, .co.uk, .pk, .lk, .th ([b79cd66](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/b79cd6644994cabfc0a8f03cbac02ff036900210)), closes [feature/DT-590](https://calmisland.atlassian.net/browse/DT-590)
+* handle new ERR_INVALID_USERNAME error code ([580ddb6](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/580ddb6b83822f10b17ca9e94efe717559c7a1dd))
+* new scaffold student next class widget ([d023a61](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d023a6144b0e81e0630cf9a64ba070f0c2b2f592))
+* removing general section from side panel ([9c4e743](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/9c4e743d22763abf6dbd273d74725566c5a55c35)), closes [AD-2016](https://calmisland.atlassian.net/browse/AD-2016)
+* **widget:** achievement widget ([45f0534](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/45f0534c94df538fa010659d1ab699266baed381)), closes [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548) [DT-548](https://calmisland.atlassian.net/browse/DT-548)
+* **widget:** student completion widget ([c4382aa](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c4382aa9e7151bf65dc13c372340d682c059bf1c)), closes [DT-549](https://calmisland.atlassian.net/browse/DT-549) [DT-549](https://calmisland.atlassian.net/browse/DT-549) [DT-549](https://calmisland.atlassian.net/browse/DT-549) [DT-549](https://calmisland.atlassian.net/browse/DT-549)
+* **widget:** teacher feedback widget ([e7483be](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/e7483be35d8b0817531335c9280f80deefabad84)), closes [DT-544](https://calmisland.atlassian.net/browse/DT-544) [DT-544](https://calmisland.atlassian.net/browse/DT-544) [DT-544](https://calmisland.atlassian.net/browse/DT-544) [DT-544](https://calmisland.atlassian.net/browse/DT-544)
+
 ### [2.30.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.30.1%0D2.30.0) (2022-02-07)
 
 ## [2.30.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.30.0%0D2.29.0) (2022-02-07)
