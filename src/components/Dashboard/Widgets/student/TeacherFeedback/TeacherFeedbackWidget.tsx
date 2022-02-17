@@ -93,7 +93,7 @@ export default function TreacherFeedbackWidget () {
                 :
                 `${month} ${day}`;
 
-        return `${time}, ${feedbackTime}`;
+        return (<>{time}, {feedbackTime}</>);
     };
 
     const data = [
