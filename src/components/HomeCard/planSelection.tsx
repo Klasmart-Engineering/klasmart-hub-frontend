@@ -255,7 +255,11 @@ function LessonPlanSelect ({
             disabled={!lessonPlans}
             options={lessonPlans as PublishedContentItem[]}
             getOptionLabel={(option) => option.name}
-            renderOption={(option) => <React.Fragment>{option}</React.Fragment>}
+            renderOption={(props, option) => (
+                <li {...props}>
+                    {option.name}
+                </li>
+            )}
             value={lessonPlan}
             noOptionsText={intl.formatMessage({
                 id: `planSelection_noOptionsLabel`,
