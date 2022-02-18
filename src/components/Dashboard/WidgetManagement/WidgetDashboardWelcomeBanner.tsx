@@ -83,7 +83,10 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                             variant="subtitle2"
                             className={classes.lastUpdatedText}
                         >
-                            <LastUpdatedMessage/>
+                            {(() => {
+                                if (view !== WidgetView.STUDENT) return (<LastUpdatedMessage/>);
+                                return (<LastUpdatedMessage mockDate={true}/>);
+                            })()}
                         </Typography>
                     </Box>
 

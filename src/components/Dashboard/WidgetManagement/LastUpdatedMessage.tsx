@@ -12,9 +12,12 @@ import {
 } from "react-intl";
 import { useIsFetching } from 'react-query';
 
-interface Props {}
+interface Props {
+    mockDate?: boolean;
+}
 
 export default function LastUpdatedMessage (props: Props) {
+    const { mockDate } = props;
     const [ dataUpdatedAt, setDataUpdatedAt ] = useState<number|undefined>(undefined);
     const reportsQueryClient = useReportsApiClient().queryClient;
     const cmsQueryClient = useCmsApiClient().queryClient;
@@ -38,6 +41,13 @@ export default function LastUpdatedMessage (props: Props) {
 
         setDataUpdatedAt(lastUpdatedDate);
     }, [ isFetching ]);
+
+    useEffect(() => {
+        if (!mockDate) return;
+
+        const now = new Date().getTime();
+        setDataUpdatedAt(now);
+    }, [ mockDate ]);
 
     if (!dataUpdatedAt) return null;
 
