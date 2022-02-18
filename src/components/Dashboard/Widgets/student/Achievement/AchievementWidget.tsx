@@ -125,7 +125,7 @@ export default function AchievementWidget () {
                 })
             }
             link={{
-                url: `Achievement`,
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.achievementWidget.containerUrlLabel`,
                 }),

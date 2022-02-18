@@ -108,7 +108,7 @@ export default function StudentAttendanceWidget (props: Props) {
                 })
             }
             link={{
-                url: `assessments`,
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.attendanceWidget.containerUrlLabel`,
                 }),

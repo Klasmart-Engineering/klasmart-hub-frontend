@@ -154,7 +154,7 @@ export default function CompletionWidget () {
             noData={false}
             reload={() => {false;}}
             link={{
-                url: `completions`,
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.completionWidget.containerUrlLabel`,
                 }),

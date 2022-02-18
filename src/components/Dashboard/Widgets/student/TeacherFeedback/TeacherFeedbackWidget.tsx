@@ -125,7 +125,7 @@ export default function TreacherFeedbackWidget () {
                 })
             }
             link={{
-                url: `feedback`,
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.teacherFeedbackWidget.containerUrlLabel`,
                 }),
