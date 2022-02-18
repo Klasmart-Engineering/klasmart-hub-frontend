@@ -16,8 +16,13 @@ import React,
 { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 
-type ClassType = "live" | "study" | "homefun" | "class" | "task";
-
+export enum ClassType {
+    LIVE = `live`,
+    STUDY = `study`,
+    HOMEFUN = `homefun`,
+    CLASS = `class`,
+    TASK = `task`,
+}
 interface ClassTypeIdentity {
     intlKey: string | ReactElement;
     color: string;

@@ -87,9 +87,9 @@ export default function TreacherFeedbackWidget () {
             hour12: true,
         });
         const feedbackTime = day === new Date().getDate() - 1 ?
-            <FormattedMessage id="home.student.teacherFeedbackWidget.yesterday" />
+            <FormattedMessage id="date.yesterday" />
             : day === new Date().getDate() ?
-                <FormattedMessage id="home.student.teacherFeedbackWidget.today" />
+                <FormattedMessage id="date.today" />
                 :
                 `${month} ${day}`;
 

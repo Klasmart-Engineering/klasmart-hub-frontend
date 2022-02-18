@@ -1,4 +1,5 @@
 import NextClassThumb from "@/assets/img/mock/next_class_thumb.png";
+import christina from "@/assets/img/teacher_christina.png";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@/config/index";
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LiveTvIcon from '@material-ui/icons/LiveTv';
@@ -179,13 +180,13 @@ function StudentNextClass (props: Props) {
             surname: intl.formatMessage({
                 id:`studentHome.nextClass.teacher2.surname`,
             }),
-            img: null,
+            img: christina,
         },
     ];
 
     const mockClassDetailsData = {
         title: intl.formatMessage({
-            id: `studentHome.nextClass.lessonTitle`,
+            id: `studentHome.mockData.lesson1.title`,
         }),
         startTime: startOfHour,
         duration: 120,
@@ -248,7 +249,6 @@ function StudentNextClass (props: Props) {
                         </div>
                         <Divider className={classes.divider} />
                         <Box>
-
                             <Box
                                 className={ classes.classDetails }>
                                 <div className={ classes.teacherList }>
