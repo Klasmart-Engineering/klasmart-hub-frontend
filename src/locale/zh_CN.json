@@ -1104,7 +1104,7 @@
     "user.inactivate.action.success": "用户已被标记为非活动状态",
     "common.action.reactivate": "重新激活",
     "user.reactivate.action.success": "用户已成功重新激活",
-    "studentHome.nextClass.lessonTitle": "圣诞野生动物园",
+    "studentHome.mockData.lesson1.title": "圣诞野生动物园",
     "studentHome.nextClass.teacher1.givenName": "迈克尔",
     "studentHome.nextClass.teacher1.surname": "斯科特",
     "studentHome.nextClass.teacher2.givenName": "帕姆",
@@ -1127,10 +1127,14 @@
     "home.student.teacherFeedbackWidget.butterflyClass": "蝴蝶班",
     "home.student.teacherFeedbackWidget.containerTitleLabel": "老师的反馈",
     "home.student.teacherFeedbackWidget.containerUrlLabel": "查看全部反馈",
-    "home.student.teacherFeedbackWidget.today": "今天",
-    "home.student.teacherFeedbackWidget.yesterday": "昨天",
+    "date.today": "今天",
+    "date.yesterday": "昨天",
     "validation.error.username.format": "{entity} {attribute}只能包含字母、数字、空格和 & / , - _ 。’",
-    "home.student.attendanceWidget.containerTitleLabel": "Attendance",
-    "home.student.attendanceWidget.containerUrlLabel": "View all attendances",
-    "home.student.attendanceWidget.legend": "Average attendance for 1 week"
+    "home.student.attendanceWidget.containerTitleLabel": "出勤率",
+    "home.student.attendanceWidget.containerUrlLabel": "查看所有出席情况",
+    "home.student.attendanceWidget.legend": "1周平均出勤率",
+    "studentHome.mockData.lesson2.title": "Bada Math - Let's count",
+    "studentHome.mockData.lesson3.title": "My colours",
+    "studentHome.mockData.lesson4.title": "Good night, Teddy Bear",
+    "date.tomorrow": "Tomorrow"
 }

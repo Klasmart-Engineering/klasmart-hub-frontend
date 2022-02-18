@@ -1104,7 +1104,7 @@
     "user.inactivate.action.success": "User has been marked inactive",
     "common.action.reactivate": "Reactivate",
     "user.reactivate.action.success": "User has been reactivated successfully",
-    "studentHome.nextClass.lessonTitle": "A Christmas Safari",
+    "studentHome.mockData.lesson1.title": "A Christmas Safari",
     "studentHome.nextClass.teacher1.givenName": "Michael",
     "studentHome.nextClass.teacher1.surname": "Scott",
     "studentHome.nextClass.teacher2.givenName": "Pam",
@@ -1127,10 +1127,14 @@
     "home.student.teacherFeedbackWidget.butterflyClass": "Butterfly Class",
     "home.student.teacherFeedbackWidget.containerTitleLabel": "Teacher’s feedback",
     "home.student.teacherFeedbackWidget.containerUrlLabel": "View all feedback",
-    "home.student.teacherFeedbackWidget.today": "Today",
-    "home.student.teacherFeedbackWidget.yesterday": "Yesterday",
+    "date.today": "Today",
+    "date.yesterday": "Yesterday",
     "validation.error.username.format": "{entity} {attribute} must only contain letters, numbers, space and & / , - _ . '",
     "home.student.attendanceWidget.containerTitleLabel": "Attendance",
     "home.student.attendanceWidget.containerUrlLabel": "View all attendances",
-    "home.student.attendanceWidget.legend": "Average attendance for 1 week"
+    "home.student.attendanceWidget.legend": "Average attendance for 1 week",
+    "studentHome.mockData.lesson2.title": "Bada Math - Let's count",
+    "studentHome.mockData.lesson3.title": "My colours",
+    "studentHome.mockData.lesson4.title": "Good night, Teddy Bear",
+    "date.tomorrow": "Tomorrow"
 }
