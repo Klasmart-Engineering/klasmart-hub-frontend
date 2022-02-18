@@ -219,11 +219,6 @@ export default function JoinedOrganizationTable (props: Props) {
                                 id: `allOrganization_searchPlaceholder`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `allOrganization_noRecords`,
-                            }),
-                        },
                     })}
                     onSelected={(ids: string[]) => setSelectedOrganizationIds(ids)}
                 />

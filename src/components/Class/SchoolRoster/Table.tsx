@@ -316,11 +316,6 @@ export default function SchoolRoster (props: Props) {
                                 id: `schoolRoster_searchPlaceholder`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `classes_noRecords`,
-                            }),
-                        },
                     })}
                     onSelected={(rows) => setSelectedIds(rows as string[])}
                     onChange={handleTableChange}

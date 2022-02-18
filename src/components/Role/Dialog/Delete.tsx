@@ -535,11 +535,6 @@ export default function DeleteRoleDialog (props: Props) {
                                             id: `users_searchPlaceholder`,
                                         }),
                                     },
-                                    body: {
-                                        noData: intl.formatMessage({
-                                            id: `users_noRecords`,
-                                        }),
-                                    },
                                 })}
                                 onPageChange={onPageChange}
                                 onChange={onTableChange}

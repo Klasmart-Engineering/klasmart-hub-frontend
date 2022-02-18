@@ -521,11 +521,6 @@ export default function UserTable (props: Props) {
                                 id: `classes_searchPlaceholder`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `classes_noRecords`,
-                            }),
-                        },
                     })}
                     onPageChange={onPageChange}
                     onChange={onTableChange}

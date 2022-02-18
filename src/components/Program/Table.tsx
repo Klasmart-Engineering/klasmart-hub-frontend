@@ -395,11 +395,6 @@ export default function ProgramTable (props: Props) {
                 id: `programs_title`,
             }),
         },
-        body: {
-            noData: intl.formatMessage({
-                id: `classes_noRecords`,
-            }),
-        },
     });
 
     const primaryAction = ({

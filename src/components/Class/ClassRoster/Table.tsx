@@ -332,11 +332,6 @@ export default function ClassRoster (props: Props) {
                                 id: `class_searchPlaceholder`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `classes_noRecords`,
-                            }),
-                        },
                     })}
                     onChange={handleTableChange}
                     onPageChange={handlePageChange}

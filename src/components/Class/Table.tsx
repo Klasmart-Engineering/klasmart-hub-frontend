@@ -565,11 +565,6 @@ export default function ClassesTable (props: Props) {
                 id: `classes_searchPlaceholder`,
             }),
         },
-        body: {
-            noData: intl.formatMessage({
-                id: `classes_noRecords`,
-            }),
-        },
     });
 
     const primaryAction = ({

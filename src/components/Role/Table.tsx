@@ -349,11 +349,6 @@ export default function RoleTable (props: Props) {
                                 id: `groups_searchPlaceholder`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `groups_noRecords`,
-                            }),
-                        },
                     })}
                     onPageChange={onPageChange}
                     onChange={onTableChange}

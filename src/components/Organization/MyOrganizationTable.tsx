@@ -274,11 +274,6 @@ export default function MyOrganizationTable (props: Props) {
                                 id: `allOrganization_myOrganizations`,
                             }),
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `allOrganization_noRecords`,
-                            }),
-                        },
                         search: {
                             placeholder: intl.formatMessage({
                                 id: `allOrganization_searchPlaceholder`,

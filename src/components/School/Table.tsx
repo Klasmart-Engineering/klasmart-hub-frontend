@@ -184,11 +184,6 @@ export default function SchoolTable (props: Props) {
                         toolbar: {
                             title: `Schools`,
                         },
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `schools_noRecords`,
-                            }),
-                        },
                         search: {
                             placeholder: intl.formatMessage({
                                 id: `schools_searchPlaceholder`,
