@@ -111,8 +111,8 @@ export interface PermissionsCategory {
 }
 
 export interface RoleInfo {
-    name: string;
-    description: string;
+    name: string | null;
+    description: string | null;
 }
 
 export interface NewRole {
@@ -131,7 +131,7 @@ interface Props {
     handleClose: () => void;
     row: RoleRow;
     roles: Role[];
-    loading: boolean;
+    loading: boolean | undefined;
     rolePermissions: GetRolePermissionsResponse | undefined;
     rolePermissionsLoading: boolean;
 }
@@ -154,8 +154,8 @@ export default function CreateAndEditRoleDialog (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const [ roleInfo, setRoleInfo ] = useState<RoleInfo>({
-        name: row.role,
-        description: row.description,
+        name: row.name ?? ``,
+        description: row.description ?? ``,
     });
     const [ roleInfoIsValid, setRoleInfoIsValid ] = useState(true);
     const [ permissionCategories, setPermissionCategories ] = useState<PermissionsCategory[]>([]);
@@ -204,8 +204,8 @@ export default function CreateAndEditRoleDialog (props: Props) {
 
     useEffect(() => {
         setRoleInfo({
-            name: row.role,
-            description: row.description,
+            name: row.name ?? ``,
+            description: row.description ?? ``,
         });
     }, [ row ]);
 
@@ -445,8 +445,8 @@ export default function CreateAndEditRoleDialog (props: Props) {
             }, []);
 
             setNewRole({
-                role_name: roleInfo.name,
-                role_description: roleInfo.description,
+                role_name: roleInfo.name ?? ``,
+                role_description: roleInfo.description ?? ``,
                 permission_names: permissions,
             });
         }

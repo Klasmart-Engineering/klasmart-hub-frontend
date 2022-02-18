@@ -14,8 +14,10 @@ import globalStyles from "@/globalStyles";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
-import { getTableLocalization } from "@/utils/table";
-import { systemRoles } from "@/utils/userRoles";
+import {
+    getTableLocalization,
+    TableProps,
+} from "@/utils/table";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -31,15 +33,13 @@ import {
 } from '@mui/styles';
 import clsx from "clsx";
 import {
-    PageTable,
+    CursorTable,
     useConfirm,
     useSnackbar,
 } from "kidsloop-px";
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import React, {
-    useEffect,
-    useState,
-} from "react";
+import React,
+{ useState } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
@@ -55,44 +55,48 @@ const useStyles = makeStyles((theme) => {
 
 export interface RoleRow {
     id: string;
-    role: string;
-    description: string;
-    type: string;
-    systemRole: boolean;
+    name?: string;
+    description?: string;
+    status?: Status.ACTIVE | Status.INACTIVE;
+    type?: string;
+    system?: boolean;
 }
 
-/**
- * Returns a match if property needs to be localized.
- * @param role Role to be checked.
- */
-const checkRoleMatch = (role: string | undefined | null) => {
-    if (!role) {
-        return null;
-    }
+interface Props extends TableProps<RoleRow> {
+}
 
-    return systemRoles.includes(role.trim());
-};
-
-/**
- * Returns function to show Rol Table in "View roles"
- */
-export default function RoleTable () {
+export default function RoleTable (props: Props) {
+    const {
+        rows,
+        loading,
+        order,
+        orderBy,
+        rowsPerPage,
+        search,
+        cursor,
+        refetch,
+        total,
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor,
+        onPageChange,
+        onTableChange,
+    } = props;
     const classes = useStyles();
     const intl = useIntl();
-    const canView = usePermission(`view_roles_and_permissions_30110`);
     const canCreate = usePermission(`create_role_with_permissions_30222`);
     const canDelete = usePermission(`delete_role_30440`);
     const canEdit = usePermission(`edit_role_and_permissions_30332`);
-    const [ rows, setRows ] = useState<RoleRow[]>([]);
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ openDeleteDialog, setOpenDeleteDialog ] = useState(false);
     const [ openViewDialog, setOpenViewDialog ] = useState(false);
     const initialRow = {
         id: ``,
-        role: ``,
+        name: ``,
         description: ``,
         type: ``,
-        systemRole: false,
+        system: false,
     };
     const [ row, setRow ] = useState<RoleRow>(initialRow);
     const [ activeStep, setActiveStep ] = useState(0);
@@ -117,48 +121,20 @@ export default function RoleTable () {
     const {
         data,
         loading: getAllRolesLoading,
-        refetch,
+        refetch: refetchOrganizationRolesPermissions,
     } = useGetOrganizationRolesPermissions(currentOrganization?.organization_id ?? ``);
     const roles: Role[] = data?.organization?.roles ?? [];
+
     const {
         data: rolePermissions,
         loading: rolePermissionsLoading,
         refetch: refetchRolePermissions,
     } = useGetRolePermissions(row.id);
+
     const [ createRole ] = useCreateRole();
     const [ editRole ] = useEditRole();
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
-    const [ loading, setLoading ] = useState(false);
-
-    const systemTypeHandler = (systemRole: boolean | null | undefined) => {
-        return systemRole ? `System Role` : `Custom Role`;
-    };
-
-    useEffect(() => {
-        if (roles.length) {
-            const rows: RoleRow[] = roles
-                .filter((role) => role.status === Status.ACTIVE)
-                .map((role) => ({
-                    id: role.role_id,
-                    role: checkRoleMatch(role.role_name)
-                        ? intl.formatMessage({
-                            id: `roles_type${role.role_name?.replace(` `, ``)}`,
-                        })
-                        : role.role_name || ``,
-                    description: role.role_description || ``,
-                    type: systemTypeHandler(role.system_role),
-                    systemRole: role.system_role ?? false,
-                }));
-
-            if (!canView) {
-                setRows([]);
-                return;
-            }
-
-            setRows(rows);
-        }
-    }, [ roles, canView ]);
 
     const columns: TableColumn<RoleRow>[] = [
         {
@@ -167,7 +143,7 @@ export default function RoleTable () {
             hidden: true,
         },
         {
-            id: `role`,
+            id: `name`,
             label: intl.formatMessage({
                 id: `groups_roleTitle`,
             }),
@@ -178,7 +154,7 @@ export default function RoleTable () {
                     className={clsx(classes.clickable, classes.primaryText)}
                     onClick={() => handleOpenViewDialog(row)}
                 >
-                    {row.role}
+                    {row.name}
                 </Link>
             ),
         },
@@ -205,7 +181,6 @@ export default function RoleTable () {
         setOpenCreateDialog(false);
         setActiveStep(0);
         setRow(initialRow);
-        setLoading(false);
     };
 
     const handleOpenDeleteDialog = (row: RoleRow) => {
@@ -245,20 +220,18 @@ export default function RoleTable () {
                 return;
             }
 
-            setLoading(true);
-
             const response = await createRole({
                 variables: {
                     organization_id: currentOrganization?.organization_id ?? ``,
-                    role_name: newRole.role_name,
-                    role_description: newRole.role_description,
+                    role_name: newRole.role_name ?? ``,
+                    role_description: newRole.role_description ?? ``,
                     permission_names: newRole.permission_names,
                 },
             });
 
             if (response?.data?.organization?.createRole === null) throw new Error();
 
-            await refetch();
+            await refetch?.();
             enqueueSnackbar(intl.formatMessage({
                 id: `roles_confirmSuccess`,
             }), {
@@ -286,18 +259,16 @@ export default function RoleTable () {
                 return;
             }
 
-            setLoading(true);
-
             await editRole({
                 variables: {
                     role_id: row.id,
-                    role_name: newRole.role_name,
-                    role_description: newRole.role_description,
+                    role_name: newRole.role_name ?? ``,
+                    role_description: newRole.role_description ?? ``,
                     permission_names: newRole.permission_names,
                 },
             });
 
-            await refetch();
+            await refetch?.();
             await refetchRolePermissions();
             enqueueSnackbar(`The role has been edited successfully`, {
                 variant: `success`,
@@ -313,10 +284,11 @@ export default function RoleTable () {
     const handleNext = async (): Promise<void> => {
         if (steps && activeStep === steps.length - 1) {
             if (row.id) {
-                return await editRoleHandler();
+                await editRoleHandler();
+            } else {
+                await createNewRoleHandler();
             }
 
-            return await createNewRoleHandler();
         }
 
         setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
@@ -325,12 +297,21 @@ export default function RoleTable () {
     return (
         <>
             <Paper className={classes.root}>
-                <PageTable
+                <CursorTable
                     columns={columns}
                     rows={rows}
-                    loading={getAllRolesLoading}
+                    loading={loading}
                     idField="id"
-                    orderBy="role"
+                    orderBy={orderBy}
+                    order={order}
+                    rowsPerPage={rowsPerPage}
+                    search={search}
+                    cursor={cursor}
+                    hasNextPage={!loading ? hasNextPage : false}
+                    hasPreviousPage={!loading ? hasPreviousPage : false}
+                    startCursor={startCursor}
+                    endCursor={endCursor}
+                    total={total}
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `roles_createRole`,
@@ -345,16 +326,16 @@ export default function RoleTable () {
                                 id: `roles_editButton`,
                             }),
                             icon: EditIcon,
-                            disabled: !canEdit || row.systemRole,
-                            onClick: (row) => handleOpenDialog(row),
+                            disabled: !canEdit || row.system,
+                            onClick: handleOpenDialog,
                         },
                         {
                             label: intl.formatMessage({
                                 id: `roles_deleteButton`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !canDelete || row.systemRole,
-                            onClick: (row) => handleOpenDeleteDialog(row),
+                            disabled: !canDelete || row.system,
+                            onClick: handleOpenDeleteDialog,
                         },
                     ]}
                     localization={getTableLocalization(intl, {
@@ -374,9 +355,10 @@ export default function RoleTable () {
                             }),
                         },
                     })}
+                    onPageChange={onPageChange}
+                    onChange={onTableChange}
                 />
             </Paper>
-
             <CreateAndEditRoleDialog
                 open={openCreateDialog}
                 steps={steps}
@@ -398,7 +380,7 @@ export default function RoleTable () {
                 row={row}
                 roles={roles}
                 getAllRolesLoading={getAllRolesLoading}
-                refetch={refetch}
+                refetch={refetchOrganizationRolesPermissions}
             />
 
             <ViewRoleDetailsDialog

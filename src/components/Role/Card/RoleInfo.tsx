@@ -151,7 +151,7 @@ export default function RoleInfoCard (props: Props) {
                                         letternumeric(),
                                         ...roles
                                             .filter((role) => role.status === Status.ACTIVE)
-                                            .filter((role) => role.role_name !== row.role)
+                                            .filter((role) => role.role_name !== row.name)
                                             .map((role) => notEquals(role.role_name, intl.formatMessage({
                                                 id: `roles_notEqualValidation`,
                                             }))),

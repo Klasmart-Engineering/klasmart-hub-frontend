@@ -21,6 +21,11 @@ const config: Config.InitialOptions = {
             prefix: `<rootDir>/`,
         }),
     },
+    transform: {
+        "^.+\\.tsx?$": `babel-jest`,
+        "^.+\\.svg$": `jest-svg-transformer`,
+    },
+
 };
 
 export default config;

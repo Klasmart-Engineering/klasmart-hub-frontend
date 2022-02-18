@@ -131,15 +131,15 @@ export const mapDeleteRoleUserRow = (edge: UserEdge) => {
         givenName: user.givenName ?? ``,
         familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
-        email: user.contactInfo.email ?? ``,
-        phone: user.contactInfo.phone ?? ``,
-        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
-        schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
+        email: user?.contactInfo?.email ?? ``,
+        phone: user?.contactInfo?.phone ?? ``,
+        roleNames: user?.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
+        schoolNames: user?.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
         status: user.organizations?.[0].userStatus,
-        joinDate: new Date(user.organizations?.[0].joinDate),
+        joinDate: new Date(user?.organizations?.[0]?.joinDate),
         newRoleId: ``,
         gender: user.gender ?? ``,
-        userShortCode: user.organizations[0].userShortCode ?? ``,
+        userShortCode: user?.organizations[0].userShortCode ?? ``,
     };
 };
 
@@ -527,7 +527,7 @@ export default function DeleteRoleDialog (props: Props) {
                                         title: intl.formatMessage({
                                             id: `roles_deleteRoleTitle`,
                                         }, {
-                                            custom_role: row.role,
+                                            custom_role: row.name,
                                         }),
                                     },
                                     search: {

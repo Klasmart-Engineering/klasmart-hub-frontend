@@ -9,8 +9,8 @@ import { GET_PAGINATED_ORGANIZATION_ROLES } from "@/operations/queries/getPagina
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
     BooleanFilter,
-    Direction,
     Organization,
+    PaginationDirection,
     Role,
     Status,
     StringFilter,
@@ -24,6 +24,15 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
+
+export interface RoleFilter extends PaginationFilter<RoleFilter> {
+    id?: UuidFilter;
+    name?: StringFilter;
+    description?: StringFilter;
+    status?: StringFilter;
+    system?: BooleanFilter;
+    organizationId?: UuidFilter;
+}
 
 export interface GetAllRolesRequest {
     organization_id: string;
@@ -44,6 +53,7 @@ export interface RoleFilter extends PaginationFilter<RoleFilter> {
 export interface RoleNode {
     id: string;
     name: string;
+    description: string;
     system: boolean;
     status?: Status;
 }
@@ -53,8 +63,12 @@ export interface RoleEdge {
 }
 
 export interface GetOrganizationPaginatedRolesRequest {
-    direction?: Direction;
+    direction: PaginationDirection;
+    cursor?: string | null;
     count?: number;
+    search?: string;
+    orderBy?: string;
+    order?: string;
     filter?: RoleFilter;
 }
 

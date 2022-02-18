@@ -19,10 +19,10 @@ import React from 'react';
 
 const initialRow = {
     id: `1ancb-hdjjdw-167e21k`,
-    role: `Test`,
+    name: `Test`,
     description: `Test`,
     type: ``,
-    systemRole: false,
+    system: false,
 };
 
 jest.mock(`@/store/organizationMemberships`, () => {
