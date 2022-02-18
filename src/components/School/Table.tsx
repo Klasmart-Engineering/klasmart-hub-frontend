@@ -87,6 +87,7 @@ export default function SchoolTable (props: Props) {
             label: intl.formatMessage({
                 id: `schools_schoolNameTitle`,
             }),
+            persistent: true,
         },
         {
             id: `shortCode`,
