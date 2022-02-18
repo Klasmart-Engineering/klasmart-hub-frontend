@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.32.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.32.0%0D2.31.0) (2022-02-18)
+
+
+### 🐛 Bug Fixes
+
+* fix planSelection autocomplete. Remove the autocompletes as they are unused ([709f5ff](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/709f5ffd0597f2b443920e4cee54f5b396eef4c6))
+* **widgets:** updated urls for achievement and attendance widgets ([866afe8](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/866afe80bb97e2a3aedc1628378cecbaeef288b4))
+
+
+### ✨ Features
+
+* added student schedule component ([4dbc93e](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/4dbc93ebb3da019bfd540a7f900a4f02699b9908))
+* lock name column in schools table ([58b874a](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/58b874a8f6b168e6b3ee21748bf7773c843c2d36)), closes [AD-1628](https://calmisland.atlassian.net/browse/AD-1628)
+* migrated get roles query to rolesConnection ([7c07794](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/7c077943746f4d310ca8280ea809aa1fce54109a)), closes [AD-1921](https://calmisland.atlassian.net/browse/AD-1921) [AD-1921](https://calmisland.atlassian.net/browse/AD-1921)
+* migrated get roles query to rolesConnection ([d4cfb05](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d4cfb052ad6d89a0a37348fd413d121bc964db7f)), closes [AD-1921](https://calmisland.atlassian.net/browse/AD-1921) [AD-1921](https://calmisland.atlassian.net/browse/AD-1921)
+* show mock last updated date for mock student view ([20cae68](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/20cae68f92005cca721e3e02ad16c0f3bceafbed)), closes [feature/DT-516](https://calmisland.atlassian.net/browse/DT-516)
+* **student-widgets:** added student permissions and widgets ([5df705b](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/5df705b2b7110d8c02dcfe6c75f172df2524fd16)), closes [DT-517](https://calmisland.atlassian.net/browse/DT-517) [DT-517](https://calmisland.atlassian.net/browse/DT-517)
+
 ## [2.31.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.31.0%0D2.30.1) (2022-02-17)
 
 
