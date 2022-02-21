@@ -1137,5 +1137,11 @@
     "studentHome.mockData.lesson3.title": "My colors",
     "studentHome.mockData.lesson4.title": "Good night, Teddy Bear",
     "date.tomorrow": "Tomorrow",
-    "common.inputField.optional": "{inputField} (optional)"
+    "common.inputField.optional": "{inputField} (optional)",
+    "home.student.teacherFeedbackWidget.alex": "Alex",
+    "home.student.teacherFeedbackWidget.christina": "Christina",
+    "react-intl-formatted-duration.daysUnit": "{value, plural, one {day} other {days}}",
+    "react-intl-formatted-duration.hoursUnit": "{value, plural, one {hour} other {hours}}",
+    "react-intl-formatted-duration.minutesUnit": "{value, plural, one {minute} other {minutes}}",
+    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}"
 }
