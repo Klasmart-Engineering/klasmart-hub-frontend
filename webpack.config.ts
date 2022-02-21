@@ -2,6 +2,7 @@ import "webpack-dev-server";
 import pkg from "./package.json";
 import { execSync } from "child_process";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CompressionPlugin from "compression-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import { config } from "dotenv";
 import Dotenv from "dotenv-webpack";
@@ -13,6 +14,7 @@ import {
     EnvironmentPlugin,
 } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import zlib from "zlib";
 
 config({
     path: process.env.ENV_PATH,
@@ -122,6 +124,26 @@ const webpackConfig: Configuration = {
                     newRelicApplicationID: `322534635`,
                 },
         }),
+        ...isDev
+            ? []
+            : [
+                new CompressionPlugin({
+                    filename: `[path][base].gz`,
+                    algorithm: `gzip`,
+                    compressionOptions: {
+                        level: 9,
+                    },
+                    test: /\.(js|css|html|svg|ttf)$/,
+                }),
+                new CompressionPlugin({
+                    filename: `[path][base].br`,
+                    algorithm: `brotliCompress`,
+                    compressionOptions: {
+                        [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+                    },
+                    test: /\.(js|css|html|svg|otf|ttf)$/,
+                }),
+            ],
         // new UnusedWebpackPlugin({
         //     // Source directories
         //     directories: [ path.join(__dirname, `src`) ],
