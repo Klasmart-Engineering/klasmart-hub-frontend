@@ -115,9 +115,6 @@ const useStyles = makeStyles<Theme, StyleProps>(((theme: Theme) => createStyles(
     liveButton:{
         fontWeight: `bold`,
         padding: `2.2em`,
-        "& .MuiFab-label": {
-            wordBreak: `keep-all`,
-        },
     },
     liveButtonInContainer: {
         fontSize: ({ smallTextInHorizontal }) => smallTextInHorizontal ? `1.4em` : `1.8em`,
@@ -140,12 +137,9 @@ const useStyles = makeStyles<Theme, StyleProps>(((theme: Theme) => createStyles(
         },
     },
     liveButtonLabel: {
+        fontSize: `0.8em`,
         lineHeight: `1.1em`,
-    },
-    liveButtonIcon: {
-        marginRight: -theme.spacing(2),
-        marginLeft: theme.spacing(1),
-        fontSize: `.8em`,
+        wordBreak: `keep-all`,
     },
 })));
 
@@ -214,7 +208,6 @@ function StudentNextClass (props: Props) {
                             onClick={() => { console.log(`live`); }}
                         >
                             <span className={classes.liveButtonLabel}><FormattedMessage id="home.nextClass.goLive" /></span>
-                            <ArrowForwardIosIcon className={classes.liveButtonIcon} />
                         </Fab>
                     }
                 </Grid>
@@ -333,7 +326,6 @@ function StudentNextClass (props: Props) {
                             <span className={classes.liveButtonLabel}>
                                 <FormattedMessage id="home.nextClass.goLive" />
                             </span>
-                            <ArrowForwardIosIcon className={classes.liveButtonIcon} />
                         </Fab>
                     </Grid>
                 }

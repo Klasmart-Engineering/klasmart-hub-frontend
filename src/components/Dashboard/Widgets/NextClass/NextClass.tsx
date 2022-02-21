@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => createStyles({
         "&:hover": {
             backgroundColor: darken(theme.palette.primary.main, 0.2),
         },
-        "& .MuiFab-label": {
+        "& .MuiTypography-root": {
             wordBreak: `keep-all`,
         },
     },
