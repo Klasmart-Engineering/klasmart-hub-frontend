@@ -171,7 +171,11 @@ function ScheduleItem (props: Props) {
                                                     alignItems="center"
                                                 >
                                                     <UserAvatar
-                                                        name={`${ teacher.givenNameKey } ${ teacher.surnameKey }`}
+                                                        name={`${intl.formatMessage({
+                                                            id:teacher.givenNameKey,
+                                                        })} ${ intl.formatMessage({
+                                                            id:teacher.surnameKey,
+                                                        })}`}
                                                         className={classes.avatar}
                                                         size="small"
                                                         src={ teacher.image }
