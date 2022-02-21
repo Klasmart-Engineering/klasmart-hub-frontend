@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         flexGrow: 1,
     },
     feedbackInnerWrapper: {
-        width: `90%`,
         display: `flex`,
         flexDirection: `column`,
         marginLeft: 20,
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         justifyContent: `space-between`,
     },
     iconWrapper: {
-        width: `10%`,
+        width: `80px`,
         [theme.breakpoints.down(`sm`)]: {
             display: `none`,
         },
