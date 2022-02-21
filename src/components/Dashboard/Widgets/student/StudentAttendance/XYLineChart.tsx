@@ -37,15 +37,25 @@ export default function XYLineChart (props: Props) {
         yAccessor: (d) => d.y,
     };
 
+    /**
+    - Original JIRA issue: https://calmisland.atlassian.net/browse/DT-655.
+    - Visx open issue on 16.02.22: https://github.com/airbnb/visx/issues/1014 it's possibly combination of
+    parentsize and xychart issue as other graphics don't face this problem.
+    - Don't delete widthAdjustmentForResizing, specifically for width={...} because without it when we resize
+    the widget never adjusts to the container width/height.
+    */
+
+    const widthAdjustmentForResizing = 20;
+
     return (
         <XYChart
-            width={width}
+            width={width - widthAdjustmentForResizing}
             height={height}
             margin={{
                 top: 30,
                 bottom: 30,
                 left: 50,
-                right: 30,
+                right: 30 - widthAdjustmentForResizing,
             }}
             xScale={{
                 type: `time`,
