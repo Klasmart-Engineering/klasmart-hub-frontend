@@ -24,7 +24,7 @@ export default function ReportsApiClientProvider (props: Props) {
 
     const STALE_TIME = 60 * 1000; // 60 seconds
     const REQUEST_RETRY_MAX_COUNT = 3; // 3
-    const USE_MOCK_DATA = process.env.USE_MOCK_REPORTS_DATA === `true`;
+    const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
 
     useEffect(() => {
         let timeTilExpiry = STALE_TIME;

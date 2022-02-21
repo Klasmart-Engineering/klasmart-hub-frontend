@@ -12,11 +12,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles(() => createStyles({
@@ -30,21 +26,14 @@ const useStyles = makeStyles(() => createStyles({
 export default function HomePage () {
     const intl = useIntl();
     const classes = useStyles();
-    const [ showDashboardNotice, setShowDashboardNotice ] = useState(false);
     const {
         dashboardMode,
+        showDashboardNoticeToggle,
         setToWidgetDashboard,
         setToOriginalDashboard,
         loading,
-        hasPermissionToViewWidgetDashboard,
         view,
     } = useDashboardMode();
-
-    useEffect(() => {
-        if(process.env.USE_MOCK_REPORTS_DATA !== `true` || loading) return;
-
-        setShowDashboardNotice(hasPermissionToViewWidgetDashboard);
-    }, [ loading, view ]);
 
     if (loading)
         return <CircularProgress
@@ -54,7 +43,7 @@ export default function HomePage () {
     if(dashboardMode === DashboardMode.WIDGET && (view === WidgetView.STUDENT || view === WidgetView.TEACHER)) {
         return (
             <>
-                {showDashboardNotice &&
+                {showDashboardNoticeToggle &&
                     <DashboardNotice
                         title={
                             intl.formatMessage({
@@ -83,7 +72,7 @@ export default function HomePage () {
 
     return (
         <>
-            {showDashboardNotice &&
+            {showDashboardNoticeToggle &&
                 <DashboardNotice
                     title={
                         intl.formatMessage({

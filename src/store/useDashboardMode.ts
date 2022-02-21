@@ -27,10 +27,10 @@ export const dashboardModeStateFamily = atomFamily<DashboardMode | undefined, st
 
 interface UseDashboardModeReturnType {
     dashboardMode: DashboardMode | undefined;
+    showDashboardNoticeToggle: boolean;
     setToWidgetDashboard: () => void;
     setToOriginalDashboard: () => void;
     loading: boolean;
-    hasPermissionToViewWidgetDashboard: boolean;
     view: WidgetView;
 }
 
@@ -41,8 +41,6 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
 
     const loading = teacherLoading || studentLoading;
 
-    const hasPermission = teacherPermission || studentPermission;
-
     const view = useMemo(() => teacherPermission ? WidgetView.TEACHER : studentPermission ? WidgetView.STUDENT : WidgetView.DEFAULT, [ teacherPermission, studentPermission ]);
 
     const organizationId = currentOrganizationMembership?.organization_id;
@@ -50,7 +48,19 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
     const stateFamilyId = currentOrganizationMembership ? `${ userId }__${ organizationId }` : ``;
     const [ dashboardMode, setDashboardMode ] = useRecoilState(dashboardModeStateFamily(stateFamilyId));
 
-    const hasPermissionToViewWidgetDashboard = useMemo(() => hasPermission && process.env.SHOW_REPORT_CARDS === `true`, [ teacherPermission, studentPermission ]);
+    const hasPermissionToViewWidgetDashboard = useMemo(() => {
+        const teacherAllowed = teacherPermission && process.env.TEACHER_WIDGET_DASHBOARD_SHOW === `true`;
+        const studentAllowed = studentPermission && process.env.STUDENT_WIDGET_DASHBOARD_SHOW === `true`;
+
+        return teacherAllowed || studentAllowed;
+    }, [ teacherPermission, studentPermission ]);
+
+    const showDashboardNoticeToggle = useMemo(() => {
+        if (teacherPermission) return process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
+        if (studentPermission) return process.env.STUDENT_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
+
+        return false;
+    }, [ teacherPermission, studentPermission ]);
 
     useEffect(() => {
         if(dashboardMode !== undefined || loading) return;
@@ -68,10 +78,10 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
 
     return {
         dashboardMode,
+        showDashboardNoticeToggle,
         setToWidgetDashboard,
         setToOriginalDashboard,
         loading,
-        hasPermissionToViewWidgetDashboard,
         view,
     };
 };
