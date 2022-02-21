@@ -97,14 +97,14 @@ export default function TreacherFeedbackWidget () {
 
     const data = [
         {
-            teacher: `Alex`,
+            teacher: <FormattedMessage id="home.student.teacherFeedbackWidget.alex" />,
             date: yesterday,
             class: <FormattedMessage id="home.student.teacherFeedbackWidget.butterflyClass" />,
             feedback: <FormattedMessage id="home.student.teacherFeedbackWidget.alexFeedback" />,
             image: alex,
         },
         {
-            teacher: `Christina`,
+            teacher: <FormattedMessage id="home.student.teacherFeedbackWidget.christina" />,
             date: twoDaysAgo,
             class: <FormattedMessage id="home.student.teacherFeedbackWidget.butterflyClass" />,
             feedback: <FormattedMessage id="home.student.teacherFeedbackWidget.christinaFeedback" />,
