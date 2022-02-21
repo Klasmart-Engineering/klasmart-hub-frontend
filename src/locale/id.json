@@ -1134,7 +1134,8 @@
     "home.student.attendanceWidget.containerUrlLabel": "Lihat semua kehadiran",
     "home.student.attendanceWidget.legend": "Kehadiran rata-rata 1 minggu",
     "studentHome.mockData.lesson2.title": "Bada Math - Let's count",
-    "studentHome.mockData.lesson3.title": "My colours",
+    "studentHome.mockData.lesson3.title": "My colors",
     "studentHome.mockData.lesson4.title": "Good night, Teddy Bear",
-    "date.tomorrow": "Tomorrow"
+    "date.tomorrow": "Tomorrow",
+    "common.inputField.optional": "{inputField} (optional)"
 }
