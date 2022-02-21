@@ -217,7 +217,7 @@ export default function CompletionWidget () {
                                 {data.completed}
                             </Typography>
                             <Typography className={classes.dataPercentage}>
-                                ({completedPercentage})%
+                                ({completedPercentage}%)
                             </Typography>
                         </div>
                     </div>
@@ -230,7 +230,7 @@ export default function CompletionWidget () {
                                 {data.total -  data.completed}
                             </Typography>
                             <Typography className={classes.dataPercentage}>
-                                ({incompletePercentage})%
+                                ({incompletePercentage}%)
                             </Typography>
                         </div>
                     </div>
