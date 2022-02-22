@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.33.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.33.0%0D2.32.0) (2022-02-22)
+
+
+### 🐛 Bug Fixes
+
+* add percentage sign inside brakets ([c0d0be3](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c0d0be392ce8c2b1220253a5331a77d25da73cb7)), closes [fix/DT-666](https://calmisland.atlassian.net/browse/DT-666)
+* make all translations fit join now button ([6333a35](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/6333a35597d0671e811731255b3bb2bfc1bfe075))
+* student widget expand/collapse sidebar resize ([433e284](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/433e28480ac54283e55d1dad5122aeb3e6abb6f1)), closes [fix/DT-655](https://calmisland.atlassian.net/browse/DT-655) [fix/DT-655](https://calmisland.atlassian.net/browse/DT-655) [fix/DT-655](https://calmisland.atlassian.net/browse/DT-655)
+* use translation key in student schedule ([c3e979e](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c3e979e214a8be389443caabffbbc269bb389dc6))
+* **widgets:** teacher feedback names switched to intl keys ([86a569d](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/86a569d2971c81f4a5a0c0d4868a8ad7990a86da))
+
+
+### ✨ Features
+
+* separated permission checks for new envs to manage student and teacher views separately ([e07e6ef](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/e07e6effe21793179a17e4e33d83ccb8709324f1))
+
 ## [2.32.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.32.0%0D2.31.0) (2022-02-18)
 
 
