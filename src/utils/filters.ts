@@ -6,7 +6,7 @@ import { mapCategoriesToFilterOptions } from "./categories";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
-import { mapSubjectsToFilterValueOptions } from "./subjects";
+import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetAllCategories } from "@/api/categories";
@@ -14,11 +14,12 @@ import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedProgramsList } from "@/api/programs";
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
-import { useGetAllSubjectsList } from "@/api/subjects";
+import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
+import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     useEffect,
@@ -76,10 +77,23 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         skip: !orgId || skipAll || !selectedFilters.queryGrades,
     });
 
-    const { data: subjectsData } = useGetAllSubjectsList({
+    const {
+        data: subjectsData,
+        fetchMore: fetchMoreSubjects,
+    } = useGetAllPaginatedSubjects({
         variables: {
-            organization_id: orgId ?? ``,
+            direction: `FORWARD`,
+            count: 50,
+            orderBy: `name`,
+            order: `ASC`,
+            filter: buildOrganizationSubjectFilter({
+                organizationId: orgId ?? ``,
+                search: ``,
+                filters: [],
+            }),
         },
+        returnPartialData: true,
+        fetchPolicy: `no-cache`,
         skip: !orgId || skipAll || !selectedFilters.querySubjects,
     });
 
@@ -158,7 +172,14 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ gradesData ]);
 
     useEffect(() => {
-        setSubjectFilterValueOptions(mapSubjectsToFilterValueOptions(subjectsData?.organization?.subjects ?? []));
+        setSubjectFilterValueOptions([ ...subjectFilterValueOptions, ...mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []) ]);
+        if (subjectsData?.subjectsConnection?.pageInfo?.hasNextPage) {
+            fetchMoreSubjects({
+                variables: {
+                    cursor: subjectsData?.subjectsConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
     }, [ subjectsData ]);
 
     useEffect(() => {
