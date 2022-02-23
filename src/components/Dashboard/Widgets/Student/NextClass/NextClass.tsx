@@ -291,7 +291,6 @@ function StudentNextClass (props: Props) {
                                             day="2-digit"
                                             month="long"
                                             weekday="long"
-                                            format="{weekDay}, {month} {day}"
                                         />
                                     </Typography>
                                     <Typography
