@@ -60,6 +60,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
     data: {
         display: `flex`,
         flexDirection: `row`,
+        alignItems: `baseline`,
     },
     dataTitle: {
         fontSize: 14,
@@ -72,7 +73,6 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
     dataPercentage: {
         fontSize: 16,
         fontWeight: 600,
-        alignSelf: `flex-end`,
     },
     barContainer: {
         [theme.breakpoints.down(`xs`)]: {
