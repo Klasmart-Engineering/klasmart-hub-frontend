@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.34.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.34.0%0D2.33.0) (2022-02-23)
+
+
+### 📦 Refactor
+
+* replacing query in subjects filter ([11fba96](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/11fba96333f582bd24a7e03f2eeff2cab3a82787)), closes [AD-1660](https://calmisland.atlassian.net/browse/AD-1660)
+
+
+### 🐛 Bug Fixes
+
+* align percentage in student completion widget ([df542dd](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/df542dd49c7d32f719aa3904da1eb79c7aee15d2)), closes [fix/DT-684](https://calmisland.atlassian.net/browse/DT-684)
+* remove wrong and unneeded format from student next class widget ([77863e2](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/77863e2c225ea3b5ac101fc9e9c34a4aab73693c))
+
+
+### ✨ Features
+
+* reusable functionality implemented for optional suffix on translating ([e92d8be](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/e92d8be7ed962b4fe05783c1519e5737f9a2aced))
+* set school edit to first step, fixed bug that appeared with required field ([8b92bdc](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/8b92bdc4ce90ca6cb9d353ca0369237ce028590e)), closes [feature/AD-2040](https://calmisland.atlassian.net/browse/AD-2040)
+
 ## [2.33.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.33.0%0D2.32.0) (2022-02-22)
 
 
