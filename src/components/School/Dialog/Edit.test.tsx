@@ -82,12 +82,5 @@ describe(`School edit`, () => {
             expect(inputs.schoolName()).toHaveValue(singleSchoolNode.schoolNode.name);
             expect(inputs.shortCode()).toHaveValue(singleSchoolNode.schoolNode.shortCode);
         });
-
-        expect(screen.getAllByText(`Language/Literacy`)).toHaveLength(2);
-        expect(screen.getAllByText(`None Specified`)).toHaveLength(2);
-        expect(screen.getAllByText(`5 - 6 Year(s)`)).toHaveLength(2);
-        expect(screen.getAllByText(`7 - 8 Year(s)`)).toHaveLength(1);
-        expect(screen.getAllByText(`3 - 4 Year(s)`)).toHaveLength(2);
-        expect(screen.getAllByText(`4 - 5 Year(s)`)).toHaveLength(2);
     });
 });

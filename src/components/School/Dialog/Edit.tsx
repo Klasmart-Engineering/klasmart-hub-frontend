@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-const INITIAL_STEP_INDEX = 2;
+const INITIAL_STEP_INDEX = 0;
 
 interface Props {
     open: boolean;
@@ -74,6 +74,7 @@ export default function EditSchoolDialog (props: Props) {
     const {
         data: schoolNodeData,
         refetch,
+        loading,
     } = useGetSchoolNode({
         variables: {
             id: schoolId ?? ``,
@@ -126,6 +127,8 @@ export default function EditSchoolDialog (props: Props) {
                 content: (
                     <SchoolInfoStep
                         value={editedSchool}
+                        isEdit={true}
+                        loading={loading}
                         onChange={handleChange}
                     />
                 ),

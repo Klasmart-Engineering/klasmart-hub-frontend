@@ -26,6 +26,8 @@ export default function SchoolInfoStep (props: EntityStepContent<SchoolStepper>)
         value,
         disabled,
         onChange,
+        loading,
+        isEdit,
     } = props;
     const classes = useStyles();
     const intl = useIntl();
@@ -68,7 +70,7 @@ export default function SchoolInfoStep (props: EntityStepContent<SchoolStepper>)
                     disabled={disabled}
                     hideHelperText={disabled}
                     autoFocus={!value.id}
-                    validations={[
+                    validations={(isEdit && value.id && !loading) || !isEdit ? [
                         required(`The school name is required.`),
                         letternumeric(intl.formatMessage({
                             id: `schoolNameValidations_letternumeric`,
@@ -78,7 +80,7 @@ export default function SchoolInfoStep (props: EntityStepContent<SchoolStepper>)
                         }, {
                             value: 120,
                         })),
-                    ]}
+                    ] : []}
                     onChange={setSchoolName}
                 />
             </Paper>

@@ -94,7 +94,7 @@ export default function SchoolsPage (props: Props) {
         currentOrganization?.organization_id,
     ]);
 
-    const rows = data?.schoolsConnection.edges
+    const rows = data?.schoolsConnection?.edges
         ?.filter((edge) => isActive(edge.node))
         .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
         ?? [];
