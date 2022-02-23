@@ -357,8 +357,11 @@ export default function UserDialogForm (props: Props) {
             count: 1,
         }),
         schools: intl.formatMessage({
-            id: `users_school`,
+            id: `common.inputField.optional`,
         }, {
+            inputField: intl.formatMessage({
+                id: `users_school`,
+            }),
             count: 1,
         }),
     };

@@ -64,7 +64,11 @@ const inputs = {
     },
     shortCode: () => {
         return screen.getByLabelText(mockIntl.formatMessage({
-            id: `schools_shortCodeLabel`,
+            id: `common.inputField.optional`,
+        }, {
+            inputField: mockIntl.formatMessage({
+                id: `schools_shortCodeLabel`,
+            }),
         }));
     },
 };
@@ -77,7 +81,6 @@ describe(`School edit`, () => {
             onClose={jest.fn()}/>, {
             mockedResponses: mocks,
         });
-
         await waitFor(() => {
             expect(inputs.schoolName()).toHaveValue(singleSchoolNode.schoolNode.name);
             expect(inputs.shortCode()).toHaveValue(singleSchoolNode.schoolNode.shortCode);

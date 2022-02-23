@@ -89,7 +89,11 @@ export default function SchoolInfoStep (props: EntityStepContent<SchoolStepper>)
                     fullWidth
                     id={`shortCode`}
                     label={intl.formatMessage({
-                        id: `schools_shortCodeLabel`,
+                        id: `common.inputField.optional`,
+                    }, {
+                        inputField: intl.formatMessage({
+                            id: `schools_shortCodeLabel`,
+                        }),
                     })}
                     value={shortCode}
                     disabled={disabled}

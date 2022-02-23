@@ -183,7 +183,11 @@ export default function ClassDialogForm (props: Props) {
                 multiple
                 id="class-dialog-school"
                 label={intl.formatMessage({
-                    id: `class_schoolsLabel`,
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `class_schoolsLabel`,
+                    }),
                 })}
                 items={schoolValueOptions}
                 value={schoolIds}
@@ -197,7 +201,11 @@ export default function ClassDialogForm (props: Props) {
                 fullWidth
                 multiple={schoolIds.length > 0}
                 label={intl.formatMessage({
-                    id: `class_programLabel`,
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `class_programLabel`,
+                    }),
                 })}
                 items={programValueOptions}
                 value={programIds}
@@ -211,7 +219,11 @@ export default function ClassDialogForm (props: Props) {
                 fullWidth
                 multiple={programIds.length > 0}
                 label={intl.formatMessage({
-                    id: `class_gradeLabel`,
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `class_gradeLabel`,
+                    }),
                 })}
                 items={gradeValueOptions}
                 value={gradeIds}
@@ -224,7 +236,11 @@ export default function ClassDialogForm (props: Props) {
                 fullWidth
                 multiple={programIds.length > 0}
                 label={intl.formatMessage({
-                    id: `class_ageRangeLabel`,
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `class_ageRangeLabel`,
+                    }),
                 })}
                 items={ageRangeValueOptions}
                 value={ageRangeIds}
@@ -238,7 +254,11 @@ export default function ClassDialogForm (props: Props) {
                 fullWidth
                 multiple={programIds.length > 0}
                 label={intl.formatMessage({
-                    id: `class_subjectsLabel`,
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `class_subjectsLabel`,
+                    }),
                 })}
                 items={subjectValueOptions}
                 value={subjectIds}
