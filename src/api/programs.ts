@@ -121,9 +121,9 @@ export interface ProgramNode {
     name: string;
     status: Status;
     system: boolean;
-    ageRanges: AgeRangeNode[];
-    subjects: Subject[];
-    grades: Grade[];
+    ageRanges?: AgeRangeNode[];
+    subjects?: Subject[];
+    grades?: Grade[];
     subjectsConnection?: GetAllSubjectsPaginatedResponse[`subjectsConnection`];
 }
 

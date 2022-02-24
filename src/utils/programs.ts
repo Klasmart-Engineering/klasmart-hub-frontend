@@ -56,8 +56,8 @@ export const mapProgramNodeToProgramRow = (node: ProgramNode): ProgramRow => ({
     name: node.name,
     system: node.system,
     ageRanges: node.ageRanges?.map(mapAgeRangeNodeToAgeRange).map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-    grades: node.grades.map((grade) => grade.name ?? ``),
-    subjects: node.subjects.map((subject) => subject.name ?? ``),
+    grades: node.grades?.map((grade) => grade.name ?? ``) ?? [],
+    subjects: node.subjects?.map((subject) => subject.name ?? ``) ?? [],
 });
 
 export const mapProgramEdgesToFilterValues = (programEdges: ProgramEdge[]) => (
