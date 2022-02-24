@@ -105,9 +105,9 @@ export const defaultStudentSmLayout: Layout[] = [
     /* eslint-disable */
     { i: WidgetType.STUDENTSCHEDULE,      x: 0, y: 0, h: 4, w: 12 },
     { i: WidgetType.FEEDBACK,             x: 0, y: 5, h: 3, w: 12 },
-    { i: WidgetType.STUDENTATTENDANCE,    x: 6, y: 8, h: 3, w: 12 },
-    { i: WidgetType.ACHIEVEMENT,          x: 6, y: 11, h: 3, w: 12 },
-    { i: WidgetType.COMPLETION,           x: 0, y: 14, h: 3, w: 12 },
+    { i: WidgetType.STUDENTATTENDANCE,    x: 6, y: 8, h: 4, w: 12 },
+    { i: WidgetType.ACHIEVEMENT,          x: 6, y: 12, h: 3, w: 12 },
+    { i: WidgetType.COMPLETION,           x: 0, y: 15, h: 3, w: 12 },
     /* eslint-enable */
 ];
 
