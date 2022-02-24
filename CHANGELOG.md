@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.34.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.34.1%0D2.34.0) (2022-02-24)
+
+
+### 🐛 Bug Fixes
+
+* student attendance widget size (mobile) ([d4ad55d](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d4ad55d07949140a28501d05b01962b814629cfd)), closes [fix/DT-699](https://calmisland.atlassian.net/browse/DT-699)
+
 ## [2.34.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.34.0%0D2.33.0) (2022-02-23)
 
 
