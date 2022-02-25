@@ -25,6 +25,7 @@ const config: Config.InitialOptions = {
         "^.+\\.tsx?$": `babel-jest`,
         "^.+\\.svg$": `jest-svg-transformer`,
     },
+    maxWorkers: `50%`,
 
 };
 
