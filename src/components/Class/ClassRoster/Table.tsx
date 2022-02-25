@@ -158,6 +158,7 @@ export default function ClassRoster (props: Props) {
             label: intl.formatMessage({
                 id: `users_lastName`,
             }),
+            persistent: true,
         },
         {
             id: `role`,
