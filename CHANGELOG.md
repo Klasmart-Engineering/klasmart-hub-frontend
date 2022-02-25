@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.35.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.35.1%0D2.35.0) (2022-02-25)
+
+
+### 🐛 Bug Fixes
+
+* comment out the marked as inactive and reactivate buttons ([d863e80](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d863e80345d7313ed46a316fe0f647922f214777))
+
 ## [2.35.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.35.0%0D2.34.1) (2022-02-25)
 
 
