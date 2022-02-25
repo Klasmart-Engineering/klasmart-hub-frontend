@@ -134,7 +134,10 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-    mockUsePermission.mockReturnValue(true);
+    mockUsePermission.mockReturnValue({
+        loading:false,
+        hasPermission: true,
+    });
 });
 
 const mockOrganizationMembership = mockOrganizationMemberships[0];

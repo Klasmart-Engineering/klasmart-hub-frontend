@@ -126,7 +126,10 @@ beforeEach(() => {
     mockOnClose.mockClear();
     mockCreateOrganizationMembership.mockClear();
     mockEnqueueSnackbar.mockClear();
-    mockUsePermission.mockReturnValue(true);
+    mockUsePermission.mockReturnValue({
+        loading:false,
+        hasPermission: true,
+    });
 });
 
 commonDialogTests({

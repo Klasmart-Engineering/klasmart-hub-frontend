@@ -78,7 +78,10 @@ beforeAll(() => {
 beforeEach(() => {
     mockOnChange.mockClear();
     mockOnValidation.mockClear();
-    mockUsePermission.mockReturnValue(true);
+    mockUsePermission.mockReturnValue({
+        loading:false,
+        hasPermission: true,
+    });
 });
 
 const mockOnChange = jest.fn();
@@ -167,7 +170,11 @@ export const inputs = {
     },
     schools: () => {
         return screen.getByLabelText(mockIntl.formatMessage({
-            id: `createUser_schoolsLabel`,
+            id: `common.inputField.optional`,
+        }, {
+            inputField: mockIntl.formatMessage({
+                id: `createUser_schoolsLabel`,
+            }),
         }));
     },
     alternativeEmail: () => {
@@ -537,7 +544,10 @@ test(`roles use 'role_name' as the text of the <Select>`, () => {
 });
 
 test(`if the user has no full permissions some roles are restricted`, () => {
-    mockUsePermission.mockReturnValue(false);
+    mockUsePermission.mockReturnValue({
+        loading:false,
+        hasPermission: false,
+    });
     render();
 
     userEvent.click(inputs.roles());

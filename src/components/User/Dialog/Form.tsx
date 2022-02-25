@@ -177,9 +177,11 @@ export default function UserDialogForm (props: Props) {
         `Teacher`,
         `School Admin`,
     ];
-    const hasOrgAdminPermissions = usePermission({
+
+    const { loading, hasPermission: hasOrgAdminPermissions } = usePermission({
         OR: [ `create_users_40220`, `edit_users_40330` ],
-    });
+    }, true);
+
     const availableRoles = hasOrgAdminPermissions ? allRoles : allRoles.filter(role => canBeGivenBySchoolAdminRoles.includes(role.role_name ?? ``));
 
     const [ givenName, setGivenName ] = useState(initialState.givenName);
@@ -202,6 +204,7 @@ export default function UserDialogForm (props: Props) {
     const [ genderIsValid, setGenderIsValid ] = useState(!errors?.gender);
     const [ birthday, setBirthday ] = useState(formatDateOfBirth(initialState.birthday));
     const [ birthdayIsValid, setBirthdayIsValid ] = useState(!errors?.birthday);
+    const [ schoolIdsValid, setSchoolIdsValid ] = useState(!errors?.schools);
     const [ isAlternativeContactInfoExpanded, setIsAlternativeContactInfoExpanded ] = useState(!!(initialState.alternativeEmail || initialState.alternativePhone));
     const {
         required,
@@ -234,6 +237,7 @@ export default function UserDialogForm (props: Props) {
             alternativePhoneIsValid,
             contactInfoIsValid,
             birthdayIsValid,
+            schoolIdsValid,
             Object.keys(errors).length === 0,
         ].every((valid) => valid));
     }, [
@@ -246,6 +250,7 @@ export default function UserDialogForm (props: Props) {
         alternativePhoneIsValid,
         contactInfoIsValid,
         birthdayIsValid,
+        schoolIdsValid,
         errors,
     ]);
 
@@ -357,16 +362,13 @@ export default function UserDialogForm (props: Props) {
             count: 1,
         }),
         schools: intl.formatMessage({
-            id: `common.inputField.optional`,
+            id: `users_school`,
         }, {
-            inputField: intl.formatMessage({
-                id: `users_school`,
-            }),
             count: 1,
         }),
     };
 
-    return (
+    return ( loading ? null :
         <div className={classes.root}>
             <div className={classes.heading}>
                 <TextField
@@ -614,9 +616,15 @@ export default function UserDialogForm (props: Props) {
                 multiple
                 fullWidth
                 id={`schools`}
-                label={intl.formatMessage({
+                label={(!hasOrgAdminPermissions ? intl.formatMessage({
                     id: `createUser_schoolsLabel`,
-                })}
+                }) : intl.formatMessage({
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `createUser_schoolsLabel`,
+                    }),
+                }))}
                 items={allSchools}
                 value={schoolIds}
                 itemText={(school) => school.name ?? ``}
@@ -631,6 +639,7 @@ export default function UserDialogForm (props: Props) {
                         attribute: attributes.schools,
                     })),
                 ]: [])}
+                onValidate={!hasOrgAdminPermissions ? setSchoolIdsValid : undefined}
                 onChange={setSchoolIds}
             />
             <Accordion
