@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.35.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.35.0%0D2.34.1) (2022-02-25)
+
+
+### ✨ Features
+
+* adding school validation if non org admin ([73e88f2](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/73e88f248b4822d2d31b6747350abe461f32423a)), closes [AD-2023](https://calmisland.atlassian.net/browse/AD-2023)
+* family name as persistent column in class roster ([8dc2209](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/8dc22094b7c35d6b5a008e43c45c8a2a784cce9f)), closes [AD-1627](https://calmisland.atlassian.net/browse/AD-1627)
+
+
+### 📦 Refactor
+
+* change program edit flow, required some refactors ([a017fa1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/a017fa118a1b77bb6ec7c185cbe2228a40e65525)), closes [feature/AD-2041](https://calmisland.atlassian.net/browse/AD-2041) [Feature/AD-2041](https://calmisland.atlassian.net/browse/AD-2041)
+
+
+### 🐛 Bug Fixes
+
+* **mobile:** move appbar behind navigation drawer ([ba89c87](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/ba89c873699be650cf73b4e83ec57930c5be5c26))
+* organization tables name column blocked ([60b55f1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/60b55f158d9d2c6696952aa472828bf5bf62792a)), closes [AD-1629](https://calmisland.atlassian.net/browse/AD-1629) [AD-1629](https://calmisland.atlassian.net/browse/AD-1629) [AD-1629](https://calmisland.atlassian.net/browse/AD-1629)
+
 ### [2.34.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.34.1%0D2.34.0) (2022-02-24)
 
 
