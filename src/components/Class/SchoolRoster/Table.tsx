@@ -49,8 +49,7 @@ interface ClassRosterRow {
     givenName: string | undefined;
     familyName: string | undefined;
     role: string;
-    email: string;
-    phoneNumber: string | null;
+    contactInfo: string;
     organizationRoles: string[];
 }
 
@@ -152,16 +151,9 @@ export default function SchoolRoster (props: Props) {
             disableSort: true,
         },
         {
-            id: `email`,
+            id: `contactInfo`,
             label: intl.formatMessage({
-                id: `schools_emailLabel`,
-            }),
-            disableSort: true,
-        },
-        {
-            id: `phoneNumber`,
-            label: intl.formatMessage({
-                id: `schools_phoneLabel`,
+                id: `users_contactInfo`,
             }),
             disableSort: true,
         },
@@ -246,8 +238,7 @@ export default function SchoolRoster (props: Props) {
         givenName: edge.node.givenName ?? ``,
         familyName: edge.node.familyName ?? ``,
         role: subgroupBy,
-        email: edge.node.contactInfo?.email ?? ``,
-        phoneNumber: edge.node.contactInfo?.phone ?? ``,
+        contactInfo: edge.node.contactInfo?.email || edge.node.contactInfo?.phone || ``,
         organizationRoles: edge.node.roles?.map(role => role.name ?? ``) ?? [],
     })) ?? [];
 
