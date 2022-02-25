@@ -145,6 +145,7 @@ export default function JoinedOrganizationTable (props: Props) {
         },
         {
             id: `name`,
+            persistent: true,
             label: intl.formatMessage({
                 id: `allOrganization_organizationName`,
             }),

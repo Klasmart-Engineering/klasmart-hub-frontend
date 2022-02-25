@@ -172,6 +172,7 @@ export default function MyOrganizationTable (props: Props) {
         },
         {
             id: `name`,
+            persistent: true,
             disableSearch: true,
             disableSort: true,
             label: intl.formatMessage({
