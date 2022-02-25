@@ -1,4 +1,7 @@
-import { useDeleteOrganizationMembership } from "@/api/organizationMemberships";
+import {
+    useDeleteOrganizationMembership,
+    useReactivateUserInOrganization,
+} from "@/api/organizationMemberships";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
@@ -24,6 +27,7 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
     PersonAdd as PersonAddIcon,
+    Refresh as RefreshIcon,
 } from "@mui/icons-material";
 import {
     Box,
@@ -120,7 +124,9 @@ export default function UserTable (props: Props) {
     const createMySchoolsUsersPermissions = usePermission(`create_my_school_users_40221`);
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
+    const canReactivateUserInOrg = usePermission(`reactivate_user_40884`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
+    const [ reactivateUserInOrganization ] = useReactivateUserInOrganization();
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
@@ -153,6 +159,29 @@ export default function UserTable (props: Props) {
     const editSelectedRow = (row: UserRow) => {
         setSelectedUserId(row.id);
         setEditDialogOpen(true);
+    };
+
+    const reactivateSelectedRow = async (row: UserRow) => {
+        try {
+            await reactivateUserInOrganization({
+                variables: {
+                    organization_id: organizationId,
+                    user_ids: [ row.id ],
+                },
+            });
+
+            enqueueSnackbar(intl.formatMessage({
+                id: `user.reactivate.action.success`,
+            }), {
+                variant: `success`,
+            });
+        } catch (error) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteError`,
+            }), {
+                variant: `error`,
+            });
+        }
     };
 
     const deleteSelectedRow = async (row: UserRow) => {
@@ -501,6 +530,17 @@ export default function UserTable (props: Props) {
                             disabled: row.status === Status.INACTIVE || !canEdit,
                             onClick: editSelectedRow,
                         },
+                        ...(canReactivateUserInOrg && row.status === Status.INACTIVE) ?
+                            [
+                                {
+                                    label: intl.formatMessage({
+                                        id: `common.action.reactivate`,
+                                    }),
+                                    icon: RefreshIcon,
+                                    disabled: false,
+                                    onClick: reactivateSelectedRow,
+                                },
+                            ] : [],
                         {
                             label: intl.formatMessage({
                                 id: `users_deleteButton`,

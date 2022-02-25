@@ -6,6 +6,7 @@ import {
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
 import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
+import { REACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/reactivateUser";
 import { GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS } from "@/operations/queries/getAllUserPermissions";
 import { GET_ORGANIZATION_USER_NODE } from "@/operations/queries/getOrganizationUserNode";
 import { GET_ORGANIZATION_USERS } from "@/operations/queries/getOrganizationUsers";
@@ -75,8 +76,23 @@ export interface DeleteOrganizationMembershipRequest {
 export interface DeleteOrganizationMembershipResponse {
 }
 
+export interface ReactivateUserInOrganizationRequest {
+    organization_id: string;
+    user_ids: string[];
+}
+
+export interface ReactivateUserInOrganizationResponse {
+}
+
 export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
     return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
+};
+
+export const useReactivateUserInOrganization = (options?: MutationHookOptions<ReactivateUserInOrganizationResponse, ReactivateUserInOrganizationRequest>) => {
+    return useMutation<ReactivateUserInOrganizationResponse, ReactivateUserInOrganizationRequest>(REACTIVATE_USER_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
