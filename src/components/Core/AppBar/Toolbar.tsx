@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     safeArea: {
         paddingLeft: `env(safe-area-inset-left)`,
         paddingRight: `env(safe-area-inset-right)`,
-        zIndex: theme.zIndex.drawer + 1,
+        zIndex: theme.zIndex.drawer - 1,
     },
     tabs: {
         padding: theme.spacing(0, 2),
