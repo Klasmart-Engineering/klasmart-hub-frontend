@@ -391,6 +391,7 @@ export const permissions = [
     `send_invitation_40882`,
     `deactivate_user_40883`,
     `reactivate_user_40884`,
+    `deactivate_my_school_user_40885`,
     `billing_50100`,
     `view_payment_details_and_make_payment_50101`,
     `view_billing_details_50110`,

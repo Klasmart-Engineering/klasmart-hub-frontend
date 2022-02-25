@@ -1,4 +1,5 @@
 import {
+    useDeactivateUserInOrganization,
     useDeleteOrganizationMembership,
     useReactivateUserInOrganization,
 } from "@/api/organizationMemberships";
@@ -7,7 +8,10 @@ import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
-import { useDeleteEntityPrompt } from "@/utils/common";
+import {
+    useDeleteEntityPrompt,
+    useMarkInactiveEntityPrompt,
+} from "@/utils/common";
 import {
     buildCsvTemplateOptions,
     EMPTY_CSV_DATA,
@@ -28,6 +32,7 @@ import {
     Edit as EditIcon,
     PersonAdd as PersonAddIcon,
     Refresh as RefreshIcon,
+    RemoveCircleOutline as InactiveIcon,
 } from "@mui/icons-material";
 import {
     Box,
@@ -113,6 +118,7 @@ export default function UserTable (props: Props) {
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const deletePrompt = useDeleteEntityPrompt();
+    const markInactivePrompt = useMarkInactiveEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.organization_id ?? ``;
@@ -125,8 +131,10 @@ export default function UserTable (props: Props) {
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const canReactivateUserInOrg = usePermission(`reactivate_user_40884`);
+    const canDeactivateUserInOrg = usePermission(`deactivate_user_40883`);
     const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
     const [ reactivateUserInOrganization ] = useReactivateUserInOrganization();
+    const [ deactivateUserInOrganization ] = useDeactivateUserInOrganization();
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
@@ -172,6 +180,35 @@ export default function UserTable (props: Props) {
 
             enqueueSnackbar(intl.formatMessage({
                 id: `user.reactivate.action.success`,
+            }), {
+                variant: `success`,
+            });
+        } catch (error) {
+            enqueueSnackbar(intl.formatMessage({
+                id: `editDialog_deleteError`,
+            }), {
+                variant: `error`,
+            });
+        }
+    };
+
+    const markInactiveSelectedRow = async (row: UserRow) => {
+        const userName = `${row.givenName} ${row.familyName}`.trim();
+        if (!await markInactivePrompt({
+            title: intl.formatMessage({
+                id: `user.inactivate.title`,
+            }),
+            entityName: userName,
+        })) return;
+        try {
+            await deactivateUserInOrganization({
+                variables: {
+                    organization_id: organizationId,
+                    user_ids: [ row.id ],
+                },
+            });
+            enqueueSnackbar(intl.formatMessage({
+                id: `user.inactivate.action.success`,
             }), {
                 variant: `success`,
             });
@@ -539,6 +576,17 @@ export default function UserTable (props: Props) {
                                     icon: RefreshIcon,
                                     disabled: false,
                                     onClick: reactivateSelectedRow,
+                                },
+                            ] : [],
+                        ...(canDeactivateUserInOrg && row.status === Status.ACTIVE) ?
+                            [
+                                {
+                                    label: intl.formatMessage({
+                                        id: `common.action.inactive`,
+                                    }),
+                                    disabled: false,
+                                    icon: InactiveIcon,
+                                    onClick: markInactiveSelectedRow,
                                 },
                             ] : [],
                         {
