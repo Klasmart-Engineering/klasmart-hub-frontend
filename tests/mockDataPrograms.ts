@@ -470,3 +470,40 @@ export const mockProgramsSchoolSummary = {
         totalCount: 2,
     },
 };
+
+export const mockProgramInfoData = {
+    programNode: {
+        id: programIdA,
+        name: programNameA,
+        status: Status.ACTIVE,
+        ageRanges:[
+            {
+                highValue:6,
+                highValueUnit:`year`,
+                id:`fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
+                lowValue:5,
+                lowValueUnit:`year`,
+                name:`5 - 6 year(s)`,
+                status:`active`,
+                system:true,
+            },
+        ],
+        grades:[
+            {
+                id:`100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
+                name:`Grade 1`,
+                status:`active`,
+                system:true,
+            },
+        ],
+        subjects:[
+            {
+                id:`0e73997e-e2fb-4119-a56e-509dc09c163d`,
+                name:`Test 1`,
+                status:`active`,
+                system:false,
+            },
+        ],
+        system:false,
+    },
+};

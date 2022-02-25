@@ -1,6 +1,6 @@
 import ProgramInfoStep from "../ProgramInfo";
 import SelectedSubjectsSummary from "./SelectedSubjects";
-import { ProgramNode } from "@/api/programs";
+import { ProgramForm } from "@/api/programs";
 import { EntityStepContent } from "@/utils/entitySteps";
 import {
     createStyles,
@@ -10,7 +10,7 @@ import React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function SummaryStep (props: EntityStepContent<ProgramNode>) {
+export default function SummaryStep (props: EntityStepContent<ProgramForm>) {
     const { value } = props;
     const classes = useStyles();
 

@@ -1,19 +1,10 @@
-import { useGetAllAgeRanges } from "@/api/ageRanges";
-import { useGetAllGrades } from "@/api/grades";
-import { ProgramNode } from "@/api/programs";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { ProgramForm } from "@/api/programs";
 import {
-    AgeRange,
-    Grade,
-    isActive,
-    isCustomValue,
-    isNonSpecified,
-    isOtherSystemValue,
-    sortEntitiesByName,
+    sortEntitiesByLabel,
     useHandleUpdateNonSpecified,
 } from "@/types/graphQL";
-import { buildAgeRangeLabel } from "@/utils/ageRanges";
 import { EntityStepContent } from "@/utils/entitySteps";
+import { useGetProgramFormDropdowns } from "@/utils/programFormDropdownValues";
 import { useValidations } from "@/utils/validations";
 import { Paper } from "@mui/material";
 import {
@@ -39,7 +30,7 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) {
+export default function ProgramInfoStep (props: EntityStepContent<ProgramForm>) {
     const {
         value,
         disabled,
@@ -53,59 +44,26 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
         letternumeric,
         max,
     } = useValidations();
-    const currentOrganization = useCurrentOrganization();
     const [ programName, setProgramName ] = useState(value.name ?? ``);
-    const [ gradeIds, setGradeIds ] = useState(value.grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-    const [ ageRanges, setAgeRanges ] = useState(value.ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
-    const { data: ageRangesData, loading: ageRangesLoading } = useGetAllAgeRanges({
-        variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-        },
-        skip: !currentOrganization?.organization_id,
-    });
-    const { data: gradesData, loading: gradesLoading } = useGetAllGrades({
-        variables: {
-            organization_id: currentOrganization?.organization_id ?? ``,
-        },
-        skip: !currentOrganization?.organization_id,
-    });
-
-    const [ loaded, setLoaded ] = useState<boolean>(false);
-    const allAgeRanges = ageRangesData?.organization.ageRanges.filter(isActive) ?? [];
-    const nonSpecifiedAgeRange = allAgeRanges.find(isNonSpecified);
-    const systemAgeRanges = allAgeRanges.filter(isOtherSystemValue);
-    const customAgeRanges = allAgeRanges.filter(isCustomValue);
-
-    const allGrades = gradesData?.organization.grades.filter(isActive) ?? [];
-    const nonSpecifiedGrade = allGrades.find(isNonSpecified);
-    const systemGrades = allGrades.filter(isOtherSystemValue);
-    const customGrades = allGrades.filter(isCustomValue);
-
-    useEffect(() => {
-        // Removing this check will make the select values dance when updated (unstable)
-        if (ageRangesLoading || gradesLoading || loaded) return;
-
-        const {
-            name,
-            grades,
-            ageRanges,
-        } = value;
-        setProgramName(name ?? ``);
-        setGradeIds(grades?.filter(isActive).map((grade) => grade.id ?? ``) ?? []);
-        setAgeRanges(ageRanges?.filter(isActive).map((ageRange) => ageRange.id ?? ``) ?? []);
-        setLoaded(true);
-    }, [
-        value,
+    const [ gradeIds, setGradeIds ] = useState(value.grades ?? []);
+    const [ ageRanges, setAgeRanges ] = useState(value.ageRanges ?? []);
+    const {
         ageRangesLoading,
         gradesLoading,
-    ]);
+        customAgeRanges,
+        systemAgeRanges,
+        nonSpecifiedAgeRange,
+        customGrades,
+        systemGrades,
+        nonSpecifiedGrade,
+    } = useGetProgramFormDropdowns();
 
     useEffect(() => {
         const updatedValue = {
             ...value,
             name: programName,
-            grades: gradeIds.map((id) => allGrades.find((grade) => grade.id === id)).filter((grade): grade is Grade => !!grade),
-            age_ranges: ageRanges.map((id) => allAgeRanges.find((ageRange) => ageRange.id === id)).filter((ageRange): ageRange is AgeRange => !!ageRange),
+            grades: gradeIds,
+            ageRanges: ageRanges,
         };
         if (isEqual(value, updatedValue)) return;
         onChange?.(updatedValue);
@@ -115,8 +73,8 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
         ageRanges,
     ]);
 
-    useHandleUpdateNonSpecified(gradeIds, setGradeIds, allGrades);
-    useHandleUpdateNonSpecified(ageRanges, setAgeRanges, allAgeRanges);
+    useHandleUpdateNonSpecified(gradeIds, setGradeIds, nonSpecifiedGrade?.value);
+    useHandleUpdateNonSpecified(ageRanges, setAgeRanges, nonSpecifiedAgeRange?.value);
 
     return <>
         <Paper className={classes.paper}>
@@ -125,7 +83,7 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
                 label={intl.formatMessage({
                     id: `programs_programNameLabel`,
                 })}
-                value={programName}
+                value={value.name}
                 disabled={disabled || loading}
                 hideHelperText={disabled}
                 autoFocus={!value.id}
@@ -147,8 +105,8 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
                 label={intl.formatMessage({
                     id: `programs_grades`,
                 })}
-                value={gradeIds}
-                items={customGrades.sort((sortEntitiesByName))}
+                value={value.grades}
+                items={customGrades.sort((sortEntitiesByLabel))}
                 sections={[
                     ...(nonSpecifiedGrade ? [
                         {
@@ -160,11 +118,11 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
                         header: intl.formatMessage({
                             id: `programs_systemValuesLabel`,
                         }),
-                        items: systemGrades.sort((sortEntitiesByName)),
+                        items: systemGrades.sort((sortEntitiesByLabel)),
                     },
                 ]}
-                itemText={(grade) => grade.name ?? ``}
-                itemValue={(grade) => grade.id ?? ``}
+                itemText={(grade) => grade.label ?? ``}
+                itemValue={(grade) => grade.value ?? ``}
                 disabled={disabled || loading || gradesLoading}
                 hideHelperText={disabled}
                 validations={[ required(`The Grade is required.`) ]}
@@ -179,7 +137,7 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
                 label={intl.formatMessage({
                     id: `programs_ageRanges`,
                 })}
-                value={ageRanges}
+                value={value.ageRanges}
                 items={customAgeRanges}
                 sections={[
                     ...(nonSpecifiedAgeRange ? [
@@ -195,8 +153,8 @@ export default function ProgramInfoStep (props: EntityStepContent<ProgramNode>) 
                         items: systemAgeRanges,
                     },
                 ]}
-                itemText={(ageRange) => buildAgeRangeLabel(ageRange)}
-                itemValue={(ageRange) => ageRange.id ?? ``}
+                itemText={(ageRange) => ageRange.label}
+                itemValue={(ageRange) => ageRange.value ?? ``}
                 disabled={disabled || loading || ageRangesLoading}
                 hideHelperText={disabled}
                 validations={[ required(`The Age Range is required.`) ]}

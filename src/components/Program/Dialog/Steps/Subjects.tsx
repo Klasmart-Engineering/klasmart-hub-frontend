@@ -1,3 +1,4 @@
+import { ProgramForm } from "@/api/programs";
 import {
     SubjectEdge,
     useGetAllPaginatedSubjects,
@@ -9,7 +10,6 @@ import {
     buildSubjectsFilters,
 } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Program } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
@@ -37,7 +37,7 @@ import React,
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export default function SubjectStep (props: EntityStepContent<Program>) {
+export default function SubjectStep (props: EntityStepContent<ProgramForm>) {
     const {
         value,
         disabled,
@@ -77,15 +77,13 @@ export default function SubjectStep (props: EntityStepContent<Program>) {
         notifyOnNetworkStatusChange: true,
     });
 
-    const selectedIds = value.subjects?.map((subject) => subject.id ?? ``) ?? [];
+    const selectedIds = value.subjects ?? [];
     const selectedSubjectsError = required()(selectedIds);
 
     const handleSelected = (ids: string[]) => {
         onChange?.({
             ...value,
-            subjects: ids.map((id) => ({
-                id: id ?? ``,
-            })),
+            subjects: ids,
         });
     };
 

@@ -127,6 +127,14 @@ export interface ProgramNode {
     subjectsConnection?: GetAllSubjectsPaginatedResponse[`subjectsConnection`];
 }
 
+export interface ProgramForm {
+    id: string;
+    name: string;
+    ageRanges: string[];
+    grades: string[];
+    subjects?: string[];
+}
+
 export interface ProgramEdge {
     node: ProgramNode;
 }

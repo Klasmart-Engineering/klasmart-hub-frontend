@@ -13,11 +13,11 @@ export interface GradePaginationFilter {
 
 export const buildGradeSearchFilter = (search: string): GradeFilter => ({
     ...(isUuid(search) ? {
-            id: {
-                operator: `eq`,
-                value: search,
-            },
-        } : {
+        id: {
+            operator: `eq`,
+            value: search,
+        },
+    } : {
         OR: [
             {
                 name: {
@@ -167,6 +167,7 @@ query getOrganizationGrades(
             node {
                 id
                 name
+                system
             }
         }
     }

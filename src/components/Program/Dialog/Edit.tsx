@@ -2,13 +2,15 @@ import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary/Base";
 import {
-    ProgramNode,
+    ProgramForm,
     useCreateOrUpdatePrograms,
     useGetProgramNode,
 } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Program } from "@/types/graphQL";
-import { buildEmptyProgram } from "@/utils/programs";
+import {
+    buildEmptyProgram,
+    mapProgramNodeToProgramForm,
+} from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
 import {
     Box,
@@ -42,12 +44,12 @@ const useStyles = makeStyles((theme) => createStyles({
     },
 }));
 
-const INITIAL_STEP_INDEX = 2;
+const INITIAL_STEP_INDEX = 0;
 
 interface Props {
     programId?: string;
     open: boolean;
-    onClose: (program?: Program) => void;
+    onClose: (program?: ProgramForm) => void;
 }
 
 export default function CreateProgramDialog (props: Props) {
@@ -76,10 +78,10 @@ export default function CreateProgramDialog (props: Props) {
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
-    const [ updatedProgram, setUpdatedProgram ] = useState<ProgramNode>(buildEmptyProgram());
+    const [ updatedProgram, setUpdatedProgram ] = useState<ProgramForm>(buildEmptyProgram());
     const [ loading, setLoading ] = useState<boolean>(true);
 
-    const handleValue = (value: ProgramNode) => {
+    const handleValue = (value: ProgramForm) => {
         if (isEqual(value, updatedProgram)) return;
         setUpdatedProgram(value);
     };
@@ -90,7 +92,7 @@ export default function CreateProgramDialog (props: Props) {
             return;
         }
         setStepIndex(INITIAL_STEP_INDEX);
-        setUpdatedProgram(data?.programNode ?? buildEmptyProgram());
+        setUpdatedProgram(data?.programNode ? mapProgramNodeToProgramForm(data?.programNode) : buildEmptyProgram());
         setLoading(programsLoading);
     }, [ open, data ]);
 
@@ -146,7 +148,11 @@ export default function CreateProgramDialog (props: Props) {
             },
         ];
         setSteps(steps);
-    }, [ updatedProgram, loading ]);
+    }, [
+        updatedProgram,
+        loading,
+        programsLoading,
+    ]);
 
     const updateProgram = async () => {
         const {
@@ -164,9 +170,9 @@ export default function CreateProgramDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            age_ranges: ageRanges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
-                            grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
-                            subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
+                            age_ranges: ageRanges ?? [],
+                            grades: grades ?? [],
+                            subjects: subjects ?? [],
                         },
                     ],
                 },

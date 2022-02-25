@@ -1,3 +1,4 @@
+import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     Dispatch,
     SetStateAction,
@@ -56,15 +57,14 @@ export const isActive = (entity: BaseEntity) => {
 };
 
 export const sortEntitiesByName = (a: BaseEntity, b: BaseEntity) => a.name?.localeCompare(b.name ?? ``) ?? 0;
+export const sortEntitiesByLabel = (a: FilterValueOption, b: FilterValueOption) => a.label?.localeCompare(b.label ?? ``) ?? 0;
 
-export const useHandleUpdateNonSpecified = (values: string[], setValues: Dispatch<SetStateAction<string[]>>, items: BaseEntity[]) => {
-    useEffect(() => {
-        if (!values.find((value) => items.find(isNonSpecified)?.id === value) || values.length <= 1) return;
-        setValues((values) => {
-            const item = items.find((item) => item.id === values[0]);
-            return (item && isNonSpecified(item)) ? values.slice(1) : values.slice(values.length - 1, values.length);
-        });
-    }, [ values ]);
+export const useHandleUpdateNonSpecified = (values: string[], setValues: Dispatch<SetStateAction<string[]>>, nonSpecifiedId?: string) => {
+    if (!values.find((value) => nonSpecifiedId === value) || values.length <= 1) return;
+    setValues((values) => {
+        const isNonSpecified = values.find((value) => nonSpecifiedId === value);
+        return isNonSpecified ? values.slice(1) : values.slice(values.length - 1, values.length);
+    });
 };
 
 export interface BaseEntity {

@@ -1,9 +1,9 @@
+import { ProgramForm } from "@/api/programs";
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
 import { buildSubjectIdsFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Program } from "@/types/graphQL";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
@@ -32,7 +32,7 @@ interface Props {
 
 }
 
-export default function SelectedSubjectsTable (props: EntityStepContent<Program>) {
+export default function SelectedSubjectsTable (props: EntityStepContent<ProgramForm>) {
     const {
         value,
         disabled,
@@ -46,7 +46,7 @@ export default function SelectedSubjectsTable (props: EntityStepContent<Program>
         orderBy: `name`,
     });
 
-    const paginationFilter = buildSubjectIdsFilter(value?.subjects?.map((subject) => subject.id ?? ``) ?? []);
+    const paginationFilter = buildSubjectIdsFilter(value?.subjects ?? []);
 
     const {
         data,

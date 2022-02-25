@@ -8,10 +8,23 @@ import {
     useGetClassNodeSchoolsLazy,
     useGetClassNodeSubjectsLazy,
 } from "@/api/classes";
-import { GradeEdge } from "@/api/grades";
-import { ProgramEdge } from "@/api/programs";
-import { SchoolEdge } from "@/api/schools";
-import { SubjectEdge } from "@/api/subjects";
+import {
+    GradeEdge,
+    GradeNode,
+} from "@/api/grades";
+import {
+    AgeRangeNode,
+    ProgramEdge,
+    ProgramNode,
+} from "@/api/programs";
+import {
+    SchoolEdge,
+    SchoolNode,
+} from "@/api/schools";
+import {
+    SubjectEdge,
+    SubjectNode,
+} from "@/api/subjects";
 import { ClassForm } from "@/components/Class/Dialog/Form";
 import { Status } from "@/types/graphQL";
 import {
@@ -20,6 +33,7 @@ import {
 } from "react";
 
 export const mapEdgeToIdString = (edge: SchoolEdge | ProgramEdge | GradeEdge | AgeRangeEdge | SubjectEdge): string => edge?.node?.id ?? ``;
+export const mapNodeToIdString = (node: SchoolNode | ProgramNode | GradeNode | AgeRangeNode | SubjectNode): string => node?.id ?? ``;
 
 export const useGetClassFormSelectedValues = (classId?: string) => {
     const [ classData, setClassData ] = useState<ClassForm>(buildEmptyClassForm());

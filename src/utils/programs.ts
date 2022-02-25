@@ -2,35 +2,33 @@ import {
     buildAgeRangeLabel,
     mapAgeRangeNodeToAgeRange,
 } from "./ageRanges";
+import { mapNodeToIdString } from "./classFormSelectedValues";
 import {
     ProgramEdge,
+    ProgramForm,
     ProgramNode,
 } from "@/api/programs";
 import { ProgramRow } from "@/components/Program/Table";
 import {
     Program,
-    School,
     Status,
 } from "@/types/graphQL";
-import { isEqual } from "lodash";
 
-export const buildEmptyProgram = (): ProgramNode => ({
+export const buildEmptyProgram = (): ProgramForm => ({
     id: ``,
     name: ``,
     ageRanges: [],
     grades: [],
     subjects: [],
-    status: Status.ACTIVE,
-    system: false,
 });
 
-export const mapProgramsFromSchools = (allSchools: School[], schoolIds: string[]): Program[] => {
-    const programs = allSchools.filter(school => schoolIds.includes(school.school_id) && school.programs?.length)
-        .flatMap(school => school.programs)
-        .filter((program, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, program))));
-
-    return programs as Program[] ?? [];
-};
+export const mapProgramNodeToProgramForm = (node: ProgramNode): ProgramForm => ({
+    id: node.id,
+    name: node.name,
+    ageRanges: node.ageRanges?.map(mapNodeToIdString) ?? [],
+    grades: node.grades?.map(mapNodeToIdString) ?? [],
+    subjects: node.subjects?.map(mapNodeToIdString) ?? [],
+});
 
 export const mapProgramNodeToProgram = (node: ProgramNode): Program => ({
     id: node.id,

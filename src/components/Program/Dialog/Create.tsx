@@ -1,7 +1,10 @@
 import ProgramInfoStep from "./Steps/ProgramInfo";
 import SubjectsStep from "./Steps/Subjects";
 import SummaryStep from "./Steps/Summary/Base";
-import { useCreateOrUpdatePrograms } from "@/api/programs";
+import {
+    ProgramForm,
+    useCreateOrUpdatePrograms,
+} from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
@@ -42,7 +45,7 @@ const INITIAL_STEP_INDEX = 0;
 
 interface Props {
     open: boolean;
-    onClose: (program?: Program) => void;
+    onClose: (program?: ProgramForm) => void;
 }
 
 export default function CreateProgramDialog (props: Props) {
@@ -62,10 +65,10 @@ export default function CreateProgramDialog (props: Props) {
     const [ steps_, setSteps ] = useState<Step[]>([]);
     const [ stepIndex_, setStepIndex ] = useState(INITIAL_STEP_INDEX);
     const [ StepComponent, setStepComponent ] = useState<ReactNode>();
-    const [ value_, setValue ] = useState<Program>(buildEmptyProgram());
+    const [ value_, setValue ] = useState<ProgramForm>(buildEmptyProgram());
     const [ createOrUpdatePrograms ] = useCreateOrUpdatePrograms();
 
-    const handleValue = (value: Program) => {
+    const handleValue = (value: ProgramForm) => {
         if (isEqual(value, value_)) return;
         setValue(value);
     };
@@ -95,7 +98,7 @@ export default function CreateProgramDialog (props: Props) {
                     letternumeric()(value_?.name),
                     max(35)(value_?.name),
                     required()(value_?.grades),
-                    required()(value_?.age_ranges),
+                    required()(value_?.ageRanges),
                 ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
@@ -124,7 +127,7 @@ export default function CreateProgramDialog (props: Props) {
     const createProgram = async () => {
         const {
             name,
-            age_ranges,
+            ageRanges,
             grades,
             subjects,
         } = value_;
@@ -135,9 +138,9 @@ export default function CreateProgramDialog (props: Props) {
                     programs: [
                         {
                             name: name ?? ``,
-                            age_ranges: age_ranges?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
-                            grades: grades?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
-                            subjects: subjects?.map(({ id }) => id).filter((id): id is string => !!id) ?? [],
+                            age_ranges: ageRanges ?? [],
+                            grades: grades ?? [],
+                            subjects: subjects ?? [],
                         },
                     ],
                 },
