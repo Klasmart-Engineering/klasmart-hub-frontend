@@ -1133,15 +1133,16 @@
     "home.student.attendanceWidget.containerTitleLabel": "Kehadiran",
     "home.student.attendanceWidget.containerUrlLabel": "Lihat semua kehadiran",
     "home.student.attendanceWidget.legend": "Kehadiran rata-rata 1 minggu",
-    "studentHome.mockData.lesson2.title": "Bada Math - Let's count",
-    "studentHome.mockData.lesson3.title": "My colors",
-    "studentHome.mockData.lesson4.title": "Good night, Teddy Bear",
-    "date.tomorrow": "Tomorrow",
+    "studentHome.mockData.lesson2.title": "Bada Math - Ayo berhitung",
+    "studentHome.mockData.lesson3.title": "Warna saya",
+    "studentHome.mockData.lesson4.title": "Selamat malam, Beruang Teddy",
+    "date.tomorrow": "Besok",
     "common.inputField.optional": "{inputField} (opsional)",
     "home.student.teacherFeedbackWidget.alex": "Alex",
     "home.student.teacherFeedbackWidget.christina": "Christina",
     "react-intl-formatted-duration.daysUnit": "{value, plural, one {day} other {days}}",
     "react-intl-formatted-duration.hoursUnit": "{value, plural, one {hour} other {hours}}",
     "react-intl-formatted-duration.minutesUnit": "{value, plural, one {minute} other {minutes}}",
-    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}"
+    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}",
+    "user.inactivate.typeToMarkInactivePrompt": "Ketik {value} untuk konfirmasi."
 }

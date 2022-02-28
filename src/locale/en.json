@@ -1102,7 +1102,6 @@
     "user.inactivate.title": "Mark User Inactive",
     "user.inactivate.details": "The user will lose access to your organization, but user data will be maintained until the user is deleted.",
     "user.inactivate.action.success": "User has been marked inactive",
-    "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm.",
     "common.action.reactivate": "Reactivate",
     "user.reactivate.action.success": "User has been reactivated successfully",
     "studentHome.mockData.lesson1.title": "A Christmas Safari",
@@ -1144,5 +1143,6 @@
     "react-intl-formatted-duration.daysUnit": "{value, plural, one {day} other {days}}",
     "react-intl-formatted-duration.hoursUnit": "{value, plural, one {hour} other {hours}}",
     "react-intl-formatted-duration.minutesUnit": "{value, plural, one {minute} other {minutes}}",
-    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}"
+    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}",
+    "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm."
 }
