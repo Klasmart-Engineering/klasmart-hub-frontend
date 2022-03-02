@@ -1,6 +1,6 @@
 {
   "name": "kidsloop-hub-frontend",
-  "version": "2.35.3",
+  "version": "2.35.4",
   "description": "",
   "scripts": {
     "build": "webpack",
