@@ -98,21 +98,13 @@ export default function UserProfileMenu (props: Props) {
         setAnchorEl(null);
     };
 
-    async function handleSignOut () {
+    function handleSignOut () {
         try {
-            const headers = new Headers();
-            headers.append(`Accept`, `application/json`);
-            headers.append(`Content-Type`, `application/json`);
             setOrganizationStack([]);
-            await fetch(`${getAuthEndpoint()}signout`, {
-                credentials: `include`,
-                headers,
-                method: `GET`,
-            });
             const stringifiedQuery = queryString.stringify({
                 continue: window.location.href,
             });
-            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
+            window.location.href = `${getAuthEndpoint()}logout?${stringifiedQuery}`;
         } catch (e) {
             console.error(e);
         }
