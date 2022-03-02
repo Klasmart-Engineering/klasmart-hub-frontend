@@ -567,28 +567,28 @@ export default function UserTable (props: Props) {
                             disabled: row.status === Status.INACTIVE || !canEdit,
                             onClick: editSelectedRow,
                         },
-                        // ...(canReactivateUserInOrg && row.status === Status.INACTIVE) ?
-                        //     [
-                        //         {
-                        //             label: intl.formatMessage({
-                        //                 id: `common.action.reactivate`,
-                        //             }),
-                        //             icon: RefreshIcon,
-                        //             disabled: false,
-                        //             onClick: reactivateSelectedRow,
-                        //         },
-                        //     ] : [],
-                        // ...(canDeactivateUserInOrg && row.status === Status.ACTIVE) ?
-                        //     [
-                        //         {
-                        //             label: intl.formatMessage({
-                        //                 id: `common.action.inactive`,
-                        //             }),
-                        //             disabled: false,
-                        //             icon: InactiveIcon,
-                        //             onClick: markInactiveSelectedRow,
-                        //         },
-                        //     ] : [],
+                        ...(canReactivateUserInOrg && row.status === Status.INACTIVE) ?
+                            [
+                                {
+                                    label: intl.formatMessage({
+                                        id: `common.action.reactivate`,
+                                    }),
+                                    icon: RefreshIcon,
+                                    disabled: false,
+                                    onClick: reactivateSelectedRow,
+                                },
+                            ] : [],
+                        ...(canDeactivateUserInOrg && row.status === Status.ACTIVE) ?
+                            [
+                                {
+                                    label: intl.formatMessage({
+                                        id: `common.action.inactive`,
+                                    }),
+                                    disabled: false,
+                                    icon: InactiveIcon,
+                                    onClick: markInactiveSelectedRow,
+                                },
+                            ] : [],
                         {
                             label: intl.formatMessage({
                                 id: `users_deleteButton`,
