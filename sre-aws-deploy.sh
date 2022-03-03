@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
 # script to build and deploy AWS based Hub frontends
-
 set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 # CHANGE ALLOWED TARGETS to deploy to a new region/environment combination
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding")
+allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding" "nextgen" "research")
 allowed_target_region=("in" "pk" "global" "uk" "lk" "th")
 
 
@@ -90,8 +89,6 @@ parse_params() {
 setup_colors
 parse_params "$@"
 
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding")
-allowed_target_region=("in" "pk" "global" "uk" "lk" "th")
 
 if [ $env == "prod" ] && [ $region == "in" ]
 then
@@ -120,6 +117,21 @@ then
 elif [ $env == "alpha" ] && [ $region == "global"  ]
 then
   S3_ENDPOINT=s3://klglobal-alpha-hub
+elif [ $env == "nextgen" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-nextgen-hub
+elif [ $env == "loadtest" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-loadtest-hub
+elif [ $env == "research" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-research-hub
+elif [ $env == "showroom" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-showroom-hub
+elif [ $env == "uat" ] && [ $region == "mb"  ]
+then
+  S3_ENDPOINT=s3://klmumbai-uat-hub
 fi
 
 # script logic here
@@ -132,15 +144,15 @@ msg "copy config file to .env.production"
 cp ./deploy/config/${region}/.env.${env} ./.env
 msg "npm install and audit"
 ## to do get npm working in docker while accessing a private bitbucket repo.
-#docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:lts npm ci
+#docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:16 npm ci
 npm ci
 
 msg "----------------------"
 msg "npm build for ${env} in region ${region}"
 ## to do get npm working in docker while accessing a private bitbucket repo.
-#docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:lts npm run build
+#docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:16 npm run build
 npm run build
-
+Version="$(git describe --tags)" Tag="$(git rev-parse HEAD | cut -c1-7)"; jq --arg version "$Version" --arg tag "$Tag" "{\"Version\":\"$Version\",\"Commit\":\"$Tag\"}" --raw-output --null-input > dist/version.txt
 msg "----------------------"
 msg "${GREEN}syncing current latest to backup${NOFORMAT}"
 aws s3 sync ${S3_ENDPOINT}/latest ${S3_ENDPOINT}/$(date "+%Y%m%d")
