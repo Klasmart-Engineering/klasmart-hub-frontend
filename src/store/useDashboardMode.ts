@@ -4,6 +4,7 @@ import { usePermission } from "@/utils/permissions";
 import {
     useEffect,
     useMemo,
+    useState,
 } from "react";
 import {
     atomFamily,
@@ -47,26 +48,49 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
     const userId = currentOrganizationMembership?.user_id;
     const stateFamilyId = currentOrganizationMembership ? `${ userId }__${ organizationId }` : ``;
     const [ dashboardMode, setDashboardMode ] = useRecoilState(dashboardModeStateFamily(stateFamilyId));
-
-    const hasPermissionToViewWidgetDashboard = useMemo(() => {
-        const teacherAllowed = teacherPermission && process.env.TEACHER_WIDGET_DASHBOARD_SHOW === `true`;
-        const studentAllowed = studentPermission && process.env.STUDENT_WIDGET_DASHBOARD_SHOW === `true`;
-
-        return teacherAllowed || studentAllowed;
-    }, [ teacherPermission, studentPermission ]);
-
-    const showDashboardNoticeToggle = useMemo(() => {
-        if (teacherPermission) return process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
-        if (studentPermission) return process.env.STUDENT_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
-
-        return false;
-    }, [ teacherPermission, studentPermission ]);
+    const [ showDashboardNoticeToggle, setShowDashboardNoticeToggle ] = useState(false);
+    const [ hasPermissionToViewWidgetDashboard, setHasPermissionToViewWidgetDashboard ] = useState(false);
 
     useEffect(() => {
-        if(dashboardMode !== undefined || loading) return;
+        if(loading) return;
 
-        setDashboardMode(hasPermissionToViewWidgetDashboard ? DashboardMode.WIDGET : DashboardMode.ORIGINAL);
-    }, [ hasPermissionToViewWidgetDashboard ]);
+        const findPermissionToViewWidgetDashboard = () => {
+            const teacherAllowed = teacherPermission && process.env.TEACHER_WIDGET_DASHBOARD_SHOW === `true`;
+            const studentAllowed = studentPermission && process.env.STUDENT_WIDGET_DASHBOARD_SHOW === `true`;
+
+            return teacherAllowed || studentAllowed;
+        };
+
+        const showDashboardNoticeToggle = () => {
+            if (teacherPermission) return process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
+            if (studentPermission) return process.env.STUDENT_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
+
+            return false;
+        };
+
+        const hasPermissionToViewWidgetDashboard = findPermissionToViewWidgetDashboard();
+        const canShowDashboardNoticeToggle = showDashboardNoticeToggle();
+
+        setShowDashboardNoticeToggle(canShowDashboardNoticeToggle);
+        setHasPermissionToViewWidgetDashboard(hasPermissionToViewWidgetDashboard);
+
+        if (!hasPermissionToViewWidgetDashboard){
+            setDashboardMode(DashboardMode.ORIGINAL);
+            return;
+        }
+        if (hasPermissionToViewWidgetDashboard  && !canShowDashboardNoticeToggle){
+            setDashboardMode(DashboardMode.WIDGET);
+            return;
+        }
+        if (hasPermissionToViewWidgetDashboard && canShowDashboardNoticeToggle){
+            setDashboardMode(dashboardMode);
+            return;
+        }
+    }, [
+        teacherPermission,
+        studentPermission,
+        organizationId,
+    ]);
 
     const setToWidgetDashboard = () => {
         if(!hasPermissionToViewWidgetDashboard) return;
