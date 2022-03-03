@@ -1,22 +1,13 @@
-import {
-    AgeRangeEdge,
-    useGetPaginatedAgeRangesList,
-} from "@/api/ageRanges";
+import { AgeRangeEdge } from "@/api/ageRanges";
 import { AgeRangeNode } from "@/api/programs";
 import { AgeRangeRow } from "@/components/AgeRanges/Table";
-import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import {
     AgeRange,
     NON_SPECIFIED,
     Program,
     Status,
 } from "@/types/graphQL";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { isEqual } from "lodash";
-import {
-    useEffect,
-    useState,
-} from "react";
 
 export const buildEmptyAgeRange = (): AgeRange => ({
     id: ``,
@@ -121,50 +112,6 @@ export const mapAgeRangesHighValueToFilter = (edges: AgeRangeEdge[]) => (
             label: buildAgeRangeHighValueLabel(edge?.node),
         })).filter((filter, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, filter))))
 );
-
-export const useAgeRangesFilters = (orgId: string, skip?: boolean) => {
-    const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
-    const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
-
-    const {
-        data: ageRangesData,
-        fetchMore: fetchMoreAgeRanges,
-        refetch: refetchAgeRanges,
-    } = useGetPaginatedAgeRangesList({
-        variables: {
-            direction: `FORWARD`,
-            count: 50,
-            orderBy: [ `lowValueUnit`, `lowValue` ],
-            order: `ASC`,
-            filter: buildOrganizationAgeRangeFilter({
-                organizationId: orgId ?? ``,
-                filters: [],
-            }),
-        },
-        returnPartialData: true,
-        fetchPolicy: `cache-first`,
-        skip: !orgId || skip,
-    });
-
-    useEffect(() => {
-        setAgeRangesLowValueOptions(mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []));
-        setAgeRangesHighValueOptions(mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []));
-
-        if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
-            fetchMoreAgeRanges({
-                variables: {
-                    cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
-                },
-            });
-        }
-    }, [ ageRangesData ]);
-
-    return {
-        ageRangesLowValueOptions,
-        ageRangesHighValueOptions,
-        refetchAgeRanges,
-    };
-};
 
 export const mapAgeRangesFromPrograms = (programs: Program[]): AgeRange[] => {
     const ageRanges = programs.filter(program => program.age_ranges?.length).flatMap(program => program.age_ranges)

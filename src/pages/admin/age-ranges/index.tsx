@@ -56,7 +56,7 @@ export default function AgeRangesPage () {
         skip: !currentOrganization?.organization_id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
-        fetchPolicy: `no-cache`,
+        fetchPolicy: `cache-and-network`,
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
