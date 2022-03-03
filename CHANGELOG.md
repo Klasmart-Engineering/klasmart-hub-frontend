@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.36.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.36.0%0D2.35.4) (2022-03-03)
+
+
+### ✨ Features
+
+* remove age ranges filters from age ranges table ([4f16996](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/4f16996591691399a9fbddccd924c484bb3d60b0)), closes [AD-1885](https://calmisland.atlassian.net/browse/AD-1885)
+
+
+### 🐛 Bug Fixes
+
+* wrong homepage being loaded ([3cac6e3](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/3cac6e34dad1dc3a3da625560c4aab160483a3e9)), closes [fix/DT-711](https://calmisland.atlassian.net/browse/DT-711) [Fix/DT-711](https://calmisland.atlassian.net/browse/DT-711)
+
 ### [2.35.4](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.35.4%0D2.35.3) (2022-03-02)
 
 ### [2.35.3](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.35.3%0D2.35.2) (2022-03-02)
