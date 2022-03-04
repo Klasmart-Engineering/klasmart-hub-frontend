@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.37.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.37.0%0D2.36.0) (2022-03-04)
+
+
+### 🐛 Bug Fixes
+
+* editing org branding showing current org values ([78c4ebd](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/78c4ebd9e802705a029e239b88873cb445265e36)), closes [AD-2180](https://calmisland.atlassian.net/browse/AD-2180)
+
+
+### ✨ Features
+
+* **lokalise:** add classes_classCreatedMessage ([d6a353b](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d6a353bd9d1f2893491e729553718ad3c42df9d6))
+
 ## [2.36.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.36.0%0D2.35.4) (2022-03-03)
 
 
