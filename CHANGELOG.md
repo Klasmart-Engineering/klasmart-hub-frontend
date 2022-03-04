@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.38.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.38.0%0D2.37.0) (2022-03-04)
+
+
+### ✨ Features
+
+* add adaptive learning student widget ([432caf1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/432caf135c4f563aed9e536f594da06bb6b58915)), closes [DT-546](https://calmisland.atlassian.net/browse/DT-546)
+
 ## [2.37.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.37.0%0D2.36.0) (2022-03-04)
 
 
