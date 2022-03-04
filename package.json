@@ -114,6 +114,7 @@
     "@styled-icons/material-twotone": "^10.28.0",
     "@types/react-big-calendar": "^0.36.2",
     "@visx/group": "^2.1.0",
+    "@visx/legend": "^2.2.2",
     "@visx/responsive": "^2.4.1",
     "@visx/scale": "^2.2.2",
     "@visx/shape": "^2.4.0",

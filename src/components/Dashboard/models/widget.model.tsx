@@ -20,4 +20,5 @@ export enum WidgetType {
     COMPLETION = `203`,
     FEEDBACK = `204`,
     STUDENTSCHEDULE = `205`,
+    LEARNINGOUTCOME = `206`,
 }

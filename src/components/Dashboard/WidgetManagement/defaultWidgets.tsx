@@ -4,6 +4,7 @@ import NextClassWidget from "../Widgets/NextClass/NextClass";
 import PendingAssessmentsWidget from "../Widgets/PendingAssessments/PendingAssessments";
 import AchievementWidget from "../Widgets/student/Achievement/AchievementWidget";
 import CompletionWidget from "../Widgets/student/Completion/CompletionWidget";
+import LearningOutcomeSummary from "../Widgets/Student/LearningOutcomeSummary/LearningOutcomeSummary";
 import StudentSchedule from "../Widgets/Student/Schedule/ScheduleWidget";
 import StudentAttendanceWidget from "../Widgets/student/StudentAttendance/StudentAttendance";
 import TreacherFeedbackWidget from "../Widgets/student/TeacherFeedback/TeacherFeedbackWidget";
@@ -79,25 +80,28 @@ export const defaultStudentWidgetMap: Widgets = {
     [WidgetType.ACHIEVEMENT]: <AchievementWidget />,
     [WidgetType.COMPLETION]: <CompletionWidget />,
     [WidgetType.STUDENTSCHEDULE]: <StudentSchedule />,
+    [WidgetType.LEARNINGOUTCOME]: <LearningOutcomeSummary />,
 };
 
 export const defaultStudentLgLayout: Layout[] = [
     /* eslint-disable */
     { i: WidgetType.STUDENTSCHEDULE,      x: 0, y: 0, h: 6, w: 6 },
-    { i: WidgetType.FEEDBACK,             x: 7, y: 4, h: 3, w: 6 },
-    { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 0, h: 3, w: 6 },
-    { i: WidgetType.ACHIEVEMENT,          x: 7, y: 7, h: 3, w: 6 },
+    { i: WidgetType.FEEDBACK,             x: 7, y: 0, h: 3, w: 6 },
+    { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 7, h: 3, w: 6 },
+    { i: WidgetType.ACHIEVEMENT,          x: 0, y: 11, h: 3, w: 6 },
     { i: WidgetType.COMPLETION,           x: 0, y: 7, h: 3, w: 6 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
     /* eslint-enable */
 ];
 
 export const defaultStudentMdLayout: Layout[] = [
     /* eslint-disable */
     { i: WidgetType.STUDENTSCHEDULE,      x: 0, y: 0, h: 6, w: 6 },
-    { i: WidgetType.FEEDBACK,             x: 7, y: 4, h: 3, w: 6 },
-    { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 0, h: 3, w: 6 },
-    { i: WidgetType.ACHIEVEMENT,          x: 7, y: 7, h: 3, w: 6 },
+    { i: WidgetType.FEEDBACK,             x: 7, y: 0, h: 3, w: 6 },
+    { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 7, h: 3, w: 6 },
+    { i: WidgetType.ACHIEVEMENT,          x: 0, y: 11, h: 3, w: 6 },
     { i: WidgetType.COMPLETION,           x: 0, y: 7, h: 3, w: 6 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
     /* eslint-enable */
 ];
 
@@ -105,9 +109,10 @@ export const defaultStudentSmLayout: Layout[] = [
     /* eslint-disable */
     { i: WidgetType.STUDENTSCHEDULE,      x: 0, y: 0, h: 4, w: 12 },
     { i: WidgetType.FEEDBACK,             x: 0, y: 5, h: 3, w: 12 },
-    { i: WidgetType.STUDENTATTENDANCE,    x: 6, y: 8, h: 4, w: 12 },
-    { i: WidgetType.ACHIEVEMENT,          x: 6, y: 12, h: 3, w: 12 },
-    { i: WidgetType.COMPLETION,           x: 0, y: 15, h: 3, w: 12 },
+    { i: WidgetType.STUDENTATTENDANCE,    x: 6, y: 12, h: 4, w: 12 },
+    { i: WidgetType.ACHIEVEMENT,          x: 6, y: 19, h: 3, w: 12 },
+    { i: WidgetType.COMPLETION,           x: 0, y: 16, h: 3, w: 12 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 6, y: 8, h: 3, w: 12 },
     /* eslint-enable */
 ];
 
