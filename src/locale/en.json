@@ -1168,5 +1168,6 @@
     "home.student.learningOutcomeWidget.legendTitle": "Top 5 Skills",
     "home.student.learningOutcomeWidget.legendAchieved": "Achieved",
     "home.student.learningOutcomeWidget.legendNotAchieved": "Not Achieved",
-    "home.student.learningOutcomeWidget.totalLabel": "total"
+    "home.student.learningOutcomeWidget.totalLabel": "total",
+    "classes_classCreatedMessage": "Class created"
 }
