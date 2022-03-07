@@ -2,10 +2,10 @@ import { mapAgeRangesToFilter } from "./ageRanges";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
-import {
-    NON_SPECIFIED,
-    Status,
-} from "@/types/graphQL";
+import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
+import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { NON_SPECIFIED } from "@/types/graphQL";
 import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     useEffect,
@@ -19,6 +19,7 @@ export const useGetProgramFormDropdowns = () => {
     const [ nonSpecifiedGrade, setNonSpecifiedGrade ] = useState<FilterValueOption>();
     const [ systemGrades, setSystemGrades ] = useState<FilterValueOption[]>([]);
     const [ customGrades, setCustomGrades ] = useState<FilterValueOption[]>([]);
+    const currentOrganization = useCurrentOrganization();
 
     const {
         data: gradesData,
@@ -30,15 +31,15 @@ export const useGetProgramFormDropdowns = () => {
             count: 50,
             orderBy: `name`,
             order: `ASC`,
-            filter: {
-                status: {
-                    operator: `eq`,
-                    value: Status.ACTIVE,
-                },
-            },
+            filter: buildGradeFilter({
+                organizationId: currentOrganization?.organization_id ?? ``,
+                search: ``,
+                filters: [],
+            }),
         },
         returnPartialData: true,
         fetchPolicy: `no-cache`,
+        skip: !currentOrganization?.organization_id,
     });
 
     const {
@@ -51,15 +52,14 @@ export const useGetProgramFormDropdowns = () => {
             count: 50,
             orderBy: [ `lowValueUnit`, `lowValue` ],
             order: `ASC`,
-            filter: {
-                status: {
-                    operator: `eq`,
-                    value: Status.ACTIVE,
-                },
-            },
+            filter: buildOrganizationAgeRangeFilter({
+                organizationId: currentOrganization?.organization_id ?? ``,
+                filters: [],
+            }),
         },
         returnPartialData: true,
         fetchPolicy: `no-cache`,
+        skip: !currentOrganization?.organization_id,
     });
 
     useEffect(() => {

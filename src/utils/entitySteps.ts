@@ -3,5 +3,5 @@ export interface EntityStepContent<T> {
     disabled?: boolean;
     onChange?: (value: T) => void;
     loading?: boolean;
-    isEdit: boolean;
+    isEdit?: boolean;
 }
