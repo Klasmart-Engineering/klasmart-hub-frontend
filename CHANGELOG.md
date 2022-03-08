@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.38.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.38.1%0D2.38.0) (2022-03-08)
+
+
+### 📦 Refactor
+
+* rename folders so we don't have mixing upper and lower cases on student ([ec0623e](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/ec0623ea3d3066f8342bf905f95af16fa76ea523))
+
+
+### 🐛 Bug Fixes
+
+* added missing translation key to ClassRoster table ([effc14e](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/effc14eb9f3c67f706293796a5b43faf1a4006e1))
+* lock ([6403341](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/6403341824fb8e8887b4f739b2d38613c891a0e8))
+* wrong dropdown values in program edit/create fixed ([c8b8d96](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/c8b8d96cfd16fa8ac70097021fc24e4973d25bdd)), closes [fix/AD-2194](https://calmisland.atlassian.net/browse/AD-2194) [Fix/AD-2194](https://calmisland.atlassian.net/browse/AD-2194)
+
 ## [2.38.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.38.0%0D2.37.0) (2022-03-04)
 
 
