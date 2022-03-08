@@ -12,6 +12,10 @@ import {
     Subject,
 } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import {
+    buildCsvTemplateOptions,
+    EMPTY_CSV_DATA,
+} from "@/utils/csv";
 import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";
 import {
@@ -21,6 +25,7 @@ import {
 import { useValidations } from "@/utils/validations";
 import {
     Add as AddIcon,
+    AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -158,6 +163,22 @@ export default function ClassesTable (props: Props) {
         queryAgeRanges: true,
         querySubjects: true,
         queryGrades: true,
+    });
+
+    const classCsvTemplateHeaders = [
+        `organization_name`,
+        `class_name`,
+        `class_shortcode`,
+        `school_name`,
+        `program_name`,
+        `grade_name`,
+    ];
+
+    const csvExporter = buildCsvTemplateOptions({
+        filename: intl.formatMessage({
+            id: `entity.class.importTemplate.filename`,
+        }),
+        headers: classCsvTemplateHeaders,
     });
 
     const setIds = (ids: string[]) => {
@@ -578,7 +599,17 @@ export default function ClassesTable (props: Props) {
 
     const secondaryActions = [
         {
-            label: `Upload CSV`,
+            label: intl.formatMessage({
+                id: `entity.user.template.download.button`,
+            }),
+            icon: AssignmentReturnedIcon,
+            disabled: !canCreate,
+            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+        },
+        {
+            label: intl.formatMessage({
+                id: `entity.user.bulkImport.button`,
+            }),
             icon: CloudIcon,
             disabled: !canCreate,
             onClick: () => {

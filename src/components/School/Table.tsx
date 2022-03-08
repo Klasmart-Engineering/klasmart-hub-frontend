@@ -4,6 +4,10 @@ import UploadSchoolCsvDialog from "@/components/School/Dialog/CsvUpload";
 import EditSchoolDialog from "@/components/School/Dialog/Edit";
 import { Status } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import {
+    buildCsvTemplateOptions,
+    EMPTY_CSV_DATA,
+} from "@/utils/csv";
 import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
@@ -11,6 +15,7 @@ import {
 } from "@/utils/table";
 import {
     Add as AddIcon,
+    AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -95,6 +100,20 @@ export default function SchoolTable (props: Props) {
         },
     ];
 
+    const schoolCsvTemplateHeaders = [
+        `organization_name`,
+        `school_name`,
+        `school_shortcode`,
+        `program_name`,
+    ];
+
+    const csvExporter = buildCsvTemplateOptions({
+        filename: intl.formatMessage({
+            id: `entity.school.importTemplate.filename`,
+        }),
+        headers: schoolCsvTemplateHeaders,
+    });
+
     const editSelectedRow = (row: SchoolRow) => {
         setSelectedSchoolId(row.id);
         setOpenEditDialog(true);
@@ -155,7 +174,17 @@ export default function SchoolTable (props: Props) {
                     }}
                     secondaryActions={[
                         {
-                            label: `Upload CSV`,
+                            label: intl.formatMessage({
+                                id: `entity.user.template.download.button`,
+                            }),
+                            icon: AssignmentReturnedIcon,
+                            disabled: !canCreate,
+                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                        },
+                        {
+                            label: intl.formatMessage({
+                                id: `entity.user.bulkImport.button`,
+                            }),
                             icon: CloudIcon,
                             disabled: !canCreate,
                             onClick: () => {
