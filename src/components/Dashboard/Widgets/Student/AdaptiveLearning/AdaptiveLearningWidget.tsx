@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
             height: theme.spacing(7),
             backgroundColor: theme.palette.grey[100],
             borderRadius: theme.spacing(1.25),
+            margin: `0.2em`,
             [theme.breakpoints.down(`sm`)]: {
                 margin: `0.2em`,
             },
@@ -73,21 +74,33 @@ const useStyles = makeStyles((theme: Theme) =>
                 paddingTop: theme.spacing(.625),
                 fontSize: `.7rem`,
             },
+            [theme.breakpoints.down(`md`)]:{
+                fontSize: `.6rem`,
+            },
         },
         labelValue: {
             fontSize: `1.5rem`,
+            paddingLeft:theme.spacing(.625),
+            paddingRIght:theme.spacing(.625),
             color: theme.palette.info.light,
             [theme.breakpoints.down(`sm`)]: {
                 textAlign: `center`,
                 width: `100%`,
             },
+            [theme.breakpoints.down(`md`)]: {
+                fontSize: `1.2rem`,
+            },
         },
         labelType: {
             fontSize: `.8rem`,
             color: theme.palette.info.light,
+            [theme.breakpoints.down(`md`)]: {
+                fontSize: `.6rem`,
+            },
         },
         labelText: {
             display: `flex`,
+            justifyContent:`center`,
         },
         labelTextWrapper: {
             display: `flex`,
@@ -151,14 +164,18 @@ export default function AdaptiveLearningWidget (props: Props) {
                 id: `home.student.adaptiveLearningWidget.totalReviews`,
             }),
             value: 3,
-            type: `classes`,
+            type: intl.formatMessage({
+                id: `home.student.adaptiveLearningWidget.classes`,
+            }),
         },
         {
             dataName: intl.formatMessage({
                 id: `home.student.adaptiveLearningWidget.skillsImproved`,
             }),
             value: 6,
-            type: `skills`,
+            type: intl.formatMessage({
+                id: `home.student.adaptiveLearningWidget.skills`,
+            }),
         },
     ];
 

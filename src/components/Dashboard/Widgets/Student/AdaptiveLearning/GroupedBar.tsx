@@ -129,13 +129,20 @@ export default function GroupedBar (props: Props) {
                 display: `flex`,
                 alignItems: `center`,
                 justifyContent: `center`,
-                padding: `4px`,
+                padding: theme.spacing(.5),
             },
             htmlLabelTextForBarValue: {
                 fontSize: `.8rem`,
                 color: `#FFFFF`,
                 fontWeight: 600,
+                paddingTop:theme.spacing(.75),
                 letterSpacing: `-0.5px`,
+                [theme.breakpoints.down(`sm`)]: {
+                    fontSize: `.65rem`,
+                },
+                [theme.breakpoints.down(`md`)]: {
+                    fontSize: `.65rem`,
+                },
             },
         }));
     const classes = useStyles();
@@ -163,7 +170,7 @@ export default function GroupedBar (props: Props) {
         } as const);
     // Annotation Label Props
     const htmlLabelContainerStylesForAnnotationLabel = {
-        width: 65,
+        width: 50,
         height: 32,
         display: `flex`,
         alignItems: `center`,
