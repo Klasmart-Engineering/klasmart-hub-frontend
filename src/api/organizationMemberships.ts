@@ -184,6 +184,21 @@ export interface OrganizationMembershipConnectionNode {
     shortCode?: string;
     joinTimestamp?: string;
     user?: UserNode;
+    rolesConnection?: RolesConnection;
+}
+
+export interface SchoolMembershipConnectionNode {
+    school: {
+        id?: string;
+        name?: string;
+        status?: Status;
+    };
+}
+
+export interface RolesConnectionNode {
+    id?: string;
+    name?: string;
+    status?: Status;
 }
 
 export interface OrganizationMembershipsConnection {
@@ -194,11 +209,41 @@ export interface OrganizationMembershipsConnection {
         startCursor: string;
         endCursor: string;
     };
-    edges: {
-        node: OrganizationMembershipConnectionNode;
-    }[];
+    edges: OrganizationMembershipConnectionEdge[];
 }
 
+export interface SchoolMembershipsConnection {
+    totalCount?: number;
+    pageInfo?: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string;
+        endCursor: string;
+    };
+    edges: SchoolsMembershipConnectionEdge[];
+}
+
+export interface RolesConnection {
+    totalCount?: number;
+    pageInfo?: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string;
+        endCursor: string;
+    };
+    edges: RolesConnectionEdge[];
+}
+export interface OrganizationMembershipConnectionEdge {
+    node: OrganizationMembershipConnectionNode;
+}
+
+export interface SchoolsMembershipConnectionEdge {
+    node: SchoolMembershipConnectionNode;
+}
+
+export interface RolesConnectionEdge {
+    node: RolesConnectionNode;
+}
 export interface UserEdge {
     node: UserNode;
 }

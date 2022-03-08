@@ -1,4 +1,7 @@
 import {
+    OrganizationMembershipConnectionEdge,
+    RolesConnectionEdge,
+    SchoolsMembershipConnectionEdge,
     useGetPaginatedOrganizationMemberships,
     UserEdge,
 } from "@/api/organizationMemberships";
@@ -29,20 +32,51 @@ import React,
     useState,
 } from "react";
 
+const mapRoles = (edge: RolesConnectionEdge) => {
+    const role = edge.node;
+    return {
+        id: role.id,
+        name: role.name ?? ``,
+        status: role.status ?? Status.INACTIVE,
+    };
+};
+
+const mapOrganizationMembershipEdges = (edge: OrganizationMembershipConnectionEdge) => {
+    const organizationMembership = edge.node;
+    return {
+        joinTimestamp: organizationMembership.joinTimestamp,
+        status: organizationMembership.status,
+        roles: organizationMembership.rolesConnection?.edges.map(mapRoles),
+    };
+};
+
+const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
+    const schoolMembership = edge.node.school;
+
+    return {
+        id: schoolMembership.id,
+        name: schoolMembership.name,
+        status: schoolMembership.status,
+    };
+};
+
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
-    const organizationUserIsActive = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations[0];
+    const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
+    const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
+    const organizationUserIsActive = organizationMemberships?.find(organization => organization.status === Status.ACTIVE) ?? organizationMemberships?.[0];
+
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
         familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
-        email: user.contactInfo.email ?? ``,
-        phone: user.contactInfo.phone ?? ``,
-        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
-        schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
-        status: organizationUserIsActive.userStatus ?? Status.INACTIVE,
-        joinDate: new Date(organizationUserIsActive.joinDate),
+        email: user.contactInfo?.email ?? ``,
+        phone: user.contactInfo?.phone ?? ``,
+        roleNames: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.name).sort(sortRoleNames) ?? [],
+        schoolNames: schoolMemberships?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+        status: organizationUserIsActive?.status ?? Status.INACTIVE,
+        joinDate: new Date(organizationUserIsActive?.joinTimestamp ?? ``),
     };
 };
 

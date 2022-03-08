@@ -1,4 +1,7 @@
-import { OrganizationMembershipsConnection } from "./organizationMemberships";
+import {
+    OrganizationMembershipsConnection,
+    SchoolMembershipsConnection,
+} from "./organizationMemberships";
 import { RoleSummaryNode } from "./roles";
 import { SchoolSummaryNode } from "./schools";
 import { getAuthEndpoint } from "@/config";
@@ -129,6 +132,7 @@ export interface UserNode {
     gender?: string;
     avatar?: string;
     organizationMembershipsConnection?: OrganizationMembershipsConnection;
+    schoolMembershipsConnection?: SchoolMembershipsConnection;
 }
 
 interface GetMeRequest {
