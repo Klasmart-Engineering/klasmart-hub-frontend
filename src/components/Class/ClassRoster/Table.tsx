@@ -308,7 +308,9 @@ export default function ClassRoster (props: Props) {
                     groupBy="role"
                     subgroupBy={subgroupBy}
                     primaryAction={{
-                        label: `Add User`,
+                        label: intl.formatMessage({
+                            id: `class_addUserLabel`,
+                        }),
                         icon: PersonAddIcon,
                         // disabled: !canCreate,
                         onClick: () => setSchoolRosterDialogOpen(true),
