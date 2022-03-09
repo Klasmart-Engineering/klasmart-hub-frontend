@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.39.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.39.0%0D2.38.1) (2022-03-09)
+
+
+### ✨ Features
+
+* **AD-2147:** add school and class csv templates ([8ee9c45](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/8ee9c4531f97752c0cf0de155d4f7b110a74e4f8)), closes [AD-2147](https://calmisland.atlassian.net/browse/AD-2147)
+
 ### [2.38.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.38.1%0D2.38.0) (2022-03-08)
 
 
