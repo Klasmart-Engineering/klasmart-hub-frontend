@@ -277,24 +277,24 @@ export default function SchoolRoster (props: Props) {
                     order="asc"
                     subgroupBy={subgroupBy}
                     hasNextPage={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection.pageInfo.hasNextPage :
-                        teachersData?.eligibleTeachersConnection.pageInfo.hasNextPage
+                        studentsData?.eligibleStudentsConnection?.pageInfo?.hasNextPage :
+                        teachersData?.eligibleTeachersConnection?.pageInfo?.hasNextPage
                     }
                     hasPreviousPage={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection.pageInfo.hasPreviousPage :
-                        teachersData?.eligibleTeachersConnection.pageInfo.hasPreviousPage
+                        studentsData?.eligibleStudentsConnection?.pageInfo?.hasPreviousPage :
+                        teachersData?.eligibleTeachersConnection?.pageInfo?.hasPreviousPage
                     }
                     total={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection.totalCount :
-                        teachersData?.eligibleTeachersConnection.totalCount
+                        studentsData?.eligibleStudentsConnection?.totalCount :
+                        teachersData?.eligibleTeachersConnection?.totalCount
                     }
                     startCursor={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection.pageInfo.startCursor :
-                        teachersData?.eligibleTeachersConnection.pageInfo.startCursor
+                        studentsData?.eligibleStudentsConnection?.pageInfo?.startCursor :
+                        teachersData?.eligibleTeachersConnection?.pageInfo?.startCursor
                     }
                     endCursor={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection.pageInfo.endCursor :
-                        teachersData?.eligibleTeachersConnection.pageInfo.endCursor
+                        studentsData?.eligibleStudentsConnection?.pageInfo?.endCursor :
+                        teachersData?.eligibleTeachersConnection?.pageInfo?.endCursor
                     }
                     localization={getTableLocalization(intl, {
                         toolbar: {

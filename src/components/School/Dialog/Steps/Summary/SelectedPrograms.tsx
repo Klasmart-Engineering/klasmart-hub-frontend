@@ -93,7 +93,7 @@ export default function SelectedSchoolPrograms (props: Props) {
             rows={rows}
             rowsPerPage={serverPagination.rowsPerPage}
             loading={loading}
-            total={data?.programsConnection.totalCount}
+            total={data?.programsConnection?.totalCount}
             hasNextPage={data?.programsConnection?.pageInfo.hasNextPage}
             hasPreviousPage={data?.programsConnection?.pageInfo.hasPreviousPage}
             startCursor={data?.programsConnection?.pageInfo.startCursor}

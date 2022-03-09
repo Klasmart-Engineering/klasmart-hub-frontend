@@ -75,7 +75,7 @@ export default function RolesPage () {
         notifyOnNetworkStatusChange: true,
     });
 
-    const pageInfo = rolesData?.rolesConnection.pageInfo;
+    const pageInfo = rolesData?.rolesConnection?.pageInfo;
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
@@ -113,7 +113,7 @@ export default function RolesPage () {
     ]);
 
     useEffect(() => {
-        const rows = rolesData?.rolesConnection.edges?.map(mapRoleRow);
+        const rows = rolesData?.rolesConnection?.edges?.map(mapRoleRow) ?? [];
         setRows(rows ?? []);
     }, [ rolesData ]);
 
@@ -126,7 +126,7 @@ export default function RolesPage () {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             search={serverPagination.search}
-            total={rolesData?.rolesConnection.totalCount}
+            total={rolesData?.rolesConnection?.totalCount}
             hasNextPage={pageInfo?.hasNextPage}
             hasPreviousPage={pageInfo?.hasPreviousPage}
             startCursor={pageInfo?.startCursor}

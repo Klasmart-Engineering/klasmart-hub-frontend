@@ -126,6 +126,7 @@ export interface DeleteRoleUserRow extends UserRow {
 
 export const mapDeleteRoleUserRow = (edge: UserEdge) => {
     const user = edge.node;
+
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
@@ -133,13 +134,13 @@ export const mapDeleteRoleUserRow = (edge: UserEdge) => {
         avatar: user.avatar ?? ``,
         email: user?.contactInfo?.email ?? ``,
         phone: user?.contactInfo?.phone ?? ``,
-        roleNames: user?.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
-        schoolNames: user?.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
-        status: user.organizations?.[0].userStatus,
-        joinDate: new Date(user?.organizations?.[0]?.joinDate),
+        roleNames: user?.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames) ?? [],
+        schoolNames: user?.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+        status: user.organizations?.[0]?.userStatus ?? ``,
+        joinDate: user?.organizations?.[0]?.joinDate ? new Date(user?.organizations?.[0]?.joinDate) : new Date(),
         newRoleId: ``,
         gender: user.gender ?? ``,
-        userShortCode: user?.organizations[0].userShortCode ?? ``,
+        userShortCode: user?.organizations?.[0]?.userShortCode ?? ``,
     };
 };
 
@@ -221,7 +222,7 @@ export default function DeleteRoleDialog (props: Props) {
         },
     });
 
-    const pageInfo = usersData?.usersConnection.pageInfo;
+    const pageInfo = usersData?.usersConnection?.pageInfo;
 
     const onPageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
@@ -261,8 +262,8 @@ export default function DeleteRoleDialog (props: Props) {
     ]);
 
     useEffect(() => {
-        const rows = usersData?.usersConnection.edges?.map(mapDeleteRoleUserRow);
-        setRows(rows ?? []);
+        const rows = usersData?.usersConnection?.edges?.map(mapDeleteRoleUserRow) ?? [];
+        setRows(rows);
     }, [ usersData ]);
 
     useEffect(() => {
@@ -503,8 +504,9 @@ export default function DeleteRoleDialog (props: Props) {
                             roles={roles.filter((role) => role.role_id !== row.id)}
                             roleId={roleId}
                             textFieldLabel={`Reassign all users to`}
-                            onChange={reAssignAllUsersHandler}
-                        />
+                            handleCopyFromRoleReset={() => { console.log(`function not implemented`);}}
+                            replayButtonIsVisible={false}
+                            onChange={reAssignAllUsersHandler}                        />
 
                         <Paper className={classes.root}>
                             <CursorTable
@@ -521,7 +523,7 @@ export default function DeleteRoleDialog (props: Props) {
                                 hasPreviousPage={!loadingOrganizationMemberships ? pageInfo?.hasPreviousPage : false}
                                 startCursor={pageInfo?.startCursor}
                                 endCursor={pageInfo?.endCursor}
-                                total={usersData?.usersConnection.totalCount}
+                                total={usersData?.usersConnection?.totalCount}
                                 localization={getTableLocalization(intl, {
                                     toolbar: {
                                         title: intl.formatMessage({

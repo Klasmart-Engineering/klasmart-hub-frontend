@@ -107,11 +107,11 @@ export default function SchoolsPage (props: Props) {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             search={serverPagination.search}
-            total={data?.schoolsConnection.totalCount}
-            hasNextPage={data?.schoolsConnection.pageInfo.hasNextPage}
-            hasPreviousPage={data?.schoolsConnection.pageInfo.hasPreviousPage}
-            startCursor={data?.schoolsConnection.pageInfo.startCursor}
-            endCursor={data?.schoolsConnection.pageInfo.endCursor}
+            total={data?.schoolsConnection?.totalCount}
+            hasNextPage={data?.schoolsConnection?.pageInfo?.hasNextPage}
+            hasPreviousPage={data?.schoolsConnection?.pageInfo?.hasPreviousPage}
+            startCursor={data?.schoolsConnection?.pageInfo?.startCursor}
+            endCursor={data?.schoolsConnection?.pageInfo?.endCursor}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />
