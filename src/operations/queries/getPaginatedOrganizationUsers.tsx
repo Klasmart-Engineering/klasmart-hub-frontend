@@ -1,5 +1,6 @@
 import { UserFilter } from "@/api/organizationMemberships";
 import { UserRow } from "@/components/User/Table";
+import { ROLE_SUMMARY_NODE_FIELDS } from "@/operations/fragments";
 import {
     UuidExclusiveOperator,
     UuidOperator,
@@ -146,6 +147,8 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
 };
 
 export const GET_PAGINATED_ORGANIZATION_USERS = gql`
+    ${ROLE_SUMMARY_NODE_FIELDS}
+    
     query getOrganizationUsers(
         $direction: ConnectionDirection!
             $count: PageSize
@@ -174,44 +177,26 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                     familyName
                     avatar
                     status
+                    organizations {
+                        name
+                        userStatus
+                        joinDate
+                        userShortCode
+                    }
+                    schools {
+                        id
+                        name
+                        status
+                    }
+                    roles {
+                        ...RoleSummaryNodeFields
+                    }
                     contactInfo {
                         email
                         phone
                     }
                     dateOfBirth
                     gender
-                    organizationMembershipsConnection(count: 50, direction: FORWARD) {
-                        edges {
-                            node {
-                                joinTimestamp
-                                status
-                                shortCode
-                                organization {
-                                    name
-                                }
-                                rolesConnection(count: 50, direction: FORWARD) {
-                                    edges {
-                                        node {
-                                            id
-                                            name
-                                            status
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    schoolMembershipsConnection(count: 50, direction: FORWARD) {
-                        edges {
-                            node {
-                                school {
-                                    id
-                                    name
-                                    status
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
