@@ -147,6 +147,7 @@ export default function UserTable (props: Props) {
         `organization_name`,
         `user_given_name`,
         `user_family_name`,
+        `user_username`,
         `user_shortcode`,
         `user_email`,
         `user_phone`,
