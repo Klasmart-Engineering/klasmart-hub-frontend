@@ -98,13 +98,28 @@ export default function UserProfileMenu (props: Props) {
         setAnchorEl(null);
     };
 
-    function handleSignOut () {
+    async function handleSignOut () {
         try {
             setOrganizationStack([]);
             const stringifiedQuery = queryString.stringify({
                 continue: window.location.href,
             });
-            window.location.href = `${getAuthEndpoint()}logout?${stringifiedQuery}`;
+
+            if (process.env.AUTH_LOGOUT_ROUTE_ENABLED === `true`) {
+                // TODO: ATH-722 remove AUTH_LOGOUT_ROUTE_ENABLED feature flag and `else` condition
+                // once all environments have auth-frontend >=2.10.4 deployed
+                window.location.href = `${getAuthEndpoint()}logout?${stringifiedQuery}`;
+            } else {
+                const headers = new Headers();
+                headers.append(`Accept`, `application/json`);
+                headers.append(`Content-Type`, `application/json`);
+                await fetch(`${getAuthEndpoint()}signout`, {
+                    credentials: `include`,
+                    headers,
+                    method: `GET`,
+                });
+                window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
+            }
         } catch (e) {
             console.error(e);
         }
