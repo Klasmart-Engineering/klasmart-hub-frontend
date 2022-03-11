@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime';
 import JoinedOrganizationTable from './JoinedOrganizationTable';
-import { LEAVE_MEMBERSHIP } from '@/operations/mutations/leaveMembership';
+import { DELETE_USER_IN_ORGANIZATION } from '@/operations/mutations/deleteUser';
 import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import { MockedResponse } from '@apollo/client/testing';
 import {
@@ -57,10 +57,10 @@ const mocks: MockedResponse[] = [
     },
     {
         request: {
-            query: LEAVE_MEMBERSHIP,
+            query: DELETE_USER_IN_ORGANIZATION,
             variables: {
-                organization_id: mockOrgId,
-                user_id: mockUserId,
+                organizationId: mockOrgId,
+                userIds: [ mockUserId ],
             },
         },
         result: () => {

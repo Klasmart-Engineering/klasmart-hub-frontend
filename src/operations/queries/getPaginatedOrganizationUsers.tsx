@@ -2,6 +2,7 @@ import { UserFilter } from "@/api/organizationMemberships";
 import { UserRow } from "@/components/User/Table";
 import { ROLE_SUMMARY_NODE_FIELDS } from "@/operations/fragments";
 import {
+    Status,
     UuidExclusiveOperator,
     UuidOperator,
 } from "@/types/graphQL";
@@ -60,7 +61,26 @@ export const buildOrganizationUserFilter = (filter: ProgramQueryFilter): UserFil
         operator: `eq`,
         value: filter.organizationId,
     },
-    AND: [ buildOrganizationUserSearchFilter(filter.search), ...filter.filters ],
+    AND: [
+        buildOrganizationUserSearchFilter(filter.search),
+        ...filter.filters,
+        {
+            OR: [
+                {
+                    organizationUserStatus: {
+                        operator: `eq`,
+                        value: Status.ACTIVE,
+                    },
+                },
+                {
+                    organizationUserStatus: {
+                        operator: `eq`,
+                        value: Status.INACTIVE,
+                    },
+                },
+            ],
+        },
+    ],
 });
 
 export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['filters'] = []): UserFilter[] => {

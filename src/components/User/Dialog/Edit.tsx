@@ -11,7 +11,7 @@ import {
 } from "./shared";
 import {
     UpdateOrganizationMembershipRequest,
-    useDeleteOrganizationMembership,
+    useDeleteUsersInOrganization,
     useGetOrganizationUserNode,
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
@@ -85,21 +85,22 @@ export default function EditUserDialog (props: Props) {
     const [ formState, setFormState ] = useState<State>(defaultState);
     const [ formErrors, setFormErrors ] = useState<Errors>({});
     const [ valid, setValid ] = useState(true);
-    const organization = useCurrentOrganization();
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.organization_id ?? ``;
     const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationUserNode({
         fetchPolicy: `cache-and-network`,
         variables: {
             id: userId ?? ``,
-            organizationId: organization?.organization_id,
+            organizationId,
         },
-        skip: !open || !organization?.organization_id || !userId,
+        skip: !open || !organizationId || !userId,
     });
 
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
-    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
+    const [ deleteUserInOrganization ] = useDeleteUsersInOrganization();
 
     useEffect(() => {
-        if (!open || !userId || !organization) return;
+        if (!open || !userId || !organizationId) return;
         const state = organizationMembershipData?.userNode ? mapUserNodeToFormState(organizationMembershipData.userNode) : defaultState;
         setInitialFormState(state);
         setFormState(state);
@@ -107,7 +108,7 @@ export default function EditUserDialog (props: Props) {
     }, [
         open,
         userId,
-        organization?.organization_id,
+        organizationId,
     ]);
 
     useEffect(() => {
@@ -153,7 +154,7 @@ export default function EditUserDialog (props: Props) {
 
     const handleEdit = async () => {
         try {
-            const variables = mapFormStateToUpdateOrganizationMembershipRequest(formState, userId ?? ``, organization?.organization_id ?? ``);
+            const variables = mapFormStateToUpdateOrganizationMembershipRequest(formState, userId ?? ``, organizationId ?? ``);
             await updateOrganizationMembership({
                 variables,
             });
@@ -169,7 +170,7 @@ export default function EditUserDialog (props: Props) {
     };
 
     const handleDelete = async () => {
-        if (!(userId && organization?.organization_id)) return;
+        if (!(userId && organizationId)) return;
         const { givenName, familyName } = organizationMembershipData?.userNode ?? {};
         const userName = `${givenName} ${familyName}`;
         if (!(await deletePrompt({
@@ -179,10 +180,10 @@ export default function EditUserDialog (props: Props) {
             entityName: userName,
         }))) return;
         try {
-            await deleteOrganizationMembership({
+            await deleteUserInOrganization({
                 variables: {
-                    organization_id: organization.organization_id,
-                    user_id: userId,
+                    organizationId,
+                    userIds: [ userId ],
                 },
             });
             onClose(true);

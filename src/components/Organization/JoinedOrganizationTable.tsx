@@ -116,8 +116,8 @@ export default function JoinedOrganizationTable (props: Props) {
         try {
             await leaveMembership({
                 variables: {
-                    organization_id: membership.organization_id,
-                    user_id: userId,
+                    organizationId: membership.organization_id,
+                    userIds: [ userId ],
                 },
             });
             removeOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
