@@ -8,6 +8,10 @@ export const redirectToAuth = (options?: RedirectToAuthOptions) => {
     const params = new URLSearchParams({
         continue: options?.withParams ? window.location.href : window.location.origin,
     });
-    const redirectURL = new URL(`${AuthClient.baseURL}logout?${params.toString()}`);
-    window.location.href = redirectURL.href;
+
+    if (process.env.AUTH_LOGOUT_ROUTE_ENABLED === `true`) {
+        window.location.href = `${AuthClient.baseURL}logout?${params.toString()}`;
+    } else {
+        window.location.href = `${AuthClient.baseURL}?${params.toString()}#/`;
+    }
 };
