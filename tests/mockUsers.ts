@@ -139,6 +139,7 @@ export const mockUserNode: UserNode = {
     contactInfo: {
         email: `test@test.com`,
         phone: null,
+        username: `username`,
     },
     alternateContactInfo: {
         email: `alt@alttest.com`,

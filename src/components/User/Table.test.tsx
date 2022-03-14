@@ -24,21 +24,18 @@ const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     givenName: edge.node.givenName ?? ``,
     familyName: edge.node.familyName ?? ``,
     avatar: edge.node.avatar ?? ``,
-    email: edge.node.contactInfo.email ?? ``,
-    phone: edge.node.contactInfo.phone ?? ``,
-    roleNames: edge.node.roles.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames),
-    schoolNames: edge.node.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
-    status: edge.node.organizations?.[0].userStatus,
-    joinDate: new Date(edge.node.organizations?.[0].joinDate),
+    email: edge.node.contactInfo?.email ?? ``,
+    phone: edge.node.contactInfo?.phone ?? ``,
+    roleNames: edge.node.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames) ?? [],
+    schoolNames: edge.node.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+    status: edge.node.organizations?.[0].userStatus ?? Status.INACTIVE,
+    joinDate: edge.node.organizations ? new Date(edge.node.organizations?.[0].joinDate) : new Date(),
 })) ?? [];
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -87,7 +84,7 @@ test(`useGetTableFilters hook should return mapped user roles data for filter dr
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrgId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrgId, {
         queryUserRoles: true,
     }), {
         wrapper,

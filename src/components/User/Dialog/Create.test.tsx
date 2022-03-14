@@ -46,7 +46,7 @@ const mockCreateOrganizationMembership = jest.fn() as jest.Mocked<
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrg.organization_id,
+            id: mockOrg.organization_id,
         }),
     };
 });
@@ -110,7 +110,7 @@ const fillValidForm = async () => {
     enter.givenName(validOrganizationMembership.user.given_name);
     enter.familyName(validOrganizationMembership.user.family_name);
     enter.contactInfo(validOrganizationMembership.user.email);
-    await enter.roles(validOrganizationMembership.roles.map(({ role_id }) => role_id));
+    await enter.roles(validOrganizationMembership.roles.map((role) => role.role_id));
 };
 
 beforeAll(() => {
@@ -181,7 +181,7 @@ describe(`submitting the form`, () => {
                 gender: UserGenders.FEMALE,
                 given_name: validOrganizationMembership.user.given_name,
                 organization_id: validOrganizationMembership.organization_id,
-                organization_role_ids: validOrganizationMembership.roles.map(({ role_id }) => role_id),
+                organization_role_ids: validOrganizationMembership.roles.map((role) => role.role_id),
                 phone: undefined,
                 school_ids: [],
                 shortcode: ``,

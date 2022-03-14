@@ -1,5 +1,5 @@
+import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import { useOrganizationStack } from "@/store/organizationMemberships";
-import { OrganizationMembership } from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     getHighestRole,
@@ -8,8 +8,8 @@ import {
 import {
     lighten,
     List,
-    ListItem,
     ListItemAvatar,
+    ListItemButton,
     ListItemText,
 } from "@mui/material";
 import {
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    onOrganizationChange: (membership: OrganizationMembership) => void;
+    onOrganizationChange?: (membership: OrganizationMembershipConnectionNode) => void;
 }
 
 export default function OrganizationMenuList (props: Props) {
@@ -56,21 +56,22 @@ export default function OrganizationMenuList (props: Props) {
     const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
 
     const currentOrganizationMembership = organizationMembershipStack[0];
-    const organizationMemberships = organizationMembershipStack.slice().sort((a, b) => a.organization?.organization_name?.localeCompare(b.organization?.organization_name ?? ``) ?? 0);
+    const organizationMemberships = organizationMembershipStack.slice().sort((a, b) => a.organization?.name?.localeCompare(b.organization?.name ?? ``) ?? 0);
 
-    const handleSelectOrganization = (membership: OrganizationMembership) => {
-        if (!membership.organization || membership.organization_id === currentOrganizationMembership?.organization_id) return;
-        onOrganizationChange(membership);
+    const handleSelectOrganization = (membership: OrganizationMembershipConnectionNode) => {
+        if (membership.organization?.id === currentOrganizationMembership?.organization?.id) return;
+        onOrganizationChange?.(membership);
         selectOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
     };
 
     return (
         <List dense>
             {organizationMemberships?.map((membership) => {
-                const sortedRoleNames = membership?.roles
-                    ?.map((r) => r.role_name)
-                    .filter((roleName): roleName is string => !!roleName);
-                const highestRole = getHighestRole(sortedRoleNames ?? []);
+                const roleNames = membership?.rolesConnection?.edges
+                    .map((edge) => edge.node.name)
+                    .filter((roleName): roleName is string => !!roleName)
+                    ?? [];
+                const highestRole = getHighestRole(roleNames);
                 const translatedRole = highestRole
                     ? (roleNameTranslations[highestRole]
                         ? intl.formatMessage({
@@ -80,24 +81,25 @@ export default function OrganizationMenuList (props: Props) {
                     : highestRole;
 
                 return (
-                    <ListItem
-                        key={membership.organization_id}
-                        button
+                    <ListItemButton
+                        key={membership.organization?.id}
                         color="primary"
+                        role="option"
+                        aria-selected={membership.organization?.id === currentOrganizationMembership?.organization?.id}
                         className={clsx({
-                            [classes.selectedOrganization]: membership.organization_id === currentOrganizationMembership?.organization_id,
+                            [classes.selectedOrganization]: membership.organization?.id === currentOrganizationMembership?.organization?.id,
                         })}
                         onClick={() => handleSelectOrganization(membership)}
                     >
                         <ListItemAvatar>
                             <OrganizationAvatar
-                                name={membership.organization?.organization_name ?? ``}
+                                name={membership.organization?.name ?? ``}
                                 src={membership.organization?.branding?.iconImageURL?? ``}
                                 color={membership.organization?.branding?.primaryColor ?? undefined}
                             />
                         </ListItemAvatar>
                         <ListItemText
-                            primary={membership.organization?.organization_name ?? intl.formatMessage({
+                            primary={membership.organization?.name ?? intl.formatMessage({
                                 id: `organization.unknown`,
                             })}
                             primaryTypographyProps={{
@@ -110,7 +112,7 @@ export default function OrganizationMenuList (props: Props) {
                                 className: clsx(`MuiListItemText-secondary`, classes.entityName),
                             }}
                         />
-                    </ListItem>
+                    </ListItemButton>
                 );
             })}
         </List>

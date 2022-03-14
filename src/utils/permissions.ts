@@ -660,11 +660,8 @@ function buildPermissionCondition (permissionOption: PermissionOption): Permissi
     };
 }
 
-const permissionsInOrganization = (organizationId: string, data: GetOrganizationMembershipsPermissionsResponse | undefined) => {
-    return new Set((data?.me?.memberships ?? [])
-        .filter((membership) => membership.organization_id === organizationId)
-        .flatMap((membership) => (membership.roles ?? [])
-            .flatMap((role) => role.permissions.map((permission) => permission.permission_id as PermissionId))));
+const permissionsInOrganization = (data: GetOrganizationMembershipsPermissionsResponse | undefined) => {
+    return new Set((data?.me?.membership?.roles ?? []).flatMap((role) => role.permissions.map((permission) => permission.permission_id as PermissionId)));
 };
 
 const hasRequiredPermissions = (actualPermissions: Set<PermissionId>, permissionOption: PermissionOption) => {
@@ -700,9 +697,14 @@ export function usePermission (permissionOption: PermissionOption, wait?: undefi
 export function usePermission (permissionOption: PermissionOption, wait: boolean): UsePermissionResult;
 export function usePermission (permissionOption: PermissionOption, wait?: boolean | undefined): boolean | UsePermissionResult {
     const currentOrganizationMembership = useCurrentOrganizationMembership();
-    const organizationId = currentOrganizationMembership?.organization_id ?? ``;
+    const organizationId = currentOrganizationMembership?.organization?.id ?? ``;
 
-    const { data, loading } = useGetOrganizationMembershipsPermissions();
+    const { data, loading } = useGetOrganizationMembershipsPermissions({
+        variables: {
+            organizationId,
+        },
+        skip: !organizationId,
+    });
 
     if (loading && wait) {
         return {
@@ -710,7 +712,7 @@ export function usePermission (permissionOption: PermissionOption, wait?: boolea
         };
     }
 
-    const actualPermissions = permissionsInOrganization(organizationId, data);
+    const actualPermissions = permissionsInOrganization(data);
     const hasPermission = hasRequiredPermissions(actualPermissions, permissionOption);
 
     if (!wait) return hasPermission;

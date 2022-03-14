@@ -1,66 +1,48 @@
-import { useGetOrganizationMemberships } from "@/api/organizations";
+import { useQueryMyUser } from "@/api/myUser";
+import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import Layout from "@/layout";
-import { ActionTypes } from "@/store/actions";
-import { useOrganizationStack } from "@/store/organizationMemberships";
-import { Store } from "@/store/store";
-import {
-    isActive,
-    OrganizationMembership,
-} from "@/types/graphQL";
+import { organizationMembershipStackState } from "@/store/organizationMemberships";
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
-import {
-    isEdge,
-    isIE,
-    isIOS,
-    isMobile,
-    isMobileSafari,
-} from "react-device-detect";
-import { useStore } from "react-redux";
+import { useSetRecoilState } from "recoil";
 
 interface Props {
 }
 
 export default function App (props: Props) {
-    const [ , setOrganizationMembershipStack ] = useOrganizationStack();
-
-    const store = useStore<Store>();
-    useEffect(() => {
-        const userInformation = {
-            isEdge,
-            isIE,
-            isIOS,
-            isMobile,
-            isMobileSafari,
-        };
-
-        store.dispatch({
-            type: ActionTypes.USER_AGENT,
-            payload: userInformation,
-        });
-    }, []);
-
+    const setOrganizationMembershipStack = useSetRecoilState(organizationMembershipStackState);
     const {
-        data: organizationsData,
-        loading: organizationsLoading,
-    } = useGetOrganizationMemberships();
+        data: myUserData,
+        loading: myUserLoading,
+        error: myUserError,
+    } = useQueryMyUser();
+
+    const setOrganizationMemberships = (memberships: OrganizationMembershipConnectionNode[]) => {
+        setOrganizationMembershipStack((membershipStack) => {
+            const sortedMemberships = memberships.sort((a, b) => {
+                const aIndex = membershipStack.findIndex((membership) => membership.organization?.id === a.organization?.id);
+                const bIndex = membershipStack.findIndex((membership) => membership.organization?.id === b.organization?.id);
+                if (aIndex === bIndex && a.organization?.name && b.organization?.name) return a.organization.name.localeCompare(b.organization.name);
+                return aIndex - bIndex;
+            });
+            return isEqual(sortedMemberships, membershipStack) ? membershipStack : sortedMemberships;
+        });
+    };
 
     useEffect(() => {
-        if (organizationsLoading) return;
-        const memberships = organizationsData?.me?.memberships?.filter((membership): membership is OrganizationMembership => !!membership);
-        setOrganizationMembershipStack((membershipStack) => {
-            const updatedMemberships = memberships
-                ?.sort((a, b) => {
-                    const aIndex = membershipStack.findIndex((membership) => membership.organization_id === a.organization_id);
-                    const bIndex = membershipStack.findIndex((membership) => membership.organization_id === b.organization_id);
-                    if (aIndex === bIndex && a.organization?.organization_name && b.organization?.organization_name) return a.organization.organization_name.localeCompare(b.organization.organization_name);
-                    return aIndex - bIndex;
-                })
-                .filter(isActive) ?? [];
-            return isEqual(updatedMemberships, membershipStack) ? membershipStack : updatedMemberships;
-        });
-    }, [ organizationsData ]);
+        if (myUserLoading) return;
+        if (!myUserData || myUserError) {
+            setOrganizationMemberships([]);
+            return;
+        }
+        const organizationMemberships = myUserData.myUser.node.organizationMembershipsConnection.edges.map((edge) => edge.node);
+        setOrganizationMemberships(organizationMemberships);
+    }, [
+        myUserData,
+        myUserLoading,
+        myUserError,
+    ]);
 
     return (
         <Layout />

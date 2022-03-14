@@ -32,7 +32,7 @@ export default function TodaysSchedule () {
     const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
     const unixEndOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
 
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const {
         data: schedulesData,
         isFetching: isSchedulesFetching,

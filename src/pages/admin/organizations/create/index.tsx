@@ -1,17 +1,14 @@
-import { useGetOrganizationMembershipsPermissions } from "@/api/organizationMemberships";
+import { useQueryMyUser } from "@/api/myUser";
 import {
     useAddUserToOrganization,
     useCreateOrganization,
-    useGetOrganizationMemberships,
     useSetOrganizationBranding,
 } from "@/api/organizations";
-import { userProfileVar } from "@/cache";
 import OrganizationForm,
 { OrganizationTabName } from "@/components/Organization/Form";
 import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
-import { useReactiveVar } from "@apollo/client";
 import {
     Box,
     Grid,
@@ -61,7 +58,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function CreateOrganizationPage () {
     const classes = useStyles();
-    const userProfile = useReactiveVar(userProfileVar);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ isValid, setValid ] = useState(false);
@@ -69,12 +65,11 @@ export default function CreateOrganizationPage () {
     const [ createOrganization ] = useCreateOrganization();
     const [ addUserToOrg ] = useAddUserToOrganization();
     const [ setOrganizationBranding ] = useSetOrganizationBranding();
-    const { refetch: refetchOrganizationMembershipsPermissions } = useGetOrganizationMembershipsPermissions({
+    const { data: myUserData, refetch: refetchMyUser } = useQueryMyUser({
         nextFetchPolicy: `network-only`,
     });
-    const { refetch: refetchOrganizationMemberships } = useGetOrganizationMemberships({
-        nextFetchPolicy: `network-only`,
-    });
+
+    const currentUser = myUserData?.myUser.node;
     const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
 
     const tabs = [
@@ -97,10 +92,11 @@ export default function CreateOrganizationPage () {
     };
 
     const handleCreate = async () => {
+        if (!currentUser?.id) return;
         try {
             const createOrganizationResp = await createOrganization({
                 variables: {
-                    user_id: userProfile.user_id,
+                    user_id: currentUser.id,
                     ...organizationState,
                 },
             });
@@ -117,13 +113,13 @@ export default function CreateOrganizationPage () {
             });
             const organizationMembershipResp = await addUserToOrg({
                 variables: {
-                    user_id: userProfile.user_id,
+                    user_id: currentUser.id,
                     organization_id: organization_id,
                 },
             });
             const organizationMembership = organizationMembershipResp.data?.organization.addUser;
             if (!organizationMembership) throw Error(`No organization joined`);
-            await Promise.all([ refetchOrganizationMemberships(), refetchOrganizationMembershipsPermissions() ]);
+            await refetchMyUser();
             history.goBack();
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_createSuccess`,

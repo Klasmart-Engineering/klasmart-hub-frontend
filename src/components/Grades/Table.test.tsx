@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime';
 import Grades from './Table';
 import { NON_SPECIFIED } from "@/types/graphQL";
 import {
@@ -28,10 +27,7 @@ const data = {
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });

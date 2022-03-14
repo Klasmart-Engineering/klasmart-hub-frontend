@@ -121,7 +121,7 @@ export default function UserTable (props: Props) {
     const markInactivePrompt = useMarkInactiveEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { required } = useValidations();
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
@@ -138,7 +138,7 @@ export default function UserTable (props: Props) {
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
-    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+    } = useGetTableFilters(organizationId, {
         querySchools: true,
         queryUserRoles: true,
     });

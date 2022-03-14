@@ -4,6 +4,7 @@ import {
     fireEvent,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from '@testing-library/react';
 import {
     mockCategories,
@@ -16,10 +17,7 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -39,25 +37,29 @@ const formValue = {
     system: false,
 };
 
-test(`Subject form renders correctly`, async () => {
-    render(<SubjectsForm
-        value={formValue}
-        onChange={jest.fn()}
-        onValidation={jest.fn()}/>);
+test(`Subject form renders correctly`, () => {
+    render((
+        <SubjectsForm
+            value={formValue}
+            onChange={jest.fn()}
+            onValidation={jest.fn()}
+        />
+    ));
 
-    await waitFor(() => {
-        expect(screen.getByLabelText(`Subject Name`)).toBeInTheDocument();
-        expect(screen.getAllByText(/category/gi).length).toBeTruthy();
-        expect(screen.getAllByText(/subcategories/gi).length).toBeTruthy();
-        expect(screen.getByLabelText(`Subject Name`).value).toBe(``);
-    });
+    expect(screen.getByLabelText(`Subject Name`)).toBeInTheDocument();
+    expect(screen.getAllByText(`Category`)).toHaveLength(3);
+    expect(screen.getAllByText(`Subcategories`)).toHaveLength(3);
+    expect(screen.getByLabelText(`Subject Name`)).toHaveValue(``);
 });
 
 test(`Subjects form updates correct and opens categories selector`, async () => {
-    render(<SubjectsForm
-        value={formValue}
-        onChange={jest.fn()}
-        onValidation={jest.fn()}/>);
+    render((
+        <SubjectsForm
+            value={formValue}
+            onChange={jest.fn()}
+            onValidation={jest.fn()}
+        />
+    ));
 
     const name = screen.getByLabelText(`Subject Name`, {
         selector: `input`,

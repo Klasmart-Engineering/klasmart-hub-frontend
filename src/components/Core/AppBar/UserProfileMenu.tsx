@@ -1,12 +1,11 @@
 import UserProfileSwitcher from "./UserProfileSwitcher";
+import { authClient } from "@/api/auth/client";
+import { useQueryMyUser } from "@/api/myUser";
 import StyledButton from "@/components/styled/button";
-import {
-    getAuthEndpoint,
-    getCookieDomain,
-} from "@/config";
+import { getCookieDomain } from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import { useOrganizationStack } from "@/store/organizationMemberships";
-import { User } from "@/types/graphQL";
+import { organizationMembershipStackState } from "@/store/organizationMemberships";
+import { redirectToAuth } from "@/utils/routing";
 import {
     Box,
     ButtonBase,
@@ -27,20 +26,17 @@ import {
     LanguageSelect,
     UserAvatar,
 } from "kidsloop-px";
-import queryString from "querystring";
 import React,
 {
-    useEffect,
+    useMemo,
     useState,
 } from "react";
-import {
-    FormattedMessage,
-    useIntl,
-} from "react-intl";
+import { FormattedMessage } from "react-intl";
+import { useSetRecoilState } from "recoil";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        userEmail: {
+        contactInfo: {
             color: theme.palette.grey[600],
         },
         userProfileMenu: {
@@ -68,28 +64,29 @@ const StyledMenu = withStyles({
 ));
 
 interface Props {
-    user?: User | null;
 }
 
 export default function UserProfileMenu (props: Props) {
-    const { user } = props;
     const classes = useStyles();
-    const intl = useIntl();
-
-    const [ , setOrganizationStack ] = useOrganizationStack();
-
+    const setOrganizationStack = useSetRecoilState(organizationMembershipStackState);
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
-    const [ userName, setUserName ] = useState<string>(``);
+    const { data: meData } = useQueryMyUser();
 
-    useEffect(() => {
-        if (user) {
-            const givenName = user.given_name ?? ``;
-            const familyName = user.family_name ?? ``;
-            const fullName = givenName + ` ` + familyName;
-            const username = user.username ?? ``;
-            setUserName(fullName === ` ` ? username ?? `Name undefined` : fullName);
-        }
-    }, [ user ]);
+    const userName = useMemo(() => {
+        const givenName = meData?.myUser.node.givenName ?? ``;
+        const familyName = meData?.myUser.node.familyName ?? ``;
+        const fullName = `${givenName} ${familyName}`.trim();
+        const username = meData?.myUser.node.contactInfo?.username ?? ``;
+        return fullName === ` ` ? username ?? `Name undefined` : fullName;
+    }, [ meData ]);
+
+    const contactInfo = useMemo(() => {
+        const contactInfo = meData?.myUser.node.contactInfo;
+        const username = contactInfo?.username;
+        const email = contactInfo?.email;
+        const phone = contactInfo?.phone;
+        return username ?? email ?? phone ?? ``;
+    }, [ meData ]);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -98,17 +95,15 @@ export default function UserProfileMenu (props: Props) {
         setAnchorEl(null);
     };
 
-    function handleSignOut () {
+    const handleSignOut = async () => {
         try {
+            await authClient.signOut();
             setOrganizationStack([]);
-            const stringifiedQuery = queryString.stringify({
-                continue: window.location.href,
-            });
-            window.location.href = `${getAuthEndpoint()}logout?${stringifiedQuery}`;
+            redirectToAuth();
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     return (
         <Grid item>
@@ -140,7 +135,7 @@ export default function UserProfileMenu (props: Props) {
                 >
                     <UserAvatar
                         name={userName ?? ``}
-                        src={user?.avatar ?? ``}
+                        src={meData?.myUser.node?.avatar ?? ``}
                         size="large"
                     />
                     <Typography
@@ -150,9 +145,9 @@ export default function UserProfileMenu (props: Props) {
                     </Typography>
                     <Typography
                         variant="body2"
-                        className={classes.userEmail}
+                        className={classes.contactInfo}
                     >
-                        {user?.email ?? user?.phone}
+                        {contactInfo}
                     </Typography>
                 </Box>
                 <UserProfileSwitcher />

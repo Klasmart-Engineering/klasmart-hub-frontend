@@ -80,10 +80,7 @@ const mocks = [
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrganizationId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrganizationId,
+            id: mockOrganizationId,
         }),
     };
 });
@@ -121,7 +118,7 @@ test(`useGetTableFilters hook should return mapped age range data`, async () => 
             {children}
         </MockedProvider>
     );
-    const { result } = renderHook(() => useGetTableFilters(mockOrganizationId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrganizationId, {
         queryAgeRanges: true,
     }), {
         wrapper,

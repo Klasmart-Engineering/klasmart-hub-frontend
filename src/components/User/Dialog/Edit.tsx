@@ -86,11 +86,11 @@ export default function EditUserDialog (props: Props) {
     const [ formErrors, setFormErrors ] = useState<Errors>({});
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { data: organizationMembershipData, loading: loadingMembershipData } = useGetOrganizationUserNode({
         fetchPolicy: `cache-and-network`,
         variables: {
-            id: userId ?? ``,
+            userId: userId ?? ``,
             organizationId,
         },
         skip: !open || !organizationId || !userId,
@@ -170,7 +170,7 @@ export default function EditUserDialog (props: Props) {
     };
 
     const handleDelete = async () => {
-        if (!(userId && organizationId)) return;
+        if (!userId || !organizationId) return;
         const { givenName, familyName } = organizationMembershipData?.userNode ?? {};
         const userName = `${givenName} ${familyName}`;
         if (!(await deletePrompt({

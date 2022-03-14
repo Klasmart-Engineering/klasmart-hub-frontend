@@ -1,4 +1,4 @@
-import { UserNode } from "@/api/organizationMemberships";
+import { UserNode } from "@/api/users";
 import { Status } from "@/types/graphQL";
 
 export const mockOrgId = `c19de3cc-aa01-47f5-9f87-850eb70ae073`;
@@ -13,6 +13,7 @@ export const users: UserNode[] = [
         contactInfo: {
             email: `johnsmith@calmid.com`,
             phone: `01012345678`,
+            username: null,
         },
         givenName: `John`,
         familyName: `Smith`,
@@ -48,6 +49,7 @@ export const users: UserNode[] = [
         contactInfo: {
             email: `andrewheath@calmid.com`,
             phone: `01087654321`,
+            username: null,
         },
         givenName: `Andrew`,
         familyName: `Heath`,
@@ -101,7 +103,7 @@ export const mockPaginatedUsers = {
         },
         totalCount: 1,
     },
-};
+} as const;
 
 export const mockOrganizationMemberships = {
     organization: {

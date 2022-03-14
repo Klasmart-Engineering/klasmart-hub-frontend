@@ -6,7 +6,6 @@ import {
     usePermission as realUsePermission,
 } from "@/utils/permissions";
 import { renderHook } from '@testing-library/react-hooks';
-import each from "jest-each";
 
 const usePermission = (permission: PermissionOption, wait?: boolean) => {
     const { result } = renderHook(() => realUsePermission(permission, wait));
@@ -42,42 +41,16 @@ function mockPermissions (perms?: PermissionId[], isLoading?: boolean) {
     mockPermissionsAPI.mockReturnValue({
         data: {
             me: {
-                memberships: [
-                    {
-                        organization_id: mockOrganization.organization_id,
-                        roles: [
-                            {
-                                permissions: perms?.map(id => {
-                                    return {
-                                        permission_id: id,
-                                    };
-                                }) ?? [],
-                            },
-                        ],
-                    },
-                    // Other organization (which should be ignored) with all required perms
-                    {
-                        organization_id: `60ac0701-a032-47a5-b2d4-d18d1bd72fa5`,
-                        roles: [
-                            {
-                                permissions: [
-                                    {
-                                        permission_id: `library_200`,
-                                    },
-                                    {
-                                        permission_id: `assessments_400`,
-                                    },
-                                    {
-                                        permission_id: `reports_600`,
-                                    },
-                                    {
-                                        permission_id: `academic_profile_20100`,
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
+                membership: {
+                    organization_id: mockOrganization.organization_id,
+                    roles: [
+                        {
+                            permissions: perms?.map((id) => ({
+                                permission_id: id,
+                            })) ?? [],
+                        },
+                    ],
+                },
             },
         },
         loading: isLoading ?? false,
@@ -209,7 +182,7 @@ describe(`PermissionOption with OR and nested ANDs`, () => {
     });
 });
 
-each([ true, false ]).test(`wait=true when API response is loading returns loading UsePermissionResult when User hasPermission=%s`, (hasPermission) => {
+test.each([ true, false ])(`wait=true when API response is loading returns loading UsePermissionResult when User hasPermission=%s`, (hasPermission) => {
     mockPermissions(hasPermission ? [ `library_200` ] : [], true);
 
     expect(usePermission(`library_200`, true)).toEqual({
@@ -218,7 +191,7 @@ each([ true, false ]).test(`wait=true when API response is loading returns loadi
     });
 });
 
-each([ true, false ]).test(`wait=true when API response has loaded returns complete UsePermissionResult when User hasPermission=%s`, (hasPermission) => {
+test.each([ true, false ])(`wait=true when API response has loaded returns complete UsePermissionResult when User hasPermission=%s`, (hasPermission) => {
     mockPermissions(hasPermission ? [ `library_200` ] : [], false);
 
     expect(usePermission(`library_200`, true)).toEqual({

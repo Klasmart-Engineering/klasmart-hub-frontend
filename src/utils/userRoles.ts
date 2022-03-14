@@ -1,9 +1,7 @@
+import { useQueryMyUser } from "@/api/myUser";
 import { RoleSummaryNode } from "@/api/roles";
-import { useGetUserNode } from "@/api/users";
-import { userIdVar } from "@/cache";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { orderedSystemRoleNames } from "@/types/graphQL";
-import { useReactiveVar } from "@apollo/client";
 import { IntlShape } from "react-intl";
 
 export const roleNameTranslations: { [key: string]: string } = {
@@ -38,16 +36,9 @@ export const getHighestRole = (roles: string[]) => {
 };
 
 export const useIsSuperAdmin = () => {
-    const userId = useReactiveVar(userIdVar);
     const currentOrganization = useCurrentOrganization();
-    const { data: userData } = useGetUserNode({
-        variables: {
-            id: userId,
-            organizationId: currentOrganization?.organization_id ?? ``,
-        },
-        skip: !userId || !currentOrganization?.organization_id,
-    });
-    const roles = userData?.userNode?.roles?.filter((role: RoleSummaryNode) => role.organizationId === currentOrganization?.organization_id);
+    const { data: myUserData } = useQueryMyUser();
+    const roles = myUserData?.myUser?.node?.roles?.filter((role: RoleSummaryNode) => role.organizationId === currentOrganization?.id);
     return!!roles?.find((role) => role.name === `Super Admin`);
 };
 

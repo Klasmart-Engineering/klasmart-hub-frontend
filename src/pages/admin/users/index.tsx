@@ -49,7 +49,7 @@ export const mapUserRow = (edge: UserEdge) => {
 export default function UsersPage () {
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
@@ -117,7 +117,7 @@ export default function UsersPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     useEffect(() => {

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_ORGANIZATION_USER_NODE = gql`
-    query getOrganizationUserNode($id: ID!, $organizationId: UUID!) {
-        userNode(id: $id) {
+    query getOrganizationUserNode($userId: ID!, $organizationId: UUID!) {
+        userNode(id: $userId) {
             id
             givenName
             familyName
@@ -11,10 +11,12 @@ export const GET_ORGANIZATION_USER_NODE = gql`
             contactInfo {
                 email
                 phone
+                username
             }
             alternateContactInfo {
                 email
                 phone
+                username
             }
             roles {
                 id

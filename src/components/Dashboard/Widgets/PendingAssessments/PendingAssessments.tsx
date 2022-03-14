@@ -71,7 +71,7 @@ export default function PendingAssessmentsWidget () {
     const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const {
         data,

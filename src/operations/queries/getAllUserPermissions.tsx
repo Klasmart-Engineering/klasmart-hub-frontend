@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 
 export const GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS = gql`
-query {
+query($organizationId: ID!) {
     me {
-        memberships {
+        membership(organization_id: $organizationId) {
             organization_id
             roles {
                 permissions {

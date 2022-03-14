@@ -36,7 +36,7 @@ export default function AgeRangesPage () {
     });
 
     const paginationFilter = buildOrganizationAgeRangeFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         filters: buildAgeRangesFilters(tableFilters),
     });
 
@@ -53,7 +53,7 @@ export default function AgeRangesPage () {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
         fetchPolicy: `cache-and-network`,
@@ -93,7 +93,7 @@ export default function AgeRangesPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     const rows =

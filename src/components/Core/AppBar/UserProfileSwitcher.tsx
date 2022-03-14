@@ -1,17 +1,6 @@
+import { authClient } from "@/api/auth/client";
+import { useQueryMyUser } from "@/api/myUser";
 import {
-    myUsersSampleResponse,
-    switchUser,
-    useGetMyUsers,
-} from "@/api/users";
-import { userIdVar } from "@/cache";
-import {
-    Status,
-    User,
-} from "@/types/graphQL";
-import { useReactiveVar } from "@apollo/client";
-import {
-    Avatar,
-    Chip,
     List,
     ListItem,
     ListItemAvatar,
@@ -25,87 +14,61 @@ import {
     UserAvatar,
     useSnackbar,
 } from "kidsloop-px";
-import React,
-{
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
-import { useHistory } from "react-router-dom";
+import React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
-    // users: User[];
 }
 
 export default function UserProfileSwitcher (props: Props) {
-    // const { users } = props;
-    const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
-    const selectedUserId = useReactiveVar(userIdVar);
-    const { loading, data } = useGetMyUsers();
+    const { data: myUserData } = useQueryMyUser();
 
-    const [ users, setUsers ] = useState<User[]>([]);
+    const currentUser = myUserData?.myUser.node;
+    const profiles = myUserData?.myUser.profiles ?? [];
 
-    const url = useMemo(() => {
-        const url = new URL(window.location.href);
-        return url;
-    }, []);
-
-    useEffect(() => {
-        if (data) {
-            setUsers(data.my_users.filter(user => user.memberships?.some(membership => membership.status === Status.ACTIVE)));
-        }
-    }, [ data ]);
-
-    const switchUsers = async (userId: string) => {
+    const handleClick = async (userId: string) => {
         try {
-            const response = await switchUser(userId);
-            return response;
-        } catch (error) {
-            console.log(`Error switching user: `, error);
+            const resp = await authClient.switchUser({
+                user_id: userId,
+            });
+            window.location.reload(); // TODO: Dirty fix - remove and improve handling in the future
+            return resp;
+        } catch (err) {
+            enqueueSnackbar(`Error switching users. Please try again later.`, {
+                variant: `error`,
+            });
         }
     };
 
-    function handleClick (userId: string) {
-        switchUsers(userId).then((response) => {
-            console.log(`switchUser response: `, response);
-            console.log(`update switchUser: `, userId);
-            if (response) {
-                userIdVar(userId);
-                history.push(`/`);
-            } else {
-                enqueueSnackbar(`Error switching users. Please try again later.`, {
-                    variant: `error`,
-                });
-            }
-        });
-    }
-
     return (
         <List dense>
-            {users?.filter((user => user.user_id !== selectedUserId)).map((user) => {
-                const givenName = user.given_name ?? ``;
-                const familyName = user.family_name ?? ``;
-                const fullName = givenName + ` ` + familyName;
-                const username = user.username ?? ``;
+            {profiles.filter((profile => profile.id !== currentUser?.id)).map((profile) => {
+                const givenName = profile.givenName ?? ``;
+                const familyName = profile.familyName ?? ``;
+                const fullName = `${givenName} ${familyName}`;
+                const username = profile.contactInfo?.username ?? ``;
                 const userName = fullName === ` ` ? username ?? `Name undefined` : fullName;
-                return <ListItem
-                    key={user.user_id}
-                    button
-                    onClick={() => handleClick(user.user_id)}
-                >
-                    <ListItemAvatar>
-                        <UserAvatar name={userName}/>
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={userName}
-                        secondary={userName === `Name undefined` ?
-                            `Please update your profile` :
-                            user.date_of_birth ? `Birthday: ` + user.date_of_birth : `` }
-                    />
-                </ListItem>;})}
+                return (
+                    <ListItem
+                        key={profile.id}
+                        button
+                        onClick={() => handleClick(profile.id)}
+                    >
+                        <ListItemAvatar>
+                            <UserAvatar name={userName}/>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={userName}
+                            secondary={userName === `Name undefined`
+                                ? `Please update your profile`
+                                : (profile.dateOfBirth ? `Birthday: ${profile.dateOfBirth}` : ``)
+                            }
+                        />
+                    </ListItem>
+                );
+            })}
         </List>
     );
 }

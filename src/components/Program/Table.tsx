@@ -104,7 +104,7 @@ export default function ProgramTable (props: Props) {
         subjectFilterValueOptions,
         ageRangesLowValueOptions,
         ageRangesHighValueOptions,
-    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+    } = useGetTableFilters(currentOrganization?.id ?? ``, {
         queryGrades: true,
         querySubjects: true,
         queryAgeRanges: true,

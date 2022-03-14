@@ -214,6 +214,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                     contactInfo {
                         email
                         phone
+                        username
                     }
                     dateOfBirth
                     gender

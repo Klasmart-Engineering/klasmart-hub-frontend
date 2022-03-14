@@ -19,7 +19,7 @@ interface Props {
 export default function ReportsPage (props: Props) {
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     return (
         <iframe

@@ -32,7 +32,7 @@ export default function (props: Props) {
     const [ valid, setValid ] = useState(true);
     const [ createGrade ] = useCreateUpdateGrade();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { data: gradesData, loading } = useGetAllGrades({
         variables: {
             organization_id: organizationId,

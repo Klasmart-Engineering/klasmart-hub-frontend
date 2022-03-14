@@ -157,7 +157,7 @@ export default function ClassesTable (props: Props) {
         ageRangesHighValueOptions,
         subjectFilterValueOptions,
         gradeFilterValueOptions,
-    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+    } = useGetTableFilters(currentOrganization?.id ?? ``, {
         querySchools: true,
         queryPrograms: true,
         queryAgeRanges: true,
@@ -678,7 +678,7 @@ export default function ClassesTable (props: Props) {
 
             {selectedClassId && <ClassRoster
                 open={classRosterDialogOpen}
-                organizationId={currentOrganization?.organization_id ?? ``}
+                organizationId={currentOrganization?.id ?? ``}
                 classId={selectedClassId}
                 onClose={() => {
                     setSelectedClassId(undefined);

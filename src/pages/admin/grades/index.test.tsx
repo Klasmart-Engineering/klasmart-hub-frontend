@@ -9,6 +9,7 @@ import {
     cleanup,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from "@testing-library/react";
 import {
     mockOrgId,
@@ -20,10 +21,7 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -61,8 +59,10 @@ const mocks: MockedResponse[] = [
     },
 ];
 
-test(`Grades page loads correctly without data`, () => {
+test(`Grades page loads correctly without data`, async () => {
     render(<GradesPage />);
+
+    await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
     expect(screen.queryByText(`Grades`)).toBeInTheDocument();
     expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
@@ -73,10 +73,8 @@ test(`Grades page loads correctly with data`, async () => {
         mockedResponses: mocks,
     });
 
-    await waitFor(() => {
-        expect(screen.queryByText(`Grades`)).toBeInTheDocument();
-        expect(screen.queryByText(`Grade 3`)).toBeInTheDocument();
-    }, {
-        timeout: 5000,
-    });
+    await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
+
+    expect(screen.queryByText(`Grades`)).toBeInTheDocument();
+    expect(screen.queryByText(`Grade 3`)).toBeInTheDocument();
 });

@@ -1,8 +1,4 @@
-import {
-    GetUserNodeRequest,
-    GetUserNodeResponse,
-    UserNode,
-} from "./users";
+import { UserNode } from "./users";
 import { DEACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/deactivateUser";
 import { DELETE_USER_IN_ORGANIZATION } from "@/operations/mutations/deleteUser";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
@@ -18,6 +14,7 @@ import {
     SortOrder,
     Status,
     StringFilter,
+    User,
     UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
@@ -148,14 +145,16 @@ export interface GetOrganizationMembershipResponse {
     };
 }
 
+export interface GetOrganizationUserNodeRequest {
+    organizationId: string;
+    userId: string;
+}
 export interface GetOrganizationUserNodeResponse {
-    userNode: {
-        membership: OrganizationMembership;
-    };
+    userNode: UserNode & Partial<User>; // until we migrate completely to UserNode
 }
 
-export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetUserNodeResponse, GetUserNodeRequest>) => {
-    return useQuery<GetUserNodeResponse, GetUserNodeRequest>(GET_ORGANIZATION_USER_NODE, options);
+export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>) => {
+    return useQuery<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>(GET_ORGANIZATION_USER_NODE, options);
 };
 
 interface GetOrganizationMembershipsRequest {
@@ -179,6 +178,28 @@ interface GetOrganizationMembershipsRequest2 {
     filter?: UserFilter;
 }
 
+export interface OrganizationContactInfo {
+    phone: string;
+}
+
+export interface OrganizationConnectionNode {
+    id: string;
+    name: string;
+    owners: {
+        email: string;
+    }[];
+    contactInfo: OrganizationContactInfo;
+    branding: {
+        iconImageURL: string;
+        primaryColor: string;
+    };
+}
+
+export interface RoleConnectionNode {
+    id: string;
+    name: string;
+}
+
 export interface OrganizationMembershipConnectionNode {
     userId?: string;
     organizationId?: string;
@@ -186,6 +207,7 @@ export interface OrganizationMembershipConnectionNode {
     shortCode?: string;
     joinTimestamp?: string;
     user?: UserNode;
+    organization?: OrganizationConnectionNode;
     rolesConnection?: RolesConnection;
 }
 
@@ -268,11 +290,12 @@ export const useGetPaginatedOrganizationMemberships = (options?: QueryHookOption
 };
 
 interface GetOrganizationMembershipsPermissionsRequest {
+    organizationId: string;
 }
 
 export interface GetOrganizationMembershipsPermissionsResponse {
     me?: {
-        memberships: OrganizationMembership[];
+        membership: OrganizationMembership;
     };
 }
 

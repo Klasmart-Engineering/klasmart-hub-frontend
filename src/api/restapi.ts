@@ -1,9 +1,7 @@
-import "regenerator-runtime/runtime";
 import { getCmsApiEndpoint } from "../config";
 import { Store } from "../store/store";
 import {
     AssessmentItem,
-    AssessmentStatus,
     ContentItemDetails,
     PublishedContentItem,
     PublishedContentPayload,
@@ -556,7 +554,7 @@ export class RestAPI {
         return this.call(method, getCmsApiEndpoint(), route, body);
     }
 
-    private async call (method: string, prefix: string, route: string, body: string | undefined) {
+    private call (method: string, prefix: string, route: string, body: string | undefined) {
         // try {
         //     const response = await this.fetchRoute(method, prefix, route, body);
         //     return response;

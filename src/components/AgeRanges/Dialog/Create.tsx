@@ -38,7 +38,7 @@ export default function CreateAgeRangeDialog (props: Props) {
 
             await addAgeRange({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
                     name: `${newAgeRange.low_value}-${newAgeRange.high_value}`,
                     low_value: newAgeRange.low_value,
                     low_value_unit: newAgeRange.low_value_unit,

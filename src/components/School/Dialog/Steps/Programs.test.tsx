@@ -102,7 +102,7 @@ test(`useGetTableFilters hook should return mapped grades for drop down filter i
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrgId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrgId, {
         queryGrades: true,
         queryAgeRanges: true,
     }), {

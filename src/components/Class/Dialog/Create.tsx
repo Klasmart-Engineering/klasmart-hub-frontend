@@ -55,7 +55,7 @@ export default function CreateClassDialog (props: Props) {
             } = newClass;
 
             const variables = {
-                organization_id: currentOrganization?.organization_id ?? ``,
+                organization_id: currentOrganization?.id ?? ``,
                 class_name: name ?? ``,
                 school_ids: schools ?? [],
             };

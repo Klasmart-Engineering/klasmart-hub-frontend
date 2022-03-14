@@ -169,7 +169,7 @@ export default function DeleteRoleDialog (props: Props) {
     const [ roleId, setRoleId ] = useState(``);
     const [ rows, setRows ] = useState<DeleteRoleUserRow[]>([]);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { required } = useValidations();
     const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
@@ -258,7 +258,7 @@ export default function DeleteRoleDialog (props: Props) {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     useEffect(() => {

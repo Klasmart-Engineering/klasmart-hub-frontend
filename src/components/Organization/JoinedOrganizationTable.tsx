@@ -1,13 +1,6 @@
-import {
-    useGetOrganizationMemberships,
-    useLeaveMembership,
-} from "@/api/organizations";
-import { userIdVar } from "@/cache";
-import { useOrganizationStack } from "@/store/organizationMemberships";
-import { Status } from "@/types/graphQL";
-import { removeOrganizationMembership } from "@/utils/organizationMemberships";
+import { useQueryMyUser } from "@/api/myUser";
+import { useLeaveMembership } from "@/api/organizations";
 import { getTableLocalization } from "@/utils/table";
-import { useReactiveVar } from "@apollo/client/react";
 import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import {
     Paper,
@@ -25,7 +18,7 @@ import {
 import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
-    useEffect,
+    useMemo,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
@@ -42,7 +35,6 @@ interface JoinedOrganizationRow {
     phone: string;
     email: string;
     roles: string[];
-    status: string;
 }
 
 interface Props {
@@ -53,37 +45,30 @@ export default function JoinedOrganizationTable (props: Props) {
     const intl = useIntl();
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
-    const userId = useReactiveVar(userIdVar);
-    const [ rows, setRows ] = useState<JoinedOrganizationRow[]>([]);
     const {
-        data,
-        loading,
-        refetch,
-    } = useGetOrganizationMemberships();
+        data: myUserData,
+        loading: myUserLoading,
+        refetch: myUserRefetch,
+    } = useQueryMyUser({
+        nextFetchPolicy: `network-only`,
+    });
     const [ leaveMembership ] = useLeaveMembership();
     const [ selectedOrganizationIds, setSelectedOrganizationIds ] = useState<string[]>([]);
-    const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
 
-    const memberships = data?.me?.memberships ?? [];
+    const currentUser = myUserData?.myUser.node;
 
-    useEffect(() => {
-        if (memberships.length === 0) {
-            setRows([]);
-            return;
-        }
-        const myEmail = data?.me?.email;
-        const rows = memberships
-            .filter((membership) => myEmail !== membership?.organization?.owner?.email && membership?.status === Status.ACTIVE)
-            .map((membership) => ({
-                id: membership.organization?.organization_id ?? ``,
-                name: membership.organization?.organization_name ?? ``,
-                phone: membership.organization?.phone ?? ``,
-                email: membership.organization?.owner?.email ?? ``,
-                roles: membership.roles?.map((r) => r.role_name ?? ``) ?? [],
-                status: membership.status ?? ``,
-            }));
-        setRows(rows);
-    }, [ data ]);
+    const rows = useMemo(() => {
+        const myEmail = currentUser?.contactInfo?.email;
+        return currentUser?.organizationMembershipsConnection.edges
+            ?.filter((organizationMembershipEdge) => myEmail !== organizationMembershipEdge?.node.organization?.owners?.[0]?.email)
+            ?.map((organizationMembershipEdge) => ({
+                id: organizationMembershipEdge.node.organization?.id ?? ``,
+                name: organizationMembershipEdge.node.organization?.name ?? ``,
+                phone: organizationMembershipEdge.node.organization?.contactInfo?.phone ?? ``,
+                email: organizationMembershipEdge.node.organization?.owners?.[0].email ?? ``,
+                roles: organizationMembershipEdge.node.rolesConnection?.edges?.map((rolesConnectionEdge) => rolesConnectionEdge.node.name ?? ``) ?? [],
+            })) ?? [];
+    }, [ myUserData ]);
 
     const handleLeaveSelectedOrganizationsClick = async (rowIds: string[]) => {
         for (const row of rows.filter((row) => rowIds.includes(row.id))) {
@@ -92,8 +77,7 @@ export default function JoinedOrganizationTable (props: Props) {
     };
 
     const handleLeaveOrganizationRowClick = async (row: JoinedOrganizationRow) => {
-        const membership = memberships.find((membership) => membership.organization_id === row.id);
-        if (!membership) return;
+        if (!currentUser?.id) return;
         if (!(await confirm({
             variant: `warning`,
             title: intl.formatMessage({
@@ -103,7 +87,7 @@ export default function JoinedOrganizationTable (props: Props) {
                 {intl.formatMessage({
                     id: `allOrganization_leaveOrganizationConfirm`,
                 }, {
-                    name: <strong>{membership.organization?.organization_name}</strong>,
+                    name: <strong>{row.name}</strong>,
                 })}
             </Typography>,
             okLabel: intl.formatMessage({
@@ -116,13 +100,14 @@ export default function JoinedOrganizationTable (props: Props) {
         try {
             await leaveMembership({
                 variables: {
-                    organizationId: membership.organization_id,
-                    userIds: [ userId ],
+                    organizationId: row.id,
+                    userIds: [ currentUser.id ],
                 },
             });
-            removeOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
+            const membership = myUserData?.myUser.node.organizationMembershipsConnection.edges.map((organizationMembershipEdge) => organizationMembershipEdge.node).find((organizationMembershipNode) => row.id === organizationMembershipNode.organization?.id);
+            if (!membership) return;
+            await myUserRefetch();
             setSelectedOrganizationIds((ids) => ids.filter((id) => id !== row.id));
-            await refetch();
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_leftOrganizationSuccess`,
             }), {
@@ -141,7 +126,7 @@ export default function JoinedOrganizationTable (props: Props) {
         {
             id: `id`,
             label: `Id`,
-            hidden: true,
+            secret: true,
         },
         {
             id: `name`,
@@ -168,15 +153,14 @@ export default function JoinedOrganizationTable (props: Props) {
                 id: `joinedOrganization_role`,
             }),
             disableSort: true,
-            render: (row) =>
-                row?.roles?.map((role, i) => (
-                    <Typography
-                        key={`role-${i}`}
-                        noWrap
-                        variant="body2">
-                        {role}
-                    </Typography>
-                )),
+            render: (row) => row?.roles?.map((role, i) => (
+                <Typography
+                    key={`role-${i}`}
+                    noWrap
+                    variant="body2">
+                    {role}
+                </Typography>
+            )),
         },
     ];
 
@@ -187,7 +171,7 @@ export default function JoinedOrganizationTable (props: Props) {
                     columns={columns}
                     rows={rows}
                     selectedRows={selectedOrganizationIds}
-                    loading={loading}
+                    loading={myUserLoading}
                     idField="id"
                     orderBy="name"
                     selectActions={[
@@ -205,7 +189,6 @@ export default function JoinedOrganizationTable (props: Props) {
                                 id: `allOrganization_leaveOrganizationButton`,
                             }),
                             icon: ExitToAppIcon,
-                            disabled: row.status === Status.INACTIVE,
                             onClick: handleLeaveOrganizationRowClick,
                         },
                     ]}

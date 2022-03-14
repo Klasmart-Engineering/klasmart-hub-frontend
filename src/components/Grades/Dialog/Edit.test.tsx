@@ -16,10 +16,7 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });

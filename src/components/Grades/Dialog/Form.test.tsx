@@ -2,10 +2,10 @@ import GradeDialogForm from './Form';
 import { GET_GRADES } from '@/operations/queries/getGrades';
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
     fireEvent,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from '@testing-library/react';
 import {
     grades,
@@ -18,10 +18,10 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
         useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -65,12 +65,12 @@ test(`Grades form renders correctly`, async () => {
         mockedResponses: mocks,
     });
 
-    await waitFor(() => {
-        expect(screen.getByLabelText(`Grade Name`)).toBeInTheDocument();
-        expect(screen.getByLabelText(`Progress From`)).toBeInTheDocument();
-        expect(screen.getByLabelText(`Progress To`)).toBeInTheDocument();
-        expect(screen.getByLabelText(`Grade Name`)?.value).toBe(``);
-    });
+    await waitForElementToBeRemoved(() => screen.queryAllByRole(`progressbar`));
+
+    expect(screen.getByLabelText(`Grade Name`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`Progress From`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`Progress To`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`Grade Name`)).toHaveValue(``);
 });
 
 test(`Grades form updates correctly`, async () => {

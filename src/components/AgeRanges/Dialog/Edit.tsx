@@ -63,7 +63,7 @@ export default function EditAgeRangeDialog (props: Props) {
 
             await editAgeRange({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
                     id: updatedAgeRange.id ?? ``,
                     name: `${updatedAgeRange.low_value}-${updatedAgeRange.high_value}`,
                     low_value: updatedAgeRange.low_value,

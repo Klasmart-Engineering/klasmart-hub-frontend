@@ -55,7 +55,7 @@ export default function CreateFolderDialog (props: Props) {
                 name,
                 parent_id: parentId,
                 partition,
-                org_id: currentOrganization?.organization_id ?? ``,
+                org_id: currentOrganization?.id ?? ``,
             });
             onClose(newFolder);
             enqueueSnackbar(intl.formatMessage({

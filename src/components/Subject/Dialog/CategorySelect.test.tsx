@@ -1,6 +1,7 @@
 import CategorySelectDialog from './CategorySelect';
 import { GET_ALL_CATEGORIES } from '@/operations/queries/getAllCategories';
 import { MockedResponse } from '@apollo/client/testing';
+import { screen } from '@testing-library/react';
 import {
     mockCategories,
     mockOrgId,
@@ -30,23 +31,13 @@ const mocks: MockedResponse[] = [
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
-        }),
-    };
-});
-
-jest.mock(`@/utils/permissions`, () => {
-    return {
-        ...jest.requireActual(`@/utils/permissions`),
-        usePermission: () => true,
     };
 });
 
 test(`Category select renders correctly with correct data.`, async () => {
-    const { findByText } = render(<CategorySelectDialog
+    render(<CategorySelectDialog
         value={mockSubjects.edges[0].node.categories[0]}
         open={true}
         onClose={jest.fn()}
@@ -54,6 +45,5 @@ test(`Category select renders correctly with correct data.`, async () => {
         mockedResponses: mocks,
     });
 
-    expect(await findByText(/Fine Motor Skills/gi)).toBeInTheDocument();
-
+    expect(await screen.findByText(`Fine Motor Skills`)).toBeInTheDocument();
 });

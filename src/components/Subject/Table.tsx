@@ -95,7 +95,7 @@ export default function SubjectsTable (props: Props) {
     const canDelete = usePermission(`delete_subjects_20447`);
     const currentOrganization = useCurrentOrganization();
     const { required } = useValidations();
-    const { categoriesFilterValueOptions } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+    const { categoriesFilterValueOptions } = useGetTableFilters(currentOrganization?.id ?? ``, {
         queryCategories: true,
     }, hideFilters);
 

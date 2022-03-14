@@ -34,7 +34,6 @@ import {
     GET_PAGINATED_ELIGIBLE_STUDENTS,
     GET_PAGINATED_ELIGIBLE_TEACHERS,
 } from "@/operations/queries/getEligibleUsers";
-import { GET_MY_CLASSES } from "@/operations/queries/getMyClasses";
 import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
 import {
     BooleanFilter,
@@ -48,7 +47,6 @@ import {
     StatusFilter,
     StringFilter,
     Subject,
-    User,
     UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
@@ -174,21 +172,6 @@ export const useEditClassAgeRanges = (options?: MutationHookOptions<
     EditClassAgeRangesRequest
 >) => {
     return useMutation<EditClassAgeRangesResponse, EditClassAgeRangesRequest>(EDIT_CLASS_AGE_RANGES, options);
-};
-
-interface GetMyClassesRequest { }
-
-interface GetMyClassesResponse {
-    me: {
-        user_id: string;
-        full_name: string;
-        classesStudying: Class[];
-        classesTeaching: Class[];
-    };
-}
-
-export const useGetMyClasses = (options?: QueryHookOptions<GetMyClassesResponse, GetMyClassesRequest>) => {
-    return useQuery<GetMyClassesResponse, GetMyClassesRequest>(GET_MY_CLASSES, options);
 };
 
 interface ClassSchoolNode {

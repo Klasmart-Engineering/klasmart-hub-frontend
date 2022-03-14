@@ -62,7 +62,7 @@ export const GET_CLASS_NODE_ROSTER = gql`
             ) @include(if: $showStudents) {
                 edges {
                     node {
-                        ...UserFields
+                        ...UserNodeFields
                     }
                 }
                 totalCount
@@ -82,7 +82,7 @@ export const GET_CLASS_NODE_ROSTER = gql`
             ) @include(if: $showTeachers) {
                 edges {
                     node {
-                        ...UserFields
+                        ...UserNodeFields
                     }
                 }
                 totalCount

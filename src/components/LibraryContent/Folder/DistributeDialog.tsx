@@ -100,7 +100,7 @@ export default function (props: Props) {
     const [ distributeStatus, setDistributeStatus ] = useState<DistributeStatus>(DistributeStatus.PRESET);
     const [ rows, setRows ] = useState<OrganizationRow[]>([]);
 
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const getFolderDistributeStatus = async () => {
         setLoadingGetFolderDistributeStatus(true);

@@ -155,7 +155,7 @@ export default function LibraryTable (props: Props) {
     const [ data, setData ] = useState<PublishedContentPayload>();
     const paths = location.pathname.replace(route.path, ``).split(`/`).filter((path) => !!path);
     const folderId = paths[paths.length - 1];
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const getContentsFolders = async () => {
         setLoadingGet(true);

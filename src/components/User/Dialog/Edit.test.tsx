@@ -6,16 +6,14 @@ import { mockUseGetPaginatedSchools } from "@/api/__mocks__/schools";
 import {
     DeleteUsersInOrganizationRequest,
     DeleteUsersInOrganizationResponse,
+    GetOrganizationUserNodeRequest,
+    GetOrganizationUserNodeResponse,
     UpdateOrganizationMembershipRequest,
     UpdateOrganizationMembershipResponse,
     useGetOrganizationUserNode,
 } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
-import {
-    GetUserNodeRequest,
-    GetUserNodeResponse,
-} from "@/api/users";
 import {
     defaultState,
     formatDateOfBirth,
@@ -83,7 +81,7 @@ const mockDeletePrompt = jest.fn().mockResolvedValue(true) as jest.MockedFunctio
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrg.organization_id,
+            id: mockOrg.organization_id,
         }),
     };
 });
@@ -246,7 +244,7 @@ describe(`user edit form`, () => {
                     },
                 },
                 loading: false,
-            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
+            } as QueryResult<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>);
 
             render();
 
@@ -263,7 +261,7 @@ describe(`user edit form`, () => {
                     },
                 },
                 loading: false,
-            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
+            } as QueryResult<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>);
 
             render();
 

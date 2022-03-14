@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime';
 import SubjectsTable,
 { SubjectRow } from './Table';
 import { GetAllSubjectsPaginatedResponse } from "@/api/subjects";
@@ -48,10 +47,7 @@ const data: GetAllSubjectsPaginatedResponse = {
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });

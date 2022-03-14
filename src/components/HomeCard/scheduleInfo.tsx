@@ -218,7 +218,7 @@ export default function ScheduleInfoShort (props: Props) {
                                             .map((item) => {
                                                 return (
                                                     <Grid
-                                                        key={item.id}
+                                                        key={`${dayWithClass}:${item.id}`}
                                                         container
                                                         className={clsx(classes.classItem, {
                                                             [classes.classItemLive]: item.class_type === `OnlineClass`,

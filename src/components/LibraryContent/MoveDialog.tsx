@@ -118,7 +118,7 @@ export default function MoveContentDialog (props: Props) {
     const currentOrganization = useCurrentOrganization();
     const [ selectedNodeId, setSelectedNodeId ] = useState<string>();
     const [ folderStructure, setFolderStructure ] = useState<Folder>();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const title = value ? (value?.length === 1 ? `Move "${value?.[0].name }"` : `Move ${value?.length} items`) : `Move`;
 

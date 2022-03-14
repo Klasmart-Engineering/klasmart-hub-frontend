@@ -48,7 +48,7 @@ export default function EditSubjectDialog (props: Props) {
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const [ deleteSubject ] = useDeleteSubject();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const { data, loading } = useGetSubject({
         variables: {

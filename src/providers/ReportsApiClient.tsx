@@ -1,8 +1,11 @@
 import { authClient } from "@/api/auth/client";
 import { getReportsEndpoint } from "@/config";
+import { redirectToAuth } from "@/utils/routing";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kidsloop/reports-api-client";
+import { AxiosError } from "axios";
 import React,
 {
+    useCallback,
     useEffect,
     useState,
 } from "react";
@@ -20,27 +23,26 @@ export default function ReportsApiClientProvider (props: Props) {
     const reportsServiceEndpoint = getReportsEndpoint();
     const cookies = new Cookies();
     const [ accessToken, setAccessToken ] = useState(cookies.get(ACCESS_TOKEN_COOKIE));
-    const [ currentDate, setCurrentDate ] = useState(Date.now());
 
     const STALE_TIME = 60 * 1000; // 60 seconds
     const REQUEST_RETRY_MAX_COUNT = 3; // 3
     const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
 
-    useEffect(() => {
-        let timeTilExpiry = STALE_TIME;
-        const getTokenExpiry = async () => {
+    const retryHandler = useCallback(async (error: AxiosError) => {
+        if (error.response?.status !== 401) throw error;
+        try {
+            await authClient.refreshToken();
             const updatedCookie = new Cookies();
-            setAccessToken(updatedCookie.get(ACCESS_TOKEN_COOKIE));
-            const { exp } = await authClient.refreshToken();
-            if (exp) timeTilExpiry = (exp - (Math.floor(currentDate / 1000))) * 1000;
-            const setDate = () => {
-                setCurrentDate(Date.now());
-            };
-            const timeOut = setTimeout(setDate, timeTilExpiry + 1000);
-            return () => clearTimeout(timeOut);
-        };
-        getTokenExpiry();
-    }, [ currentDate ]);
+            const updatedAccessToken = updatedCookie.get(ACCESS_TOKEN_COOKIE);
+            error.config.headers![AUTH_HEADER] = updatedAccessToken;
+            setAccessToken(updatedAccessToken);
+        } catch (err) {
+            redirectToAuth({
+                withParams: true,
+            });
+            throw err;
+        }
+    }, [ setAccessToken ]);
 
     return (
         <KLReportsApiClientProvider
@@ -113,6 +115,9 @@ export default function ReportsApiClientProvider (props: Props) {
                             },
                         };
                     }),
+                },
+                {
+                    onRejected: retryHandler,
                 },
             ] : undefined}
         >

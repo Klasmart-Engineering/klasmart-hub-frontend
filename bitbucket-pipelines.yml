@@ -37,7 +37,7 @@ definitions:
         size: 2x
         script:
           - npm i --no-audit --no-progress
-          - npm test -- --coverage
+          - npm test -- --coverage --coverageReporters="text-summary"
           - cp deploy/config/internal/.env.alpha ./.env
           - npm run build
           # - npm prune --production

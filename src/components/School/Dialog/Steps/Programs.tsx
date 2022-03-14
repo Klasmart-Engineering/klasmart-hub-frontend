@@ -55,7 +55,7 @@ export default function ProgramsStep (props: Props) {
     });
 
     const paginationFilter = buildOrganizationProgramFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildProgramFilters(tableFilters),
     });
@@ -73,7 +73,7 @@ export default function ProgramsStep (props: Props) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         fetchPolicy: `cache-and-network`,
         notifyOnNetworkStatusChange: true,
     });

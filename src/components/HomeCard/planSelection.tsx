@@ -90,12 +90,12 @@ export default function PlanSelection () {
     const intl = useIntl();
 
     const [ lessonPlan, setLessonPlan ] = useState<PublishedContentItem | null>(null);
-    const [ lessonPlans, setLessonPlans ] = useState<PublishedContentItem[] | undefined>(undefined);
+    const [ lessonPlans, setLessonPlans ] = useState<PublishedContentItem[]>([]);
     const [ liveToken, setLiveToken ] = useState(``);
     const [ shareLink, setShareLink ] = useState(``);
     const [ openShareLink, setOpenShareLink ] = useState(false);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const permissionAccessLibrary = usePermission(`library_200`);
 
@@ -109,9 +109,9 @@ export default function PlanSelection () {
     }
 
     useEffect(() => {
-        if (!currentOrganization) return;
+        if (!currentOrganization?.id) return;
         getPublishedLessonPlans();
-    }, [ currentOrganization ]);
+    }, [ currentOrganization?.id ]);
 
     useEffect(() => {
         if (!lessonPlan) {
@@ -237,7 +237,7 @@ function LessonPlanSelect ({
     lessonPlan,
     setLessonPlan,
 }: {
-    lessonPlans?: PublishedContentItem[];
+    lessonPlans: PublishedContentItem[];
     lessonPlan?: PublishedContentItem | null;
     setLessonPlan: React.Dispatch<
         React.SetStateAction<PublishedContentItem | null>
@@ -252,8 +252,8 @@ function LessonPlanSelect ({
             fullWidth
             autoHighlight
             id="lesson-plan-select"
-            disabled={!lessonPlans}
-            options={lessonPlans as PublishedContentItem[]}
+            disabled={!lessonPlans.length}
+            options={lessonPlans}
             getOptionLabel={(option) => option.name}
             renderOption={(props, option) => (
                 <li {...props}>

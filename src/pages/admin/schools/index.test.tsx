@@ -4,7 +4,7 @@ import SchoolTable from "@/components/School/Table";
 import { usePermission } from "@/utils/permissions";
 import { QueryHookOptions } from "@apollo/client";
 import { render } from "@testing-library/react";
-import { mockOrg } from "@tests/mockOrganizationData";
+import { mockOrgId } from "@tests/mockOrganizationData";
 import {
     schoolA,
     schoolB,
@@ -26,7 +26,9 @@ jest.mock(`@/components/School/Table`, () => {
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
-        useCurrentOrganization: () => mockOrg,
+        useCurrentOrganization: () => ({
+            id: mockOrgId,
+        }),
     };
 });
 
@@ -112,7 +114,7 @@ test(`if User doesn't have view_school or view_my_school Permission no rows are 
     }), expect.anything());
 });
 
-test(`if User has view_school or view_my_school Permission the table contains active Schools`, async () => {
+test(`if User has view_school or view_my_school Permission the table contains active Schools`, () => {
 
     mockUsePermission.mockImplementation((perm) => {
         return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? true : false;

@@ -99,7 +99,7 @@ export default function FeedbackComment (props: Props) {
             className={clsx(classes.clickable, classes.feedbackText)}
             onClick={(event) => handleMoreFeedbackOpen(event, id)}
         >
-            <div
+            <span
                 className={clsx(classes.feedbackShort, {
                     [classes.feedbackTruncated]: truncateRequired,
                     [classes.feedbackResizing]: isResizing,
@@ -107,7 +107,7 @@ export default function FeedbackComment (props: Props) {
                 id={componentId}
             >
                 {feedback}
-            </div>
+            </span>
 
             {truncateRequired &&
                 <Link href={undefined}>

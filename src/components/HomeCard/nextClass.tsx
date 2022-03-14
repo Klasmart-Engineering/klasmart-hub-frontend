@@ -107,12 +107,11 @@ export default function NextClass (props: Props) {
     const [ nextClass, setNextClass ] = useState<SchedulePayload>();
     const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
     const [ maxTeachers, _ ] = useState(3);
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const now = new Date().getTime() / 1000;
     const secondsBeforeClassCanStart = 900;
 
     const { data: rosterData } = useGetClassNodeRoster({
-        fetchPolicy: `network-only`,
         variables: {
             id: nextClass?.class_id ?? ``,
             count: maxTeachers,

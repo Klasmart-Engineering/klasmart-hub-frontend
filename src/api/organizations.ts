@@ -9,7 +9,6 @@ import { SET_ORGANIZATION_BRANDING } from "@/operations/mutations/setOrganizatio
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
-import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import {
     Organization,
     OrganizationMembership,
@@ -33,16 +32,6 @@ interface GetOrganizationResponse {
 
 export const useGetOrganization = (options?: QueryHookOptions<GetOrganizationResponse, GetOrganizationRequest>) => {
     return useQuery<GetOrganizationResponse, GetOrganizationRequest>(GET_ORGANIZATION, options);
-};
-
-interface GetOrganizationsRequest {}
-
-interface GetOrganizationsResponse {
-    me?: User;
-}
-
-export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {
-    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(GET_ORGANIZATION_MEMBERSHIPS, options);
 };
 
 interface GetAllOrganizationsRequest {}
@@ -76,13 +65,8 @@ interface GetOrganizationOwnershipsResponse {
     me: User;
 }
 
-export const useGetOrganizationOwnerships = () => {
-    return useQuery<
-        GetOrganizationOwnershipsResponse,
-        GetOrganizationOwnershipsRequest
-    >(GET_ORGANIZATION_OWNERSHIPS, {
-        fetchPolicy: `network-only`,
-    });
+export const useGetOrganizationOwnerships = (options?: QueryHookOptions<GetOrganizationOwnershipsResponse, GetOrganizationOwnershipsRequest>) => {
+    return useQuery<GetOrganizationOwnershipsResponse, GetOrganizationOwnershipsRequest>(GET_ORGANIZATION_OWNERSHIPS, options);
 };
 
 interface DeleteOrganizationRequest {

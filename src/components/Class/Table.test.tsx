@@ -1,4 +1,3 @@
-import "regenerator-runtime/runtime";
 import ClassTable from "./Table";
 import {
     buildGradeFilter,
@@ -48,19 +47,14 @@ import {
     mockSchoolsData,
 } from "@tests/mockDataSchools";
 import { render } from "@tests/utils/render";
-import { utils } from "kidsloop-px";
 import React from "react";
-import TestRenderer from 'react-test-renderer';
 
 const mockOrgId = `c19de3cc-aa01-47f5-9f87-850eb70ae073`;
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -160,7 +154,7 @@ test(`useClassFilters hook should return mapped schools data for filter drop dow
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrgId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrgId, {
         querySchools: true,
     }), {
         wrapper,
@@ -184,7 +178,7 @@ test(`useClassFilters hook should return mapped programs data for filter drop do
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrgId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrgId, {
         queryPrograms: true,
     }), {
         wrapper,
@@ -212,7 +206,7 @@ test(`useClassFilters hook should return mapped grades data for filter drop down
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrgId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrgId, {
         queryGrades: true,
     }), {
         wrapper,
