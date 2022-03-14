@@ -1,7 +1,7 @@
 import {
-    useDeactivateUserInOrganization,
-    useDeleteOrganizationMembership,
-    useReactivateUserInOrganization,
+    useDeactivateUsersInOrganization,
+    useDeleteUsersInOrganization,
+    useReactivateUsersInOrganization,
 } from "@/api/organizationMemberships";
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
@@ -121,7 +121,7 @@ export default function UserTable (props: Props) {
     const markInactivePrompt = useMarkInactiveEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { required } = useValidations();
     const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
     const [ editDialogOpen, setEditDialogOpen ] = useState(false);
@@ -132,13 +132,13 @@ export default function UserTable (props: Props) {
     const canDelete = usePermission(`delete_users_40440`);
     const canReactivateUserInOrg = usePermission(`reactivate_user_40884`);
     const canDeactivateUserInOrg = usePermission(`deactivate_user_40883`);
-    const [ deleteOrganizationMembership ] = useDeleteOrganizationMembership();
-    const [ reactivateUserInOrganization ] = useReactivateUserInOrganization();
-    const [ deactivateUserInOrganization ] = useDeactivateUserInOrganization();
+    const [ deleteUserInOrganization ] = useDeleteUsersInOrganization();
+    const [ reactivateUserInOrganization ] = useReactivateUsersInOrganization();
+    const [ deactivateUserInOrganization ] = useDeactivateUsersInOrganization();
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
-    } = useGetTableFilters(currentOrganization?.organization_id ?? ``, {
+    } = useGetTableFilters(organizationId, {
         querySchools: true,
         queryUserRoles: true,
     });
@@ -147,6 +147,7 @@ export default function UserTable (props: Props) {
         `organization_name`,
         `user_given_name`,
         `user_family_name`,
+        `user_username`,
         `user_shortcode`,
         `user_email`,
         `user_phone`,
@@ -173,8 +174,8 @@ export default function UserTable (props: Props) {
         try {
             await reactivateUserInOrganization({
                 variables: {
-                    organization_id: organizationId,
-                    user_ids: [ row.id ],
+                    organizationId,
+                    userIds: [ row.id ],
                 },
             });
 
@@ -203,8 +204,8 @@ export default function UserTable (props: Props) {
         try {
             await deactivateUserInOrganization({
                 variables: {
-                    organization_id: organizationId,
-                    user_ids: [ row.id ],
+                    organizationId,
+                    userIds: [ row.id ],
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -230,10 +231,10 @@ export default function UserTable (props: Props) {
             entityName: userName,
         }))) return;
         try {
-            await deleteOrganizationMembership({
+            await deleteUserInOrganization({
                 variables: {
-                    organization_id: organizationId,
-                    user_id: row.id,
+                    organizationId,
+                    userIds: [ row.id ],
                 },
             });
             enqueueSnackbar(intl.formatMessage({

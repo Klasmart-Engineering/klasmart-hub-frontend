@@ -60,7 +60,7 @@ export default function AttendanceRateWidget () {
     const theme = useTheme();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const width = useWidth();
     const {
         data,

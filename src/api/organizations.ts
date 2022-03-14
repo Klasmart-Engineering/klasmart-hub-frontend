@@ -3,13 +3,12 @@ import { CREATE_ORGANIZATION } from "@/operations/mutations/createOrganization";
 import { DELETE_ORGANIZATION } from "@/operations/mutations/deleteOrganization";
 import { DELETE_ORGANIZATION_BRANDING_IMAGE } from "@/operations/mutations/deleteOrganizationBrandingImage";
 import { DELETE_ORGANIZATION_BRANDING_PRIMARY_COLOR } from "@/operations/mutations/deleteOrganizationBrandingPrimaryColor";
-import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
+import { DELETE_USER_IN_ORGANIZATION } from "@/operations/mutations/deleteUser";
 import { SAVE_ORGANIZATION } from "@/operations/mutations/saveOrganization";
 import { SET_ORGANIZATION_BRANDING } from "@/operations/mutations/setOrganizationBranding";
 import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations";
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
-import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import {
     Organization,
     OrganizationMembership,
@@ -35,16 +34,6 @@ export const useGetOrganization = (options?: QueryHookOptions<GetOrganizationRes
     return useQuery<GetOrganizationResponse, GetOrganizationRequest>(GET_ORGANIZATION, options);
 };
 
-interface GetOrganizationsRequest {}
-
-interface GetOrganizationsResponse {
-    me?: User;
-}
-
-export const useGetOrganizationMemberships = (options?: QueryHookOptions<GetOrganizationsResponse, GetOrganizationsRequest>) => {
-    return useQuery<GetOrganizationsResponse, GetOrganizationsRequest>(GET_ORGANIZATION_MEMBERSHIPS, options);
-};
-
 interface GetAllOrganizationsRequest {}
 
 interface GetAllOrganizationsResponse {
@@ -56,8 +45,8 @@ export const useGetAllOrganizations = (options?: QueryHookOptions<GetAllOrganiza
 };
 
 interface LeaveMembershipRequest {
-    organization_id: string;
-    user_id: string;
+    organizationId: string;
+    userIds: string[];
 }
 
 interface LeaveMembershipResponse {
@@ -65,7 +54,7 @@ interface LeaveMembershipResponse {
 }
 
 export const useLeaveMembership = () => {
-    return useMutation<LeaveMembershipResponse, LeaveMembershipRequest>(LEAVE_MEMBERSHIP);
+    return useMutation<LeaveMembershipResponse, LeaveMembershipRequest>(DELETE_USER_IN_ORGANIZATION);
 };
 
 interface GetOrganizationOwnershipsRequest {
@@ -76,13 +65,8 @@ interface GetOrganizationOwnershipsResponse {
     me: User;
 }
 
-export const useGetOrganizationOwnerships = () => {
-    return useQuery<
-        GetOrganizationOwnershipsResponse,
-        GetOrganizationOwnershipsRequest
-    >(GET_ORGANIZATION_OWNERSHIPS, {
-        fetchPolicy: `network-only`,
-    });
+export const useGetOrganizationOwnerships = (options?: QueryHookOptions<GetOrganizationOwnershipsResponse, GetOrganizationOwnershipsRequest>) => {
+    return useQuery<GetOrganizationOwnershipsResponse, GetOrganizationOwnershipsRequest>(GET_ORGANIZATION_OWNERSHIPS, options);
 };
 
 interface DeleteOrganizationRequest {

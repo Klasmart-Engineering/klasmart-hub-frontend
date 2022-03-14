@@ -10,7 +10,6 @@ import {
     mockClassId,
     mockClassSummary,
     mockOrgId,
-    mockUserId,
 } from "@tests/mockDataClasses";
 import { inputSearch } from "@tests/mockDataPrograms";
 import { render } from "@tests/utils/render";
@@ -19,18 +18,8 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
-        }),
-    };
-});
-
-jest.mock(`@apollo/client`, () => {
-    return {
-        ...jest.requireActual(`@apollo/client`),
-        useReactiveVar: () => mockUserId,
     };
 });
 

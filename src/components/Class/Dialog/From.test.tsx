@@ -8,10 +8,7 @@ import {
     screen,
     waitFor,
 } from "@testing-library/react";
-import {
-    mockOrgId,
-    mockUserId,
-} from '@tests/mockDataClasses';
+import { mockOrgId } from '@tests/mockDataClasses';
 import {
     mockSchoolName2,
     mockSchoolsData,
@@ -29,18 +26,8 @@ jest.mock(`@/utils/permissions`, () => {
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
-        }),
-    };
-});
-
-jest.mock(`@apollo/client`, () => {
-    return {
-        ...jest.requireActual(`@apollo/client`),
-        useReactiveVar: () => mockUserId,
     };
 });
 

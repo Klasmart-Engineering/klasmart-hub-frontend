@@ -5,14 +5,13 @@ import {
 } from '@/operations/queries/getPaginatedOrganizationRoles';
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    fireEvent,
     screen,
-    waitFor,
+    waitForElementToBeRemoved,
 } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 import {
     mockOrgId,
     mockRolesConnection,
-    mockSearchRolesConnection,
 } from '@tests/mockRoles';
 import { render } from "@tests/utils/render";
 import React from "react";
@@ -29,18 +28,6 @@ const mockQueryVariables = {
     }),
 };
 
-const mockSearchQueryVariables = {
-    direction: `FORWARD`,
-    count: 10,
-    orderBy: `name`,
-    order: `ASC`,
-    filter: buildOrganizationRoleFilter({
-        organizationId: mockOrgId,
-        search: `Organization Admin`,
-        filters:  [],
-    }),
-};
-
 const mocks: MockedResponse[] = [
     {
         request: {
@@ -53,26 +40,12 @@ const mocks: MockedResponse[] = [
             },
         },
     },
-    {
-        request: {
-            query: GET_PAGINATED_ORGANIZATION_ROLES,
-            variables: mockSearchQueryVariables,
-        },
-        result: {
-            data: {
-                rolesConnection: mockSearchRolesConnection,
-            },
-        },
-    },
 ];
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -91,18 +64,20 @@ describe(`RolesPage`, () => {
                 mockedResponses: mocks,
             });
 
-            await waitFor(() => {
-                expect(screen.queryByText(`Roles`)).toBeInTheDocument();
-                expect(screen.queryByText(`Organization Admin`)).toBeInTheDocument();
-                expect(screen.queryByText(`School Admin`)).toBeInTheDocument();
-            });
+            await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
+
+            expect(screen.getByText(`Roles`)).toBeInTheDocument();
+            expect(screen.getByText(`Organization Admin`)).toBeInTheDocument();
+            expect(screen.getByText(`School Admin`)).toBeInTheDocument();
         });
 
-        test(`No mocked response data`, () => {
+        test(`No mocked response data`, async () => {
             render(<RolesPage />);
 
-            expect(screen.queryByText(`Roles`)).toBeInTheDocument();
-            expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
+            await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
+
+            expect(screen.getByText(`Roles`)).toBeInTheDocument();
+            expect(screen.getByText(`No records to display`)).toBeInTheDocument();
         });
     });
 
@@ -112,18 +87,15 @@ describe(`RolesPage`, () => {
                 mockedResponses: mocks,
             });
 
-            await waitFor(() => {
-                expect(screen.queryByText(`Roles`)).toBeInTheDocument();
-                expect(screen.queryByText(`Organization Admin`)).toBeInTheDocument();
-                expect(screen.queryByText(`School Admin`)).toBeInTheDocument();
-            });
+            await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
-            fireEvent.click(screen.queryAllByTestId(`MoreVertIcon`)[0]);
-            fireEvent.click(await screen.findByText(`Edit`));
+            userEvent.click(screen.getAllByLabelText(`More actions`)[2]);
+            userEvent.click(screen.getByRole(`menuitem`, {
+                name: `Edit`,
+                hidden: true,
+            }));
 
-            await waitFor(() => {
-                expect(screen.queryByText(`Edit Role`)).toBeInTheDocument();
-            });
+            expect(screen.getByText(`Edit Role`)).toBeInTheDocument();
         });
     });
 });

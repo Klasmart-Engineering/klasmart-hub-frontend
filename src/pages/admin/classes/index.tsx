@@ -42,7 +42,7 @@ export default function ClassesPage (props: Props) {
     });
 
     const paginationFilter = buildOrganizationClassesFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildClassesFilters(tableFilters),
     });
@@ -60,7 +60,7 @@ export default function ClassesPage (props: Props) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id || !canView,
+        skip: !currentOrganization?.id || !canView,
         notifyOnNetworkStatusChange: true,
     });
 
@@ -98,7 +98,7 @@ export default function ClassesPage (props: Props) {
         serverPagination.order,
         serverPagination.orderBy,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     const rows = data?.classesConnection?.edges?.map(organizationPaginatedClasses) ?? [];

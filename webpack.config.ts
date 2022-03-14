@@ -178,13 +178,6 @@ const webpackConfig: Configuration = {
         port: 8080,
         https: true,
         historyApiFallback: true,
-        proxy: {
-            "/v1": {
-                target: `https://cms.alpha.kidsloop.net/`,
-                secure: true,
-                changeOrigin: true,
-            },
-        },
     },
 };
 

@@ -31,10 +31,7 @@ const mocks: MockedResponse[] = [
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrganizationId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrganizationId,
+            id: mockOrganizationId,
         }),
     };
 });

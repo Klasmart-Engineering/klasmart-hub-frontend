@@ -1,5 +1,6 @@
-import { useCurrentOrganizationMembership } from "./organizationMemberships";
+import { useQueryMyUser } from "@/api/myUser";
 import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
+import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
 import { usePermission } from "@/utils/permissions";
 import {
     useEffect,
@@ -35,17 +36,19 @@ interface UseDashboardModeReturnType {
 }
 
 export const useDashboardMode = () : UseDashboardModeReturnType => {
+    const { data: myUserData, loading: myUserLoading } = useQueryMyUser();
+    const currentUser = myUserData?.myUser.node;
     const currentOrganizationMembership = useCurrentOrganizationMembership();
     const { hasPermission: teacherPermission = false, loading: teacherLoading } = usePermission(`view_my_class_users_40112`, true);
     const { hasPermission: studentPermission = false, loading: studentLoading } = usePermission(`view_teacher_feedback_670`, true);
 
-    const loading = teacherLoading || studentLoading;
+    const loading = teacherLoading || studentLoading || myUserLoading;
 
     const view = useMemo(() => teacherPermission ? WidgetView.TEACHER : studentPermission ? WidgetView.STUDENT : WidgetView.DEFAULT, [ teacherPermission, studentPermission ]);
 
-    const organizationId = currentOrganizationMembership?.organization_id;
-    const userId = currentOrganizationMembership?.user_id;
-    const stateFamilyId = currentOrganizationMembership ? `${ userId }__${ organizationId }` : ``;
+    const organizationId = currentOrganizationMembership?.organization?.id;
+    const userId = currentUser?.id;
+    const stateFamilyId = currentOrganizationMembership ? `${userId}__${organizationId}` : ``;
     const [ dashboardMode, setDashboardMode ] = useRecoilState(dashboardModeStateFamily(stateFamilyId));
 
     const hasPermissionToViewWidgetDashboard = useMemo(() => {
@@ -63,8 +66,7 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
     }, [ teacherPermission, studentPermission ]);
 
     useEffect(() => {
-        if(dashboardMode !== undefined || loading) return;
-
+        if (dashboardMode !== undefined || loading) return;
         setDashboardMode(hasPermissionToViewWidgetDashboard ? DashboardMode.WIDGET : DashboardMode.ORIGINAL);
     }, [
         loading,
@@ -73,8 +75,7 @@ export const useDashboardMode = () : UseDashboardModeReturnType => {
     ]);
 
     const setToWidgetDashboard = () => {
-        if(!hasPermissionToViewWidgetDashboard) return;
-
+        if (!hasPermissionToViewWidgetDashboard) return;
         setDashboardMode(DashboardMode.WIDGET);
     };
 

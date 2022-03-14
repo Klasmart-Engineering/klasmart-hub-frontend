@@ -40,6 +40,7 @@ export const GET_PAGINATED_ELIGIBLE_STUDENTS = gql`
                     contactInfo {
                         email
                         phone
+                        username
                     }
                 }
             }
@@ -86,6 +87,7 @@ export const GET_PAGINATED_ELIGIBLE_TEACHERS = gql`
                     contactInfo {
                         email
                         phone
+                        username
                     }
                 }
             }

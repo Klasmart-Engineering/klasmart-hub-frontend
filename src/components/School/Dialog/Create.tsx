@@ -140,7 +140,7 @@ export default function CreateSchoolDialog (props: Props) {
         try {
             const createdSchoolResp = await createSchool({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
                     school_name: name ?? ``,
                     shortcode: shortcode ?? undefined,
                 },

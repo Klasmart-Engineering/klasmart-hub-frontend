@@ -38,23 +38,6 @@ export interface SchedulePayload {
 }
 
 export type TimeView = `day` | `work_week` | `week` | `month` | `year` |  `full_view`;
-
-export enum AssessmentStatus {
-    COMPLETE = `complete`,
-    IN_PROGRESS = `in_progress`,
-}
-
-export interface AssessmentItem {
-    id: string;
-    title: string;
-    subject: Identity;
-    program: Identity;
-    teachers: Identity[];
-    class_end_time: number;
-    complete_time: number;
-    status: AssessmentStatus;
-}
-
 export interface LivePreviewJWT {
     aud: string;
     exp: number;
@@ -74,6 +57,7 @@ export interface LivePreviewJWT {
 export interface Material {
     name: string;
     url: string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     __typename: string;
 }
 

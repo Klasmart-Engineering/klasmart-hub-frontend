@@ -29,7 +29,7 @@ export function themeProvider () {
     const currentOrganization = useCurrentOrganization();
     const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
-    const organizationName = currentOrganization?.organization_name ?? ``;
+    const organizationName = currentOrganization?.name ?? ``;
     const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
     const locale = cookies.locale ?? getLanguage(languageCode).locale;
 

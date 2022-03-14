@@ -1,11 +1,10 @@
-import { useGetMyUser } from "@/api/users";
+import { useQueryMyUser } from "@/api/myUser";
 import Assessment from "@/components/HomeCard/Assessments";
 import NextClass from "@/components/HomeCard/nextClass";
 import PlanSelection from "@/components/HomeCard/planSelection";
 import ScheduleInfoShort from "@/components/HomeCard/scheduleInfo";
 import TeacherFeedback from "@/components/HomeCard/TeacherFeedback/Table";
 import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
-import YourClasses from "@/components/HomeCard/yourClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
@@ -22,7 +21,10 @@ import {
     makeStyles,
 } from '@mui/styles';
 import { Card } from "kidsloop-px";
-import { clamp } from "lodash";
+import {
+    clamp,
+    uniqBy,
+} from "lodash";
 import React, {
     useEffect,
     useMemo,
@@ -63,16 +65,21 @@ export default function Dashboard (props: Props) {
     const [ page, setPage ] = useState(1);
     const currentOrganization = useCurrentOrganization();
     const canViewTeacherFeedback = usePermission(`view_teacher_feedback_670`);
-    const canViewClasses = usePermission(`view_my_classes_20118`);
     const permissionViewMyClassUser = usePermission(`view_my_class_users_40112`, true);
-    const { data: userData } = useGetMyUser();
+    const { data: myUserData } = useQueryMyUser();
 
     const SCHEDULE_PAGE_SIZE = 20;
     const SCHEDULE_PAGE_START = 1;
 
-    const userInfo = useMemo(() => userData?.myUser.node, [ userData ]);
+    const userInfo = useMemo(() => myUserData?.myUser.node, [ myUserData ]);
 
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
+
+    useEffect(() => {
+        setPage(1);
+        setSchedule([]);
+    }, [ organizationId ]);
+
     const {
         data: schedulesData,
         isFetching: isSchedulesFetching,
@@ -102,52 +109,78 @@ export default function Dashboard (props: Props) {
     };
 
     useEffect(() => {
-        if (!currentOrganization || !schedulesData?.data.length) return;
+        if (!schedulesData?.data.length) {
+            setSchedule([]);
+            return;
+        }
         schedulesData.data.sort((a, b) => {
             const startDiff = a.start_at - b.start_at;
             if (startDiff === 0) return a.title.localeCompare(b.title);
             return startDiff;
         });
-        setSchedule([ ...schedule, ...schedulesData.data ]);
-    }, [ currentOrganization, schedulesData ]);
+        setSchedule(uniqBy([ ...schedule, ...schedulesData.data ], (schedule) => `${schedule.id}:${schedule.start_at}`));
+    }, [ schedulesData ]);
 
     return (
-        <Container
-            maxWidth="xl"
-            className={classes.root}
-        >
-            <WelcomeMessage user={userInfo} />
-            <Box mb={4}>
-                <NextClass schedule={schedule} />
-            </Box>
-            <Grid
-                container
-                spacing={4}
+        <>
+            <Container
+                maxWidth="xl"
+                className={classes.root}
             >
+                <WelcomeMessage user={userInfo} />
+                <Box mb={4}>
+                    <NextClass schedule={schedule} />
+                </Box>
                 <Grid
-                    item
-                    xs={12}
-                    md={6}
-                >
-                    <Card>
-                        <ScheduleInfoShort
-                            schedule={schedule}
-                            scrollCallback={fetchMoreSchedulesOnScroll}
-                            loading={isSchedulesFetching}
-                        />
-                    </Card>
-                </Grid>
-                <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    className={classes.gridRightColumn}
+                    container
+                    spacing={4}
                 >
                     <Grid
-                        container
-                        direction="column"
+                        item
+                        xs={12}
+                        md={6}
                     >
-                        {canViewTeacherFeedback && (
+                        <Card>
+                            <ScheduleInfoShort
+                                schedule={schedule}
+                                scrollCallback={fetchMoreSchedulesOnScroll}
+                                loading={isSchedulesFetching}
+                            />
+                        </Card>
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        md={6}
+                        className={classes.gridRightColumn}
+                    >
+                        <Grid
+                            container
+                            direction="column"
+                        >
+                            {canViewTeacherFeedback && (
+                                <Grid
+                                    item
+                                    xs
+                                    style={{
+                                        marginBottom: theme.spacing(4),
+                                    }}>
+                                    <Card className={classes.assessmentCard}>
+                                        <TeacherFeedback />
+                                    </Card>
+                                </Grid>
+                            )}
+                            {permissionViewMyClassUser && (
+                                <Grid
+                                    item
+                                    style={{
+                                        marginBottom: theme.spacing(4),
+                                    }}>
+                                    <Card>
+                                        <PlanSelection />
+                                    </Card>
+                                </Grid>
+                            )}
                             <Grid
                                 item
                                 xs
@@ -155,44 +188,13 @@ export default function Dashboard (props: Props) {
                                     marginBottom: theme.spacing(4),
                                 }}>
                                 <Card className={classes.assessmentCard}>
-                                    <TeacherFeedback />
+                                    <Assessment />
                                 </Card>
                             </Grid>
-                        )}
-                        {permissionViewMyClassUser && (
-                            <Grid
-                                item
-                                style={{
-                                    marginBottom: theme.spacing(4),
-                                }}>
-                                <Card>
-                                    <PlanSelection />
-                                </Card>
-                            </Grid>
-                        )}
-                        <Grid
-                            item
-                            xs
-                            style={{
-                                marginBottom: theme.spacing(4),
-                            }}>
-                            <Card className={classes.assessmentCard}>
-                                <Assessment />
-                            </Card>
                         </Grid>
-                        {/* <Grid item>
-                            <Card>
-                                <UsageInfo schedule={schedule} />
-                            </Card>
-                        </Grid> */}
                     </Grid>
                 </Grid>
-            </Grid>
-            {canViewClasses &&
-                <Box mt={4}>
-                    <YourClasses />
-                </Box>
-            }
-        </Container>
+            </Container>
+        </>
     );
 }

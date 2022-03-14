@@ -708,7 +708,9 @@ export const mockClassConnections = {
 
 export const mockClassSummary = {
     classNode: {
+        id: mockClassId,
         name: `Demo Class`,
+        status: Status.ACTIVE,
         programsConnection: {
             edges: [
                 {

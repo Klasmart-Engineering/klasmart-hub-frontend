@@ -42,7 +42,7 @@ export default function EditFolderDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const currentOrganization = useCurrentOrganization();
 
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     useEffect(() => {
         setEditedLibraryContent(value ?? newLibraryContent());

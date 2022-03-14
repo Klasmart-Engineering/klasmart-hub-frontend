@@ -1,7 +1,7 @@
 import {
-    GetUserNodeRequest,
-    GetUserNodeResponse,
-} from "../users";
+    GetOrganizationUserNodeRequest,
+    GetOrganizationUserNodeResponse,
+} from "../organizationMemberships";
 import { QueryResult } from "@apollo/client";
 import { mockUserNode } from "@tests/mockUsers";
 
@@ -10,4 +10,5 @@ export const mockGetOrganizationMembership = {
         userNode: mockUserNode,
     },
     loading: false,
-} as unknown as QueryResult<GetUserNodeResponse, GetUserNodeRequest>;
+
+} as QueryResult<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>;

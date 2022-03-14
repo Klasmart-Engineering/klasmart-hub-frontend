@@ -5,7 +5,6 @@ import {
     screen,
 } from "@testing-library/react";
 import { render } from "@tests/utils/render";
-import each from "jest-each";
 import React from "react";
 
 describe(`OrganizationSwitcher`, () => {
@@ -36,13 +35,13 @@ describe(`OrganizationSwitcher`, () => {
             expect(container.querySelector(`*[class*="showOrganizationsMenuButtonOpen"]`)).toBeInTheDocument();
         });
 
-        each([
+        test.skip.each([
             0,
             1,
             2,
             3,
             5,
-        ]).test.skip(`with organizationMembershipStack of length = %s`, () => undefined);
+        ])(`with organizationMembershipStack of length = %s`, () => undefined);
 
         test.todo(`with previewOrganizationColor`);
     });

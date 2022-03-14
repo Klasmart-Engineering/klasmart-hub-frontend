@@ -134,7 +134,7 @@ export default function CreateProgramDialog (props: Props) {
         try {
             await createOrUpdatePrograms({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
                     programs: [
                         {
                             name: name ?? ``,

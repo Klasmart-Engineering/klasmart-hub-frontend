@@ -45,7 +45,7 @@ export default function SubjectsPage (props: Props) {
     });
 
     const paginationFilter = buildOrganizationSubjectFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildSubjectsFilters(tableFilters),
     });
@@ -63,7 +63,7 @@ export default function SubjectsPage (props: Props) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
     });
 

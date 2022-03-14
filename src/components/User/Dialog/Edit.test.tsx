@@ -4,18 +4,16 @@ import { mockGetOrganizationMembership } from "@/api/__mocks__/organizationMembe
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
 import { mockUseGetPaginatedSchools } from "@/api/__mocks__/schools";
 import {
-    DeleteOrganizationMembershipRequest,
-    DeleteOrganizationMembershipResponse,
+    DeleteUsersInOrganizationRequest,
+    DeleteUsersInOrganizationResponse,
+    GetOrganizationUserNodeRequest,
+    GetOrganizationUserNodeResponse,
     UpdateOrganizationMembershipRequest,
     UpdateOrganizationMembershipResponse,
     useGetOrganizationUserNode,
 } from "@/api/organizationMemberships";
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
-import {
-    GetUserNodeRequest,
-    GetUserNodeResponse,
-} from "@/api/users";
 import {
     defaultState,
     formatDateOfBirth,
@@ -71,10 +69,10 @@ const mockUpdateOrganizationMembership = jest.fn() as jest.Mocked<
     >
 >[0];
 
-const mockDeleteOrganizationMembership = jest.fn() as jest.Mocked<
+const mockDeleteUserInOrganization = jest.fn() as jest.Mocked<
     MutationTuple<
-        DeleteOrganizationMembershipResponse,
-        DeleteOrganizationMembershipRequest
+        DeleteUsersInOrganizationResponse,
+        DeleteUsersInOrganizationRequest
     >
 >[0];
 
@@ -83,7 +81,7 @@ const mockDeletePrompt = jest.fn().mockResolvedValue(true) as jest.MockedFunctio
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrg.organization_id,
+            id: mockOrg.organization_id,
         }),
     };
 });
@@ -92,7 +90,7 @@ jest.mock(`@/api/organizationMemberships`, () => {
     return {
         useGetOrganizationMembership: jest.fn(),
         useGetOrganizationUserNode: jest.fn(),
-        useDeleteOrganizationMembership: () => [ mockDeleteOrganizationMembership ],
+        useDeleteUsersInOrganization: () => [ mockDeleteUserInOrganization ],
         useUpdateOrganizationMembership: () => [ mockUpdateOrganizationMembership ],
     };
 });
@@ -246,7 +244,7 @@ describe(`user edit form`, () => {
                     },
                 },
                 loading: false,
-            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
+            } as QueryResult<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>);
 
             render();
 
@@ -263,7 +261,7 @@ describe(`user edit form`, () => {
                     },
                 },
                 loading: false,
-            } as QueryResult<GetUserNodeResponse, GetUserNodeRequest>);
+            } as QueryResult<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>);
 
             render();
 
@@ -329,11 +327,11 @@ describe(`user edit form`, () => {
     });
 
     describe(`delete`, () => {
-        mockDeleteOrganizationMembership.mockResolvedValue({});
+        mockDeleteUserInOrganization.mockResolvedValue({});
 
         beforeEach(() => {
             mockDeletePrompt.mockClear();
-            mockDeleteOrganizationMembership.mockClear();
+            mockDeleteUserInOrganization.mockClear();
         });
 
         function expectDeleteCalled () {
@@ -345,11 +343,11 @@ describe(`user edit form`, () => {
                 entityName: `${mockUserNode.givenName} ${mockUserNode.familyName}`,
             });
 
-            expect(mockDeleteOrganizationMembership).toHaveBeenCalledTimes(1);
-            expect(mockDeleteOrganizationMembership).toHaveBeenCalledWith({
+            expect(mockDeleteUserInOrganization).toHaveBeenCalledTimes(1);
+            expect(mockDeleteUserInOrganization).toHaveBeenCalledWith({
                 variables: {
-                    organization_id: mockOrganizationMembership.organization_id,
-                    user_id: mockOrganizationMembership.user_id,
+                    organizationId: mockOrganizationMembership.organization_id,
+                    userIds: [ mockOrganizationMembership.user_id ],
                 },
             });
         }
@@ -382,7 +380,7 @@ describe(`user edit form`, () => {
 
             await triggerDelete();
 
-            expect(mockDeleteOrganizationMembership).not.toHaveBeenCalled();
+            expect(mockDeleteUserInOrganization).not.toHaveBeenCalled();
             expect(mockOnClose).not.toHaveBeenCalled();
             expect(mockEnqueueSnackbar).not.toHaveBeenCalled();
         });
@@ -390,7 +388,7 @@ describe(`user edit form`, () => {
         test(`if confirmed but delete request errors, shows an error snackbar`, async () => {
             render();
 
-            mockDeleteOrganizationMembership.mockImplementationOnce(async () => {throw new Error(`Failed`);});
+            mockDeleteUserInOrganization.mockImplementationOnce(async () => {throw new Error(`Failed`);});
 
             await triggerDelete();
 

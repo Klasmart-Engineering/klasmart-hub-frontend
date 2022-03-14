@@ -1,6 +1,9 @@
 import SubjectStep from './Subjects';
 import { buildEmptyProgram } from '@/utils/programs';
-import { screen } from "@testing-library/react";
+import {
+    screen,
+    waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { mockOrgId } from "@tests/mockDataSubjects";
 import { render } from "@tests/utils/render";
 import React from 'react';
@@ -8,10 +11,7 @@ import React from 'react';
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -23,13 +23,18 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-test(`Subjects step renders correctly.`, () => {
-    render(<SubjectStep value={buildEmptyProgram()}/>, {
+test(`Subjects step renders correctly.`, async () => {
+    render(<SubjectStep
+        value={buildEmptyProgram()}
+        isEdit={false}
+    />, {
         mockedResponses: [],
     });
 
-    expect(screen.queryByText(`Subjects`)).toBeTruthy();
-    expect(screen.queryAllByText(`Name`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Categories`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Type`).length).toBeTruthy();
+    await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
+
+    expect(screen.getByText(`Subjects`)).toBeInTheDocument();
+    expect(screen.getAllByText(`Name`)).toHaveLength(2);
+    expect(screen.getAllByText(`Categories`)).toHaveLength(2);
+    expect(screen.getAllByText(`Type`)).toHaveLength(2);
 });

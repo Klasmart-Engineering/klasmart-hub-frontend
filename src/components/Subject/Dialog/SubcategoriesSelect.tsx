@@ -80,7 +80,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
     } = useValidations();
     const [ updatedSubcategories, setUpdatedSubcategories ] = useState(value);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ deleteSubcategoryReq ] = useDeleteSubcategory();
     const { data: programsData } = useGetAllPrograms({

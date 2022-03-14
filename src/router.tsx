@@ -1,4 +1,5 @@
-import ProtectedRoute from "./components/Utility/ProtectedRoute";
+import { authClient } from "@/api/auth/client";
+import ProtectedRoute from "@/components/Utility/ProtectedRoute";
 import AgeRangesPage from "@/pages/admin/age-ranges";
 import ClassesPage from "@/pages/admin/classes";
 import Grades from "@/pages/admin/grades";
@@ -20,9 +21,13 @@ import OrganizationContentPage from "@/pages/library/organization-content";
 import ReportsPage from "@/pages/reports";
 import SchedulePage from "@/pages/schedule";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
-import { redirectIfUnauthorized } from "@/utils/redirectIfUnauthorized";
+import { redirectToAuth } from "@/utils/routing";
 import React,
-{ useEffect } from "react";
+{
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
 import { isIE } from "react-device-detect";
 import {
     Redirect,
@@ -35,8 +40,28 @@ interface Props {
 }
 
 export default function Router (props: Props)  {
+    const [ timeUntilExpiry, setTimeUntilExpiry ] = useState(0);
+
+    const redirectIfUnauthenticated = useCallback(async () => {
+        try {
+            const authToken = await authClient.refreshToken();
+            setTimeUntilExpiry(authToken.exp * 1000 - Date.now());
+        } catch (err) {
+            redirectToAuth({
+                withParams: true,
+            });
+        }
+    }, [ setTimeUntilExpiry ]);
+
+    useEffect(() => {
+        const timeout = setTimeout(redirectIfUnauthenticated, timeUntilExpiry);
+        return () => clearTimeout(timeout);
+    }, [ redirectIfUnauthenticated, timeUntilExpiry ]);
+
     const location = useLocation().pathname;
-    useEffect(() => { redirectIfUnauthorized(); }, [ location ]);
+    useEffect(() => {
+        redirectIfUnauthenticated();
+    }, [ location ]);
 
     return isIE
         ? <BrowserList />

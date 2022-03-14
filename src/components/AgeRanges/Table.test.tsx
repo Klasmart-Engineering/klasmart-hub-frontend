@@ -17,7 +17,6 @@ import {
     mockPaginatedAgeRanges,
 } from "@tests/mockDataAgeRanges";
 import { render } from "@tests/utils/render";
-import { utils } from "kidsloop-px";
 import React from "react";
 
 const data = {
@@ -58,10 +57,7 @@ const mocks = [
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrganizationId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrganizationId,
+            id: mockOrganizationId,
         }),
     };
 });
@@ -108,7 +104,7 @@ test(`useGetTableFilters hook should return mapped age range data`, async () => 
         </MockedProvider>
     );
 
-    const { result } = renderHook(() => useGetTableFilters(mockOrganizationId, {
+    const { result, waitFor } = renderHook(() => useGetTableFilters(mockOrganizationId, {
         queryAgeRanges: true,
     }), {
         wrapper,

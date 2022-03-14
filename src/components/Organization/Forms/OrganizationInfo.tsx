@@ -240,7 +240,6 @@ export default function OrganizationInfo (props: Props) {
                     item
                     xs={12}
                     sm={4}
-                    direction="column"
                 >
                     {/* <TextField
                         fullWidth
@@ -302,54 +301,62 @@ export default function OrganizationInfo (props: Props) {
                     item
                     xs={12}
                     sm={4}
-                    direction="column"
                 >
-                    <TextField
-                        fullWidth
-                        variant="standard"
-                        label={intl.formatMessage({
-                            id: `addOrganization_addressLabel1`,
-                        })}
-                        value={address1}
-                        className={classes.formInput}
-                        validations={[
-                            required(),
-                            letternumeric(),
-                            min(ORGANIZATION_ADDRESS1_LENGTH_MIN, intl.formatMessage({
-                                id: `validation.error.organization.address1.minLength`,
-                            }, {
-                                value: ORGANIZATION_ADDRESS1_LENGTH_MIN,
-                            })),
-                            max(ORGANIZATION_ADDRESS1_LENGTH_MAX, intl.formatMessage({
-                                id: `validation.error.organization.address1.maxLength`,
-                            }, {
-                                value: ORGANIZATION_ADDRESS1_LENGTH_MAX,
-                            })),
-                        ]}
-                        id="addressOne"
-                        onChange={setAddress1}
-                        onValidate={setAddress1Valid}
-                    />
-                    <TextField
-                        fullWidth
-                        variant="standard"
-                        label={intl.formatMessage({
-                            id: `addOrganization_addressLabel2`,
-                        })}
-                        value={address2}
-                        className={classes.formInput}
-                        validations={[
-                            letternumeric(),
-                            max(ORGANIZATION_ADDRESS2_LENGTH_MAX, intl.formatMessage({
-                                id: `validation.error.organization.address2.maxLength`,
-                            }, {
-                                value: ORGANIZATION_ADDRESS2_LENGTH_MAX,
-                            })),
-                        ]}
-                        id="addressTwo"
-                        onChange={setAddress2}
-                        onValidate={setAddress2Valid}
-                    />
+                    <Grid
+                        container
+                        direction="column"
+                    >
+                        <Grid item>
+                            <TextField
+                                fullWidth
+                                variant="standard"
+                                label={intl.formatMessage({
+                                    id: `addOrganization_addressLabel1`,
+                                })}
+                                value={address1}
+                                className={classes.formInput}
+                                validations={[
+                                    required(),
+                                    letternumeric(),
+                                    min(ORGANIZATION_ADDRESS1_LENGTH_MIN, intl.formatMessage({
+                                        id: `validation.error.organization.address1.minLength`,
+                                    }, {
+                                        value: ORGANIZATION_ADDRESS1_LENGTH_MIN,
+                                    })),
+                                    max(ORGANIZATION_ADDRESS1_LENGTH_MAX, intl.formatMessage({
+                                        id: `validation.error.organization.address1.maxLength`,
+                                    }, {
+                                        value: ORGANIZATION_ADDRESS1_LENGTH_MAX,
+                                    })),
+                                ]}
+                                id="addressOne"
+                                onChange={setAddress1}
+                                onValidate={setAddress1Valid}
+                            />
+                        </Grid>
+                        <Grid>
+                            <TextField
+                                fullWidth
+                                variant="standard"
+                                label={intl.formatMessage({
+                                    id: `addOrganization_addressLabel2`,
+                                })}
+                                value={address2}
+                                className={classes.formInput}
+                                validations={[
+                                    letternumeric(),
+                                    max(ORGANIZATION_ADDRESS2_LENGTH_MAX, intl.formatMessage({
+                                        id: `validation.error.organization.address2.maxLength`,
+                                    }, {
+                                        value: ORGANIZATION_ADDRESS2_LENGTH_MAX,
+                                    })),
+                                ]}
+                                id="addressTwo"
+                                onChange={setAddress2}
+                                onValidate={setAddress2Valid}
+                            />
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

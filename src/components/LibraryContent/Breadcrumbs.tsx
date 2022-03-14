@@ -71,7 +71,7 @@ export default function TableBreadcrumbs (props: Props) {
             if (pathName) return;
             const pathDetails = await restApi.getFolderItemsDetailsById({
                 folder_id: path,
-                org_id: currentOrganization?.organization_id ?? ``,
+                org_id: currentOrganization?.id ?? ``,
             });
             updatedPathNames.set(path, pathDetails.name);
         }));

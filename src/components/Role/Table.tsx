@@ -122,14 +122,20 @@ export default function RoleTable (props: Props) {
         data,
         loading: getAllRolesLoading,
         refetch: refetchOrganizationRolesPermissions,
-    } = useGetOrganizationRolesPermissions(currentOrganization?.organization_id ?? ``);
+    } = useGetOrganizationRolesPermissions(currentOrganization?.id ?? ``);
     const roles: Role[] = data?.organization?.roles ?? [];
 
     const {
         data: rolePermissions,
         loading: rolePermissionsLoading,
         refetch: refetchRolePermissions,
-    } = useGetRolePermissions(row.id);
+    } = useGetRolePermissions({
+        fetchPolicy: `network-only`,
+        variables: {
+            role_id: row.id,
+        },
+        skip: !row.id,
+    });
 
     const [ createRole ] = useCreateRole();
     const [ editRole ] = useEditRole();
@@ -222,9 +228,9 @@ export default function RoleTable (props: Props) {
 
             const response = await createRole({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
-                    role_name: newRole.role_name ?? ``,
-                    role_description: newRole.role_description ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
+                    role_name: newRole.role_name,
+                    role_description: newRole.role_description,
                     permission_names: newRole.permission_names,
                 },
             });

@@ -80,7 +80,7 @@ export default function CategorySelectDialog (props: Props) {
     const currentOrganization = useCurrentOrganization();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ deleteCategoryReq ] = useDeleteCategory();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { data: programsData } = useGetAllPrograms({
         variables: {
             organization_id: organizationId,

@@ -1,4 +1,4 @@
-import { OrganizationMembership } from "@/types/graphQL";
+import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import {
     atom,
     selector,
@@ -9,7 +9,7 @@ import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist();
 
-export const organizationMembershipStackState = atom<OrganizationMembership[]>({
+export const organizationMembershipStackState = atom<OrganizationMembershipConnectionNode[]>({
     key: `organizationStackState`,
     default: [],
     // eslint-disable-next-line @typescript-eslint/naming-convention

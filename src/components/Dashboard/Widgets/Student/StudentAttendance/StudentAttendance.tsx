@@ -57,8 +57,7 @@ export default function StudentAttendanceWidget (props: Props) {
     const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
-    const organizationName = currentOrganization?.organization_name ?? ``;
+    const organizationName = currentOrganization?.name ?? ``;
     const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
 
     const data = [

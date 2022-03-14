@@ -1,10 +1,7 @@
+import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import { useOrganizationStack } from "@/store/organizationMemberships";
 import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
 import { PRIMARY_THEME_COLOR } from "@/themeProvider";
-import {
-    OrganizationMembership,
-    Status,
-} from "@/types/graphQL";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     getHighestRole,
@@ -96,13 +93,13 @@ export default function OrganizationSwitcher (props: Props) {
     const memberships = organizationMembershipStack.slice();
     const currentOrganizationMembership = memberships[0];
     const currentOrganization = currentOrganizationMembership?.organization;
-    const currentOrganizationName = currentOrganization?.organization_name ?? ``;
+    const currentOrganizationName = currentOrganization?.name ?? ``;
     const currentOrganizationLogo = currentOrganization?.branding?.iconImageURL ?? ``;
     const currentOrganizationColor_ = currentOrganization?.branding?.primaryColor;
 
     memberships.sort((a, b) => {
-        const aIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === a.organization_id);
-        const bIndex = organizationMembershipStack.findIndex((organization) => organization.organization_id === b.organization_id);
+        const aIndex = organizationMembershipStack.findIndex((organization) => organization.organizationId === a.organizationId);
+        const bIndex = organizationMembershipStack.findIndex((organization) => organization.organizationId === b.organizationId);
         return aIndex - bIndex;
     });
 
@@ -114,18 +111,18 @@ export default function OrganizationSwitcher (props: Props) {
         setShowOrganizations(showOrganizations);
     }, [ showOrganizations ]);
 
-    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization_id !== currentOrganization?.organization_id);
+    const otherAvailableOrganizations = memberships.filter((membership) => membership.organization?.id !== currentOrganization?.id);
 
-    const handleSelectOrganization = (membership: OrganizationMembership) => {
-        if (!membership || membership.organization_id === currentOrganization?.organization_id) return;
+    const handleSelectOrganization = (membership: OrganizationMembershipConnectionNode) => {
+        if (!membership || membership.organizationId === currentOrganization?.id) return;
         selectOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
     };
 
-    const sortedRoleNames = currentOrganizationMembership?.roles
-        ?.filter((r) => r.status === Status.ACTIVE)
-        .map((r) => r.role_name)
-        .filter((roleName): roleName is string => !!roleName);
-    const highestRole = getHighestRole(sortedRoleNames ?? []);
+    const roleNames = currentOrganizationMembership?.rolesConnection?.edges
+        .map((edge) => edge.node.name)
+        .filter((roleName): roleName is string => !!roleName)
+        ?? [];
+    const highestRole = getHighestRole(roleNames);
     const translatedRole = highestRole
         ? (roleNameTranslations[highestRole]
             ? intl.formatMessage({
@@ -163,12 +160,12 @@ export default function OrganizationSwitcher (props: Props) {
                 >
                     {otherAvailableOrganizations?.slice(0, 2).map((membership) => (
                         <ButtonBase
-                            key={membership.organization_id}
+                            key={membership.organization?.id}
                             className={classes.organizationSelection}
                             onClick={() => handleSelectOrganization(membership)}
                         >
                             <OrganizationAvatar
-                                name={membership.organization?.organization_name ?? ``}
+                                name={membership.organization?.name ?? ``}
                                 src={membership.organization?.branding?.iconImageURL ?? ``}
                             />
                         </ButtonBase>

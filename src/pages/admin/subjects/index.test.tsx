@@ -5,10 +5,11 @@ import {
 } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { MockedResponse } from "@apollo/client/testing";
 import {
-    fireEvent,
     screen,
     waitFor,
+    waitForElementToBeRemoved,
 } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 import { mockProgramsFilterList } from '@tests/mockDataPrograms';
 import {
     mockOrgId,
@@ -89,10 +90,7 @@ const mocks: MockedResponse[] = [
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
+            id: mockOrgId,
         }),
     };
 });
@@ -138,16 +136,12 @@ test(`Subjects page results render when searching by name`, async () => {
         mockedResponses: mocks,
     });
 
-    fireEvent.change(screen.getByPlaceholderText(`Search`), {
-        target: {
-            value: `Mock Subject`,
-        },
-    });
+    await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
-    await waitFor(() => {
-        expect(screen.queryAllByText(`Mock Subject`)).toHaveLength(1);
-        expect(screen.queryByText(`Subject Grade 3`)).toBeFalsy();
-    }, {
-        timeout: 4000,
-    });
+    userEvent.type(screen.getByPlaceholderText(`Search`), `Mock Subject`);
+
+    await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
+
+    expect(await screen.findByText(`Mock Subject`)).toBeInTheDocument();
+    expect(screen.queryByText(`Subject Grade 3`)).not.toBeInTheDocument();
 });

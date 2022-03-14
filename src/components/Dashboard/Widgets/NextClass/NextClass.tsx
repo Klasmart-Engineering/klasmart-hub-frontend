@@ -147,7 +147,7 @@ export default function NextClass () {
     const [ maxTeachers, _ ] = useState(2);
     const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
 
     const secondsBeforeClassCanStart = 900;
 

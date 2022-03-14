@@ -44,7 +44,7 @@ export default function GradesPage (props: Props) {
     });
 
     const paginationFilter = buildGradeFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildGradesFilters(tableFilters),
     });
@@ -62,7 +62,7 @@ export default function GradesPage (props: Props) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
         returnPartialData: true,
     });
@@ -101,7 +101,7 @@ export default function GradesPage (props: Props) {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     const rows =

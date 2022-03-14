@@ -1,6 +1,5 @@
-import UserProfileMenu from "./UserProfileMenu";
-import { useGetMe } from "@/api/users";
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
+import UserProfileMenu from "@/components/Core/AppBar/UserProfileMenu";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import {
@@ -77,7 +76,6 @@ export default function Toolbar (props: Props) {
     const location = useLocation();
     const intl = useIntl();
     const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
-    const { data: userData } = useGetMe();
     const currentOrganization = useCurrentOrganization();
     const organizationLogo = currentOrganization?.branding?.iconImageURL;
     const showSiteLogo = !organizationLogo && currentOrganization;
@@ -158,7 +156,7 @@ export default function Toolbar (props: Props) {
                         display="flex"
                         order={2}
                     >
-                        <UserProfileMenu user={userData?.me} />
+                        <UserProfileMenu />
                     </Box>
                 </Grid>
             </AppToolbar>

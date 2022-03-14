@@ -55,7 +55,7 @@ export default function SubjectStep (props: EntityStepContent<ProgramForm>) {
     });
 
     const paginationFilter = buildOrganizationSubjectFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildSubjectsFilters(tableFilters),
     });
@@ -73,7 +73,7 @@ export default function SubjectStep (props: EntityStepContent<ProgramForm>) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
     });
 

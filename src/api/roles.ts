@@ -88,7 +88,7 @@ export interface GetOrganizationPaginatedRolesResponse {
 export interface RoleSummaryNode {
     id: string;
     name: string;
-    status: string;
+    status: Status;
     organizationId: string | null;
     schoolId: string | null;
 }
@@ -171,13 +171,8 @@ export interface GetRolePermissionsResponse {
     role: Role;
 }
 
-export const useGetRolePermissions = (roleId: string) => {
-    return useQuery<GetRolePermissionsResponse, GetRolePermissionsRequest>(GET_ROLE_PERMISSIONS, {
-        fetchPolicy: `network-only`,
-        variables: {
-            role_id: roleId,
-        },
-    });
+export const useGetRolePermissions = (options?: QueryHookOptions<GetRolePermissionsResponse, GetRolePermissionsRequest>) => {
+    return useQuery<GetRolePermissionsResponse, GetRolePermissionsRequest>(GET_ROLE_PERMISSIONS, options);
 };
 
 interface EditRoleRequest {

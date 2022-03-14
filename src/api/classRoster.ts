@@ -8,7 +8,6 @@ import { ADD_USERS_TO_CLASS } from "@/operations/mutations/addUsersToClass";
 import { REMOVE_CLASS_STUDENT } from "@/operations/mutations/deleteClassStudent";
 import { REMOVE_CLASS_TEACHER } from "@/operations/mutations/deleteClassTeacher";
 import { GET_CLASS_NODE_ROSTER } from "@/operations/queries/getClassNodeRoster";
-import { GET_CLASS_ROSTER } from "@/operations/queries/getClassRoster";
 import {
     OrganizationMembership,
     SchoolMembership,
@@ -18,15 +17,6 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
-
-interface GetClassRosterRequest {
-    class_id: string;
-    organization_id: string;
-}
-
-interface GetClassRosterIdsRequest {
-    id: string;
-}
 
 export interface ClassUser {
     avatar: string | null;
@@ -51,26 +41,6 @@ export interface ClassUserRow {
     role?: string;
     organizationRoles: string[];
     contactInfo: string;
-}
-
-interface GetClassRosterResponse {
-    class: {
-        class_name?: string;
-        students: ClassUser[];
-        teachers: ClassUser[];
-    };
-}
-
-interface GetClassRosterEligibleUsersResponse {
-    class: {
-        eligibleStudents: ClassUser[];
-        eligibleTeachers: ClassUser[];
-    };
-}
-
-interface GetClassRosterEligibleUsersRequest {
-    class_id: string;
-    organization_id: string;
 }
 
 interface AddUsersToClassRequest {

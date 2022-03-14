@@ -61,7 +61,7 @@ export default function SelectedSubjectsTable (props: EntityStepContent<ProgramF
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
     });
 

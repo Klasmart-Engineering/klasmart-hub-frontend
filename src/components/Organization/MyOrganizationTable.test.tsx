@@ -1,15 +1,15 @@
-import 'regenerator-runtime/runtime';
 import MyOrganizationTable from './MyOrganizationTable';
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
+import { Status } from '@/types/graphQL';
 import { MockedResponse } from '@apollo/client/testing';
 import {
-    act,
     screen,
     waitFor,
 } from '@testing-library/react';
 import {
     mockOrgId,
     mockOrgStack,
+    mockUserId,
 } from '@tests/mockOrganizationData';
 import { render } from "@tests/utils/render";
 import React from 'react';
@@ -22,9 +22,49 @@ const mocks: MockedResponse[] = [
         result: {
             data: {
                 me: {
-                    organization_ownerships: [ mockOrgStack[0] ],
-                    user_id: `f6d5a6e2-ebb2-5b0b-836d-2731b2594500`,
-                    user_name: `Joe Schmoe`,
+                    organization_ownerships: [
+                        {
+                            organization: {
+                                organization_id: mockOrgId,
+                                organization_name: `KidsLoop Miracle Squad`,
+                                phone: `1112223344`,
+                                status: Status.ACTIVE,
+                                roles: [
+                                    {
+                                        role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
+                                        role_name: `Organization Admin`,
+                                        status: Status.ACTIVE,
+                                    },
+                                    {
+                                        role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
+                                        role_name: `School Admin`,
+                                        status: Status.ACTIVE,
+                                    },
+                                ],
+                                owner: {
+                                    email: `owneremail@testing.com`,
+                                },
+                            },
+                            organization_id: mockOrgId,
+                            status: Status.ACTIVE,
+                            user_id: mockUserId,
+                            user: {
+                                email: `test@testing.com`,
+                            },
+                            roles: [
+                                {
+                                    role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
+                                    role_name: `Organization Admin`,
+                                    status: Status.ACTIVE,
+                                },
+                                {
+                                    role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
+                                    role_name: `School Admin`,
+                                    status: Status.ACTIVE,
+                                },
+                            ],
+                        },
+                    ],
                 },
             },
         },
@@ -33,12 +73,6 @@ const mocks: MockedResponse[] = [
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
-        useCurrentOrganization: () => ({
-            organization_id: mockOrgId,
-        }),
-        useCurrentOrganizationMembership: () => ({
-            organization_id: mockOrgId,
-        }),
         useOrganizationStack: () => ([ mockOrgStack[0] ]),
     };
 });
@@ -50,23 +84,17 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-test(`MyOrganizationTable renders correctly`, () => {
+test(`MyOrganizationTable renders correctly`, async () => {
     render(<MyOrganizationTable />, {
         mockedResponses: mocks,
     });
 
-    expect(screen.queryByText(`My Organizations`)).toBeInTheDocument();
-    expect(screen.queryAllByText(`Organization Name`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Phone Number`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Email`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Role(s)`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Status`).length).toBeTruthy();
-});
-
-test(`MyOrganizationTable renders correct data`, async () => {
-    render(<MyOrganizationTable />, {
-        mockedResponses: mocks,
-    });
+    expect(screen.getByText(`My Organizations`)).toBeInTheDocument();
+    expect(screen.getAllByText(`Organization Name`)).toHaveLength(2);
+    expect(screen.getAllByText(`Phone Number`)).toHaveLength(2);
+    expect(screen.getAllByText(`Email`)).toHaveLength(2);
+    expect(screen.getAllByText(`Role(s)`)).toHaveLength(2);
+    expect(screen.getAllByText(`Status`)).toHaveLength(2);
 
     await waitFor(() => {
         expect(screen.queryByText(`KidsLoop Miracle Squad`)).toBeInTheDocument();

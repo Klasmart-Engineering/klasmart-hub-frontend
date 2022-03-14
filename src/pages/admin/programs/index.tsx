@@ -46,7 +46,7 @@ export default function ProgramsPage (props: Props) {
     });
 
     const paginationFilter = buildOrganizationProgramFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
         filters: buildProgramFilters(tableFilters),
     });
@@ -64,7 +64,7 @@ export default function ProgramsPage (props: Props) {
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
         notifyOnNetworkStatusChange: true,
     });
 
@@ -102,7 +102,7 @@ export default function ProgramsPage (props: Props) {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     const rows = data?.programsConnection?.edges

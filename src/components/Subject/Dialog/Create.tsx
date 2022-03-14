@@ -44,7 +44,7 @@ export default function CreateSubjectDialog (props: Props) {
     const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { data: categoriesData } = useGetAllCategories({
         variables: {
             organization_id: organizationId,

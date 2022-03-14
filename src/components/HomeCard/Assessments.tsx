@@ -104,7 +104,7 @@ export default function Assessments () {
             display="flex"
             flexDirection="column"
             flex="1"
-            justifyContent={showChart && `center`}
+            justifyContent={showChart ? `center` : undefined}
         >
             {showChart
                 ? <AssessmentPieChart/>

@@ -6,44 +6,30 @@ export const mockUserId = `f6d5a6e2-ebb2-5b0b-836d-2731b2594500`;
 export const mockOrgStack = [
     {
         organization: {
-            organization_id: mockOrgId,
-            organization_name: `KidsLoop Miracle Squad`,
-            phone: `1112223344`,
-            status: Status.ACTIVE,
-            roles: [
+            id: mockOrgId,
+            name: `KidsLoop Miracle Squad`,
+            owners: [
                 {
-                    role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
-                    role_name: `Organization Admin`,
-                    status: Status.ACTIVE,
-                },
-                {
-                    role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
-                    role_name: `School Admin`,
-                    status: Status.ACTIVE,
+                    email: `owneremail@testing.com`,
                 },
             ],
-            owner: {
-                email: `owneremail@testing.com`,
-            },
         },
-        organization_id: mockOrgId,
-        status: Status.ACTIVE,
-        user_id: mockUserId,
-        user: {
-            email: `test@testing.com`,
+        rolesConnection: {
+            edges: [
+                {
+                    node: {
+                        id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
+                        name: `Organization Admin`,
+                    },
+                },
+                {
+                    node: {
+                        id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
+                        name: `School Admin`,
+                    },
+                },
+            ],
         },
-        roles: [
-            {
-                role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
-                role_name: `Organization Admin`,
-                status: Status.ACTIVE,
-            },
-            {
-                role_id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
-                role_name: `School Admin`,
-                status: Status.ACTIVE,
-            },
-        ],
     },
 ];
 

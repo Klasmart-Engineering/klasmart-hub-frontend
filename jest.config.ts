@@ -1,7 +1,7 @@
 import { compilerOptions } from "./tsconfig.json";
 import type { Config } from '@jest/types';
 import { defaults } from "jest-config";
-import { pathsToModuleNameMapper } from "ts-jest/utils";
+import { pathsToModuleNameMapper } from "ts-jest";
 
 const config: Config.InitialOptions = {
     verbose: false,
@@ -16,14 +16,10 @@ const config: Config.InitialOptions = {
     ],
     moduleDirectories: [ `node_modules` ],
     moduleNameMapper: {
-        "\\.(css|less)$": `<rootDir>/tests/mocks/styleMock.ts`,
+        "\\.(css|less|svg)$": `<rootDir>/tests/mocks/transformer.ts`,
         ...pathsToModuleNameMapper(compilerOptions.paths, {
             prefix: `<rootDir>/`,
         }),
-    },
-    transform: {
-        "^.+\\.tsx?$": `babel-jest`,
-        "^.+\\.svg$": `jest-svg-transformer`,
     },
     maxWorkers: `50%`,
 

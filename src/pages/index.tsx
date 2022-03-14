@@ -40,7 +40,7 @@ export default function HomePage () {
             color="primary"
             className={classes.pageLoading}/>;
 
-    if(dashboardMode === DashboardMode.WIDGET && (view === WidgetView.STUDENT || view === WidgetView.TEACHER)) {
+    if (dashboardMode === DashboardMode.WIDGET && (view === WidgetView.STUDENT || view === WidgetView.TEACHER)) {
         return (
             <>
                 {showDashboardNoticeToggle &&

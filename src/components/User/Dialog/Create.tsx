@@ -100,7 +100,7 @@ export default function CreateUserDialog (props: Props) {
 
     const handleCreate = async () => {
         try {
-            const variables = mapFormStateToCreateOrganizationMembershipRequest(formState, currentOrganization?.organization_id ?? ``);
+            const variables = mapFormStateToCreateOrganizationMembershipRequest(formState, currentOrganization?.id ?? ``);
             await createOrganizationMembership({
                 variables,
             });

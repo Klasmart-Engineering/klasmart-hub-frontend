@@ -1,4 +1,4 @@
-import { useGetMyUser } from "@/api/users";
+import { useQueryMyUser } from "@/api/myUser";
 import {
     createStyles,
     makeStyles,
@@ -23,8 +23,8 @@ interface Props {}
 
 export default function WidgetDashboardWelcomeMessage (props: Props) {
     const classes = useStyles();
-    const { data: userData } = useGetMyUser();
-    const givenName = userData?.myUser.node.givenName;
+    const { data: myUserData } = useQueryMyUser();
+    const givenName = myUserData?.myUser.node.givenName;
 
     const getTimeOfDayId = () => {
         const now = new Date();

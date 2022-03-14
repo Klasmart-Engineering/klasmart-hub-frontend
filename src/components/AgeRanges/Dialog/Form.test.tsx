@@ -1,40 +1,42 @@
 import AgeRangeForm from './Form';
 import { buildEmptyAgeRange } from '@/utils/ageRanges';
-import {
-    fireEvent,
-    screen,
-    waitFor,
-} from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from "@tests/utils/render";
 import React from 'react';
 
-test(`Age range form renders correctly`, async () => {
-    render(<AgeRangeForm
-        value={buildEmptyAgeRange()}
-        onChange={jest.fn()}
-        onValidation={jest.fn()}/>);
+test(`Age range form renders correctly`, () => {
+    render((
+        <AgeRangeForm
+            value={buildEmptyAgeRange()}
+            onChange={jest.fn()}
+            onValidation={jest.fn()}
+        />
+    ));
 
-    expect(screen.queryByText(`Age Range`)).toBeInTheDocument();
-    expect(screen.getByLabelText(`From`)).toBeTruthy();
-    expect(screen.queryAllByText(`From Unit`).length).toBeTruthy();
-    expect(screen.queryAllByText(`To`).length).toBeTruthy();
-    expect(screen.queryAllByText(`To Unit`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Year(s)`).length).toBeTruthy();
+    expect(screen.getByText(`Age Range`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`From`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`From`)).toHaveValue(0);
+    expect(screen.getByLabelText(`From Unit`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`To`)).toBeInTheDocument();
+    expect(screen.getByLabelText(`To`)).toHaveValue(1);
+    expect(screen.getByLabelText(`To Unit`)).toBeInTheDocument();
+});
 
-    fireEvent.change(screen.getByLabelText(`From`), {
-        target: {
-            value: `10`,
-        },
-    });
+test(`Age range form change values`, () => {
+    render((
+        <AgeRangeForm
+            value={buildEmptyAgeRange()}
+            onChange={jest.fn()}
+            onValidation={jest.fn()}
+        />
+    ));
 
-    fireEvent.change(screen.getByLabelText(`To`), {
-        target: {
-            value: `12`,
-        },
-    });
+    userEvent.type(screen.getByLabelText(`From`), `{selectall}`);
+    userEvent.type(screen.getByLabelText(`From`), `10`);
+    userEvent.type(screen.getByLabelText(`To`), `{selectall}`);
+    userEvent.type(screen.getByLabelText(`To`), `12`);
 
-    await waitFor(() => {
-        expect((screen.getByLabelText(`From`) as HTMLInputElement)?.value).toBe(`10`);
-        expect((screen.getByLabelText(`To`) as HTMLInputElement)?.value).toBe(`12`);
-    });
+    expect(screen.getByLabelText(`From`)).toHaveValue(10);
+    expect(screen.getByLabelText(`To`)).toHaveValue(12);
 });

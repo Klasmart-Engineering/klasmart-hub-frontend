@@ -43,9 +43,9 @@ const switchUser = async (body: SwitchUserBody) => {
 class AuthClient {
     static baseURL = authInstance.defaults.baseURL;
 
-    refreshToken = refreshToken;
-    signOut = signOut;
-    switchUser = switchUser;
+    readonly refreshToken = refreshToken;
+    readonly signOut = signOut;
+    readonly switchUser = switchUser;
 }
 
 const authClient = new AuthClient();

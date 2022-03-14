@@ -44,7 +44,7 @@ export default function RolesPage () {
     const [ rows, setRows ] = useState<RoleRow[]>([]);
     const canView = usePermission(`view_roles_and_permissions_30110`);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -109,7 +109,7 @@ export default function RolesPage () {
         serverPagination.order,
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     useEffect(() => {

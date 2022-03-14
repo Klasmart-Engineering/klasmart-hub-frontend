@@ -31,25 +31,25 @@ import React,
 
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
-    const organizationUserIsActive = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations[0];
+    const organizationUserIsActive = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations?.[0];
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
         familyName: user.familyName ?? ``,
         avatar: user.avatar ?? ``,
-        email: user.contactInfo.email ?? ``,
-        phone: user.contactInfo.phone ?? ``,
-        roleNames: user.roles.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames),
-        schoolNames: user.schools.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames),
-        status: organizationUserIsActive.userStatus ?? Status.INACTIVE,
-        joinDate: new Date(organizationUserIsActive.joinDate),
+        email: user.contactInfo?.email ?? ``,
+        phone: user.contactInfo?.phone ?? ``,
+        roleNames: user.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames) ?? [],
+        schoolNames: user.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+        status: organizationUserIsActive?.userStatus ?? Status.INACTIVE,
+        joinDate: new Date(organizationUserIsActive?.joinDate ?? 0),
     };
 };
 
 export default function UsersPage () {
     const [ rows, setRows ] = useState<UserRow[]>([]);
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
@@ -117,7 +117,7 @@ export default function UsersPage () {
         serverPagination.orderBy,
         serverPagination.rowsPerPage,
         tableFilters,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     useEffect(() => {

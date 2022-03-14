@@ -174,7 +174,7 @@ export default function TeacherFeedback (props: Props) {
                             onDownloadClick: async () => {
                                 try {
                                     const contentResource = await restApi.getContentsResourcesDownloadById({
-                                        org_id: currentOrganization?.organization_id ?? ``,
+                                        org_id: currentOrganization?.id ?? ``,
                                         resource_id: file.id,
                                     });
                                     if (!contentResource) throw Error(`content-resource-not-found`);
@@ -258,7 +258,7 @@ export default function TeacherFeedback (props: Props) {
             const fourteenDaysAgo = new Date();
             fourteenDaysAgo.setDate(now.getDate() - 14);
             const resp = await restApi.getAssessmentsForStudent({
-                org_id: currentOrganization?.organization_id ?? ``,
+                org_id: currentOrganization?.id ?? ``,
                 page: page + 1, // table component starts at 0, api starts at 1
                 page_size: ROWS_PER_PAGE,
                 type: subgroupBy,

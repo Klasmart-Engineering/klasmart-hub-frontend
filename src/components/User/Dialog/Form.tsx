@@ -152,7 +152,7 @@ export default function UserDialogForm (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.organization_id ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const { data: schoolsData } = useGetPaginatedSchools({
         variables: {
             direction: `FORWARD`,

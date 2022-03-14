@@ -1,12 +1,8 @@
-import {
-    GetUserNodeRequest,
-    GetUserNodeResponse,
-    UserNode,
-} from "./users";
+import { UserNode } from "./users";
 import { DEACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/deactivateUser";
+import { DELETE_USER_IN_ORGANIZATION } from "@/operations/mutations/deleteUser";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
 import { INVITE_USER_TO_ORGANIZATION } from "@/operations/mutations/inviteUserToOrganization";
-import { LEAVE_MEMBERSHIP } from "@/operations/mutations/leaveMembership";
 import { REACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/reactivateUser";
 import { GET_ORGANIZATION_MEMBERSHIPS_PERMISSIONS } from "@/operations/queries/getAllUserPermissions";
 import { GET_ORGANIZATION_USER_NODE } from "@/operations/queries/getOrganizationUserNode";
@@ -18,6 +14,7 @@ import {
     SortOrder,
     Status,
     StringFilter,
+    User,
     UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
@@ -69,42 +66,44 @@ export const useUpdateOrganizationMembership = (options?: MutationHookOptions<Up
     });
 };
 
-export interface DeleteOrganizationMembershipRequest {
-    organization_id: string;
-    user_id: string;
+export interface DeleteUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
 }
 
-export interface DeleteOrganizationMembershipResponse {
+export interface DeleteUsersInOrganizationResponse {
 }
 
-export interface ReactivateUserInOrganizationRequest {
+export interface ReactivateUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
 }
-export interface DeactivateUserInOrganizationRequest {
-    organization_id: string;
-    user_ids: string[];
-}
-
-export interface ReactivateUserInOrganizationResponse {
-}
-export interface DeactivateUserInOrganizationResponse {
+export interface DeactivateUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
 }
 
-export const useDeleteOrganizationMembership = (options?: MutationHookOptions<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>) => {
-    return useMutation<DeleteOrganizationMembershipResponse, DeleteOrganizationMembershipRequest>(LEAVE_MEMBERSHIP, {
+export interface ReactivateUsersInOrganizationResponse {
+}
+export interface DeactivateUsersInOrganizationResponse {
+}
+
+export const useDeleteUsersInOrganization = (options?: MutationHookOptions<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>) => {
+    return useMutation<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>(DELETE_USER_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
 };
 
-export const useReactivateUserInOrganization = (options?: MutationHookOptions<ReactivateUserInOrganizationResponse, ReactivateUserInOrganizationRequest>) => {
-    return useMutation<ReactivateUserInOrganizationResponse, ReactivateUserInOrganizationRequest>(REACTIVATE_USER_IN_ORGANIZATION, {
+export const useReactivateUsersInOrganization = (options?: MutationHookOptions<ReactivateUsersInOrganizationResponse, ReactivateUsersInOrganizationRequest>) => {
+    return useMutation<ReactivateUsersInOrganizationResponse, ReactivateUsersInOrganizationRequest>(REACTIVATE_USER_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
 };
 
-export const useDeactivateUserInOrganization = (options?: MutationHookOptions<DeactivateUserInOrganizationResponse, DeactivateUserInOrganizationRequest>) => {
-    return useMutation<DeactivateUserInOrganizationResponse, DeactivateUserInOrganizationRequest>(DEACTIVATE_USER_IN_ORGANIZATION, {
+export const useDeactivateUsersInOrganization = (options?: MutationHookOptions<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>) => {
+    return useMutation<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>(DEACTIVATE_USER_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
@@ -146,14 +145,16 @@ export interface GetOrganizationMembershipResponse {
     };
 }
 
+export interface GetOrganizationUserNodeRequest {
+    organizationId: string;
+    userId: string;
+}
 export interface GetOrganizationUserNodeResponse {
-    userNode: {
-        membership: OrganizationMembership;
-    };
+    userNode: UserNode & Partial<User>; // until we migrate completely to UserNode
 }
 
-export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetUserNodeResponse, GetUserNodeRequest>) => {
-    return useQuery<GetUserNodeResponse, GetUserNodeRequest>(GET_ORGANIZATION_USER_NODE, options);
+export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>) => {
+    return useQuery<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>(GET_ORGANIZATION_USER_NODE, options);
 };
 
 interface GetOrganizationMembershipsRequest {
@@ -177,6 +178,28 @@ interface GetOrganizationMembershipsRequest2 {
     filter?: UserFilter;
 }
 
+export interface OrganizationContactInfo {
+    phone: string;
+}
+
+export interface OrganizationConnectionNode {
+    id: string;
+    name: string;
+    owners: {
+        email: string;
+    }[];
+    contactInfo: OrganizationContactInfo;
+    branding: {
+        iconImageURL: string;
+        primaryColor: string;
+    };
+}
+
+export interface RoleConnectionNode {
+    id: string;
+    name: string;
+}
+
 export interface OrganizationMembershipConnectionNode {
     userId?: string;
     organizationId?: string;
@@ -184,6 +207,7 @@ export interface OrganizationMembershipConnectionNode {
     shortCode?: string;
     joinTimestamp?: string;
     user?: UserNode;
+    organization?: OrganizationConnectionNode;
     rolesConnection?: RolesConnection;
 }
 
@@ -266,11 +290,12 @@ export const useGetPaginatedOrganizationMemberships = (options?: QueryHookOption
 };
 
 interface GetOrganizationMembershipsPermissionsRequest {
+    organizationId: string;
 }
 
 export interface GetOrganizationMembershipsPermissionsResponse {
     me?: {
-        memberships: OrganizationMembership[];
+        membership: OrganizationMembership;
     };
 }
 

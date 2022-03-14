@@ -1,15 +1,14 @@
+import { useQueryMyUser } from "@/api/myUser";
 import {
     useDeleteOrganizationOwnership,
     useGetOrganizationOwnerships,
 } from "@/api/organizations";
 import globalStyles from "@/globalStyles";
-import { useOrganizationStack } from "@/store/organizationMemberships";
 import {
     OrganizationOwnership,
     Status,
 } from "@/types/graphQL";
 import { history } from "@/utils/history";
-import { removeOrganizationMembership } from "@/utils/organizationMemberships";
 import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -76,12 +75,14 @@ export default function MyOrganizationTable (props: Props) {
     const { equals, required } = useValidations();
     const prompt = usePrompt();
     const {
-        data,
-        loading,
-        refetch,
+        data: organizationOwnershipData,
+        loading: organizationOwnershipLoading,
+        refetch: refetchOrganizationOwnership,
     } = useGetOrganizationOwnerships();
+    const { refetch: refetchMyUser } = useQueryMyUser({
+        nextFetchPolicy: `network-only`,
+    });
     const [ deleteOrganization ] = useDeleteOrganizationOwnership();
-    const [ organizationMembershipStack, setOrganizationMembershipStack ] = useOrganizationStack();
     const [ rows, setRows ] = useState<MyOrganizationRow[]>([]);
     const canCreate = usePermission({
         OR: [ `create_own_organization_10220`, `create_an_organization_account_1` ],
@@ -89,7 +90,7 @@ export default function MyOrganizationTable (props: Props) {
     const canEdit = usePermission({
         OR: [ `edit_this_organization_10330`, `edit_my_organization_10331` ],
     });
-    const organizationOwnerships = data?.me?.organization_ownerships ?? [];
+    const organizationOwnerships = organizationOwnershipData?.me?.organization_ownerships ?? [];
 
     useEffect(() => {
         if (!organizationOwnerships.length) {
@@ -109,7 +110,7 @@ export default function MyOrganizationTable (props: Props) {
         }));
 
         setRows(rows);
-    }, [ data ]);
+    }, [ organizationOwnershipData ]);
 
     const handleDeleteSelectedOrganizationClick = async (row: MyOrganizationRow): Promise<void> => {
         const membership = organizationOwnerships.find((membership) => membership.organization_id === row.id);
@@ -146,8 +147,7 @@ export default function MyOrganizationTable (props: Props) {
                     organization_id: membership.organization_id,
                 },
             });
-            removeOrganizationMembership(membership, organizationMembershipStack, setOrganizationMembershipStack);
-            await refetch();
+            await Promise.all([ refetchMyUser(), refetchOrganizationOwnership() ]);
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_deleteSuccess`,
             }), {
@@ -166,7 +166,7 @@ export default function MyOrganizationTable (props: Props) {
         {
             id: `id`,
             label: `Id`,
-            hidden: true,
+            secret: true,
             disableSearch: true,
             disableSort: true,
         },
@@ -239,7 +239,7 @@ export default function MyOrganizationTable (props: Props) {
                 <PageTable
                     columns={columns}
                     rows={rows}
-                    loading={loading}
+                    loading={organizationOwnershipLoading}
                     idField={`id`}
                     primaryAction={{
                         label: intl.formatMessage({

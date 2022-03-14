@@ -1,7 +1,6 @@
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
 import { usePermission } from "@/utils/permissions";
 import { renderWithRouter } from "@tests/router";
-import each from "jest-each";
 import React from "react";
 
 jest.mock(`@/utils/permissions`, () => {
@@ -31,7 +30,7 @@ beforeEach(() => {
     MockComponent.mockClear();
 });
 
-each([ true, false ]).test(`if Permission API is loading and User hasPermission=%s, it renders the child component`, (hasPermission) => {
+test.each([ true, false ])(`if Permission API is loading and User hasPermission=%s, it renders the child component`, (hasPermission) => {
     mockUsePermission.mockReturnValueOnce({
         loading: true,
         hasPermission,

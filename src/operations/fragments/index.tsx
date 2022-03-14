@@ -38,7 +38,7 @@ export const USER_FIELDS = gql`
 `;
 
 export const USER_NODE_FIELDS = gql`
-    fragment UserFields on UserConnectionNode {
+    fragment UserNodeFields on UserConnectionNode {
         id
         givenName
         familyName
@@ -46,10 +46,12 @@ export const USER_NODE_FIELDS = gql`
         contactInfo {
             email
             phone
+            username
         }
         alternateContactInfo {
             email
             phone
+            username
         }
         roles {
             id

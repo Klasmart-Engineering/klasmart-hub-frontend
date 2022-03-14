@@ -1,8 +1,8 @@
+import { useQueryMyUser } from "@/api/myUser";
 import {
     useDeleteOrganizationBrandingImage,
     useDeleteOrganizationBrandingPrimaryColor,
     useGetOrganization,
-    useGetOrganizationMemberships,
     useSaveOrganization,
     useSetOrganizationBranding,
 } from "@/api/organizations";
@@ -86,7 +86,7 @@ export default function EditOrganizationPage () {
             organization_id: organizationId,
         },
     });
-    const { refetch: refetchMemberships } = useGetOrganizationMemberships({
+    const { refetch: refetchMemberships } = useQueryMyUser({
         nextFetchPolicy: `network-only`,
     });
 

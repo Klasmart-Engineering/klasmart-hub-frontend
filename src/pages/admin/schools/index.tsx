@@ -38,7 +38,7 @@ export default function SchoolsPage (props: Props) {
     });
 
     const paginationFilter = buildOrganizationSchoolFilter({
-        organizationId: currentOrganization?.organization_id ?? ``,
+        organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
     });
 
@@ -55,7 +55,7 @@ export default function SchoolsPage (props: Props) {
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.organization_id || !canView,
+        skip: !currentOrganization?.id || !canView,
         notifyOnNetworkStatusChange: true,
     });
 
@@ -91,7 +91,7 @@ export default function SchoolsPage (props: Props) {
         serverPagination.rowsPerPage,
         serverPagination.order,
         serverPagination.orderBy,
-        currentOrganization?.organization_id,
+        currentOrganization?.id,
     ]);
 
     const rows = data?.schoolsConnection?.edges

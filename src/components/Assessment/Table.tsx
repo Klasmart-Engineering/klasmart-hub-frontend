@@ -1,13 +1,14 @@
-import { useRestAPI } from "@/api/restapi";
+import {
+    buildDefaultAssessmentStatusTabs,
+    getStatusLabel,
+} from "./utils";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AssessmentItem,
     AssessmentStatus,
-} from "@/types/objectTypes";
-import {
-    buildDefaultAssessmentStatusTabs,
-    getStatusLabel,
-} from "@/utils/assessments";
+    useGetAssessments,
+    useGetAssessmentsSummary,
+} from "@kidsloop/cms-api-client";
 import { Box } from "@mui/material";
 import {
     createStyles,
@@ -23,7 +24,7 @@ import { PageTableData } from "kidsloop-px/dist/types/components/Table/Page/Tabl
 import { sumBy } from "lodash";
 import React,
 {
-    useEffect,
+    useMemo,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
@@ -41,81 +42,59 @@ interface Props {
 
 export default function AssessmentTable (props: Props) {
     const classes = useStyles();
-    const restApi = useRestAPI();
     const intl = useIntl();
 
-    const [ rows, setRows ] = useState<AssessmentItem[]>([]);
-    const [ total, setTotal ] = useState(0);
-    const [ allStatusTotal, setAllStatusTotal ] = useState(0);
     const [ page, setPage ] = useState(0);
-    const [ loading, setLoading ] = useState(false);
-    const [ subgroupBy, setSubgroupBy ] = useState<string| undefined>(AssessmentStatus.IN_PROGRESS);
-    const [ statusGroups, setStatusGroups ] = useState<SubgroupTab[]>(buildDefaultAssessmentStatusTabs(intl) ?? []);
+    const [ subgroupBy, setSubgroupBy ] = useState<string | undefined>(`in_progress`);
     const currentOrganization = useCurrentOrganization();
 
-    const fetchStatusGroups = async () => {
-        const assessmentSummary = await restApi.getAssessmentsSummary({
-            org_id: currentOrganization?.organization_id ?? ``,
-        });
-        const groups: SubgroupTab[] = Object
-            .values(AssessmentStatus)
-            .map((status) => ({
-                text: getStatusLabel(status, intl),
-                value: status,
-                count: assessmentSummary?.[status] ?? 0,
-            }));
+    const { data: assessmentsData, isLoading: assessmentsLoading } = useGetAssessments({
+        org_id: currentOrganization?.id ?? ``,
+        page: page + 1,
+        page_size: ROWS_PER_PAGE,
+        status: subgroupBy,
+    }, {
+        queryOptions: {
+            enabled: !!currentOrganization?.id,
+        },
+    });
 
-        const allCount = sumBy(groups, (group) => typeof group.count === `number` ? group.count : 0);
+    const assessmentItemData = useMemo(() => {
+        const items = assessmentsData?.items ?? [];
+        const total = assessmentsData?.total ?? 0;
+        return {
+            rows: items,
+            total,
+        };
+    }, [ assessmentsData ]);
 
-        setAllStatusTotal(allCount);
-        setStatusGroups(groups);
-    };
+    const { data: assessmentsSummaryData, isLoading: assessmentsSummaryLoading } = useGetAssessmentsSummary({
+        org_id: currentOrganization?.id ?? ``,
+    }, {
+        queryOptions: {
+            enabled: !!currentOrganization?.id,
+        },
+    });
 
-    const fetchRowsByStatus = async () => {
-        const resp = await restApi.getAssessments({
-            org_id: currentOrganization?.organization_id ?? ``,
-            page: page + 1,
-            page_size: ROWS_PER_PAGE,
-            status: subgroupBy,
-        });
-        const items = resp?.items ?? [];
-        const total = resp?.total ?? 0;
-        setRows(items);
-        setTotal(total);
-    };
+    const statusGroups = useMemo(() => {
+        if (!assessmentsSummaryData) return buildDefaultAssessmentStatusTabs(intl) ?? [];
+        const assessmentStatus: AssessmentStatus[] = [ `complete`, `in_progress` ];
+        const groups: SubgroupTab[] = assessmentStatus.map((status) => ({
+            text: getStatusLabel(status, intl),
+            value: status,
+            count: assessmentsSummaryData?.[status] ?? 0,
+        }));
+        return groups;
+    }, [ assessmentsSummaryData ]);
+
+    const allStatusTotal = useMemo(() => {
+        return sumBy(statusGroups, (group) => typeof group.count === `number` ? group.count : 0);
+    }, [ statusGroups ]);
 
     const handleOnChange = (tableData: PageTableData<AssessmentItem>) => {
         setPage(tableData.page);
         setSubgroupBy(tableData.subgroupBy);
     };
-
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            try {
-                await Promise.all([ fetchStatusGroups() ]);
-            } catch (err) {
-                console.error(err);
-            }
-            setLoading(false);
-        })();
-    }, [ currentOrganization ]);
-
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            try {
-                await Promise.all([ fetchRowsByStatus() ]);
-            } catch (err) {
-                console.error(err);
-            }
-            setLoading(false);
-        })();
-    }, [
-        currentOrganization,
-        subgroupBy,
-        page,
-    ]);
 
     const columns: TableColumn<AssessmentItem>[] = [
         {
@@ -150,11 +129,11 @@ export default function AssessmentTable (props: Props) {
             disableSearch: true,
             render: (row) => (
                 <Box
-                    flexWrap
+                    flexWrap="wrap"
                     display="flex"
                     flexDirection="row"
                 >
-                    {row.teachers.sort((a, b) => a.name.localeCompare(b.name)).map((teacher) => (
+                    {row.teachers?.sort((a, b) => a.name.localeCompare(b.name)).map((teacher) => (
                         <UserAvatar
                             key={teacher.id}
                             className={classes.teacherAvatar}
@@ -171,10 +150,10 @@ export default function AssessmentTable (props: Props) {
         <PageTable
             idField="id"
             page={page}
-            loading={loading}
+            loading={assessmentsLoading || assessmentsSummaryLoading}
             columns={columns}
-            rows={rows}
-            total={total}
+            rows={assessmentItemData.rows}
+            total={assessmentItemData.total}
             groupBy="status"
             subgroupBy={subgroupBy}
             rowsPerPage={ROWS_PER_PAGE}

@@ -54,7 +54,7 @@ export default function (props: Props) {
         try {
             await updateGrade({
                 variables: {
-                    organization_id: currentOrganization?.organization_id ?? ``,
+                    organization_id: currentOrganization?.id ?? ``,
                     grades: [
                         {
                             id: updatedGrade.id,

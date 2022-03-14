@@ -79,7 +79,7 @@ export default function GradeTable (props: Props) {
     const canDelete = usePermission(`delete_grade_20443`);
     const currentOrganization = useCurrentOrganization();
     const { required } = useValidations();
-    const { gradeFilterValueOptions } = useGradeFilters(currentOrganization?.organization_id ?? ``, hideFilters);
+    const { gradeFilterValueOptions } = useGradeFilters(currentOrganization?.id ?? ``, hideFilters);
 
     const filters: TableFilter<GradeRow>[] = [
         {

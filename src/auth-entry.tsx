@@ -1,10 +1,9 @@
+import { authClient } from "@/api/auth/client";
 import SiteLoading from "@/components/Utility/SiteLoading";
-import { getAuthEndpoint } from "@/config";
 import HealthPage from "@/pages/health";
 import VersionPage from "@/pages/version";
 import { history } from "@/utils/history";
-import { refreshToken } from "@/utils/redirectIfUnauthorized";
-import queryString from "querystring";
+import { redirectToAuth } from "@/utils/routing";
 import React,
 {
     Suspense,
@@ -42,22 +41,18 @@ export default function AuthEntry () {
 }
 
 function ProtectedEntry () {
-    const [ isAwaitingAuthtoken, setIsAwaitingAuthtoken ] = useState(true);
+    const [ isAwaitingAuthToken, setIsAwaitingAuthToken ] = useState(true);
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     const [ EntryComponent, setEntryComponent ] = useState(<SiteLoading />);
 
-    const stringifiedQuery = queryString.stringify({
-        continue: window.location.href,
-    });
-
     const initAuth = async () => {
         try {
-            const authToken = await refreshToken();
-            setIsAuthenticated(!!authToken?.id);
+            const authToken = await authClient.refreshToken();
+            setIsAuthenticated(!!authToken.id);
         } catch (err) {
             setIsAuthenticated(false);
         }
-        setIsAwaitingAuthtoken(false);
+        setIsAwaitingAuthToken(false);
     };
 
     useEffect(() => {
@@ -65,14 +60,16 @@ function ProtectedEntry () {
     }, []);
 
     useEffect(() => {
-        if (isAwaitingAuthtoken) return;
+        if (isAwaitingAuthToken) return;
         if (!isAuthenticated) {
-            window.location.href = `${getAuthEndpoint()}?${stringifiedQuery}#/`;
+            redirectToAuth({
+                withParams: true,
+            });
             return;
         }
         const Providers = React.lazy(() => import(`@/providers`));
         setEntryComponent(<Providers />);
-    }, [ isAwaitingAuthtoken, isAuthenticated ]);
+    }, [ isAwaitingAuthToken, isAuthenticated ]);
 
     return (
         <Suspense fallback={<SiteLoading />}>
