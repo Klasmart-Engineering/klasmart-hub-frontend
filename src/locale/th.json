@@ -1168,5 +1168,21 @@
     "home.student.learningOutcomeWidget.legendTitle": "Top 5 Skills",
     "home.student.learningOutcomeWidget.legendAchieved": "Achieved",
     "home.student.learningOutcomeWidget.legendNotAchieved": "Not Achieved",
-    "home.student.learningOutcomeWidget.totalLabel": "total"
+    "home.student.learningOutcomeWidget.totalLabel": "total",
+    "classes_classCreatedMessage": "Class created",
+    "home.customization.addwidgetdialog.title": "Widgets",
+    "home.customization.addwidgetdialog.cancel": "Cancel",
+    "home.customization.addwidgetdialog.addwidget": "Add Widget",
+    "home.customization.warning.title": "Warning",
+    "home.customization.warning.desc": "You have unsaved changes, are you sure you want to leave this page? Any unsaved changes will be lost.",
+    "home.customization.warning.confirm": "CONFRIM",
+    "home.customization.warning.cancel": "CANCEL",
+    "home.customization.title": "Customize",
+    "home.customization.reset": "Reset to default",
+    "home.customization.addwidget": "Add Widget",
+    "home.customization.save": "Save",
+    "home.customization.cancel": "Cancel",
+    "home.student.adaptiveLearningJourney.containerTitleLabel": "Adaptive review journey",
+    "home.student.adaptiveLearningJourney.progressBarLabel": "Overall Performance",
+    "home.student.adaptiveLearningJourney.classTitle": "Class-Remedial"
 }
