@@ -1,4 +1,7 @@
 import {
+    OrganizationMembershipConnectionEdge,
+    RolesConnectionEdge,
+    SchoolsMembershipConnectionEdge,
     useGetPaginatedOrganizationMemberships,
     UserEdge,
 } from "@/api/organizationMemberships";
@@ -29,9 +32,40 @@ import React,
     useState,
 } from "react";
 
+const mapRoles = (edge: RolesConnectionEdge) => {
+    const role = edge.node;
+    return {
+        id: role.id,
+        name: role.name ?? ``,
+        status: role.status ?? Status.INACTIVE,
+    };
+};
+
+const mapOrganizationMembershipEdges = (edge: OrganizationMembershipConnectionEdge) => {
+    const organizationMembership = edge.node;
+    return {
+        joinTimestamp: organizationMembership.joinTimestamp,
+        status: organizationMembership.status,
+        roles: organizationMembership.rolesConnection?.edges.map(mapRoles),
+    };
+};
+
+const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
+    const schoolMembership = edge.node.school;
+
+    return {
+        id: schoolMembership.id,
+        name: schoolMembership.name,
+        status: schoolMembership.status,
+    };
+};
+
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
-    const organizationUserIsActive = user.organizations?.find(organization => organization.userStatus === Status.ACTIVE) ?? user.organizations?.[0];
+    const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
+    const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
+    const organizationUserIsActive = organizationMemberships?.find(organization => organization.status === Status.ACTIVE) ?? organizationMemberships?.[0];
+
     return {
         id: user.id,
         givenName: user.givenName ?? ``,
@@ -39,10 +73,10 @@ export const mapUserRow = (edge: UserEdge) => {
         avatar: user.avatar ?? ``,
         email: user.contactInfo?.email ?? ``,
         phone: user.contactInfo?.phone ?? ``,
-        roleNames: user.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames) ?? [],
-        schoolNames: user.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
-        status: organizationUserIsActive?.userStatus ?? Status.INACTIVE,
-        joinDate: new Date(organizationUserIsActive?.joinDate ?? 0),
+        roleNames: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.name ?? ``).sort(sortRoleNames) ?? [],
+        schoolNames: schoolMemberships?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name ?? ``).sort(sortSchoolNames) ?? [],
+        status: organizationUserIsActive?.status ?? Status.INACTIVE,
+        joinDate: new Date(organizationUserIsActive?.joinTimestamp ?? ``),
     };
 };
 
@@ -81,7 +115,7 @@ export default function UsersPage () {
         notifyOnNetworkStatusChange: true,
     });
 
-    const pageInfo = usersData?.usersConnection.pageInfo;
+    const pageInfo = usersData?.usersConnection?.pageInfo;
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
@@ -121,8 +155,8 @@ export default function UsersPage () {
     ]);
 
     useEffect(() => {
-        const rows = usersData?.usersConnection.edges?.map(mapUserRow);
-        setRows(rows ?? []);
+        const rows = usersData?.usersConnection.edges?.map(mapUserRow) ?? [];
+        setRows(rows);
     }, [ usersData ]);
 
     return (
@@ -134,7 +168,7 @@ export default function UsersPage () {
             orderBy={serverPagination.orderBy}
             rowsPerPage={serverPagination.rowsPerPage}
             search={serverPagination.search}
-            total={usersData?.usersConnection.totalCount}
+            total={usersData?.usersConnection?.totalCount}
             hasNextPage={pageInfo?.hasNextPage}
             hasPreviousPage={pageInfo?.hasPreviousPage}
             startCursor={pageInfo?.startCursor}

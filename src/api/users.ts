@@ -1,4 +1,7 @@
-import { OrganizationMembershipsConnection } from "./organizationMemberships";
+import {
+    OrganizationMembershipsConnection,
+    SchoolMembershipsConnection,
+} from "./organizationMemberships";
 import { RoleSummaryNode } from "./roles";
 import { SchoolSummaryNode } from "./schools";
 import { UPLOAD_USERS_CSV } from "@/operations/mutations/uploadUsersCsv";
@@ -43,4 +46,5 @@ export interface UserNode {
     gender?: string;
     avatar?: string | null;
     organizationMembershipsConnection?: OrganizationMembershipsConnection;
+    schoolMembershipsConnection?: SchoolMembershipsConnection;
 }
