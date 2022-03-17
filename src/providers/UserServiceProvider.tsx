@@ -71,10 +71,10 @@ const UserServiceProvider: React.FC<Props> = (props) => {
     const client = useMemo(() => new ApolloClient({
         credentials: `include`,
         link: ApolloLink.from([
-            // persistedQueryLink, + OrganizationContactInfo = no bueno
             objectCleanerLink,
             retryLink,
             graphQLErrorPromoterLink,
+            persistedQueryLink,
             uploadLink,
         ]),
         cache,
