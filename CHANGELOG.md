@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.39.1-hotfix.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.39.1-hotfix.0%0D2.39.0) (2022-03-14)
+
+
+### 🐛 Bug Fixes
+
+* add AUTH_LOGOUT_ROUTE_ENABLED feature flag ([d2f9eb4](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/d2f9eb4ba9ef6407ef9c9bed39b3e97e3374bd0f))
+
 ## [2.39.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.39.0%0D2.38.1) (2022-03-09)
 
 
