@@ -172,6 +172,10 @@ export default function ClassesTable (props: Props) {
         `school_name`,
         `program_name`,
         `grade_name`,
+        `subject_name`,
+        `age_range_low_value`,
+        `age_range_high_value`,
+        `age_range_unit`
     ];
 
     const csvExporter = buildCsvTemplateOptions({
