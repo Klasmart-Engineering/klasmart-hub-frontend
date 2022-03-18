@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.40.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.0%0D2.39.1-hotfix.0) (2022-03-18)
+
+
+### 📦 Refactor
+
+* migrate to myUser resolver and optimize fetched data on site load ([91c8c95](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/91c8c95b2031307b441524f1340879ae0d1ee12e))
+
+
+### 🐛 Bug Fixes
+
+* don't allow npm publish on standard version ([23a765d](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/23a765dc14b1fa87f494c78eee453f1e7e09842b))
+* use logout feature flag in `redirectToAuth` ([ff0cec1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/ff0cec16fb99f7b677eaf3fef97118954e99105f))
+
+
+### ✨ Features
+
+* **AD-2225:** added age range and subject columns to class csv templates ([6babf97](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/6babf9770ff84d552f850de4f87afde244890470)), closes [AD-2225](https://calmisland.atlassian.net/browse/AD-2225)
+* **AD-2228:** add username to the user CSV template ([cba8a21](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/cba8a2108d52f7cfbf6be716ba56404d28fe0414)), closes [AD-2228](https://calmisland.atlassian.net/browse/AD-2228)
+* delete user in organization ([07e801f](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/07e801fadafb85f1cc65b1b5529bf803e9c9f176)), closes [AD-1156](https://calmisland.atlassian.net/browse/AD-1156) [AD-1156](https://calmisland.atlassian.net/browse/AD-1156)
+* reenable persisted queries ([e1dde56](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/e1dde564793fe0c7cb8d85d2c4089a5c61d42cec))
+
 ### [2.39.1-hotfix.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.39.1-hotfix.0%0D2.39.0) (2022-03-14)
 
 
