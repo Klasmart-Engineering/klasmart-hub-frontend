@@ -1,7 +1,7 @@
 import NoDataSvg from "@/assets/img/nodata.svg";
 import { Theme } from "@mui/material";
-import createStyles from '@mui/styles/createStyles';
 import { makeStyles } from "@mui/styles";
+import createStyles from '@mui/styles/createStyles';
 import React from "react";
 import { FormattedMessage } from "react-intl";
 

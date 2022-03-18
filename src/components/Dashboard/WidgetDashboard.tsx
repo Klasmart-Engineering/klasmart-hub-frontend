@@ -1,6 +1,5 @@
 import "react-grid-layout/css/styles.css";
-import getLayouts,
-{ WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
+import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
 import WidgetDashboardWelcomeBanner from "@/components/Dashboard/WidgetManagement/WidgetDashboardWelcomeBanner";
 import WidgetGrid from "@/components/Dashboard/WidgetManagement/WidgetGrid";
 import {
@@ -12,11 +11,7 @@ import {
     makeStyles,
 } from "@mui/styles";
 import clsx from "clsx";
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
+import React from "react";
 import ReactResizeDetector from 'react-resize-detector';
 
 const useStyles = makeStyles(() =>

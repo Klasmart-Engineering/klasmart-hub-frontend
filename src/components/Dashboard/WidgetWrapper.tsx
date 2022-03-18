@@ -86,6 +86,9 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
         label,
         link,
         overrideLink,
+        loading,
+        error,
+        noData,
         reload,
         id,
     } = props;
@@ -103,7 +106,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                 className={classes.card}
             >
                 <Box sx={
-                    props.loading ? {
+                    loading ? {
                         m: `auto`,
                         display: `flex`,
                         alignItems: `center`,
@@ -112,11 +115,11 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                             height: `100%`,
                         }
                 }>
-                    {props.loading ?
+                    {loading ?
                         <CircularProgress color="primary" />
-                        : props.error ?
+                        : error ?
                             <WidgetWrapperError reload={reload}/>
-                            : props.noData ?
+                            : noData ?
                                 <WidgetWrapperNoData/>
                                 :
                                 children

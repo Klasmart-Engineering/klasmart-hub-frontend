@@ -1,9 +1,12 @@
 import OopsSvg from "@/assets/img/oops.svg";
-import { styled, Theme } from "@mui/material";
-import createStyles from '@mui/styles/createStyles';
-import Button from "@mui/material/Button";
 import ReplayIcon from '@mui/icons-material/Replay';
+import {
+    styled,
+    Theme,
+} from "@mui/material";
+import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
+import createStyles from '@mui/styles/createStyles';
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
@@ -43,13 +46,10 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         fontSize: 24,
         fontWeight: `bold`,
     },
-    subtitle: {
-        color: theme.palette.text.hint,
-    },
 }));
 
 type Props = {
-    reload: () => void;
+    reload?: () => any | Promise<any>;
 }
 
 export default function WidgetWrapperError (props: Props) {
@@ -67,22 +67,22 @@ export default function WidgetWrapperError (props: Props) {
                         <div className={classes.title}>
                             <FormattedMessage id="home.common.error.generic.title" />
                         </div>
-                        <div className={classes.subtitle}>
+                        <div>
                             <FormattedMessage id="home.common.error.generic.description" />
                         </div>
                     </div>
                 </div>
-                <Button
+                {props.reload && <Button
                     className={classes.tryAgainButton}
                     variant="contained"
                     color="secondary"
                     endIcon={<ReloadIcon
                         fontSize="small"
                         className="reload-transform" />}
-                    onClick={() => props.reload()}
+                    onClick={() => props.reload && props.reload()}
                 >
                     <FormattedMessage id="home.common.error.action" />
-                </Button>
+                </Button>}
             </div>
         </>
     );

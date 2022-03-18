@@ -16,7 +16,7 @@ const config: Config.InitialOptions = {
     ],
     moduleDirectories: [ `node_modules` ],
     moduleNameMapper: {
-        "\\.(css|less|svg)$": `<rootDir>/tests/mocks/transformer.ts`,
+        "\\.(css|less|svg|png)$": `<rootDir>/tests/mocks/transformer.ts`,
         ...pathsToModuleNameMapper(compilerOptions.paths, {
             prefix: `<rootDir>/`,
         }),
