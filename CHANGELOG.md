@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.40.1](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.1%0D2.40.0) (2022-03-21)
+
+
+### 🐛 Bug Fixes
+
+* altered orgId property to correctly pass in orgid for program form dropdowns ([3451ef3](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/3451ef3506e54de8d93224b278bf8df1fb6c3a21))
+* missing reports endpoint ([a41fbdd](https://bitbucket.org/calmisland/kidsloop-hub-frontend/commits/a41fbdd8838168416260ef3e51e76553e44de8ac))
+
 ## [2.40.0](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.0%0D2.39.1-hotfix.0) (2022-03-18)
 
 
