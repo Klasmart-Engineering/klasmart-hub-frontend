@@ -32,14 +32,14 @@ export const useGetProgramFormDropdowns = () => {
             orderBy: `name`,
             order: `ASC`,
             filter: buildGradeFilter({
-                organizationId: currentOrganization?.organization_id ?? ``,
+                organizationId: currentOrganization?.id ?? ``,
                 search: ``,
                 filters: [],
             }),
         },
         returnPartialData: true,
         fetchPolicy: `no-cache`,
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
     });
 
     const {
@@ -53,13 +53,13 @@ export const useGetProgramFormDropdowns = () => {
             orderBy: [ `lowValueUnit`, `lowValue` ],
             order: `ASC`,
             filter: buildOrganizationAgeRangeFilter({
-                organizationId: currentOrganization?.organization_id ?? ``,
+                organizationId: currentOrganization?.id ?? ``,
                 filters: [],
             }),
         },
         returnPartialData: true,
         fetchPolicy: `no-cache`,
-        skip: !currentOrganization?.organization_id,
+        skip: !currentOrganization?.id,
     });
 
     useEffect(() => {
