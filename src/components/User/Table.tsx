@@ -595,7 +595,7 @@ export default function UserTable (props: Props) {
                                 id: `users_deleteButton`,
                             }),
                             icon: DeleteIcon,
-                            disabled: row.status === Status.INACTIVE || !canDelete,
+                            disabled: !canDelete,
                             onClick: deleteSelectedRow,
                         },
                     ]}
