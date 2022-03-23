@@ -28,10 +28,14 @@ const objectCleanerLink = new ApolloLink((operation, forward) => {
     return forward(operation).map((value) => utils.trimStrings(value)); // clean response data
 });
 
+const checkForAuthError = (error: GraphQLError) => {
+    return error.extensions?.code === `UNAUTHENTICATED` || error.message === `User is required for authorization`;
+};
+
 const retryLink = new RetryLink({
     attempts: async (count, operation, error) => {
         if (count > REQUEST_RETRY_COUNT_MAX) return false;
-        const isAuthError = error.result?.errors.find((error: GraphQLError) => error.message === `User is required for authorization`);
+        const isAuthError = error.result?.errors.find(checkForAuthError);
         if (!isAuthError) return false;
         try {
             await authClient.refreshToken();
@@ -52,7 +56,7 @@ const retryLink = new RetryLink({
  */
 const graphQLAuthErrorPromoterLink = new ApolloLink((operation, forward) => {
     return forward(operation).map((data) => {
-        const isAuthError = data?.errors?.find((error: GraphQLError) => error.message === `User is required for authorization`);
+        const isAuthError = data?.errors?.find(checkForAuthError);
         if (isAuthError) throw {
             result: data,
         };
