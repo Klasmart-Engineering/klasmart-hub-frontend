@@ -31,7 +31,7 @@ const objectCleanerLink = new ApolloLink((operation, forward) => {
 const retryLink = new RetryLink({
     attempts: async (count, operation, error) => {
         if (count > REQUEST_RETRY_COUNT_MAX) return false;
-        const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
+        const isAuthError = error.result?.errors.find((error: GraphQLError) => error.message === `User is required for authorization`);
         if (!isAuthError) return false;
         try {
             await authClient.refreshToken();
@@ -50,9 +50,10 @@ const retryLink = new RetryLink({
  * https://www.apollographql.com/docs/react/api/link/apollo-link-retry/
  * solution inspired by https://github.com/apollographql/apollo-link/issues/541
  */
-const graphQLErrorPromoterLink = new ApolloLink((operation, forward) => {
+const graphQLAuthErrorPromoterLink = new ApolloLink((operation, forward) => {
     return forward(operation).map((data) => {
-        if (data?.errors?.length) throw {
+        const isAuthError = data?.errors?.find((error: GraphQLError) => error.message === `User is required for authorization`);
+        if (isAuthError) throw {
             result: data,
         };
         return data;
@@ -73,7 +74,7 @@ const UserServiceProvider: React.FC<Props> = (props) => {
         link: ApolloLink.from([
             objectCleanerLink,
             retryLink,
-            graphQLErrorPromoterLink,
+            graphQLAuthErrorPromoterLink,
             persistedQueryLink,
             uploadLink,
         ]),
