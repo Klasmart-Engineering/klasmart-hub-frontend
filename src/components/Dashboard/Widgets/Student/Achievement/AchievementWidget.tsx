@@ -2,6 +2,8 @@
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useStudentLearningOutcome } from "@kidsloop/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
     List,
@@ -15,13 +17,17 @@ import {
     makeStyles,
 } from '@mui/styles';
 import { sumBy } from "lodash";
-import React from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme:Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     widgetContent: {
         height: `100%`,
         display: `flex`,
@@ -42,14 +48,6 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         borderRadius: `100%`,
         padding: 5,
         fontSize: 35,
-    },
-    progressBar: {
-        [theme.breakpoints.down(`xs`)]: {
-            display: `none`,
-        },
-        [theme.breakpoints.down(`sm`)]: {
-            display: `none`,
-        },
     },
     text: {
         fontSize: 16,
@@ -88,37 +86,65 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
     },
 }));
 
+export interface AchievementData {
+    intlKey: JSX.Element;
+    count: number;
+    color: string;
+}
+
 export default function AchievementWidget () {
     const intl = useIntl();
     const classes = useStyles();
     const theme = useTheme();
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.id ?? ``;
+    const {
+        data: achievementData,
+        isFetching: isachievementDataFetching,
+        error: isachievementDataError,
+        refetch: achievementDataRefetch,
+    } = useStudentLearningOutcome({
+        org: organizationId,
+    });
+    const [ achievementDatas, setachievementDatas ] = useState<AchievementData[]>();
+    const [ total, setTotal ] = useState(0);
+    useEffect(() => {
+        if (!achievementData || achievementData.info === undefined) return;
+        const generatedAchievementData = [
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendAchieved" />,
+                count: achievementData.info.learning_outcomes.achieved,
+                color: theme.palette.info.light,
+            },
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendPending" />,
+                count: achievementData.info.learning_outcomes.not_covered,
+                color: `#9473E5`,
+            },
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendNotAchieved" />,
+                count: achievementData.info.learning_outcomes.not_achieved,
+                color: theme.palette.error.light,
+            },
+        ];
+        setachievementDatas(generatedAchievementData);
+        setTotal(sumBy(generatedAchievementData, (item) => item.count));
 
-    const data = [
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendAchieved" />,
-            count: 86,
-            color: theme.palette.info.light,
-        },
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendPending" />,
-            count: 28,
-            color: `#9473E5`,
-        },
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendNotAchieved" />,
-            count: 53,
-            color: theme.palette.error.light,
-        },
-    ];
-
-    const total: number = sumBy(data, (item) => item.count);
+    }, [
+        achievementData,
+        currentOrganization,
+        total,
+    ]);
+    const reload = () => {
+        achievementDataRefetch();
+    };
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={false}
-            noData={false}
-            reload={() => { false;}}
+            loading={isachievementDataFetching}
+            error={isachievementDataError}
+            noData={!achievementData?.successful}
+            reload={reload}
             label={
                 intl.formatMessage({
                     id: `home.student.achievementWidget.containerTitleLabel`,
@@ -133,18 +159,18 @@ export default function AchievementWidget () {
             id={WidgetType.ACHIEVEMENT}>
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
-                    <FiberManualRecord className={classes.bullet}/>
+                    <FiberManualRecord className={classes.bullet} />
                     <Typography className={classes.title}>
                         <FormattedMessage id="home.student.achievementWidget.title" />
                     </Typography>
                 </div>
-                {data &&
+                {achievementDatas &&
                     <List>
                         <Typography className={classes.heading}>
                             <FormattedMessage id="home.student.achievementWidget.containerHeading" />
                         </Typography>
                         <div className={classes.break} />
-                        {data.map((item, index:number)=>{
+                        {achievementDatas?.map((item, index: number) => {
                             return <ListItem key={index}>
                                 <div
                                     className={classes.row}
@@ -156,7 +182,7 @@ export default function AchievementWidget () {
                                     >
                                         {item.intlKey}
                                     </div>
-                                    <div className={classes.progressBar}>
+                                    <div>
                                         <ProgressBar
                                             total={total}
                                             progress={item.count}
