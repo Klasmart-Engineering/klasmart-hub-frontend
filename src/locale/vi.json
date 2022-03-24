@@ -1187,9 +1187,16 @@
     "home.student.adaptiveLearningJourney.classTitle": "Lớp phụ đạo",
     "home.customization.addwidget.schedule.description": "Xem lịch hàng ngày của bạn, xem các sự kiện sắp tới như lớp học tại lớp và lớp học trực tuyến.",
     "home.customization.addwidget.nextclass.description": "Đánh dấu các lớp học tiếp theo của bạn, giúp bạn dễ dàng tham gia lớp học tiếp theo hơn.",
-    "home.customization.addwidget.attendance.description": "Xác định các nhóm học sinh có tỷ lệ tham gia khác nhau, đồng thời cung cấp cái nhìn sâu sắc về những học sinh đi học ít tham gia và có thể yêu cầu trợ giúp thêm.",
-    "home.customization.addwidget.pendingassessments.description": "Làm nổi bật số lượng bài đánh giá của một giáo viên vượt trội, để họ có thể theo dõi những bài đánh giá nổi bật yêu cầu hoàn thành.",
+    "home.customization.addwidget.attendance.description": "Xác định các nhóm học sinh có tỷ lệ tham gia khác nhau, đồng thời cung cấp cái nhìn sâu sắc về những học sinh ít tham gia và có thể cần trợ giúp thêm.",
+    "home.customization.addwidget.pendingassessments.description": "Đánh dấu số lượng bài đánh giá của một giáo viên vượt trội, để họ có thể theo dõi những bài đánh giá nổi bật được yêu cầu hoàn thành.",
     "home.customization.addwidget.teacherload.description": "Hiển thị khối lượng giảng dạy của giáo viên trong tuần trước so với khối lượng giảng dạy của họ trong tuần sắp tới.",
     "home.customization.addwidget.contentstatus.description": "Xác định nội dung có sẵn cho giáo viên, tiện ích cũng làm nổi bật nội dung vẫn đang chờ xử lý và chưa được phê duyệt.",
-    "home.student.teacherFeedbackWidget.noFeedBack": "There is no teacher's feedback"
+    "home.student.teacherFeedbackWidget.noFeedBack": "Không có phản hồi của giáo viên",
+    "home.customization.addwidget.student.attendance.description": "Displays your average attendance for the last week, broken down by day.",
+    "home.customization.addwidget.student.completion.description": "Shows you how many assignments you have in total, and an overview of how many assignments which still need to be completed.",
+    "home.customization.addwidget.student.feedback.description": "Providing you an area where you can view and read feedback sent to you from your teachers.",
+    "home.customization.addwidget.student.schedule.description": "View your daily and weekly schedule to see upcoming events in your calendar, such as your Classes and Live Classes.",
+    "home.customization.addwidget.student.learningoutcome.description": "An overview of your achieved Learning Outcomes to those that still need to be achieved for each skill, highlighting your Top 5 skills.",
+    "home.customization.addwidget.student.achievement.description": "Shows you at high level how many learning outcomes you have achieved, and an overview of how many learning outcomes you have not achieved and how many learning outcomes were planed but not taught yet.",
+    "home.customization.addwidget.student.adaptivelearning.description": "Shows you the impact of the AI review classes taken by summarising the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills"
 }
