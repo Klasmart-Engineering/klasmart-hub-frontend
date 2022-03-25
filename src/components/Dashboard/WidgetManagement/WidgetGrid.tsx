@@ -1,12 +1,14 @@
-import getLayouts, {
+import {
     Layout,
-    Layouts,
-    Widgets,
     WidgetView,
 } from "./defaultWidgets";
+import immutableStateUpdate from "./widgetCustomisation/immutableStateUpdate";
+import WidgetContext from "./widgetCustomisation/widgetContext";
+import { State } from "@/components/Dashboard/WidgetDashboard";
 import { styled } from "@mui/material";
 import React,
 {
+    useContext,
     useEffect,
     useMemo,
     useState,
@@ -33,16 +35,33 @@ interface Props {
 export default function WidgetGrid (props: Props) {
     const [ layoutArray, setLayoutArray ] = useState<Layout[]>([] as Layout[]);
     const [ breakpoint, setBreakpoint ] = useState<string>(`lg`);
-    const [ layouts, setLayouts ] = useState<Layouts>({} as Layouts);
-    const [ widgets, setWidgets ] = useState<Widgets>({} as Widgets);
+    const [ state, setState ] = useState<State>({} as State);
+
+    const {
+        widgets: contextWidgets,
+        layouts: contextLayouts,
+        editing,
+        reorderWidgets,
+        cancelEditing,
+    } = useContext(WidgetContext);
     const { view } = props;
 
     useEffect(() => {
-        const { layouts: initialLayout, widgets: initialWidget } = getLayouts(view);
-        setLayouts(initialLayout);
-        setWidgets(initialWidget);
-        setLayoutArray(initialLayout[breakpoint]);
-    }, [ view ]);
+        setLayoutArray(contextLayouts[breakpoint]);
+        immutableStateUpdate(setState, contextWidgets, contextLayouts);
+    }, [ view, editing ]);
+
+    useEffect(() => {
+        setLayoutArray(contextLayouts[breakpoint]);
+    }, [ contextLayouts ]);
+
+    useEffect(() => {
+        immutableStateUpdate(setState, contextWidgets, contextLayouts);
+    }, [ contextWidgets, contextLayouts ]);
+
+    useEffect(() => {
+        reorderWidgets(contextLayouts[breakpoint]);
+    }, [ editing ]);
 
     useEffect(() => {
         // dispatch resize everytime the grid updates
@@ -54,25 +73,29 @@ export default function WidgetGrid (props: Props) {
         isResizable: false,
         margin: [ 15, 15 ],
         rowHeight: 100,
-        isDraggable: false,
+        isDraggable: editing,
         isBounded: true,
         onBreakpointChange:(newBreakpoint: string) => {
             setBreakpoint(newBreakpoint);
+            if(newBreakpoint === `sm` && editing) { cancelEditing();}
         },
         onLayoutChange: () => {
-            setLayoutArray(layouts[breakpoint]);
+            setLayoutArray(state.layouts[breakpoint]);
+        },
+        onDragStop: (newItem) => {
+            reorderWidgets(newItem as Layout[]);
         },
     };
 
     const widgetArray = useMemo(() => {
         return layoutArray && layoutArray.map((layout:Layout) => {
-            return <div key={layout.i}>{widgets[layout.i]}</div>;
+            return <div key={layout.i}>{state.widgets[layout.i]}</div>;
         });
     }, [ view, layoutArray ]);
 
     return <ResponsiveGridLayout
         className="layout"
-        layouts={layouts}
+        layouts={state.layouts}
         {...responsiveProps}
         breakpoints={{
             lg: 1200,

@@ -17,11 +17,10 @@ import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
-import FormattedDuration from "react-intl-formatted-duration";
 
 const now = new Date();
 
-const useStyles = makeStyles((theme:Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     dayTitle: {
         color: theme.palette.grey[700],
     },
@@ -57,7 +56,7 @@ export default function ScheduleWidget () {
             loading={false}
             error={false}
             noData={false}
-            reload={() => {false;}}
+            reload={() => { false; }}
             label={
                 intl.formatMessage({
                     id: `home.schedule.containerTitleLabel`,
@@ -72,18 +71,18 @@ export default function ScheduleWidget () {
             id={WidgetType.STUDENTSCHEDULE}
         >
 
-            <div className={ classes.scrollContainer }>
-                { ClassMockData ? (
+            <div className={classes.scrollContainer}>
+                {ClassMockData ? (
                     <>
-                        { daysWithClass?.map((dayWithClass) => {
+                        {daysWithClass?.map((dayWithClass) => {
 
                             return (
                                 <Box
                                     key={dayWithClass}
                                     paddingBottom={1}>
                                     <Box paddingLeft={2}>
-                                        <Typography className={ classes.dayTitle }>
-                                            <DateLabel date={ dayWithClass } />
+                                        <Typography className={classes.dayTitle}>
+                                            <DateLabel date={dayWithClass} />
                                         </Typography></Box>
                                     <Box>
                                         {
@@ -95,7 +94,7 @@ export default function ScheduleWidget () {
 
                                                     return (
                                                         <Box
-                                                            key={ `class-${ item.id }` }
+                                                            key={`class-${item.id}`}
                                                             paddingTop={1}>
                                                             <ScheduleItem
                                                                 active={isActive}
@@ -106,7 +105,8 @@ export default function ScheduleWidget () {
                                         }
                                     </Box>
                                 </Box>
-                            );})
+                            );
+                        })
                         }
                     </>
                 ) : (
@@ -125,7 +125,7 @@ type DateLabelProps = {
     date: string;
 }
 
-function DateLabel (props : DateLabelProps) {
+function DateLabel (props: DateLabelProps) {
     const { date } = props;
     const scheduleDay = new Date(date);
 
