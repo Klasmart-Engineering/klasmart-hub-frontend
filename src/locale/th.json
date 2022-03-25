@@ -1145,7 +1145,7 @@
     "react-intl-formatted-duration.minutesUnit": "{value, plural, other {นาที}}",
     "react-intl-formatted-duration.secondsUnit": "{value, plural, other {วินาที}}",
     "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm.",
-    "home.student.adaptiveLearningWidget.containerTitleLabel": "Adaptive learning",
+    "home.student.adaptiveLearningWidget.containerTitleLabel": "AI Review",
     "home.student.adaptiveLearningWidget.containerUrlLabel": "View all details",
     "home.student.adaptiveLearningWidget.skill1": "Writing",
     "home.student.adaptiveLearningWidget.skill2": "Speaking",

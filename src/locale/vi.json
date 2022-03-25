@@ -1145,7 +1145,7 @@
     "react-intl-formatted-duration.minutesUnit": "{value, plural, other {phút}}",
     "react-intl-formatted-duration.secondsUnit": "{value, plural, other {giây}}",
     "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm.",
-    "home.student.adaptiveLearningWidget.containerTitleLabel": "Adaptive learning",
+    "home.student.adaptiveLearningWidget.containerTitleLabel": "AI Review",
     "home.student.adaptiveLearningWidget.containerUrlLabel": "View all details",
     "home.student.adaptiveLearningWidget.skill1": "Writing",
     "home.student.adaptiveLearningWidget.skill2": "Speaking",
@@ -1192,11 +1192,11 @@
     "home.customization.addwidget.teacherload.description": "Hiển thị khối lượng giảng dạy của giáo viên trong tuần trước so với khối lượng giảng dạy của họ trong tuần sắp tới.",
     "home.customization.addwidget.contentstatus.description": "Xác định nội dung có sẵn cho giáo viên, tiện ích cũng làm nổi bật nội dung vẫn đang chờ xử lý và chưa được phê duyệt.",
     "home.student.teacherFeedbackWidget.noFeedBack": "Không có phản hồi của giáo viên",
-    "home.customization.addwidget.student.attendance.description": "Displays your average attendance for the last week, broken down by day.",
-    "home.customization.addwidget.student.completion.description": "Shows you how many assignments you have in total, and an overview of how many assignments which still need to be completed.",
-    "home.customization.addwidget.student.feedback.description": "Providing you an area where you can view and read feedback sent to you from your teachers.",
-    "home.customization.addwidget.student.schedule.description": "View your daily and weekly schedule to see upcoming events in your calendar, such as your Classes and Live Classes.",
-    "home.customization.addwidget.student.learningoutcome.description": "An overview of your achieved Learning Outcomes to those that still need to be achieved for each skill, highlighting your Top 5 skills.",
-    "home.customization.addwidget.student.achievement.description": "Shows you at high level how many learning outcomes you have achieved, and an overview of how many learning outcomes you have not achieved and how many learning outcomes were planed but not taught yet.",
-    "home.customization.addwidget.student.adaptivelearning.description": "Shows you the impact of the AI review classes taken by summarising the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills"
+    "home.customization.addwidget.student.attendance.description": "Hiển thị sự tham gia trung bình của bạn trong tuần qua, được chia theo ngày.",
+    "home.customization.addwidget.student.completion.description": "Cho bạn thấy tổng cộng bạn có bao nhiêu bài tập và tổng quan bao nhiêu bài tập vẫn cần phải hoàn thành.",
+    "home.customization.addwidget.student.feedback.description": "Cung cấp cho bạn một khu vực bạn có thể xem và đọc phản hồi gửi cho bạn từ giáo viên của bạn.",
+    "home.customization.addwidget.student.schedule.description": "Xem thời khóa biểu hàng ngày và hàng tuần của bạn để xem các sự kiện sắp tới trong lịch của bạn, chẳng hạn như Lớp học tại lớp và Lớp học trực tuyến.",
+    "home.customization.addwidget.student.learningoutcome.description": "Tổng quan về kết quả học tập đạt được của bạn và những kết quả vẫn cần đạt được cho từng kỹ năng, làm nổi bật 5 kỹ năng hàng đầu của bạn.",
+    "home.customization.addwidget.student.achievement.description": "Cho bạn thấy ở cấp độ cao bạn đã đạt được bao nhiêu kết quả học tập và tổng quan về bao nhiêu kết quả học tập mà bạn chưa đạt được và bao nhiêu kết quả học tập đã được lên kế hoạch nhưng chưa được giảng dạy.",
+    "home.customization.addwidget.student.adaptivelearning.description": "Cho bạn thấy tác động của các lớp được đánh giá AI được thực hiện bằng cách tóm tắt tổng số lớp đánh giá AI và đếm tất cả các kỹ năng được nhắm mục tiêu trong các lớp ôn tập này cũng như mô tả chi tiết tác động của việc xem xét AI đối với 3 kỹ năng được cải thiện nhiều nhất"
 }
