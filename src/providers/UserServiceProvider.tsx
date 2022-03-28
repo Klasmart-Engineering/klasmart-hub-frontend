@@ -15,7 +15,7 @@ import { RetryLink } from "@apollo/client/link/retry";
 import { createUploadLink } from "apollo-upload-client";
 import { sha256 } from 'crypto-hash';
 import { GraphQLError } from "graphql";
-import { utils } from "kidsloop-px";
+import { utils } from "@kl-engineering/kidsloop-px";
 import React,
 { useMemo } from "react";
 

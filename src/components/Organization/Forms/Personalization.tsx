@@ -16,8 +16,8 @@ import {
     ImagePicker,
     OrganizationAvatar,
     utils,
-} from "kidsloop-px";
-import { CroppedImage } from "kidsloop-px/dist/types/components/ImagePicker/ImagePicker";
+} from "@kl-engineering/kidsloop-px";
+import { CroppedImage } from "@kl-engineering/kidsloop-px/dist/types/components/ImagePicker/ImagePicker";
 import React,
 {
     useEffect,

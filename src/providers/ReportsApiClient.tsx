@@ -1,7 +1,7 @@
 import { authClient } from "@/api/auth/client";
 import { getReportsEndpoint } from "@/config";
 import { redirectToAuth } from "@/utils/routing";
-import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kidsloop/reports-api-client";
+import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engineering/reports-api-client";
 import { AxiosError } from "axios";
 import React,
 {

@@ -8,7 +8,7 @@ import {
     AssessmentStatus,
     useGetAssessments,
     useGetAssessmentsSummary,
-} from "@kidsloop/cms-api-client";
+} from "@kl-engineering/cms-api-client";
 import { Box } from "@mui/material";
 import {
     createStyles,
@@ -17,10 +17,10 @@ import {
 import {
     PageTable,
     UserAvatar,
-} from "kidsloop-px";
-import { SubgroupTab } from "kidsloop-px/dist/types/components/Table/Common/GroupTabs";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageTableData } from "kidsloop-px/dist/types/components/Table/Page/Table";
+} from "@kl-engineering/kidsloop-px";
+import { SubgroupTab } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/GroupTabs";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Page/Table";
 import { sumBy } from "lodash";
 import React,
 {

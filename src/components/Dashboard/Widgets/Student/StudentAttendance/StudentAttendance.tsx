@@ -15,7 +15,7 @@ import {
     makeStyles,
 } from '@mui/styles';
 import { ParentSize } from "@visx/responsive";
-import { utils } from "kidsloop-px";
+import { utils } from "@kl-engineering/kidsloop-px";
 import React from "react";
 import {
     FormattedMessage,

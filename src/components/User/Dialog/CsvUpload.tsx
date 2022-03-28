@@ -7,8 +7,8 @@ import {
     FullScreenDialog,
     SpreadsheetFileInput,
     useSnackbar,
-} from "kidsloop-px";
-import { Column } from "kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+} from "@kl-engineering/kidsloop-px";
+import { Column } from "@kl-engineering/kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
 import React,
 {
     useEffect,

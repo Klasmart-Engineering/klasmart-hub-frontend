@@ -20,7 +20,7 @@ import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginat
 import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     useEffect,
     useState,

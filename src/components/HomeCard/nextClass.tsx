@@ -14,7 +14,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { UserAvatar } from "kidsloop-px";
+import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

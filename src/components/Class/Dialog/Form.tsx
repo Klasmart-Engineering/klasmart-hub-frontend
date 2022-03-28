@@ -11,7 +11,7 @@ import {
 import {
     Select,
     TextField,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

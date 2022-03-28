@@ -35,13 +35,13 @@ import {
     FullScreenDialog,
     usePrompt,
     UserAvatar,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import {
     Order,
     TableColumn,
-} from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+} from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React,
 { useState } from "react";
 import {

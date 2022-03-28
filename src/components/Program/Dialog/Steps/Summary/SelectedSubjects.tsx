@@ -17,9 +17,9 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React,
 {
     useEffect,

@@ -10,7 +10,7 @@ import {
     createStyles,
     makeStyles,
 } from "@mui/styles";
-import { Button } from "kidsloop-px";
+import { Button } from "@kl-engineering/kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";
 

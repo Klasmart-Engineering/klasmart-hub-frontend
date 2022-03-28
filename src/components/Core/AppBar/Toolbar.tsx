@@ -20,8 +20,8 @@ import clsx from "clsx";
 import {
     IconButton,
     Tabs,
-} from "kidsloop-px";
-import { Tab } from "kidsloop-px/dist/types/components/Tabs";
+} from "@kl-engineering/kidsloop-px";
+import { Tab } from "@kl-engineering/kidsloop-px/dist/types/components/Tabs";
 import React from "react";
 import { useIntl } from "react-intl";
 import {

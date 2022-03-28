@@ -14,7 +14,7 @@ import {
 import {
     Select,
     TextField,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import { isEqual } from "lodash";
 import React,
 {

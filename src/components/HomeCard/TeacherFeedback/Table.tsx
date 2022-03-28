@@ -32,9 +32,9 @@ import {
     PageTable,
     UserAvatar,
     useSnackbar,
-} from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageTableData } from "kidsloop-px/dist/types/components/Table/Page/Table";
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Page/Table";
 import React,
 {
     useCallback,

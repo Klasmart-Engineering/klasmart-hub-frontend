@@ -6,7 +6,8 @@ import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
-import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
+import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
+import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import {
     Box,
@@ -21,7 +22,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { UserAvatar } from "kidsloop-px";
 import React,
 {
     useEffect,
@@ -259,10 +259,12 @@ export default function NextClass () {
                     <Grid container>
                         <Grid
                             item
-                            xs={12}>
+                            xs={12}
+                        >
                             <Typography
                                 className={classes.nextClassCardTitleIntro}
-                                variant="caption">
+                                variant="caption"
+                            >
                                 <FormattedMessage id="home.nextClass.title" />
                             </Typography>
                             <Typography className={classes.nextClassCardTitle}>
@@ -296,7 +298,8 @@ export default function NextClass () {
                                 container
                                 alignItems="center"
                                 justifyContent="space-between"
-                                className={classes.nextClassTimeWrapper}>
+                                className={classes.nextClassTimeWrapper}
+                            >
                                 <Grid item>
                                     <div className={classes.nextClassTime}>
                                         <Typography variant="caption">
@@ -321,7 +324,8 @@ export default function NextClass () {
                                     </div>
                                 </Grid>
                                 <Grid
-                                    item>
+                                    item
+                                >
                                     <Fab
                                         variant="circular"
                                         color="primary"
@@ -339,7 +343,8 @@ export default function NextClass () {
                                                 <FormattedRelativeTime
                                                     value={timeBeforeClass}
                                                     updateIntervalInSeconds={1}
-                                                /></Typography>
+                                                />
+                                            </Typography>
 
                                         )}
                                     </Fab>
@@ -350,7 +355,8 @@ export default function NextClass () {
                         {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (
                             <Grid
                                 item
-                                xs={12}>
+                                xs={12}
+                            >
                                 <Box>
                                     <Typography className={classes.teachersTitle}>
                                         <FormattedMessage
@@ -362,13 +368,15 @@ export default function NextClass () {
                                     </Typography>
                                     <Grid
                                         container
-                                        alignItems="baseline">
+                                        alignItems="baseline"
+                                    >
                                         {rosterData?.classNode.teachersConnection?.edges.map((edge, i) => {
                                             return (
                                                 <Grid
                                                     key={edge.node.id}
                                                     item
-                                                    className={classes.teacher}>
+                                                    className={classes.teacher}
+                                                >
                                                     {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection?.totalCount <= maxTeachers &&
                                                     <Box
                                                         display="flex"
@@ -398,13 +406,15 @@ export default function NextClass () {
                                                             <Typography variant="caption">
                                                                 {edge.node.givenName}
                                                             </Typography>
-                                                            {i === maxTeachers - 1 &&  <Typography variant="caption">
+                                                            {i === maxTeachers - 1 && <Typography variant="caption">
                                                                 <span style={{
                                                                     display: `inline-block`,
                                                                     paddingLeft: `1em`,
-                                                                }}> + {rosterData?.classNode.teachersConnection?.totalCount - maxTeachers}</span>
+                                                                }}
+                                                                > + {rosterData?.classNode.teachersConnection?.totalCount - maxTeachers}
+                                                                </span>
 
-                                                            </Typography>}
+                                                                                      </Typography>}
                                                         </Box>
                                                     }
                                                 </Grid>
@@ -419,7 +429,8 @@ export default function NextClass () {
                     <div className={classes.noClass}>
                         <img
                             src={scheduleSvg}
-                            alt=""/>
+                            alt=""
+                        />
                         <Typography color="primary">
                             <FormattedMessage id="home.common.noData.schedule.title" />
                         </Typography>

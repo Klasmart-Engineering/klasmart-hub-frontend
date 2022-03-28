@@ -19,7 +19,7 @@ import {
     withStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import { Drawer } from "kidsloop-px";
+import { Drawer } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

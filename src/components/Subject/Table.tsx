@@ -28,9 +28,9 @@ import {
 import {
     CursorTable,
     useSnackbar,
-} from "kidsloop-px";
-import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,

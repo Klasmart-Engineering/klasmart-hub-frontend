@@ -1,5 +1,5 @@
-import { useCmsApiClient } from "@kidsloop/cms-api-client";
-import { useReportsApiClient } from "@kidsloop/reports-api-client";
+import { useCmsApiClient } from "@kl-engineering/cms-api-client";
+import { useReportsApiClient } from "@kl-engineering/reports-api-client";
 import { maxBy } from "lodash";
 import React,
 {
@@ -51,7 +51,7 @@ export default function LastUpdatedMessage (props: Props) {
 
     if (!dataUpdatedAt) return null;
 
-    return <FormattedMessage
+    return (<FormattedMessage
         id="home.banner.lastUpdatedDate"
         values={{
             lastUpdatedDate: (
@@ -67,5 +67,5 @@ export default function LastUpdatedMessage (props: Props) {
                 </span>
             ),
         }}
-    />;
+    />);
 }

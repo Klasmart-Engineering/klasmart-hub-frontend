@@ -31,8 +31,8 @@ import {
     PageTable,
     usePrompt,
     useSnackbar,
-} from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
     useEffect,

@@ -20,6 +20,13 @@ import {
 import { handleError } from "@/utils/images";
 import { getTableLocalization } from "@/utils/table";
 import {
+    PageTable,
+    usePrompt,
+    useSnackbar,
+    validations,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import {
     CreateNewFolder as CreateNewFolderIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -40,13 +47,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    PageTable,
-    usePrompt,
-    useSnackbar,
-    validations,
-} from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,

@@ -11,7 +11,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { useWidth } from "kidsloop-px";
+import { useWidth } from "@kl-engineering/kidsloop-px";
 import React, {
     useEffect,
     useState,

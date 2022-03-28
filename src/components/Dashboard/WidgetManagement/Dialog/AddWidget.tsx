@@ -33,7 +33,7 @@ import {
     makeStyles,
     useTheme,
 } from "@mui/styles";
-import { Button } from "kidsloop-px";
+import { Button } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

@@ -8,6 +8,10 @@ import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
 import { roleNameTranslations } from "@/utils/userRoles";
 import { UserGenders } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
+import {
+    Select,
+    TextField,
+} from "@kl-engineering/kidsloop-px";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Theme } from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
@@ -23,10 +27,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import withStyles from '@mui/styles/withStyles';
-import {
-    Select,
-    TextField,
-} from "kidsloop-px";
 import React,
 {
     useEffect,

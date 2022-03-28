@@ -20,7 +20,7 @@ import {
 import { mockEnqueueSnackbar } from "@tests/mocks";
 import { getBackdrop } from "@tests/queries";
 import { waitForButtonToLoad } from "@tests/waitFor";
-import { utils } from "kidsloop-px";
+import { utils } from "@kl-engineering/kidsloop-px";
 
 interface DialogOptions {
     type: string;

@@ -7,7 +7,7 @@ import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { retrieveClassTypeIdentityOrDefault } from "@/config/classTypes";
 import { WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH } from "@/config/index";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client/dist/api/schedule";
+import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client/dist/api/schedule";
 import { Box } from "@mui/material";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import React,
@@ -96,14 +96,16 @@ export default function TodaysSchedule () {
                 display="flex"
                 height="100%"
                 paddingBottom="2"
-                paddingTop="3" >
+                paddingTop="3"
+            >
                 <ParentSize>
                     {({ width }) => {
                         if(width > 0) {
                             return(
                                 <DailyCalendar
-                                    mode={ width > WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH ? `horizontal` : `vertical`}
-                                    events={events} />
+                                    mode={width > WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH ? `horizontal` : `vertical`}
+                                    events={events}
+                                />
                             );
                         }
                     }}

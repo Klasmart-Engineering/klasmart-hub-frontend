@@ -17,7 +17,7 @@ import {
 import {
     Button,
     IconButton,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React,
 { useState } from "react";
 import {

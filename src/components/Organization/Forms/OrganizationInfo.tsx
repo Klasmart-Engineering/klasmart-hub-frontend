@@ -17,7 +17,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { TextField } from "kidsloop-px";
+import { TextField } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

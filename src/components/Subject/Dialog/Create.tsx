@@ -17,7 +17,7 @@ import { buildEmptySubject } from "@/utils/subjects";
 import {
     Dialog,
     useSnackbar,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React, {
     useEffect,
     useState,

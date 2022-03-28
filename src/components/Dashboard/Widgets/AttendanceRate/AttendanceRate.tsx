@@ -6,7 +6,8 @@ import DonutWithText from "@/components/Dashboard/Widgets/AttendanceRate/Donut/D
 import Legend from "@/components/Dashboard/Widgets/AttendanceRate/Donut/Legend";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { useGetClassAttendanceRateGroup } from "@kidsloop/reports-api-client";
+import { useWidth } from "@kl-engineering/kidsloop-px";
+import { useGetClassAttendanceRateGroup } from "@kl-engineering/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
     Theme,
@@ -17,7 +18,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { useWidth } from "kidsloop-px";
 import React,
 { useMemo } from "react";
 import {
@@ -110,14 +110,15 @@ export default function AttendanceRateWidget () {
             id={WidgetType.ATTENDANCERATE}
         >
             <div className={classes.titleWrapper}>
-                <FiberManualRecord className={classes.icon}/>
+                <FiberManualRecord className={classes.icon} />
                 <Typography className={classes.title}>
                     <FormattedMessage id="home.attendance.title" />
                 </Typography>
             </div>
 
             {data && <div
-                className={`${classes.root} ${defaultView ? classes.rootDesktop : classes.rootMobile}`} >
+                className={`${classes.root} ${defaultView ? classes.rootDesktop : classes.rootMobile}`}
+                     >
                 <DonutWithText
                     data={formattedData}
                     options={{
@@ -128,8 +129,9 @@ export default function AttendanceRateWidget () {
                 />
                 <Legend
                     data={formattedData}
-                    format={defaultView ? `desktop` : `mobile`}/>
-            </div>
+                    format={defaultView ? `desktop` : `mobile`}
+                />
+                     </div>
             }
         </WidgetWrapper>
     );

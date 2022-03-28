@@ -13,7 +13,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { Drawer } from "kidsloop-px";
+import { Drawer } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

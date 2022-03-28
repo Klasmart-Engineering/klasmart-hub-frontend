@@ -3,10 +3,10 @@ import {
     ClassAttendanceLegendLabels,
     ClassAttendanceRateGroupDataFormatted,
 } from "@/components/Dashboard/models/data.model";
-import { ClassAttendanceRateGroupResponse } from "@kidsloop/reports-api-client";
+import { ClassAttendanceRateGroupResponse } from "@kl-engineering/reports-api-client";
 import { Theme } from "@mui/material";
 
-export default function attendanceRateDataFormatter (data: ClassAttendanceRateGroupResponse, theme: Theme, dataLabels:ClassAttendanceLegendLabels): ClassAttendanceRateGroupDataFormatted[] {
+export default function attendanceRateDataFormatter (data: ClassAttendanceRateGroupResponse, theme: Theme, dataLabels: ClassAttendanceLegendLabels): ClassAttendanceRateGroupDataFormatted[] {
     const formattedData: ClassAttendanceRateGroupDataFormatted[] = [
         {
             label: dataLabels.high,

@@ -8,7 +8,7 @@ import {
     Program,
     Status,
 } from "@/types/graphQL";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     isEqual,
     pickBy,

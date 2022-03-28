@@ -18,7 +18,7 @@ import {
     makeStyles,
 } from "@mui/styles";
 import clsx from "clsx";
-import { UserAvatar } from "kidsloop-px";
+import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import React  from "react";
 import {
     FormattedDate,

@@ -3,7 +3,7 @@ import { GradeRow } from "@/components/Grades/Table";
 import { UuidOperator } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
 export interface GradePaginationFilter {
     organizationId: string;

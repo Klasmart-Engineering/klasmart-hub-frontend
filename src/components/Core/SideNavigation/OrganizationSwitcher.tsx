@@ -25,7 +25,7 @@ import clsx from "clsx";
 import {
     OrganizationAvatar,
     utils,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,
