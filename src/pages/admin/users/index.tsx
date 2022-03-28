@@ -92,12 +92,10 @@ const mapAndCombineClassConnections = (user: UserNode) => {
 
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
-    console.log(`user node`, user);
     const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
     const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
     const organizationUserIsActive = organizationMemberships?.find(organization => organization.status === Status.ACTIVE) ?? organizationMemberships?.[0];
     const schoolClasses = mapAndCombineClassConnections(user);
-    console.log(`user`, schoolClasses);
 
     return {
         id: user.id,
