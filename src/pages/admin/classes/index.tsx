@@ -6,7 +6,7 @@ import {
     buildOrganizationClassesFilter,
 } from "@/operations/queries/getPaginatedOrganizationClasses";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { organizationPaginatedClasses } from "@/utils/classes";
+import { mapClassNodeToClassRow } from "@/utils/classes";
 import { usePermission } from "@/utils/permissions";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -101,9 +101,9 @@ export default function ClassesPage (props: Props) {
         currentOrganization?.id,
     ]);
 
-    const rows = data?.classesConnection?.edges?.map(organizationPaginatedClasses) ?? [];
+    const rows = data?.classesConnection?.edges?.map(mapClassNodeToClassRow) ?? [];
 
-    return <ClassTable
+    return (<ClassTable
         rows={rows}
         loading={loading}
         hasNextPage={data?.classesConnection?.pageInfo.hasNextPage}
@@ -117,5 +117,5 @@ export default function ClassesPage (props: Props) {
         refetch={refetch}
         onPageChange={handlePageChange}
         onTableChange={handleTableChange}
-    />;
+    />);
 }

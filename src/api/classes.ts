@@ -36,6 +36,7 @@ import {
 } from "@/operations/queries/getEligibleUsers";
 import { GET_PAGINATED_ORGANIZATION_CLASSES } from "@/operations/queries/getPaginatedOrganizationClasses";
 import {
+    BaseEntity,
     BooleanFilter,
     Class,
     Grade,
@@ -66,6 +67,10 @@ interface UpdateClassRequest {
 
 interface UpdateClassResponse {
     class: Class;
+}
+export interface ClassSummaryNode extends BaseEntity {
+    name: string;
+    status: Status;
 }
 
 export const useUpdateClass = (options?: MutationHookOptions<UpdateClassResponse, UpdateClassRequest>) => {

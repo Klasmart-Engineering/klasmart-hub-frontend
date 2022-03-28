@@ -28,6 +28,8 @@ export const buildEmptyGrade = (grade?: Grade): Grade =>
         progress_to_grade: grade?.progress_to_grade,
     }, (value) => value !== undefined);
 
+export const sortGradeNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
+
 export const mapGradeEdgesToFilterOptions = (edges: GradeEdge[]) =>
     edges.map((edge) => ({
         value: edge.node.id,

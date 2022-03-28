@@ -161,6 +161,36 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
                 OR: values,
             };
         }
+        case `classNames`: {
+            const values = filter.values.map((value) => {
+                const classFilter: UserFilter = {
+                    classId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return classFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
+        case `gradeNames`: {
+            const values = filter.values.map((value) => {
+                const gradeFilter: UserFilter = {
+                    gradeId: {
+                        operator: filter.operatorValue as UuidOperator,
+                        value,
+                    },
+                };
+                return gradeFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         default: return {};
         }
     });
@@ -168,74 +198,108 @@ export const buildOrganizationUserFilters = (filters: BaseTableData<UserRow>['fi
 
 export const GET_PAGINATED_ORGANIZATION_USERS = gql`
     query getOrganizationUsers(
-        $direction: ConnectionDirection!
-            $count: PageSize
-            $cursor: String
-            $order: SortOrder!
-            $orderBy: UserSortBy!
-            $filter: UserFilter
-        ) {
-            usersConnection(
-                direction: $direction
-                directionArgs: { count: $count, cursor: $cursor }
-                sort: { field: [$orderBy], order: $order }
-                filter: $filter
+            $direction: ConnectionDirection!
+                $count: PageSize
+                $cursor: String
+                $order: SortOrder!
+                $orderBy: UserSortBy!
+                $filter: UserFilter
             ) {
-                totalCount
-                pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
-            }
-            edges {
-                node {
-                    id
-                    givenName
-                    familyName
-                    avatar
-                    status
-                    contactInfo {
-                        email
-                        phone
-                        username
-                    }
-                    dateOfBirth
-                    gender
-                    organizationMembershipsConnection(count: 50, direction: FORWARD) {
-                        edges {
-                            node {
-                                joinTimestamp
-                                status
-                                shortCode
-                                organization {
-                                    name
+                usersConnection(
+                    direction: $direction
+                    directionArgs: { count: $count, cursor: $cursor }
+                    sort: { field: [$orderBy], order: $order }
+                    filter: $filter
+                ) {
+                    totalCount
+                    pageInfo {
+                    hasNextPage
+                    hasPreviousPage
+                    startCursor
+                    endCursor
+                }
+                edges {
+                    node {
+                        id
+                        givenName
+                        familyName
+                        avatar
+                        status
+                        contactInfo {
+                            email
+                            phone
+                            username
+                        }
+                        dateOfBirth
+                        gender
+                        organizationMembershipsConnection(count: 50, direction: FORWARD) {
+                            edges {
+                                node {
+                                    joinTimestamp
+                                    status
+                                    shortCode
+                                    organization {
+                                        name
+                                    }
+                                    rolesConnection(count: 50, direction: FORWARD) {
+                                        edges {
+                                            node {
+                                                id
+                                                name
+                                                status
+                                            }
+                                        }
+                                    }
+                                
                                 }
-                                rolesConnection(count: 50, direction: FORWARD) {
-                                    edges {
-                                        node {
-                                            id
-                                            name
-                                            status
+                            }
+                        }
+                        schoolMembershipsConnection(count: 50, direction: FORWARD) {
+                            edges {
+                                node {
+                                    school {
+                                        id
+                                        name
+                                        status
+                                    }
+                                }
+                            
+                            }
+                        }
+                        classesStudyingConnection {
+                            edges {
+                                node {
+                                    id
+                                    name
+                                    gradesConnection {
+                                        edges {
+                                            node {
+                                                id
+                                                name
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    schoolMembershipsConnection(count: 50, direction: FORWARD) {
-                        edges {
-                            node {
-                                school {
+                        classesTeachingConnection {
+                            edges {
+                                node {
                                     id
                                     name
-                                    status
+                                    gradesConnection {
+                                        edges {
+                                            node {
+                                                id
+                                                name
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
+        	        }
+      	        }
             }
         }
-    }
 `;

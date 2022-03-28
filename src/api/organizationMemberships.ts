@@ -38,6 +38,7 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     schoolId?: UuidExclusiveFilter;
     organizationUserStatus?: StringFilter;
     classId?: UuidFilter;
+    gradeId?: UuidFilter;
 }
 
 export interface UpdateOrganizationMembershipRequest {
@@ -219,6 +220,16 @@ export interface SchoolMembershipConnectionNode {
     };
 }
 
+export interface ClassConnectionNode {
+    id: string;
+    name: string;
+    gradesConnection: GradeConnection;
+}
+
+export interface GradeConnectionNode {
+    id: string;
+    name: string;
+}
 export interface RolesConnectionNode {
     id?: string;
     name?: string;
@@ -247,6 +258,13 @@ export interface SchoolMembershipsConnection {
     edges: SchoolsMembershipConnectionEdge[];
 }
 
+export interface ClassConnection {
+    edges: ClassConnectionEdge[];
+}
+
+export interface GradeConnection {
+    edges: GradeConnectionEdge[];
+}
 export interface RolesConnection {
     totalCount?: number;
     pageInfo?: {
@@ -265,6 +283,12 @@ export interface SchoolsMembershipConnectionEdge {
     node: SchoolMembershipConnectionNode;
 }
 
+export interface ClassConnectionEdge {
+    node: ClassConnectionNode;
+}
+export interface GradeConnectionEdge {
+    node: GradeConnectionNode;
+}
 export interface RolesConnectionEdge {
     node: RolesConnectionNode;
 }

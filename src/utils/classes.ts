@@ -4,7 +4,10 @@ import {
 } from "./ageRanges";
 import { ClassEdge } from "@/api/classes";
 import { ClassForm } from "@/components/Class/Dialog/Form";
-import { ClassDetails } from "@/components/Class/Table";
+import {
+    ClassDetails,
+    ClassRow,
+} from "@/components/Class/Table";
 import {
     Class,
     Status,
@@ -76,7 +79,9 @@ export const organizationClasses = (classItem: Class) => {
     };
 };
 
-export const organizationPaginatedClasses = (classItem: ClassEdge) => {
+export const sortClassNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
+
+export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
     return {
         id: classItem.node.id,
         name: classItem.node.name ?? ``,
@@ -88,3 +93,10 @@ export const organizationPaginatedClasses = (classItem: ClassEdge) => {
         status: classItem.node.status ?? ``,
     };
 };
+
+export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
+    classEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
+        label: edge.node.name,
+        value: edge.node.id,
+    }))
+);

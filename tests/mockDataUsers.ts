@@ -40,6 +40,20 @@ export const users: UserNode[] = [
                 status: Status.ACTIVE,
             },
         ],
+        classes: [
+            {
+                id: `b7fe12e7-7b80-46ba-8759-7b97b3dbf513`,
+                name: `Mock Class`,
+                status: Status.ACTIVE,
+            },
+        ],
+        grades: [
+            {
+                id: `781e8a08-29e8-4171-8392-7e8ac9f183a0`,
+                name: `Mock Grade`,
+                status: Status.ACTIVE,
+            },
+        ],
         dateOfBirth: `210910`,
         gender: `male`,
     },
@@ -73,6 +87,20 @@ export const users: UserNode[] = [
             {
                 id: `87aca549-fdb6-4a63-97d4-d563d4a4687g`,
                 name: `Mock Data Academy`,
+                status: Status.ACTIVE,
+            },
+        ],
+        classes: [
+            {
+                id: `1a4cbef2-f836-476e-9a2d-2de7b5ee089a`,
+                name: `Mock Class 2`,
+                status: Status.ACTIVE,
+            },
+        ],
+        grades: [
+            {
+                id: `100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
+                name: `Mock Grade 2`,
                 status: Status.ACTIVE,
             },
         ],
