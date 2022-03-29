@@ -8,7 +8,7 @@ import {
     Program,
     Status,
 } from "@/types/graphQL";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     isEqual,
     pickBy,
@@ -27,6 +27,8 @@ export const buildEmptyGrade = (grade?: Grade): Grade =>
         progress_from_grade: grade?.progress_from_grade,
         progress_to_grade: grade?.progress_to_grade,
     }, (value) => value !== undefined);
+
+export const sortGradeNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
 export const mapGradeEdgesToFilterOptions = (edges: GradeEdge[]) =>
     edges.map((edge) => ({

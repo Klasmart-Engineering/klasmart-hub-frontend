@@ -41,6 +41,30 @@ const schoolB = {
     status: Status.ACTIVE,
 };
 
+const gradeA = {
+    id: `781e8a08-29e8-4171-8392-7e8ac9f183a0`,
+    name: `Grade 1`,
+    status: Status.ACTIVE,
+};
+
+const gradeB = {
+    id: `100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
+    name: `Grade 2`,
+    status: Status.ACTIVE,
+};
+
+const classA = {
+    id: `b7fe12e7-7b80-46ba-8759-7b97b3dbf513`,
+    name: `Sunshine`,
+    status: Status.ACTIVE,
+};
+
+const classB = {
+    id: `1a4cbef2-f836-476e-9a2d-2de7b5ee089a`,
+    name: `Moon Light`,
+    status: Status.ACTIVE,
+};
+
 const userA: UserEdge = {
     node: {
         id: `2128d1d6-16b9-5df2-927b-3f2b9ed947d4`,
@@ -80,6 +104,12 @@ const userA: UserEdge = {
         schoolMembershipsConnection: {
             edges: [],
         },
+        classesStudyingConnection: {
+            edges: [],
+        },
+        classesTeachingConnection: {
+            edges: [],
+        },
     },
 };
 const userB: UserEdge = {
@@ -89,6 +119,7 @@ const userB: UserEdge = {
         contactInfo: {
             email: `andresp+09@bluetrailsoft.com`,
             phone: null,
+            username: null,
         },
         givenName: `John`,
         familyName: `Petrucci`,
@@ -136,6 +167,27 @@ const userB: UserEdge = {
                 },
             ],
         },
+        classesTeachingConnection: {
+            edges: [],
+        },
+        classesStudyingConnection: {
+            edges: [
+                {
+                    node: {
+                        ...classA,
+                        gradesConnection: {
+                            edges: [
+                                {
+                                    node: {
+                                        ...gradeA,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            ],
+        },
     },
 };
 const userC: UserEdge = {
@@ -145,6 +197,7 @@ const userC: UserEdge = {
         contactInfo: {
             email: `mike@09.com`,
             phone: null,
+            username: null,
         },
         givenName: `Mike`,
         familyName: `Portnoy`,
@@ -192,6 +245,27 @@ const userC: UserEdge = {
                 },
             ],
         },
+        classesTeachingConnection: {
+            edges: [
+                {
+                    node: {
+                        ...classB,
+                        gradesConnection: {
+                            edges: [
+                                {
+                                    node: {
+                                        ...gradeB,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            ],
+        },
+        classesStudyingConnection: {
+            edges: [],
+        },
     },
 };
 const userD: UserEdge = {
@@ -201,6 +275,7 @@ const userD: UserEdge = {
         contactInfo: {
             email: `stephen@09.com`,
             phone: null,
+            username: null,
         },
         givenName: `Stephen`,
         familyName: `King`,
@@ -240,7 +315,42 @@ const userD: UserEdge = {
                 },
             ],
         },
-
+        classesTeachingConnection: {
+            edges: [
+                {
+                    node: {
+                        ...classB,
+                        gradesConnection: {
+                            edges: [
+                                {
+                                    node: {
+                                        ...gradeB,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            ],
+        },
+        classesStudyingConnection: {
+            edges: [
+                {
+                    node: {
+                        ...classA,
+                        gradesConnection: {
+                            edges: [
+                                {
+                                    node: {
+                                        ...gradeA,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            ],
+        },
     },
 };
 
@@ -264,6 +374,8 @@ test(`map server users to table users`, () => {
             phone: ``,
             roleNames: [ `Organization Admin`, `Student` ],
             schoolNames: [],
+            classNames: [],
+            gradeNames: [],
             status: `active`,
             joinDate: new Date(`2020-12-10T19:03:14.417Z`),
         },
@@ -276,6 +388,8 @@ test(`map server users to table users`, () => {
             phone: ``,
             roleNames: [ `Role 12`, `Student` ],
             schoolNames: [ `BTS University`, `San Javier University` ],
+            classNames: [ `Sunshine` ],
+            gradeNames: [ `Grade 1` ],
             status: `active`,
             joinDate: new Date(`2020-12-10T19:03:14.417Z`),
         },
@@ -288,6 +402,8 @@ test(`map server users to table users`, () => {
             phone: ``,
             roleNames: [ `Teacher`, `Student` ],
             schoolNames: [ `BTS University`, `San Javier University` ],
+            classNames: [ `Moon Light` ],
+            gradeNames: [ `Grade 2` ],
             status: `inactive`,
             joinDate: new Date(`2020-12-10T19:32:35.376Z`),
         },
@@ -300,6 +416,8 @@ test(`map server users to table users`, () => {
             phone: ``,
             roleNames: [ `Teacher`, `Student` ],
             schoolNames: [ `BTS University` ],
+            classNames: [ `Sunshine`, `Moon Light` ],
+            gradeNames: [ `Grade 1`, `Grade 2` ],
             status: `inactive`,
             joinDate: new Date(`2020-12-11T17:11:11.992Z`),
         },

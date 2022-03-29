@@ -1,4 +1,4 @@
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     Dispatch,
     SetStateAction,

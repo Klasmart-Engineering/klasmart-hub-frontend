@@ -3,7 +3,7 @@ import { ClassRow } from "@/components/Class/Table";
 import { Status } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
 
 export interface ClassPaginationFilter {
     organizationId: string;
@@ -13,21 +13,21 @@ export interface ClassPaginationFilter {
 
 export const buildOrganizationClassesSearchFilter = (search: string): ClassesFilter => ({
     ...(isUuid(search) ? {
-            id: {
-                operator: `eq`,
-                value: search,
-            },
-        } : {
-            OR: [
-                {
-                    name: {
-                        operator: `contains`,
-                        value: search,
-                        caseInsensitive: true,
-                    },
+        id: {
+            operator: `eq`,
+            value: search,
+        },
+    } : {
+        OR: [
+            {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
                 },
-            ],
-        }),
+            },
+        ],
+    }),
 });
 
 export const buildOrganizationClassesFilter = (filter: ClassPaginationFilter): ClassesFilter => ({

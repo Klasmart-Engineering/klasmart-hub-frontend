@@ -2,7 +2,7 @@ import { authClient } from "@/api/auth/client";
 import { getCmsApiEndpoint } from "@/config";
 import { REQUEST_RETRY_COUNT_MAX } from "@/config/index";
 import { redirectToAuth } from "@/utils/routing";
-import { CmsApiClientProvider as KLCmsApiClientProvider } from "@kidsloop/cms-api-client";
+import { CmsApiClientProvider as KLCmsApiClientProvider } from "@kl-engineering/cms-api-client";
 import { AxiosError } from "axios";
 import React from "react";
 

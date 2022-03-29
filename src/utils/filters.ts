@@ -3,6 +3,7 @@ import {
     mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
 import { mapCategoriesToFilterOptions } from "./categories";
+import { mapClassEdgesToFilterValues } from "./classes";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
@@ -10,6 +11,7 @@ import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetAllCategories } from "@/api/categories";
+import { useGetAllPaginatedClasses } from "@/api/classes";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedProgramsList } from "@/api/programs";
 import { useGetOrganizationRoles } from "@/api/roles";
@@ -17,10 +19,11 @@ import { useGetPaginatedSchools } from "@/api/schools";
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
+import { buildOrganizationClassesFilter } from "@/operations/queries/getPaginatedOrganizationClasses";
 import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { FilterValueOption } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {
     useEffect,
     useState,
@@ -31,6 +34,7 @@ interface SelectFilters {
     querySubjects?: boolean;
     queryAgeRanges?: boolean;
     querySchools?: boolean;
+    queryClass?: boolean;
     queryPrograms?: boolean;
     queryUserRoles?: boolean;
     queryCategories?: boolean;
@@ -42,6 +46,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     const [ ageRangesLowValueOptions, setAgeRangesLowValueOptions ] = useState<FilterValueOption[]>([]);
     const [ ageRangesHighValueOptions, setAgeRangesHighValueOptions ] = useState<FilterValueOption[]>([]);
     const [ schoolsFilterValueOptions, setSchoolsFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ classFilterValueOptions, setClassFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ programsFilterValueOptions, setProgramsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ userRolesFilterValueOptions, setUserRolesFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ categoriesFilterValueOptions, setCategoriesFilterValueOptions ] = useState<FilterValueOption[]>([]);
@@ -55,6 +60,13 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         organizationId: orgId ?? ``,
         search: ``,
     });
+
+    const classPaginationFilter = buildOrganizationClassesFilter({
+        organizationId: orgId ?? ``,
+        search: ``,
+        filters: [],
+    });
+
     const programPaginationFilter = buildOrganizationProgramFilter({
         organizationId: orgId ?? ``,
         search: ``,
@@ -129,6 +141,21 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         },
         notifyOnNetworkStatusChange: true,
         skip: !orgId || skipAll || !selectedFilters.querySchools,
+    });
+
+    const {
+        data: classData,
+        fetchMore: fetchMoreClasses,
+    } = useGetAllPaginatedClasses({
+        variables: {
+            direction: `FORWARD`,
+            count: 50,
+            order: `ASC`,
+            orderBy: `name`,
+            filter: classPaginationFilter,
+        },
+        notifyOnNetworkStatusChange: true,
+        skip: !orgId || skipAll || !selectedFilters.queryClass,
     });
 
     const {
@@ -207,6 +234,17 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ schoolsData ]);
 
     useEffect(() => {
+        setClassFilterValueOptions([ ...classFilterValueOptions, ...mapClassEdgesToFilterValues(classData?.classesConnection?.edges ?? []) ]);
+        if (classData?.classesConnection?.pageInfo?.hasNextPage) {
+            fetchMoreClasses({
+                variables: {
+                    cursor: classData?.classesConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
+    }, [ classData ]);
+
+    useEffect(() => {
         setProgramsFilterValueOptions([ ...programsFilterValueOptions, ...mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []) ]);
         if (programsData?.programsConnection?.pageInfo?.hasNextPage) {
             fetchMorePrograms({
@@ -231,6 +269,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         ageRangesLowValueOptions,
         ageRangesHighValueOptions,
         schoolsFilterValueOptions,
+        classFilterValueOptions,
         programsFilterValueOptions,
         userRolesFilterValueOptions,
         categoriesFilterValueOptions,

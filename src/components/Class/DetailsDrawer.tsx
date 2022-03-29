@@ -1,6 +1,10 @@
 import { useGetClassNodeSummary } from "@/api/classes";
 import { UserNode } from "@/api/users";
 import globalStyles from "@/globalStyles";
+import {
+    Drawer,
+    UserAvatar,
+} from "@kl-engineering/kidsloop-px";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
     Box,
@@ -19,10 +23,6 @@ import {
     withStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    Drawer,
-    UserAvatar,
-} from 'kidsloop-px';
 import React, {
     useEffect,
     useState,
@@ -229,7 +229,8 @@ export default function ClassDetailsDrawer (props: Props) {
                                 >
                                     <span>{intl.formatMessage({
                                         id: `class_classRosterHeader`,
-                                    })}</span>
+                                    })}
+                                    </span>
                                 </Link>
                             </Accordion>
 
@@ -280,7 +281,8 @@ export default function ClassDetailsDrawer (props: Props) {
                                 >
                                     <span>{intl.formatMessage({
                                         id: `class_classRosterHeader`,
-                                    })}</span>
+                                    })}
+                                    </span>
                                 </Link>
                             </Accordion>
                         </>

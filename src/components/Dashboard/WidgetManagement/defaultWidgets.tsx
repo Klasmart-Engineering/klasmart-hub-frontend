@@ -1,3 +1,4 @@
+import { WidgetType } from "../../../components/Dashboard/models/widget.model";
 import AttendanceRateWidget from "../Widgets/AttendanceRate/AttendanceRate";
 import ContentStatusWidget from "../Widgets/ContentStatus/ContentStatus";
 import NextClassWidget from "../Widgets/NextClass/NextClass";
@@ -11,7 +12,6 @@ import StudentAttendanceWidget from "../Widgets/Student/StudentAttendance/Studen
 import TreacherFeedbackWidget from "../Widgets/Student/TeacherFeedback/TeacherFeedbackWidget";
 import TeacherLoadWidget from "../Widgets/TeacherLoadWidget/TeacherLoadWidget";
 import TodaysScheduleWidget from "../Widgets/TodaysSchedule/TodaysSchedule";
-import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import React,
 { ReactElement } from "react";
 

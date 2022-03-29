@@ -5,7 +5,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { Fab } from "kidsloop-px";
+import { Fab } from "@kl-engineering/kidsloop-px";
 import React from "react";
 import {
     FormattedMessage,

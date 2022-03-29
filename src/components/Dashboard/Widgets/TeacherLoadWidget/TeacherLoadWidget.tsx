@@ -1,8 +1,8 @@
 import { WidgetType } from "../../models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
-import { useClassTeacherLoad } from "@kidsloop/reports-api-client";
+import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
+import { useClassTeacherLoad } from "@kl-engineering/reports-api-client";
 import {
     Theme,
     Typography,
@@ -161,51 +161,60 @@ export default function TeacherLoadWidget () {
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
-                            className={classes.body2}>
+                            className={classes.body2}
+                        >
                             <FormattedMessage id="home.teacherLoad.totalClassesLabel" />
                         </Typography>
                         <Typography
-                            className={classes.count}>
+                            className={classes.count}
+                        >
                             {totalClasses}
                         </Typography>
                         <Typography
                             variant="caption"
                             className={classes.caption}
-                            color="textSecondary">
+                            color="textSecondary"
+                        >
                             <FormattedMessage id="home.teacherLoad.totalClassesTimeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
-                            className={classes.body2}>
+                            className={classes.body2}
+                        >
                             <FormattedMessage id="home.teacherLoad.totalStudentsLabel" />
                         </Typography>
                         <Typography
-                            className={classes.count}>
+                            className={classes.count}
+                        >
                             {totalStudents}
                         </Typography>
                         <Typography
                             variant="caption"
                             className={classes.caption}
-                            color="textSecondary">
+                            color="textSecondary"
+                        >
                             <FormattedMessage id="home.teacherLoad.totalStudentsTimeFrame" />
                         </Typography>
                     </li>
                     <li className={classes.listItem}>
                         <Typography
                             variant="body2"
-                            className={classes.body2}>
+                            className={classes.body2}
+                        >
                             <FormattedMessage id="home.teacherLoad.upcomingClassesLabel" />
                         </Typography>
                         <Typography
-                            className={classes.count}>
+                            className={classes.count}
+                        >
                             {upcomingClasses}
                         </Typography>
                         <Typography
                             variant="caption"
                             className={classes.caption}
-                            color="textSecondary">
+                            color="textSecondary"
+                        >
                             <FormattedMessage id="home.teacherLoad.upcomingClassesTimeFrame" />
                         </Typography>
                     </li>

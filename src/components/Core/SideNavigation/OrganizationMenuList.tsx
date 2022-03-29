@@ -17,7 +17,7 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import { OrganizationAvatar } from "kidsloop-px";
+import { OrganizationAvatar } from "@kl-engineering/kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";
 

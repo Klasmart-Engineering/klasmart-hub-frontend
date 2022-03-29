@@ -1145,7 +1145,7 @@
     "react-intl-formatted-duration.minutesUnit": "{value, plural, other {phút}}",
     "react-intl-formatted-duration.secondsUnit": "{value, plural, other {giây}}",
     "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm.",
-    "home.student.adaptiveLearningWidget.containerTitleLabel": "Adaptive learning",
+    "home.student.adaptiveLearningWidget.containerTitleLabel": "AI Review",
     "home.student.adaptiveLearningWidget.containerUrlLabel": "View all details",
     "home.student.adaptiveLearningWidget.skill1": "Writing",
     "home.student.adaptiveLearningWidget.skill2": "Speaking",
@@ -1187,9 +1187,16 @@
     "home.student.adaptiveLearningJourney.classTitle": "Lớp phụ đạo",
     "home.customization.addwidget.schedule.description": "Xem lịch hàng ngày của bạn, xem các sự kiện sắp tới như lớp học tại lớp và lớp học trực tuyến.",
     "home.customization.addwidget.nextclass.description": "Đánh dấu các lớp học tiếp theo của bạn, giúp bạn dễ dàng tham gia lớp học tiếp theo hơn.",
-    "home.customization.addwidget.attendance.description": "Xác định các nhóm học sinh có tỷ lệ tham gia khác nhau, đồng thời cung cấp cái nhìn sâu sắc về những học sinh đi học ít tham gia và có thể yêu cầu trợ giúp thêm.",
-    "home.customization.addwidget.pendingassessments.description": "Làm nổi bật số lượng bài đánh giá của một giáo viên vượt trội, để họ có thể theo dõi những bài đánh giá nổi bật yêu cầu hoàn thành.",
+    "home.customization.addwidget.attendance.description": "Xác định các nhóm học sinh có tỷ lệ tham gia khác nhau, đồng thời cung cấp cái nhìn sâu sắc về những học sinh ít tham gia và có thể cần trợ giúp thêm.",
+    "home.customization.addwidget.pendingassessments.description": "Đánh dấu số lượng bài đánh giá của một giáo viên vượt trội, để họ có thể theo dõi những bài đánh giá nổi bật được yêu cầu hoàn thành.",
     "home.customization.addwidget.teacherload.description": "Hiển thị khối lượng giảng dạy của giáo viên trong tuần trước so với khối lượng giảng dạy của họ trong tuần sắp tới.",
     "home.customization.addwidget.contentstatus.description": "Xác định nội dung có sẵn cho giáo viên, tiện ích cũng làm nổi bật nội dung vẫn đang chờ xử lý và chưa được phê duyệt.",
-    "home.student.teacherFeedbackWidget.noFeedBack": "There is no teacher's feedback"
+    "home.student.teacherFeedbackWidget.noFeedBack": "Không có phản hồi của giáo viên",
+    "home.customization.addwidget.student.attendance.description": "Hiển thị sự tham gia trung bình của bạn trong tuần qua, được chia theo ngày.",
+    "home.customization.addwidget.student.completion.description": "Cho bạn thấy tổng cộng bạn có bao nhiêu bài tập và tổng quan bao nhiêu bài tập vẫn cần phải hoàn thành.",
+    "home.customization.addwidget.student.feedback.description": "Cung cấp cho bạn một khu vực bạn có thể xem và đọc phản hồi gửi cho bạn từ giáo viên của bạn.",
+    "home.customization.addwidget.student.schedule.description": "Xem thời khóa biểu hàng ngày và hàng tuần của bạn để xem các sự kiện sắp tới trong lịch của bạn, chẳng hạn như Lớp học tại lớp và Lớp học trực tuyến.",
+    "home.customization.addwidget.student.learningoutcome.description": "Tổng quan về kết quả học tập đạt được của bạn và những kết quả vẫn cần đạt được cho từng kỹ năng, làm nổi bật 5 kỹ năng hàng đầu của bạn.",
+    "home.customization.addwidget.student.achievement.description": "Cho bạn thấy ở cấp độ cao bạn đã đạt được bao nhiêu kết quả học tập và tổng quan về bao nhiêu kết quả học tập mà bạn chưa đạt được và bao nhiêu kết quả học tập đã được lên kế hoạch nhưng chưa được giảng dạy.",
+    "home.customization.addwidget.student.adaptivelearning.description": "Cho bạn thấy tác động của các lớp được đánh giá AI được thực hiện bằng cách tóm tắt tổng số lớp đánh giá AI và đếm tất cả các kỹ năng được nhắm mục tiêu trong các lớp ôn tập này cũng như mô tả chi tiết tác động của việc xem xét AI đối với 3 kỹ năng được cải thiện nhiều nhất"
 }

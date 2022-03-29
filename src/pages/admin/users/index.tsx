@@ -1,10 +1,14 @@
 import {
+    ClassConnection,
+    ClassConnectionEdge,
+    GradeConnectionEdge,
     OrganizationMembershipConnectionEdge,
     RolesConnectionEdge,
     SchoolsMembershipConnectionEdge,
     useGetPaginatedOrganizationMemberships,
     UserEdge,
 } from "@/api/organizationMemberships";
+import { UserNode } from "@/api/users";
 import UserTable,
 { UserRow } from "@/components/User/Table";
 import {
@@ -22,10 +26,10 @@ import {
     tableToServerOrder,
 } from "@/utils/table";
 import { sortRoleNames } from "@/utils/userRoles";
-import { Filter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { Order } from "kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React,
 {
     useEffect,
@@ -60,11 +64,38 @@ const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
     };
 };
 
+const mapClassEdges = (edge: ClassConnectionEdge) => {
+    const classNode = edge.node;
+
+    return {
+        id: classNode.id,
+        name: classNode.name,
+        grades: classNode.gradesConnection?.edges.map(mapGradeEdges) ?? [],
+    };
+};
+
+const mapGradeEdges = (edge: GradeConnectionEdge) => {
+    const classNode = edge.node;
+
+    return {
+        id: classNode.id,
+        name: classNode.name,
+    };
+};
+
+const mapAndCombineClassConnections = (user: UserNode) => {
+    const allClassEdges = user.classesStudyingConnection?.edges.concat(user.classesTeachingConnection?.edges ?? []);
+    const classes = allClassEdges?.map(mapClassEdges) ?? [];
+
+    return classes;
+};
+
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
     const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
     const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
     const organizationUserIsActive = organizationMemberships?.find(organization => organization.status === Status.ACTIVE) ?? organizationMemberships?.[0];
+    const schoolClasses = mapAndCombineClassConnections(user);
 
     return {
         id: user.id,
@@ -75,6 +106,8 @@ export const mapUserRow = (edge: UserEdge) => {
         phone: user.contactInfo?.phone ?? ``,
         roleNames: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.name ?? ``).sort(sortRoleNames) ?? [],
         schoolNames: schoolMemberships?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name ?? ``).sort(sortSchoolNames) ?? [],
+        classNames: schoolClasses.map((schoolClass) => schoolClass.name),
+        gradeNames: schoolClasses.map((schoolClass) => schoolClass.grades.map((grade) => grade.name ?? ``)).flat() ?? [],
         status: organizationUserIsActive?.status ?? Status.INACTIVE,
         joinDate: new Date(organizationUserIsActive?.joinTimestamp ?? ``),
     };

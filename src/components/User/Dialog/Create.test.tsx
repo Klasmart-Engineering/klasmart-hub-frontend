@@ -31,7 +31,7 @@ import { mockOrg } from "@tests/mockOrganizationData";
 import { mockRoles } from "@tests/mockRoles";
 import { mockEnqueueSnackbar } from "@tests/mocks";
 import { waitForButtonToLoad } from "@tests/waitFor";
-import { utils } from "kidsloop-px";
+import { utils } from "@kl-engineering/kidsloop-px";
 import React from "react";
 
 const mockOnClose = jest.fn();

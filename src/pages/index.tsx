@@ -65,7 +65,7 @@ export default function HomePage () {
                             },
                         }} />
                 }
-                <WidgetDashboard view={view} />
+                <div id="widgetDashBaord"><WidgetDashboard view={view} /></div>
             </>
         );
     }

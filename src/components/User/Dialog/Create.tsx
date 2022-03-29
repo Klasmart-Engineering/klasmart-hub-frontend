@@ -15,13 +15,13 @@ import {
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { ApolloError } from "@apollo/client";
 import {
+    Dialog,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Dialog,
-    useSnackbar,
-} from "kidsloop-px";
 import { isEmpty } from "lodash";
 import React,
 {

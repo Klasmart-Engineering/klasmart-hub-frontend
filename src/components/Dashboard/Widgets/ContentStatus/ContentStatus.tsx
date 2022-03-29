@@ -3,7 +3,7 @@ import { WidgetType } from "../../models/widget.model";
 import contentStatusDataFormatter from "./contentStatusDataFormatter";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { useGetContentTeacher } from "@kidsloop/reports-api-client";
+import { useGetContentTeacher } from "@kl-engineering/reports-api-client";
 import { Theme, Typography } from "@mui/material";
 import createStyles from '@mui/styles/createStyles';
 import { FiberManualRecord } from "@mui/icons-material";

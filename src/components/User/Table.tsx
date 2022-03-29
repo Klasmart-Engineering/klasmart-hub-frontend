@@ -26,6 +26,13 @@ import {
 import { getCustomRoleName } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import {
+    CursorTable,
+    UserAvatar,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import {
     AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudUploadIcon,
     Delete as DeleteIcon,
@@ -44,13 +51,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    CursorTable,
-    UserAvatar,
-    useSnackbar,
-} from "kidsloop-px";
-import { TableFilter } from "kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import { escapeRegExp } from "lodash";
 import React,
 { useState } from "react";
@@ -89,6 +89,8 @@ export interface UserRow {
     phone: string;
     roleNames: string[];
     schoolNames: string[];
+    classNames: string[];
+    gradeNames: string[];
     status: string;
     joinDate: Date;
 }
@@ -138,8 +140,12 @@ export default function UserTable (props: Props) {
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
+        classFilterValueOptions,
+        gradeFilterValueOptions,
     } = useGetTableFilters(organizationId, {
+        queryClass: true,
         querySchools: true,
+        queryGrades: true,
         queryUserRoles: true,
     });
 
@@ -318,14 +324,45 @@ export default function UserTable (props: Props) {
             label: intl.formatMessage({
                 id: `users_school`,
             }),
-            render: (row) => row.schoolNames?.map((schoolName, i) =>
+            render: (row) => row.schoolNames?.map((schoolName, i) => (
                 <Typography
                     key={`school-${i}`}
                     noWrap
                     variant="body2"
                 >
                     {schoolName}
-                </Typography>),
+                </Typography>
+            )),
+        },
+        {
+            id: `classNames`,
+            disableSort: true,
+            hidden: true,
+            label: `Class`,
+            render: (row) => row.classNames?.map((className, i) => (
+                <Typography
+                    key={`class-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {className}
+                </Typography>
+            )),
+        },
+        {
+            id: `gradeNames`,
+            disableSort: true,
+            hidden: true,
+            label: `Grade`,
+            render: (row) => row.gradeNames?.map((gradeName, i) => (
+                <Typography
+                    key={`class-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {gradeName}
+                </Typography>
+            )),
         },
         {
             id: `contactInfo`,
@@ -455,6 +492,56 @@ export default function UserTable (props: Props) {
                     multipleValues: true,
                     validations: [ required() ],
                     options: schoolsFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `classNames`,
+            label: intl.formatMessage({
+                id: `classes_classTitle`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: classFilterValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `gradeNames`,
+            label: intl.formatMessage({
+                id: `class_gradeLabel`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: gradeFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersEqualsChipLabel`,

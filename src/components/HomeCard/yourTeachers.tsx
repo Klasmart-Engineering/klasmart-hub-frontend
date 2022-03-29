@@ -10,7 +10,7 @@ import {
 import {
     Card,
     UserAvatar,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 

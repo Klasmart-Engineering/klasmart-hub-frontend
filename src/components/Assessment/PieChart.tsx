@@ -7,7 +7,7 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     AssessmentStatus,
     useGetAssessmentsSummary,
-} from "@kidsloop/cms-api-client";
+} from "@kl-engineering/cms-api-client";
 import { Assessment as AssessmentIcon } from '@mui/icons-material';
 import {
     CircularProgress,
@@ -81,7 +81,7 @@ export default function AssessmentPieChart (props: Props) {
     return (
         <div className={classes.root}>
             {allStatusCount > 0
-                ? <PieChart data={statusGroups}/>
+                ? <PieChart data={statusGroups} />
                 : (
                     <div className={classes.noNewUpdates}>
                         <AssessmentIcon

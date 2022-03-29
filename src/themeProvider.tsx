@@ -2,6 +2,7 @@ import { useCurrentOrganization } from "./store/organizationMemberships";
 import { usePreviewOrganizationColor } from "./store/previewOrganizationColor";
 import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
+import { utils } from "@kl-engineering/kidsloop-px";
 import {
     blue,
     green,
@@ -16,7 +17,6 @@ import {
     responsiveFontSizes,
     Theme,
 } from "@mui/material/styles";
-import { utils } from "kidsloop-px";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 

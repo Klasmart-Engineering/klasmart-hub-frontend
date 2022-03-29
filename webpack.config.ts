@@ -30,7 +30,7 @@ const dirtyNodeEnv = process.env.NODE_ENV as Configuration["mode"];
 const nodeEnv = (modes.includes(dirtyNodeEnv) ? dirtyNodeEnv : undefined) ?? `production`;
 const isDev = nodeEnv === `development`;
 
-const { loadBrandingOptions } = require(`kidsloop-branding`);
+const { loadBrandingOptions } = require(`@kl-engineering/kidsloop-branding`);
 
 const brandingOptions = loadBrandingOptions(process.env.BRAND);
 

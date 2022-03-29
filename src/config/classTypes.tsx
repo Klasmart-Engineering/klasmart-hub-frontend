@@ -5,7 +5,7 @@ import {
     THEME_COLOR_CLASS_TYPE_STUDY,
     THEME_COLOR_CLASS_TYPE_TASK,
 } from "@/config/index";
-import { ScheduleClassType } from '@kidsloop/cms-api-client';
+import { ScheduleClassType } from '@kl-engineering/cms-api-client';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
 import LocalLibraryOutlinedIcon from "@mui/icons-material/LocalLibraryOutlined";

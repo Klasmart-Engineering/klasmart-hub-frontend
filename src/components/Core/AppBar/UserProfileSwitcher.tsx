@@ -13,7 +13,7 @@ import {
 import {
     UserAvatar,
     useSnackbar,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React from "react";
 
 const useStyles = makeStyles((theme) => createStyles({}));

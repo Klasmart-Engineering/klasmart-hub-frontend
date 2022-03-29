@@ -1,10 +1,10 @@
 import { APIErrorCode } from "../api/errors";
 import { ApolloError } from "@apollo/client";
-import { ExportToCsv } from 'export-to-csv';
 import {
     Props as SpreadsheetFileInputProps,
     SpreadsheetValidationError,
-} from "kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+} from "@kl-engineering/kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+import { ExportToCsv } from 'export-to-csv';
 import { IntlShape } from "react-intl";
 
 export const CSV_ACCEPT_TYPES = [

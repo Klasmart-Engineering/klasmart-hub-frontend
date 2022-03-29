@@ -16,7 +16,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { TableSearch } from "kidsloop-px";
+import { TableSearch } from "@kl-engineering/kidsloop-px";
 import React,
 {
     Dispatch,

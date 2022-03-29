@@ -11,7 +11,7 @@ import {
     buildOrganizationSchoolFilter,
     GET_PAGINATED_ORGANIZATION_SCHOOLS,
 } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { organizationPaginatedClasses } from "@/utils/classes";
+import { mapClassNodeToClassRow } from "@/utils/classes";
 import { useGetTableFilters } from "@/utils/filters";
 import { MockedProvider } from "@apollo/client/testing/";
 import {
@@ -66,7 +66,7 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-const rows = mockClasses.edges?.map(organizationPaginatedClasses) ?? [];
+const rows = mockClasses.edges?.map(mapClassNodeToClassRow) ?? [];
 
 const mocks = [
     {
@@ -128,7 +128,7 @@ const mocks = [
 ];
 
 test(`Class table renders without records`, async () => {
-    render(<ClassTable rows={[]}/>);
+    render(<ClassTable rows={[]} />);
 
     await waitFor(() => {
         expect(screen.queryByText(`Classes`)).toBeInTheDocument();
@@ -137,7 +137,7 @@ test(`Class table renders without records`, async () => {
 });
 
 test(`Class table renders with records`, async () => {
-    render(<ClassTable rows={rows}/>);
+    render(<ClassTable rows={rows} />);
 
     await waitFor(() => {
         expect(screen.queryByText(`Classes`)).toBeInTheDocument();
@@ -149,7 +149,8 @@ test(`useClassFilters hook should return mapped schools data for filter drop dow
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
-            addTypename={false}>
+            addTypename={false}
+        >
             {children}
         </MockedProvider>
     );
@@ -173,7 +174,8 @@ test(`useClassFilters hook should return mapped programs data for filter drop do
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
-            addTypename={false}>
+            addTypename={false}
+        >
             {children}
         </MockedProvider>
     );
@@ -201,7 +203,8 @@ test(`useClassFilters hook should return mapped grades data for filter drop down
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
-            addTypename={false}>
+            addTypename={false}
+        >
             {children}
         </MockedProvider>
     );

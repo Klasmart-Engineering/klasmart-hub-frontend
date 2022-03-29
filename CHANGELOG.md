@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.40.5](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.5%0D2.40.4) (2022-03-25)
+
+### [2.40.4](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.4%0D2.40.3) (2022-03-25)
+
 ### [2.40.3](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.3%0D2.40.2) (2022-03-23)
 
 ### [2.40.2](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.2%0D2.40.1) (2022-03-23)

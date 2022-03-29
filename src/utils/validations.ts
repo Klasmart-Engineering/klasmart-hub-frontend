@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { validations } from "kidsloop-px";
+import { validations } from "@kl-engineering/kidsloop-px";
 import { useIntl } from "react-intl";
 
 export function alphanumeric (name: string): boolean {

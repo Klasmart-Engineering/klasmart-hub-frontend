@@ -22,8 +22,8 @@ import {
     FullScreenDialog,
     Stepper,
     useSnackbar,
-} from "kidsloop-px";
-import { Step } from "kidsloop-px/dist/types/components/Stepper";
+} from "@kl-engineering/kidsloop-px";
+import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
 import { isEqual } from "lodash";
 import React,
 {

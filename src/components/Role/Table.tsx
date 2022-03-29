@@ -19,6 +19,12 @@ import {
     TableProps,
 } from "@/utils/table";
 import {
+    CursorTable,
+    useConfirm,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -32,12 +38,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    CursorTable,
-    useConfirm,
-    useSnackbar,
-} from "kidsloop-px";
-import { TableColumn } from "kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";

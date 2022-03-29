@@ -1,6 +1,6 @@
 import { PendingAssignmentInfoFormatted } from "@/components/Dashboard/models/data.model";
 import { classTypeIdentities } from "@/config/classTypes";
-import { PendingAssignmentsResponse } from "@kidsloop/reports-api-client";
+import { PendingAssignmentsResponse } from "@kl-engineering/reports-api-client";
 
 enum ClassType {
     LIVE = `live`,
@@ -16,10 +16,10 @@ export default function pendingAssesmentsDataFormatter (data: PendingAssignments
         homework: number;
         study: number;
     } = {
-        [ClassType.LIVE]: data?.info?.filter((item)=>item.class_type === ClassType.LIVE).reduce((sum:number, item) => {return sum + item.count; }, 0) || 0,
-        [ClassType.CLASS]: data?.info?.filter((item)=>item.class_type === ClassType.CLASS).reduce((sum:number, item) => {return sum + item.count; }, 0) || 0,
-        [ClassType.HOMEWORK]: data?.info?.filter((item)=>item.class_type === ClassType.HOMEWORK).reduce((sum:number, item) => {return sum + item.count; }, 0) || 0,
-        [ClassType.STUDY]: data?.info?.filter((item)=>item.class_type === ClassType.STUDY).reduce((sum:number, item) => {return sum + item.count; }, 0) || 0,
+        [ClassType.LIVE]: data?.info?.filter((item)=>item.class_type === ClassType.LIVE).reduce((sum: number, item) => {return sum + item.count; }, 0) || 0,
+        [ClassType.CLASS]: data?.info?.filter((item)=>item.class_type === ClassType.CLASS).reduce((sum: number, item) => {return sum + item.count; }, 0) || 0,
+        [ClassType.HOMEWORK]: data?.info?.filter((item)=>item.class_type === ClassType.HOMEWORK).reduce((sum: number, item) => {return sum + item.count; }, 0) || 0,
+        [ClassType.STUDY]: data?.info?.filter((item)=>item.class_type === ClassType.STUDY).reduce((sum: number, item) => {return sum + item.count; }, 0) || 0,
     };
 
     const formattedData: PendingAssignmentInfoFormatted[]= [

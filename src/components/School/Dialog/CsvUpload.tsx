@@ -7,7 +7,7 @@ import {
     FullScreenDialog,
     SpreadsheetFileInput,
     useSnackbar,
-} from "kidsloop-px";
+} from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,

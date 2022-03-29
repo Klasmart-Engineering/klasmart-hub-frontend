@@ -8,7 +8,7 @@ import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
-import { usePostSchedulesTimeViewList } from "@kidsloop/cms-api-client";
+import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import {
     Box,
     Container,
@@ -20,7 +20,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { Card } from "kidsloop-px";
+import { Card } from "@kl-engineering/kidsloop-px";
 import {
     clamp,
     uniqBy,
@@ -32,10 +32,6 @@ import React, {
 } from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    backdrop: {
-        zIndex: theme.zIndex.drawer - 1,
-        color: theme.palette.common.white,
-    },
     gridRightColumn: {
         display: `flex`,
     },

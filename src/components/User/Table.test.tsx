@@ -1,7 +1,9 @@
 import UsersTable from './Table';
 import { GET_ORGANIZATION_ROLES } from '@/operations/queries/getOrganizationRoles';
 import { Status } from "@/types/graphQL";
+import { sortClassNames } from '@/utils/classes';
 import { useGetTableFilters } from '@/utils/filters';
+import { sortGradeNames } from '@/utils/grades';
 import { sortSchoolNames } from '@/utils/schools';
 import { sortRoleNames } from '@/utils/userRoles';
 import { MockedProvider } from '@apollo/client/testing';
@@ -28,6 +30,8 @@ const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     phone: edge.node.contactInfo?.phone ?? ``,
     roleNames: edge.node.roles?.filter((role) => role.status === Status.ACTIVE).map((role) => role.name).sort(sortRoleNames) ?? [],
     schoolNames: edge.node.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+    classNames: edge.node.classes?.filter((classObject) => classObject.status === Status.ACTIVE).map((classObject) => classObject.name).sort(sortClassNames) ?? [],
+    gradeNames: edge.node.grades?.filter((grade) => grade.status === Status.ACTIVE).map((grade) => grade.name).sort(sortGradeNames) ?? [],
     status: edge.node.organizations?.[0].userStatus ?? Status.INACTIVE,
     joinDate: edge.node.organizations ? new Date(edge.node.organizations?.[0].joinDate) : new Date(),
 })) ?? [];
@@ -48,11 +52,11 @@ jest.mock(`@/utils/permissions`, () => {
 });
 
 test(`Users table page renders correctly`, async () => {
-    const component = <UsersTable
+    const component = (<UsersTable
         order="asc"
         orderBy="name"
         rows={rows}
-    />;
+    />);
     render(component);
 
     await waitFor(() => {
@@ -79,7 +83,8 @@ test(`useGetTableFilters hook should return mapped user roles data for filter dr
     const wrapper = ({ children }: { children: [] }) => (
         <MockedProvider
             mocks={mocks}
-            addTypename={false}>
+            addTypename={false}
+        >
             {children}
         </MockedProvider>
     );

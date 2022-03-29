@@ -1,5 +1,5 @@
 import { ContentTeacherFormatted } from "@/components/Dashboard/models/data.model";
-import { ContentTeacherResponse } from "@kidsloop/reports-api-client";
+import { ContentTeacherResponse } from "@kl-engineering/reports-api-client";
 
 enum ContentType {
     DRAFT = `draft`,

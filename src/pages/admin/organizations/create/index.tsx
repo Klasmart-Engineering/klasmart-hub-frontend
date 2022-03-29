@@ -10,6 +10,12 @@ import { OrganizationTab } from "@/types/graphQL";
 import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
 import {
+    Button,
+    Card,
+    Tabs,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import {
     Box,
     Grid,
 } from "@mui/material";
@@ -19,12 +25,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    Card,
-    Tabs,
-    useSnackbar,
-} from "kidsloop-px";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";

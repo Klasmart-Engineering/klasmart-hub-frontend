@@ -1,6 +1,6 @@
 import { useValidations } from "@/utils/validations";
+import { usePrompt } from "@kl-engineering/kidsloop-px";
 import { DialogContentText } from "@mui/material";
-import { usePrompt } from "kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";
 
