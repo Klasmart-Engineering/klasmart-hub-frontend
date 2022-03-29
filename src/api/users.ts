@@ -1,4 +1,7 @@
+import { ClassSummaryNode } from "./classes";
+import { GradeSummaryNode } from "./grades";
 import {
+    ClassConnection,
     OrganizationMembershipsConnection,
     SchoolMembershipsConnection,
 } from "./organizationMemberships";
@@ -42,9 +45,13 @@ export interface UserNode {
     }[];
     roles?: RoleSummaryNode[];
     schools?: SchoolSummaryNode[];
+    classes?: ClassSummaryNode[];
+    grades?: GradeSummaryNode[];
     dateOfBirth?: string;
     gender?: string;
     avatar?: string | null;
     organizationMembershipsConnection?: OrganizationMembershipsConnection;
     schoolMembershipsConnection?: SchoolMembershipsConnection;
+    classesStudyingConnection?: ClassConnection;
+    classesTeachingConnection?: ClassConnection;
 }

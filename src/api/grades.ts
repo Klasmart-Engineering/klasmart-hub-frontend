@@ -7,6 +7,7 @@ import {
     GET_PAGINATED_ORGANIZATION_GRADES_LIST,
 } from "@/operations/queries/getOrganizationGrades";
 import {
+    BaseEntity,
     BooleanFilter,
     Direction,
     Grade,
@@ -70,7 +71,10 @@ export interface GradeNode {
 export interface GradeEdge {
     node: GradeNode;
 }
-
+export interface GradeSummaryNode extends BaseEntity {
+    name: string;
+    status: Status;
+}
 export interface GetOrganizationGradesResponsePaginated {
     gradesConnection: {
         totalCount: number;
