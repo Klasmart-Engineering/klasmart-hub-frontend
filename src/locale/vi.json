@@ -1145,7 +1145,7 @@
     "react-intl-formatted-duration.minutesUnit": "{value, plural, other {phút}}",
     "react-intl-formatted-duration.secondsUnit": "{value, plural, other {giây}}",
     "user.inactivate.typeToMarkInactivePrompt": "Type {value} to confirm.",
-    "home.student.adaptiveLearningWidget.containerTitleLabel": "AI Review",
+    "home.student.adaptiveLearningWidget.containerTitleLabel": "Lớp ôn tập thông minh",
     "home.student.adaptiveLearningWidget.containerUrlLabel": "View all details",
     "home.student.adaptiveLearningWidget.skill1": "Writing",
     "home.student.adaptiveLearningWidget.skill2": "Speaking",
@@ -1182,9 +1182,9 @@
     "home.customization.addwidget": "Thêm tiện ích",
     "home.customization.save": "Lưu",
     "home.customization.cancel": "Huỷ bỏ",
-    "home.student.adaptiveLearningJourney.containerTitleLabel": "Đánh giá quá trình thích ứng",
-    "home.student.adaptiveLearningJourney.progressBarLabel": "Tổng hiệu suất",
-    "home.student.adaptiveLearningJourney.classTitle": "Lớp phụ đạo",
+    "home.student.adaptiveLearningJourney.containerTitleLabel": "Hành trình cá nhân của tôi",
+    "home.student.adaptiveLearningJourney.progressBarLabel": "Tiến độ tổng thể",
+    "home.student.adaptiveLearningJourney.classTitle": "Lớp ôn tập thông minh",
     "home.customization.addwidget.schedule.description": "Xem lịch hàng ngày của bạn, xem các sự kiện sắp tới như lớp học tại lớp và lớp học trực tuyến.",
     "home.customization.addwidget.nextclass.description": "Đánh dấu các lớp học tiếp theo của bạn, giúp bạn dễ dàng tham gia lớp học tiếp theo hơn.",
     "home.customization.addwidget.attendance.description": "Xác định các nhóm học sinh có tỷ lệ tham gia khác nhau, đồng thời cung cấp cái nhìn sâu sắc về những học sinh ít tham gia và có thể cần trợ giúp thêm.",
@@ -1198,5 +1198,7 @@
     "home.customization.addwidget.student.schedule.description": "Xem thời khóa biểu hàng ngày và hàng tuần của bạn để xem các sự kiện sắp tới trong lịch của bạn, chẳng hạn như Lớp học tại lớp và Lớp học trực tuyến.",
     "home.customization.addwidget.student.learningoutcome.description": "Tổng quan về kết quả học tập đạt được của bạn và những kết quả vẫn cần đạt được cho từng kỹ năng, làm nổi bật 5 kỹ năng hàng đầu của bạn.",
     "home.customization.addwidget.student.achievement.description": "Cho bạn thấy ở cấp độ cao bạn đã đạt được bao nhiêu kết quả học tập và tổng quan về bao nhiêu kết quả học tập mà bạn chưa đạt được và bao nhiêu kết quả học tập đã được lên kế hoạch nhưng chưa được giảng dạy.",
-    "home.customization.addwidget.student.adaptivelearning.description": "Cho bạn thấy tác động của các lớp được đánh giá AI được thực hiện bằng cách tóm tắt tổng số lớp đánh giá AI và đếm tất cả các kỹ năng được nhắm mục tiêu trong các lớp ôn tập này cũng như mô tả chi tiết tác động của việc xem xét AI đối với 3 kỹ năng được cải thiện nhiều nhất"
+    "home.customization.addwidget.student.adaptivelearning.description": "Cho bạn thấy tác động của các lớp ôn tập thông minh được thực hiện bằng cách tóm tắt tổng số lớp ôn tập thông minh và đếm tất cả các kỹ năng được nhắm mục tiêu trong các lớp ôn tập này cũng như mô tả chi tiết tác động của việc xem xét lớp ôn tập thông minh đối với 3 kỹ năng được cải thiện nhiều nhất",
+    "home.widget.noWidgetAdded": "Không có tiện ích nào được thêm vào",
+    "home.student.learningOutcomeWidget.singleSkillTitle": "Top Skill"
 }
