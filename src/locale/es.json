@@ -1165,7 +1165,7 @@
     "home.student.learningOutcomeWidget.skill3": "Emocional",
     "home.student.learningOutcomeWidget.skill4": "Social",
     "home.student.learningOutcomeWidget.skill5": "Habilidades motrices gruesas",
-    "home.student.learningOutcomeWidget.legendTitle": "Las 5 mejores habilidades",
+    "home.student.learningOutcomeWidget.legendTitle": "{skillcount, plural, one {} other {Las {skillcount} mejores habilidades}}",
     "home.student.learningOutcomeWidget.legendAchieved": "Logrado",
     "home.student.learningOutcomeWidget.legendNotAchieved": "No logrado",
     "home.student.learningOutcomeWidget.totalLabel": "total",
@@ -1198,5 +1198,7 @@
     "home.customization.addwidget.student.schedule.description": "View your daily and weekly schedule to see upcoming events in your calendar, such as your Classes and Live Classes.",
     "home.customization.addwidget.student.learningoutcome.description": "An overview of your achieved Learning Outcomes to those that still need to be achieved for each skill, highlighting your Top 5 skills.",
     "home.customization.addwidget.student.achievement.description": "Shows you at high level how many learning outcomes you have achieved, and an overview of how many learning outcomes you have not achieved and how many learning outcomes were planed but not taught yet.",
-    "home.customization.addwidget.student.adaptivelearning.description": "Shows you the impact of the AI review classes taken by summarising the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills"
+    "home.customization.addwidget.student.adaptivelearning.description": "Shows you the impact of the AI review classes taken by summarizing the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills",
+    "home.widget.noWidgetAdded": "No widgets added",
+    "home.student.learningOutcomeWidget.singleSkillTitle": "Top Skill"
 }
