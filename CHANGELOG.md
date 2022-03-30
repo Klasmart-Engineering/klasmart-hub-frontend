@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.41.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.1%0Dv2.41.0) (2022-03-30)
+
+
+### 🐛 Bug Fixes
+
+* use migrated organization and user object (#12) ([545f80c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/545f80cadeb4b92849d08034b6c63b5fa3562315))
+
 ## [2.41.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.0%0Dv2.40.7) (2022-03-30)
 
 
