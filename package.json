@@ -7,7 +7,7 @@
     "build": "webpack",
     "start": "cross-env NODE_ENV=development webpack serve",
     "test": "jest",
-    "release": "standard-version -t ''",
+    "release": "standard-version",
     "prepare": "husky install",
     "postversion": "git push && git push --tags",
     "lint": "eslint ."
