@@ -52,8 +52,8 @@ export const useDashboardMode = (): UseDashboardModeReturnType => {
 
     const view = useMemo(() => teacherPermission ? WidgetView.TEACHER : studentPermission ? WidgetView.STUDENT : WidgetView.DEFAULT, [ teacherPermission, studentPermission ]);
 
-    const organizationId = currentOrganizationMembership?.organization_id;
-    const userId = currentOrganizationMembership?.user_id;
+    const organizationId = currentOrganizationMembership?.organization?.id;
+    const userId = currentUser?.id;
     const stateFamilyId = currentOrganizationMembership ? `${ userId }__${ organizationId }` : ``;
 
     const hasPermissionLoading = teacherLoading || studentLoading || myUserLoading;
