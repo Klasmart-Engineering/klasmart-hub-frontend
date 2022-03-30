@@ -12,7 +12,7 @@ import {
     mockOrgId,
 } from '@tests/mockDataGrades';
 import { render } from "@tests/utils/render";
-import { utils } from 'kidsloop-px';
+import { utils } from "@kl-engineering/kidsloop-px";
 import React from 'react';
 
 jest.mock(`@/store/organizationMemberships`, () => {

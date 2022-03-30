@@ -13,7 +13,6 @@ import SchoolsPage from "@/pages/admin/schools";
 import SubjectsPage from "@/pages/admin/subjects";
 import UsersPage from "@/pages/admin/users";
 import AssessmentsPage from "@/pages/assessments";
-import { BrowserList } from "@/pages/browserList";
 import HomePage from "@/pages/index";
 import BadanamuContentPage from "@/pages/library/badanamu-content";
 import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
@@ -28,7 +27,6 @@ import React,
     useEffect,
     useState,
 } from "react";
-import { isIE } from "react-device-detect";
 import {
     Redirect,
     Route,
@@ -39,7 +37,7 @@ import {
 interface Props {
 }
 
-export default function Router (props: Props)  {
+export default function Router (props: Props) {
     const [ timeUntilExpiry, setTimeUntilExpiry ] = useState(0);
 
     const redirectIfUnauthenticated = useCallback(async () => {
@@ -63,9 +61,8 @@ export default function Router (props: Props)  {
         redirectIfUnauthenticated();
     }, [ location ]);
 
-    return isIE
-        ? <BrowserList />
-        : <Switch>
+    return (
+        <Switch>
             <Route
                 exact
                 path="/"
@@ -118,7 +115,8 @@ export default function Router (props: Props)  {
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/organizations/create"
-                permissions={`create_own_organization_10220`}>
+                permissions={`create_own_organization_10220`}
+            >
                 <Layout>
                     <CreateOrganizationPage />
                 </Layout>
@@ -128,56 +126,64 @@ export default function Router (props: Props)  {
                 permissions={{
                     AND: [ `organizational_profile_10100` ],
                     OR: [ `view_this_organization_profile_10110`, `view_my_organization_profile_10111` ],
-                }}>
+                }}
+            >
                 <Layout>
                     <OrganizationsPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/roles"
-                permissions={`roles_30100`}>
+                permissions={`roles_30100`}
+            >
                 <Layout>
                     <RolesPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/schools"
-                permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}>
+                permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}
+            >
                 <Layout>
                     <SchoolsPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/classes"
-                permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}>
+                permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}
+            >
                 <Layout>
                     <ClassesPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/programs"
-                permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}>
+                permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}
+            >
                 <Layout>
                     <ProgramsPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/grades"
-                permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}>
+                permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}
+            >
                 <Layout>
                     <Grades />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/subjects"
-                permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}>
+                permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}
+            >
                 <Layout>
                     <SubjectsPage />
                 </Layout>
             </ProtectedRoute>
             <ProtectedRoute
                 path="/admin/age-ranges"
-                permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}>
+                permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}
+            >
                 <Layout>
                     <AgeRangesPage />
                 </Layout>
@@ -205,5 +211,6 @@ export default function Router (props: Props)  {
             <Route>
                 <HomePage />
             </Route>
-        </Switch>;
+        </Switch>
+    );
 }

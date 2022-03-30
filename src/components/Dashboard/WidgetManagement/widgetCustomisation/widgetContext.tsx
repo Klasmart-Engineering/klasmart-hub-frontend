@@ -9,6 +9,7 @@ import { createContext } from "react";
 
 type Context = {
     editing: boolean;
+    checkIfLayoutUpdated: () => void;
     editWidgets: () => void;
     cancelEditing: () => void;
     widgets : Widgets;

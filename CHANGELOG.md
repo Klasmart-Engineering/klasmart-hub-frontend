@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.40.6](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.40.6%0Dv2.40.5) (2022-03-30)
+
+
+### ♻️ Chores
+
+* **localization:** No teacher feedback keys and English (#10) ([f6a3cc2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f6a3cc2d9e2592f593900ebf5b172e9abd8ec76b))
+* migrate to github ([3bb4e47](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3bb4e47f649624a7fd1df59a65e472175f7cebea))
+* remove removal of v in git tags ([94c4cf5](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/94c4cf5dd1dccaeb372ff5dfd116dbdb1e503382))
+
+
+### 🐛 Bug Fixes
+
+* missing migration of kidsloop-px in tests ([04eebcd](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/04eebcd69095ad63e8dcb40a3edea787f0c7d55f))
+
+
+### 📦 Refactor
+
+* remove redux and unused dependencies (#11) ([cdc9066](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/cdc90668889bf5029350c3cb1b93a470538d0c2b))
+
 ### [2.40.5](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.5%0D2.40.4) (2022-03-25)
 
 ### [2.40.4](https://bitbucket.org/calmisland/kidsloop-hub-frontend/branches/compare/2.40.4%0D2.40.3) (2022-03-25)

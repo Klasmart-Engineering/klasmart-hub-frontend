@@ -1,11 +1,13 @@
 import StudentNextClass from "../Widgets/Student/NextClass/NextClass";
-import {
+import getLayouts, {
     defaultStudentWidgetMap,
     defaultTeacherWidgetMap,
+    Layout,
+    Layouts,
+    Widgets,
     WidgetView,
 } from "./defaultWidgets";
 import AddWidgetDialog from "./Dialog/AddWidget";
-import ConfirmBox from "./Dialog/ConfirmBox";
 import LastUpdatedMessage from "./LastUpdatedMessage";
 import WidgetContext from "./widgetCustomisation/widgetContext";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
@@ -37,6 +39,8 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+import { useFeatureFlags } from "@/feature-flag/utils";
+import { WidgetType } from "../models/widget.model";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -95,21 +99,36 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
         editing,
         editWidgets,
         saveWidgets,
-        cancelEditing,
+        checkIfLayoutUpdated,
         resetWidgets,
         addWidget,
         widgets,
         layouts,
     } = useContext(WidgetContext);
+    const { studentWidgetAdaptiveLearning: showStudentWidgetAdaptiveLearning } = useFeatureFlags();
     const [ openAddWidgetDialog, setOpenAddWidgetDialog ] = useState(false);
-    const [ openConfirmDialog, setOpenConfirmDialog ] = useState(false);
     const [ currentWidgets, setCurrentWidgets ] = useState(widgets);
+    const filterAdaptiveWidgets = (widgets: Widgets, layouts: Layouts) => {
+        const { [WidgetType.ADAPTIVELEARNING]: _, ...newWidgets } = widgets;
+        const removeLayout = (l: Layout) => WidgetType.ADAPTIVELEARNING !== l.i;
+        layouts = {
+            sm: layouts.sm.filter(removeLayout),
+            md: layouts.md.filter(removeLayout),
+            lg: layouts.lg.filter(removeLayout),
+        };
+        return {
+            layouts,
+            widgets: newWidgets,
+        };
+    };
     useEffect(() => {
         setCurrentWidgets(widgets);
     }, [ widgets ]);
     const currentWidgetsLength = widgets ? Object.keys(widgets).length : 0;
-    const studentsWidgetsLength = Object.keys(defaultStudentWidgetMap).length;
-    const teachersWidgetsLength = Object.keys(defaultTeacherWidgetMap).length;
+    const { widgets: currWidgets , layouts: currLayouts } = getLayouts(view);
+    const { widgets: defaultWidgets } = showStudentWidgetAdaptiveLearning ? { widgets: currWidgets } :
+    filterAdaptiveWidgets(currWidgets, currLayouts);
+    const totalAvailableWidget = Object.keys(defaultWidgets || {}).length;
     return (
         <Box
             className={clsx(classes.root, {
@@ -185,7 +204,7 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                                         })}</Button>
                                 </Box>
                                 <Button
-                                    className={view === WidgetView.TEACHER ? currentWidgetsLength < teachersWidgetsLength ? classes.whiteButton : classes.hidden : currentWidgetsLength < studentsWidgetsLength ? classes.whiteButton : classes.hidden}
+                                    className={currentWidgetsLength < totalAvailableWidget ? classes.whiteButton : classes.hidden}
                                     variant="outlined"
                                     startIcon={<AddCard color="inherit" />}
                                     onClick={() => setOpenAddWidgetDialog(true)}>{intl.formatMessage({
@@ -206,7 +225,7 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                                     variant="contained"
                                     color="error"
                                     startIcon={<Cancel color="inherit" />}
-                                    onClick={() => setOpenConfirmDialog(true)}>{intl.formatMessage({
+                                    onClick={checkIfLayoutUpdated}>{intl.formatMessage({
                                         id: `home.customization.cancel`,
                                         defaultMessage: `Cancel`,
                                     })}</Button>
@@ -231,11 +250,6 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                     setOpenAddWidgetDialog(false);
                 }}
             />
-            <ConfirmBox
-                open={openConfirmDialog}
-                confirm={cancelEditing}
-                onClose={() => setOpenConfirmDialog(false)}
-            ></ConfirmBox>
         </Box>
     );
 }

@@ -45,6 +45,6 @@ export default function App (props: Props) {
     ]);
 
     return (
-        <Layout />
+        myUserLoading ? <></> : <Layout />
     );
 }

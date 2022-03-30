@@ -1,9 +1,9 @@
+import LDProvider from "./feature-flag/LDProvider";
 import App from "@/app";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
 import UserServiceProvider from "@/providers/UserServiceProvider";
-import { createDefaultStore } from '@/store/store';
-import { themeProvider } from "@/themeProvider";
+import { useThemeProvider } from "@/themeProvider";
 import { getLanguage } from "@/utils/locale";
 import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kl-engineering/cms-api-client";
 import {
@@ -22,13 +22,11 @@ import {
 import React from 'react';
 import { useCookies } from "react-cookie";
 import { RawIntlProvider } from "react-intl";
-import { Provider } from "react-redux";
 import { RecoilRoot } from 'recoil';
-import { PersistGate } from 'redux-persist/integration/react';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface DefaultTheme extends Theme {}
+    interface DefaultTheme extends Theme { }
 }
 
 export function ClientSide () {
@@ -40,22 +38,24 @@ export function ClientSide () {
         <ReportsApiClientProvider>
             <CmsApiClientProvider>
                 <UserServiceProvider>
-                    <RawIntlProvider value={locale}>
-                        <StyledEngineProvider injectFirst>
-                            <ThemeProvider theme={themeProvider()}>
-                                <ConfirmDialogProvider>
-                                    <PromptDialogProvider>
-                                        <AlertDialogProvider>
-                                            <SnackbarProvider closeButtonLabel="Dismiss">
-                                                <CssBaseline />
-                                                <App />
-                                            </SnackbarProvider>
-                                        </AlertDialogProvider>
-                                    </PromptDialogProvider>
-                                </ConfirmDialogProvider>
-                            </ThemeProvider>
-                        </StyledEngineProvider>
-                    </RawIntlProvider>
+                    <LDProvider>
+                        <RawIntlProvider value={locale}>
+                            <StyledEngineProvider injectFirst>
+                                <ThemeProvider theme={useThemeProvider()}>
+                                    <ConfirmDialogProvider>
+                                        <PromptDialogProvider>
+                                            <AlertDialogProvider>
+                                                <SnackbarProvider closeButtonLabel="Dismiss">
+                                                    <CssBaseline />
+                                                    <App />
+                                                </SnackbarProvider>
+                                            </AlertDialogProvider>
+                                        </PromptDialogProvider>
+                                    </ConfirmDialogProvider>
+                                </ThemeProvider>
+                            </StyledEngineProvider>
+                        </RawIntlProvider>
+                    </LDProvider>
                 </UserServiceProvider>
                 {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
             </CmsApiClientProvider>
@@ -65,18 +65,9 @@ export function ClientSide () {
 }
 
 export default function ClientEntry () {
-    const { store, persistor } = createDefaultStore();
-
     return (
         <RecoilRoot>
-            <Provider store={store}>
-                <PersistGate
-                    loading={null}
-                    persistor={persistor}
-                >
-                    <ClientSide />
-                </PersistGate>
-            </Provider>
+            <ClientSide />
         </RecoilRoot>
     );
 }

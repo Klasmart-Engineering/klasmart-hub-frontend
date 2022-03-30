@@ -8,8 +8,6 @@ import {
 } from "react";
 import {
     atomFamily,
-    AtomFamilyOptions,
-    RecoilState,
     useRecoilState,
 } from "recoil";
 import { recoilPersist } from 'recoil-persist';
@@ -45,7 +43,7 @@ interface UseDashboardModeReturnType {
     view: WidgetView;
 }
 
-export const useDashboardMode = () : UseDashboardModeReturnType => {
+export const useDashboardMode = (): UseDashboardModeReturnType => {
     const { data: myUserData, loading: myUserLoading } = useQueryMyUser();
     const currentUser = myUserData?.myUser.node;
     const currentOrganizationMembership = useCurrentOrganizationMembership();

@@ -11,7 +11,6 @@ import {
     scrollScheduleToTimeMarker,
     updateTimeMarkerPosition,
 } from "./DailyCalenderHelper";
-import { State } from "@/store/store";
 import useInterval from "@/utils/useInterval";
 import clsx from "clsx";
 import moment from "moment";
@@ -28,8 +27,8 @@ import {
     momentLocalizer,
     Views,
 } from "react-big-calendar";
+import { useCookies } from "react-cookie";
 import { useIntl } from "react-intl";
-import { useSelector } from "react-redux";
 
 interface Props {
     mode: ScheduleViewMode;
@@ -51,8 +50,8 @@ export default function DailySchedule (props: Props) {
 
     const hasNoAllDayEvents = !events.some((event: Event) => event.allDay);
 
-    const languageCode = useSelector((state: State) => state.ui.locale || ``);
-    moment.locale(languageCode);
+    const [ cookies ] = useCookies([ `locale` ]);
+    moment.locale(cookies.locale);
     const localizer = momentLocalizer(moment);
     const intl = useIntl();
 
@@ -132,21 +131,21 @@ export default function DailySchedule (props: Props) {
             onMouseLeave={() => eventFocused && setEventFocused(false)}
         >
             <StyledDayCalendar
+                showMultiDayTimes
                 className={clsx({
                     [`rbc-calendar--event-focused`]: eventFocused,
                     [`rbc-calendar--no-all-day-events`]: hasNoAllDayEvents,
                     [`rbc-calendar--${mode}`]: true,
                 })}
-                min={ min }
-                max={ max }
+                min={min}
+                max={max}
                 events={events}
-                defaultView={ Views.DAY }
+                defaultView={Views.DAY}
                 step={30}
                 defaultDate={date}
                 toolbar={false}
                 localizer={localizer}
                 formats={timeFormats}
-                showMultiDayTimes={true}
                 eventPropGetter = {
                     () => {
                         return {
