@@ -1,12 +1,12 @@
 import { authClient } from "@/api/auth/client";
 import { getReportsEndpoint } from "@/config";
+import { REQUEST_RETRY_COUNT_MAX } from "@/config/index";
 import { redirectToAuth } from "@/utils/routing";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engineering/reports-api-client";
 import { AxiosError } from "axios";
 import React,
 {
     useCallback,
-    useEffect,
     useState,
 } from "react";
 import Cookies from "universal-cookie";
@@ -25,11 +25,10 @@ export default function ReportsApiClientProvider (props: Props) {
     const [ accessToken, setAccessToken ] = useState(cookies.get(ACCESS_TOKEN_COOKIE));
 
     const STALE_TIME = 60 * 1000; // 60 seconds
-    const REQUEST_RETRY_MAX_COUNT = 3; // 3
     const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
 
     const retryHandler = useCallback(async (error: AxiosError) => {
-        if (error.response?.status !== 401) throw error;
+        if (error.response?.status !== 401 || error.response?.data.label !== `general_error_unauthorized`) throw error;
         try {
             await authClient.refreshToken();
             const updatedCookie = new Cookies();
@@ -56,7 +55,7 @@ export default function ReportsApiClientProvider (props: Props) {
                 defaultOptions: {
                     queries: {
                         staleTime: STALE_TIME,
-                        retry: REQUEST_RETRY_MAX_COUNT,
+                        retry: REQUEST_RETRY_COUNT_MAX,
                     },
                 },
             }}
@@ -116,10 +115,11 @@ export default function ReportsApiClientProvider (props: Props) {
                         };
                     }),
                 },
+            ] : [
                 {
                     onRejected: retryHandler,
                 },
-            ] : undefined}
+            ]}
         >
             {children}
         </KLReportsApiClientProvider>
