@@ -10,11 +10,11 @@ jest.mock(`react-dom`, () => {
     };
 });
 
-jest.mock(`kidsloop-px`, () => ({
-    ...jest.requireActual(`kidsloop-px`),
+jest.mock(`@kl-engineering/kidsloop-px`, () => ({
+    ...jest.requireActual(`@kl-engineering/kidsloop-px`),
     useSnackbar: () => ({
         enqueueSnackbar: mockEnqueueSnackbar,
     }),
-    usePrompt: () => (async () => true),
-    useConfirm: () => (async () => true),
+    usePrompt: () => (() => Promise.resolve(true)),
+    useConfirm: () => (() => Promise.resolve(true)),
 }));

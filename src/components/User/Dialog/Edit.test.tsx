@@ -58,7 +58,7 @@ import {
     mockUserNode,
 } from "@tests/mockUsers";
 import { waitForButtonToLoad } from "@tests/waitFor";
-import { utils } from 'kidsloop-px';
+import { utils } from "@kl-engineering/kidsloop-px";
 import { cloneDeep } from "lodash";
 import React from "react";
 
