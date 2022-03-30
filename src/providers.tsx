@@ -1,3 +1,4 @@
+import LDProvider from "./feature-flag/LDProvider";
 import App from "@/app";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
@@ -25,7 +26,7 @@ import { RecoilRoot } from 'recoil';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface DefaultTheme extends Theme {}
+    interface DefaultTheme extends Theme { }
 }
 
 export function ClientSide () {
@@ -37,22 +38,24 @@ export function ClientSide () {
         <ReportsApiClientProvider>
             <CmsApiClientProvider>
                 <UserServiceProvider>
-                    <RawIntlProvider value={locale}>
-                        <StyledEngineProvider injectFirst>
-                            <ThemeProvider theme={useThemeProvider()}>
-                                <ConfirmDialogProvider>
-                                    <PromptDialogProvider>
-                                        <AlertDialogProvider>
-                                            <SnackbarProvider closeButtonLabel="Dismiss">
-                                                <CssBaseline />
-                                                <App />
-                                            </SnackbarProvider>
-                                        </AlertDialogProvider>
-                                    </PromptDialogProvider>
-                                </ConfirmDialogProvider>
-                            </ThemeProvider>
-                        </StyledEngineProvider>
-                    </RawIntlProvider>
+                    <LDProvider>
+                        <RawIntlProvider value={locale}>
+                            <StyledEngineProvider injectFirst>
+                                <ThemeProvider theme={useThemeProvider()}>
+                                    <ConfirmDialogProvider>
+                                        <PromptDialogProvider>
+                                            <AlertDialogProvider>
+                                                <SnackbarProvider closeButtonLabel="Dismiss">
+                                                    <CssBaseline />
+                                                    <App />
+                                                </SnackbarProvider>
+                                            </AlertDialogProvider>
+                                        </PromptDialogProvider>
+                                    </ConfirmDialogProvider>
+                                </ThemeProvider>
+                            </StyledEngineProvider>
+                        </RawIntlProvider>
+                    </LDProvider>
                 </UserServiceProvider>
                 {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
             </CmsApiClientProvider>

@@ -19,6 +19,8 @@ import TeacherLoad from "@/assets/img/widgets/thumbnails/teacher_load.png";
 import TeacherNextClass from "@/assets/img/widgets/thumbnails/teacher_nextclass.png";
 import TeacherPendingAssesments from "@/assets/img/widgets/thumbnails/teacher_pendingassesments.png";
 import TeacherSchedule from "@/assets/img/widgets/thumbnails/teacher_schedule.png";
+import { useFeatureFlags } from "@/feature-flag/utils";
+import { Button } from "@kl-engineering/kidsloop-px";
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Box,
@@ -33,7 +35,6 @@ import {
     makeStyles,
     useTheme,
 } from "@mui/styles";
-import { Button } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,
@@ -97,8 +98,9 @@ export default function AddWidgetDialog (props: Props) {
         addWidget,
     } = props;
     const theme = useTheme();
+    const { studentWidgetAdaptiveLearning: showStudentWidgetAdaptiveLearning } = useFeatureFlags();
 
-    const TeachersWidgets =
+    const teachersWidgets =
         [
             {
                 id: WidgetType.SCHEDULE,
@@ -170,7 +172,7 @@ export default function AddWidgetDialog (props: Props) {
             },
         ];
 
-    const StudentsWidgets =
+    const studentsWidgets =
         [
             {
                 id: WidgetType.STUDENTATTENDANCE,
@@ -238,18 +240,18 @@ export default function AddWidgetDialog (props: Props) {
             //     }),
             //     snapshotUrl:StudentLearningOutcome,
             // },
-            // {
-            //     id:WidgetType.ADAPTIVELEARNING,
-            //     name: intl.formatMessage({
-            //         id: `home.student.adaptiveLearningWidget.containerTitleLabel`,
-            //     }),
-            //     description:intl.formatMessage({
-            //         id: `home.customization.addwidget.student.adaptivelearning.description`,
-            //         defaultMessage:`Shows you the impact of the AI review classes taken by summarising the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills.`,
-            //     }),
-            //     snapshotUrl:StudentAdaptiveLearning,
-            // },
-        ];
+            {
+                id: WidgetType.ADAPTIVELEARNING,
+                name: intl.formatMessage({
+                    id: `home.student.adaptiveLearningWidget.containerTitleLabel`,
+                }),
+                description: intl.formatMessage({
+                    id: `home.customization.addwidget.student.adaptivelearning.description`,
+                    defaultMessage: `Shows you the impact of the AI review classes taken by summarising the total number of AI review classes and counts of all the skills targeted in these review classes as well as describing the impact of AI review in detail for the top 3 most improved skills.`,
+                }),
+                snapshotUrl: StudentAdaptiveLearning,
+            },
+        ].filter(student => showStudentWidgetAdaptiveLearning || student.id !== WidgetType.ADAPTIVELEARNING);
 
     const handelAddWidget = (id: WidgetType, widgets: Widgets) => {
         const layouts = getLayouts(view).layouts;
@@ -258,7 +260,7 @@ export default function AddWidgetDialog (props: Props) {
     };
 
     const getDefaultWidgetToDisplay = () => {
-        const widgetsToDisplay = view === WidgetView.STUDENT ? StudentsWidgets : TeachersWidgets;
+        const widgetsToDisplay = view === WidgetView.STUDENT ? studentsWidgets : teachersWidgets;
         const defaultWidget = widgetsToDisplay.find(widget => {
             return !(widgets && widgets[widget.id]);
         });
@@ -280,8 +282,8 @@ export default function AddWidgetDialog (props: Props) {
 
     return (
         <Dialog
+            fullWidth
             open={open}
-            fullWidth={true}
             maxWidth="md"
             className={classes.root}
             onClose={onClose}
@@ -289,32 +291,36 @@ export default function AddWidgetDialog (props: Props) {
             <Box className={classes.sideBar}>
                 <Box>
                     <Typography
-                        className={classes.sidebarheader}>
+                        className={classes.sidebarheader}
+                    >
                         {intl.formatMessage({
                             id: `home.customization.addwidgetdialog.title`,
                             defaultMessage: `Widgets`,
                         })}
-                    </Typography></Box>
+                    </Typography>
+                </Box>
                 <WidgetTreeList
-                    widgets={view === WidgetView.STUDENT ? StudentsWidgets : TeachersWidgets}
+                    widgets={view === WidgetView.STUDENT ? studentsWidgets : teachersWidgets}
                     updateWidget={updateWidget}
                     availableWidgets={widgets}
-                    defaultSelectedId={selectedWidget.id} />
+                    defaultSelectedId={selectedWidget.id}
+                />
             </Box>
             <Box className={classes.main}>
                 <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    className={classes.header}>
-                    <Typography className={classes.mainheader}
-                    >
+                    className={classes.header}
+                >
+                    <Typography className={classes.mainheader}>
                         {selectedWidget?.name || ``}
                     </Typography>
                     <IconButton
                         aria-label="delete"
                         size="large"
-                        onClick={onClose}>
+                        onClick={onClose}
+                    >
                         <CloseIcon fontSize="inherit" />
                     </IconButton>
                 </Box>
@@ -337,7 +343,8 @@ export default function AddWidgetDialog (props: Props) {
                         variant="text"
                         size="medium"
                         color={theme.palette.info.dark}
-                        onClick={onClose}></Button>
+                        onClick={onClose}
+                    />
                     <Button
                         disabled={widgets ? (widgets[selectedWidget.id] ? true : false) : false}
                         label={intl.formatMessage({
@@ -347,7 +354,8 @@ export default function AddWidgetDialog (props: Props) {
                         variant="text"
                         size="medium"
                         color={theme.palette.info.dark}
-                        onClick={() => handelAddWidget(selectedWidget.id, widgets)}></Button>
+                        onClick={() => handelAddWidget(selectedWidget.id, widgets)}
+                    />
                 </Box>
             </Box>
         </Dialog>

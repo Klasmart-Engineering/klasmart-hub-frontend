@@ -203,6 +203,7 @@ export default function AdaptiveLearningWidget (props: Props) {
                     colorRange={legendColorRange}
                 />
                 <Grid
+                    item
                     xs={12}
                     sm={8}
                     className={classes.chartContainer}
@@ -219,6 +220,7 @@ export default function AdaptiveLearningWidget (props: Props) {
                     </ParentSize>
                 </Grid>
                 <Grid
+                    item
                     xs={12}
                     sm={4}
                     className={classes.labelContainer}
@@ -229,7 +231,6 @@ export default function AdaptiveLearningWidget (props: Props) {
                             item
                             xs={4}
                             sm={12}
-                            spacing={2}
                             className={classes.label}
 
                         >

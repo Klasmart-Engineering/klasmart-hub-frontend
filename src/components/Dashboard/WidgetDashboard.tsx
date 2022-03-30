@@ -1,4 +1,5 @@
 import "react-grid-layout/css/styles.css";
+import ConfirmBox from "./WidgetManagement/Dialog/ConfirmBox";
 import immutableStateUpdate from "./WidgetManagement/widgetCustomisation/immutableStateUpdate";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import getLayouts, {
@@ -9,9 +10,9 @@ import getLayouts, {
 } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
 import {
     addSingleWidget,
+    orderWidgetsArray,
     removeSingleWidget,
     updateWidgetOrders,
-    orderWidgetsArray
 } from "@/components/Dashboard/WidgetManagement/widgetCustomisation/modifyWidgets";
 import WidgetContext from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetContext";
 import {
@@ -21,6 +22,7 @@ import {
 } from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetStorage";
 import WidgetDashboardWelcomeBanner from "@/components/Dashboard/WidgetManagement/WidgetDashboardWelcomeBanner";
 import WidgetGrid from "@/components/Dashboard/WidgetManagement/WidgetGrid";
+import { useFeatureFlags } from "@/feature-flag/utils";
 import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
 import {
     Box,
@@ -37,7 +39,6 @@ import React,
     useState,
 } from "react";
 import ReactResizeDetector from 'react-resize-detector';
-import ConfirmBox from "./WidgetManagement/Dialog/ConfirmBox";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -60,14 +61,14 @@ export interface State {
     layouts: Layouts;
 }
 
-export default function HomeWidgets(props: Props) {
+export default function HomeWidgets (props: Props) {
     const currentOrganizationMembership = useCurrentOrganizationMembership();
     const organizationId = currentOrganizationMembership?.organization?.id;
     const userId = currentOrganizationMembership?.userId;
     const { view } = props;
     const classes = useStyles();
     const storageId = `${view}_${userId}_${organizationId}`;
-    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+    const [ openConfirmDialog, setOpenConfirmDialog ] = useState(false);
 
     const checkIfUnsavedChanges = (previous: any, newLayouts: any) => {
         const newOrder = orderWidgetsArray(newLayouts || []);
@@ -79,31 +80,52 @@ export default function HomeWidgets(props: Props) {
         // check if order is changed
         return !!previousOrder
             .find((layout, index) => previousOrder[index]?.i !== layout?.i);
-    }
+    };
     // We use three versions of state
     // currentState is used to display the widgets and layouts
     // editingState is used to track what changes are made during edit and overwrite currentState during edit
     // savedState is a fallback copy of currentState that we can revert to if the user cancels their edit
 
-    const [savedState, setSavedState] = useState<State>({} as State);
-    const [editingState, setEditingState] = useState<State>({} as State);
-    const [currentState, setCurrentState] = useState<State>({} as State);
-    const [editing, setEditing] = useState<boolean>(false);
+    const [ savedState, setSavedState ] = useState<State>({} as State);
+    const [ editingState, setEditingState ] = useState<State>({} as State);
+    const [ currentState, setCurrentState ] = useState<State>({} as State);
+    const [ editing, setEditing ] = useState<boolean>(false);
+    const { studentWidgetAdaptiveLearning: showStudentWidgetAdaptiveLearning } = useFeatureFlags();
+
+    const filterAdaptiveWidgets = (widgets: Widgets, layouts: Layouts) => {
+        const { [WidgetType.ADAPTIVELEARNING]: _, ...newWidgets } = widgets;
+        const removeLayout = (l: Layout) => WidgetType.ADAPTIVELEARNING !== l.i;
+        layouts = {
+            sm: layouts.sm.filter(removeLayout),
+            md: layouts.md.filter(removeLayout),
+            lg: layouts.lg.filter(removeLayout),
+        };
+        return {
+            layouts,
+            widgets: newWidgets,
+        };
+    };
 
     useEffect(() => {
         const { widgets, layouts } = getLocalWidgets(storageId, view);
-        const defaultWidgets = Object.assign({}, widgets);
-        const defaultLayouts = Object.assign({}, layouts);
+        const { widgets: defaultWidgets, layouts: defaultLayouts } = showStudentWidgetAdaptiveLearning ?{
+            widgets,
+            layouts,
+        } :
+            filterAdaptiveWidgets(widgets, layouts);
         immutableStateUpdate(setEditingState, defaultWidgets, defaultLayouts);
         immutableStateUpdate(setCurrentState, defaultWidgets, defaultLayouts);
-    }, [view]);
+    }, [ view ]);
 
     useEffect(() => {
         const { widgets, layouts } = getLocalWidgets(storageId, view);
-        const defaultWidgets = Object.assign({}, widgets);
-        const defaultLayouts = Object.assign({}, layouts);
+        const { widgets: defaultWidgets, layouts: defaultLayouts } = showStudentWidgetAdaptiveLearning ?{
+            widgets,
+            layouts,
+        } :
+            filterAdaptiveWidgets(widgets, layouts);
         immutableStateUpdate(setSavedState, defaultWidgets, defaultLayouts);
-    }, [editing]);
+    }, [ editing ]);
 
     const editWidgets = () => {
         setEditing(true);
@@ -112,14 +134,17 @@ export default function HomeWidgets(props: Props) {
     const checkIfLayoutUpdated = () => {
         const isLayoutChanged = checkIfUnsavedChanges(editingState.layouts.lg, savedState.layouts.lg);
         isLayoutChanged ? setOpenConfirmDialog(true) : cancelEditing();
-    }
+    };
 
     const resetWidgets = () => {
         deleteLocalWidgets(storageId);
         const { widgets, layouts } = getLayouts(view);
-        const defaultLayouts = Object.assign({}, layouts);
+        const { widgets: defaultWidgets, layouts: defaultLayouts } = showStudentWidgetAdaptiveLearning ?{
+            widgets,
+            layouts,
+        } :
+            filterAdaptiveWidgets(widgets, layouts);
         const reorderedLayouts = updateWidgetOrders(defaultLayouts.lg, view);
-        const defaultWidgets = Object.assign({}, widgets);
         immutableStateUpdate(setSavedState, defaultWidgets, reorderedLayouts);
         immutableStateUpdate(setEditingState, defaultWidgets, reorderedLayouts);
         immutableStateUpdate(setCurrentState, defaultWidgets, reorderedLayouts);
@@ -187,13 +212,16 @@ export default function HomeWidgets(props: Props) {
             checkIfLayoutUpdated,
             layouts: currentState.layouts,
             view,
-        }}>
+        }}
+        >
             <Box className={clsx(classes.root, {
                 [classes.rootEditing]: editing,
-            })}>
+            })}
+            >
                 <WidgetDashboardWelcomeBanner view={view} />
                 <Box
-                    paddingY={2} >
+                    paddingY={2}
+                >
                     <Container
                         maxWidth="xl"
                     >
@@ -214,7 +242,7 @@ export default function HomeWidgets(props: Props) {
                 open={openConfirmDialog}
                 confirm={cancelEditing}
                 onClose={() => setOpenConfirmDialog(false)}
-            ></ConfirmBox>
+            />
         </WidgetContext.Provider>
     );
 }
