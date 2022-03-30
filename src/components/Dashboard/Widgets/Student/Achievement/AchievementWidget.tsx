@@ -3,7 +3,7 @@ import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { useStudentLearningOutcome } from "@kidsloop/reports-api-client";
+import { useStudentLearningOutcome } from "@kl-engineering/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
     List,
@@ -130,11 +130,7 @@ export default function AchievementWidget () {
         setachievementDatas(generatedAchievementData);
         setTotal(sumBy(generatedAchievementData, (item) => item.count));
 
-    }, [
-        achievementData,
-        currentOrganization,
-        total,
-    ]);
+    }, [ achievementData, theme ]);
     const reload = () => {
         achievementDataRefetch();
     };
@@ -156,7 +152,8 @@ export default function AchievementWidget () {
                     id: `home.student.achievementWidget.containerUrlLabel`,
                 }),
             }}
-            id={WidgetType.ACHIEVEMENT}>
+            id={WidgetType.ACHIEVEMENT}
+        >
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
                     <FiberManualRecord className={classes.bullet} />
@@ -171,32 +168,35 @@ export default function AchievementWidget () {
                         </Typography>
                         <div className={classes.break} />
                         {achievementDatas?.map((item, index: number) => {
-                            return <ListItem key={index}>
-                                <div
-                                    className={classes.row}
-                                    style={{
-                                        color: item.color,
-                                    }}>
+                            return (
+                                <ListItem key={index}>
                                     <div
-                                        className={classes.text}
+                                        className={classes.row}
+                                        style={{
+                                            color: item.color,
+                                        }}
                                     >
-                                        {item.intlKey}
+                                        <div
+                                            className={classes.text}
+                                        >
+                                            {item.intlKey}
+                                        </div>
+                                        <div>
+                                            <ProgressBar
+                                                total={total}
+                                                progress={item.count}
+                                                color={item.color}
+                                                thickness={15}
+                                                backgroundColor="transparent"
+                                            />
+                                        </div>
+                                        <div
+                                            className={classes.count}
+                                        >
+                                            {item.count}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <ProgressBar
-                                            total={total}
-                                            progress={item.count}
-                                            color={item.color}
-                                            thickness={15}
-                                            backgroundColor="transparent"
-                                        />
-                                    </div>
-                                    <div
-                                        className={classes.count}>
-                                        {item.count}
-                                    </div>
-                                </div>
-                            </ListItem>;
+                                </ListItem>);
                         })}
                         <div className={classes.break} />
                     </List>
