@@ -5,7 +5,6 @@ import {
     WidgetView,
 } from "./defaultWidgets";
 import AddWidgetDialog from "./Dialog/AddWidget";
-import ConfirmBox from "./Dialog/ConfirmBox";
 import LastUpdatedMessage from "./LastUpdatedMessage";
 import WidgetContext from "./widgetCustomisation/widgetContext";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
@@ -95,14 +94,13 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
         editing,
         editWidgets,
         saveWidgets,
-        cancelEditing,
+        checkIfLayoutUpdated,
         resetWidgets,
         addWidget,
         widgets,
         layouts,
     } = useContext(WidgetContext);
     const [ openAddWidgetDialog, setOpenAddWidgetDialog ] = useState(false);
-    const [ openConfirmDialog, setOpenConfirmDialog ] = useState(false);
     const [ currentWidgets, setCurrentWidgets ] = useState(widgets);
     useEffect(() => {
         setCurrentWidgets(widgets);
@@ -206,7 +204,7 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                                     variant="contained"
                                     color="error"
                                     startIcon={<Cancel color="inherit" />}
-                                    onClick={() => setOpenConfirmDialog(true)}>{intl.formatMessage({
+                                    onClick={checkIfLayoutUpdated}>{intl.formatMessage({
                                         id: `home.customization.cancel`,
                                         defaultMessage: `Cancel`,
                                     })}</Button>
@@ -231,11 +229,6 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                     setOpenAddWidgetDialog(false);
                 }}
             />
-            <ConfirmBox
-                open={openConfirmDialog}
-                confirm={cancelEditing}
-                onClose={() => setOpenConfirmDialog(false)}
-            ></ConfirmBox>
         </Box>
     );
 }

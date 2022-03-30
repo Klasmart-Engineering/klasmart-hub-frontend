@@ -11,6 +11,7 @@ import {
     addSingleWidget,
     removeSingleWidget,
     updateWidgetOrders,
+    orderWidgetsArray
 } from "@/components/Dashboard/WidgetManagement/widgetCustomisation/modifyWidgets";
 import WidgetContext from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetContext";
 import {
@@ -36,12 +37,13 @@ import React,
     useState,
 } from "react";
 import ReactResizeDetector from 'react-resize-detector';
+import ConfirmBox from "./WidgetManagement/Dialog/ConfirmBox";
 
 const useStyles = makeStyles(() =>
     createStyles({
         root: {
             backgroundColor: `#f2f3f8`,
-            height: `100%`,
+            minHeight: `100vh`,
             transition: `.5s background-color`,
         },
         rootEditing: {
@@ -58,22 +60,35 @@ export interface State {
     layouts: Layouts;
 }
 
-export default function HomeWidgets (props: Props) {
+export default function HomeWidgets(props: Props) {
     const currentOrganizationMembership = useCurrentOrganizationMembership();
     const organizationId = currentOrganizationMembership?.organization?.id;
     const userId = currentOrganizationMembership?.userId;
     const { view } = props;
     const classes = useStyles();
     const storageId = `${view}_${userId}_${organizationId}`;
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+    const checkIfUnsavedChanges = (previous: any, newLayouts: any) => {
+        const newOrder = orderWidgetsArray(newLayouts || []);
+        const previousOrder = orderWidgetsArray(previous || []);
+        // check widget added or removed
+        if (previousOrder.length !== newOrder.length) {
+            return true;
+        }
+        // check if order is changed
+        return !!previousOrder
+            .find((layout, index) => previousOrder[index]?.i !== layout?.i);
+    }
     // We use three versions of state
     // currentState is used to display the widgets and layouts
     // editingState is used to track what changes are made during edit and overwrite currentState during edit
     // savedState is a fallback copy of currentState that we can revert to if the user cancels their edit
 
-    const [ savedState, setSavedState ] = useState<State>({} as State);
-    const [ editingState, setEditingState ] = useState<State>({} as State);
-    const [ currentState, setCurrentState ] = useState<State>({} as State);
-    const [ editing, setEditing ] = useState<boolean>(false);
+    const [savedState, setSavedState] = useState<State>({} as State);
+    const [editingState, setEditingState] = useState<State>({} as State);
+    const [currentState, setCurrentState] = useState<State>({} as State);
+    const [editing, setEditing] = useState<boolean>(false);
 
     useEffect(() => {
         const { widgets, layouts } = getLocalWidgets(storageId, view);
@@ -81,18 +96,23 @@ export default function HomeWidgets (props: Props) {
         const defaultLayouts = Object.assign({}, layouts);
         immutableStateUpdate(setEditingState, defaultWidgets, defaultLayouts);
         immutableStateUpdate(setCurrentState, defaultWidgets, defaultLayouts);
-    }, [ view ]);
+    }, [view]);
 
     useEffect(() => {
         const { widgets, layouts } = getLocalWidgets(storageId, view);
         const defaultWidgets = Object.assign({}, widgets);
         const defaultLayouts = Object.assign({}, layouts);
         immutableStateUpdate(setSavedState, defaultWidgets, defaultLayouts);
-    }, [ editing ]);
+    }, [editing]);
 
     const editWidgets = () => {
         setEditing(true);
     };
+
+    const checkIfLayoutUpdated = () => {
+        const isLayoutChanged = checkIfUnsavedChanges(editingState.layouts.lg, savedState.layouts.lg);
+        isLayoutChanged ? setOpenConfirmDialog(true) : cancelEditing();
+    }
 
     const resetWidgets = () => {
         deleteLocalWidgets(storageId);
@@ -164,6 +184,7 @@ export default function HomeWidgets (props: Props) {
             addWidget,
             removeWidget,
             reorderWidgets,
+            checkIfLayoutUpdated,
             layouts: currentState.layouts,
             view,
         }}>
@@ -189,6 +210,11 @@ export default function HomeWidgets (props: Props) {
                     </Container>
                 </Box>
             </Box>
+            <ConfirmBox
+                open={openConfirmDialog}
+                confirm={cancelEditing}
+                onClose={() => setOpenConfirmDialog(false)}
+            ></ConfirmBox>
         </WidgetContext.Provider>
     );
 }
