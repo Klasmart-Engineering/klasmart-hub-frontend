@@ -1,7 +1,5 @@
 import { getCmsApiEndpoint } from "../config";
-import { Store } from "../store/store";
 import {
-    AssessmentItem,
     ContentItemDetails,
     PublishedContentItem,
     PublishedContentPayload,
@@ -13,7 +11,6 @@ import {
     RestAPIErrorType,
 } from "./restapi_errors";
 import queryString from "query-string";
-import { useStore } from "react-redux";
 
 export enum ContentType {
     MATERIAL = 1,
@@ -257,13 +254,6 @@ interface GetContentResourcesDownloadByIdResponse {
 }
 
 export class RestAPI {
-
-    private store: Store;
-
-    constructor (store: ReturnType<typeof useStore>) {
-        this.store = store as any; // TODO: Fix types
-    }
-
     public async getContentsFolders (orgId: string, contentType = 2, page = 1, pageSize = 100, orderBy = `-create_at`, path = ``) {
         const str = queryString.stringify({
             org_id: orgId,
@@ -593,8 +583,7 @@ export class RestAPI {
 }
 
 export function useRestAPI () {
-    const store = useStore();
-    const api = new RestAPI(store);
+    const api = new RestAPI();
     (window as any).api = api;
     return api;
 }

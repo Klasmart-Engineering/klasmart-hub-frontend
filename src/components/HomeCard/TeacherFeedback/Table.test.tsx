@@ -24,16 +24,8 @@ jest.mock(`@/api/restapi`, () => {
     };
 });
 
-jest.mock(`react-redux`, () => {
-    return {
-        ...jest.requireActual(`react-redux`),
-        useStore: () => ({}),
-    };
-});
-
 test(`Home feedback card loads data correctly`, async () => {
-    const component = <TeacherFeedback
-    />;
+    const component = (<TeacherFeedback />);
     render(component);
 
     await waitFor(() => {

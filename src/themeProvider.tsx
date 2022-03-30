@@ -1,8 +1,9 @@
+import { fallbackLocale } from "./locale/locale";
 import { useCurrentOrganization } from "./store/organizationMemberships";
 import { usePreviewOrganizationColor } from "./store/previewOrganizationColor";
-import { State } from "./store/store";
 import { getLanguage } from "./utils/locale";
 import { utils } from "@kl-engineering/kidsloop-px";
+import { colors } from "@mui/material";
 import {
     blue,
     green,
@@ -18,20 +19,17 @@ import {
     Theme,
 } from "@mui/material/styles";
 import { useCookies } from "react-cookie";
-import { useSelector } from "react-redux";
 
 export const PRIMARY_THEME_COLOR = `#0094FF`;
 
-export function themeProvider () {
-    const themeMode = useSelector((state: State) => state.ui.darkMode);
-    const languageCode = useSelector((state: State) => state.ui.locale || ``);
+export function useThemeProvider () {
     const [ cookies ] = useCookies([ `locale` ]);
     const currentOrganization = useCurrentOrganization();
     const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const organizationName = currentOrganization?.name ?? ``;
     const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
-    const locale = cookies.locale ?? getLanguage(languageCode).locale;
+    const locale = cookies.locale ?? fallbackLocale.locale;
 
     function setTypography () {
         let localeFontFamily = `Inter`;
@@ -113,47 +111,47 @@ export function themeProvider () {
                 styleOverrides: {
                     colorPrimary: {
                         color: `#000`,
-                        backgroundColor: themeMode === `light` ? organizationToolbarColor : `#041125`,
+                        backgroundColor: organizationToolbarColor,
                     },
                 },
             },
             MuiTable: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: themeMode === `light` ? `#fff` : `#05152e`,
+                        backgroundColor:`#fff`,
                     },
                 },
             },
             MuiTableCell: {
                 styleOverrides: {
                     stickyHeader: {
-                        backgroundColor: themeMode === `light` ? `#fafafa` : `#041125`,
+                        backgroundColor: `#fafafa`,
                     },
                 },
             },
             MuiTabs: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: themeMode === `light` ? `#FFF` : `#030D1C`,
+                        backgroundColor: `#FFF`,
                     },
                 },
             },
             MuiTab: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: themeMode === `light` ? `#fafafa` : `#030D1C !important`,
+                        backgroundColor: `#fafafa`,
                     },
                 },
             },
             MuiToggleButton: {
                 styleOverrides: {
                     root: {
-                        color: themeMode === `light` ? `#1B365D` : `#FFF`,
-                        backgroundColor: themeMode === `light` ? `#FFF` : `#1B365D`,
+                        color: `#1B365D`,
+                        backgroundColor:`#FFF`,
                         "&:hover": {
                             "-webkit-transition": `all .4s ease`,
-                            color: themeMode === `light` ? `#FFF` : `#030D1C`,
-                            backgroundColor: themeMode === `light` ? `#1B365D` : `#FFF`,
+                            color: `#FFF`,
+                            backgroundColor: `#1B365D`,
                             "box-shadow": `0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)`,
                             transition: `all .4s ease`,
                         },
@@ -170,9 +168,10 @@ export function themeProvider () {
     };
 
     const palette: PaletteOptions = {
+        mode: `light`,
         background: {
-            default: themeMode === `light` ? `#fafafa` : `#030D1C`,
-            paper: themeMode === `light` ? `#FFF` : `#030D1C`,
+            default: colors.common.white,
+            paper: colors.common.white,
         },
         primary: {
             contrastText: getContrastColor(organizationColor),
@@ -201,27 +200,12 @@ export function themeProvider () {
         },
     };
 
-    let theme: Theme;
-    if (themeMode === `light`) {
-        palette.mode = `light`;
-        palette.background = {
-            default: `#FFF`,
-        };
-        theme = createTheme({
-            ...componentOverrides,
-            ...breakpointOverrides,
-            palette,
-            typography,
-        });
-    } else {
-        palette.mode = `dark`;
-        theme = createTheme({
-            ...componentOverrides,
-            ...breakpointOverrides,
-            palette,
-            typography,
-        });
-    }
+    const theme = createTheme({
+        ...componentOverrides,
+        ...breakpointOverrides,
+        palette,
+        typography,
+    });
 
     return responsiveFontSizes(theme);
 }

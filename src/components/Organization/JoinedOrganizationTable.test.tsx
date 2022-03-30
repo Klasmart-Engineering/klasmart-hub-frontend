@@ -107,7 +107,7 @@ const mocks: MockedResponse[] = [
                         },
                     },
                 };
-            } else  {
+            } else {
                 return {
                     data: {
                         myUser: {

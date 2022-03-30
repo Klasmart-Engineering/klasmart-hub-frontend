@@ -2,8 +2,7 @@ import App from "@/app";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
 import UserServiceProvider from "@/providers/UserServiceProvider";
-import { createDefaultStore } from '@/store/store';
-import { themeProvider } from "@/themeProvider";
+import { useThemeProvider } from "@/themeProvider";
 import { getLanguage } from "@/utils/locale";
 import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kl-engineering/cms-api-client";
 import {
@@ -22,9 +21,7 @@ import {
 import React from 'react';
 import { useCookies } from "react-cookie";
 import { RawIntlProvider } from "react-intl";
-import { Provider } from "react-redux";
 import { RecoilRoot } from 'recoil';
-import { PersistGate } from 'redux-persist/integration/react';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -42,7 +39,7 @@ export function ClientSide () {
                 <UserServiceProvider>
                     <RawIntlProvider value={locale}>
                         <StyledEngineProvider injectFirst>
-                            <ThemeProvider theme={themeProvider()}>
+                            <ThemeProvider theme={useThemeProvider()}>
                                 <ConfirmDialogProvider>
                                     <PromptDialogProvider>
                                         <AlertDialogProvider>
@@ -65,18 +62,9 @@ export function ClientSide () {
 }
 
 export default function ClientEntry () {
-    const { store, persistor } = createDefaultStore();
-
     return (
         <RecoilRoot>
-            <Provider store={store}>
-                <PersistGate
-                    loading={null}
-                    persistor={persistor}
-                >
-                    <ClientSide />
-                </PersistGate>
-            </Provider>
+            <ClientSide />
         </RecoilRoot>
     );
 }

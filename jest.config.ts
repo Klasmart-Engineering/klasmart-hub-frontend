@@ -22,7 +22,6 @@ const config: Config.InitialOptions = {
         }),
     },
     maxWorkers: `50%`,
-
 };
 
 export default config;

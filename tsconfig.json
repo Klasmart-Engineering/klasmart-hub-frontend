@@ -3,13 +3,19 @@
         "outDir": "./dist/",
         "noEmit": true,
         "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "esnext",
-        "jsx": "react",
+        "module": "CommonJS",
+        "target": "ESNext",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
+        ],
+        "jsx": "react-jsx",
         "allowJs": true,
         "strictNullChecks": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
         "baseUrl": "./",
         "paths": {
             "@/*": [
@@ -21,10 +27,12 @@
         }
     },
     "include": [
-        "src",
-        "tests",
-        "**.js",
-        "**.ts"
+        ".*.js",
+        ".*.ts",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx"
     ],
     "exclude": [
         "node_modules"
