@@ -49,13 +49,13 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface Props {
-    dataLength : number;
-    width : number;
-    height : number;
+    dataLength: number;
+    width: number;
+    height: number;
     colorRange: any[];
 }
 
-export default function ChartLegend (props : Props) {
+export default function ChartLegend (props: Props) {
     const intl = useIntl();
     const classes = useStyles();
     const {
@@ -68,6 +68,8 @@ export default function ChartLegend (props : Props) {
     const legendShapeHeight = 10;
     const legendTitle = intl.formatMessage({
         id: `home.student.learningOutcomeWidget.legendTitle`,
+    }, {
+        skillcount: 5,
     });
     const achieved = intl.formatMessage({
         id: `home.student.learningOutcomeWidget.legendAchieved`,
@@ -89,21 +91,25 @@ export default function ChartLegend (props : Props) {
         >
             <Typography
                 variant="subtitle2"
-                className={classes.legendTitle}>
+                className={classes.legendTitle}
+            >
                 {legendTitle}
             </Typography>
             <LegendOrdinal
                 scale={ordinalColorScale}
-                labelFormat={(label) => label}>
+                labelFormat={(label) => label}
+            >
                 {(labels) => (
                     <Box className={classes.legendItemWrapper}>
                         {labels.map((label, i) => (
                             <LegendItem
                                 key={`legend-quantile-${i}`}
-                                margin="0 5px">
+                                margin="0 5px"
+                            >
                                 <svg
                                     width={legendShapeWidth}
-                                    height={legendShapeHeight}>
+                                    height={legendShapeHeight}
+                                >
                                     <rect
                                         fill={label.value}
                                         width={legendShapeWidth}
@@ -113,7 +119,8 @@ export default function ChartLegend (props : Props) {
                                 </svg>
                                 <LegendLabel
                                     align="left"
-                                    margin="0 0 0 5px">
+                                    margin="0 0 0 5px"
+                                >
                                     <Typography
                                         variant="subtitle2"
                                         color="grey"

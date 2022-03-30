@@ -6,7 +6,7 @@ import PendingAssessmentsWidget from "../Widgets/PendingAssessments/PendingAsses
 import AchievementWidget from "../Widgets/Student/Achievement/AchievementWidget";
 import AdaptiveLearningWidget from "../Widgets/Student/AdaptiveLearning/AdaptiveLearningWidget";
 import CompletionWidget from "../Widgets/Student/Completion/CompletionWidget";
-// import LearningOutcomeSummary from "../Widgets/Student/LearningOutcomeSummary/LearningOutcomeSummary";
+import LearningOutcomeSummary from "../Widgets/Student/LearningOutcomeSummary/LearningOutcomeSummary";
 import StudentSchedule from "../Widgets/Student/Schedule/ScheduleWidget";
 import StudentAttendanceWidget from "../Widgets/Student/StudentAttendance/StudentAttendance";
 import TreacherFeedbackWidget from "../Widgets/Student/TeacherFeedback/TeacherFeedbackWidget";
@@ -26,9 +26,6 @@ export enum WidgetView {
     STUDENT = `student`,
     DEFAULT = `default`
 }
-
-// @TODO
-// uncomment LearningOutcomeSummary and AdaptiveLearningWidget code in next release
 
 export const defaultTeacherWidgetMap: Widgets = {
     [WidgetType.SCHEDULE]: <TodaysScheduleWidget />,
@@ -84,8 +81,8 @@ export const defaultStudentWidgetMap: Widgets = {
     [WidgetType.ACHIEVEMENT]: <AchievementWidget />,
     [WidgetType.COMPLETION]: <CompletionWidget />,
     [WidgetType.STUDENTSCHEDULE]: <StudentSchedule />,
-    [WidgetType.ADAPTIVELEARNING]: <AdaptiveLearningWidget/>,
-    // [WidgetType.LEARNINGOUTCOME]: <LearningOutcomeSummary />,
+    [WidgetType.ADAPTIVELEARNING]: <AdaptiveLearningWidget />,
+    [WidgetType.LEARNINGOUTCOME]: <LearningOutcomeSummary />,
 };
 
 export const defaultStudentLgLayout: Layout[] = [
@@ -95,7 +92,7 @@ export const defaultStudentLgLayout: Layout[] = [
     { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 7, h: 3, w: 6 },
     { i: WidgetType.ACHIEVEMENT,          x: 7, y: 11, h: 3, w: 6 },
     { i: WidgetType.ADAPTIVELEARNING,     x: 0, y: 7, h: 3, w: 6 },
-    // { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
     { i: WidgetType.COMPLETION,           x: 0, y: 14, h: 3, w:6 },
     /* eslint-enable */
 ];
@@ -107,7 +104,7 @@ export const defaultStudentMdLayout: Layout[] = [
     { i: WidgetType.STUDENTATTENDANCE,    x: 7, y: 7, h: 3, w: 6 },
     { i: WidgetType.ACHIEVEMENT,          x: 7, y: 11, h: 3, w: 6 },
     { i: WidgetType.ADAPTIVELEARNING,     x: 0, y: 7, h: 3, w: 6 },
-    // { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 7, y: 4, h: 3, w: 6 },
     { i: WidgetType.COMPLETION,           x: 0, y: 14, h: 3, w:6 },
     /* eslint-enable */
 ];
@@ -119,7 +116,7 @@ export const defaultStudentSmLayout: Layout[] = [
     { i: WidgetType.STUDENTATTENDANCE,    x: 0, y: 17, h: 4, w: 12 },
     { i: WidgetType.ACHIEVEMENT,          x: 0, y: 26, h: 3, w: 12 },
     { i: WidgetType.ADAPTIVELEARNING,     x: 0, y: 13, h: 3, w: 12 },
-    // { i: WidgetType.LEARNINGOUTCOME,      x: 0, y: 9, h: 3, w: 12 },
+    { i: WidgetType.LEARNINGOUTCOME,      x: 0, y: 9, h: 3, w: 12 },
     { i: WidgetType.COMPLETION,           x: 0, y: 22, h: 3, w: 12 },
     /* eslint-enable */
 ];

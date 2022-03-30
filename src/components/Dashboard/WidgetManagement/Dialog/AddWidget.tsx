@@ -229,17 +229,17 @@ export default function AddWidgetDialog (props: Props) {
                 }),
                 snapshotUrl: StudentSchedule,
             },
-            // {
-            //     id:WidgetType.LEARNINGOUTCOME,
-            //     name:intl.formatMessage({
-            //         id: `home.student.learningOutcomeWidget.containerTitleLabel`,
-            //     }),
-            //     description:intl.formatMessage({
-            //         id: `home.customization.addwidget.student.learningoutcome.description`,
-            //         defaultMessage:`An overview of your achieved Learning Outcomes to those that still need to be achieved for each skill, highlighting your Top 5 skills.`,
-            //     }),
-            //     snapshotUrl:StudentLearningOutcome,
-            // },
+            {
+                id:WidgetType.LEARNINGOUTCOME,
+                name:intl.formatMessage({
+                    id: `home.student.learningOutcomeWidget.containerTitleLabel`,
+                }),
+                description:intl.formatMessage({
+                    id: `home.customization.addwidget.student.learningoutcome.description`,
+                    defaultMessage:`An overview of your achieved Learning Outcomes to those that still need to be achieved for each skill, highlighting your Top 5 skills.`,
+                }),
+                snapshotUrl:StudentLearningOutcome,
+            },
             {
                 id: WidgetType.ADAPTIVELEARNING,
                 name: intl.formatMessage({
