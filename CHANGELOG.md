@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.41.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.0%0Dv2.40.7) (2022-03-30)
+
+
+### ✨ Features
+
+* **widgets:** enabled learning outcome summary widget (#13) ([bd7b7ad](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/bd7b7ad568f95eb0af3d9dc4a5fefdb58181e0b3))
+
 ### [2.40.7](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.40.7%0Dv2.40.6) (2022-03-30)
 
 
