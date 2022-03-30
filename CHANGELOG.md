@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.40.7](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.40.7%0Dv2.40.6) (2022-03-30)
+
+
+### ♻️ Chores
+
+* remove url from confirmation step ([7a80403](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7a80403ae56968200917657e6a6fcbcbb7f8d59f))
+
+
+### 🐛 Bug Fixes
+
+* added msg on no widget, fixed not saved popup and height issue (#6) ([ec82aeb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ec82aeb2592f9f56ddaa3027ef1c43ae20892dcd))
+* build with git lfs pulled assets ([7036be2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7036be2dd2f8ab2d3953f67720aeb44949ff2eaf))
+* retryHandler was used wrongly (#9) ([e898c9f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/e898c9f371d0d7501d913df25be19aa408429c61))
+
 ### [2.40.6](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.40.6%0Dv2.40.5) (2022-03-30)
 
 
