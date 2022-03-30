@@ -1,3 +1,5 @@
+import { WidgetType } from "../models/widget.model";
+import AdaptiveLearningJourney from "../Widgets/Student/AdaptiveLearningJourney/AdaptiveLearningJourney";
 import StudentNextClass from "../Widgets/Student/NextClass/NextClass";
 import getLayouts, {
     defaultStudentWidgetMap,
@@ -12,6 +14,7 @@ import LastUpdatedMessage from "./LastUpdatedMessage";
 import WidgetContext from "./widgetCustomisation/widgetContext";
 import WidgetDashboardWelcomeMessage from "./WidgetDashboardWelcomeMessage";
 import PillButton from "@/components/styled/pillButton";
+import { useFeatureFlags } from "@/feature-flag/utils";
 import {
     AddCard,
     Cancel,
@@ -39,8 +42,6 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { useFeatureFlags } from "@/feature-flag/utils";
-import { WidgetType } from "../models/widget.model";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -105,7 +106,7 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
         widgets,
         layouts,
     } = useContext(WidgetContext);
-    const { studentWidgetAdaptiveLearning: showStudentWidgetAdaptiveLearning } = useFeatureFlags();
+    const { studentWidgetAdaptiveLearning: showStudentWidgetAdaptiveLearning, studentWidgetAdaptiveLearningJourney: showStudentWidgetAdaptiveLearningJourney } = useFeatureFlags();
     const [ openAddWidgetDialog, setOpenAddWidgetDialog ] = useState(false);
     const [ currentWidgets, setCurrentWidgets ] = useState(widgets);
     const filterAdaptiveWidgets = (widgets: Widgets, layouts: Layouts) => {
@@ -125,9 +126,11 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
         setCurrentWidgets(widgets);
     }, [ widgets ]);
     const currentWidgetsLength = widgets ? Object.keys(widgets).length : 0;
-    const { widgets: currWidgets , layouts: currLayouts } = getLayouts(view);
-    const { widgets: defaultWidgets } = showStudentWidgetAdaptiveLearning ? { widgets: currWidgets } :
-    filterAdaptiveWidgets(currWidgets, currLayouts);
+    const { widgets: currWidgets, layouts: currLayouts } = getLayouts(view);
+    const { widgets: defaultWidgets } = showStudentWidgetAdaptiveLearning ? {
+        widgets: currWidgets,
+    } :
+        filterAdaptiveWidgets(currWidgets, currLayouts);
     const totalAvailableWidget = Object.keys(defaultWidgets || {}).length;
     return (
         <Box
@@ -137,11 +140,13 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
             paddingY={5}
         >
             <Container
-                maxWidth="xl">
+                maxWidth="xl"
+            >
                 <Box
                     display="flex"
                     justifyContent="space-between"
-                    alignItems="center">
+                    alignItems="center"
+                >
                     {!editing ?
                         <Box>
                             <Typography
@@ -157,7 +162,7 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
 
                                 {(() => {
                                     if (view !== WidgetView.STUDENT) return (<LastUpdatedMessage />);
-                                    return (<LastUpdatedMessage mockDate={true} />);
+                                    return (<LastUpdatedMessage mockDate />);
                                 })()}
                             </Typography>
                         </Box>
@@ -201,34 +206,41 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                                     > {intl.formatMessage({
                                             id: `home.customization.reset`,
                                             defaultMessage: `Reset to default`,
-                                        })}</Button>
+                                        })}
+                                    </Button>
                                 </Box>
                                 <Button
                                     className={currentWidgetsLength < totalAvailableWidget ? classes.whiteButton : classes.hidden}
                                     variant="outlined"
                                     startIcon={<AddCard color="inherit" />}
-                                    onClick={() => setOpenAddWidgetDialog(true)}>{intl.formatMessage({
+                                    onClick={() => setOpenAddWidgetDialog(true)}
+                                >{intl.formatMessage({
                                         id: `home.customization.addwidget`,
                                         defaultMessage: `Add Widget`,
-                                    })}</Button>
+                                    })}
+                                </Button>
                                 <Button
                                     className={classes.whiteButton}
                                     variant="contained"
                                     color="primary"
                                     startIcon={<Save color="inherit" />}
-                                    onClick={() => saveWidgets(widgets, layouts)}>{intl.formatMessage({
+                                    onClick={() => saveWidgets(widgets, layouts)}
+                                >{intl.formatMessage({
                                         id: `home.customization.save`,
                                         defaultMessage: `Save`,
-                                    })}</Button>
+                                    })}
+                                </Button>
                                 <Button
                                     className={classes.whiteButton}
                                     variant="contained"
                                     color="error"
                                     startIcon={<Cancel color="inherit" />}
-                                    onClick={checkIfLayoutUpdated}>{intl.formatMessage({
+                                    onClick={checkIfLayoutUpdated}
+                                >{intl.formatMessage({
                                         id: `home.customization.cancel`,
                                         defaultMessage: `Cancel`,
-                                    })}</Button>
+                                    })}
+                                </Button>
 
                             </Box>
                         }
@@ -236,9 +248,14 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                 </Box>
                 {
                     view === WidgetView.STUDENT &&
-                    <Box paddingY={2}>
-                        <StudentNextClass />
-                    </Box>
+                    <>
+                        <Box paddingY={2}>
+                            <StudentNextClass />
+                        </Box>
+                        <Box paddingY={2}>
+                            {showStudentWidgetAdaptiveLearningJourney && <AdaptiveLearningJourney />}
+                        </Box>
+                    </>
                 }
             </Container>
             <AddWidgetDialog

@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: 15,
         height: `100%`,
     },
+    cardNoBackground: {
+        backgroundColor: `unset`,
+    },
     titleContainer: {
         display: `flex`,
         justifyContent: `space-between`,
@@ -98,6 +101,7 @@ export type BaseWidgetProps = {
     loading: boolean;
     error?: any;
     noData?: boolean;
+    noBackground?: boolean;
     reload?: () => any | Promise<any>;
     id: WidgetType;
 }
@@ -112,6 +116,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
         loading,
         error,
         noData,
+        noBackground,
         reload,
         id,
     } = props;
@@ -128,7 +133,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                 id={id}
             />
             <Card
-                className={classes.card + ` ` + (editing && classes.pointerNone)}
+                className={classes.card + ` ` + (noBackground && classes.cardNoBackground) + ` ` + (editing && classes.pointerNone)}
             >
                 <Box sx={
                     loading ? {
