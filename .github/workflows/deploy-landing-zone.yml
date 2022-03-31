@@ -43,6 +43,7 @@ jobs:
 
     build-docker:
         name: Build & optionally upload FE artifact
+        needs: install
         runs-on: ubuntu-latest
         permissions:
             contents: read
