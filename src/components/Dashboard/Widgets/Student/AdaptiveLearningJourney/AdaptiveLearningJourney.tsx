@@ -21,20 +21,21 @@ import React,
     useEffect,
     useRef,
     useState,
+    useMemo
 } from "react";
 import { useIntl } from "react-intl";
 import { useResizeDetector } from "react-resize-detector";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root : {
+        root: {
             height: `570px`,
             width: `100%`,
             position: `relative`,
-            overflow : `hidden`,
+            overflow: `hidden`,
             borderRadius: theme.spacing(1.2),
             [theme.breakpoints.down(`sm`)]: {
-                height : `500px`,
+                height: `500px`,
             },
         },
         slider: {
@@ -52,21 +53,21 @@ const useStyles = makeStyles((theme: Theme) =>
                 alignItems: `start`,
             },
         },
-        bgWrapper : {
-            position : `absolute`,
+        bgWrapper: {
+            position: `absolute`,
             display: `flex`,
             overflow: `hidden`,
             scrollBehavior: `smooth`,
-            width : `100%`,
-            height : `100%`,
+            width: `100%`,
+            height: `100%`,
             [theme.breakpoints.down(`sm`)]: {
                 flexDirection: `column`,
             },
         },
-        levelContainer : {
-            minWidth : 250,
-            minHeight : 200,
-            marginBottom : theme.spacing(10),
+        levelContainer: {
+            minWidth: 250,
+            minHeight: 200,
+            marginBottom: theme.spacing(10),
             display: `flex`,
             position: `relative`,
             [theme.breakpoints.up(`sm`)]: {
@@ -75,9 +76,9 @@ const useStyles = makeStyles((theme: Theme) =>
             [theme.breakpoints.down(`sm`)]: {
                 flexDirection: `column`,
                 justifyContent: `start`,
-                marginBottom : theme.spacing(0),
-                minWidth : 100,
-                minHeight : 150,
+                marginBottom: theme.spacing(0),
+                minWidth: 100,
+                minHeight: 150,
             },
         },
         leftNavigator: {
@@ -102,7 +103,7 @@ const useStyles = makeStyles((theme: Theme) =>
             color: theme.palette.common.white,
             fontSize: 50,
             position: `absolute`,
-            right:0,
+            right: 0,
             zIndex: 2,
             cursor: `pointer`,
             [theme.breakpoints.up(`sm`)]: {
@@ -130,9 +131,9 @@ interface DataObj {
     slides: number;
 }
 
-interface Props {}
+interface Props { }
 
-function AdaptiveLearningJourney (props : Props) {
+function AdaptiveLearningJourney(props: Props) {
     const {
         width,
         height,
@@ -144,16 +145,15 @@ function AdaptiveLearningJourney (props : Props) {
     const classes = useStyles();
     const intl = useIntl();
     const scrollOffset = 500;
-    const [ currentLevel, setCurrentLevel ] = useState({} as DataObj);
-    const [ selectedAssesmentType, setSelectedAssesmentType ] = useState(`live`);
-    const [ selectedAssesment, setSelectedAssesment ] = useState({} as DataObj | null);
-    const [ connectorSVGWidth, setConnectorSVGWidth ] = useState(0);
-    const [ connectorSVGHeight, setConnectorSVGHeight ] = useState(0);
-    const [ isVerticalMode, setIsverticalMode ] = useState(width ? width < VERTICAL_MODE_BREAKPOINT : false);
-    const [ open, setOpen ] = useState(false);
+    const [selectedAssesmentType, setSelectedAssesmentType] = useState(`live`);
+    const [selectedAssesment, setSelectedAssesment] = useState({} as DataObj | null);
+    const [connectorSVGWidth, setConnectorSVGWidth] = useState(0);
+    const [connectorSVGHeight, setConnectorSVGHeight] = useState(0);
+    const [isVerticalMode, setIsverticalMode] = useState(width ? width < VERTICAL_MODE_BREAKPOINT : false);
+    const [open, setOpen] = useState(false);
 
     const scroll = (scrollOffset: number) => {
-        if(isVerticalMode){
+        if (isVerticalMode) {
             sliderRef.current.scrollTop += scrollOffset;
             bgRef.current.scrollTop = (sliderRef.current.scrollTop + scrollOffset);
         } else {
@@ -162,19 +162,19 @@ function AdaptiveLearningJourney (props : Props) {
         }
 
     };
-    const handlePopup = (open : boolean, type : string, data : DataObj | null) => {
+    const handlePopup = (open: boolean, type: string, data: DataObj | null) => {
         setOpen(open);
         setSelectedAssesmentType(type);
         setSelectedAssesment(data);
     };
 
-    useEffect(() => {
-        setCurrentLevel(mockData.filter(data => !data.completed || (data.hasBooster && !data.boosterCompleted))[0]);
-    }, [ mockData ]);
+    const currentLevel = useMemo(() => {
+        return mockData.filter(data => !data.completed || (data.hasBooster && !data.boosterCompleted))[0];
+    }, []);
 
     useEffect(() => {
         setIsverticalMode(width ? width < VERTICAL_MODE_BREAKPOINT : false);
-    }, [ width ]);
+    }, [width]);
 
     useEffect(() => {
         sliderRef.current.scrollTop = 0;
@@ -197,10 +197,11 @@ function AdaptiveLearningJourney (props : Props) {
     return (
         <WidgetWrapper
             noBackground
-            loading={false}
+            editable={false}
             error={false}
+            loading={false}
             noData={false}
-            reload={() => {false;}}
+            reload={() => { false; }}
             label={
                 intl.formatMessage({
                     id: `home.student.adaptiveLearningJourney.containerTitleLabel`,
@@ -212,7 +213,8 @@ function AdaptiveLearningJourney (props : Props) {
                     id: `home.student.adaptiveLearningWidget.containerUrlLabel`,
                 }),
             }}
-            id={WidgetType.ADAPTIVELEARNINGJOURNEY}>
+            id={WidgetType.ADAPTIVELEARNINGJOURNEY}
+        >
             <Box
                 ref={ref}
                 className={classes.root}
@@ -220,31 +222,37 @@ function AdaptiveLearningJourney (props : Props) {
             >
                 <ArrowBackIosNewRoundedIcon
                     className={classes.leftNavigator}
-                    onClick={() => scroll(isVerticalMode ? -(scrollOffset - 200) : -scrollOffset)}/>
+                    onClick={() => scroll(isVerticalMode ? -(scrollOffset - 200) : -scrollOffset)}
+                />
                 <ArrowForwardIosRoundedIcon
                     className={classes.rightNavigator}
-                    onClick={() => scroll(isVerticalMode ? scrollOffset - 200 : scrollOffset)}/>
+                    onClick={() => scroll(isVerticalMode ? scrollOffset - 200 : scrollOffset)}
+                />
                 <ProgressBar />
                 <Popup
                     open={open}
                     handlePopup={handlePopup}
                     isVerticalMode={isVerticalMode}
                     selectedAssesment={selectedAssesment}
-                    selectedAssesmentType={selectedAssesmentType}/>
+                    selectedAssesmentType={selectedAssesmentType}
+                />
                 <Box
                     ref={bgRef}
-                    className={classes.bgWrapper}>
+                    className={classes.bgWrapper}
+                >
                     <img
                         src={isVerticalMode ? mobileBg : desktop}
+                        alt="background"
                         style={{
-                            flexGrow : 1,
+                            flexGrow: 1,
                         }}
                     />
                 </Box>
                 <Box
                     ref={sliderRef}
                     className={classes.slider}
-                    id="slider">
+                    id="slider"
+                >
                     <LinePath
                         levelsRef={levelsRef.current}
                         width={width ?? 0}
@@ -258,22 +266,25 @@ function AdaptiveLearningJourney (props : Props) {
                             key={data.level}
                             className={classes.levelContainer}
                             sx={{
-                                alignItems : data.level % 2 === 0 ? `start` : `center`,
-                            }}>
+                                alignItems: data.level % 2 === 0 ? `start` : `center`,
+                            }}
+                        >
                             {data.type !== `booster` &&
-                        <LevelBox
-                            ref={levelsRef.current[i]}
-                            data={data}
-                            booster={false}
-                            currentLevel={currentLevel}
-                            handlePopup={handlePopup}/>}
+                                <LevelBox
+                                    ref={levelsRef.current[i]}
+                                    data={data}
+                                    booster={false}
+                                    currentLevel={currentLevel}
+                                    handlePopup={handlePopup}
+                                />}
 
                             {data.hasBooster &&
-                        <LevelBox
-                            data={data}
-                            booster={data.hasBooster}
-                            currentLevel={currentLevel}
-                            handlePopup={handlePopup}/>
+                                <LevelBox
+                                    data={data}
+                                    booster={data.hasBooster}
+                                    currentLevel={currentLevel}
+                                    handlePopup={handlePopup}
+                                />
                             }
                         </Box>
                     ))}

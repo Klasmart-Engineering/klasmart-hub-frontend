@@ -102,6 +102,7 @@ export type BaseWidgetProps = {
     error?: any;
     noData?: boolean;
     noBackground?: boolean;
+    editable?: boolean;
     reload?: () => any | Promise<any>;
     id: WidgetType;
 }
@@ -117,6 +118,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
         error,
         noData,
         noBackground,
+        editable = true,
         reload,
         id,
     } = props;
@@ -124,8 +126,9 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
     const { editing } = useContext(WidgetContext);
 
     return (
-        <Box className={classes.cardWrapper + ` ` + (editing && classes.editContainer)}>
+        <Box className={`${classes.cardWrapper} ${(editing && editable && classes.editContainer)}`}>
             <CardAnnotation
+                editable={editable}
                 classes={classes}
                 label={label}
                 link={link}
@@ -133,7 +136,7 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                 id={id}
             />
             <Card
-                className={classes.card + ` ` + (noBackground && classes.cardNoBackground) + ` ` + (editing && classes.pointerNone)}
+                className={`${classes.card} ${(noBackground && classes.cardNoBackground)} ${(editing && editable && classes.pointerNone)}`}
             >
                 <Box sx={
                     loading ? {
@@ -145,7 +148,8 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                         {
                             height: `100%`,
                         }
-                }>
+                }
+                >
                     {loading ?
                         <CircularProgress color="primary" />
                         : error ?
@@ -167,6 +171,7 @@ type CardAnnotationProps = {
     link?: LinkProps;
     overrideLink?: React.ReactNode;
     id: WidgetType;
+    editable?: boolean;
 }
 
 function CardAnnotation ({
@@ -175,6 +180,7 @@ function CardAnnotation ({
     link,
     overrideLink,
     id,
+    editable,
 }: CardAnnotationProps) {
     const {
         editing,
@@ -205,11 +211,12 @@ function CardAnnotation ({
                 )
             }
             {
-                editing && (
+                editing && editable && (
                     <Box >
                         <IconButton
                             className={classes.removeWidget}
-                            onClick={() => removeWidget(id, widgets, layouts)}>
+                            onClick={() => removeWidget(id, widgets, layouts)}
+                        >
                             <Cancel className={classes.icon} />
                         </IconButton>
                     </Box>
