@@ -11,6 +11,9 @@ concurrency:
 on:
     release:
         types: [published]
+    push:
+        branches:
+            - feature/SMK-167-landing-zone
     workflow_dispatch:
 
 jobs:
