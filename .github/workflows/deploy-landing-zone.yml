@@ -30,34 +30,63 @@ jobs:
     #     needs: [install]
     #     uses: ./.github/workflows/lint.yml
 
-    build:
-        needs: [install]
-        uses: KL-Engineering/github-action-workflows/.github/workflows/npm-build-upload-fe.yml@v1.1.5
-        with:
-            environment: landingzone
-            region: internal
-            save: true
+    # build:
+    #     needs: [install]
+    #     uses: KL-Engineering/github-action-workflows/.github/workflows/npm-build-upload-fe.yml@v1.1.5
+    #     with:
+    #         environment: landingzone
+    #         region: internal
+    #         save: true
 
     # TODO - put into the library?
+    # build-docker:
+
     build-docker:
-        needs: build
+        name: Build & optionally upload FE artifact
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+
+        # needs: build
         strategy:
             matrix:
                 envfile:
                     - internal/.env.landingzone
-        steps:
-            - uses: actions/checkout@v2
 
+        steps:
+            - uses: nschloe/action-cached-lfs-checkout@v1
             - uses: actions/setup-node@v2
               with:
-                  node-version: 16
-                  cache: npm
-                  registry-url: https://npm.pkg.github.com/
+                node-version: 16
+                registry-url: https://npm.pkg.github.com/
 
-            - run: npm ci --no-progress --no-audit
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-                  CYPRESS_INSTALL_BINARY: 0
+            - name: Find node_modules cache
+              id: cache-node_modules
+              uses: actions/cache@v3
+              with:
+                path: ./node_modules
+                key: ${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+            - name: Copy environment variables
+              run: cp deploy/config/internal/.env.landingzone .env
+            #   run: cp deploy/config/${{ inputs.region }}/.env.${{ inputs.environment }} .env
+
+            - name: Build
+              run: npm run build
+
+            - name: Version
+              run: jq "{\"Version\":\"$GITHUB_REF_NAME\",\"Commit\":\"$GITHUB_SHA\"}" --raw-output --null-input > dist/version.txt
+
+            # - name: Upload build
+            #   uses: actions/upload-artifact@v3
+            #   if: ${{ success() && inputs.upload }}
+            #   with:
+            #     name: build-internal-landingzone
+            #     # name: build-${{ inputs.region }}-${{ inputs.environment }}
+            #     path: dist
+            #     retention-days: 1
+            #     if-no-files-found: error
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v1
@@ -69,23 +98,21 @@ jobs:
             - name: Login to Amazon ECR
               uses: aws-actions/amazon-ecr-login@v1
 
-            - name: Run NPM build with ${{ matrix.envfile }} dot-env file
+            - name: Pack docker image
               run: |
                     set +x
-                    #   export ENV_TAG=$(echo "${{ matrix.envfile }}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
-                    #   export BRANCH_TAG=$(echo "${GITHUB_REF_NAME}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
-                    #   cp deploy/config/${{ matrix.envfile }} .env
-                    #   source .env
-                    #   npm run build
-                    jq "{\"Version\":\"$GITHUB_REF_NAME\",\"Commit\":\"$GITHUB_SHA\"}" --raw-output --null-input > dist/version.txt
-                    docker build -t $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest -f deploy/Dockerfile .
+                    cp dist deploy/
+                    cd deploy
+                    export ENV_TAG=$(echo "${{ matrix.envfile }}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+                    export BRANCH_TAG=$(echo "${GITHUB_REF_NAME}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+                    docker build -t $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest .
                     docker tag $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest
                     docker tag $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-${GITHUB_SHA::7}
                     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest
                     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-${GITHUB_SHA::7}
               env:
                   ECR_REGISTRY: 942095822719.dkr.ecr.eu-west-2.amazonaws.com
-                  ECR_REPOSITORY: kidsloop-auth-frontend
+                  ECR_REPOSITORY: kidsloop-hub-frontend
 
     deploy-landing-zone:
         # deploy-landing-zone - this Github Actions job will deploy images created on `main` to the Kidsloop landing zone.
@@ -96,7 +123,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: build-docker
         # Put any deploy conditions in here.
-        if: github.ref == 'refs/heads/master'
+        # if: github.ref == 'refs/heads/master'
         env:
             # Due to a Teleport bug, we are using K8 port forwarding to connect to ArgoCD for now.
             TOOLS_KUBECONFIG: '${{ github.workspace }}/.kube/tools-kubeconfig.yml'
