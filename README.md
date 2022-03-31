@@ -1,4 +1,4 @@
-# KidsLoop hub
+# KidsLoop Hub
 
 KidsLoop hub Frontend uses 3 different branches for developing, testing and deploying (`master`, `beta` and `prod`).
 

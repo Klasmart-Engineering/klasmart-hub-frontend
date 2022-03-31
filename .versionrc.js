@@ -1,4 +1,7 @@
 module.exports = {
+    scrips: {
+        postchangelog: `./scripts/normalize-headings.sh`,
+    },
     types: [
         {
             type: `feat`,
@@ -18,12 +21,12 @@ module.exports = {
         {
             type: `docs`,
             section: `📚 Docs`,
-            hidden: true,
+            hidden: false,
         },
         {
             type: `style`,
             section: `💎 Style`,
-            hidden: true,
+            hidden: false,
         },
         {
             type: `refactor`,
@@ -38,22 +41,22 @@ module.exports = {
         {
             type: `test`,
             section: `🧪 Tests`,
-            hidden: true,
+            hidden: false,
         },
         {
             type: `ci`,
             section: `⚙️ Continuous Integrations`,
-            hidden: true,
+            hidden: false,
         },
         {
             type: `build`,
             section: `🔨 Build`,
-            hidden: true,
+            hidden: false,
         },
         {
             type: `revert`,
             section: `🗑 Reverts`,
-            title: `Reverts`,
+            hidden: false,
         },
     ],
     commitUrlFormat: `{{host}}/{{owner}}/{{repository}}/commits/{{hash}}`,
