@@ -1,0 +1,182 @@
+name: Deploy to Landing Zone
+
+env:
+    ARGOCD_APP: uk-landingzone-hub-frontend
+    ARGOCD_APP_CHART_TAG_PATH: hubFrontend.tag
+
+concurrency: 
+    group: AlphaDeployment
+    cancel-in-progress: true
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+jobs:
+    install:
+        uses: KL-Engineering/github-action-workflows/.github/workflows/npm-ci.yml@v1.1.5
+        secrets:
+            NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+    test-unit:
+        needs: [install]
+        uses: KL-Engineering/github-action-workflows/.github/workflows/npm-test-jest.yml@v1.1.5
+
+    # lint:
+    #     needs: [install]
+    #     uses: ./.github/workflows/lint.yml
+
+    build:
+        needs: [install]
+        uses: KL-Engineering/github-action-workflows/.github/workflows/npm-build-upload-fe.yml@v1.1.5
+        with:
+            environment: landingzone
+            region: internal
+            save: true
+
+    # TODO - put into the library?
+    build-docker:
+        needs: build
+        strategy:
+            matrix:
+                envfile:
+                    - internal/.env.landingzone
+        steps:
+            - uses: actions/checkout@v2
+
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 16
+                  cache: npm
+                  registry-url: https://npm.pkg.github.com/
+
+            - run: npm ci --no-progress --no-audit
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+                  CYPRESS_INSTALL_BINARY: 0
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+                  aws-region: eu-west-2
+
+            - name: Login to Amazon ECR
+              uses: aws-actions/amazon-ecr-login@v1
+
+            - name: Run NPM build with ${{ matrix.envfile }} dot-env file
+              run: |
+                    set +x
+                    #   export ENV_TAG=$(echo "${{ matrix.envfile }}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+                    #   export BRANCH_TAG=$(echo "${GITHUB_REF_NAME}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+                    #   cp deploy/config/${{ matrix.envfile }} .env
+                    #   source .env
+                    #   npm run build
+                    jq "{\"Version\":\"$GITHUB_REF_NAME\",\"Commit\":\"$GITHUB_SHA\"}" --raw-output --null-input > dist/version.txt
+                    docker build -t $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest -f deploy/Dockerfile .
+                    docker tag $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest
+                    docker tag $ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-${GITHUB_SHA::7}
+                    docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-latest
+                    docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BRANCH_TAG-$ENV_TAG-${GITHUB_SHA::7}
+              env:
+                  ECR_REGISTRY: 942095822719.dkr.ecr.eu-west-2.amazonaws.com
+                  ECR_REPOSITORY: kidsloop-auth-frontend
+
+    deploy-landing-zone:
+        # deploy-landing-zone - this Github Actions job will deploy images created on `main` to the Kidsloop landing zone.
+        # Landing zone URL: hub.landing-zone.kidsloop.live
+
+        # ENV required: [ARGOCD_APP, ARGOCD_APP_CHART_TAG_PATH]
+        # SECRETS required: [TOOLS_KUBECONFIG_CONTENT_B64, ARGOCD_AUTH_USERNAME, ARGOCD_AUTH_PASSWORD]
+        runs-on: ubuntu-latest
+        needs: build-docker
+        # Put any deploy conditions in here.
+        if: github.ref == 'refs/heads/master'
+        env:
+            # Due to a Teleport bug, we are using K8 port forwarding to connect to ArgoCD for now.
+            TOOLS_KUBECONFIG: '${{ github.workspace }}/.kube/tools-kubeconfig.yml'
+            ARGOCD_SERVER: localhost:8080
+            ARGOCD_OPTS: --grpc-web --insecure --plaintext
+        name: Deploy to Landing Zone
+        steps:
+            # Set up the kubeconfig file in GHA secrets first
+            - name: Set up kubernetes config file
+              run: |
+                  mkdir -p '${{ github.workspace }}/.kube' \
+                    && echo '${{ secrets.TOOLS_KUBECONFIG_CONTENT_B64 }}' | base64 -d > $TOOLS_KUBECONFIG
+
+            - name: Test kubernetes connection
+              run: 'kubectl version --kubeconfig $TOOLS_KUBECONFIG'
+
+            - name: Configure ArgoCD CLI
+              uses: clowdhaus/argo-cd-action@v1.9.0
+              with:
+                  version: 2.2.5
+                  command: version
+                  options: --client
+
+            - name: Set up kubernetes port-forwarding connection to tools cluster
+              run: 'kubectl port-forward -n argocd svc/argocd-server 8080:80 --kubeconfig $TOOLS_KUBECONFIG &'
+
+            - name: Configure tags
+              run: |
+                  export BRANCH_TAG=$(echo "${GITHUB_REF_NAME}" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+                  export ENV_TAG="uk-env-landingzone"
+                  export DEPLOY_TAG=$BRANCH_TAG-$ENV_TAG-${GITHUB_SHA::7}
+                  echo "TAG    : ${TAG}"
+                  echo "COMMIT : ${GITHUB_SHA::7}"
+                  echo "IMAGE  : $DEPLOY_TAG"
+                  echo "TAG=$TAG" >> $GITHUB_ENV
+                  echo "DEPLOY_TAG=$DEPLOY_TAG" >> $GITHUB_ENV
+
+            - name: Log into ArgoCD
+              uses: clowdhaus/argo-cd-action@v1.9.0
+              with:
+                  version: 2.2.5
+                  command: login
+                  options: >
+                      '${{ env.ARGOCD_SERVER }}'
+                      --username '${{ secrets.ARGOCD_AUTH_USERNAME }}'
+                      --password '${{ secrets.ARGOCD_AUTH_PASSWORD }}'
+                      ${{ env.ARGOCD_OPTS }}
+
+            - name: Show ArgoCD app info
+              uses: clowdhaus/argo-cd-action@v1.9.0
+              with:
+                  version: 2.2.5
+                  command: app
+                  options: get ${{ env.ARGOCD_APP }}
+
+            - name: Set ArgoCD app tag to build output
+              uses: clowdhaus/argo-cd-action@v1.9.0
+              with:
+                  version: 2.2.5
+                  command: app
+                  options: set ${{ env.ARGOCD_APP }} -p ${{ env.ARGOCD_APP_CHART_TAG_PATH }}=${{ env.DEPLOY_TAG }}
+
+            - name: Sync the app now
+              uses: clowdhaus/argo-cd-action@v1.9.0
+              with:
+                  version: 2.2.5
+                  command: app
+                  options: sync ${{ env.ARGOCD_APP }} --timeout 300
+
+            - name: Status - ArgoCD url
+              if: always()
+              uses: ouzi-dev/commit-status-updater@v1.1.0
+              with:
+                  status: '${{ job.status }}'
+                  url: https://argocd.kidsloop.teleport.sh/applications/${{ env.ARGOCD_APP }}
+                  description: 'Click to view the app in ArgoCD'
+                  name: 'ArgoCD'
+
+            - name: Status - target url
+              if: always()
+              uses: ouzi-dev/commit-status-updater@v1.1.0
+              with:
+                  status: '${{ job.status }}'
+                  url: https://hub.landing-zone.kidsloop.live
+                  description: "Click to test in the 'Landing Zone' environment"
+                  name: 'Landing Zone'
