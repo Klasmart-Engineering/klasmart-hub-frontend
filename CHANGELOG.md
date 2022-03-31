@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.41.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.3%0Dv2.41.2) (2022-03-31)
+
+
+### ⚙️ Continuous Integrations
+
+* update to latest reusable workflow with git lfs ([f0bf512](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f0bf51278a37304e0fb84fdfad1dee47b0ad52d0))
+
+
+### 🐛 Bug Fixes
+
+* removed the close button for adaptive learning journey while usi… (#15) ([81cb319](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/81cb319c072913b233c14fba68a6c08ca56d61e4))
+
 ### [2.41.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.2%0Dv2.41.1) (2022-03-31)
 
 
