@@ -28,7 +28,7 @@ export default function ReportsApiClientProvider (props: Props) {
     const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
 
     const retryHandler = useCallback(async (error: AxiosError) => {
-        if (error.response?.status !== 401 || error.response?.data.label !== `general_error_unauthorized`) throw error;
+        if (error.response?.status !== 401) throw error;
         try {
             await authClient.refreshToken();
             const updatedCookie = new Cookies();
