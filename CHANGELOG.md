@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.41.4](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.4%0Dv2.41.3) (2022-04-01)
+
+
+### 🐛 Bug Fixes
+
+* remove general_error_unauthorized check for reporting api refresh token function ([f3118cd](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f3118cdc1b25d907fec9eaf900b402b0c23baeda))
+
 ### [2.41.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.3%0Dv2.41.2) (2022-03-31)
 
 
