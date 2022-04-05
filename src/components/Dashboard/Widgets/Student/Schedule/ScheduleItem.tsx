@@ -1,7 +1,9 @@
-import { MockClass } from "./mockDataClasses";
+import { useGetClassNodeRoster } from "@/api/classRoster";
 import NextClassThumb from "@/assets/img/mock/next_class_thumb.png";
 import { retrieveClassTypeIdentityOrDefault } from "@/config/classTypes";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@/config/index";
+import { SchedulePayload } from "@/types/objectTypes";
+import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import {
     Box,
     Chip,
@@ -16,13 +18,8 @@ import {
     createStyles,
     makeStyles,
 } from "@mui/styles";
-import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import React from "react";
-import {
-    FormattedDate,
-    FormattedMessage,
-    useIntl,
-} from "react-intl";
+import { FormattedDate } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 import { withResizeDetector } from "react-resize-detector";
 import { ReactResizeDetectorDimensions } from "react-resize-detector/build/ResizeDetector";
@@ -30,7 +27,7 @@ import { ReactResizeDetectorDimensions } from "react-resize-detector/build/Resiz
 const SHOW_IMAGE_BREAKPOINT = 500;
 
 interface Props extends ReactResizeDetectorDimensions {
-    mockClass: MockClass;
+    item: SchedulePayload;
     active: boolean;
 }
 
@@ -85,20 +82,35 @@ const useStyles = makeStyles<Theme, StyleProps>(((theme: Theme) => createStyles(
 function ScheduleItem (props: Props) {
     const {
         width,
-        mockClass,
+        item,
         active,
     } = props;
     const showImage = width ? width > SHOW_IMAGE_BREAKPOINT : false;
-    const classIdentity = retrieveClassTypeIdentityOrDefault(mockClass.type);
 
-    const intl = useIntl();
+    const classIdentity = retrieveClassTypeIdentityOrDefault(item.class_type);
+
     const classes = useStyles({
         classTypeTheme: active ? `white` : classIdentity.color,
         isActive: active,
     });
 
+    const maxTeachers = 2;
+    const { data: rosterData } = useGetClassNodeRoster({
+        fetchPolicy: `no-cache`,
+        variables: {
+            id: item?.class_id ?? ``,
+            count: maxTeachers,
+            orderBy: `familyName`,
+            order: `ASC`,
+            direction: `FORWARD`,
+            showStudents: false,
+            showTeachers: true,
+        },
+        skip: !item?.class_id,
+    });
+
     return (
-        <Box className={ classes.root }>
+        <Box className={classes.root}>
             <Grid
                 container
                 alignItems="stretch"
@@ -108,41 +120,47 @@ function ScheduleItem (props: Props) {
                     <Grid
                         item
                         xs={3}
-                        className={ classes.imageContainer }
+                        className={classes.imageContainer}
                     >
                         <img
-                            className={ classes.image }
-                            src={NextClassThumb} />
+                            className={classes.image}
+                            src={NextClassThumb}
+                        />
                     </Grid>)}
                 <Grid
                     container
                     direction="column"
                     justifyContent="space-between"
-                    paddingX={ showImage ? 2 : 0}
+                    paddingX={showImage ? 2 : 0}
                 >
                     <Grid
                         container
-                        justifyContent="space-between">
+                        justifyContent="space-between"
+                    >
                         <div>
                             <Chip
                                 size="small"
                                 className={classes.chip}
-                                icon={ <SvgIcon
-                                    component={classIdentity.icon} /> }
-                                label={ classIdentity.intlKey } />
+                                icon={<SvgIcon
+                                    component={classIdentity.icon}
+                                />}
+                                label={classIdentity.intlKey}
+                            />
                             <Typography
                                 variant="h6"
-                                className={ classes.title }>
-                                <FormattedMessage id={mockClass.titleKey} />
+                                className={classes.title}
+                            >
+                                {item.title}
                             </Typography>
                         </div>
                         <Typography
                             noWrap
                             variant="body2"
-                            className={classes.timeLabel}>
+                            className={classes.timeLabel}
+                        >
                             <FormattedDate
-                                value={mockClass.startTime}
-                                hour12={true}
+                                hour12
+                                value={item.start_at}
                                 hour="2-digit"
                                 minute="2-digit"
                             />
@@ -154,41 +172,70 @@ function ScheduleItem (props: Props) {
                         <Grid
                             container
                             justifyContent="space-between"
-                            alignItems="center">
-                            <div className={ classes.teacherList }>
+                            alignItems="center"
+                        >
+                            <div className={classes.teacherList}>
                                 <Box paddingTop={1}>
                                     <Grid
                                         container
-                                        spacing={1}>
-                                        { mockClass.teachers.map((teacher, i) => (
-                                            <Grid
-                                                key={`teacher-${i}`}
-                                                item
-                                                className={classes.teacher}>
-                                                <Box
-                                                    display="flex"
-                                                    flexDirection="row"
-                                                    alignItems="center"
+                                        alignItems="baseline"
+                                    >
+                                        {rosterData?.classNode.teachersConnection?.edges.map((edge, i) => {
+                                            return (
+                                                <Grid
+                                                    key={edge.node.id}
+                                                    item
+                                                    className={classes.teacher}
                                                 >
-                                                    <UserAvatar
-                                                        name={`${intl.formatMessage({
-                                                            id:teacher.givenNameKey,
-                                                        })} ${ intl.formatMessage({
-                                                            id:teacher.surnameKey,
-                                                        })}`}
-                                                        className={classes.avatar}
-                                                        size="small"
-                                                        src={ teacher.image }
-                                                    />
-                                                    <Typography
-                                                        variant="body2"
-                                                        className={ classes.teacherName }>
-                                                        <FormattedMessage id={ teacher.givenNameKey } />
-                                                    </Typography>
-                                                </Box>
-                                            </Grid>
-                                        ))
-                                        }
+                                                    {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) <= maxTeachers &&
+                                                    <Box
+                                                        display="flex"
+                                                        flexDirection="row"
+                                                        alignItems="center"
+                                                        className="singleTeacher"
+                                                    >
+                                                        <UserAvatar
+                                                            name={`${edge.node.givenName} ${edge.node.familyName}`}
+                                                            className={classes.avatar}
+                                                            size="small"
+                                                        />
+                                                        <span style={{
+                                                            display: `inline-block`,
+                                                            paddingLeft: `0.5em`,
+                                                            paddingRight: `0.5em`,
+                                                        }}
+                                                        >{edge.node.givenName} {edge.node.familyName}
+                                                        </span>
+                                                    </Box>}
+                                                    {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) > maxTeachers &&
+                                                        <Box
+                                                            display="flex"
+                                                            flexDirection="row"
+                                                            paddingRight="1em"
+                                                            paddingBottom="1em"
+                                                        >
+                                                            <UserAvatar
+                                                                name={`${edge.node.givenName} ${edge.node.familyName}`}
+                                                                className={classes.avatar}
+                                                                size="small"
+                                                            />
+                                                            <Typography variant="caption">
+                                                                {edge.node.givenName}
+                                                            </Typography>
+                                                            {i === maxTeachers - 1 && <Typography variant="caption">
+                                                                <span style={{
+                                                                    display: `inline-block`,
+                                                                    paddingLeft: `1em`,
+                                                                }}
+                                                                > + {rosterData?.classNode.teachersConnection?.totalCount - maxTeachers}
+                                                                </span>
+
+                                                                                      </Typography>}
+                                                        </Box>
+                                                    }
+                                                </Grid>
+                                            );
+                                        })}
                                     </Grid>
                                 </Box>
                             </div>
@@ -197,9 +244,10 @@ function ScheduleItem (props: Props) {
                                     noWrap
                                     variant="body1"
                                     fontWeight="bold"
-                                    className={classes.durationLabel}>
+                                    className={classes.durationLabel}
+                                >
                                     <FormattedDuration
-                                        seconds={ mockClass.duration * 60 }
+                                        seconds={item.end_at - item.start_at}
                                         format="{hours} {minutes}"
                                     />
                                 </Typography>
