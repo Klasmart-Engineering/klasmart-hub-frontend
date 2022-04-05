@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.42.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.42.0%0Dv2.41.4) (2022-04-05)
+
+
+### 🐛 Bug Fixes
+
+* update to get the access token every time from cookies (#27) ([e33ae99](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/e33ae99955da903fc5a7a3ef5a583feea07599ed))
+
+
+### ⚙️ Continuous Integrations
+
+* add conventional pr title workflow ([30ee50b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/30ee50be54125acd9cd717e59df9c7196b413b0f))
+
+
+### ✨ Features
+
+* **feature-flag:** add default values (#22) ([b1fb533](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/b1fb533442f4fd9143dacdbc4f2be1e322890016))
+* integrate student next class widget with api (#24) ([9191957](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/91919572ebe047cdc4f635fac1e742feb823cf52))
+* integrate student schedule widget with api (#25) ([377bb49](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/377bb496fa83f9204e054c637dbad9296ce0451f))
+* integrate student teachers feedback widget with api (#23) ([98a7d68](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/98a7d685c30bd49d34908b9fbc9162fe21175203))
+
 ### [2.41.4](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.41.4%0Dv2.41.3) (2022-04-01)
 
 
