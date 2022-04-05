@@ -4,11 +4,7 @@ import { REQUEST_RETRY_COUNT_MAX } from "@/config/index";
 import { redirectToAuth } from "@/utils/routing";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engineering/reports-api-client";
 import { AxiosError } from "axios";
-import React,
-{
-    useCallback,
-    useState,
-} from "react";
+import React from "react";
 import Cookies from "universal-cookie";
 
 const AUTH_HEADER = `authorization`;
@@ -21,35 +17,29 @@ interface Props {
 export default function ReportsApiClientProvider (props: Props) {
     const { children } = props;
     const reportsServiceEndpoint = getReportsEndpoint();
-    const cookies = new Cookies();
-    const [ accessToken, setAccessToken ] = useState(cookies.get(ACCESS_TOKEN_COOKIE));
 
     const STALE_TIME = 60 * 1000; // 60 seconds
     const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
 
-    const retryHandler = useCallback(async (error: AxiosError) => {
+    const retryHandler = async (error: AxiosError) => {
         if (error.response?.status !== 401) throw error;
         try {
             await authClient.refreshToken();
             const updatedCookie = new Cookies();
             const updatedAccessToken = updatedCookie.get(ACCESS_TOKEN_COOKIE);
             error.config.headers![AUTH_HEADER] = updatedAccessToken;
-            setAccessToken(updatedAccessToken);
         } catch (err) {
             redirectToAuth({
                 withParams: true,
             });
             throw err;
         }
-    }, [ setAccessToken ]);
+    };
 
     return (
         <KLReportsApiClientProvider
             config={{
                 baseURL: reportsServiceEndpoint,
-                headers: {
-                    [AUTH_HEADER]: accessToken,
-                },
             }}
             queryOptions={{
                 defaultOptions: {
@@ -61,7 +51,7 @@ export default function ReportsApiClientProvider (props: Props) {
             }}
             requestInterceptors={USE_MOCK_DATA ? [
                 {
-                    onFulfilled: ((config) => {
+                    onFulfilled: (config) => {
                         const BASE_URL = `/reportsMockData`;
                         switch (config.params.repid) {
                         case `clsattendrategrp`:
@@ -91,9 +81,24 @@ export default function ReportsApiClientProvider (props: Props) {
                         default:
                             return config;
                         }
-                    }),
+                    },
                 },
-            ] : undefined}
+            ] : [
+                {
+                    onFulfilled: (config) => {
+                        const updatedCookie = new Cookies();
+                        const updatedAccessToken = updatedCookie.get(ACCESS_TOKEN_COOKIE);
+                        const updatedConfig = {
+                            ...config,
+                            headers: {
+                                ...config.headers,
+                                [AUTH_HEADER]: updatedAccessToken,
+                            },
+                        };
+                        return updatedConfig;
+                    },
+                },
+            ]}
             responseInterceptors={USE_MOCK_DATA ? [
                 {
                     onFulfilled: ((config) => {
