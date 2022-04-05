@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.42.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.42.1%0Dv2.42.0) (2022-04-05)
+
+
+### ⚙️ Continuous Integrations
+
+* fix workflow input variable name ([f738c52](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f738c52321cb8dd8f674001da2d01b110be13745))
+
+
+### ♻️ Chores
+
+* add git hook to run tests before commit ([11cd09e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/11cd09e89da77644fb596991b69fd5d96fce2782))
+
 ## [2.42.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.42.0%0Dv2.41.4) (2022-04-05)
 
 
