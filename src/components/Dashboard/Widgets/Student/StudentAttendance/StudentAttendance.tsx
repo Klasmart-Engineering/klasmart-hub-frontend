@@ -1,9 +1,12 @@
 
-import XYLineChart from "./XYLineChart";
+import XYLineChart,
+{ LineChartData } from "./XYLineChart";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PRIMARY_THEME_COLOR } from "@/themeProvider";
+import { utils } from "@kl-engineering/kidsloop-px";
+import { useGetStudentAttendanceRate } from "@kl-engineering/reports-api-client";
 import { CalendarTodayOutlined } from '@mui/icons-material';
 import {
     Box,
@@ -15,14 +18,17 @@ import {
     makeStyles,
 } from '@mui/styles';
 import { ParentSize } from "@visx/responsive";
-import { utils } from "@kl-engineering/kidsloop-px";
-import React from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme:Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     widgetContent: {
         display: `grid`,
         gridTemplateColumns: `1fr`,
@@ -58,49 +64,31 @@ export default function StudentAttendanceWidget (props: Props) {
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationName = currentOrganization?.name ?? ``;
+    const organizationId = currentOrganization?.id ?? ``;
     const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
+    const [ attendanceData, setAttendanceData ] = useState<LineChartData[]>([]);
+    const [ averageAttendance, setAverageAttendance ] = useState(0);
+    const {
+        data,
+        isFetching,
+        error,
+        refetch,
+    } = useGetStudentAttendanceRate({
+        org: organizationId,
+    });
 
-    const data = [
-        {
-            x: `2020-01-18`,
-            y: 0.7,
-        },
-        {
-            x: `2020-01-19`,
-            y: 0.05,
-        },
-        {
-            x: `2020-01-20`,
-            y: 0.70,
-        },
-        {
-            x: `2020-01-21`,
-            y: 0.85,
-        },
-        {
-            x: `2020-01-22`,
-            y: 0.75,
-        },
-        {
-            x: `2020-01-23`,
-            y: 0.85,
-        },
-        {
-            x: `2020-01-24`,
-            y: 0.80,
-        },
-        {
-            x: `2020-01-25`,
-            y: 0.60,
-        },
-    ];
+    useEffect(() => {
+        if(!data?.info) return;
+        setAttendanceData(data.info);
+        setAverageAttendance(Math.round((data.info.reduce((rate, current) => rate + current.rate, 0) / data.info.length) * 100));
+    }, [ data ]);
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={undefined}
-            noData={false}
-            reload={()=>{return;}}
+            noData={!attendanceData?.length}
+            loading={isFetching}
+            error={error}
+            reload={refetch}
             label={
                 intl.formatMessage({
                     id: `home.student.attendanceWidget.containerTitleLabel`,
@@ -112,26 +100,27 @@ export default function StudentAttendanceWidget (props: Props) {
                     id: `home.student.attendanceWidget.containerUrlLabel`,
                 }),
             }}
-            id={WidgetType.STUDENTATTENDANCE}>
+            id={WidgetType.STUDENTATTENDANCE}
+        >
             <Box className={classes.widgetContent}>
                 <Box className={classes.banner}>
                     <div className="bannerLeft">
                         <CalendarTodayOutlined
                             fontSize="large"
                             color="primary"
-                        >
-                        </CalendarTodayOutlined>
+                        />
                         <div>
                             <Typography variant="body1">
-                                <FormattedMessage id="home.student.attendanceWidget.legend"></FormattedMessage>
+                                <FormattedMessage id="home.student.attendanceWidget.legend" />
                             </Typography>
                         </div>
                     </div>
                     <div>
                         <Typography
                             variant="h5"
-                            color="primary">
-                            86%
+                            color="primary"
+                        >
+                            {averageAttendance}%
                         </Typography>
                     </div>
                 </Box>
@@ -139,7 +128,7 @@ export default function StudentAttendanceWidget (props: Props) {
                     <ParentSize>
                         {({ width, height }) => (
                             <XYLineChart
-                                data={data}
+                                data={attendanceData}
                                 width={width}
                                 height={height}
                                 color={organizationPrimaryColor}

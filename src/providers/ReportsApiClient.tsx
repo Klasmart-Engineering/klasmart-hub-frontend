@@ -1,10 +1,13 @@
 import { authClient } from "@/api/auth/client";
+import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
 import { getReportsEndpoint } from "@/config";
 import { REQUEST_RETRY_COUNT_MAX } from "@/config/index";
+import { useDashboardMode } from "@/store/useDashboardMode";
 import { redirectToAuth } from "@/utils/routing";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engineering/reports-api-client";
 import { AxiosError } from "axios";
-import React from "react";
+import React,
+{ useMemo } from "react";
 import Cookies from "universal-cookie";
 
 const AUTH_HEADER = `authorization`;
@@ -17,9 +20,15 @@ interface Props {
 export default function ReportsApiClientProvider (props: Props) {
     const { children } = props;
     const reportsServiceEndpoint = getReportsEndpoint();
+    const { view } = useDashboardMode();
 
     const STALE_TIME = 60 * 1000; // 60 seconds
-    const USE_MOCK_DATA = process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA === `true`;
+
+    const useMockData = useMemo(() => {
+        return (view === WidgetView.STUDENT ?
+            process.env.STUDENT_WIDGET_DASHBOARD_USE_MOCK_DATA
+            : process.env.TEACHER_WIDGET_DASHBOARD_USE_MOCK_DATA) === `true`;
+    }, [ view ]);
 
     const retryHandler = async (error: AxiosError) => {
         if (error.response?.status !== 401) throw error;
@@ -49,7 +58,7 @@ export default function ReportsApiClientProvider (props: Props) {
                     },
                 },
             }}
-            requestInterceptors={USE_MOCK_DATA ? [
+            requestInterceptors={useMockData ? [
                 {
                     onFulfilled: (config) => {
                         const BASE_URL = `/reportsMockData`;
@@ -78,6 +87,12 @@ export default function ReportsApiClientProvider (props: Props) {
                                 baseURL: BASE_URL,
                                 url: `/contentteacher.json`,
                             };
+                        case `student_attendrate`:
+                            return {
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/studentattendrate.json`,
+                            };
                         default:
                             return config;
                         }
@@ -99,7 +114,7 @@ export default function ReportsApiClientProvider (props: Props) {
                     },
                 },
             ]}
-            responseInterceptors={USE_MOCK_DATA ? [
+            responseInterceptors={useMockData ? [
                 {
                     onFulfilled: ((config) => {
                         const now = Date.now();

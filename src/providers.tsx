@@ -35,9 +35,9 @@ export function ClientSide () {
     const locale = getLanguage(languageCode);
 
     return (
-        <ReportsApiClientProvider>
-            <CmsApiClientProvider>
-                <UserServiceProvider>
+        <UserServiceProvider>
+            <ReportsApiClientProvider>
+                <CmsApiClientProvider>
                     <LDProvider>
                         <RawIntlProvider value={locale}>
                             <StyledEngineProvider injectFirst>
@@ -56,11 +56,11 @@ export function ClientSide () {
                             </StyledEngineProvider>
                         </RawIntlProvider>
                     </LDProvider>
-                </UserServiceProvider>
-                {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
-            </CmsApiClientProvider>
-            {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
-        </ReportsApiClientProvider>
+                    {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
+                </CmsApiClientProvider>
+                {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
+            </ReportsApiClientProvider>
+        </UserServiceProvider>
     );
 }
 

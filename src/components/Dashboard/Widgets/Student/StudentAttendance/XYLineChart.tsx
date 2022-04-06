@@ -9,14 +9,14 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 export interface LineChartData {
-    x: string;
-    y: number;
+    class_date: string;
+    rate: number;
 }
 
 interface Props {
-    data:LineChartData[];
-    width:number;
-    height:number;
+    data: LineChartData[];
+    width: number;
+    height: number;
     color: any;
 }
 
@@ -29,12 +29,11 @@ export default function XYLineChart (props: Props) {
     } = props;
 
     const intl = useIntl();
-
     const approximateYrows = 3;
 
     const accessors = {
-        xAccessor: (d) => new Date(`${d.x}T00:00:00`),
-        yAccessor: (d) => d.y,
+        xAccessor: (d: LineChartData) => new Date(`${d.class_date}T00:00:00`),
+        yAccessor: (d: LineChartData) => d.rate,
     };
 
     /**
