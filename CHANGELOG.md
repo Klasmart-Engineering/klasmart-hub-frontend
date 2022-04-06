@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.43.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.43.0%0Dv2.42.1) (2022-04-06)
+
+
+### 🐛 Bug Fixes
+
+* repoint symlink to the actual global alpha (#17) ([693067d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/693067daa3f94e790166cba33c4243db6ad8d4d1))
+
+
+### ⚙️ Continuous Integrations
+
+* remove edited event type trigger from pr workflow ([ae6b227](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ae6b2277cc7b784fba1159ae58872c2023770c7f))
+* separate pr workflows for meta info and commits ([f95b091](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f95b0916a195a2afafcc5c2fc322f8405ca09cd1))
+
+
+### ✨ Features
+
+* enable real data for student dashboard reporting widget apis (#31) ([0e97195](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0e97195619822e22d205f784e16e5b78d6b8c269))
+* integrate student attendance widget with api (#28) ([6c8f422](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/6c8f422e079a7c94ebc7d968bc484e509dcf6f30))
+* **widget:** integrate getStudentLearningOutcome api to student achivement widget (#20) ([f64541e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f64541e4b349063922899371b310fdf1f281b75d))
+* **widget:** integrate student learning outcome achieved widget with api (#16) ([ced500a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ced500a527d02e1db038b9e6283c78511eb549ee))
+
 ### [2.42.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.42.1%0Dv2.42.0) (2022-04-05)
 
 
