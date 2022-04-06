@@ -44,22 +44,22 @@ const useStyles = makeStyles((theme: Theme) =>
             fontSize: `0.7rem`,
             textAlign: `center`,
             lineHeight: `0.5rem`,
-            padding : `0.15rem`,
+            padding: `0.15rem`,
         },
         totalLabelSubtitle: {
             fontSize: `0.85rem`,
             textAlign: `center`,
             lineHeight: `0.5rem`,
-            padding : `0.15rem`,
+            padding: `0.15rem`,
             fontWeight: 700,
             letterSpacing: -0.5,
         },
-        htmlLabelTextWrapperForBarValue : {
+        htmlLabelTextWrapperForBarValue: {
             display: `flex`,
             alignItems: `center`,
             justifyContent: `center`,
         },
-        htmlLabelTextForBarValue : {
+        htmlLabelTextForBarValue: {
             fontSize: `0.6rem`,
             color: theme.palette.common.white,
             fontWeight: 600,
@@ -69,16 +69,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const roundNumber = (num: number) => Math.round(num / 10) * 10;
 const LEFT_AXIS_BREAKPOINT = 400;
-    interface Data {
-        skill: string;
-        achieved: number;
-        notAchieved: number;
-    }
-    interface Props {
-        data: Data[];
-        width: number;
-        height: number;
-    }
+interface Data {
+    skill: string;
+    achieved: number;
+    notAchieved: number;
+}
+interface Props {
+    data: Data[];
+    width: number;
+    height: number;
+}
 
 export default function BarChart (props: Props) {
     const {
@@ -91,7 +91,7 @@ export default function BarChart (props: Props) {
     const theme = createTheme();
     const margin = {
         top: 60,
-        bottom: 40,
+        bottom: 50,
         left: width < LEFT_AXIS_BREAKPOINT ? 0 : 10,
         right: 10,
     };
@@ -104,7 +104,7 @@ export default function BarChart (props: Props) {
     const achievedColor = theme.palette.info.light;
     const notAchievedColor = theme.palette.error.light;
     const barRadius = 6;
-    const keys = Object.keys(data[0]).filter((d) => d !== `skill`);
+    const keys = Object.keys(data[0] || {}).filter((d) => d !== `skill`);
     const achievementTotals = data.reduce((totals, skill) => {
         totals.push(skill.achieved + skill.notAchieved);
         return totals;
@@ -153,12 +153,14 @@ export default function BarChart (props: Props) {
         <Box
             sx={{
                 position: `relative`,
-            }}>
+            }}
+        >
             <ChartLegend
                 width={width}
                 height={height}
                 dataLength={data?.length}
-                colorRange={colorRange}/>
+                colorRange={colorRange}
+            />
             <svg
                 width="100%"
                 height="100%"
@@ -171,7 +173,8 @@ export default function BarChart (props: Props) {
                     width={width}
                     height={height}
                     fill={theme.palette.common.white}
-                    rx={12} />
+                    rx={12}
+                />
 
                 {/* Chart Grid Lines */}
                 <GridRows
@@ -221,6 +224,7 @@ export default function BarChart (props: Props) {
                         xScale={xScale}
                         yScale={yScale}
                         color={colorScale}
+                        offset={`none`}
                     >
                         {(barStacks) =>
                             barStacks.map((barStack) =>
@@ -238,7 +242,7 @@ export default function BarChart (props: Props) {
                                                 fill={color}
                                                 top={
                                                     barStack.key === `notAchieved` ||
-                          bar?.data?.notAchieved === 0
+                                                        bar?.data?.notAchieved === 0
                                                         ? true
                                                         : false
                                                 }
@@ -267,7 +271,7 @@ export default function BarChart (props: Props) {
                                                             className={classes.totalLabelSubtitle}
                                                         >
                                                             {bar?.data?.achieved +
-                                bar?.data?.notAchieved}
+                                                                bar?.data?.notAchieved}
                                                         </Typography>
                                                     </Box>
                                                 ) : (

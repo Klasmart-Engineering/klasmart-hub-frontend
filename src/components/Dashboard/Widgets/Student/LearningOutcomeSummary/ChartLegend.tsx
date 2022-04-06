@@ -66,10 +66,12 @@ export default function ChartLegend (props: Props) {
     } = props;
     const legendShapeWidth = 10;
     const legendShapeHeight = 10;
-    const legendTitle = intl.formatMessage({
+    const legendTitle = dataLength === 1 ? intl.formatMessage({
+        id: `home.student.learningOutcomeWidget.singleSkillTitle`,
+    }) : intl.formatMessage({
         id: `home.student.learningOutcomeWidget.legendTitle`,
     }, {
-        skillcount: 5,
+        skillcount: dataLength,
     });
     const achieved = intl.formatMessage({
         id: `home.student.learningOutcomeWidget.legendAchieved`,
