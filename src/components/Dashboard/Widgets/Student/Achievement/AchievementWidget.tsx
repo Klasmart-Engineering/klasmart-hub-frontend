@@ -1,7 +1,8 @@
-
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useGetStudentLearningOutcome } from "@kl-engineering/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
     List,
@@ -15,13 +16,17 @@ import {
     makeStyles,
 } from '@mui/styles';
 import { sumBy } from "lodash";
-import React from "react";
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
 
-const useStyles = makeStyles((theme:Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
     widgetContent: {
         height: `100%`,
         display: `flex`,
@@ -42,14 +47,6 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         borderRadius: `100%`,
         padding: 5,
         fontSize: 35,
-    },
-    progressBar: {
-        [theme.breakpoints.down(`xs`)]: {
-            display: `none`,
-        },
-        [theme.breakpoints.down(`sm`)]: {
-            display: `none`,
-        },
     },
     text: {
         fontSize: 16,
@@ -87,90 +84,115 @@ const useStyles = makeStyles((theme:Theme) => createStyles({
         fontSize: 14,
     },
 }));
-
+export interface AchievementData {
+    intlKey: JSX.Element;
+    count: number;
+    color: string;
+}
 export default function AchievementWidget () {
     const intl = useIntl();
     const classes = useStyles();
     const theme = useTheme();
-
-    const data = [
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendAchieved" />,
-            count: 86,
-            color: theme.palette.info.light,
-        },
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendPending" />,
-            count: 28,
-            color: `#9473E5`,
-        },
-        {
-            intlKey: <FormattedMessage id="home.student.achievementWidget.legendNotAchieved" />,
-            count: 53,
-            color: theme.palette.error.light,
-        },
-    ];
-
-    const total: number = sumBy(data, (item) => item.count);
-
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.id ?? ``;
+    const {
+        data,
+        isFetching: isachievementDataFetching,
+        error: isachievementDataError,
+        refetch: achievementDataRefetch,
+    } = useGetStudentLearningOutcome({
+        org: organizationId,
+    });
+    const [ achievementData, setAchievementData ] = useState<AchievementData[]>([]);
+    const [ total, setTotal ] = useState(0);
+    useEffect(() => {
+        const { learning_outcomes } = data?.info || {};
+        if (!learning_outcomes) return;
+        const generatedAchievementData = [
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendAchieved" />,
+                count: learning_outcomes.achieved,
+                color: theme.palette.info.light,
+            },
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendPending" />,
+                count: learning_outcomes.not_covered,
+                color: `#9473E5`,
+            },
+            {
+                intlKey: <FormattedMessage id="home.student.achievementWidget.legendNotAchieved" />,
+                count: learning_outcomes.not_achieved,
+                color: theme.palette.error.light,
+            },
+        ];
+        setAchievementData(generatedAchievementData);
+        setTotal(sumBy(generatedAchievementData, (item) => item.count));
+    }, [ data, theme ]);
+    const reload = () => {
+        achievementDataRefetch();
+    };
     return (
         <WidgetWrapper
-            loading={false}
-            error={false}
-            noData={false}
-            reload={() => { false;}}
+            loading={isachievementDataFetching}
+            error={isachievementDataError}
+            noData={!data?.successful}
+            reload={reload}
             label={
                 intl.formatMessage({
                     id: `home.student.achievementWidget.containerTitleLabel`,
                 })
             }
             link={{
-                url: ``,
+                url: `reports`,
                 label: intl.formatMessage({
                     id: `home.student.achievementWidget.containerUrlLabel`,
                 }),
             }}
-            id={WidgetType.ACHIEVEMENT}>
+            id={WidgetType.ACHIEVEMENT}
+        >
             <div className={classes.widgetContent}>
                 <div className={classes.titleWrapper}>
-                    <FiberManualRecord className={classes.bullet}/>
+                    <FiberManualRecord className={classes.bullet} />
                     <Typography className={classes.title}>
                         <FormattedMessage id="home.student.achievementWidget.title" />
                     </Typography>
                 </div>
-                {data &&
+                {achievementData?.length &&
                     <List>
                         <Typography className={classes.heading}>
                             <FormattedMessage id="home.student.achievementWidget.containerHeading" />
                         </Typography>
                         <div className={classes.break} />
-                        {data.map((item, index:number)=>{
-                            return <ListItem key={index}>
-                                <div
-                                    className={classes.row}
-                                    style={{
-                                        color: item.color,
-                                    }}>
+                        {achievementData?.map((item, i) => {
+                            return (
+                                <ListItem key={i}>
                                     <div
-                                        className={classes.text}
+                                        className={classes.row}
+                                        style={{
+                                            color: item.color,
+                                        }}
                                     >
-                                        {item.intlKey}
+                                        <div
+                                            className={classes.text}
+                                        >
+                                            {item.intlKey}
+                                        </div>
+                                        <div>
+                                            <ProgressBar
+                                                total={total}
+                                                progress={item.count}
+                                                color={item.color}
+                                                thickness={15}
+                                                backgroundColor="transparent"
+                                            />
+                                        </div>
+                                        <div
+                                            className={classes.count}
+                                        >
+                                            {item.count}
+                                        </div>
                                     </div>
-                                    <div className={classes.progressBar}>
-                                        <ProgressBar
-                                            total={total}
-                                            progress={item.count}
-                                            color={item.color}
-                                            thickness={15}
-                                            backgroundColor="transparent"
-                                        />
-                                    </div>
-                                    <div
-                                        className={classes.count}>
-                                        {item.count}
-                                    </div>
-                                </div>
-                            </ListItem>;
+                                </ListItem>);
                         })}
                         <div className={classes.break} />
                     </List>
