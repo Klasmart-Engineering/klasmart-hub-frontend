@@ -14,13 +14,14 @@ import { useGetAllCategories } from "@/api/categories";
 import { useGetAllPaginatedClasses } from "@/api/classes";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedProgramsList } from "@/api/programs";
-import { useGetOrganizationRoles } from "@/api/roles";
+import { useGetPaginatedOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import { buildOrganizationClassesFilter } from "@/operations/queries/getPaginatedOrganizationClasses";
 import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
+import { buildOrganizationRoleFilter } from "@/operations/queries/getPaginatedOrganizationRoles";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
 import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
@@ -68,6 +69,12 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     });
 
     const programPaginationFilter = buildOrganizationProgramFilter({
+        organizationId: orgId ?? ``,
+        search: ``,
+        filters: [],
+    });
+
+    const rolesPaginationFilter = buildOrganizationRoleFilter({
         organizationId: orgId ?? ``,
         search: ``,
         filters: [],
@@ -173,9 +180,16 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         skip: !orgId || skipAll || !selectedFilters.queryPrograms,
     });
 
-    const { data: userRolesData } = useGetOrganizationRoles({
+    const {
+        data: userRolesData,
+        fetchMore: fetchMoreUserRoles,
+    } = useGetPaginatedOrganizationRoles({
         variables: {
-            organization_id: orgId ?? ``,
+            direction: `FORWARD`,
+            count: 50,
+            order: `ASC`,
+            orderBy: `name`,
+            filter: rolesPaginationFilter,
         },
         skip: !orgId || skipAll || !selectedFilters.queryUserRoles,
     });
@@ -188,7 +202,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     });
 
     useEffect(() => {
-        setGradeFilterValueOptions([ ...gradeFilterValueOptions, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]);
+        setGradeFilterValueOptions((values) => ([ ...values, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]));
         if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
             fetchMoreGrades({
                 variables: {
@@ -196,10 +210,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ gradesData ]);
+    }, [ gradesData, fetchMoreGrades ]);
 
     useEffect(() => {
-        setSubjectFilterValueOptions([ ...subjectFilterValueOptions, ...mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []) ]);
+        setSubjectFilterValueOptions((values) => ([ ...values, ...mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []) ]));
         if (subjectsData?.subjectsConnection?.pageInfo?.hasNextPage) {
             fetchMoreSubjects({
                 variables: {
@@ -207,11 +221,11 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ subjectsData ]);
+    }, [ subjectsData, fetchMoreSubjects ]);
 
     useEffect(() => {
-        setAgeRangesLowValueOptions([ ...ageRangesLowValueOptions, ...mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
-        setAgeRangesHighValueOptions([ ...ageRangesHighValueOptions, ...mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
+        setAgeRangesLowValueOptions((values) => ([ ...values, ...mapAgeRangesLowValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]));
+        setAgeRangesHighValueOptions((values) => ([ ...values, ...mapAgeRangesHighValueToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]));
 
         if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
             fetchMoreAgeRanges({
@@ -220,10 +234,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ ageRangesData ]);
+    }, [ ageRangesData, fetchMoreAgeRanges ]);
 
     useEffect(() => {
-        setSchoolsFilterValueOptions([ ...schoolsFilterValueOptions, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]);
+        setSchoolsFilterValueOptions((values) => ([ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
         if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
             fetchMoreSchools({
                 variables: {
@@ -231,10 +245,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ schoolsData ]);
+    }, [ schoolsData, fetchMoreSchools ]);
 
     useEffect(() => {
-        setClassFilterValueOptions([ ...classFilterValueOptions, ...mapClassEdgesToFilterValues(classData?.classesConnection?.edges ?? []) ]);
+        setClassFilterValueOptions((values) => ([ ...values, ...mapClassEdgesToFilterValues(classData?.classesConnection?.edges ?? []) ]));
         if (classData?.classesConnection?.pageInfo?.hasNextPage) {
             fetchMoreClasses({
                 variables: {
@@ -242,10 +256,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ classData ]);
+    }, [ classData, fetchMoreClasses ]);
 
     useEffect(() => {
-        setProgramsFilterValueOptions([ ...programsFilterValueOptions, ...mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []) ]);
+        setProgramsFilterValueOptions((values) => ([ ...values, ...mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []) ]));
         if (programsData?.programsConnection?.pageInfo?.hasNextPage) {
             fetchMorePrograms({
                 variables: {
@@ -253,11 +267,18 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
                 },
             });
         }
-    }, [ programsData ]);
+    }, [ programsData, fetchMorePrograms ]);
 
     useEffect(() => {
-        setUserRolesFilterValueOptions(mapUserRolesToFilterValueOptions(userRolesData?.organization?.roles ?? []));
-    }, [ userRolesData ]);
+        setUserRolesFilterValueOptions((values) => ([ ...values, ...mapUserRolesToFilterValueOptions(userRolesData?.rolesConnection?.edges ?? []) ]));
+        if (userRolesData?.rolesConnection?.pageInfo?.hasNextPage) {
+            fetchMoreUserRoles({
+                variables: {
+                    cursor: userRolesData?.rolesConnection?.pageInfo?.endCursor ?? ``,
+                },
+            });
+        }
+    }, [ userRolesData, fetchMoreUserRoles ]);
 
     useEffect(() => {
         setCategoriesFilterValueOptions(mapCategoriesToFilterOptions(categoriesData?.organization?.categories ?? []));

@@ -1,6 +1,7 @@
 import { ClassUserRow } from "@/api/classRoster";
 import { UserNode } from "@/api/users";
 import { Role } from "@/types/graphQL";
+import { RoleEdge } from "@/api/roles";
 
 export enum UserGenders {
     MALE = `male`,
@@ -9,10 +10,10 @@ export enum UserGenders {
     OTHER = `other`,
 }
 
-export const mapUserRolesToFilterValueOptions = (roles: Role[]) => (
-    roles.map(role => ({
-        value: role.role_id ?? ``,
-        label: role.role_name ?? ``,
+export const mapUserRolesToFilterValueOptions = (edges: RoleEdge[]) => (
+    edges.map(edge => ({
+        value: edge.node.id ?? ``,
+        label: edge.node.name ?? ``,
     }))
 );
 

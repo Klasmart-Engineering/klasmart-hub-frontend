@@ -1,12 +1,11 @@
 import UsersTable from './Table';
-import { GET_ORGANIZATION_ROLES } from '@/operations/queries/getOrganizationRoles';
 import { Status } from "@/types/graphQL";
 import { sortClassNames } from '@/utils/classes';
 import { useGetTableFilters } from '@/utils/filters';
 import { sortGradeNames } from '@/utils/grades';
 import { sortSchoolNames } from '@/utils/schools';
 import { sortRoleNames } from '@/utils/userRoles';
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import {
     fireEvent,
     screen,
@@ -16,10 +15,11 @@ import { renderHook } from "@testing-library/react-hooks";
 import {
     mockOrgId,
     mockPaginatedUsers,
-    mockRolesFilterList,
 } from '@tests/mockDataUsers';
 import { render } from "@tests/utils/render";
 import React from 'react';
+import { buildOrganizationRoleFilter, GET_PAGINATED_ORGANIZATION_ROLES } from '@/operations/queries/getPaginatedOrganizationRoles';
+import { mockRolesConnection } from '@tests/mockRoles';
 
 const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     id: edge.node.id,
@@ -65,16 +65,36 @@ test(`Users table page renders correctly`, async () => {
     });
 });
 
-const mocks = [
+const mockQueryVariables = {
+    direction: `FORWARD`,
+    count: 50,
+    order: `ASC`,
+    orderBy: `name`,
+    filter: buildOrganizationRoleFilter({
+        organizationId: mockOrgId,
+        search: ``,
+        filters: [],
+    }),
+};
+
+const mocks: MockedResponse[] = [
     {
         request: {
-            query: GET_ORGANIZATION_ROLES,
-            variables: {
-                organization_id: mockOrgId,
-            },
+            query: GET_PAGINATED_ORGANIZATION_ROLES,
+            variables: mockQueryVariables,
         },
         result: {
-            data: mockRolesFilterList,
+            data: {
+                rolesConnection: {
+                    ...mockRolesConnection,
+                    pageInfo: {
+                        hasNextPage: false,
+                        hasPreviousPage: false,
+                        startCursor: ``,
+                        endCursor: ``,
+                    }
+                },
+            },
         },
     },
 ];
@@ -96,7 +116,7 @@ test(`useGetTableFilters hook should return mapped user roles data for filter dr
     });
 
     await waitFor(() => {
-        expect(result.current.userRolesFilterValueOptions).toHaveLength(5);
+        expect(result.current.userRolesFilterValueOptions).toHaveLength(7);
         expect(result.current.userRolesFilterValueOptions[0].label).toBe(`Test Organization Admin`);
         expect(result.current.userRolesFilterValueOptions[1].label).toBe(`Test School Admin`);
         expect(result.current.userRolesFilterValueOptions[0].value).toBe(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);

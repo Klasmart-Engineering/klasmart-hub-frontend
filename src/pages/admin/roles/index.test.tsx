@@ -67,8 +67,8 @@ describe(`RolesPage`, () => {
             await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
             expect(screen.getByText(`Roles`)).toBeInTheDocument();
-            expect(screen.getByText(`Organization Admin`)).toBeInTheDocument();
-            expect(screen.getByText(`School Admin`)).toBeInTheDocument();
+            expect(screen.getByText(`Test Organization Admin`)).toBeInTheDocument();
+            expect(screen.getByText(`Test School Admin`)).toBeInTheDocument();
         });
 
         test(`No mocked response data`, async () => {

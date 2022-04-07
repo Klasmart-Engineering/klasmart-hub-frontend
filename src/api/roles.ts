@@ -141,7 +141,11 @@ export const useDeleteRole = (options?: MutationHookOptions<DeleteRoleResponse, 
     const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
     return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, {
         ...options,
-        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+        refetchQueries: [
+            GET_ORGANIZATION_MEMBERSHIPS,
+            GET_PAGINATED_ORGANIZATION_ROLES,
+            ...refetchQueries,
+        ],
     });
 };
 

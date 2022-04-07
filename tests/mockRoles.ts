@@ -90,8 +90,8 @@ export const mockRolesConnection = {
     edges: [
         {
             node: {
-                id: `32d320c8-055a-457a-853a-00f8ab04b074`,
-                name: `Organization Admin`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4690a`,
+                name: `Test Organization Admin`,
                 description: `System Default Role`,
                 system: true,
                 status: Status.ACTIVE,
@@ -100,8 +100,8 @@ export const mockRolesConnection = {
         },
         {
             node: {
-                id: `85e1daad-b56a-470b-a69f-a237d6dd4f0a`,
-                name: `School Admin`,
+                id: `87aca549-fdb6-4a63-97d4-d563d4a4690b`,
+                name: `Test School Admin`,
                 description: `System Default Role`,
                 system: true,
                 status: Status.ACTIVE,
