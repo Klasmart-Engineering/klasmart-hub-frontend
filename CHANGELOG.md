@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.43.1%0Dv2.43.0) (2022-04-07)
+
+
+### 🐛 Bug Fixes
+
+* corrected the date and categorization for schedules added link to next class widget (#35) ([f74bdcc](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f74bdcc8e3c4fc1ae87a401a92f25f51a2e9f257))
+* remove date and time for teacher feedback (#36) ([007cad7](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/007cad7ac3a7777ae3585a658dd50cd077ebc4ef))
+
 ## [2.43.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.43.0%0Dv2.42.1) (2022-04-06)
 
 
