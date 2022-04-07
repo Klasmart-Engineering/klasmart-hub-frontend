@@ -1,3 +1,4 @@
+import { ClassEdge } from "./classes";
 import { ProgramEdge } from "./programs";
 import { DELETE_SCHOOL } from "@/operations/mutations/deleteSchool";
 import { EDIT_SCHOOL } from "@/operations/mutations/editSchool";
@@ -5,7 +6,7 @@ import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms"
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
 import { UPLOAD_SCHOOLS_CSV } from "@/operations/mutations/uploadSchoolsCsv";
 import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { GET_SCHOOL_NODE } from "@/operations/queries/getSchoolNode";
+import { GET_SCHOOL_NODE, GET_SCHOOL_NODE_WITH_CLASS_RELATIONS } from "@/operations/queries/getSchoolNode";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     BaseEntity,
@@ -129,8 +130,18 @@ interface GetSchoolNodeResponse {
     schoolNode: SchoolNode;
 }
 
+interface GetSchoolNodeWithClassRelationsRequest {
+    id: string;
+    classCount?: number;
+    classCursor?: string;
+}
+
 export const useGetSchoolNode = (options?: QueryHookOptions<GetSchoolNodeResponse, GetSchoolNodeRequest>) => {
     return useQuery<GetSchoolNodeResponse, GetSchoolNodeRequest>(GET_SCHOOL_NODE, options);
+};
+
+export const useGetSchoolNodeWithClassRelations = (options?: QueryHookOptions<GetSchoolNodeResponse, GetSchoolNodeWithClassRelationsRequest>) => {
+    return useQuery<GetSchoolNodeResponse, GetSchoolNodeWithClassRelationsRequest>(GET_SCHOOL_NODE_WITH_CLASS_RELATIONS, options);
 };
 
 interface UploadSchoolsCsvResponse {
@@ -167,6 +178,9 @@ export interface SchoolNode {
         edges: ProgramEdge[];
         pageInfo: PageInfo;
         total?: number;
+    };
+    classesConnection?: {
+        edges: ClassEdge[];
     };
 }
 

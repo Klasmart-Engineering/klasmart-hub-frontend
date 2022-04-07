@@ -13,14 +13,6 @@ import {
 } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
 import {
-    Paper,
-    Typography,
-} from "@mui/material";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import {
     CursorTable,
     FullScreenDialog,
 } from "@kl-engineering/kidsloop-px";
@@ -30,6 +22,14 @@ import {
 } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import {
+    Paper,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
 {
     useEffect,
@@ -263,12 +263,12 @@ export default function SchoolRoster (props: Props) {
                 <CursorTable
                     hideAllGroupTab
                     hideSelectAll
+                    showSelectables
                     selectedRows={selectedIds}
                     columns={columns}
                     rows={rows}
                     idField="id"
                     groupBy="role"
-                    showSelectables={true}
                     loading={subgroupBy === `Student` ?
                         loadingStudents :
                         loadingTeachers

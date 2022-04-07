@@ -24,6 +24,12 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    CursorTable,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudIcon,
@@ -41,12 +47,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    CursorTable,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
@@ -175,7 +175,7 @@ export default function ClassesTable (props: Props) {
         `subject_name`,
         `age_range_low_value`,
         `age_range_high_value`,
-        `age_range_unit`
+        `age_range_unit`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({
@@ -193,6 +193,21 @@ export default function ClassesTable (props: Props) {
     const editSelectedRow = (row: ClassRow) => {
         setSelectedClassId(row.id);
         setEditDialogOpen(true);
+    };
+
+    const goToClassRoster = (classId: string) => {
+        if(selectedClassId !== undefined) {
+            setClassRosterDialogOpen(false);
+            setSelectedClassId(undefined);
+            setTimeout(() => {
+                setSelectedClassId(classId);
+                setClassRosterDialogOpen(true);
+            }, 500);
+            return;
+        }
+
+        setSelectedClassId(classId);
+        setClassRosterDialogOpen(true);
     };
 
     const filters: TableFilter<ClassRow>[] = [
@@ -431,8 +446,7 @@ export default function ClassesTable (props: Props) {
                     href={undefined}
                     className={clsx(classes.clickable, classes.primaryText)}
                     onClick={() => {
-                        setSelectedClassId(row.id);
-                        setClassRosterDialogOpen(true);
+                        goToClassRoster(row.id);
                     }}
                 >
                     {row.name}
@@ -446,7 +460,7 @@ export default function ClassesTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: disabled,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.schoolNames.map((school, i) => (
                     <Chip
                         key={`school-${i}`}
@@ -454,7 +468,7 @@ export default function ClassesTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+                              </>),
         },
         {
             id: `ageRanges`,
@@ -469,7 +483,8 @@ export default function ClassesTable (props: Props) {
                         <Chip
                             key={`ageRange-${i}`}
                             label={ageRange}
-                            className={classes.chip} />
+                            className={classes.chip}
+                        />
                     ))}
                 </>
             ),
@@ -487,7 +502,8 @@ export default function ClassesTable (props: Props) {
                         <Chip
                             key={`grade-${i}`}
                             label={grade}
-                            className={classes.chip} />
+                            className={classes.chip}
+                        />
                     ))}
                 </>
             ),
@@ -505,7 +521,8 @@ export default function ClassesTable (props: Props) {
                         <Chip
                             key={`program-${i}`}
                             label={program}
-                            className={classes.chip} />
+                            className={classes.chip}
+                        />
                     ))}
                 </>
             ),
@@ -523,7 +540,8 @@ export default function ClassesTable (props: Props) {
                         <Chip
                             key={`subject-${i}`}
                             label={subject}
-                            className={classes.chip} />
+                            className={classes.chip}
+                        />
                     ))}
                 </>
             ),
@@ -680,15 +698,18 @@ export default function ClassesTable (props: Props) {
                 }}
             />
 
-            {selectedClassId && <ClassRoster
-                open={classRosterDialogOpen}
-                organizationId={currentOrganization?.id ?? ``}
-                classId={selectedClassId}
-                onClose={() => {
-                    setSelectedClassId(undefined);
-                    setClassRosterDialogOpen(false);
-                }}
-            />}
+            {selectedClassId &&
+                <ClassRoster
+                    open={classRosterDialogOpen}
+                    organizationId={currentOrganization?.id ?? ``}
+                    classId={selectedClassId}
+                    goToClassRoster={goToClassRoster}
+                    onClose={() => {
+                        setSelectedClassId(undefined);
+                        setClassRosterDialogOpen(false);
+                    }}
+                />
+            }
 
             <UploadClassCsvDialog
                 open={uploadCsvDialogOpen}

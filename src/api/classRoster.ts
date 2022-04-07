@@ -7,6 +7,8 @@ import { ADD_TEACHERS_TO_CLASS } from "@/operations/mutations/addTeachersToClass
 import { ADD_USERS_TO_CLASS } from "@/operations/mutations/addUsersToClass";
 import { REMOVE_CLASS_STUDENT } from "@/operations/mutations/deleteClassStudent";
 import { REMOVE_CLASS_TEACHER } from "@/operations/mutations/deleteClassTeacher";
+import { MOVE_STUDENTS_TO_CLASS } from "@/operations/mutations/moveStudentsToClass";
+import { MOVE_TEACHERS_TO_CLASS } from "@/operations/mutations/moveTeachersToClass";
 import { GET_CLASS_NODE_ROSTER } from "@/operations/queries/getClassNodeRoster";
 import {
     OrganizationMembership,
@@ -37,6 +39,7 @@ export interface ClassUserRow {
     dateOfBirth: string | null;
     familyName: string;
     givenName: string;
+    tableId: string;
     id: string;
     role?: string;
     organizationRoles: string[];
@@ -66,6 +69,12 @@ interface AddTeachersToClassRequest {
     teacherIds: string[];
 }
 
+export interface MoveUsersToClassRequest {
+    userIds: string[];
+    fromClassId: string;
+    toClassId: string;
+}
+
 export const useGetClassNodeRoster = (options?: QueryHookOptions<GetClassNodeResponse, GetClassNodeRequest>) => {
     return useQuery<GetClassNodeResponse, GetClassNodeRequest>(GET_CLASS_NODE_ROSTER, options);
 };
@@ -88,4 +97,12 @@ export const useAddStudentsToClass = () => {
 
 export const useAddTeachersToClass = () => {
     return useMutation<EmptyResponse, AddTeachersToClassRequest>(ADD_TEACHERS_TO_CLASS);
+};
+
+export const useMoveStudentsToClass = () => {
+    return useMutation<EmptyResponse, MoveUsersToClassRequest>(MOVE_STUDENTS_TO_CLASS);
+};
+
+export const useMoveTeachersToClass = () => {
+    return useMutation<EmptyResponse, MoveUsersToClassRequest>(MOVE_TEACHERS_TO_CLASS);
 };

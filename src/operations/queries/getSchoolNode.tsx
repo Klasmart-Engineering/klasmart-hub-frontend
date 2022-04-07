@@ -25,3 +25,29 @@ export const GET_SCHOOL_NODE = gql`
         }
     }
 `;
+
+export const GET_SCHOOL_NODE_WITH_CLASS_RELATIONS = gql`
+    query getSchoolNodeWithClassRelations($id: ID!, $classCount: PageSize, $classCursor: String) {
+        schoolNode(id: $id) {
+            id
+            name
+            status
+            shortCode
+            classesConnection(
+                count: $classCount
+                cursor: $classCursor
+            ){
+                edges{
+                    node {
+                        id
+                        name
+                        status
+                        schoolsConnection {
+                            totalCount
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;

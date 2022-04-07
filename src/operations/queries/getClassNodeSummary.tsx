@@ -37,6 +37,7 @@ export const GET_CLASS_NODE_SUMMARY = gql`
                 totalCount
                 edges {
                     node {
+                        id
                         givenName
                         familyName
                     }
@@ -49,6 +50,7 @@ export const GET_CLASS_NODE_SUMMARY = gql`
                 totalCount
                 edges {
                     node {
+                        id
                         givenName
                         familyName
                     }

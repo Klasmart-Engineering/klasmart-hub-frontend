@@ -1,10 +1,10 @@
+import TransferClassDialog from "./Dialog/Transfer";
 import {
     ClassUserRow,
     useGetClassNodeRoster,
     useRemoveClassStudent,
     useRemoveClassTeacher,
 } from "@/api/classRoster";
-import { UserNode } from "@/api/users";
 import SchoolRoster from "@/components/Class/SchoolRoster/Table";
 import { buildClassNodeUserSearchFilter } from "@/operations/queries/getClassNodeRoster";
 import {
@@ -15,21 +15,8 @@ import {
     tableToServerOrder,
 } from "@/utils/table";
 import { getCustomRoleName } from "@/utils/userRoles";
+import { mapUserRowPerRole } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
-import {
-    Delete as DeleteIcon,
-    PersonAdd as PersonAddIcon,
-} from "@mui/icons-material";
-import {
-    Box,
-    DialogContentText,
-    Paper,
-    Typography,
-} from "@mui/material";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
 import {
     CursorTable,
     FullScreenDialog,
@@ -42,8 +29,26 @@ import {
 } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import {
+    Delete as DeleteIcon,
+    PersonAdd as PersonAddIcon,
+} from "@mui/icons-material";
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import {
+    Box,
+    DialogContentText,
+    Paper,
+    Typography,
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
-{ useState } from "react";
+{
+    useEffect,
+    useState,
+} from "react";
 import {
     FormattedMessage,
     useIntl,
@@ -61,27 +66,19 @@ const useStyles = makeStyles((theme) => createStyles({
 interface Props {
     open: boolean;
     onClose: () => void;
+    goToClassRoster: (classId: string) => void;
     classId?: string;
     className?: string;
     organizationId: string;
 }
 
-const mapUserRow = (edge: { node: UserNode }, role: string): ClassUserRow => ({
-    givenName: edge.node.givenName ?? ``,
-    familyName: edge.node.familyName ?? ``,
-    role,
-    id: `${edge.node.id}-${role}`,
-    organizationRoles: edge.node.roles?.map((role) => (
-        role.name ?? ``
-    )) ?? [],
-    dateOfBirth: edge.node.dateOfBirth ?? null,
-    contactInfo: edge.node.contactInfo?.email || edge.node.contactInfo?.phone || ``,
-});
+export type ClassRosterSubgroup = `Teacher` | `Student`;
 
 export default function ClassRoster (props: Props) {
     const {
         open,
         onClose,
+        goToClassRoster,
         classId,
         organizationId,
     } = props;
@@ -90,10 +87,13 @@ export default function ClassRoster (props: Props) {
     const intl = useIntl();
     const prompt = usePrompt();
     const [ schoolRosterDialogOpen, setSchoolRosterDialogOpen ] = useState(false);
+    const [ selectedUserIds, setSelectedUserIds ] = useState<string[]>([]);
     const { required, equals } = useValidations();
     const [ removeStudent ] = useRemoveClassStudent();
     const [ removeTeacher ] = useRemoveClassTeacher();
-    const [ subgroupBy, setSubgroupBy ] = useState(`Student`);
+    const [ subgroupBy, setSubgroupBy ] = useState<ClassRosterSubgroup>(`Student`);
+    const [ transferClassDialogOpen, setTransferClassDialogOpen ] = useState(false);
+    const [ transerClassUserIds, setTranserClassUserIds ] = useState<string[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -121,9 +121,11 @@ export default function ClassRoster (props: Props) {
     });
 
     const rows = subgroupBy === `Student` ?
-        rosterData?.classNode?.studentsConnection?.edges.map((edge) => mapUserRow(edge, subgroupBy)) ?? [] :
-        rosterData?.classNode?.teachersConnection?.edges.map((edge) => mapUserRow(edge, subgroupBy)) ?? [];
+        rosterData?.classNode?.studentsConnection?.edges.map((edge) => mapUserRowPerRole(edge, subgroupBy)) ?? [] :
+        rosterData?.classNode?.teachersConnection?.edges.map((edge) => mapUserRowPerRole(edge, subgroupBy)) ?? [];
     const roles = [ `Student`, `Teacher` ];
+
+    const enableClassRosterTransfer = rosterData?.classNode?.schools?.length === 1 ?? false;
 
     const columns: TableColumn<ClassUserRow>[] = [
         {
@@ -196,6 +198,18 @@ export default function ClassRoster (props: Props) {
         },
     ];
 
+    // // if users change tab, remove existing selection
+    useEffect(() => {
+        if (!selectedUserIds.length) return;
+        setSelectedUserIds([]);
+    }, [ subgroupBy ]);
+
+    const handleClassTransferDialogOpen = (targetTableUserIds: string[]) => {
+        const rawIds = targetTableUserIds.map((id) => id.replace(`-${subgroupBy}`, ``));
+        setTranserClassUserIds(rawIds);
+        setTransferClassDialogOpen(true);
+    };
+
     const handleRemoveUser = async (row: ClassUserRow) => {
         const userName = `${row.givenName} ${row.familyName}`.trim();
 
@@ -246,7 +260,7 @@ export default function ClassRoster (props: Props) {
     };
 
     const handleTableChange = (tableData: CursorTableData<ClassUserRow>) => {
-        setSubgroupBy(tableData?.subgroupBy ?? `Student`);
+        setSubgroupBy(tableData?.subgroupBy as ClassRosterSubgroup ?? `Student`);
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
@@ -273,6 +287,7 @@ export default function ClassRoster (props: Props) {
             open={open}
             title={rosterData?.classNode?.name ?? ``}
             onClose={() => {
+                setSelectedUserIds([]);
                 onClose();
             }}
         >
@@ -306,6 +321,21 @@ export default function ClassRoster (props: Props) {
                     orderBy="givenName"
                     order="asc"
                     groupBy="role"
+                    selectActions={
+                        [
+                            {
+                                label: intl.formatMessage({
+                                    id: `class_transferLabel`,
+                                    defaultMessage: `Transfer`,
+                                }),
+                                disabled: !enableClassRosterTransfer,
+                                icon: MoveDownIcon,
+                                onClick: () => {
+                                    handleClassTransferDialogOpen(selectedUserIds); },
+                            },
+                        ]
+                    }
+                    selectedRows={selectedUserIds}
                     subgroupBy={subgroupBy}
                     primaryAction={{
                         label: intl.formatMessage({
@@ -323,6 +353,15 @@ export default function ClassRoster (props: Props) {
                             icon: DeleteIcon,
                             onClick: () => handleRemoveUser(row),
                         },
+                        {
+                            label: intl.formatMessage({
+                                id: `class_transferLabel`,
+                                defaultMessage: `Transfer`,
+                            }),
+                            disabled: !enableClassRosterTransfer,
+                            icon: MoveDownIcon,
+                            onClick: () => handleClassTransferDialogOpen([ row.id ]),
+                        },
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
@@ -336,22 +375,44 @@ export default function ClassRoster (props: Props) {
                             }),
                         },
                     })}
+                    onSelected={(ids: string[]) => {
+                        setSelectedUserIds(ids);
+                    }}
                     onChange={handleTableChange}
                     onPageChange={handlePageChange}
                 />
             </Paper>
 
-            {classId &&
-                <SchoolRoster
-                    open={schoolRosterDialogOpen}
-                    refetchClassRoster={refetch}
-                    classId={classId}
-                    organizationId={organizationId}
-                    onClose={() => {
-                        refetch();
-                        setSchoolRosterDialogOpen(false);
-                    }}
-                />
+            {classId && (
+                <>
+                    <SchoolRoster
+                        open={schoolRosterDialogOpen}
+                        refetchClassRoster={refetch}
+                        classId={classId}
+                        organizationId={organizationId}
+                        onClose={() => {
+                            refetch();
+                            setSchoolRosterDialogOpen(false);
+                        }}
+                    />
+                    <TransferClassDialog
+                        open={transferClassDialogOpen}
+                        userIds={transerClassUserIds}
+                        currentClassId={classId}
+                        subgroupBy={subgroupBy}
+                        goToClassRoster={goToClassRoster}
+                        onSuccess={() => {
+                            setSelectedUserIds([]);
+                            setTranserClassUserIds([]);
+                            refetch();
+                        }}
+                        onClose={() => {
+                            setTransferClassDialogOpen(false);
+                            setTranserClassUserIds([]);
+                        }}
+                    />
+                </>
+            )
             }
         </FullScreenDialog>
     );
