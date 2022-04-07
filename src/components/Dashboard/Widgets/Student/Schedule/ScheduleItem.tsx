@@ -160,7 +160,7 @@ function ScheduleItem (props: Props) {
                         >
                             <FormattedDate
                                 hour12
-                                value={item.start_at}
+                                value={item.start_at * 1000}
                                 hour="2-digit"
                                 minute="2-digit"
                             />

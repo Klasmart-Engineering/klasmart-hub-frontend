@@ -183,7 +183,7 @@ export default function TreacherFeedbackWidget () {
     //             hour="numeric"
     //             minute="2-digit"
     //         />}, {feedbackDay}
-    //             </>);
+    //     </>);
     // };
 
     const fetchStatusGroups = async () => {
@@ -236,7 +236,7 @@ export default function TreacherFeedbackWidget () {
                 })
             }
             link={{
-                url: ``,
+                url: `reports`,
                 label: intl.formatMessage({
                     id: `home.student.teacherFeedbackWidget.containerUrlLabel`,
                 }),

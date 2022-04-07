@@ -274,7 +274,7 @@ function StudentNextClass (props: Props) {
             error={isError}
             reload={refetch}
             link={{
-                url: ``,
+                url: `schedule`,
                 label: intl.formatMessage({
                     id: `home.nextClass.containerUrlLabel`,
                 }),
@@ -283,21 +283,22 @@ function StudentNextClass (props: Props) {
             id={WidgetType.STUDENTNEXTCLASS}
         >
             <Box className={classes.root}>
-                {(nextClass) ? <Grid
-                    container
-                    alignItems="stretch"
-                >
+                {(nextClass) ?
                     <Grid
-                        item
-                        xs={isVerticalMode ? 12 : 3}
-                        className={classes.imageContainer}
+                        container
+                        alignItems="stretch"
                     >
-                        <img
-                            className={classes.image}
-                            src={NextClassThumb}
-                        />
-                        {
-                            isVerticalMode &&
+                        <Grid
+                            item
+                            xs={isVerticalMode ? 12 : 3}
+                            className={classes.imageContainer}
+                        >
+                            <img
+                                className={classes.image}
+                                src={NextClassThumb}
+                            />
+                            {
+                                isVerticalMode &&
                         <Fab
                             color="primary"
                             className={clsx(classes.liveButton, classes.liveButtonImageOverlay)}
@@ -305,44 +306,45 @@ function StudentNextClass (props: Props) {
                         >
                             <span className={classes.liveButtonLabel}><FormattedMessage id="home.nextClass.goLive" /></span>
                         </Fab>
-                        }
-                    </Grid>
+                            }
+                        </Grid>
 
-                    <Grid
-                        item
-                        xs
-                        className={classes.contentContainer}
-                    >
-                        <div className={classes.content}>
-                            <div>
-                                <Chip
-                                    className={classes.darkChip}
-                                    label={intl.formatMessage({
-                                        id: `home.nextClass.title`,
-                                    })}
-                                />
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    p={1}
-                                >
+                        <Grid
+                            item
+                            xs
+                            className={classes.contentContainer}
+                        >
+                            <div className={classes.content}>
+                                <div>
+                                    <Chip
+                                        className={classes.darkChip}
+                                        label={intl.formatMessage({
+                                            id: `home.nextClass.title`,
+                                        })}
+                                    />
                                     <Box
-                                        paddingTop={.25}
-                                        paddingRight={1}
+                                        display="flex"
+                                        alignItems="center"
+                                        p={1}
                                     >
-                                        <LiveTvIcon fontSize={smallTextInHorizontal ? `medium` : `large`} />
+                                        <Box
+                                            paddingTop={.25}
+                                            paddingRight={1}
+                                        >
+                                            <LiveTvIcon fontSize={smallTextInHorizontal ? `medium` : `large`} />
+                                        </Box>
+                                        <Typography
+                                            variant={smallTextInHorizontal ? `h6` : `h5`}
+                                            className={classes.title}
+                                        >
+                                            {nextClass?.title}
+                                        </Typography>
                                     </Box>
-                                    <Typography
-                                        variant={smallTextInHorizontal ? `h6` : `h5`}
-                                        className={classes.title}
-                                    >
-                                        {nextClass?.title}
-                                    </Typography>
-                                </Box>
-                            </div>
-                            <Divider className={classes.divider} />
-                            <Box>
-                                {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (<Box
+                                </div>
+                                <Divider className={classes.divider} />
+                                <Box>
+                                    {rosterData?.classNode.teachersConnection?.totalCount !== 0 &&
+                                <Box
                                     className={classes.classDetails}
                                 >
                                     <div className={classes.teacherList}>
@@ -385,46 +387,47 @@ function StudentNextClass (props: Props) {
                                             </Grid>
                                         </Box>
                                     </div>
-                                    {nextClass ? <div>
-                                        {timeBeforeClass < 0 ? (
-                                            <FormattedMessage id="home.nextClass.alreadyStarted" />
-                                        ) : (
-                                            timeBeforeClass < secondsBeforeClassCanStart && (
-                                                <FormattedMessage id="home.nextClass.startsSoon" />
-                                            )
-                                        )}
-                                        <Typography
-                                            noWrap
-                                            variant={smallTextInHorizontal ? `body2` : `body1`}
-                                        >
-                                            <FormattedDate
-                                                value={(nextClass?.start_at || 0) * 1000}
-                                                day="2-digit"
-                                                month="long"
-                                                weekday="long"
-                                            />
-                                        </Typography>
-                                        <Typography
-                                            noWrap
-                                            variant={smallTextInHorizontal ? `body2` : `body1`}
-                                        >
-                                            <FormattedDate
-                                                hour12
-                                                value={(nextClass?.start_at || 0) * 1000}
-                                                hour="2-digit"
-                                                minute="2-digit"
-                                            />
-                                            <FormattedDuration
-                                                seconds={(nextClass?.end_at || 0) - (nextClass?.start_at || 0)}
-                                                format=" - {hours} {minutes}"
-                                            />
-                                        </Typography>
-                                    </div> : <></>}
-                                </Box>)}
-                            </Box>
-                        </div>
-                    </Grid>
-                    {!isVerticalMode &&
+                                    {nextClass ?
+                                        <div>
+                                            {timeBeforeClass < 0 ? (
+                                                <FormattedMessage id="home.nextClass.alreadyStarted" />
+                                            ) : (
+                                                timeBeforeClass < secondsBeforeClassCanStart && (
+                                                    <FormattedMessage id="home.nextClass.startsSoon" />
+                                                )
+                                            )}
+                                            <Typography
+                                                noWrap
+                                                variant={smallTextInHorizontal ? `body2` : `body1`}
+                                            >
+                                                <FormattedDate
+                                                    value={(nextClass?.start_at || 0) * 1000}
+                                                    day="2-digit"
+                                                    month="long"
+                                                    weekday="long"
+                                                />
+                                            </Typography>
+                                            <Typography
+                                                noWrap
+                                                variant={smallTextInHorizontal ? `body2` : `body1`}
+                                            >
+                                                <FormattedDate
+                                                    hour12
+                                                    value={(nextClass?.start_at || 0) * 1000}
+                                                    hour="2-digit"
+                                                    minute="2-digit"
+                                                />
+                                                <FormattedDuration
+                                                    seconds={(nextClass?.end_at || 0) - (nextClass?.start_at || 0)}
+                                                    format=" - {hours} {minutes}"
+                                                />
+                                            </Typography>
+                                        </div> : <></>}
+                                </Box>}
+                                </Box>
+                            </div>
+                        </Grid>
+                        {!isVerticalMode &&
                     <Grid
                         item
                         xs={2}
@@ -438,19 +441,20 @@ function StudentNextClass (props: Props) {
                         >
                             <span className={classes.liveButtonLabel}>
                                 {timeBeforeClass < secondsBeforeClassCanStart ?
-                                    <FormattedMessage id="home.nextClass.goLive" />
-                                    : <Typography>
+                                    <FormattedMessage id="home.nextClass.goLive" /> :
+                                    <Typography>
                                         <FormattedRelativeTime
                                             value={timeBeforeClass}
                                             updateIntervalInSeconds={1}
                                         />
-                                    </Typography>}
+                                    </Typography>
+                                }
                             </span>
                         </Fab>
+                    </Grid>}
                     </Grid>
-                    }
-                </Grid>
-                    : (schedulesData && <Typography className={classes.noClass}>
+                    : (schedulesData &&
+                    <Typography className={classes.noClass}>
                         <FormattedMessage id="home.nextClass.noClass" />
                     </Typography>
                     )}

@@ -95,7 +95,7 @@ export default function StudentAttendanceWidget (props: Props) {
                 })
             }
             link={{
-                url: ``,
+                url: `reports`,
                 label: intl.formatMessage({
                     id: `home.student.attendanceWidget.containerUrlLabel`,
                 }),

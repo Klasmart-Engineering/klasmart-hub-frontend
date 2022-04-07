@@ -56,7 +56,7 @@ export default function ScheduleWidget () {
     const organizationId = currentOrganization?.id ?? ``;
 
     const now = new Date();
-    const yesterday = now.setDate(new Date().getDate() - 1) / 1000;
+    const yesterday = new Date().setDate(new Date().getDate() - 1) / 1000;
     const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
     const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
     const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
@@ -88,13 +88,13 @@ export default function ScheduleWidget () {
             if (startDiff === 0) return a.title.localeCompare(b.title);
             return startDiff;
         });
-        setSchedule([ ...schedule, ...schedulesData.data ]);
+        setSchedule([ ...schedulesData.data ]);
     }, [ currentOrganization, schedulesData ]);
 
     const scheduledClass = schedule
         ?.map((e) => ({
             ...e,
-            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset).toISOString().split(`T`)[0],
+            start_at_date: new Date(((e.start_at + 1 + timeZoneOffset) * 1000)).toISOString().split(`T`)[0],
         }))
         .filter((event) => event.status !== `Closed`)
         .filter((event) => event.start_at > yesterday);
@@ -102,7 +102,7 @@ export default function ScheduleWidget () {
     const daysWithClass = schedule
         ?.map((e) => ({
             ...e,
-            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset).toISOString().split(`T`)[0],
+            start_at_date: new Date(((e.start_at + 1 + timeZoneOffset) * 1000)).toISOString().split(`T`)[0],
         }))
         .filter((event) => event.status !== `Closed`)
         .filter((event) => event.start_at > yesterday)
@@ -201,11 +201,11 @@ type DateLabelProps = {
     now: Date;
 }
 
+// eslint-disable-next-line react/no-multi-comp
 function DateLabel (props: DateLabelProps) {
     const { date, now } = props;
 
     const scheduleDay = new Date(date);
-
     if (now.getDate() === scheduleDay.getDate())
         return (<FormattedMessage id="date.today" />);
 
