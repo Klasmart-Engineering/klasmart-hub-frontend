@@ -162,28 +162,29 @@ export default function TreacherFeedbackWidget () {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
-    const formatDate = (date: Date) => {
-        const day = date.getDate();
-        const feedbackDay = day === new Date().getDate() - 1 ?
-            <FormattedMessage id="date.yesterday" />
-            : day === new Date().getDate() ?
-                <FormattedMessage id="date.today" />
-                :
-                <FormattedDate
-                    value={date}
-                    day="2-digit"
-                    month="short"
-                />;
+    // enable the date and time after the Bug is fixed in the API
+    // const formatDate = (date: Date) => {
+    //     const day = date.getDate();
+    //     const feedbackDay = day === new Date().getDate() - 1 ?
+    //         <FormattedMessage id="date.yesterday" />
+    //         : day === new Date().getDate() ?
+    //             <FormattedMessage id="date.today" />
+    //             :
+    //             <FormattedDate
+    //                 value={date}
+    //                 day="2-digit"
+    //                 month="short"
+    //             />;
 
-        return (<>
-            {<FormattedDate
-                hour12
-                value={date}
-                hour="numeric"
-                minute="2-digit"
-            />}, {feedbackDay}
-                </>);
-    };
+    //     return (<>
+    //         {<FormattedDate
+    //             hour12
+    //             value={date}
+    //             hour="numeric"
+    //             minute="2-digit"
+    //         />}, {feedbackDay}
+    //             </>);
+    // };
 
     const fetchStatusGroups = async () => {
         if (rows.length === totalCount && totalCount !== 0) return;
@@ -266,7 +267,7 @@ export default function TreacherFeedbackWidget () {
                                     <div className={classes.feedbackInnerWrapper}>
                                         <div className={classes.feedbackHeader}>
                                             <Typography className={classes.name}><b>{item.teacherName}</b>, {item.title}</Typography>
-                                            <Typography className={classes.date}>{formatDate(item.date)}</Typography>
+                                            {/* <Typography className={classes.date}>{formatDate(item.date)}</Typography> */}
                                         </div>
                                         <Typography className={classes.feedback}>{item.feedback}</Typography>
                                     </div>
