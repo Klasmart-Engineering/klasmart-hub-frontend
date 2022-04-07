@@ -1,23 +1,19 @@
 import ClassRosterTable from './Table';
-import {
-    screen,
-    waitFor,
-} from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { render } from "@tests/utils/render";
 import React from 'react';
 
-test(`Class roster table loads correctly.`, async () => {
+test(`Class roster table loads correctly.`, () => {
     render(<ClassRosterTable
-        open={true}
+        open
         organizationId={`test`}
-        onClose={jest.fn()}/>);
+        onClose={jest.fn()}
+           />);
 
-    await waitFor(() => {
-        expect(screen.queryByText(`Class Roster`)).toBeInTheDocument();
-        expect(screen.queryAllByText(`Given Name`).length).toBeTruthy();
-        expect(screen.queryAllByText(`Family Name`).length).toBeTruthy();
-        expect(screen.queryAllByText(`Participating As`).length).toBeTruthy();
-        expect(screen.queryAllByText(`Contact Info`).length).toBeTruthy();
-        expect(screen.queryAllByText(`Organization Roles`).length).toBeTruthy();
-    });
+    expect(screen.getByText(`Class Roster`)).toBeInTheDocument();
+    expect(screen.getAllByText(`Given Name`).length).toBeTruthy();
+    expect(screen.getAllByText(`Family Name`).length).toBeTruthy();
+    expect(screen.getAllByText(`Participating As`).length).toBeTruthy();
+    expect(screen.getAllByText(`Contact Info`).length).toBeTruthy();
+    expect(screen.getAllByText(`Organization Roles`).length).toBeTruthy();
 });

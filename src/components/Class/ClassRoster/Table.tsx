@@ -129,13 +129,6 @@ export default function ClassRoster (props: Props) {
 
     const columns: TableColumn<ClassUserRow>[] = [
         {
-            id: `id`,
-            label: intl.formatMessage({
-                id: `generic_idLabel`,
-            }),
-            hidden: true,
-        },
-        {
             id: `givenName`,
             label: intl.formatMessage({
                 id: `users_firstName`,
