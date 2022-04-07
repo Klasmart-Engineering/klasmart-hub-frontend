@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.44.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.44.0%0Dv2.43.1) (2022-04-07)
+
+
+### 🐛 Bug Fixes
+
+* modified mutation in class roster to prevent api error response (#21) ([f6b75fe](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f6b75fec77e554adb26528200a6771786c48d2cd))
+* removed ID column in class roster to match other user tables (#34) ([88d5825](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/88d5825425e5102e678c89b2ce0d42e52b177bc5))
+* user table filters for roles no longer shows inactive roles, changed query to paginated query (#30) ([b5ef5fe](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/b5ef5fe15fbf8f0f3f992f0865bfcd4f65255094))
+
+
+### ✨ Features
+
+* [AD-2303](https://calmisland.atlassian.net/browse/AD-2303) - Bulk transfer class option on class roster (#33) ([c1dad7e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c1dad7e27e81e1a2c71c11f58590f31bb3975a5d))
+* enable mock data for student dashboard widget for reporting apis (#37) ([5ca6175](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5ca61756986ecdf71c8eadbddb2751cb6c53f909))
+
 ### [2.43.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.43.1%0Dv2.43.0) (2022-04-07)
 
 
