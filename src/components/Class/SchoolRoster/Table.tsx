@@ -2,7 +2,7 @@ import {
     useGetPaginatedElgibleStudents,
     useGetPaginatedElgibleTeachers,
 } from "@/api/classes";
-import { useAddUsersToClass } from "@/api/classRoster";
+import { useAddStudentsToClass, useAddTeachersToClass, useAddUsersToClass } from "@/api/classRoster";
 import { buildOrganizationUserSearchFilter } from "@/operations/queries/getPaginatedOrganizationUsers";
 import {
     DEFAULT_ROWS_PER_PAGE,
@@ -72,6 +72,8 @@ export default function SchoolRoster (props: Props) {
     const intl = useIntl();
     const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
     const [ addUsersToClass ] = useAddUsersToClass();
+    const [ addStudentsToClass ] = useAddStudentsToClass();
+    const [ addTeachersToClass ] = useAddTeachersToClass();
     const [ subgroupBy, setSubgroupBy ] = useState(`Student`);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
@@ -183,14 +185,34 @@ export default function SchoolRoster (props: Props) {
 
         const studentIds = selectedIds.filter((id: string) => id.match(/-student/gi)).map((id: string) => (id.replace(/-student/gi, ``)));
         const teacherIds = selectedIds.filter((id: string) => id.match(/-teacher/gi)).map((id: string) => (id.replace(/-teacher/gi, ``)));
+        const variables = { classId };
 
-        await addUsersToClass({
-            variables: {
-                classId,
-                studentIds,
-                teacherIds,
-            },
-        });
+        switch (`${studentIds.length > 0}-${teacherIds.length > 0}`) {
+            case `true-false`:
+                await addStudentsToClass({
+                    variables: {
+                        ...variables,
+                        studentIds,
+                    }
+                });
+                break;
+            case `false-true`:
+                await addTeachersToClass({
+                    variables: {
+                        ...variables,
+                       teacherIds,
+                    }
+                });
+                break;
+            default:
+                await addUsersToClass({
+                    variables: {
+                        ...variables,
+                        studentIds,
+                        teacherIds,
+                    }
+                });
+            }
 
         refetchClassRoster();
         onClose();
