@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     }));
 
-const roundNumber = (num: number) => Math.round(num / 10) * 10;
+const roundNumber = (num: number) => Math.round((num / 10) * 10);
 const LEFT_AXIS_BREAKPOINT = 400;
 interface Data {
     skill: string;
@@ -288,7 +288,7 @@ export default function BarChart (props: Props) {
                                                             color={theme.palette.common.white}
                                                             className={classes.htmlLabelTextForBarValue}
                                                         >
-                                                            {bar?.data?.achieved}
+                                                            {!!bar?.data?.achieved && bar.data.achieved}
                                                         </Typography>
                                                     </Box>
                                                 )}

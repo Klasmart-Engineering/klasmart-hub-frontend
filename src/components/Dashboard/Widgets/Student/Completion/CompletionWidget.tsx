@@ -1,5 +1,7 @@
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useGetStudentAssignmentCompletion } from "@kl-engineering/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";
 import {
     Theme,
@@ -9,7 +11,8 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React from "react";
+import React,
+{ useMemo } from "react";
 import {
     FormattedMessage,
     useIntl,
@@ -52,7 +55,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
         display: `flex`,
         flexDirection: `column`,
         alignItems: `center`,
-        justifyItems:`center`,
+        justifyItems: `center`,
         backgroundColor: theme.palette.grey[100],
         padding: `0.9rem 0 0.9rem 0`,
         borderRadius: `0.5rem`,
@@ -130,17 +133,28 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
     },
 })));
 
-const data = {
-    total: 132,
-    completed: 45,
-};
-
 export default function CompletionWidget () {
+    const currentOrganization = useCurrentOrganization();
+    const organizationId = currentOrganization?.id ?? ``;
+    const {
+        data,
+        isLoading: isAssignmentCompletionLoading,
+        error: isAssignmentCompletionError,
+        refetch,
+    } = useGetStudentAssignmentCompletion({
+        org: organizationId,
+    });
     const intl = useIntl();
     const classes = useStyles();
-
-    const completedPercentage = Math.floor((data.completed / data.total) * 100);
-    const incompletePercentage = Math.floor(((data.total -  data.completed) / data.total) * 100);
+    const completionData = useMemo(() => {
+        if (!data?.successful) return;
+        const info = data.info;
+        return {
+            ...info,
+            completed_perc: info.completed_perc * 100,
+            incomplete_perc: info.incomplete_perc * 100,
+        };
+    }, [ data ]);
 
     return (
         <WidgetWrapper
@@ -149,93 +163,97 @@ export default function CompletionWidget () {
                     id: `home.student.completionWidget.containerTitleLabel`,
                 })
             }
-            loading={false}
-            error={false}
-            noData={false}
-            reload={() => {false;}}
+            loading={isAssignmentCompletionLoading}
+            error={isAssignmentCompletionError}
+            noData={!data?.successful}
+            reload={refetch}
             link={{
-                url: ``,
+                url: `reports`,
                 label: intl.formatMessage({
                     id: `home.student.completionWidget.containerUrlLabel`,
                 }),
             }}
-            id={WidgetType.COMPLETION}>
-            <div className={classes.widgetContent}>
-                <div className={classes.titleWrapper}>
-                    <FiberManualRecord className={classes.titleBullet}/>
-                    <Typography className={classes.title}>
-                        <FormattedMessage id="home.student.completionWidget.title" />
-                    </Typography>
-                </div>
-                <div className={classes.barContainer}>
-                    <div className={classes.bar} >
-                        <div
-                            className={classes.barLeft}
-                            style={{
-                                width: `${completedPercentage}%`,
-                            }}>
-                            <Typography>
-                                {completedPercentage}%
-                            </Typography>
-                        </div>
-                        <div
-                            className={classes.barRight}
-                            style={{
-                                width: `${incompletePercentage}%`,
-                            }}>
-                            <Typography>
-                                {incompletePercentage}%
-                            </Typography>
-                        </div>
-                    </div>
-                    <div className={classes.barFooter}>
-                        <Typography className={classes.barFooterLeft}>
-                            <FormattedMessage id="home.student.completionWidget.legendCompleted" />
-                        </Typography>
-                        <Typography className={classes.barFooterRight}>
-                            <FormattedMessage id="home.student.completionWidget.legendIncomplete" />
+            id={WidgetType.COMPLETION}
+        >
+            {completionData &&
+                <div className={classes.widgetContent}>
+                    <div className={classes.titleWrapper}>
+                        <FiberManualRecord className={classes.titleBullet} />
+                        <Typography className={classes.title}>
+                            <FormattedMessage id="home.student.completionWidget.title" />
                         </Typography>
                     </div>
-                </div>
-                <div className={classes.list} >
-                    <div className={classes.listItem}>
-                        <Typography className={classes.dataTitle}>
-                            <FormattedMessage id="home.student.completionWidget.totalAssignment" />
-                        </Typography>
-                        <div className={classes.data}>
-                            <Typography className={classes.dataCount}>
-                                {data.total}
+                    <div className={classes.barContainer}>
+                        <div className={classes.bar} >
+                            <div
+                                className={classes.barLeft}
+                                style={{
+                                    width: `${completionData.completed_perc}%`,
+                                }}
+                            >
+                                <Typography>
+                                    {completionData.completed_perc}%
+                                </Typography>
+                            </div>
+                            <div
+                                className={classes.barRight}
+                                style={{
+                                    width: `${completionData.incomplete_perc}%`,
+                                }}
+                            >
+                                <Typography>
+                                    {completionData.incomplete_perc}%
+                                </Typography>
+                            </div>
+                        </div>
+                        <div className={classes.barFooter}>
+                            <Typography className={classes.barFooterLeft}>
+                                <FormattedMessage id="home.student.completionWidget.legendCompleted" />
+                            </Typography>
+                            <Typography className={classes.barFooterRight}>
+                                <FormattedMessage id="home.student.completionWidget.legendIncomplete" />
                             </Typography>
                         </div>
                     </div>
-                    <div className={classes.listItem}>
-                        <Typography className={classes.dataTitle}>
-                            <FormattedMessage id="home.student.completionWidget.legendCompleted" />
-                        </Typography>
-                        <div className={`${classes.data} ${classes.light}`}>
-                            <Typography className={classes.dataCount}>
-                                {data.completed}
+                    <div className={classes.list} >
+                        <div className={classes.listItem}>
+                            <Typography className={classes.dataTitle}>
+                                <FormattedMessage id="home.student.completionWidget.totalAssignment" />
                             </Typography>
-                            <Typography className={classes.dataPercentage}>
-                                ({completedPercentage}%)
+                            <div className={classes.data}>
+                                <Typography className={classes.dataCount}>
+                                    {completionData.total}
+                                </Typography>
+                            </div>
+                        </div>
+                        <div className={classes.listItem}>
+                            <Typography className={classes.dataTitle}>
+                                <FormattedMessage id="home.student.completionWidget.legendCompleted" />
                             </Typography>
+                            <div className={`${classes.data} ${classes.light}`}>
+                                <Typography className={classes.dataCount}>
+                                    {completionData.completed}
+                                </Typography>
+                                <Typography className={classes.dataPercentage}>
+                                    ({completionData.completed_perc}%)
+                                </Typography>
+                            </div>
+                        </div>
+                        <div className={classes.listItem}>
+                            <Typography className={classes.dataTitle}>
+                                <FormattedMessage id="home.student.completionWidget.legendIncomplete" />
+                            </Typography>
+                            <div className={`${classes.data} ${classes.warning}`}>
+                                <Typography className={classes.dataCount}>
+                                    {completionData.incomplete}
+                                </Typography>
+                                <Typography className={classes.dataPercentage}>
+                                    ({completionData.incomplete_perc}%)
+                                </Typography>
+                            </div>
                         </div>
                     </div>
-                    <div className={classes.listItem}>
-                        <Typography className={classes.dataTitle}>
-                            <FormattedMessage id="home.student.completionWidget.legendIncomplete" />
-                        </Typography>
-                        <div className={`${classes.data} ${classes.warning}`}>
-                            <Typography className={classes.dataCount}>
-                                {data.total -  data.completed}
-                            </Typography>
-                            <Typography className={classes.dataPercentage}>
-                                ({incompletePercentage}%)
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </div>}
         </WidgetWrapper>
     );
 }

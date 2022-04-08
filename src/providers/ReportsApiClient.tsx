@@ -99,6 +99,12 @@ export default function ReportsApiClientProvider (props: Props) {
                                 baseURL: BASE_URL,
                                 url: `/studentattendrate.json`,
                             };
+                        case `student_assesscomp`:
+                            return{
+                                ...config,
+                                baseURL: BASE_URL,
+                                url: `/studentassesmentcompletion.json`,
+                            };
                         default:
                             return config;
                         }
