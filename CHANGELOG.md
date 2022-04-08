@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.45.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.45.0%0Dv2.44.0) (2022-04-08)
+
+
+### 🐛 Bug Fixes
+
+* removing unused permissions (#38) ([3ef16dd](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3ef16dd63a99f55e4adbf8b59edc6aa01c736233))
+
+
+### ✨ Features
+
+* enable real data for student dashboard reporting widget apis (#40) ([c7e64ea](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c7e64ea9c5f737ab9f0591190f9193d87a5cac32))
+* **widget:** integrate with assignment completion widget api (#39) ([1fe11bf](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1fe11bf720d7d1a7560495af7d8e6a0e485fd600))
+
 ## [2.44.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.44.0%0Dv2.43.1) (2022-04-07)
 
 
