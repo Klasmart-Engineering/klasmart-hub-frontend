@@ -14,6 +14,13 @@ import {
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {
+    Dialog,
+    PageTable,
+    usePrompt,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
 } from "@mui/icons-material";
@@ -26,13 +33,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Dialog,
-    PageTable,
-    usePrompt,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { uniq } from "lodash";
 import React,
 {
@@ -233,7 +233,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
             id: `programs`,
             label: `Programs using`,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.programs.map((program, i) => (
                     <Chip
                         key={`program-${i}`}
@@ -241,13 +241,13 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+                              </>),
         },
         {
             id: `subjects`,
             label: `Subjects using`,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.subjects.map((subject, i) => (
                     <Chip
                         key={`subject-${i}`}
@@ -255,13 +255,13 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+                              </>),
         },
         {
             id: `categories`,
             label: `Categories using`,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.categories.map((category, i) => (
                     <Chip
                         key={`category-${i}`}
@@ -269,7 +269,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+                              </>),
         },
     ];
 
@@ -324,7 +324,6 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         },
                     }}
                     onSelected={(rows: string[]) => {
-                        if (!rows.length) return;
                         const selectedSubcategories = subcategories.filter((subcategory) => rows.includes(subcategory.id ?? ``));
                         setUpdatedSubcategories(selectedSubcategories);
                     }}
