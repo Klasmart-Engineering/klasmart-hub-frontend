@@ -39,6 +39,7 @@ interface SelectFilters {
     queryPrograms?: boolean;
     queryUserRoles?: boolean;
     queryCategories?: boolean;
+    queryAcademicTerm?: boolean;
 }
 
 export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters, skipAll?: boolean) => {
@@ -51,6 +52,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     const [ programsFilterValueOptions, setProgramsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ userRolesFilterValueOptions, setUserRolesFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ categoriesFilterValueOptions, setCategoriesFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ academicTermValueOptions, setAcademicTermValueOptions ] = useState<FilterValueOption[]>([]);
     const gradeFilter = buildGradeFilter({
         organizationId: orgId ?? ``,
         search: ``,
@@ -284,6 +286,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         setCategoriesFilterValueOptions(mapCategoriesToFilterOptions(categoriesData?.organization?.categories ?? []));
     }, [ categoriesData ]);
 
+    useEffect(() => {
+        setAcademicTermValueOptions([]);
+    }, []);
+
     return {
         gradeFilterValueOptions,
         subjectFilterValueOptions,
@@ -294,5 +300,6 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         programsFilterValueOptions,
         userRolesFilterValueOptions,
         categoriesFilterValueOptions,
+        academicTermValueOptions,
     };
 };

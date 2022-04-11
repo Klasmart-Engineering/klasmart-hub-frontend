@@ -108,6 +108,7 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
+    academicTerm: string[];
 }
 
 interface Props extends TableProps<ClassRow> {
@@ -157,12 +158,14 @@ export default function ClassesTable (props: Props) {
         ageRangesHighValueOptions,
         subjectFilterValueOptions,
         gradeFilterValueOptions,
+        academicTermValueOptions,
     } = useGetTableFilters(currentOrganization?.id ?? ``, {
         querySchools: true,
         queryPrograms: true,
         queryAgeRanges: true,
         querySubjects: true,
         queryGrades: true,
+        queryAcademicTerm: true,
     });
 
     const classCsvTemplateHeaders = [
@@ -275,6 +278,32 @@ export default function ClassesTable (props: Props) {
                     multipleValues: true,
                     validations: [ required() ],
                     options: ageRangesHighValueOptions,
+                    chipLabel: (column, value) => (
+                        intl.formatMessage({
+                            id: `generic_filtersEqualsChipLabel`,
+                        }, {
+                            column,
+                            value,
+                        })
+                    ),
+                },
+            ],
+        },
+        {
+            id: `academicTerm`,
+            label: intl.formatMessage({
+                id: `academicTerm.todo`,
+                defaultMessage: `Academic Term`,
+            }),
+            operators: [
+                {
+                    label: intl.formatMessage({
+                        id: `generic_filtersEqualsLabel`,
+                    }),
+                    value: `eq`,
+                    multipleValues: true,
+                    validations: [ required() ],
+                    options: academicTermValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersEqualsChipLabel`,
@@ -468,7 +497,7 @@ export default function ClassesTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
         {
             id: `ageRanges`,
@@ -483,6 +512,26 @@ export default function ClassesTable (props: Props) {
                         <Chip
                             key={`ageRange-${i}`}
                             label={ageRange}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
+        },
+        {
+            id: `academicTerm`,
+            label: intl.formatMessage({
+                id: `academicTerm.todo`,
+                defaultMessage: `Academic Term`,
+            }),
+            disableSort: true,
+            disableSearch: disabled,
+            render: (row) => (
+                <>
+                    {row.academicTerm.map((academicTerm, i) => (
+                        <Chip
+                            key={`academicTerm-${i}`}
+                            label={academicTerm}
                             className={classes.chip}
                         />
                     ))}
