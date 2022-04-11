@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.46.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.46.0%0Dv2.45.0) (2022-04-11)
+
+
+### ♻️ Chores
+
+* Moving deploy env files around to make logical sense (#32) ([9540ebb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9540ebbf0ef0d251cd494808cdb7bf352ccf3225))
+
+
+### ✨ Features
+
+* remove scaffolding and switch view function for in domain and stage env (#45) ([d7ce0d4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/d7ce0d4521ab80a37c1682b4e60d90c3b073ebe6))
+
+
+### 🐛 Bug Fixes
+
+* assignment completion when perc value are zero hide label - value and bar. (#47) ([5a0514d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5a0514d916381fb1fb96166e4cd334c33755b107))
+
 ## [2.45.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.45.0%0Dv2.44.0) (2022-04-08)
 
 
