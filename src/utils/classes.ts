@@ -103,7 +103,7 @@ export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
 );
 
 export const mapClassEdgesToAcademicTerm = (classEdges: ClassEdge[]) => {
-    const nodes = classEdges.map((edge) => edge.node.academicTerm ?? []);
+    const nodes = classEdges?.map((edge) => edge.node.academicTerm ?? []);
     const terms = [].concat.apply([], ...nodes).map((term : AcademicTermNode) => ({
         label: term.name,
         value: term.id,

@@ -287,7 +287,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ categoriesData ]);
 
     useEffect(() => {
-        setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(classData?.classesConnection.edges));
+        setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(classData?.classesConnection.edges ?? []));
     }, [ classData ]);
 
     return {
