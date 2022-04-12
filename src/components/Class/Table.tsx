@@ -489,15 +489,16 @@ export default function ClassesTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: disabled,
-            render: (row) => (<>
-                {row.schoolNames.map((school, i) => (
-                    <Chip
-                        key={`school-${i}`}
-                        label={school}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.schoolNames.map((school, i) => (
+                        <Chip
+                            key={`school-${i}`}
+                            label={school}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>),
         },
         {
             id: `ageRanges`,
@@ -526,6 +527,7 @@ export default function ClassesTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: disabled,
+            hidden: true,
             render: (row) => (
                 <>
                     {row.academicTerm.map((academicTerm, i) => (

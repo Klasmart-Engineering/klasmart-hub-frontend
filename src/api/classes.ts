@@ -194,6 +194,15 @@ interface ClassProgramNode {
     grades?: Grade[];
 }
 
+interface AcademicTermNode {
+    id: string;
+    name: string;
+    status?: Status;
+    startDate: string;
+    endDate: string;
+    school: { id: string };
+}
+
 interface SummaryNode {
     totalCount: number;
     pageInfo: {
@@ -218,6 +227,7 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
+    academicTerm?: AcademicTermNode[];
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
@@ -236,6 +246,7 @@ export interface ClassNodeConnections {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
+    academicTerm?: AcademicTermNode[];
     schoolsConnection?: SummaryNode;
     studentsConnection?: SummaryNode;
     teachersConnection?: SummaryNode;
