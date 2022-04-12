@@ -194,7 +194,7 @@ interface ClassProgramNode {
     grades?: Grade[];
 }
 
-interface AcademicTermNode {
+export interface AcademicTermNode {
     id: string;
     name: string;
     status?: Status;

@@ -2,7 +2,7 @@ import {
     buildAgeRangeEdgeLabel,
     buildAgeRangeLabel,
 } from "./ageRanges";
-import { ClassEdge } from "@/api/classes";
+import { AcademicTermNode, ClassEdge } from "@/api/classes";
 import { ClassForm } from "@/components/Class/Dialog/Form";
 import {
     ClassDetails,
@@ -101,3 +101,12 @@ export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
         value: edge.node.id,
     }))
 );
+
+export const mapClassEdgesToAcademicTerm = (classEdges: ClassEdge[]) => {
+    const nodes = classEdges.map((edge) => edge.node.academicTerm ?? []);
+    const terms = [].concat.apply([], ...nodes).map((term : AcademicTermNode) => ({
+        label: term.name,
+        value: term.id,
+    }));
+    return terms;
+};

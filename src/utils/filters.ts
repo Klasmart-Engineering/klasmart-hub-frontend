@@ -3,7 +3,7 @@ import {
     mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
 import { mapCategoriesToFilterOptions } from "./categories";
-import { mapClassEdgesToFilterValues } from "./classes";
+import { mapClassEdgesToFilterValues, mapClassEdgesToAcademicTerm } from "./classes";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
@@ -287,8 +287,8 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ categoriesData ]);
 
     useEffect(() => {
-        setAcademicTermValueOptions(classData?.classesConnection.edges.node.academicTerm);
-    }, []);
+        setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(classData?.classesConnection.edges));
+    }, [ classData ]);
 
     return {
         gradeFilterValueOptions,
