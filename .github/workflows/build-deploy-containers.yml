@@ -1,15 +1,15 @@
 name: container builds
 
 concurrency:
-  group: LandingZoneDeployment
+  group: buildDeployContainers
   cancel-in-progress: true
 
 on:
-  # push:
-  #   branches:
-  #     - "feature/workflow_build_container"
-  release:
-    types: [published]
+  push:
+    branches:
+      - "ci/enabling_multi_arch_containers"
+  # release:
+  #   types: [published]
   workflow_dispatch:
 
 # Repository specific variables
@@ -31,42 +31,38 @@ jobs:
         include:
           - environment: landingzone
             region: uk
-          - environment: prod
-            region: uk
-          - environment: beta
-            region: id
-          - environment: prod
-            region: id
-          - environment: prod
-            region: th
-          - environment: beta
-            region: vn
-          - environment: prod
-            region: vn
-          - environment: alpha
-            region: vn
-          - environment: loadtest
-            region: vn
-          - environment: prod
-            region: in
-          - environment: prod
-            region: lk
-          - environment: uat
-            region: mb
-          - environment: prod
-            region: pk
-          - environment: prod
-            region: global
-          - environment: alpha
-            region: global
-          - environment: loadtest
-            region: global
-          - environment: nextgen
-            region: global
-          - environment: showroom
-            region: global
-          - environment: stage
-            region: global
+          # - environment: prod
+          #   region: uk
+          # - environment: beta
+          #   region: id
+          # - environment: prod
+          #   region: id
+          # - environment: prod
+          #   region: th
+          # - environment: beta
+          #   region: vn
+          # - environment: prod
+          #   region: vn
+          # - environment: prod
+          #   region: in
+          # - environment: prod
+          #   region: lk
+          # - environment: uat
+          #   region: mb
+          # - environment: prod
+          #   region: pk
+          # - environment: prod
+          #   region: global
+          # - environment: alpha
+          #   region: global
+          # - environment: loadtest
+          #   region: global
+          # - environment: nextgen
+          #   region: global
+          # - environment: showroom
+          #   region: global
+          # - environment: stage
+          #   region: global
     name: build container
     runs-on: ubuntu-latest
     env:
@@ -81,11 +77,15 @@ jobs:
         run: cp -r dist deploy/
 
       - name: Build and Push Container
-        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@d51babc87eeba745b2ceaf8aa51b9381dec9f71e
+        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@e755b50770a152d9063863ec0a5b7e9013a88230
         with:
-          environment: ${{ env.environment }}
-          region: ${{ env.region }}
-          ecr_repository: ${{ env.ecr_repository }}
+          image_name: ${{ env.ecr_repository }}
+          dockerfile: deploy/Dockerfile
+          docker_build_context: deploy
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            type=raw,value={{branch}}-${{ env.region }}-${{ env.environment }}-{{sha}}
+          push_to_registry: true
           ECR_AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           ECR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
