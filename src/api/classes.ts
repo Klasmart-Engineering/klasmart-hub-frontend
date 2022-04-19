@@ -197,7 +197,6 @@ interface ClassProgramNode {
 export interface AcademicTermNode {
     id: string;
     name: string;
-    status?: Status;
     startDate: string;
     endDate: string;
     school: { id: string };

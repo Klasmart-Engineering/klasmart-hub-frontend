@@ -64,7 +64,6 @@ export default function ClassesPage (props: Props) {
         notifyOnNetworkStatusChange: true,
     });
 
-    console.log(data);
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
         await fetchMore({
