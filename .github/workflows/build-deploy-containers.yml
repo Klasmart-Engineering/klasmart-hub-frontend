@@ -26,6 +26,8 @@ jobs:
 
   build-container:
     needs: [install]
+    outputs:
+      image_version: ${{ steps.build-push.outputs.image_version}}
     strategy:
       matrix:
         include:
@@ -77,14 +79,16 @@ jobs:
         run: cp -r dist deploy/
 
       - name: Build and Push Container
-        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@e755b50770a152d9063863ec0a5b7e9013a88230
+        id: build-push
+        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@73a99700e5af9ac7a2a69efdfa4338f9027060c9
         with:
           image_name: ${{ env.ecr_repository }}
           dockerfile: deploy/Dockerfile
           docker_build_context: deploy
           platforms: linux/amd64,linux/arm64
           tags: |
-            type=raw,value={{branch}}-${{ env.region }}-${{ env.environment }}-{{sha}}
+            type=ref,event=tag,prefix=${{ env.region }}-${{ env.environment }}-
+            type=ref,event=branch,prefix=${{ env.region }}-${{ env.environment }}-,suffix=-{{sha}}
           push_to_registry: true
           ECR_AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           ECR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
@@ -107,12 +111,13 @@ jobs:
       environment: ${{ matrix.environment }}
     steps:
       - name: Deploy to ${{ matrix.environment }}
-        uses: KL-Engineering/github-action-workflows/.github/actions/argocd-override-image-parameter@d51babc87eeba745b2ceaf8aa51b9381dec9f71e
+        uses: KL-Engineering/github-action-workflows/.github/actions/argocd-override-image-parameter@6816df6657d8c0b57924b220212f5b1cb4de0f83
         with:
           environment: ${{ env.environment }}
           region: ${{ env.region }}
           argocd_app: "${{ env.region }}-${{ env.environment }}-${{ env.argocd_app_component }}"
           argocd_app_chart_tag_path: ${{ env.argocd_app_chart_tag_path }}
+          argocd_app_chart_tag_value: ${{ needs.build-container.outputs.image_version }}
           TOOLS_KUBECONFIG_CONTENT_B64: ${{ secrets.TOOLS_KUBECONFIG_CONTENT_B64 }}
           ARGOCD_AUTH_USERNAME: ${{ secrets.ARGOCD_AUTH_USERNAME }}
           ARGOCD_AUTH_PASSWORD: ${{ secrets.ARGOCD_AUTH_PASSWORD }}
