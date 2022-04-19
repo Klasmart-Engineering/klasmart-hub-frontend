@@ -15,6 +15,7 @@ import { getCustomRoleName } from "@/utils/userRoles";
 import {
     CursorTable,
     FullScreenDialog,
+    useSnackbar,
 } from "@kl-engineering/kidsloop-px";
 import {
     Order,
@@ -75,6 +76,7 @@ export default function SchoolRoster (props: Props) {
     const [ addStudentsToClass ] = useAddStudentsToClass();
     const [ addTeachersToClass ] = useAddTeachersToClass();
     const [ subgroupBy, setSubgroupBy ] = useState(`Student`);
+    const { enqueueSnackbar } = useSnackbar();
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
@@ -187,33 +189,49 @@ export default function SchoolRoster (props: Props) {
         const teacherIds = selectedIds.filter((id: string) => id.match(/-teacher/gi)).map((id: string) => (id.replace(/-teacher/gi, ``)));
         const variables = { classId };
 
-        switch (`${studentIds.length > 0}-${teacherIds.length > 0}`) {
-            case `true-false`:
-                await addStudentsToClass({
-                    variables: {
-                        ...variables,
-                        studentIds,
-                    }
-                });
-                break;
-            case `false-true`:
-                await addTeachersToClass({
-                    variables: {
-                        ...variables,
-                       teacherIds,
-                    }
-                });
-                break;
-            default:
-                await addUsersToClass({
-                    variables: {
-                        ...variables,
-                        studentIds,
+        try {
+            switch (`${studentIds.length > 0}-${teacherIds.length > 0}`) {
+                case `true-false`:
+                    await addStudentsToClass({
+                        variables: {
+                            ...variables,
+                            studentIds,
+                        }
+                    });
+                    break;
+                case `false-true`:
+                    await addTeachersToClass({
+                        variables: {
+                            ...variables,
                         teacherIds,
-                    }
+                        }
+                    });
+                    break;
+                default:
+                    await addUsersToClass({
+                        variables: {
+                            ...variables,
+                            studentIds,
+                            teacherIds,
+                        }
+                    });
+                }
+
+                enqueueSnackbar(intl.formatMessage({
+                    id: `createUser_userCsvUploadSuccess`,
+                }), {
+                    variant: `success`,
+                });
+
+            } catch(err) {
+                enqueueSnackbar(intl.formatMessage({
+                    id: `createUser_error`,
+                }), {
+                    variant: `error`,
                 });
             }
 
+        setSelectedIds([]);
         refetchClassRoster();
         onClose();
     };
@@ -233,6 +251,12 @@ export default function SchoolRoster (props: Props) {
         serverPagination.rowsPerPage,
         subgroupBy,
     ]);
+
+    useEffect(() => {
+        if (!open) {
+            setSelectedIds([]);
+        }
+    }, [open]);
 
     const handleTableChange = (tableData: CursorTableData<ClassRosterRow>) => {
         setSubgroupBy(tableData?.subgroupBy as string);

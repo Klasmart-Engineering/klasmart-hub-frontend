@@ -89,23 +89,22 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
         color: `#FFFFFF`,
         fontSize: 18,
         justifyContent: `middle`,
+        borderRadius: 5,
+        overflow: `hidden`,
     },
     barLeft: {
         display: `flex`,
         alignItems: `center`,
         backgroundColor: theme.palette.info.light,
-        borderTopLeftRadius: 5,
-        borderBottomLeftRadius: 5,
-        paddingLeft: 10,
     },
     barRight: {
         display: `flex`,
         alignItems: `center`,
         justifyContent: `flex-end`,
         backgroundColor: theme.palette.error.light,
-        borderTopRightRadius: 5,
-        borderBottomRightRadius: 5,
-        paddingRight: 10,
+    },
+    barValue: {
+        padding: theme.spacing(0, 1),
     },
     barFooter: {
         display: `flex`,
@@ -185,33 +184,38 @@ export default function CompletionWidget () {
                     </div>
                     <div className={classes.barContainer}>
                         <div className={classes.bar} >
-                            <div
-                                className={classes.barLeft}
-                                style={{
-                                    width: `${completionData.completed_perc}%`,
-                                }}
-                            >
-                                <Typography>
-                                    {completionData.completed_perc}%
-                                </Typography>
-                            </div>
-                            <div
-                                className={classes.barRight}
-                                style={{
-                                    width: `${completionData.incomplete_perc}%`,
-                                }}
-                            >
-                                <Typography>
-                                    {completionData.incomplete_perc}%
-                                </Typography>
-                            </div>
+                            {!!completionData.completed &&
+                                <div
+                                    className={classes.barLeft}
+                                    style={{
+                                        width: `${completionData.completed_perc}%`,
+                                    }}
+                                >
+                                    <Typography className={classes.barValue}>
+                                        {completionData.completed_perc}%
+                                    </Typography>
+                                </div>}
+                            {!!completionData.incomplete &&
+                                <div
+                                    className={classes.barRight}
+                                    style={{
+                                        width: `${completionData.incomplete_perc}%`,
+                                    }}
+                                >
+                                    <Typography className={classes.barValue}>
+                                        {completionData.incomplete_perc}%
+                                    </Typography>
+                                </div>}
                         </div>
                         <div className={classes.barFooter}>
                             <Typography className={classes.barFooterLeft}>
-                                <FormattedMessage id="home.student.completionWidget.legendCompleted" />
+                                {!!completionData.completed &&
+                                    <FormattedMessage id="home.student.completionWidget.legendCompleted" />}
                             </Typography>
+
                             <Typography className={classes.barFooterRight}>
-                                <FormattedMessage id="home.student.completionWidget.legendIncomplete" />
+                                {!!completionData.incomplete &&
+                                    <FormattedMessage id="home.student.completionWidget.legendIncomplete" />}
                             </Typography>
                         </div>
                     </div>
