@@ -21,6 +21,7 @@ export const GET_ALL_ACADEMIC_TERMS = gql`
                                 name
                                 startDate
                                 endDate
+                                status
                             }
                         }
                     }

@@ -102,4 +102,5 @@ export const mapAcademicTermNodeToAcademicTermRow = (node: AcademicTermNode): Ac
     termName: node.name,
     startDate: node.startDate,
     endDate: node.endDate,
+    status: node.status,
 });

@@ -29,6 +29,7 @@ import {
 import React,
 { useState } from "react";
 import { FormattedDate, useIntl } from "react-intl";
+import { Status, StatusFilter } from "@/types/graphQL";
 
 const useStyles = makeStyles(() => createStyles({
     root: {
@@ -41,6 +42,7 @@ export interface AcademicTermRow {
     termName: string;
     startDate: string;
     endDate: string;
+    status: Status;
 }
 
 interface Props extends TableProps<AcademicTermRow> {

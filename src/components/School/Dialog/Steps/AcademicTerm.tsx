@@ -19,6 +19,7 @@ import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/componen
 import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { mapAcademicTermNodeToAcademicTermRow, useGetAllAcademicTerms } from "@/api/academicTerms";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
+import { Status } from "@/types/graphQL";
 
 const useStyles = makeStyles((theme) => createStyles({
     info: {
@@ -78,10 +79,7 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
         },
         skip: !currentOrganization?.id || !canView,
         notifyOnNetworkStatusChange: true,
-    });
-
-    console.log(data);
-    
+    });    
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
@@ -108,11 +106,9 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
     const rows = data?.schoolsConnection?.edges?.filter((edge)=> edge.node.id === value.id)
         .map((schoolEdge) => schoolEdge.node.academicTermsConnection.edges)
         .flatMap((academicTermEdgeArray) => academicTermEdgeArray.map((academicTermEdge) => mapAcademicTermNodeToAcademicTermRow(academicTermEdge.node)))
+        .filter((academicTermRow) => academicTermRow.status === Status.ACTIVE)
         ?? [];
-
-        console.log(rows);
         
-
     return (
         <>
             <Alert severity="info" className={classes.info} icon={<InfoIcon color="action"/>}>
