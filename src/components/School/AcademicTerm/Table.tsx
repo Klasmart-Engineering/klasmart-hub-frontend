@@ -1,8 +1,5 @@
-import { useDeleteSchool } from "@/api/schools";
-import CreateSchoolDialog from "@/components/School/Dialog/Create";
-import UploadSchoolCsvDialog from "@/components/School/Dialog/CsvUpload";
-import EditSchoolDialog from "@/components/School/Dialog/Edit";
-import { Status } from "@/types/graphQL";
+import CreateAcademicTermDialog from "./Dialog/Create";
+import { useDeleteAcademicTerm } from "@/api/academicTerms";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import {
     buildCsvTemplateOptions,
@@ -21,7 +18,6 @@ import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/T
 import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
-    CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
@@ -32,25 +28,26 @@ import {
 } from '@mui/styles';
 import React,
 { useState } from "react";
-import { useIntl } from "react-intl";
+import { FormattedDate, useIntl } from "react-intl";
 
-const useStyles = makeStyles((theme) => createStyles({
+const useStyles = makeStyles(() => createStyles({
     root: {
         width: `100%`,
     },
 }));
 
-export interface SchoolRow {
+export interface AcademicTermRow {
     id: string;
-    name: string;
-    shortCode: string;
-    status: string;
+    termName: string;
+    startDate: string;
+    endDate: string;
 }
 
-interface Props extends TableProps<SchoolRow> {
+interface Props extends TableProps<AcademicTermRow> {
+    schoolId: string;
 }
 
-export default function SchoolTable (props: Props) {
+export default function AcademicTermTable (props: Props) {
     const {
         rows,
         loading,
@@ -66,80 +63,96 @@ export default function SchoolTable (props: Props) {
         endCursor,
         onPageChange,
         onTableChange,
+        schoolId,
     } = props;
 
     const classes = useStyles();
-    const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const deletePrompt = useDeleteEntityPrompt();
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
-    const [ openEditDialog, setOpenEditDialog ] = useState(false);
-    const [ selectedSchoolId, setSelectedSchoolId ] = useState<string>();
-    const [ deleteSchool ] = useDeleteSchool();
-    const canEdit = usePermission(`edit_school_20330`);
+    const [ deleteAcademicTerm ] = useDeleteAcademicTerm();
+    // const canDelete = usePermission(`delete_academic_term_20448`);
+    // const canCreate = usePermission(`create_academic_term_20228`);
     const canDelete = usePermission(`delete_school_20440`);
     const canCreate = usePermission(`create_school_20220`);
 
-    const columns: TableColumn<SchoolRow>[] = [
+    const columns: TableColumn<AcademicTermRow>[] = [
         {
             id: `id`,
             label: `ID`,
             hidden: true,
         },
         {
-            id: `name`,
+            id: `termName`,
             label: intl.formatMessage({
-                id: `schools_schoolNameTitle`,
+                id: `academicTerm.todo`,
+                defaultMessage: `Academic Term`,
             }),
             persistent: true,
         },
         {
-            id: `shortCode`,
-            label: `Short Code`,
+            id: `startDate`,
+            label: intl.formatMessage({
+                id: `academicTerm.todo`,
+                defaultMessage: `Start date`,
+            }),
+            render: (row) => (
+                <FormattedDate value={row.startDate} />
+            ),
+        },
+        {
+            id: `endDate`,
+            label: intl.formatMessage({
+                id: `academicTerm.todo`,
+                defaultMessage: `End date`,
+            }),
+            render: (row) => (
+                <FormattedDate value={row.endDate} />
+            ),
         },
     ];
 
-    const schoolCsvTemplateHeaders = [
-        `organization_name`,
-        `school_name`,
-        `school_shortcode`,
-        `program_name`,
+    const academicTermCsvTemplateHeaders = [
+        `academic_term_name`,
+
+        `academic_term_start_date`,
+        `academic_term_end_date`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({
         filename: intl.formatMessage({
-            id: `entity.school.importTemplate.filename`,
+            // i.e. entity.academicTerm.importTemplate.filename
+            id: `academicTerm.todo`,
+            defaultMessage: `kidsloop-academic-term-template`,
         }),
-        headers: schoolCsvTemplateHeaders,
+        headers: academicTermCsvTemplateHeaders,
     });
 
-    const editSelectedRow = (row: SchoolRow) => {
-        setSelectedSchoolId(row.id);
-        setOpenEditDialog(true);
-    };
-
-    const deleteSelectedRow = async (row: SchoolRow) => {
+    const deleteSelectedRow = async (row: AcademicTermRow) => {
         if (!(await deletePrompt({
             title: intl.formatMessage({
-                id: `schools_deleteTitleLabel`,
+                id: `academicTerm.todo`,
+                defaultMessage: `Delete Academic Term`,
             }),
-            entityName: row.name,
+            entityName: row.termName,
         }))) return;
         try {
-            await deleteSchool({
+            await deleteAcademicTerm({
                 variables: {
-                    school_id: row.id,
+                    id: row.id,
                 },
             });
             enqueueSnackbar(intl.formatMessage({
-                id: `schools_deleteSuccess`,
+                id: `academicTerm.todo`,
+                defaultMessage: `Academic Term has been deleted successfully`,
             }), {
                 variant: `success`,
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `schools_deleteError`,
+                id: `academicTerm.todo`,
+                defaultMessage: `Sorry, something went wrong, please try again`,
             }), {
                 variant: `error`,
             });
@@ -166,7 +179,8 @@ export default function SchoolTable (props: Props) {
                     total={total}
                     primaryAction={{
                         label: intl.formatMessage({
-                            id: `schools_createSchoolLabel`,
+                            id: `academicTerm.todo`,
+                            defaultMessage: `Create academic term`,
                         }),
                         icon: AddIcon,
                         disabled: !canCreate,
@@ -175,48 +189,37 @@ export default function SchoolTable (props: Props) {
                     secondaryActions={[
                         {
                             label: intl.formatMessage({
-                                id: `entity.user.template.download.button`,
+                                // i.e. entity.user.template.download.button
+                                id: `academicTerm.todo`,
+                                defaultMessage: `Download CSV Template File`,
                             }),
                             icon: AssignmentReturnedIcon,
                             disabled: !canCreate,
                             onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
                         },
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.bulkImport.button`,
-                            }),
-                            icon: CloudIcon,
-                            disabled: !canCreate,
-                            onClick: () => {
-                                setUploadCsvDialogOpen(true);
-                            },
-                        },
                     ]}
                     rowActions={(row) => [
                         {
                             label: intl.formatMessage({
-                                id: `schools_editButton`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !(row.status === Status.ACTIVE && canEdit),
-                            onClick: editSelectedRow,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `schools_deleteButton`,
+                                id: `academicTerm.todo`,
+                                defaultMessage: `Delete`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !(row.status === Status.ACTIVE && canDelete),
+                            disabled: !(canDelete),
                             onClick: deleteSelectedRow,
                         },
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Schools`,
+                            title: intl.formatMessage({
+                                id: `academicTerm.todo`,
+                                defaultMessage: `Academic Term`,
+                            }),
                         },
                         search: {
                             placeholder: intl.formatMessage({
-                                id: `schools_searchPlaceholder`,
+                                id: `academicTerm.todo`,
+                                defaultMessage: `Search`,
                             }),
                         },
                     })}
@@ -225,26 +228,11 @@ export default function SchoolTable (props: Props) {
                 />
             </Paper>
 
-            <CreateSchoolDialog
+            <CreateAcademicTermDialog
                 open={openCreateDialog}
+                schoolId={schoolId}
                 onClose={() => {
                     setOpenCreateDialog(false);
-                }}
-            />
-
-            <EditSchoolDialog
-                open={openEditDialog}
-                schoolId={selectedSchoolId}
-                onClose={() => {
-                    setSelectedSchoolId(undefined);
-                    setOpenEditDialog(false);
-                }}
-            />
-
-            <UploadSchoolCsvDialog
-                open={uploadCsvDialogOpen}
-                onClose={() => {
-                    setUploadCsvDialogOpen(false);
                 }}
             />
         </>

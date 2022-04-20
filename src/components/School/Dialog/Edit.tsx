@@ -1,3 +1,4 @@
+import AcademicTermStep from "./Steps/AcademicTerm";
 import ProgramsStep from "./Steps/Programs";
 import SchoolInfoStep from "./Steps/SchoolInfo";
 import { SchoolStepper } from "./Steps/shared";
@@ -14,6 +15,13 @@ import {
 } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
+    Button,
+    FullScreenDialog,
+    Stepper,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
+import {
     Box,
     Toolbar,
 } from "@mui/material";
@@ -21,13 +29,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    FullScreenDialog,
-    Stepper,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
 import { isEqual } from "lodash";
 import React,
 {
@@ -126,8 +127,29 @@ export default function EditSchoolDialog (props: Props) {
                 }),
                 content: (
                     <SchoolInfoStep
+                        isEdit
                         value={editedSchool}
-                        isEdit={true}
+                        loading={loading}
+                        onChange={handleChange}
+                    />
+                ),
+                error: [
+                    required()(editedSchool?.name),
+                    letternumeric()(editedSchool?.name),
+                    max(120)(editedSchool?.name ?? ``),
+                    max(10)(editedSchool?.shortcode ?? ``),
+                    alphanumeric()(editedSchool?.shortcode),
+                ].filter(((error): error is string => error !== true)).find((error) => error),
+            },
+            {
+                label: intl.formatMessage({
+                    id: `academicTerm.todo`,
+                    defaultMessage: `Academic Term (Optional)`,
+                }),
+                content: (
+                    <AcademicTermStep
+                        isEdit
+                        value={editedSchool}
                         loading={loading}
                         onChange={handleChange}
                     />
