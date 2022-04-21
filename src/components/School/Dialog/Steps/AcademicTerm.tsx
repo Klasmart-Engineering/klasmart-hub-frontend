@@ -6,7 +6,7 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { DEFAULT_ROWS_PER_PAGE, pageChangeToDirection, ServerCursorPagination, serverToTableOrder, tableToServerOrder } from "@/utils/table";
 import { SchoolFilter, useGetPaginatedSchools } from "@/api/schools";
@@ -17,9 +17,13 @@ import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/C
 import { Info as InfoIcon } from "@mui/icons-material";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { mapAcademicTermNodeToAcademicTermRow, useGetAllAcademicTerms } from "@/api/academicTerms";
+import { AcademicTermFilter,
+     builAcademicTermFilter,
+     useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { Status } from "@/types/graphQL";
+import { isUuid } from "@/utils/pagination";
+import { mapAcademicTermNodeToAcademicTermRow } from "@/utils/academicTerms";
 
 const useStyles = makeStyles((theme) => createStyles({
     info: {
@@ -42,44 +46,37 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
 
-
-    // const canView = usePermission({
-    //     OR: [ `view_academic_term_20116` ],
-    // });
-
     const canView = usePermission({
-        OR: [ `view_school_20110`, `view_my_school_20119` ], // change to at some point view_academic_term_20116
+        OR: [ `view_academic_term_20116` ],
     });
 
-    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
         order: `ASC`,
         orderBy: `name`,
     });
-    
-    const paginationFilter = buildOrganizationSchoolFilter({
-        organizationId: currentOrganization?.id ?? ``,
-        search: serverPagination.search,
-    });
-    
+
+    const paginationFilter = builAcademicTermFilter({ search: serverPagination.search });
+
     const {
         loading,
         data,
-        refetch,
+        refetch: refetchAcacemicTerms,
         fetchMore, 
-    } = useGetAllAcademicTerms({
+    } = useGetPaginatedAcademicTerms({
         variables: {
+            id: value.id,
             direction: `FORWARD`,
             count: serverPagination.rowsPerPage,
+            cursor: serverPagination.cursor,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
-            filter: paginationFilter
+            filter: paginationFilter,
         },
         skip: !currentOrganization?.id || !canView,
         notifyOnNetworkStatusChange: true,
-    });    
+    });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
@@ -87,27 +84,32 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
             variables: {
                 count,
                 cursor,
-                direction,
+                direction
             },
         });
     };
 
     const handleTableChange = async (tableData: CursorTableData<AcademicTermRow>) => {
-        setTableFilters(tableData?.filters ?? []);
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
-            search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
+            search: tableData.search,
         });
     };
-    
 
-    const rows = data?.schoolsConnection?.edges?.filter((edge)=> edge.node.id === value.id)
-        .map((schoolEdge) => schoolEdge.node.academicTermsConnection.edges)
-        .flatMap((academicTermEdgeArray) => academicTermEdgeArray.map((academicTermEdge) => mapAcademicTermNodeToAcademicTermRow(academicTermEdge.node)))
-        .filter((academicTermRow) => academicTermRow.status === Status.ACTIVE)
-        ?? [];
+    useEffect(() => {
+        refetchAcacemicTerms({
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            search: serverPagination.search,
+        });
+        }, [
+            currentOrganization?.id,
+    ]);
+    
+    const rows = data?.schoolNode?.academicTermsConnection?.edges.map((edge) => mapAcademicTermNodeToAcademicTermRow(edge.node)) ?? []
         
     return (
         <>
@@ -124,11 +126,12 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
                 orderBy={serverPagination.orderBy}
                 rowsPerPage={serverPagination.rowsPerPage}
                 search={serverPagination.search}
-                total={rows.length}
-                hasNextPage={false}
-                hasPreviousPage={false}
-                startCursor={undefined}
-                endCursor={undefined}
+                cursor={serverPagination.cursor}
+                total={data?.schoolNode?.academicTermsConnection?.totalCount}
+                hasNextPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasNextPage}
+                hasPreviousPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasPreviousPage}
+                startCursor={data?.schoolNode?.academicTermsConnection?.pageInfo.startCursor}
+                endCursor={data?.schoolNode?.academicTermsConnection?.pageInfo.endCursor}
                 onPageChange={handlePageChange}
                 onTableChange={handleTableChange}
                 schoolId={value.id}

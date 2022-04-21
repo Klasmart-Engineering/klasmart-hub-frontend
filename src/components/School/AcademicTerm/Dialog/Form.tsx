@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 export interface AcademicTermForm {
-    termName: string;
+    name: string;
     startDate: string;
     endDate: string;
 }
@@ -129,7 +129,7 @@ export default function AcademicTermDialogForm (props: Props) {
         setIsFormValid(true)
 
         const academicTermForm : AcademicTermForm = {
-            termName: name,
+            name,
             startDate: startDateValue,
             endDate: endDateValue
         }

@@ -1,12 +1,19 @@
-import { SchoolFilter } from "./schools";
-import { AcademicTermRow } from "@/components/School/AcademicTerm/Table";
+
 import { CREATE_ACADEMIC_TERM } from "@/operations/mutations/createAcademicTerm";
 import { DELETE_ACADEMIC_TERM } from "@/operations/mutations/deleteAcademicTerm";
-import { GET_ALL_ACADEMIC_TERMS } from "@/operations/queries/getAllAcademicTerms";
+import { GET_PAGINATED_ACADEMIC_TERMS } from "@/operations/queries/getPaginatedAcademicTerms";
 import {
     Direction,
+    PageInfo,
+    SortOrder,
     Status,
+    StringFilter,
+    UuidFilter,
 } from "@/types/graphQL";
+import {
+    isUuid,
+    PaginationFilter,
+} from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -28,7 +35,7 @@ interface CreateAcademicResponse {
 export const useCreateAcademicTerm = (options?: MutationHookOptions<CreateAcademicResponse, CreateAcademicTermRequest>) => {
     return useMutation<CreateAcademicResponse, CreateAcademicTermRequest>(CREATE_ACADEMIC_TERM, {
         ...options,
-        refetchQueries: [ GET_ALL_ACADEMIC_TERMS ],
+        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS ],
     });
 };
 
@@ -43,23 +50,30 @@ interface DeleteAcademicTermResponse {
 export const useDeleteAcademicTerm = (options?: MutationHookOptions<DeleteAcademicTermResponse, DeleteAcademicTermRequest>) => {
     return useMutation<DeleteAcademicTermResponse, DeleteAcademicTermRequest>(DELETE_ACADEMIC_TERM, {
         ...options,
-        refetchQueries: [ GET_ALL_ACADEMIC_TERMS ],
+        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS ],
     });
 };
 
-interface GetAllAcademicTermsRequest {
+interface GetPaginatedcademicTermsRequest {
+    id?: string;
+    filter?: AcademicTermFilter;
     direction?: Direction;
     cursor?: string;
     count?: number;
-    orderBy?: string;
-    order?: string;
-    filter?: SchoolFilter;
+    order: SortOrder;
+    orderBy: string;
+    search?: string;
 }
-
+interface GetPaginatedAcademicTermsResponse {
+    schoolNode: {
+        id: string;
+        name: string;
+        academicTermsConnection: AcademicTermsConnection;
+    };
+}
 export interface AcademicTermEdge {
     node: AcademicTermNode;
 }
-
 export interface AcademicTermNode {
     id: string;
     name: string;
@@ -69,38 +83,48 @@ export interface AcademicTermNode {
 }
 
 export interface AcademicTermsConnection {
+    totalCount: number;
+    pageInfo: PageInfo;
     edges: AcademicTermEdge[];
 }
 
-export interface SchoolsConnectionEdge {
-    node: {
-        academicTermsConnection: AcademicTermsConnection;
-        id: string;
-        name: string;
-    };
+export interface AcademicTermFilter extends PaginationFilter<AcademicTermFilter> {
+    id?: UuidFilter;
+    name?: StringFilter;
+    status?: StringFilter;
 }
 
-interface GetAllAcademicTermsResponse {
-    schoolsConnection: {
-        totalCount: number;
-        pageInfo: {
-            hasNextPage: boolean;
-            hasPreviousPage: boolean;
-            startCursor: string;
-            endCursor: string;
-        };
-        edges: SchoolsConnectionEdge[];
-    };
+export interface AcademicTermPaginationFilter {
+    search: string;
 }
 
-export const useGetAllAcademicTerms = (options?: QueryHookOptions<GetAllAcademicTermsResponse, GetAllAcademicTermsRequest>) => {
-    return useQuery<GetAllAcademicTermsResponse, GetAllAcademicTermsRequest>(GET_ALL_ACADEMIC_TERMS, options);
-};
-
-export const mapAcademicTermNodeToAcademicTermRow = (node: AcademicTermNode): AcademicTermRow => ({
-    id: node.id,
-    termName: node.name,
-    startDate: node.startDate,
-    endDate: node.endDate,
-    status: node.status,
+const builAcademicTermSearchFilter = (search: string): AcademicTermFilter => ({
+    ...(isUuid(search) ? {
+        id: {
+            operator: `eq`,
+            value: search,
+        },
+    } : {
+        OR: [
+            {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
+                },
+            },
+        ],
+    }),
 });
+
+export const builAcademicTermFilter = (filter: AcademicTermPaginationFilter): AcademicTermFilter => ({
+    status: {
+        operator: `eq`,
+        value: Status.ACTIVE,
+    },
+    AND: [ builAcademicTermSearchFilter(filter.search) ],
+});
+
+export const useGetPaginatedAcademicTerms = (options?: QueryHookOptions<GetPaginatedAcademicTermsResponse, GetPaginatedcademicTermsRequest>) => {
+    return useQuery<GetPaginatedAcademicTermsResponse, GetPaginatedcademicTermsRequest>(GET_PAGINATED_ACADEMIC_TERMS, options);
+};

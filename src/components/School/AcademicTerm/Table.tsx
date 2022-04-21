@@ -39,10 +39,10 @@ const useStyles = makeStyles(() => createStyles({
 
 export interface AcademicTermRow {
     id: string;
-    termName: string;
+    name: string;
     startDate: string;
     endDate: string;
-    status: Status;
+    status?: Status;
 }
 
 interface Props extends TableProps<AcademicTermRow> {
@@ -74,10 +74,8 @@ export default function AcademicTermTable (props: Props) {
     const deletePrompt = useDeleteEntityPrompt();
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ deleteAcademicTerm ] = useDeleteAcademicTerm();
-    // const canDelete = usePermission(`delete_academic_term_20448`);
-    // const canCreate = usePermission(`create_academic_term_20228`);
-    const canDelete = usePermission(`delete_school_20440`);
-    const canCreate = usePermission(`create_school_20220`);
+    const canDelete = usePermission(`delete_academic_term_20448`);
+    const canCreate = usePermission(`create_academic_term_20228`);
 
     const columns: TableColumn<AcademicTermRow>[] = [
         {
@@ -86,7 +84,7 @@ export default function AcademicTermTable (props: Props) {
             hidden: true,
         },
         {
-            id: `termName`,
+            id: `name`,
             label: intl.formatMessage({
                 id: `academicTerm.todo`,
                 defaultMessage: `Academic Term`,
@@ -137,7 +135,7 @@ export default function AcademicTermTable (props: Props) {
                 id: `academicTerm.todo`,
                 defaultMessage: `Delete Academic Term`,
             }),
-            entityName: row.termName,
+            entityName: row.name,
         }))) return;
         try {
             await deleteAcademicTerm({
