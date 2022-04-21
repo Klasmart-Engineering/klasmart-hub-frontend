@@ -14,6 +14,10 @@ export const emailAddressRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"
 export const formatPermissionName = (str: string) =>
     str.replace(/[^A-Za-z]+/g, ` `).replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
 
+export const mapRows = (rows: any[], key: string) => rows.map((row) => row[key] ?? ``);
+
+export const concatNestedArrayAndRemoveDuplicates = (array: any[]) => [ ...new Set(array.flat()) ];
+
 export const useValidations = () => {
     const intl = useIntl();
     return {
@@ -62,6 +66,12 @@ export const useValidations = () => {
             id: `genericValidations_beforeDateError`,
         }, {
             value: format(max, `MMMM yyyy`),
+        })),
+        otherValidation: (failedValidation: boolean, errorMessage?: string) => failedValidation ? () => errorMessage ? errorMessage : intl.formatMessage({
+            id: `genericValidations_otherValidation`,
+            defaultMessage: `Please select only one school`,
+        }) : validations.required(intl.formatMessage({
+            id: `genericValidations_required`,
         })),
     };
 };

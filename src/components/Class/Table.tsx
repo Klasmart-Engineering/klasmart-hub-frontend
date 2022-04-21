@@ -22,7 +22,7 @@ import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
-import { useValidations } from "@/utils/validations";
+import { useValidations, mapRows, concatNestedArrayAndRemoveDuplicates } from "@/utils/validations";
 import {
     CursorTable,
     useSnackbar,
@@ -149,7 +149,7 @@ export default function ClassesTable (props: Props) {
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedIds_, setSelectedIds ] = useState<string[]>(selectedIds ?? []);
     const [ deleteClass ] = useDeleteClass();
-    const { required } = useValidations();
+    const { required, otherValidation } = useValidations();
     const deletePrompt = useDeleteEntityPrompt();
     const {
         schoolsFilterValueOptions,
@@ -196,6 +196,12 @@ export default function ClassesTable (props: Props) {
     const editSelectedRow = (row: ClassRow) => {
         setSelectedClassId(row.id);
         setEditDialogOpen(true);
+    };
+
+    const academicTermFilterDisabled = () => {
+        const selectedSchools = mapRows(rows, `schoolNames`);
+        const dedupedSelectedSchools = concatNestedArrayAndRemoveDuplicates(selectedSchools);
+        return dedupedSelectedSchools.length !== 1
     };
 
     const goToClassRoster = (classId: string) => {
@@ -302,7 +308,7 @@ export default function ClassesTable (props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [ required() ],
+                    validations: [ otherValidation(academicTermFilterDisabled()) ],
                     options: academicTermValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
