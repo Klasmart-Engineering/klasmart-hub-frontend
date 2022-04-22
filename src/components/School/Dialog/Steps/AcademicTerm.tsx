@@ -113,13 +113,16 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
         
     return (
         <>
-            <Alert severity="info" className={classes.info} icon={<InfoIcon color="action"/>}>
+            {!disabled && (
+                <Alert severity="info" className={classes.info} icon={<InfoIcon color="action"/>}>
                 {intl.formatMessage({
                     id: `academicTerm.todo`,
                     defaultMessage: `Academic term can be used to configure when classes and class rosters should be active. Adding academic years to a school is optional.`,
                 })}
             </Alert>
+            )}
             <AcademicTermTable
+                disabled={disabled}
                 rows={rows}
                 loading={loading}
                 order={serverToTableOrder(serverPagination.order)}

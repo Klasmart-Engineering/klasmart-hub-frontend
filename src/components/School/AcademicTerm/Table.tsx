@@ -20,7 +20,7 @@ import {
     AssignmentReturned as AssignmentReturnedIcon,
     Delete as DeleteIcon
 } from "@mui/icons-material";
-import { Paper } from "@mui/material";
+import { Paper, Theme } from "@mui/material";
 import {
     createStyles,
     makeStyles,
@@ -30,9 +30,10 @@ import React,
 import { FormattedDate, useIntl } from "react-intl";
 import { Status } from "@/types/graphQL";
 
-const useStyles = makeStyles(() => createStyles({
+const useStyles = makeStyles((theme:Theme) => createStyles({
     root: {
         width: `100%`,
+        marginBottom: theme.spacing(2)
     },
 }));
 
@@ -65,6 +66,7 @@ export default function AcademicTermTable (props: Props) {
         onPageChange,
         onTableChange,
         schoolId,
+        disabled
     } = props;
 
     const classes = useStyles();
@@ -81,6 +83,7 @@ export default function AcademicTermTable (props: Props) {
             id: `id`,
             label: `ID`,
             hidden: true,
+            disableSearch: disabled,
         },
         {
             id: `name`,
@@ -89,6 +92,7 @@ export default function AcademicTermTable (props: Props) {
                 defaultMessage: `Academic Term`,
             }),
             persistent: true,
+            disableSearch: disabled,
         },
         {
             id: `startDate`,
@@ -99,6 +103,7 @@ export default function AcademicTermTable (props: Props) {
             render: (row) => (
                 <FormattedDate value={row.startDate} />
             ),
+            disableSearch: disabled,
         },
         {
             id: `endDate`,
@@ -109,6 +114,7 @@ export default function AcademicTermTable (props: Props) {
             render: (row) => (
                 <FormattedDate value={row.endDate} />
             ),
+            disableSearch: disabled,
         },
     ];
 
@@ -176,7 +182,7 @@ export default function AcademicTermTable (props: Props) {
                     endCursor={endCursor}
                     rowsPerPage={rowsPerPage}
                     total={total}
-                    primaryAction={{
+                    primaryAction={!disabled ? {
                         label: intl.formatMessage({
                             id: `academicTerm.todo`,
                             defaultMessage: `Create academic term`,
@@ -184,8 +190,8 @@ export default function AcademicTermTable (props: Props) {
                         icon: AddIcon,
                         disabled: !canCreate,
                         onClick: () => setOpenCreateDialog(true),
-                    }}
-                    secondaryActions={[
+                    } : undefined}
+                    secondaryActions={ !disabled ? [
                         {
                             label: intl.formatMessage({
                                 // i.e. entity.user.template.download.button
@@ -196,8 +202,8 @@ export default function AcademicTermTable (props: Props) {
                             disabled: !canCreate,
                             onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
                         },
-                    ]}
-                    rowActions={(row) => [
+                    ] : []}
+                    rowActions={ !disabled ? (row) => [
                         {
                             label: intl.formatMessage({
                                 id: `academicTerm.todo`,
@@ -207,7 +213,7 @@ export default function AcademicTermTable (props: Props) {
                             disabled: !(canDelete),
                             onClick: deleteSelectedRow,
                         },
-                    ]}
+                    ] : undefined}
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
