@@ -63,8 +63,6 @@ export default function CreateAcademicTermDialog (props: Props) {
                 variant: `success`,
             });
         } catch (error) {
-            console.log(JSON.parse(JSON.stringify(error)))
-
             enqueueSnackbar(intl.formatMessage({
                 id: `academicTerm.todo`,
                 defaultMessage: `Sorry, something went wrong, please try again`,
