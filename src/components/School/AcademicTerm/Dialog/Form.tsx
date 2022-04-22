@@ -17,6 +17,7 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+import { AcademicTermRow } from "../Table";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,6 +44,7 @@ interface Props {
     onChange: (value: AcademicTermForm) => void;
     onValidation: (valid: boolean) => void;
     loading?: boolean;
+    data: AcademicTermRow[];
 }
 
 export default function AcademicTermDialogForm (props: Props) {
@@ -51,6 +53,7 @@ export default function AcademicTermDialogForm (props: Props) {
         onChange,
         onValidation: setIsFormValid,
         loading,
+        data
     } = props;
 
     const classes = useStyles();
@@ -69,6 +72,10 @@ export default function AcademicTermDialogForm (props: Props) {
     const [ isNameValid, setIsNameValid] = useState(false);
     const [ startDateValidation, setStartDateValidation ] = useState<DateValidation>({ error: false });
     const [ endDateValidation, setEndDateValidation ] = useState<DateValidation>({ error: false });
+
+    const academicTermDateRanges: {startDate: string, endDate: string}[] = data?.map((academicTerm)=> { 
+        return { startDate: academicTerm.startDate, endDate: academicTerm.endDate }
+    })
 
     const resetDateErrors = () => {
         setStartDateValidation({ error: false, message: undefined })
@@ -113,9 +120,33 @@ export default function AcademicTermDialogForm (props: Props) {
         }
     }
 
+    const validateDateRanges = () => {
+        academicTermDateRanges.forEach((dateRange)=>{
+            const dateRangeStart = moment(dateRange.startDate)
+            const dateRangeEnd = moment(dateRange.endDate)
+            const startDate = moment(startDateValue)
+            const endDate = moment(endDateValue)
+            
+            const isInvalidDateRange = startDate.isBetween(dateRangeStart, dateRangeEnd, undefined, '[]') || dateRangeStart.isBetween(startDate, endDate, undefined, '[]') || 
+            endDate.isBetween(dateRangeStart, dateRangeEnd, undefined, '[]') || dateRangeEnd.isBetween(startDate, endDate, undefined, '[]');
+
+            if(isInvalidDateRange) {
+                setStartDateValidation({ 
+                    error:true, 
+                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `This date range conflicts with an existing academic term range` })
+                });
+                setEndDateValidation({ 
+                    error:true, 
+                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `This date range conflicts with an existing academic term range` })
+                });
+            }
+        })
+    }
+
     const validateDates = () => {
         validateStartDate();
         validateEndDate();
+        validateDateRanges();
     }
 
     useEffect(() => {

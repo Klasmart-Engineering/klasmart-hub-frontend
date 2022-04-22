@@ -18,8 +18,7 @@ import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/T
 import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
-    Delete as DeleteIcon,
-    Edit as EditIcon,
+    Delete as DeleteIcon
 } from "@mui/icons-material";
 import { Paper } from "@mui/material";
 import {
@@ -29,7 +28,7 @@ import {
 import React,
 { useState } from "react";
 import { FormattedDate, useIntl } from "react-intl";
-import { Status, StatusFilter } from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 
 const useStyles = makeStyles(() => createStyles({
     root: {
@@ -231,6 +230,7 @@ export default function AcademicTermTable (props: Props) {
             <CreateAcademicTermDialog
                 open={openCreateDialog}
                 schoolId={schoolId}
+                data={rows}
                 onClose={() => {
                     setOpenCreateDialog(false);
                 }}

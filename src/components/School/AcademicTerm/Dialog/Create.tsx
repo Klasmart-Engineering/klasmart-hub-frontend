@@ -13,15 +13,17 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+import { AcademicTermRow } from "../Table";
 
 interface Props {
     open: boolean;
     schoolId: string;
+    data: AcademicTermRow[];
     onClose: (value?: AcademicTermForm) => void;
 }
 
 export default function CreateAcademicTermDialog (props: Props) {
-    const { open, schoolId, onClose } = props;
+    const { open, schoolId, onClose, data } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
@@ -102,6 +104,7 @@ export default function CreateAcademicTermDialog (props: Props) {
         >
             <AcademicTermDialogForm
                 value={newAcademicTerm}
+                data={data}
                 onChange={(value) => setNewAcademicTerm(value)}
                 onValidation={setValid}
             />
