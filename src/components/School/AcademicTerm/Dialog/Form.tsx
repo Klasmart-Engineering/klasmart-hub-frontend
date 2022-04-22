@@ -133,11 +133,11 @@ export default function AcademicTermDialogForm (props: Props) {
             if(isInvalidDateRange) {
                 setStartDateValidation({ 
                     error:true, 
-                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `This date range conflicts with an existing academic term range` })
+                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Current date range conflicts with an existing academic term date range` })
                 });
                 setEndDateValidation({ 
                     error:true, 
-                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `This date range conflicts with an existing academic term range` })
+                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Current date range conflicts with an existing academic term date range` })
                 });
             }
         })
