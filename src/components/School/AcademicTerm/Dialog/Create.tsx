@@ -14,6 +14,7 @@ import React,
 } from "react";
 import { useIntl } from "react-intl";
 import { AcademicTermRow } from "../Table";
+import { ApolloError } from "@apollo/client";
 
 interface Props {
     open: boolean;
@@ -63,12 +64,34 @@ export default function CreateAcademicTermDialog (props: Props) {
                 variant: `success`,
             });
         } catch (error) {
+
+            let errors = []
+            
+            if (error instanceof ApolloError && error.message === "ERR_API_BAD_INPUT") {
+                errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === "ERR_API_BAD_INPUT")
+                ?.map(graphQLError => graphQLError.extensions?.exception?.errors)
+                ?.flatMap(graphQLErrors=> graphQLErrors)
+                ?.filter(specificError=> specificError.code === "ERR_OVERLAPPING_DATE_RANGE")
+            }
+
+            if (errors.length > 0){
+                enqueueSnackbar(intl.formatMessage({
+                    id: `academicTerm.validationError.dateRangeConflict`,
+                    defaultMessage: `Current date range conflicts with an existing academic term date range`,
+                }), {
+                    variant: `error`,
+                });
+
+                return;
+            }
+
             enqueueSnackbar(intl.formatMessage({
                 id: `academicTerm.create.error.general`,
                 defaultMessage: `Academic term create has failed`,
             }), {
                 variant: `error`,
             });
+            
         }
     };
 
