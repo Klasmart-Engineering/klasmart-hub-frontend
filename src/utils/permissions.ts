@@ -146,6 +146,7 @@ export const permissions = [
     `view_my_school_reports_611`,
     `view_my_organizations_reports_612`,
     `view_my_reports_614`,
+    `report_student_progress_teacher_660`,
     `report_learning_outcomes_in_categories_616`,
     `report_organization_teaching_load_617`,
     `report_school_teaching_load_618`,

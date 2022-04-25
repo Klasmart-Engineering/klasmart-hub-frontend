@@ -1,3 +1,4 @@
+import { useFeatureFlags } from "@/feature-flag/utils";
 import { usePermission } from "@/utils/permissions";
 import { useIsSuperAdmin } from "@/utils/userRoles";
 import {
@@ -16,6 +17,7 @@ import {
     MenuBook,
     Person,
     School,
+    ShowChartTwoTone,
     SvgIconComponent,
     TableChart,
 } from "@mui/icons-material";
@@ -84,6 +86,7 @@ export default function NavigationMenuList (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const location = useLocation();
+    const { teacherStudentProgressReport } = useFeatureFlags();
     const homeSection: MenuSection = {
         items: [
             {
@@ -285,6 +288,7 @@ export default function NavigationMenuList (props: Props) {
 
     const dataPermissions = {
         viewReports: usePermission(`reports_600`),
+        viewStudentReport: usePermission(`report_student_progress_teacher_660`),
         viewAssessments: usePermission(`assessments_page_406`),
     };
     const givenDataPermissionsValues = Object.values(dataPermissions).filter((permission) => permission);
@@ -305,6 +309,18 @@ export default function NavigationMenuList (props: Props) {
                         }),
                         icon: TableChart,
                         link: `/reports`,
+                    },
+                ]
+                : []),
+            ...( teacherStudentProgressReport && dataPermissions.viewStudentReport
+                ? [
+                    {
+                        text: intl.formatMessage({
+                            id: `navMenu_studentReportTitle`,
+                            defaultMessage: `Student Report`,
+                        }),
+                        icon: ShowChartTwoTone,
+                        link: `/student-report`,
                     },
                 ]
                 : []),
