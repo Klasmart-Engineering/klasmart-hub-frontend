@@ -5,9 +5,10 @@ import {
   TabList,
   TabPanel
 } from "@mui/lab";
-import Breadcrumb from "@/components/TeachersStudentProgressReport/BreadCrumb";
-import ClassTabs from "@/components/TeachersStudentProgressReport/ClassTabs";
+import Breadcrumb from "@/components/StudentReport/BreadCrumb";
+import ClassTabs from "@/components/StudentReport/ClassTabs";
 import { useIntl } from "react-intl";
+import Statistics from "@/components/StudentReport/Statistics";
 
 interface Performance {
   total_students: number;
@@ -54,15 +55,19 @@ export default function StudentReport(props: Props) {
       <Box paddingY={1}>
         <Breadcrumb links={links} />
       </Box>
-    <ClassTabs onClassChange={setClass} />
+      <ClassTabs onClassChange={setClass} />
       <Box>
         <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={(_, tab) => setTab(tab)}>
+
               <Tab label={performanceLabel} value="performance" />
             </TabList>
           </Box>
-          <TabPanel value="performance"></TabPanel>
+          <TabPanel value="performance" sx={{ padding: 0 }}>
+            {classObj?.performance &&
+              <Statistics performance={classObj.performance} />}
+          </TabPanel>
         </TabContext>
       </Box>
     </Box>
