@@ -53,7 +53,7 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
     const {
         loading,
         data,
-        refetch: refetchAcacemicTerms,
+        refetch: refetchAcademicTerms,
         fetchMore, 
     } = useGetPaginatedAcademicTerms({
         variables: {
@@ -90,7 +90,7 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
     };
 
     useEffect(() => {
-        refetchAcacemicTerms({
+        refetchAcademicTerms({
             count: serverPagination.rowsPerPage,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,

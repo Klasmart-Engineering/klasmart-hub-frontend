@@ -145,10 +145,10 @@ export default function EditSchoolDialog (props: Props) {
             {
                 label: intl.formatMessage({
                     id: `common.inputField.optional`,
-                    defaultMessage: `Academic Term (Optional)`,
                 }, {
                     inputField: intl.formatMessage({
                         id: `academicTerm.label`,
+                        defaultMessage: `Academic Term`,
                     }),
                 }),
                 content: (
