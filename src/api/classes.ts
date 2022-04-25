@@ -226,7 +226,7 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermNode[];
+    academicTerm?: AcademicTermNode;
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
@@ -273,6 +273,7 @@ export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
     programId?: UuidFilter;
     subjectId?: UuidFilter;
     gradeId?: UuidFilter;
+    academicTermId?: UuidFilter;
 }
 
 interface GetAllClassesPaginatedRequest {

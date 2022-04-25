@@ -116,6 +116,21 @@ export const buildClassesFilters = (filters: BaseTableData<ClassRow>['filters'] 
                 OR: values,
             };
         }
+        case `academicTerm`: {
+            const values = filter.values.map((value) => {
+                const academicTermFilter: ClassesFilter = {
+                    academicTermId: {
+                        operator: `eq`,
+                        value,
+                    },
+                };
+                return academicTermFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         case `ageRangeFrom`: {
             const values = filter.values.map((value) => {
                 const [ fromValue, fromUnit ] = value.split(` `);

@@ -3,12 +3,16 @@ import {
     mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
 import { mapCategoriesToFilterOptions } from "./categories";
-import { mapClassEdgesToFilterValues, mapClassEdgesToAcademicTerm } from "./classes";
+import {
+    mapClassEdgesToAcademicTerm,
+    mapClassEdgesToFilterValues,
+} from "./classes";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
+import { useGetClassAcademicTerms } from "@/api/academicTerms";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetAllCategories } from "@/api/categories";
 import { useGetAllPaginatedClasses } from "@/api/classes";
@@ -17,6 +21,7 @@ import { useGetAllPaginatedProgramsList } from "@/api/programs";
 import { useGetPaginatedOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
+import { buildClassAcademicTermFilter } from "@/operations/queries/getClassAcademicTerms";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import { buildOrganizationClassesFilter } from "@/operations/queries/getPaginatedOrganizationClasses";
@@ -77,6 +82,12 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     });
 
     const rolesPaginationFilter = buildOrganizationRoleFilter({
+        organizationId: orgId ?? ``,
+        search: ``,
+        filters: [],
+    });
+
+    const academicTermFilter = buildClassAcademicTermFilter({
         organizationId: orgId ?? ``,
         search: ``,
         filters: [],
@@ -203,6 +214,17 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         skip: !orgId || skipAll || !selectedFilters.queryCategories,
     });
 
+    const { data: academicTermData } = useGetClassAcademicTerms({
+        variables: {
+            direction: `FORWARD`,
+            count: 50,
+            order: `ASC`,
+            orderBy: `name`,
+            filter: academicTermFilter,
+        },
+        skip: !orgId || skipAll || !selectedFilters.queryUserRoles,
+    });
+
     useEffect(() => {
         setGradeFilterValueOptions((values) => ([ ...values, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]));
         if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
@@ -239,6 +261,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ ageRangesData, fetchMoreAgeRanges ]);
 
     useEffect(() => {
+
         setSchoolsFilterValueOptions((values) => ([ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
         if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
             fetchMoreSchools({
@@ -287,8 +310,9 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ categoriesData ]);
 
     useEffect(() => {
-        setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(classData?.classesConnection.edges ?? []));
-    }, [ classData ]);
+        console.log(academicTermData);
+        setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(academicTermData?.classesConnection.edges ?? []));
+    }, [ academicTermData ]);
 
     return {
         gradeFilterValueOptions,

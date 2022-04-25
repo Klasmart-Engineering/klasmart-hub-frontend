@@ -108,7 +108,7 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
-    academicTerm: string[];
+    academicTerm?: string;
 }
 
 interface Props extends TableProps<ClassRow> {
@@ -536,13 +536,12 @@ export default function ClassesTable (props: Props) {
             hidden: true,
             render: (row) => (
                 <>
-                    {row.academicTerm.map((academicTerm, i) => (
+                    {row.academicTerm && 
                         <Chip
-                            key={`academicTerm-${i}`}
-                            label={academicTerm}
+                            label={row.academicTerm}
                             className={classes.chip}
                         />
-                    ))}
+                    }
                 </>
             ),
         },
