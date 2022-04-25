@@ -73,10 +73,6 @@ export default function AcademicTermDialogForm (props: Props) {
     const [ startDateValidation, setStartDateValidation ] = useState<DateValidation>({ error: false });
     const [ endDateValidation, setEndDateValidation ] = useState<DateValidation>({ error: false });
 
-    const academicTermDateRanges: {startDate: string, endDate: string}[] = data?.map((academicTerm)=> { 
-        return { startDate: academicTerm.startDate, endDate: academicTerm.endDate }
-    })
-
     const resetDateErrors = () => {
         setStartDateValidation({ error: false, message: undefined })
         setEndDateValidation({ error: false, message: undefined })
@@ -86,17 +82,17 @@ export default function AcademicTermDialogForm (props: Props) {
         if (!startDateValue) { 
             setStartDateValidation({
                 error: true,
-                message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Required` }) 
+                message: intl.formatMessage({ id: `common.validation.required`, defaultMessage: `Required` }) 
             });
         } else if (startDateValue === endDateValue) {
             setStartDateValidation({
                 error: true, 
-                message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `The Start and End Dates cannot be the same date` })
+                message: intl.formatMessage({ id: `academicTerm.validationError.sameDate`, defaultMessage: `The Start and End Dates cannot be the same date` })
             });
         } else if (endDateValue && startDateValue > endDateValue){
             setStartDateValidation({ 
                 error:true, 
-                message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Start Date should be prior to End Date` })
+                message: intl.formatMessage({ id: `academicTerm.validationError.startBeforeEndDate`, defaultMessage: `Start Date should be prior to End Date` })
             });
         }
     }
@@ -105,48 +101,24 @@ export default function AcademicTermDialogForm (props: Props) {
         if (!endDateValue) { 
             setEndDateValidation({
                 error: true, 
-                message: intl.formatMessage({ id: `academicTerm.todo`,  defaultMessage: `Required` }) 
+                message: intl.formatMessage({ id: `common.validation.required`,  defaultMessage: `Required` }) 
             }); 
         } else if (startDateValue === endDateValue) {
             setEndDateValidation({
                 error:true, 
-                message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `The Start and End Dates cannot be the same date` })
+                message: intl.formatMessage({ id: `academicTerm.validationError.sameDate`, defaultMessage: `The Start and End Dates cannot be the same date` })
             });
         } else if (startDateValue && startDateValue > endDateValue){
             setEndDateValidation({ 
                 error:true, 
-                message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Start Date should be prior to End Date` })
+                message: intl.formatMessage({ id: `academicTerm.validationError.startBeforeEndDate`, defaultMessage: `Start Date should be prior to End Date` })
             });
         }
-    }
-
-    const validateDateRanges = () => {
-        academicTermDateRanges.forEach((dateRange)=>{
-            const dateRangeStart = moment(dateRange.startDate)
-            const dateRangeEnd = moment(dateRange.endDate)
-            const startDate = moment(startDateValue)
-            const endDate = moment(endDateValue)
-            
-            const isInvalidDateRange = startDate.isBetween(dateRangeStart, dateRangeEnd, undefined, '[]') || dateRangeStart.isBetween(startDate, endDate, undefined, '[]') || 
-            endDate.isBetween(dateRangeStart, dateRangeEnd, undefined, '[]') || dateRangeEnd.isBetween(startDate, endDate, undefined, '[]');
-
-            if(isInvalidDateRange) {
-                setStartDateValidation({ 
-                    error:true, 
-                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Current date range conflicts with an existing academic term date range` })
-                });
-                setEndDateValidation({ 
-                    error:true, 
-                    message: intl.formatMessage({ id: `academicTerm.todo`, defaultMessage: `Current date range conflicts with an existing academic term date range` })
-                });
-            }
-        })
     }
 
     const validateDates = () => {
         validateStartDate();
         validateEndDate();
-        validateDateRanges();
     }
 
     useEffect(() => {
@@ -178,23 +150,23 @@ export default function AcademicTermDialogForm (props: Props) {
                 id="class-dialog-name"
                 value={name}
                 label={intl.formatMessage({
-                    id: `academicTerm.todo`,
+                    id: `common.label.name`,
                     defaultMessage: `Name`
                 })}
                 variant="outlined"
                 type="text"
                 validations={[
                     required(intl.formatMessage({
-                        id: `academicTerm.todo`,
-                        defaultMessage: `The academic term name is required`
+                        id: `schools_nameRequiredValidation`,
+                        defaultMessage: `Name is required`
                     })),
                     letternumeric(intl.formatMessage({
-                        id: `academicTerm.todo`,
-                        defaultMessage: `The academic term can only contain letters, numbers, space and & / , -.`
+                        id: `genericValidations_letternumeric`,
+                        defaultMessage: `The input can only contain letters, numbers, space and & / , -.`
                     })),
                     max(ACADEMIC_TERM_NAME_LENGTH_MAX, intl.formatMessage({
                         // ie `validation.error.class.name.maxLength`
-                        id: `academicTerm.todo`,
+                        id: `academicTerm.validationError.maxLength`,
                         defaultMessage: `The academic term name has a max length of {value} characters`
                     }, {
                         value: ACADEMIC_TERM_NAME_LENGTH_MAX,
@@ -211,7 +183,7 @@ export default function AcademicTermDialogForm (props: Props) {
                     <DatePicker
                         disablePast
                         label={intl.formatMessage({
-                            id: `academicTerm.todo`,
+                            id: `common.startDate.label`,
                             defaultMessage: `Start date`,
                         })}
                         openTo="day"
@@ -236,7 +208,7 @@ export default function AcademicTermDialogForm (props: Props) {
                     <DatePicker
                         disablePast
                         label={intl.formatMessage({
-                            id: `academicTerm.todo`,
+                            id: `common.endDate.label`,
                             defaultMessage: `End date`,
                         })}
                         openTo="day"

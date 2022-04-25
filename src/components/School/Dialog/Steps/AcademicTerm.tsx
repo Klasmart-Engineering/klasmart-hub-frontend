@@ -9,20 +9,14 @@ import {
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { DEFAULT_ROWS_PER_PAGE, pageChangeToDirection, ServerCursorPagination, serverToTableOrder, tableToServerOrder } from "@/utils/table";
-import { SchoolFilter, useGetPaginatedSchools } from "@/api/schools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { usePermission } from "@/utils/permissions";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { Info as InfoIcon } from "@mui/icons-material";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
-import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { AcademicTermFilter,
-     builAcademicTermFilter,
+import {builAcademicTermFilter,
      useGetPaginatedAcademicTerms } from "@/api/academicTerms";
-import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { Status } from "@/types/graphQL";
-import { isUuid } from "@/utils/pagination";
 import { mapAcademicTermNodeToAcademicTermRow } from "@/utils/academicTerms";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -37,9 +31,6 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
     const {
         value,
         disabled,
-        onChange,
-        loading: stepLoading,
-        isEdit,
     } = props;
 
     const classes = useStyles();
@@ -74,10 +65,10 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.id || !canView,
+        skip: !currentOrganization?.id || !canView || !value,
         notifyOnNetworkStatusChange: true,
     });
-
+    
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
         await fetchMore({
@@ -116,7 +107,7 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
             {!disabled && (
                 <Alert severity="info" className={classes.info} icon={<InfoIcon color="action"/>}>
                 {intl.formatMessage({
-                    id: `academicTerm.todo`,
+                    id: `academicTerm.info`,
                     defaultMessage: `Academic term can be used to configure when classes and class rosters should be active. Adding academic years to a school is optional.`,
                 })}
             </Alert>

@@ -56,7 +56,7 @@ export default function CreateAcademicTermDialog (props: Props) {
 
             onClose(newAcademicTerm);
             enqueueSnackbar(intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.create.success`,
                 defaultMessage: `Academic term has been created successfully`,
 
             }), {
@@ -64,8 +64,8 @@ export default function CreateAcademicTermDialog (props: Props) {
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `academicTerm.todo`,
-                defaultMessage: `Sorry, something went wrong, please try again`,
+                id: `academicTerm.create.error.general`,
+                defaultMessage: `Academic term create has failed`,
             }), {
                 variant: `error`,
             });
@@ -76,13 +76,13 @@ export default function CreateAcademicTermDialog (props: Props) {
         <Dialog
             open={open}
             title={intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.create.action`,
                 defaultMessage: `Create Academic Term`,
             })}
             actions={[
                 {
                     label: intl.formatMessage({
-                        id: `academicTerm.todo`,
+                        id: `common.action.cancel`,
                         defaultMessage: `Cancel`,
                     }),
                     color: `primary`,
@@ -90,7 +90,7 @@ export default function CreateAcademicTermDialog (props: Props) {
                 },
                 {
                     label: intl.formatMessage({
-                        id: `academicTerm.todo`,
+                        id: `common.action.create`,
                         defaultMessage: `Create`,
                     }),
                     color: `primary`,

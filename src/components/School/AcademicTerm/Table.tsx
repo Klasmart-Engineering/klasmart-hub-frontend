@@ -88,7 +88,7 @@ export default function AcademicTermTable (props: Props) {
         {
             id: `name`,
             label: intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.label`,
                 defaultMessage: `Academic Term`,
             }),
             persistent: true,
@@ -97,7 +97,7 @@ export default function AcademicTermTable (props: Props) {
         {
             id: `startDate`,
             label: intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `common.startDate.label`,
                 defaultMessage: `Start date`,
             }),
             render: (row) => (
@@ -108,7 +108,7 @@ export default function AcademicTermTable (props: Props) {
         {
             id: `endDate`,
             label: intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `common.endDate.label`,
                 defaultMessage: `End date`,
             }),
             render: (row) => (
@@ -120,7 +120,6 @@ export default function AcademicTermTable (props: Props) {
 
     const academicTermCsvTemplateHeaders = [
         `academic_term_name`,
-
         `academic_term_start_date`,
         `academic_term_end_date`,
     ];
@@ -128,7 +127,7 @@ export default function AcademicTermTable (props: Props) {
     const csvExporter = buildCsvTemplateOptions({
         filename: intl.formatMessage({
             // i.e. entity.academicTerm.importTemplate.filename
-            id: `academicTerm.todo`,
+            id: `academicTerm.csvTemplate.filename`,
             defaultMessage: `kidsloop-academic-term-template`,
         }),
         headers: academicTermCsvTemplateHeaders,
@@ -137,7 +136,7 @@ export default function AcademicTermTable (props: Props) {
     const deleteSelectedRow = async (row: AcademicTermRow) => {
         if (!(await deletePrompt({
             title: intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.action.delete`,
                 defaultMessage: `Delete Academic Term`,
             }),
             entityName: row.name,
@@ -149,15 +148,15 @@ export default function AcademicTermTable (props: Props) {
                 },
             });
             enqueueSnackbar(intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.delete.success`,
                 defaultMessage: `Academic Term has been deleted successfully`,
             }), {
                 variant: `success`,
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `academicTerm.todo`,
-                defaultMessage: `Sorry, something went wrong, please try again`,
+                id: `academicTerm.delete.error.general`,
+                defaultMessage: `Academic Term delete has failed`,
             }), {
                 variant: `error`,
             });
@@ -184,7 +183,7 @@ export default function AcademicTermTable (props: Props) {
                     total={total}
                     primaryAction={!disabled ? {
                         label: intl.formatMessage({
-                            id: `academicTerm.todo`,
+                            id: `academicTerm.create.action`,
                             defaultMessage: `Create academic term`,
                         }),
                         icon: AddIcon,
@@ -195,7 +194,7 @@ export default function AcademicTermTable (props: Props) {
                         {
                             label: intl.formatMessage({
                                 // i.e. entity.user.template.download.button
-                                id: `academicTerm.todo`,
+                                id: `academicTerm.csvTemplate.download`,
                                 defaultMessage: `Download CSV Template File`,
                             }),
                             icon: AssignmentReturnedIcon,
@@ -206,7 +205,7 @@ export default function AcademicTermTable (props: Props) {
                     rowActions={ !disabled ? (row) => [
                         {
                             label: intl.formatMessage({
-                                id: `academicTerm.todo`,
+                                id: `common.action.delete`,
                                 defaultMessage: `Delete`,
                             }),
                             icon: DeleteIcon,
@@ -217,13 +216,13 @@ export default function AcademicTermTable (props: Props) {
                     localization={getTableLocalization(intl, {
                         toolbar: {
                             title: intl.formatMessage({
-                                id: `academicTerm.todo`,
+                                id: `academicTerm.label`,
                                 defaultMessage: `Academic Term`,
                             }),
                         },
                         search: {
                             placeholder: intl.formatMessage({
-                                id: `academicTerm.todo`,
+                                id: `common.action.search`,
                                 defaultMessage: `Search`,
                             }),
                         },

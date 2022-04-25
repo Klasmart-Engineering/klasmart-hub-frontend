@@ -139,12 +139,17 @@ export default function EditSchoolDialog (props: Props) {
                     max(120)(editedSchool?.name ?? ``),
                     max(10)(editedSchool?.shortcode ?? ``),
                     alphanumeric()(editedSchool?.shortcode),
-                ].filter(((error): error is string => error !== true)).find((error) => error),
+                ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
-                    id: `academicTerm.todo`,
+                    id: `common.inputField.optional`,
                     defaultMessage: `Academic Term (Optional)`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `academicTerm.label`,
+                    }),
                 }),
                 content: (
                     <AcademicTermStep
@@ -154,13 +159,6 @@ export default function EditSchoolDialog (props: Props) {
                         onChange={handleChange}
                     />
                 ),
-                error: [
-                    required()(editedSchool?.name),
-                    letternumeric()(editedSchool?.name),
-                    max(120)(editedSchool?.name ?? ``),
-                    max(10)(editedSchool?.shortcode ?? ``),
-                    alphanumeric()(editedSchool?.shortcode),
-                ].filter(((error): error is string => error !== true)).find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -172,7 +170,8 @@ export default function EditSchoolDialog (props: Props) {
                         onChange={handleChange}
                     />
                 ),
-                error: [ required()(editedSchool?.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(editedSchool?.programIds) ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
