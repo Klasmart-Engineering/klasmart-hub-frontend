@@ -98,7 +98,7 @@ export interface AcademicTermPaginationFilter {
     search: string;
 }
 
-const builAcademicTermSearchFilter = (search: string): AcademicTermFilter => ({
+const buildAcademicTermSearchFilter = (search: string): AcademicTermFilter => ({
     ...(isUuid(search) ? {
         id: {
             operator: `eq`,
@@ -122,7 +122,7 @@ export const builAcademicTermFilter = (filter: AcademicTermPaginationFilter): Ac
         operator: `eq`,
         value: Status.ACTIVE,
     },
-    AND: [ builAcademicTermSearchFilter(filter.search) ],
+    AND: [ buildAcademicTermSearchFilter(filter.search) ],
 });
 
 export const useGetPaginatedAcademicTerms = (options?: QueryHookOptions<GetPaginatedAcademicTermsResponse, GetPaginatedcademicTermsRequest>) => {

@@ -60,7 +60,6 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
             id: value.id,
             direction: `FORWARD`,
             count: serverPagination.rowsPerPage,
-            cursor: serverPagination.cursor,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
@@ -120,7 +119,6 @@ export default function AcademicTermStep (props: EntityStepContent<SchoolStepper
                 orderBy={serverPagination.orderBy}
                 rowsPerPage={serverPagination.rowsPerPage}
                 search={serverPagination.search}
-                cursor={serverPagination.cursor}
                 total={data?.schoolNode?.academicTermsConnection?.totalCount}
                 hasNextPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasNextPage}
                 hasPreviousPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasPreviousPage}
