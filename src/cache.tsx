@@ -18,6 +18,11 @@ export const cacheConfig: InMemoryCacheConfig = {
             // Same Role could be assigned on the Organization or School level
             keyFields: [ `id`, `organizationId` ],
         },
+        SchoolConnectionNode: {
+            fields: {
+                academicTermsConnection: relayStylePagination(),
+            },
+        },
         ContactInfo: {
             keyFields: [
                 `email`,

@@ -1,3 +1,4 @@
+import { AcademicTermEdge } from "./academicTerms";
 import { ClassEdge } from "./classes";
 import { ProgramEdge } from "./programs";
 import { DELETE_SCHOOL } from "@/operations/mutations/deleteSchool";
@@ -6,7 +7,10 @@ import { EDIT_SCHOOL_PROGRAMS } from "@/operations/mutations/editSchoolPrograms"
 import { CREATE_SCHOOL } from "@/operations/mutations/newSchool";
 import { UPLOAD_SCHOOLS_CSV } from "@/operations/mutations/uploadSchoolsCsv";
 import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { GET_SCHOOL_NODE, GET_SCHOOL_NODE_WITH_CLASS_RELATIONS } from "@/operations/queries/getSchoolNode";
+import {
+    GET_SCHOOL_NODE,
+    GET_SCHOOL_NODE_WITH_CLASS_RELATIONS,
+} from "@/operations/queries/getSchoolNode";
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     BaseEntity,

@@ -98,6 +98,48 @@ export function useThemeProvider () {
 
     const componentOverrides = {
         components: {
+            MuiYearPicker: {
+                styleOverrides: {
+                    root: {
+                        "& .Mui-selected": {
+                            "&:focus": {
+                                color: `#FFF`,
+                            },
+                            "&:hover": {
+                                color: `#FFF`,
+                            },
+                        },
+                    },
+                },
+            },
+            MuiMonthPicker: {
+                styleOverrides: {
+                    root: {
+                        "& .Mui-selected": {
+                            "&:focus": {
+                                color: `#FFF`,
+                            },
+                            "&:hover": {
+                                color: `#FFF`,
+                            },
+                        },
+                    },
+                },
+            },
+            MuiPickersDay: {
+                styleOverrides: {
+                    root: {
+                        "&.Mui-selected": {
+                            "&:focus": {
+                                color: `#FFF`,
+                            },
+                            "&:hover": {
+                                color: `#FFF`,
+                            },
+                        },
+                    },
+                },
+            },
             MuiCssBaseline: {
                 styleOverrides: {
                     body: {
