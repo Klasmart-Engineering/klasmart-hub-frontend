@@ -41,6 +41,8 @@ export default function ClassesPage (props: Props) {
         orderBy: `name`,
     });
 
+    const showAcademicTermFilter = tableFilters.filter(filter => filter.columnId === `schoolNames`)[0]?.values.length === 1;
+
     const paginationFilter = buildOrganizationClassesFilter({
         organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
@@ -104,6 +106,7 @@ export default function ClassesPage (props: Props) {
     const rows = data?.classesConnection?.edges?.map(mapClassNodeToClassRow) ?? [];
 
     return (<ClassTable
+        showAcademicTermFilter={showAcademicTermFilter}
         rows={rows}
         loading={loading}
         hasNextPage={data?.classesConnection?.pageInfo.hasNextPage}

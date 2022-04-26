@@ -116,6 +116,7 @@ export interface ClassRow {
 }
 
 interface Props extends TableProps<ClassRow> {
+    showAcademicTermFilter: boolean;
 }
 
 export default function ClassesTable (props: Props) {
@@ -137,6 +138,7 @@ export default function ClassesTable (props: Props) {
         onTableChange,
         refetch,
         loading,
+        showAcademicTermFilter,
     } = props;
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
@@ -169,7 +171,9 @@ export default function ClassesTable (props: Props) {
         queryAgeRanges: true,
         querySubjects: true,
         queryGrades: true,
-        queryAcademicTerm: true,
+        queryAcademicTerm: {
+            schoolId: ``,
+        },
     });
 
     const classCsvTemplateHeaders = [
@@ -221,6 +225,33 @@ export default function ClassesTable (props: Props) {
 
         setSelectedClassId(classId);
         setClassRosterDialogOpen(true);
+    };
+
+    const academicTermFilter: TableFilter<ClassRow> = {
+        id: `academicTerm`,
+        label: intl.formatMessage({
+            id: `academicTerm.todo`,
+            defaultMessage: `Academic Term`,
+        }),
+        operators: [
+            {
+                label: intl.formatMessage({
+                    id: `generic_filtersEqualsLabel`,
+                }),
+                value: `eq`,
+                multipleValues: true,
+                validations: [ otherValidation(academicTermFilterDisabled()) ],
+                options: academicTermValueOptions,
+                chipLabel: (column, value) => (
+                    intl.formatMessage({
+                        id: `generic_filtersEqualsChipLabel`,
+                    }, {
+                        column,
+                        value,
+                    })
+                ),
+            },
+        ],
     };
 
     const filters: TableFilter<ClassRow>[] = [
@@ -299,32 +330,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
-        {
-            id: `academicTerm`,
-            label: intl.formatMessage({
-                id: `academicTerm.todo`,
-                defaultMessage: `Academic Term`,
-            }),
-            operators: [
-                {
-                    label: intl.formatMessage({
-                        id: `generic_filtersEqualsLabel`,
-                    }),
-                    value: `eq`,
-                    multipleValues: true,
-                    validations: [ otherValidation(academicTermFilterDisabled()) ],
-                    options: academicTermValueOptions,
-                    chipLabel: (column, value) => (
-                        intl.formatMessage({
-                            id: `generic_filtersEqualsChipLabel`,
-                        }, {
-                            column,
-                            value,
-                        })
-                    ),
-                },
-            ],
-        },
+
         {
             id: `grades`,
             label: intl.formatMessage({
@@ -400,6 +406,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
+        ...showAcademicTermFilter?[ academicTermFilter ]: [],
         {
             id: `status`,
             label: intl.formatMessage({
@@ -541,10 +548,10 @@ export default function ClassesTable (props: Props) {
             render: (row) => (
                 <>
                     {row.academicTerm &&
-                        <Chip
-                            label={row.academicTerm}
-                            className={classes.chip}
-                        />
+                    <Chip
+                        label={row.academicTerm}
+                        className={classes.chip}
+                    />
                     }
                 </>
             ),
