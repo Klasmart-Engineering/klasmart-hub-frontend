@@ -22,7 +22,11 @@ import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
-import { useValidations, mapRows, concatNestedArrayAndRemoveDuplicates } from "@/utils/validations";
+import {
+    concatNestedArrayAndRemoveDuplicates,
+    mapRows,
+    useValidations,
+} from "@/utils/validations";
 import {
     CursorTable,
     useSnackbar,
@@ -201,7 +205,7 @@ export default function ClassesTable (props: Props) {
     const academicTermFilterDisabled = () => {
         const selectedSchools = mapRows(rows, `schoolNames`);
         const dedupedSelectedSchools = concatNestedArrayAndRemoveDuplicates(selectedSchools);
-        return dedupedSelectedSchools.length !== 1
+        return dedupedSelectedSchools.length !== 1;
     };
 
     const goToClassRoster = (classId: string) => {
@@ -536,7 +540,7 @@ export default function ClassesTable (props: Props) {
             hidden: true,
             render: (row) => (
                 <>
-                    {row.academicTerm && 
+                    {row.academicTerm &&
                         <Chip
                             label={row.academicTerm}
                             className={classes.chip}
