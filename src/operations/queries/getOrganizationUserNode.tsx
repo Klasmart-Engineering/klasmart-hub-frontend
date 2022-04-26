@@ -9,38 +9,47 @@ export const GET_ORGANIZATION_USER_NODE = gql`
             gender
             dateOfBirth
             contactInfo {
-                email
-                phone
-                username
+              email
+              phone
+              username
             }
             alternateContactInfo {
-                email
-                phone
-                username
+              email
+              phone
+              username
             }
-            roles {
-                id
-                name
-                status
-                organizationId
-            }
-            schools {
-                id
-                name
-                status
-                organizationId
+            schoolMembershipsConnection {
+              edges {
+                node {
+                  school {
+                    id
+                    name
+                    status
+                    organizationId
+                  }
+                }
+              }
             }
             organizationMembershipsConnection(
-                count: 1
-                filter: { organizationId: { value: $organizationId, operator: eq } }
+              count: 1
+              filter: { organizationId: { value: $organizationId, operator: eq } }
             ) {
-                edges {
-                    node {
-                        userId
-                        shortCode
+              edges {
+                node {
+                  userId
+                  shortCode
+                  rolesConnection {
+                    edges {
+                      node {
+                        id
+                        name
+                        status
+                      }
                     }
+                  }
                 }
+              }
             }
+          }
         }
-    }
 `;

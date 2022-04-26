@@ -1,11 +1,22 @@
-import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
+import { OrganizationMembershipConnectionEdge, OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
 import { SetterOrUpdater } from "recoil";
+import { mapRoles } from "./userRoles";
 
 export const buildEmptyOrganizationMembership = (): OrganizationMembership => ({
     organization_id: ``,
     user_id: ``,
 });
+
+export const mapOrganizationMembershipEdges = (edge: OrganizationMembershipConnectionEdge) => {
+    const organizationMembership = edge.node;
+    return {
+        organization: organizationMembership.organization,
+        joinTimestamp: organizationMembership.joinTimestamp,
+        status: organizationMembership.status,
+        roles: organizationMembership.rolesConnection?.edges.map(mapRoles),
+    };
+};
 
 export const selectOrganizationMembership = (selectedMembership: OrganizationMembershipConnectionNode, organizationMembershipStack: OrganizationMembershipConnectionNode[], setOrganizationMembershipStack: SetterOrUpdater<OrganizationMembershipConnectionNode[]>) => {
     const otherOrganizations = organizationMembershipStack.filter((membership) => membership.organization?.id !== selectedMembership.organization?.id);

@@ -2,7 +2,7 @@ import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { FormErrors } from "@/types/form";
-import { isActive } from "@/types/graphQL";
+import { isActive, UuidOperator } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
 import { roleNameTranslations } from "@/utils/userRoles";
@@ -153,18 +153,23 @@ export default function UserDialogForm (props: Props) {
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
-    const { data: schoolsData } = useGetPaginatedSchools({
+    const { data: schoolsData, refetch: refetchSchoolsData } = useGetPaginatedSchools({
         variables: {
             direction: `FORWARD`,
-            orderBy: `school_name`,
+            orderBy: `name`,
             order: `ASC`,
+            filter: {
+                organizationId: { operator: `eq` as UuidOperator, value: organizationId }
+            }
         },
     });
+
     const allSchools = schoolsData?.schoolsConnection?.edges
         .filter((edge) => isActive(edge.node))
         .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
     ?? [];
-    const { data: organizationData } = useGetOrganizationRoles({
+
+    const { data: organizationData, refetch: refetchOrganizationRoles } = useGetOrganizationRoles({
         variables: {
             organization_id: organizationId,
         },
@@ -225,6 +230,21 @@ export default function UserDialogForm (props: Props) {
     const currentYear = today.getFullYear();
     const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
     minDateAllowed.setFullYear(currentYear - 100);
+
+    useEffect(() => {
+        refetchSchoolsData({
+            direction: `FORWARD`,
+            orderBy: `name`,
+            order: `ASC`,
+            filter: {
+                organizationId: { operator: `eq` as UuidOperator, value: organizationId }
+            }
+        });
+        refetchOrganizationRoles({
+            organization_id: organizationId,
+        });
+
+    }, [organizationId])
 
     useEffect(() => {
         onValidation([

@@ -1,3 +1,4 @@
+import { SchoolsMembershipConnectionEdge } from "@/api/organizationMemberships";
 import {
     SchoolEdge,
     SchoolNode,
@@ -41,6 +42,17 @@ export const mapSchoolNodeToSchoolRow = (node: SchoolNode): SchoolRow => ({
     status: node.status,
     shortCode: node.shortCode,
 });
+
+export const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
+    const schoolMembership = edge.node.school;
+
+    return {
+        id: schoolMembership.id,
+        name: schoolMembership.name,
+        organizationId: schoolMembership.organizationId,
+        status: schoolMembership.status,
+    };
+};
 
 export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
