@@ -87,12 +87,6 @@ export default function AcademicTermStep (props: Props) {
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
-        console.log(`academ page change`, {
-            pageChange,
-            count,
-            cursor,
-        });
-
         const direction = pageChangeToDirection(pageChange);
         fetchMore({
             variables: {
@@ -105,7 +99,6 @@ export default function AcademicTermStep (props: Props) {
 
     const handleTableChange = async (tableData: CursorTableData<AcademicTermRow>) => {
         if (loading) return;
-        console.log(`table change`);
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
@@ -115,23 +108,23 @@ export default function AcademicTermStep (props: Props) {
         setTableFilters(tableData?.filters ?? []);
     };
 
-    // useEffect(() => {
-    //     refetchAcademicTerms({
-    //         count: serverPagination.rowsPerPage,
-    //         order: serverPagination.order,
-    //         orderBy: serverPagination.orderBy,
-    //         filter: paginationFilter,
-    //     });
-    // }, [
-    //     serverPagination.search,
-    //     serverPagination.order,
-    //     serverPagination.orderBy,
-    //     serverPagination.rowsPerPage,
-    //     tableFilters,
-    // ]);
+    useEffect(() => {
+        refetchAcademicTerms({
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
+            filter: paginationFilter,
+        });
+    }, [
+        serverPagination.search,
+        serverPagination.order,
+        serverPagination.orderBy,
+        serverPagination.rowsPerPage,
+        tableFilters,
+    ]);
 
     const rows = data?.schoolNode?.academicTermsConnection?.edges.map((edge) => mapAcademicTermNodeToAcademicTermRow(edge.node)) ?? [];
-    console.log(`data`, data);
+
     return (
         <>
             {!disabled && (
@@ -153,7 +146,6 @@ export default function AcademicTermStep (props: Props) {
                 total={data?.schoolNode?.academicTermsConnection?.totalCount}
                 rowsPerPage={serverPagination.rowsPerPage}
                 search={serverPagination.search}
-                total={data?.schoolNode?.academicTermsConnection?.totalCount}
                 hasNextPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasNextPage}
                 hasPreviousPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasPreviousPage}
                 startCursor={data?.schoolNode?.academicTermsConnection?.pageInfo.startCursor}
