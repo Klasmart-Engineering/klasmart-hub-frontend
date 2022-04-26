@@ -224,6 +224,10 @@ query getOrganizationClasses(
                     id
                     name
                 }
+                academicTerm {
+                    id
+                    name
+                }
             }
         }
     }

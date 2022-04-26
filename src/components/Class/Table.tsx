@@ -108,6 +108,7 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
+    academicTerm?: string;
 }
 
 interface Props extends TableProps<ClassRow> {
@@ -460,15 +461,16 @@ export default function ClassesTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: disabled,
-            render: (row) => (<>
-                {row.schoolNames.map((school, i) => (
-                    <Chip
-                        key={`school-${i}`}
-                        label={school}
-                        className={classes.chip}
-                    />
-                ))}
-                              </>),
+            render: (row) => (
+                <>
+                    {row.schoolNames.map((school, i) => (
+                        <Chip
+                            key={`school-${i}`}
+                            label={school}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>),
         },
         {
             id: `ageRanges`,
@@ -486,6 +488,26 @@ export default function ClassesTable (props: Props) {
                             className={classes.chip}
                         />
                     ))}
+                </>
+            ),
+        },
+        {
+            id: `academicTerm`,
+            label: intl.formatMessage({
+                id: `academicTerm.label`,
+                defaultMessage: `Academic Term`,
+            }),
+            disableSort: true,
+            disableSearch: true,
+            hidden: true,
+            render: (row) => (
+                <>
+                    {row.academicTerm &&
+                        <Chip
+                            label={row.academicTerm}
+                            className={classes.chip}
+                        />
+                    }
                 </>
             ),
         },
