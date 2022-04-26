@@ -10,10 +10,7 @@ import {
     StringFilter,
     UuidFilter,
 } from "@/types/graphQL";
-import {
-    isUuid,
-    PaginationFilter,
-} from "@/utils/pagination";
+import { PaginationFilter } from "@/utils/pagination";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -54,7 +51,7 @@ export const useDeleteAcademicTerm = (options?: MutationHookOptions<DeleteAcadem
     });
 };
 
-interface GetPaginatedcademicTermsRequest {
+interface GetPaginatedAcademicTermsRequest {
     id?: string;
     filter?: AcademicTermFilter;
     direction?: Direction;
@@ -94,37 +91,6 @@ export interface AcademicTermFilter extends PaginationFilter<AcademicTermFilter>
     status?: StringFilter;
 }
 
-export interface AcademicTermPaginationFilter {
-    search: string;
-}
-
-const buildAcademicTermSearchFilter = (search: string): AcademicTermFilter => ({
-    ...(isUuid(search) ? {
-        id: {
-            operator: `eq`,
-            value: search,
-        },
-    } : {
-        OR: [
-            {
-                name: {
-                    operator: `contains`,
-                    value: search,
-                    caseInsensitive: true,
-                },
-            },
-        ],
-    }),
-});
-
-export const builAcademicTermFilter = (filter: AcademicTermPaginationFilter): AcademicTermFilter => ({
-    status: {
-        operator: `eq`,
-        value: Status.ACTIVE,
-    },
-    AND: [ buildAcademicTermSearchFilter(filter.search) ],
-});
-
-export const useGetPaginatedAcademicTerms = (options?: QueryHookOptions<GetPaginatedAcademicTermsResponse, GetPaginatedcademicTermsRequest>) => {
-    return useQuery<GetPaginatedAcademicTermsResponse, GetPaginatedcademicTermsRequest>(GET_PAGINATED_ACADEMIC_TERMS, options);
+export const useGetPaginatedAcademicTerms = (options?: QueryHookOptions<GetPaginatedAcademicTermsResponse, GetPaginatedAcademicTermsRequest>) => {
+    return useQuery<GetPaginatedAcademicTermsResponse, GetPaginatedAcademicTermsRequest>(GET_PAGINATED_ACADEMIC_TERMS, options);
 };
