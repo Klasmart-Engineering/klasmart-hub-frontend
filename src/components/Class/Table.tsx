@@ -108,7 +108,7 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
-    academicTerm?: string[];
+    academicTerm?: string;
 }
 
 interface Props extends TableProps<ClassRow> {
@@ -138,6 +138,7 @@ export default function ClassesTable (props: Props) {
         showAcademicTermFilter,
         filteredSchoolId,
     } = props;
+
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
@@ -539,13 +540,11 @@ export default function ClassesTable (props: Props) {
             hidden: true,
             render: (row) => (
                 <>
-                    {row.academicTerm && row.academicTerm.map((term, i) => (
+                    {row.academicTerm &&
                         <Chip
-                            key={`academicTerm-${i}`}
                             label={row.academicTerm}
                             className={classes.chip}
                         />
-                    ))
                     }
                 </>
             ),

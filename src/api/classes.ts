@@ -1,3 +1,4 @@
+import { GetPaginatedAcademicTermsResponse } from "./academicTerms";
 import { GetPaginatedOrganizationAgeRangesResponse } from "./ageRanges";
 import { GetOrganizationGradesResponsePaginated } from "./grades";
 import {
@@ -59,7 +60,6 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
-import { GetPaginatedAcademicTermsResponse } from "./academicTerms";
 
 interface UpdateClassRequest {
     class_id: string;
@@ -226,6 +226,7 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
+    academicTerm?: AcademicTermNode;
     academicTermsConnection?: GetPaginatedAcademicTermsResponse[];
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];

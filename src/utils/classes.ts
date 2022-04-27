@@ -95,7 +95,7 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
         grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
         ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
         status: classItem.node.status ?? ``,
-        academicTerm: classItem.node.academicTermsConnection?.map(({ schoolNode }: {schoolNode: SchoolAcademicTermNode}) => schoolNode.name) ?? [],
+        academicTerm: classItem.node?.academicTerm?.name ?? ``,
     };
 };
 
