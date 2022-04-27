@@ -59,6 +59,7 @@ import {
     useMutation,
     useQuery,
 } from "@apollo/client";
+import { GetPaginatedAcademicTermsResponse } from "./academicTerms";
 
 interface UpdateClassRequest {
     class_id: string;
@@ -199,7 +200,6 @@ export interface AcademicTermNode {
     name: string;
     startDate: string;
     endDate: string;
-    school: { id: string };
 }
 
 interface SummaryNode {
@@ -226,7 +226,7 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermNode;
+    academicTermsConnection?: GetPaginatedAcademicTermsResponse[];
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];

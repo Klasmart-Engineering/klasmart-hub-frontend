@@ -4,7 +4,7 @@ import {
 } from "./ageRanges";
 import { mapCategoriesToFilterOptions } from "./categories";
 import {
-    mapClassEdgesToAcademicTerm,
+    mapAcademicTerm,
     mapClassEdgesToFilterValues,
 } from "./classes";
 import { mapGradeEdgesToFilterOptions } from "./grades";
@@ -12,6 +12,7 @@ import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
+import { useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetAllCategories } from "@/api/categories";
 import { useGetAllPaginatedClasses } from "@/api/classes";
@@ -290,33 +291,19 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         setCategoriesFilterValueOptions(mapCategoriesToFilterOptions(categoriesData?.organization?.categories ?? []));
     }, [ categoriesData ]);
 
-    // const academicTermFilter = buildClassAcademicTermFilter({
-    //     organizationId: orgId ?? ``,
-    //     search: ``,
-    //     filters: [
-    //         {
-    //             schoolId: {
-    //                 value: selectedFilters.queryAcademicTerm?.schoolId ?? ``,
-    //                 operator: `eq`,
-    //             },
-    //         },
-    //     ],
-    // });
+    const { data: academicTermData } = useGetPaginatedAcademicTerms({
+        variables: {
+            id: selectedFilters.queryAcademicTerm?.schoolId ?? ``,
+            direction: `FORWARD`,
+            order: `ASC`,
+            orderBy: `name`,
+        },
+        skip: !orgId || skipAll || !selectedFilters.queryAcademicTerm?.schoolId,
+    });
 
-    // const { data: academicTermData } = useGetClassAcademicTerms({
-    //     variables: {
-    //         direction: `FORWARD`,
-    //         count: 50,
-    //         order: `ASC`,
-    //         orderBy: `name`,
-    //         filter: academicTermFilter,
-    //     },
-    //     skip: !orgId || skipAll || !selectedFilters.queryAcademicTerm?.schoolId,
-    // });
-
-    // useEffect(() => {
-    //     setAcademicTermValueOptions(mapClassEdgesToAcademicTerm(academicTermData?.classesConnection.edges ?? []));
-    // }, [ academicTermData ]);
+    useEffect(() => {
+        academicTermData?.schoolNode && setAcademicTermValueOptions(mapAcademicTerm(academicTermData.schoolNode));
+    }, [ academicTermData ]);
 
     return {
         gradeFilterValueOptions,

@@ -241,7 +241,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
         {
             id: `subjects`,
@@ -255,7 +255,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
         {
             id: `categories`,
@@ -269,7 +269,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
     ];
 
@@ -296,7 +296,6 @@ export default function SubcategoriesSelectDialog (props: Props) {
             <Paper>
                 <PageTable
                     showSelectables
-                    hideSelectStatus
                     selectedRows={updatedSubcategories?.map((subcategory) => subcategory.id ?? ``)}
                     order="asc"
                     orderBy="name"

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.47.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.47.0%0Dv2.46.1) (2022-04-20)
+
+
+### ⚙️ Continuous Integrations
+
+* Feature/workflow build container (#46) ([c2e0202](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c2e020269ffb5f142f3ac381e6c133dd2272e510))
+
+
+### ✨ Features
+
+* enable real data for student dashboard on Korea prod domain (#54) ([4b434ea](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4b434ea2876e335b2ac9f02410f5b06485122703))
+* enable real data for teachers dashboard on vn for alpha beta prod and loadtest (#53) ([28b8e3c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/28b8e3cecfbe1d366d00b77b94d0676b7f186923))
+
 ### [2.46.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.46.1%0Dv2.46.0) (2022-04-11)
 
 

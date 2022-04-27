@@ -2,7 +2,11 @@ import {
     buildAgeRangeEdgeLabel,
     buildAgeRangeLabel,
 } from "./ageRanges";
-import { AcademicTermNode, ClassEdge } from "@/api/classes";
+import {
+    AcademicTermNode,
+    SchoolAcademicTermNode,
+} from "@/api/academicTerms";
+import { ClassEdge } from "@/api/classes";
 import { ClassForm } from "@/components/Class/Dialog/Form";
 import {
     ClassDetails,
@@ -91,22 +95,23 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
         grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
         ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
         status: classItem.node.status ?? ``,
-        academicTerm: classItem.node.academicTerm?.name ?? undefined,
+        academicTerm: classItem.node.academicTermsConnection?.map(({ schoolNode }: {schoolNode: SchoolAcademicTermNode}) => schoolNode.name) ?? [],
     };
 };
 
 export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
-    classEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
-        label: edge.node.name,
-        value: edge.node.id,
-    }))
+    classEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
 );
 
-export const mapClassEdgesToAcademicTerm = (classEdges: ClassEdge[]) => {
-    const nodes = classEdges?.map((edge) => edge.node.academicTerm ?? []);
-    const terms = [].concat.apply([], ...nodes).map((term : AcademicTermNode) => ({
-        label: term.name,
-        value: term.id,
+export const mapAcademicTerm = (schoolNode: SchoolAcademicTermNode) => {
+    const data = schoolNode?.academicTermsConnection?.edges ?? [];
+    const terms = data.map(({ node }: {node: AcademicTermNode}) => ({
+        label: node.name,
+        value: node.id,
     }));
     return terms;
 };

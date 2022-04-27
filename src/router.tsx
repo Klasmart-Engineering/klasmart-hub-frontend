@@ -1,3 +1,6 @@
+
+import { useFeatureFlags } from "./feature-flag/utils";
+import StudentReport from "./pages/studentReport";
 import { authClient } from "@/api/auth/client";
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
 import AgeRangesPage from "@/pages/admin/age-ranges";
@@ -61,6 +64,8 @@ export default function Router (props: Props) {
         redirectIfUnauthenticated();
     }, [ location ]);
 
+    const { teacherStudentProgressReport } = useFeatureFlags();
+
     return (
         <Switch>
             <Route
@@ -93,6 +98,14 @@ export default function Router (props: Props) {
             <Route path="/reports">
                 <ReportsPage />
             </Route>
+            {teacherStudentProgressReport &&
+                <ProtectedRoute
+                    exact
+                    path="/student-report"
+                    permissions={`report_student_progress_teacher_660`}
+                >
+                    <StudentReport />
+                </ProtectedRoute>}
             <ProtectedRoute
                 exact
                 path="/admin/organizations/:organizationId/edit"

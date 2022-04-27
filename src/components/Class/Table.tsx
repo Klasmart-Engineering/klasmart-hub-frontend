@@ -22,11 +22,7 @@ import {
     getTableLocalization,
     TableProps,
 } from "@/utils/table";
-import {
-    concatNestedArrayAndRemoveDuplicates,
-    mapRows,
-    useValidations,
-} from "@/utils/validations";
+import { useValidations } from "@/utils/validations";
 import {
     CursorTable,
     useSnackbar,
@@ -112,11 +108,12 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
-    academicTerm?: string;
+    academicTerm?: string[];
 }
 
 interface Props extends TableProps<ClassRow> {
     showAcademicTermFilter: boolean;
+    filteredSchoolId: string;
 }
 
 export default function ClassesTable (props: Props) {
@@ -139,6 +136,7 @@ export default function ClassesTable (props: Props) {
         refetch,
         loading,
         showAcademicTermFilter,
+        filteredSchoolId,
     } = props;
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
@@ -155,7 +153,7 @@ export default function ClassesTable (props: Props) {
     const [ classRosterDialogOpen, setClassRosterDialogOpen ] = useState(false);
     const [ selectedIds_, setSelectedIds ] = useState<string[]>(selectedIds ?? []);
     const [ deleteClass ] = useDeleteClass();
-    const { required, otherValidation } = useValidations();
+    const { required } = useValidations();
     const deletePrompt = useDeleteEntityPrompt();
     const {
         schoolsFilterValueOptions,
@@ -172,7 +170,7 @@ export default function ClassesTable (props: Props) {
         querySubjects: true,
         queryGrades: true,
         queryAcademicTerm: {
-            schoolId: ``,
+            schoolId: filteredSchoolId,
         },
     });
 
@@ -206,12 +204,6 @@ export default function ClassesTable (props: Props) {
         setEditDialogOpen(true);
     };
 
-    const academicTermFilterDisabled = () => {
-        const selectedSchools = mapRows(rows, `schoolNames`);
-        const dedupedSelectedSchools = concatNestedArrayAndRemoveDuplicates(selectedSchools);
-        return dedupedSelectedSchools.length !== 1;
-    };
-
     const goToClassRoster = (classId: string) => {
         if(selectedClassId !== undefined) {
             setClassRosterDialogOpen(false);
@@ -240,7 +232,7 @@ export default function ClassesTable (props: Props) {
                 }),
                 value: `eq`,
                 multipleValues: true,
-                validations: [ otherValidation(academicTermFilterDisabled()) ],
+                validations: [ required() ],
                 options: academicTermValueOptions,
                 chipLabel: (column, value) => (
                     intl.formatMessage({
@@ -547,11 +539,13 @@ export default function ClassesTable (props: Props) {
             hidden: true,
             render: (row) => (
                 <>
-                    {row.academicTerm &&
-                    <Chip
-                        label={row.academicTerm}
-                        className={classes.chip}
-                    />
+                    {row.academicTerm && row.academicTerm.map((term, i) => (
+                        <Chip
+                            key={`academicTerm-${i}`}
+                            label={row.academicTerm}
+                            className={classes.chip}
+                        />
+                    ))
                     }
                 </>
             ),

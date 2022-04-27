@@ -41,7 +41,9 @@ export default function ClassesPage (props: Props) {
         orderBy: `name`,
     });
 
-    const showAcademicTermFilter = tableFilters.filter(filter => filter.columnId === `schoolNames`)[0]?.values.length === 1;
+    const filteredSchools = tableFilters.filter(filter => filter.columnId === `schoolNames`)[0]?.values ?? ``;
+    const showAcademicTermFilter = filteredSchools.length === 1;
+    const filteredSchoolId = showAcademicTermFilter ? filteredSchools[0] : ``;
 
     const paginationFilter = buildOrganizationClassesFilter({
         organizationId: currentOrganization?.id ?? ``,
@@ -106,6 +108,7 @@ export default function ClassesPage (props: Props) {
     const rows = data?.classesConnection?.edges?.map(mapClassNodeToClassRow) ?? [];
 
     return (<ClassTable
+        filteredSchoolId={filteredSchoolId}
         showAcademicTermFilter={showAcademicTermFilter}
         rows={rows}
         loading={loading}
@@ -120,5 +123,5 @@ export default function ClassesPage (props: Props) {
         refetch={refetch}
         onPageChange={handlePageChange}
         onTableChange={handleTableChange}
-    />);
+            />);
 }

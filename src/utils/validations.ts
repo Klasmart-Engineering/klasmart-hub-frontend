@@ -12,11 +12,8 @@ export const phoneNumberRegex = /^\++?[1-9][0-9]\d{6,14}$/;
 export const emailAddressRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export const formatPermissionName = (str: string) =>
-    str.replace(/[^A-Za-z]+/g, ` `).replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
-
-export const mapRows = (rows: any[], key: string) => rows.map((row) => row[key] ?? ``);
-
-export const concatNestedArrayAndRemoveDuplicates = (array: any[]) => [ ...new Set(array.flat()) ];
+    str.replace(/[^A-Za-z]+/g, ` `)
+        .replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
 
 export const useValidations = () => {
     const intl = useIntl();
@@ -66,12 +63,6 @@ export const useValidations = () => {
             id: `genericValidations_beforeDateError`,
         }, {
             value: format(max, `MMMM yyyy`),
-        })),
-        otherValidation: (failedValidation: boolean, errorMessage?: string) => failedValidation ? () => errorMessage ? errorMessage : intl.formatMessage({
-            id: `genericValidations_otherValidation`,
-            defaultMessage: `Please select only one school`,
-        }) : validations.required(intl.formatMessage({
-            id: `genericValidations_required`,
         })),
     };
 };

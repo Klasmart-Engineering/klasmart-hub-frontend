@@ -146,6 +146,7 @@ export const permissions = [
     `view_my_school_reports_611`,
     `view_my_organizations_reports_612`,
     `view_my_reports_614`,
+    `report_student_progress_teacher_660`,
     `report_learning_outcomes_in_categories_616`,
     `report_organization_teaching_load_617`,
     `report_school_teaching_load_618`,
@@ -238,6 +239,10 @@ export const permissions = [
     `publish_featured_content_for_all_hub_79000`,
     `publish_featured_content_for_specific_orgs_79001`,
     `publish_featured_content_for_all_orgs_79002`,
+    `view_academic_term_20116`,
+    `create_academic_term_20228`,
+    `edit_academic_term_20338`,
+    `delete_academic_term_20448`,
 ] as const;
 
 /**
