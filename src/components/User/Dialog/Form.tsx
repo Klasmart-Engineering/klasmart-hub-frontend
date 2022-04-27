@@ -1,8 +1,10 @@
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
+import { SchoolRow } from "@/components/School/Table";
+import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { FormErrors } from "@/types/form";
-import { isActive, UuidOperator } from "@/types/graphQL";
+import { isActive } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
 import { roleNameTranslations } from "@/utils/userRoles";
@@ -153,21 +155,21 @@ export default function UserDialogForm (props: Props) {
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
+    const [ allSchools, setAllSchools ] = useState<SchoolRow[]>([]);
     const { data: schoolsData, refetch: refetchSchoolsData } = useGetPaginatedSchools({
         variables: {
             direction: `FORWARD`,
             orderBy: `name`,
             order: `ASC`,
-            filter: {
-                organizationId: { operator: `eq` as UuidOperator, value: organizationId }
-            }
+            count: 50,
+            filter: buildOrganizationSchoolFilter({
+                organizationId: organizationId,
+                search: ``,
+            }),
         },
+        fetchPolicy: `no-cache`,
+        skip: !organizationId,
     });
-
-    const allSchools = schoolsData?.schoolsConnection?.edges
-        .filter((edge) => isActive(edge.node))
-        .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
-    ?? [];
 
     const { data: organizationData, refetch: refetchOrganizationRoles } = useGetOrganizationRoles({
         variables: {
@@ -236,15 +238,16 @@ export default function UserDialogForm (props: Props) {
             direction: `FORWARD`,
             orderBy: `name`,
             order: `ASC`,
-            filter: {
-                organizationId: { operator: `eq` as UuidOperator, value: organizationId }
-            }
+            filter: buildOrganizationSchoolFilter({
+                organizationId: organizationId,
+                search: ``,
+            }),
         });
         refetchOrganizationRoles({
             organization_id: organizationId,
         });
 
-    }, [organizationId])
+    }, [ organizationId ]);
 
     useEffect(() => {
         onValidation([
@@ -283,7 +286,8 @@ export default function UserDialogForm (props: Props) {
             alternativeEmail,
             alternativePhone,
             gender: radioValue === UserGenders.OTHER ? gender : radioValue,
-            roles: availableRoles.filter((role) => roleIds.includes(role.role_id)).map(({ role_id }) => role_id),
+            roles: availableRoles.filter((role) => roleIds.includes(role.role_id))
+                .map(({ role_id }) => role_id),
             schools: allSchools
                 .filter((school) => schoolIds.includes(school.id))
                 .map(({ id }) => id),
@@ -305,6 +309,7 @@ export default function UserDialogForm (props: Props) {
         shortcode,
         schoolsData,
         organizationData,
+        allSchools,
     ]);
 
     useEffect(() => {
@@ -321,6 +326,24 @@ export default function UserDialogForm (props: Props) {
         setBirthday(formatDateOfBirth(initialState.birthday));
         setIsAlternativeContactInfoExpanded(!!(initialState.alternativeEmail || initialState.alternativePhone));
     }, [ initialState ]);
+
+    useEffect(() => {
+        const schools = schoolsData?.schoolsConnection?.edges
+            .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
+        ?? [];
+
+        setAllSchools((values) => ([ ...values, ...schools ]));
+
+        if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
+            refetchSchoolsData({
+                cursor: schoolsData?.schoolsConnection?.pageInfo?.endCursor ?? ``,
+            });
+        }
+    }, [
+        schoolsData,
+        setAllSchools,
+        refetchSchoolsData,
+    ]);
 
     const handleAccordionChange = (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
         setIsAlternativeContactInfoExpanded(newExpanded);
@@ -499,7 +522,7 @@ export default function UserDialogForm (props: Props) {
                             max: `${currentYear}-${currentMonth}`,
                         },
                     }}
-                    validations={[ beforeDate(today), afterDate(minDateAllowed)  ]}
+                    validations={[ beforeDate(today), afterDate(minDateAllowed) ]}
                     onValidate={setBirthdayIsValid}
                     onChange={setBirthday}
                 />
@@ -542,19 +565,22 @@ export default function UserDialogForm (props: Props) {
                     aria-label={attributes.gender}
                     name="gender"
                     value={radioValue}
-                    onChange={handleGenderChange}>
+                    onChange={handleGenderChange}
+                >
                     <FormControlLabel
                         value={UserGenders.FEMALE}
                         control={<Radio />}
                         label={intl.formatMessage({
                             id: `user.gender.female`,
-                        })} />
+                        })}
+                    />
                     <FormControlLabel
                         value={UserGenders.MALE}
                         control={<Radio />}
                         label={intl.formatMessage({
                             id: `user.gender.male`,
-                        })} />
+                        })}
+                    />
                     <FormControlLabel
                         value={UserGenders.NOT_SPECIFIED}
                         control={<Radio />}
@@ -567,7 +593,8 @@ export default function UserDialogForm (props: Props) {
                         control={<Radio />}
                         label={intl.formatMessage({
                             id: `common.other`,
-                        })} />
+                        })}
+                    />
                 </RadioGroup>
                 {radioValue === UserGenders.OTHER && (
                     <TextField
@@ -665,13 +692,16 @@ export default function UserDialogForm (props: Props) {
             <Accordion
                 square
                 expanded={isAlternativeContactInfoExpanded}
-                onChange={handleAccordionChange}>
+                onChange={handleAccordionChange}
+            >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    id="panel1d-header">
+                    id="panel1d-header"
+                >
                     <FormLabel>{intl.formatMessage({
                         id: `common.contactInfo.alternative`,
-                    })}</FormLabel>
+                    })}
+                    </FormLabel>
                 </AccordionSummary>
                 <AccordionDetails>
                     <div className={classes.accordionContainer}>
