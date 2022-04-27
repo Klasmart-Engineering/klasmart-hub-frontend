@@ -80,18 +80,33 @@ jobs:
 
       - name: Build and Push Container
         id: build-push
-        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@73a99700e5af9ac7a2a69efdfa4338f9027060c9
+        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@a8cd2f2cc1aeb5c5724e9e9ba2d2c84a49fa6b10
         with:
           image_name: ${{ env.ecr_repository }}
           dockerfile: deploy/Dockerfile
           docker_build_context: deploy
           platforms: linux/amd64,linux/arm64
           tags: |
-            type=ref,event=tag,prefix=${{ env.region }}-${{ env.environment }}-
-            type=ref,event=branch,prefix=${{ env.region }}-${{ env.environment }}-,suffix=-{{sha}}
-          push_to_registry: true
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}-{{sha}}
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}-latest
+            type=ref,event=branch,suffix=-${{ env.region }}-${{ env.environment }}-{{sha}}
+            type=ref,event=branch,suffix=-${{ env.region }}-${{ env.environment }}-latest
           ECR_AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           ECR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Archive build for legacy frontend deployments
+        shell: bash
+        run: |
+          tar zcvf dist.tgz dist
+
+      - name: Upload build to github artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ steps.build-push.outputs.image_version}}
+          path: dist.tgz
+          retention-days: 1
+          if-no-files-found: error
 
   deploy-ci:
     needs: [build-container]
