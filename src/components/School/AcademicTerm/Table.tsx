@@ -2,10 +2,6 @@ import CreateAcademicTermDialog from "./Dialog/Create";
 import { useDeleteAcademicTerm } from "@/api/academicTerms";
 import { Status } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
-import {
-    buildCsvTemplateOptions,
-    EMPTY_CSV_DATA,
-} from "@/utils/csv";
 import { usePermission } from "@/utils/permissions";
 import {
     getTableLocalization,
@@ -18,7 +14,6 @@ import {
 import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import {
     Add as AddIcon,
-    AssignmentReturned as AssignmentReturnedIcon,
     Delete as DeleteIcon,
 } from "@mui/icons-material";
 import {
@@ -124,21 +119,6 @@ export default function AcademicTermTable (props: Props) {
         },
     ];
 
-    const academicTermCsvTemplateHeaders = [
-        `academic_term_name`,
-        `academic_term_start_date`,
-        `academic_term_end_date`,
-    ];
-
-    const csvExporter = buildCsvTemplateOptions({
-        filename: intl.formatMessage({
-            // i.e. entity.academicTerm.importTemplate.filename
-            id: `academicTerm.csvTemplate.filename`,
-            defaultMessage: `kidsloop-academic-term-template`,
-        }),
-        headers: academicTermCsvTemplateHeaders,
-    });
-
     const deleteSelectedRow = async (row: AcademicTermRow) => {
         if (!(await deletePrompt({
             title: intl.formatMessage({
@@ -196,18 +176,6 @@ export default function AcademicTermTable (props: Props) {
                         disabled: !canCreate,
                         onClick: () => setOpenCreateDialog(true),
                     } : undefined}
-                    secondaryActions={!disabled ? [
-                        {
-                            label: intl.formatMessage({
-                                // i.e. entity.user.template.download.button
-                                id: `academicTerm.csvTemplate.download`,
-                                defaultMessage: `Download CSV Template File`,
-                            }),
-                            icon: AssignmentReturnedIcon,
-                            disabled: !canCreate,
-                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
-                        },
-                    ] : []}
                     rowActions={!disabled ? (row) => [
                         {
                             label: intl.formatMessage({

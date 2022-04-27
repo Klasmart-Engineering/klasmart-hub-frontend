@@ -177,6 +177,7 @@ export default function ClassesTable (props: Props) {
         `age_range_low_value`,
         `age_range_high_value`,
         `age_range_unit`,
+        `academic_term_name`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({

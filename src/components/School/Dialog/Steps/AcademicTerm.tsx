@@ -18,7 +18,7 @@ import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/C
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import { Info as InfoIcon } from "@mui/icons-material";
-import { Alert } from "@mui/lab";
+import Alert from '@mui/material/Alert';
 import {
     createStyles,
     makeStyles,
