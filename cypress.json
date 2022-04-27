@@ -1,0 +1,11 @@
+{
+    "downloadsFolder": "tests/e2e/downloads",
+    "fixturesFolder": "tests/e2e/fixtures",
+    "ignoreTestFiles": "*.hot-update.js",
+    "integrationFolder": "tests/e2e/integration",
+    "pluginsFile": "tests/e2e/plugins/index.js",
+    "screenshotsFolder": "tests/e2e/screenshots",
+    "supportFile": "tests/e2e/support/index.js",
+    "testFiles": "**/*.*",
+    "videosFolder": "tests/e2e/videos"
+}
