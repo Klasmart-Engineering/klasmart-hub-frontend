@@ -5,13 +5,13 @@ import { useGetClassFormValues } from "@/utils/classFormDropdownValues";
 import { usePermission } from "@/utils/permissions";
 import { useValidations } from "@/utils/validations";
 import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import {
     Select,
     TextField,
 } from "@kl-engineering/kidsloop-px";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
 {
     useEffect,
@@ -212,7 +212,7 @@ export default function ClassDialogForm (props: Props) {
                 itemText={(program) => program.label ?? ``}
                 itemValue={(program) => program.value ?? ``}
                 loading={loading || schoolsLoading || programsLoading}
-                disabled={loading || schoolsLoading }
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setProgramIds(values)}
             />
             <Select
@@ -229,7 +229,7 @@ export default function ClassDialogForm (props: Props) {
                 value={gradeIds}
                 itemText={(grade) => grade.label ?? ``}
                 itemValue={(grade) => grade.value ?? ``}
-                loading={loading || schoolsLoading }
+                loading={loading || schoolsLoading}
                 onChange={(values) => setGradeIds(values)}
             />
             <Select
@@ -246,8 +246,8 @@ export default function ClassDialogForm (props: Props) {
                 value={ageRangeIds}
                 itemText={(ageRange) => ageRange.label}
                 itemValue={(ageRange) => ageRange.value ?? ``}
-                loading={loading || schoolsLoading }
-                disabled={loading || schoolsLoading }
+                loading={loading || schoolsLoading}
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setAgeRangeIds(values)}
             />
             <Select
@@ -264,8 +264,8 @@ export default function ClassDialogForm (props: Props) {
                 value={subjectIds}
                 itemText={(subject) => subject.label ?? ``}
                 itemValue={(subject) => subject.value ?? ``}
-                loading={loading || schoolsLoading }
-                disabled={loading || schoolsLoading }
+                loading={loading || schoolsLoading}
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setSubjectIds(values)}
             />
         </div>

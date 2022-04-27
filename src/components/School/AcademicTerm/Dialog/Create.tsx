@@ -1,8 +1,13 @@
 
+import { AcademicTermRow } from "../Table";
 import AcademicTermDialogForm,
 { AcademicTermForm } from "./Form";
 import { useCreateAcademicTerm } from "@/api/academicTerms";
-import { buildEmptyAcademicTerm, buildEmptyAcademicTermForm } from "@/utils/academicTerms";
+import {
+    buildEmptyAcademicTerm,
+    buildEmptyAcademicTermForm,
+} from "@/utils/academicTerms";
+import { ApolloError } from "@apollo/client";
 import {
     Dialog,
     useSnackbar,
@@ -13,8 +18,6 @@ import React,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { AcademicTermRow } from "../Table";
-import { ApolloError } from "@apollo/client";
 
 interface Props {
     open: boolean;
@@ -24,12 +27,17 @@ interface Props {
 }
 
 export default function CreateAcademicTermDialog (props: Props) {
-    const { open, schoolId, onClose, data } = props;
+    const {
+        open,
+        schoolId,
+        onClose,
+        data,
+    } = props;
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ valid, setValid ] = useState(true);
     const [ newAcademicTerm, setNewAcademicTerm ] = useState(buildEmptyAcademicTermForm());
-    const [ createAcademicTerm ] = useCreateAcademicTerm();    
+    const [ createAcademicTerm ] = useCreateAcademicTerm();
 
     useEffect(() => {
         if (!open) return;
@@ -37,7 +45,6 @@ export default function CreateAcademicTermDialog (props: Props) {
     }, [ open ]);
 
     const handleCreate = async () => {
-        
         try {
 
             const {
@@ -45,15 +52,14 @@ export default function CreateAcademicTermDialog (props: Props) {
                 startDate,
                 endDate,
             } = newAcademicTerm;
-            
             await createAcademicTerm({
                 variables: {
                     schoolId,
                     name,
                     startDate,
                     endDate,
-                }
-            })
+                },
+            });
 
             onClose(newAcademicTerm);
             enqueueSnackbar(intl.formatMessage({
@@ -65,13 +71,13 @@ export default function CreateAcademicTermDialog (props: Props) {
             });
         } catch (error) {
 
-            let errors = []
-            
-            if (error instanceof ApolloError && error.message === "ERR_API_BAD_INPUT") {
-                errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === "ERR_API_BAD_INPUT")
-                ?.map(graphQLError => graphQLError.extensions?.exception?.errors)
-                ?.flatMap(graphQLErrors=> graphQLErrors)
-                ?.filter(specificError=> specificError.code === "ERR_OVERLAPPING_DATE_RANGE")
+            let errors = [];
+
+            if (error instanceof ApolloError && error.message === `ERR_API_BAD_INPUT`) {
+                errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === `ERR_API_BAD_INPUT`)
+                    ?.map(graphQLError => graphQLError.extensions?.exception?.errors)
+                    ?.flatMap(graphQLErrors=> graphQLErrors)
+                    ?.filter(specificError=> specificError.code === `ERR_OVERLAPPING_DATE_RANGE`);
             }
 
             if (errors.length > 0){
@@ -91,7 +97,6 @@ export default function CreateAcademicTermDialog (props: Props) {
             }), {
                 variant: `error`,
             });
-            
         }
     };
 

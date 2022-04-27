@@ -22,6 +22,8 @@ import {
     Status,
 } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { mapOrganizationMembershipEdges } from "@/utils/organizationMemberships";
+import { mapSchoolsMembershipEdges } from "@/utils/schools";
 import { ApolloError } from "@apollo/client";
 import {
     Dialog,
@@ -41,7 +43,10 @@ import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({}));
 
-export function mapUserNodeToFormState (user: UserNode): State {
+export function mapUserNodeToFormState (organizationId: string, user: UserNode): State {
+    const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
+    const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
+
     return {
         givenName: user?.givenName ?? ``,
         familyName: user?.familyName ?? ``,
@@ -51,8 +56,8 @@ export function mapUserNodeToFormState (user: UserNode): State {
         alternativeEmail: user?.alternateContactInfo?.email ?? ``,
         alternativePhone: user?.alternateContactInfo?.phone ?? ``,
         shortcode: user.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
-        schools: user.schools?.filter(school => school?.status === Status.ACTIVE)?.map(school => school.id ?? ``) ?? [],
-        roles: user.roles?.filter(isActive)?.map(role => role.id ?? ``) ?? [],
+        schools: schoolMemberships.filter((school) => organizationId === school.organizationId && school.status === Status.ACTIVE)?.map(school => school.id ?? ``) ?? [],
+        roles: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.id ?? ``) ?? [],
     };
 }
 
@@ -98,10 +103,9 @@ export default function EditUserDialog (props: Props) {
 
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteUserInOrganization ] = useDeleteUsersInOrganization();
-
     useEffect(() => {
         if (!open || !userId || !organizationId) return;
-        const state = organizationMembershipData?.userNode ? mapUserNodeToFormState(organizationMembershipData.userNode) : defaultState;
+        const state = organizationMembershipData?.userNode ? mapUserNodeToFormState(organizationId, organizationMembershipData.userNode) : defaultState;
         setInitialFormState(state);
         setFormState(state);
         setFormErrors({});
@@ -113,10 +117,10 @@ export default function EditUserDialog (props: Props) {
 
     useEffect(() => {
         if (!organizationMembershipData) return;
-        const state = mapUserNodeToFormState(organizationMembershipData.userNode);
+        const state = mapUserNodeToFormState(organizationId, organizationMembershipData.userNode);
         setInitialFormState(state);
         setFormState(state);
-    }, [ organizationMembershipData ]);
+    }, [ organizationMembershipData, organizationId ]);
 
     const onChange = (newFormState: State) => {
         if (!isEmpty(formErrors)) {
@@ -235,8 +239,8 @@ export default function EditUserDialog (props: Props) {
             onClose={() => onClose()}
         >
             <UserDialogForm
+                isExistingUser
                 initialState={initialFormState}
-                isExistingUser={true}
                 errors={formErrors}
                 onChange={onChange}
                 onValidation={setValid}

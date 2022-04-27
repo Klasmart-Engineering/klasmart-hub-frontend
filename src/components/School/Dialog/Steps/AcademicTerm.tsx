@@ -14,12 +14,11 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import { Info as InfoIcon } from "@mui/icons-material";
-import { Alert } from "@mui/lab";
+import Alert from '@mui/material/Alert';
 import {
     createStyles,
     makeStyles,
@@ -50,11 +49,8 @@ export default function AcademicTermStep (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
-    const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
 
-    const canView = usePermission({
-        OR: [ `view_academic_term_20116` ],
-    });
+    const canView = usePermission(`view_academic_term_20116`);
 
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
@@ -70,7 +66,7 @@ export default function AcademicTermStep (props: Props) {
     const {
         loading,
         data,
-        refetch: refetchAcademicTerms,
+        refetch,
         fetchMore,
     } = useGetPaginatedAcademicTerms({
         variables: {
@@ -82,13 +78,13 @@ export default function AcademicTermStep (props: Props) {
             filter: paginationFilter,
         },
         skip: !currentOrganization?.id || !canView || !value,
-        fetchPolicy: `no-cache`,
+        fetchPolicy: `cache-and-network`,
         notifyOnNetworkStatusChange: true,
     });
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
-        fetchMore({
+        await fetchMore({
             variables: {
                 count,
                 cursor,
@@ -99,30 +95,22 @@ export default function AcademicTermStep (props: Props) {
 
     const handleTableChange = async (tableData: CursorTableData<AcademicTermRow>) => {
         if (loading) return;
-        console.log(tableData.search);
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             rowsPerPage: tableData.rowsPerPage,
             search: tableData.search,
         });
-        setTableFilters(tableData?.filters ?? []);
     };
 
     useEffect(() => {
-        refetchAcademicTerms({
+        refetch({
             count: serverPagination.rowsPerPage,
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
         });
-    }, [
-        serverPagination.search,
-        serverPagination.order,
-        serverPagination.orderBy,
-        serverPagination.rowsPerPage,
-        tableFilters,
-    ]);
+    }, [ currentOrganization?.id ]);
 
     const rows = data?.schoolNode?.academicTermsConnection?.edges.map((edge) => mapAcademicTermNodeToAcademicTermRow(edge.node)) ?? [];
 
@@ -151,7 +139,6 @@ export default function AcademicTermStep (props: Props) {
                 hasPreviousPage={data?.schoolNode?.academicTermsConnection?.pageInfo.hasPreviousPage}
                 startCursor={data?.schoolNode?.academicTermsConnection?.pageInfo.startCursor}
                 endCursor={data?.schoolNode?.academicTermsConnection?.pageInfo.endCursor}
-                refetch={refetchAcademicTerms}
                 order={serverToTableOrder(serverPagination.order)}
                 orderBy={serverPagination.orderBy}
                 schoolId={value.id}

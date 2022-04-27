@@ -25,6 +25,7 @@ export interface MyUserResponse {
               };
               owners: {
                 email: string;
+                id: string;
               };
               contactInfo: {
                 phone: string;

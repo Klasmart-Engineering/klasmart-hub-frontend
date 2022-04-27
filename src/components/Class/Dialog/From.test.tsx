@@ -38,6 +38,8 @@ const mocks: MockedResponse[] = [
             variables: {
                 direction: `FORWARD`,
                 count: 50,
+                orderBy: `name`,
+                order: `ASC`,
                 filter: {
                     status: {
                         operator: `eq`,
@@ -56,16 +58,17 @@ test(`Class dialog form renders correctly`, async () => {
     render(<ClassDialogForm
         value={buildEmptyClassForm()}
         onChange={jest.fn()}
-        onValidation={jest.fn()}/>, {
+        onValidation={jest.fn()}
+    />, {
         mockedResponses: mocks,
     });
 
-    expect(screen.queryAllByText(`Class name`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Schools (optional)`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Program (optional)`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Grade (optional)`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Age range (optional)`).length).toBeTruthy();
-    expect(screen.queryAllByText(`Subjects (optional)`).length).toBeTruthy();
+    expect(screen.getAllByText(`Class name`).length).toBeTruthy();
+    expect(screen.getAllByText(`Schools (optional)`).length).toBeTruthy();
+    expect(screen.getAllByText(`Program (optional)`).length).toBeTruthy();
+    expect(screen.getAllByText(`Grade (optional)`).length).toBeTruthy();
+    expect(screen.getAllByText(`Age range (optional)`).length).toBeTruthy();
+    expect(screen.getAllByText(`Subjects (optional)`).length).toBeTruthy();
 
     expect(screen.getByLabelText(`Schools (optional)`)).toBeInTheDocument();
 

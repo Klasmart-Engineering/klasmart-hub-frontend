@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.49.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.49.0%0Dv2.48.0) (2022-04-27)
+
+
+### 📚 Docs
+
+* update link to user-service repo (#57) ([caa2e54](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/caa2e54244da4b716264ad971c132101f5ebfb3c))
+
+
+### ♻️ Chores
+
+* added dashboard variables to beta env for id (#68) ([1254845](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/12548450b9fa3549e725e94bc435c280c87fdb38))
+
+
+### ✨ Features
+
+* **AD-1895:** define academic term when editing schools (#66) ([aa3b01f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/aa3b01fa868a50c41b6a72ebffe5ceeaebe7d6af)), closes [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895)
+* **AD-2393:** ensured users table displays info of users in specific org (#58) ([e96bdff](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/e96bdff76c6609907a618769e7ef774f7a27efc2)), closes [AD-2393](https://calmisland.atlassian.net/browse/AD-2393)
+* **AD-2426:** add academic term to csv upload (#69) ([7322eb6](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7322eb6706a4d0bb9ffda25fb091106d4c58eabd)), closes [AD-2426](https://calmisland.atlassian.net/browse/AD-2426)
+
+
+### 🐛 Bug Fixes
+
+* [AD-2182](https://calmisland.atlassian.net/browse/AD-2182) set owned org as default when first login in, if it exists (#60) ([08bc94f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/08bc94fe5c6627c3efd28e51988af2572fa65ec1)), closes [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [AD-2393](https://calmisland.atlassian.net/browse/AD-2393) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895)
+* corrected issue where dropdowns for forms in class and user were… (#59) ([d5ce34d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/d5ce34dfc4caeb3d4c333b7669be86ba6e528b33)), closes [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [AD-2393](https://calmisland.atlassian.net/browse/AD-2393) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895)
+* removed select all from programs table (#48) ([a996fa0](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a996fa031f0aff5adafe98f7783faf554ed3ed88))
+
+## [2.48.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.48.0%0Dv2.47.0) (2022-04-26)
+
+
+### 🐛 Bug Fixes
+
+* removed hide select status to show total selected subcategories (#49) ([4254295](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4254295212c4b898eec47bf2a1cf5f36ae98eaeb))
+
+
+### ♻️ Chores
+
+* **localization:** update translations (#63) ([1d8ec09](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1d8ec09bad1ec8bc39ed7769b004cbb5e3c23103))
+
+
+### ✨ Features
+
+* AD 2332 Display academic term on class table (#64) ([5a7a730](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5a7a7302653503f0dae4370f272b40f1d75b40a5)), closes [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332)
+* add student performance high level statistic on student reports page (#65) ([77aa452](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/77aa452435c7633f18a8c5c1101b8f9e99244f89))
+* add student performance report filters and add student report in menu behind feature flag (#61) ([5876d89](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5876d89302ec0c6fe45f54db0fb531dcbba5c176))
+
 ## [2.47.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.47.0%0Dv2.46.1) (2022-04-20)
 
 

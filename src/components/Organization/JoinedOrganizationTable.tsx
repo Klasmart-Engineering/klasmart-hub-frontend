@@ -1,6 +1,12 @@
 import { useQueryMyUser } from "@/api/myUser";
 import { useLeaveMembership } from "@/api/organizations";
 import { getTableLocalization } from "@/utils/table";
+import {
+    PageTable,
+    useConfirm,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import {
     Paper,
@@ -10,12 +16,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    PageTable,
-    useConfirm,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
     useMemo,
@@ -157,7 +157,8 @@ export default function JoinedOrganizationTable (props: Props) {
                 <Typography
                     key={`role-${i}`}
                     noWrap
-                    variant="body2">
+                    variant="body2"
+                >
                     {role}
                 </Typography>
             )),
@@ -168,6 +169,7 @@ export default function JoinedOrganizationTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <PageTable
+                    hideSelectAll
                     columns={columns}
                     rows={rows}
                     selectedRows={selectedOrganizationIds}

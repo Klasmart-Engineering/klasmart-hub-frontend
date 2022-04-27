@@ -1,3 +1,4 @@
+import { getInitialOwnedOrg } from "./utils/organizationMemberships";
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import Layout from "@/layout";
@@ -20,12 +21,20 @@ export default function App (props: Props) {
 
     const setOrganizationMemberships = (memberships: OrganizationMembershipConnectionNode[]) => {
         setOrganizationMembershipStack((membershipStack) => {
+            const ownedId = getInitialOwnedOrg(myUserData);
             const sortedMemberships = memberships.sort((a, b) => {
                 const aIndex = membershipStack.findIndex((membership) => membership.organization?.id === a.organization?.id);
                 const bIndex = membershipStack.findIndex((membership) => membership.organization?.id === b.organization?.id);
                 if (aIndex === bIndex && a.organization?.name && b.organization?.name) return a.organization.name.localeCompare(b.organization.name);
                 return aIndex - bIndex;
             });
+
+            if (!membershipStack.length && ownedId) {
+                const ownedIndex = sortedMemberships.findIndex(membership => membership.organization?.id === ownedId);
+                const ownedOrg = sortedMemberships.splice(ownedIndex, 1)[0];
+                sortedMemberships.unshift(ownedOrg);
+            }
+
             return isEqual(sortedMemberships, membershipStack) ? membershipStack : sortedMemberships;
         });
     };

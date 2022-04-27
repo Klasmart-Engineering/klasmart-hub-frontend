@@ -1,8 +1,13 @@
 import { useQueryMyUser } from "@/api/myUser";
+import { RolesConnectionEdge } from "@/api/organizationMemberships";
 import { RoleSummaryNode } from "@/api/roles";
+import { 
+    orderedSystemRoleNames, 
+    Status, 
+} from "@/types/graphQL";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { orderedSystemRoleNames } from "@/types/graphQL";
 import { IntlShape } from "react-intl";
+
 
 export const roleNameTranslations: { [key: string]: string } = {
     'Super Admin': `users_superAdminRole`,
@@ -22,6 +27,15 @@ export const systemRoles = [
 ];
 
 const orderedRoleNames = orderedSystemRoleNames.slice() as string[];
+
+export const mapRoles = (edge: RolesConnectionEdge) => {
+    const role = edge.node;
+    return {
+        id: role.id,
+        name: role.name ?? ``,
+        status: role.status ?? Status.INACTIVE,
+    };
+};
 
 export const sortRoleNames = (a: string, b: string) => {
     const aIndex = orderedRoleNames.indexOf(a);

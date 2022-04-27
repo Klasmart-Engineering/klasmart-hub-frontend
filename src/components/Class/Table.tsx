@@ -186,6 +186,7 @@ export default function ClassesTable (props: Props) {
         `age_range_low_value`,
         `age_range_high_value`,
         `age_range_unit`,
+        `academic_term_name`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({
@@ -532,7 +533,7 @@ export default function ClassesTable (props: Props) {
         {
             id: `academicTerm`,
             label: intl.formatMessage({
-                id: `academicTerm.todo`,
+                id: `academicTerm.label`,
                 defaultMessage: `Academic Term`,
             }),
             disableSort: true,

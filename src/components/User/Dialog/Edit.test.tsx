@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-closing-bracket-location */
 import EditDialog,
 { mapUserNodeToFormState } from "./Edit";
 import { mockGetOrganizationMembership } from "@/api/__mocks__/organizationMemberships";
@@ -31,12 +32,15 @@ import {
 } from "@/locale/__mocks__/locale";
 import { isActive } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
+import { mapOrganizationMembershipEdges } from "@/utils/organizationMemberships";
 import { usePermission } from "@/utils/permissions";
+import { mapSchoolsMembershipEdges } from "@/utils/schools";
 import { UserGenders } from "@/utils/users";
 import {
     MutationTuple,
     QueryResult,
 } from "@apollo/client";
+import { utils } from "@kl-engineering/kidsloop-px";
 import {
     getElementError,
     screen,
@@ -58,7 +62,6 @@ import {
     mockUserNode,
 } from "@tests/mockUsers";
 import { waitForButtonToLoad } from "@tests/waitFor";
-import { utils } from "@kl-engineering/kidsloop-px";
 import { cloneDeep } from "lodash";
 import React from "react";
 
@@ -76,7 +79,8 @@ const mockDeleteUserInOrganization = jest.fn() as jest.Mocked<
     >
 >[0];
 
-const mockDeletePrompt = jest.fn().mockResolvedValue(true) as jest.MockedFunction<ReturnType<typeof useDeleteEntityPrompt>>;
+const mockDeletePrompt = jest.fn()
+    .mockResolvedValue(true) as jest.MockedFunction<ReturnType<typeof useDeleteEntityPrompt>>;
 
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
@@ -133,7 +137,7 @@ beforeAll(() => {
 
 beforeEach(() => {
     mockUsePermission.mockReturnValue({
-        loading:false,
+        loading: false,
         hasPermission: true,
     });
 });
@@ -141,14 +145,19 @@ beforeEach(() => {
 const mockOrganizationMembership = mockOrganizationMemberships[0];
 
 describe(`mapOrganizationMembershipToFormState`, () => {
+    const organizationMemberships = mockUserNode.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
+    const schoolMemberships = mockUserNode.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
     test(`inactive schools are ignored`, () => {
-        expect(mapUserNodeToFormState(mockUserNode).schools)
+        expect(mapUserNodeToFormState(mockOrg.organization_id, mockUserNode).schools)
             .toEqual([ schoolA.school_id ]);
     });
 
     test(`inactive roles are ignored`, () => {
-        expect(mapUserNodeToFormState(mockUserNode).roles)
-            .toEqual(mockUserNode.roles?.filter(isActive).map(role => role.id));
+        const activeUserRole = organizationMemberships?.map(organization => organization?.roles?.filter(isActive))
+            .flat()
+            .map((role) => role?.id ?? ``);
+        expect(mapUserNodeToFormState(mockOrg.organization_id, mockUserNode).roles)
+            .toEqual(activeUserRole);
     });
 
     test(`maps properties when all are specified`, () => {
@@ -160,20 +169,25 @@ describe(`mapOrganizationMembershipToFormState`, () => {
             familyName: mockUserNode.familyName ?? ``,
             gender: mockUserNode.gender ?? ``,
             givenName: mockUserNode.givenName ?? ``,
-            roles: mockUserNode.roles?.filter(isActive).map(role => role.id ?? ``) ?? [],
-            schools: mockUserNode.schools?.filter(isActive).map(school => school.id ?? ``) ?? [],
+            roles: organizationMemberships?.map(organization => organization?.roles?.filter(isActive))
+                .flat()
+                .map((role) => role?.id ?? ``) ?? [],
+            schools: schoolMemberships.filter((school) => mockOrg.organization_id === school.organizationId && isActive(school))
+                ?.map(school => school.id ?? ``) ?? [],
             shortcode: mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
         };
-        expect(mapUserNodeToFormState(mockUserNode)).toEqual(expected);
+        expect(mapUserNodeToFormState(mockOrg.organization_id, mockUserNode))
+            .toEqual(expected);
     });
 
     test(`maps to defaults when the minimum is specified`, () => {
-        expect(mapUserNodeToFormState({
+        expect(mapUserNodeToFormState(mockOrg.organization_id, {
             id: ``,
             givenName: ``,
             familyName: ``,
             gender: `female`,
-        })).toEqual(defaultState);
+        }))
+            .toEqual(defaultState);
     });
 });
 
@@ -182,14 +196,17 @@ describe(`user edit form`, () => {
     const mockOnClose = jest.fn();
 
     const render = () => {
+
         const view = renderWithIntl(<EditDialog
             open
             userId={mockUserNode.id}
-            onClose={mockOnClose} />);
+            onClose={mockOnClose}
+        />);
 
         const submitButton = screen.getByText(mockIntl.formatMessage({
             id: `editDialog_save`,
-        })).closest(`button`);
+        }))
+            .closest(`button`);
         if (submitButton === null) {
             throw getElementError(`Unable to find submitButton`, view.container);
         }
@@ -213,20 +230,29 @@ describe(`user edit form`, () => {
     describe(`edit`, () => {
         test(`loads the OrganizationMembership into the form state`, () => {
             render();
-            expect(inputs.givenName()).toHaveValue(mockUserNode.givenName);
-            expect(inputs.familyName()).toHaveValue(mockUserNode.familyName);
-            expect(inputs.contactInfo()).toHaveValue(mockUserNode.contactInfo?.email);
-            expect(inputs.birthday()).toHaveValue(formatDateOfBirth(mockUserNode.dateOfBirth as string));
-            expect(inputs.shortcode()).toHaveValue(mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode);
-            expect(inputs.roles()).toHaveTextContent(mockRoles.organizationAdmin.role_name as string);
-            expect(inputs.alternativeEmail()).toHaveValue(mockUserNode.alternateContactInfo?.email);
-            expect(inputs.alternativePhone()).toHaveValue(mockUserNode.alternateContactInfo?.phone);
+            expect(inputs.givenName())
+                .toHaveValue(mockUserNode.givenName);
+            expect(inputs.familyName())
+                .toHaveValue(mockUserNode.familyName);
+            expect(inputs.contactInfo())
+                .toHaveValue(mockUserNode.contactInfo?.email);
+            expect(inputs.birthday())
+                .toHaveValue(formatDateOfBirth(mockUserNode.dateOfBirth as string));
+            expect(inputs.shortcode())
+                .toHaveValue(mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode);
+            expect(inputs.roles())
+                .toHaveTextContent(mockRoles.organizationAdmin.role_name as string);
+            expect(inputs.alternativeEmail())
+                .toHaveValue(mockUserNode.alternateContactInfo?.email);
+            expect(inputs.alternativePhone())
+                .toHaveValue(mockUserNode.alternateContactInfo?.phone);
         });
 
         test(`disables the contactInfo field`, () => {
             render();
 
-            expect(inputs.contactInfo()).toBeDisabled();
+            expect(inputs.contactInfo())
+                .toBeDisabled();
         });
 
         test.each([
@@ -248,7 +274,8 @@ describe(`user edit form`, () => {
 
             render();
 
-            expect(radio()).toBeChecked();
+            expect(radio())
+                .toBeChecked();
         });
 
         test(`an 'other' gender pre-selects the 'other' option and fills the text input`, () => {
@@ -265,8 +292,10 @@ describe(`user edit form`, () => {
 
             render();
 
-            expect(inputs.gender.radio.other()).toBeChecked();
-            expect(inputs.gender.other()).toHaveValue(customGender);
+            expect(inputs.gender.radio.other())
+                .toBeChecked();
+            expect(inputs.gender.other())
+                .toHaveValue(customGender);
         });
 
         test.skip(`displays a success message when the API returns successfully`, async () => {
@@ -290,7 +319,8 @@ describe(`user edit form`, () => {
                 family_name: mockOrganizationMembership2.user.family_name,
                 gender: mockOrganizationMembership2.user.gender,
                 given_name: mockOrganizationMembership2.user.given_name,
-                organization_role_ids: mockOrganizationMembership2.roles.filter(isActive).map(role => role.role_id),
+                organization_role_ids: mockOrganizationMembership2.roles.filter(isActive)
+                    .map(role => role.role_id),
                 school_ids: [ mockSchoolsData.schoolsConnection.edges[1].node.id ],
                 shortcode: mockOrganizationMembership2.shortcode,
             };
@@ -311,17 +341,21 @@ describe(`user edit form`, () => {
 
             await waitForButtonToLoad(submitButton);
 
-            expect(mockUpdateOrganizationMembership).toHaveBeenCalledTimes(1);
-            expect(mockUpdateOrganizationMembership).toHaveBeenCalledWith({
-                variables: expectedMembership,
-            });
+            expect(mockUpdateOrganizationMembership)
+                .toHaveBeenCalledTimes(1);
+            expect(mockUpdateOrganizationMembership)
+                .toHaveBeenCalledWith({
+                    variables: expectedMembership,
+                });
 
             expectSnackbarSuccess(mockIntl.formatMessage({
                 id: `editDialog_savedSuccess`,
             }));
 
-            expect(mockOnClose).toHaveBeenCalledTimes(1);
-            expect(mockOnClose).toHaveBeenCalledWith(true);
+            expect(mockOnClose)
+                .toHaveBeenCalledTimes(1);
+            expect(mockOnClose)
+                .toHaveBeenCalledWith(true);
             expect(global.console.error).not.toHaveBeenCalled();
         });
     });
@@ -335,21 +369,25 @@ describe(`user edit form`, () => {
         });
 
         function expectDeleteCalled () {
-            expect(mockDeletePrompt).toHaveBeenCalledTimes(1);
-            expect(mockDeletePrompt).toHaveBeenCalledWith({
-                title: mockIntl.formatMessage({
-                    id: `users_deleteTitle`,
-                }),
-                entityName: `${mockUserNode.givenName} ${mockUserNode.familyName}`,
-            });
+            expect(mockDeletePrompt)
+                .toHaveBeenCalledTimes(1);
+            expect(mockDeletePrompt)
+                .toHaveBeenCalledWith({
+                    title: mockIntl.formatMessage({
+                        id: `users_deleteTitle`,
+                    }),
+                    entityName: `${mockUserNode.givenName} ${mockUserNode.familyName}`,
+                });
 
-            expect(mockDeleteUserInOrganization).toHaveBeenCalledTimes(1);
-            expect(mockDeleteUserInOrganization).toHaveBeenCalledWith({
-                variables: {
-                    organizationId: mockOrganizationMembership.organization_id,
-                    userIds: [ mockOrganizationMembership.user_id ],
-                },
-            });
+            expect(mockDeleteUserInOrganization)
+                .toHaveBeenCalledTimes(1);
+            expect(mockDeleteUserInOrganization)
+                .toHaveBeenCalledWith({
+                    variables: {
+                        organizationId: mockOrganizationMembership.organization_id,
+                        userIds: [ mockOrganizationMembership.user_id ],
+                    },
+                });
         }
 
         async function triggerDelete () {
@@ -369,8 +407,10 @@ describe(`user edit form`, () => {
                 id: `editDialog_deleteSuccess`,
             }));
 
-            expect(mockOnClose).toHaveBeenCalledTimes(1);
-            expect(mockOnClose).toHaveBeenCalledWith(true);
+            expect(mockOnClose)
+                .toHaveBeenCalledTimes(1);
+            expect(mockOnClose)
+                .toHaveBeenCalledWith(true);
         });
 
         test(`if not confirmed, does not delete OrganizationMembership`, async () => {
@@ -407,7 +447,8 @@ describe(`user edit form`, () => {
 
         rerender(withMockIntl(<EditDialog
             open={false}
-            onClose={mockOnClose} />));
+            onClose={mockOnClose}
+        />));
 
         await waitForElementToBeRemoved(screen.getAllByRole(`presentation`, {
             hidden: true,
@@ -415,8 +456,10 @@ describe(`user edit form`, () => {
 
         rerender(withMockIntl(<EditDialog
             open
-            onClose={mockOnClose} />));
+            onClose={mockOnClose}
+        />));
 
-        expect(inputs.givenName()).toHaveValue(mockUserNode.givenName);
+        expect(inputs.givenName())
+            .toHaveValue(mockUserNode.givenName);
     });
 });

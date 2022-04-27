@@ -16,8 +16,9 @@ import {
     buildOrganizationUserFilters,
 } from "@/operations/queries/getPaginatedOrganizationUsers";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Status } from "@/types/graphQL";
-import { sortSchoolNames } from "@/utils/schools";
+import { Status, UuidOperator } from "@/types/graphQL";
+import { mapOrganizationMembershipEdges } from "@/utils/organizationMemberships";
+import { mapSchoolsMembershipEdges, sortSchoolNames } from "@/utils/schools";
 import {
     DEFAULT_ROWS_PER_PAGE,
     pageChangeToDirection,
@@ -36,33 +37,6 @@ import React,
     useState,
 } from "react";
 
-const mapRoles = (edge: RolesConnectionEdge) => {
-    const role = edge.node;
-    return {
-        id: role.id,
-        name: role.name ?? ``,
-        status: role.status ?? Status.INACTIVE,
-    };
-};
-
-const mapOrganizationMembershipEdges = (edge: OrganizationMembershipConnectionEdge) => {
-    const organizationMembership = edge.node;
-    return {
-        joinTimestamp: organizationMembership.joinTimestamp,
-        status: organizationMembership.status,
-        roles: organizationMembership.rolesConnection?.edges.map(mapRoles),
-    };
-};
-
-const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
-    const schoolMembership = edge.node.school;
-
-    return {
-        id: schoolMembership.id,
-        name: schoolMembership.name,
-        status: schoolMembership.status,
-    };
-};
 
 const mapClassEdges = (edge: ClassConnectionEdge) => {
     const classNode = edge.node;
@@ -92,6 +66,7 @@ const mapAndCombineClassConnections = (user: UserNode) => {
 
 export const mapUserRow = (edge: UserEdge) => {
     const user = edge.node;
+
     const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
     const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
     const organizationUserIsActive = organizationMemberships?.find(organization => organization.status === Status.ACTIVE) ?? organizationMemberships?.[0];
@@ -105,7 +80,7 @@ export const mapUserRow = (edge: UserEdge) => {
         email: user.contactInfo?.email ?? ``,
         phone: user.contactInfo?.phone ?? ``,
         roleNames: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.name ?? ``).sort(sortRoleNames) ?? [],
-        schoolNames: schoolMemberships?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name ?? ``).sort(sortSchoolNames) ?? [],
+        schoolNames: schoolMemberships?.filter((school) => organizationUserIsActive?.organization?.id === school.organizationId && school.status === Status.ACTIVE).map((school) => school.name ?? ``).sort(sortSchoolNames) ?? [],
         classNames: schoolClasses.map((schoolClass) => schoolClass.name),
         gradeNames: schoolClasses.map((schoolClass) => schoolClass.grades.map((grade) => grade.name ?? ``)).flat() ?? [],
         status: organizationUserIsActive?.status ?? Status.INACTIVE,
@@ -131,6 +106,13 @@ export default function UsersPage () {
         filters: buildOrganizationUserFilters(tableFilters),
     });
 
+    const organizationMembershipFilter = {
+        organizationId: {
+            operator: `eq` as UuidOperator,
+            value: organizationId,
+        },
+    };
+
     const {
         data: usersData,
         refetch: refetchUsers,
@@ -143,6 +125,8 @@ export default function UsersPage () {
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
+            organizationMembershipFilter: organizationMembershipFilter,
+            classFilter: organizationMembershipFilter,
         },
         skip: !organizationId,
         notifyOnNetworkStatusChange: true,
@@ -177,6 +161,7 @@ export default function UsersPage () {
             order: serverPagination.order,
             orderBy: serverPagination.orderBy,
             filter: paginationFilter,
+            organizationMembershipFilter: organizationMembershipFilter,
         });
     }, [
         serverPagination.search,
