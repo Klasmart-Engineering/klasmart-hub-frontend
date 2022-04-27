@@ -1,3 +1,4 @@
+import { MyUserResponse } from "@/api/myUser";
 import { OrganizationMembershipConnectionEdge, OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import { OrganizationMembership } from "@/types/graphQL";
 import { SetterOrUpdater } from "recoil";
@@ -25,4 +26,14 @@ export const selectOrganizationMembership = (selectedMembership: OrganizationMem
 
 export const removeOrganizationMembership = (membership: OrganizationMembershipConnectionNode, organizationMembershipStack: OrganizationMembershipConnectionNode[], setOrganizationMembershipStack: SetterOrUpdater<OrganizationMembershipConnectionNode[]>) => {
     setOrganizationMembershipStack(organizationMembershipStack.filter((membershipStack) => membershipStack.organization?.id !== membership.organization?.id));
+};
+
+export const getInitialOwnedOrg = (userData?: MyUserResponse): string | undefined => {
+    if (!userData) return;
+
+    const userId = userData.myUser.node.id;
+    const orgs = userData.myUser.node.organizationMembershipsConnection?.edges ?? [];
+    const owned = orgs.find(org => org?.node?.organization?.owners?.find(owner => owner.id === userId));
+
+    return owned?.node?.organization?.id;
 };
