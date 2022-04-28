@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.50.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.0%0Dv2.49.0) (2022-04-28)
+
+
+### ✨ Features
+
+* **DT-797:** cluster class roster into groups by performance merged classfilter statistics and class roster (#67) ([8ac377b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8ac377bece38b6dd3a6964185ffccb9f25c4d359)), closes [DT-797](https://calmisland.atlassian.net/browse/DT-797)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2471:** provide better error message on same name AT creation (#73) ([9330c46](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9330c4607f6b90d78d6d771c8c02915cd1a9478e)), closes [AD-2471](https://calmisland.atlassian.net/browse/AD-2471)
+
 ## [2.49.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.49.0%0Dv2.48.0) (2022-04-27)
 
 
