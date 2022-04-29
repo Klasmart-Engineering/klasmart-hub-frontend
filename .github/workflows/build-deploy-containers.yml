@@ -71,7 +71,7 @@ jobs:
       region: ${{ matrix.region }}
       environment: ${{ matrix.environment }}
     steps:
-      - uses: KL-Engineering/github-action-workflows/.github/actions/npm-build-fe@d51babc87eeba745b2ceaf8aa51b9381dec9f71e
+      - uses: KL-Engineering/github-action-workflows/.github/actions/npm-build-fe@v3.2.0
         with:
           environment: ${{ env.environment }}
           region: ${{ env.region }}
@@ -80,7 +80,7 @@ jobs:
 
       - name: Build and Push Container
         id: build-push
-        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@a8cd2f2cc1aeb5c5724e9e9ba2d2c84a49fa6b10
+        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@v3.2.0
         with:
           image_name: ${{ env.ecr_repository }}
           dockerfile: deploy/Dockerfile
@@ -126,7 +126,7 @@ jobs:
       environment: ${{ matrix.environment }}
     steps:
       - name: Deploy to ${{ matrix.environment }}
-        uses: KL-Engineering/github-action-workflows/.github/actions/argocd-override-image-parameter@6816df6657d8c0b57924b220212f5b1cb4de0f83
+        uses: KL-Engineering/github-action-workflows/.github/actions/argocd-override-image-parameter@v3.2.0
         with:
           environment: ${{ env.environment }}
           region: ${{ env.region }}
