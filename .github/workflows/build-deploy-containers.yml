@@ -29,23 +29,23 @@ jobs:
     strategy:
       matrix:
         include:
-          - environment: prod
-            region: in
-          - environment: uat
-            region: mb
-          - environment: prod
-            region: pk
-          - environment: prod
-            region: global
-          - environment: alpha
-            region: global
-          - environment: nextgen
-            region: global
-          - environment: showroom
-            region: global
+          # - environment: prod
+          #   region: in
+          # - environment: uat
+          #   region: mb
+          # - environment: prod
+          #   region: pk
+          # - environment: prod
+          #   region: global
+          # - environment: alpha
+          #   region: global
+          # - environment: nextgen
+          #   region: global
+          # - environment: showroom
+          #   region: global
           - environment: stage
             region: global
-    name: build container
+    name: upload standalone fe build
     runs-on: ubuntu-latest
     env:
       region: ${{ matrix.region }}
@@ -55,14 +55,14 @@ jobs:
         with:
           environment: ${{ env.environment }}
           region: ${{ env.region }}
-      - name: Archive build for legacy frontend deployments
+      - name: Archive build
         shell: bash
         run: |
           tar zcvf dist.tgz dist
       - name: Upload build to github artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.region }}-${{ env.environment }}
+          name: "build-${{ env.region }}-${{ env.environment }}"
           path: dist.tgz
           retention-days: 15
           if-no-files-found: error
