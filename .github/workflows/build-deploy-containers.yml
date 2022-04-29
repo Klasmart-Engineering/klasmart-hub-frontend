@@ -2,7 +2,7 @@ name: container builds
 
 concurrency:
   group: buildDeployContainers
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   push:
@@ -27,44 +27,63 @@ jobs:
   build-container:
     needs: [install]
     outputs:
-      image_version: ${{ steps.build-push.outputs.image_version}}
+      # Does not work for front end images that have unique image ids
+      # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+      # https://github.community/t/bug-jobs-output-should-return-a-list-for-a-matrix-job/128626/24
+      # each environment in the matrix will need its own output
+      # for backend builds it can be just:
+      # image_version: ${{ steps.build-push.outputs.image_version}}
+      uk-landingzone: ${{steps.set-output-image-version.outputs.uk-landingzone}}
+      uk-prod: ${{steps.set-output-image-version.outputs.uk-prod}}
+      id-beta: ${{steps.set-output-image-version.outputs.id-beta}}
+      id-prod: ${{steps.set-output-image-version.outputs.id-prod}}
+      th-prod: ${{steps.set-output-image-version.outputs.th-prod}}
+      vn-beta: ${{steps.set-output-image-version.outputs.vn-beta}}
+      vn-prod: ${{steps.set-output-image-version.outputs.vn-prod}}
+      in-prod: ${{steps.set-output-image-version.outputs.in-prod}}
+      lk-prod: ${{steps.set-output-image-version.outputs.lk-prod}}
+      mb-uat: ${{steps.set-output-image-version.outputs.mb-uat}}
+      pk-prod: ${{steps.set-output-image-version.outputs.pk-prod}}
+      global-prod: ${{steps.set-output-image-version.outputs.global-prod}}
+      global-alpha: ${{steps.set-output-image-version.outputs.global-alpha}}
+      global-nextgen: ${{steps.set-output-image-version.outputs.global-nextgen}}
+      global-showroom: ${{steps.set-output-image-version.outputs.global-showroom}}
+      global-stage: ${{steps.set-output-image-version.outputs.global-stage}}
     strategy:
       matrix:
         include:
           - environment: landingzone
             region: uk
-          # - environment: prod
-          #   region: uk
-          # - environment: beta
-          #   region: id
-          # - environment: prod
-          #   region: id
-          # - environment: prod
-          #   region: th
-          # - environment: beta
-          #   region: vn
-          # - environment: prod
-          #   region: vn
-          # - environment: prod
-          #   region: in
-          # - environment: prod
-          #   region: lk
-          # - environment: uat
-          #   region: mb
-          # - environment: prod
-          #   region: pk
-          # - environment: prod
-          #   region: global
-          # - environment: alpha
-          #   region: global
-          # - environment: loadtest
-          #   region: global
-          # - environment: nextgen
-          #   region: global
-          # - environment: showroom
-          #   region: global
-          # - environment: stage
-          #   region: global
+          - environment: prod
+            region: uk
+          - environment: beta
+            region: id
+          - environment: prod
+            region: id
+          - environment: prod
+            region: th
+          - environment: beta
+            region: vn
+          - environment: prod
+            region: vn
+          - environment: prod
+            region: in
+          - environment: prod
+            region: lk
+          - environment: uat
+            region: mb
+          - environment: prod
+            region: pk
+          - environment: prod
+            region: global
+          - environment: alpha
+            region: global
+          - environment: nextgen
+            region: global
+          - environment: showroom
+            region: global
+          - environment: stage
+            region: global
     name: build container
     runs-on: ubuntu-latest
     env:
@@ -95,18 +114,12 @@ jobs:
           ECR_AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           ECR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
-      - name: Archive build for legacy frontend deployments
+      - name: set-output-image-version
+        id: set-output-image-version
         shell: bash
         run: |
-          tar zcvf dist.tgz dist
-
-      - name: Upload build to github artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ steps.build-push.outputs.image_version}}
-          path: dist.tgz
-          retention-days: 1
-          if-no-files-found: error
+          echo "Setting output: ${{ matrix.region }}-${{ matrix.environment }} to ${{ steps.build-push.outputs.image_version}}"
+          echo '::set-output name=${{ matrix.region }}-${{ matrix.environment }}::${{ steps.build-push.outputs.image_version}}'
 
   deploy-ci:
     needs: [build-container]
@@ -125,6 +138,14 @@ jobs:
       region: ${{ matrix.region }}
       environment: ${{ matrix.environment }}
     steps:
+      - name: Extract image name
+        id: image_version
+        shell: bash
+        run: |
+          image_version=$(echo -E '${{ toJSON(needs.build-container.outputs) }}' | jq --raw-output '."${{ matrix.region }}-${{ matrix.environment }}"')
+          echo "setting image_version to: ${image_version}"
+          echo "::set-output name=image_version::${image_version}"
+
       - name: Deploy to ${{ matrix.environment }}
         uses: KL-Engineering/github-action-workflows/.github/actions/argocd-override-image-parameter@v3.2.0
         with:
@@ -132,7 +153,7 @@ jobs:
           region: ${{ env.region }}
           argocd_app: "${{ env.region }}-${{ env.environment }}-${{ env.argocd_app_component }}"
           argocd_app_chart_tag_path: ${{ env.argocd_app_chart_tag_path }}
-          argocd_app_chart_tag_value: ${{ needs.build-container.outputs.image_version }}
+          argocd_app_chart_tag_value: ${{ steps.image_version.outputs.image_version }}
           TOOLS_KUBECONFIG_CONTENT_B64: ${{ secrets.TOOLS_KUBECONFIG_CONTENT_B64 }}
           ARGOCD_AUTH_USERNAME: ${{ secrets.ARGOCD_AUTH_USERNAME }}
           ARGOCD_AUTH_PASSWORD: ${{ secrets.ARGOCD_AUTH_PASSWORD }}
