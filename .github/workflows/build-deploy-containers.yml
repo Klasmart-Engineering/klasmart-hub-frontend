@@ -5,8 +5,11 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - "ci/upload_kl_builds"
+  # release:
+  #   types: [published]
   workflow_dispatch:
 
 # Repository specific variables
@@ -20,6 +23,49 @@ jobs:
     uses: KL-Engineering/github-action-workflows/.github/workflows/npm-ci.yml@v1.1.5
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+  upload-builds:
+    needs: [install]
+    strategy:
+      matrix:
+        include:
+          - environment: prod
+            region: in
+          - environment: uat
+            region: mb
+          - environment: prod
+            region: pk
+          - environment: prod
+            region: global
+          - environment: alpha
+            region: global
+          - environment: nextgen
+            region: global
+          - environment: showroom
+            region: global
+          - environment: stage
+            region: global
+    name: build container
+    runs-on: ubuntu-latest
+    env:
+      region: ${{ matrix.region }}
+      environment: ${{ matrix.environment }}
+    steps:
+      - uses: KL-Engineering/github-action-workflows/.github/actions/npm-build-fe@v3.2.0
+        with:
+          environment: ${{ env.environment }}
+          region: ${{ env.region }}
+      - name: Archive build for legacy frontend deployments
+        shell: bash
+        run: |
+          tar zcvf dist.tgz dist
+      - name: Upload build to github artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.region }}-${{ env.environment }}
+          path: dist.tgz
+          retention-days: 15
+          if-no-files-found: error
 
   build-container:
     needs: [install]
@@ -37,38 +83,38 @@ jobs:
         include:
           - environment: landingzone
             region: uk
-          - environment: prod
-            region: uk
-          - environment: beta
-            region: id
-          - environment: prod
-            region: id
-          - environment: prod
-            region: th
-          - environment: alpha
-            region: vn
-          - environment: beta
-            region: vn
-          - environment: loadtest
-            region: vn
-          - environment: prod
-            region: vn
-          - environment: prod
-            region: in
-          - environment: prod
-            region: lk
-          - environment: uat
-            region: mb
-          - environment: prod
-            region: pk
-          - environment: prod
-            region: global
-          - environment: alpha
-            region: global
-          - environment: nextgen
-            region: global
-          - environment: showroom
-            region: global
+          # - environment: prod
+          #   region: uk
+          # - environment: beta
+          #   region: id
+          # - environment: prod
+          #   region: id
+          # - environment: prod
+          #   region: th
+          # - environment: alpha
+          #   region: vn
+          # - environment: beta
+          #   region: vn
+          # - environment: loadtest
+          #   region: vn
+          # - environment: prod
+          #   region: vn
+          # - environment: prod
+          #   region: in
+          # - environment: prod
+          #   region: lk
+          # - environment: uat
+          #   region: mb
+          # - environment: prod
+          #   region: pk
+          # - environment: prod
+          #   region: global
+          # - environment: alpha
+          #   region: global
+          # - environment: nextgen
+          #   region: global
+          # - environment: showroom
+          #   region: global
           - environment: stage
             region: global
     name: build container
