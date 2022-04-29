@@ -5,11 +5,8 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  push:
-    branches:
-      - "ci/enabling_multi_arch_containers"
-  # release:
-  #   types: [published]
+  release:
+    types: [published]
   workflow_dispatch:
 
 # Repository specific variables
@@ -27,11 +24,12 @@ jobs:
   build-container:
     needs: [install]
     outputs:
-      # Does not work for front end images that have unique image ids
       # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
       # https://github.community/t/bug-jobs-output-should-return-a-list-for-a-matrix-job/128626/24
-      # each environment in the matrix will need its own output
-      # for backend builds it can be just:
+      # Outputs is a single string rather than a list/array.
+      # This does not work for front end images that have unique image tags for each environment.
+      # Each environment in the matrix will need its own output.
+      # For environment-agnostic builds (like backend) it can be just:
       # image_version: ${{ steps.build-push.outputs.image_version}}
       uk-landingzone: ${{steps.set-output-image-version.outputs.uk-landingzone}}
       uk-prod: ${{steps.set-output-image-version.outputs.uk-prod}}
