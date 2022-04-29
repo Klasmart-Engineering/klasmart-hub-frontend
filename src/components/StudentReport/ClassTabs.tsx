@@ -93,24 +93,24 @@ interface Performance {
   today_total_classes: number;
   today_activities: number;
 }
-interface ClassObj {
+interface ClassDetail {
   class_id: number;
   class_name: string;
   performance: Performance;
 }
 interface ClassRoasters {
   total: number;
-  classes: ClassObj[];
+  classes: ClassDetail[];
 }
 
 interface Props {
-  onClassChange: (classObj: ClassObj) => void;
+  onClassChange: (classDetail: ClassDetail) => void;
 }
 
 export default function ClassTabs({ onClassChange }: Props) {
   const style = useStyles();
   const classesData = mockData;
-  const [classess, setClassess] = useState<ClassObj[]>(classesData.classes || []);
+  const [classess, setClassess] = useState<ClassDetail[]>(classesData.classes || []);
   const [count, setCount] = useState(1);
   const tabsRef = createRef<any>();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -118,15 +118,15 @@ export default function ClassTabs({ onClassChange }: Props) {
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
-  const selectClass = (classObj: ClassObj) => {
-    onClassChange(classObj);
-    const index = classess.findIndex((v: ClassObj) => v.class_id === classObj.class_id);
+  const selectClass = (classDetail: ClassDetail) => {
+    onClassChange(classDetail);
+    const index = classess.findIndex((v: ClassDetail) => v.class_id === classDetail.class_id);
     classess.splice(index, 1);
-    setClassess([classObj, ...classess]);
+    setClassess([classDetail, ...classess]);
   };
-  const handleClose = (classObj: ClassObj) => {
+  const handleClose = (classDetail: ClassDetail) => {
     setAnchorEl(null);
-    selectClass(classObj);
+    selectClass(classDetail);
   };
 
   useEffect(() => {
@@ -165,11 +165,11 @@ export default function ClassTabs({ onClassChange }: Props) {
         }}
         ref={tabsRef}
       >
-        {classess.map((classObj, index) => (
+        {classess.map((classDetail, index) => (
           <ClassTab
-            key={classObj.class_id}
-            label={classObj.class_name}
-            onClick={() => selectClass(classObj)}
+            key={classDetail.class_id}
+            label={classDetail.class_name}
+            onClick={() => selectClass(classDetail)}
             className={index === 0 ? `` : style.seperator}
           />
         ))}
@@ -193,9 +193,9 @@ export default function ClassTabs({ onClassChange }: Props) {
         >
           {classess
             ?.slice(classess.length - count - 1)
-            .map((classObj, index) => (
-              <MenuItem key={index} onClick={() => handleClose(classObj)}>
-                {classObj.class_name}
+            .map((classDetail, index) => (
+              <MenuItem key={index} onClick={() => handleClose(classDetail)}>
+                {classDetail.class_name}
               </MenuItem>
             ))}
         </Menu>
