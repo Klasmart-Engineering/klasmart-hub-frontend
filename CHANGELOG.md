@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.50.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.1%0Dv2.50.0) (2022-04-29)
+
+
+### 🐛 Bug Fixes
+
+* allow to choose dates in the past on academic term creation (#74) ([ba2d48c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ba2d48c992b7cc334b21b0e9af518a8ed0f28fcb))
+
 ## [2.50.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.0%0Dv2.49.0) (2022-04-28)
 
 
