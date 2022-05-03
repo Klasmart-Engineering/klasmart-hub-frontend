@@ -5,7 +5,7 @@ import {
 } from "@/api/categories";
 import { useGetAllPrograms } from "@/api/programs";
 import { useGetAllSubjects } from "@/api/subjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     Category,
     isActive,

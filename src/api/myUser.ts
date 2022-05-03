@@ -12,7 +12,7 @@ export interface MyUserRequest {
 export interface MyUserResponse {
   myUser: {
     profiles: UserNode[];
-    node: (UserNode & {
+    node: UserNode & {
       organizationMembershipsConnection: {
         edges: {
           node: {
@@ -38,7 +38,7 @@ export interface MyUserResponse {
           };
         }[];
       };
-    });
+    };
   };
 }
 

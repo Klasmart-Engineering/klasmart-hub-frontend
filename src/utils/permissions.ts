@@ -9,7 +9,7 @@ import {
     PermissionsCategory,
     Role,
 } from "@/components/Role/Dialog/CreateEdit";
-import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
+import { useCurrentOrganizationMembership } from "@/state/organizationMemberships";
 
 export type PermissionId = typeof permissions[number]
 

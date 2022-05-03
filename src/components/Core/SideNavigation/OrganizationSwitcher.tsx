@@ -1,6 +1,6 @@
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import { useOrganizationStack } from "@/store/organizationMemberships";
-import { usePreviewOrganizationColor } from "@/store/previewOrganizationColor";
+import { useOrganizationStack } from "@/state/organizationMemberships";
+import { usePreviewOrganizationColor } from "@/state/previewOrganizationColor";
 import { PRIMARY_THEME_COLOR } from "@/themeProvider";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {

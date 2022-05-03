@@ -1,6 +1,6 @@
 import { WidgetType } from "../../models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { useClassTeacherLoad } from "@kl-engineering/reports-api-client";
 import {

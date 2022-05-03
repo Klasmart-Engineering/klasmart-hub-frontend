@@ -4,7 +4,7 @@ import { useRestAPI } from "@/api/restapi";
 import scheduleSvg from "@/assets/img/schedule.svg";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { getLiveEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";

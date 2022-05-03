@@ -5,7 +5,7 @@ import {
     buildGradeFilter,
     buildGradesFilters,
 } from "@/operations/queries/getOrganizationGrades";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { NON_SPECIFIED } from "@/types/graphQL";
 import {
     DEFAULT_ROWS_PER_PAGE,

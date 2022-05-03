@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import "webpack-dev-server";
 import pkg from "./package.json";
 import { execSync } from "child_process";
@@ -13,12 +14,17 @@ import {
     Configuration,
     EnvironmentPlugin,
 } from "webpack";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import ModuleFederationPlugin from "webpack/lib/container/ModuleFederationPlugin";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import zlib from "zlib";
 
 config({
     path: process.env.ENV_PATH,
 });
+
+console.log(process.env.SCHEDULE_FRONTEND_URL);
 
 const modes: Required<Configuration["mode"]>[] = [
     `development`,
@@ -38,7 +44,7 @@ const webpackConfig: Configuration = {
     mode: nodeEnv,
     devtool: isDev ? `eval-cheap-module-source-map` : `source-map`,
     entry: {
-        hubui: `./src/client-entry.tsx`,
+        hubui: `./src/index.ts`,
     },
     module: {
         rules: [
@@ -87,6 +93,7 @@ const webpackConfig: Configuration = {
         ],
         alias: {
             react: path.resolve(`./node_modules/react`),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             "@": path.resolve(__dirname, `src`),
             ...brandingOptions.webpack.resolve.alias,
         },
@@ -99,7 +106,10 @@ const webpackConfig: Configuration = {
     plugins: [
         new EnvironmentPlugin({
             VERSION: pkg.version,
-            GIT_COMMIT: execSync(`git rev-parse HEAD`).toString().trim().slice(0, 7),
+            GIT_COMMIT: execSync(`git rev-parse HEAD`)
+                .toString()
+                .trim()
+                .slice(0, 7),
         }),
         new CopyWebpackPlugin({
             patterns: [
@@ -123,6 +133,31 @@ const webpackConfig: Configuration = {
                     newRelicLicenseKey: `NRJS-eff8c9c844416a5083f`,
                     newRelicApplicationID: `322534635`,
                 },
+        }),
+        new ModuleFederationPlugin({
+            name: `hub`,
+            filename: `remoteEntry.js`,
+            remotes: {
+                schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
+            },
+            shared: {
+                '@kl-engineering/frontend-state': {
+                    singleton: true,
+                    // requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
+                },
+                // recoil: {},
+                // 'react-cookie': {},
+                react: {
+                    // eager: true,
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react`],
+                },
+                'react-dom': {
+                    // eager: true,
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react-dom`],
+                },
+            },
         }),
         ...isDev
             ? []
@@ -178,6 +213,19 @@ const webpackConfig: Configuration = {
         port: 8080,
         https: true,
         historyApiFallback: true,
+        client: {
+            overlay: {
+                warnings: false,
+            },
+        },
+        // proxy: {
+        //     // eslint-disable-next-line @typescript-eslint/naming-convention
+        //     "/v1": {
+        //         target: `https://cms.alpha.kidsloop.net/`,
+        //         secure: true,
+        //         changeOrigin: true,
+        //     },
+        // },
     },
 };
 

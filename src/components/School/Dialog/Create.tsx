@@ -6,7 +6,7 @@ import {
     useCreateSchool,
     useEditSchoolPrograms,
 } from "@/api/schools";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { buildEmptySchoolNode } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {

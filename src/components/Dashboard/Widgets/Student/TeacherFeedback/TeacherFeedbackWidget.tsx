@@ -5,7 +5,7 @@ import {
 import noFeedBack from "@/assets/img/noFeedback.png";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapAssessmentScheduleServerToClientType } from "@/utils/assessments";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import {

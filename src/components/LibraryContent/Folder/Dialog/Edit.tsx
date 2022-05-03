@@ -1,6 +1,6 @@
 import LibraryFolderDialogForm from "./Form";
 import { useRestAPI } from "@/api/restapi";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { ContentItemDetails } from "@/types/objectTypes";
 import { newLibraryContent } from "@/utils/libraryContents";
 import {

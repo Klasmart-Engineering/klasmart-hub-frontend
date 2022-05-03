@@ -4,7 +4,7 @@ import {
     useDeleteGrade,
     useGetGrade,
 } from "@/api/grades";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Grade } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { buildEmptyGrade } from "@/utils/grades";

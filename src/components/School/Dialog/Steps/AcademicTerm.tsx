@@ -3,7 +3,7 @@ import { useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import AcademicTermTable,
 { AcademicTermRow } from "@/components/School/AcademicTerm/Table";
 import { buildAcademicTermFilter } from "@/operations/queries/getPaginatedAcademicTerms";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapAcademicTermNodeToAcademicTermRow } from "@/utils/academicTerms";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { usePermission } from "@/utils/permissions";

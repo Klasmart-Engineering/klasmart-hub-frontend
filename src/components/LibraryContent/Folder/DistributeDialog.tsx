@@ -1,6 +1,6 @@
 import { useGetAllOrganizations } from "@/api/organizations";
 import { useRestAPI } from "@/api/restapi";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { ContentItemDetails } from "@/types/objectTypes";
 import { Info as InfoIcon } from "@mui/icons-material";

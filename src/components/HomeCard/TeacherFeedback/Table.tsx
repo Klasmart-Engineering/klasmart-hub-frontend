@@ -4,7 +4,7 @@ import {
     useRestAPI,
 } from "@/api/restapi";
 import globalStyles from "@/globalStyles";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapAssessmentScheduleServerToClientType } from "@/utils/assessments";
 import { getTableLocalization } from "@/utils/table";
 import {

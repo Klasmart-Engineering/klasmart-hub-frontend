@@ -1,6 +1,11 @@
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
 import UserProfileMenu from "@/components/Core/AppBar/UserProfileMenu";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
+import {
+    IconButton,
+    Tabs,
+} from "@kl-engineering/kidsloop-px";
+import { Tab } from "@kl-engineering/kidsloop-px/dist/types/components/Tabs";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import {
     AppBar,
@@ -17,11 +22,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    IconButton,
-    Tabs,
-} from "@kl-engineering/kidsloop-px";
-import { Tab } from "@kl-engineering/kidsloop-px/dist/types/components/Tabs";
 import React from "react";
 import { useIntl } from "react-intl";
 import {
@@ -102,12 +102,14 @@ export default function Toolbar (props: Props) {
         ?? [];
     };
 
-    const tabs = getTabs(location.pathname).map((tab) => ({
-        ...tab,
-        text: intl.formatMessage({
-            id: `navbar_${tab.text.split(` `).join(``)}Tab`,
-        }),
-    }));
+    const tabs = getTabs(location.pathname)
+        .map((tab) => ({
+            ...tab,
+            text: intl.formatMessage({
+                id: `navbar_${tab.text.split(` `)
+                    .join(``)}Tab`,
+            }),
+        }));
 
     return (
         <AppBar
@@ -138,7 +140,8 @@ export default function Toolbar (props: Props) {
                             className={classes.menuButton}
                             icon={MenuIcon}
                             size="medium"
-                            onClick={() => onMenuButtonClick()} />
+                            onClick={() => onMenuButtonClick()}
+                        />
                         {showSiteLogo && (
                             <Button
                                 className={classes.logo}

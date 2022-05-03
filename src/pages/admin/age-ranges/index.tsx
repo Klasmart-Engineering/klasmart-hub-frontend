@@ -5,7 +5,7 @@ import {
     buildAgeRangesFilters,
     buildOrganizationAgeRangeFilter,
 } from "@/operations/queries/getPaginatedAgeRanges";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapAgeRangeNodeToAgeRangeRow } from "@/utils/ageRanges";
 import {
     DEFAULT_ROWS_PER_PAGE,

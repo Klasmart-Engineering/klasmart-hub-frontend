@@ -4,7 +4,7 @@ import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { NON_SPECIFIED } from "@/types/graphQL";
 import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
 import {

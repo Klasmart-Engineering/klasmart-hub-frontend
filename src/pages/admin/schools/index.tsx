@@ -2,7 +2,7 @@ import { useGetPaginatedSchools } from "@/api/schools";
 import SchoolTable,
 { SchoolRow }  from "@/components/School/Table";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { isActive } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import { mapSchoolNodeToSchoolRow } from "@/utils/schools";

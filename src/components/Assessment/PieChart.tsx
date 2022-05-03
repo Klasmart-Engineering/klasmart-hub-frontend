@@ -3,7 +3,7 @@ import {
     getStatusLabel,
 } from "./utils";
 import PieChart from "@/components/Charts/Pie";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     AssessmentStatus,
     useGetAssessmentsSummary,

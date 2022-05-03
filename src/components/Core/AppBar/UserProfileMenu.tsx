@@ -4,8 +4,13 @@ import { useQueryMyUser } from "@/api/myUser";
 import StyledButton from "@/components/styled/button";
 import { getCookieDomain } from "@/config";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
+import { organizationMembershipStackState } from "@/state/organizationMemberships";
 import { redirectToAuth } from "@/utils/routing";
+import { useSetState } from "@kl-engineering/frontend-state";
+import {
+    LanguageSelect,
+    UserAvatar,
+} from "@kl-engineering/kidsloop-px";
 import {
     Box,
     ButtonBase,
@@ -22,17 +27,12 @@ import {
     makeStyles,
     withStyles,
 } from '@mui/styles';
-import {
-    LanguageSelect,
-    UserAvatar,
-} from "@kl-engineering/kidsloop-px";
 import React,
 {
     useMemo,
     useState,
 } from "react";
 import { FormattedMessage } from "react-intl";
-import { useSetRecoilState } from "recoil";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -68,7 +68,7 @@ interface Props {
 
 export default function UserProfileMenu (props: Props) {
     const classes = useStyles();
-    const setOrganizationStack = useSetRecoilState(organizationMembershipStackState);
+    const setOrganizationStack = useSetState(organizationMembershipStackState);
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const { data: meData } = useQueryMyUser();
 
@@ -174,7 +174,8 @@ export default function UserProfileMenu (props: Props) {
                             >
                                 <LanguageSelect
                                     cookieDomain={getCookieDomain()}
-                                    languages={LANGUAGES_LABEL} />
+                                    languages={LANGUAGES_LABEL}
+                                />
                             </Grid>
                             <Grid
                                 item

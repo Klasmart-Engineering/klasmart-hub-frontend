@@ -6,7 +6,7 @@ import {
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import {
     useDeleteEntityPrompt,

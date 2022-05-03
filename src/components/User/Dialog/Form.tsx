@@ -1,6 +1,6 @@
 import { useGetOrganizationRoles } from "@/api/roles";
 import { useGetPaginatedSchools } from "@/api/schools";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { FormErrors } from "@/types/form";
 import { isActive, UuidOperator } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";

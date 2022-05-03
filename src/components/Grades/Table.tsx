@@ -1,7 +1,7 @@
 import { useDeleteGrade } from "@/api/grades";
 import CreateGradeDialog from "@/components/Grades/Dialog/Create";
 import EditGradeDialog from "@/components/Grades/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { useGradeFilters } from "@/utils/grades";
 import { usePermission } from "@/utils/permissions";

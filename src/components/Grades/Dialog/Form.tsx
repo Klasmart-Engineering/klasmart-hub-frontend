@@ -1,5 +1,5 @@
 import { useGetAllGrades } from "@/api/grades";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     Grade,
     isActive,

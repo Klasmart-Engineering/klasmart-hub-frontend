@@ -5,7 +5,7 @@ import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidge
 import {
     DashboardMode,
     useDashboardMode,
-} from "@/store/useDashboardMode";
+} from "@/state/useDashboardMode";
 import CachedIcon from '@mui/icons-material/Cached';
 import { CircularProgress } from "@mui/material";
 import {

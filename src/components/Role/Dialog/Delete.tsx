@@ -14,7 +14,7 @@ import {
     buildOrganizationUserFilter,
     buildOrganizationUserFilters,
 } from "@/operations/queries/getPaginatedOrganizationUsers";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { sortSchoolNames } from "@/utils/schools";
 import {

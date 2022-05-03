@@ -1,7 +1,8 @@
-
 import { useFeatureFlags } from "./feature-flag/utils";
 import StudentReport from "./pages/studentReport";
 import { authClient } from "@/api/auth/client";
+import ErrorBoundary from "@/components/Common/ErrorBoundary";
+import LoadingCard from "@/components/Common/LoadingCard";
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
 import AgeRangesPage from "@/pages/admin/age-ranges";
 import ClassesPage from "@/pages/admin/classes";
@@ -21,11 +22,13 @@ import BadanamuContentPage from "@/pages/library/badanamu-content";
 import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
 import OrganizationContentPage from "@/pages/library/organization-content";
 import ReportsPage from "@/pages/reports";
-import SchedulePage from "@/pages/schedule";
+// import SchedulePage from "@/pages/schedule";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { redirectToAuth } from "@/utils/routing";
 import React,
 {
+    Suspense,
     useCallback,
     useEffect,
     useState,
@@ -37,10 +40,15 @@ import {
     useLocation,
 } from "react-router-dom";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const SchedulePage = React.lazy(() => import(`schedule/Schedule`));
+
 interface Props {
 }
 
 export default function Router (props: Props) {
+    const currentOrganization = useCurrentOrganization();
     const [ timeUntilExpiry, setTimeUntilExpiry ] = useState(0);
 
     const redirectIfUnauthenticated = useCallback(async () => {
@@ -90,7 +98,15 @@ export default function Router (props: Props) {
                 <MoreFeaturedContentPage />
             </Route>
             <Route path="/schedule">
-                <SchedulePage />
+                <ErrorBoundary>
+                    <Suspense
+                        fallback={(
+                            <LoadingCard />
+                        )}
+                    >
+                        <SchedulePage organization_id={currentOrganization?.id ?? ``} />
+                    </Suspense>
+                </ErrorBoundary>
             </Route>
             <Route path="/assessments">
                 <AssessmentsPage />

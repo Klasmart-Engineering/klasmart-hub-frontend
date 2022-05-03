@@ -2,7 +2,7 @@ import { useRestAPI } from "@/api/restapi";
 import InviteButton from "@/components/invite";
 import StyledFAB from "@/components/styled/fabButton";
 import { getLiveEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
 import { history } from "@/utils/history";
 import { usePermission } from "@/utils/permissions";

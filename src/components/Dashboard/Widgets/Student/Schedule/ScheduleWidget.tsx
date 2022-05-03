@@ -2,7 +2,7 @@ import scheduleSvg from "@/assets/img/schedule.svg";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import ScheduleItem from "@/components/Dashboard/Widgets/Student/Schedule/ScheduleItem";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import {

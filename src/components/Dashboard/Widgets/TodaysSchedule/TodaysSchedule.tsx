@@ -6,7 +6,7 @@ import { DailyCalendarEvent } from "@/components/Dashboard/Widgets/TodaysSchedul
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { retrieveClassTypeIdentityOrDefault } from "@/config/classTypes";
 import { WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH } from "@/config/index";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client/dist/api/schedule";
 import { Box } from "@mui/material";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";

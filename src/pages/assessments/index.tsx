@@ -1,5 +1,5 @@
 import { getCmsSiteEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     createStyles,
     makeStyles,

@@ -1,6 +1,6 @@
 import AgeRangeForm from "./Form";
 import { useCreateAgeRange } from "@/api/ageRanges";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { buildEmptyAgeRange } from "@/utils/ageRanges";
 import {
     Dialog,

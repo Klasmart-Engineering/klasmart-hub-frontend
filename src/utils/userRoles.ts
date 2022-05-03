@@ -5,7 +5,7 @@ import {
     orderedSystemRoleNames, 
     Status, 
 } from "@/types/graphQL";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { IntlShape } from "react-intl";
 
 

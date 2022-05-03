@@ -1,7 +1,7 @@
 import BarChart from "./BarChart";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useGetStudentLearningOutcome } from "@kl-engineering/reports-api-client";
 import { ParentSize } from "@visx/responsive";
 import React from "react";

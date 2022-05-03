@@ -1,5 +1,5 @@
 import { useQueryMyUser } from '@/api/myUser';
-import { useCurrentOrganizationMembership } from '@/store/organizationMemberships';
+import { useCurrentOrganizationMembership } from '@/state/organizationMemberships';
 import { withLDProvider } from 'launchdarkly-react-client-sdk';
 import React from 'react';
 

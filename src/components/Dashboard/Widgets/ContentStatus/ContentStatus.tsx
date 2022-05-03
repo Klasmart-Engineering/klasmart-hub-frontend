@@ -2,7 +2,7 @@
 import { WidgetType } from "../../models/widget.model";
 import contentStatusDataFormatter from "./contentStatusDataFormatter";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useGetContentTeacher } from "@kl-engineering/reports-api-client";
 import { Theme, Typography } from "@mui/material";
 import createStyles from '@mui/styles/createStyles';

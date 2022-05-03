@@ -3,7 +3,7 @@ import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import SubjectTable,
 { SubjectRow } from "@/components/Subject/Table";
 import { buildSubjectIdsFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { EntityStepContent } from "@/utils/entitySteps";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {

@@ -16,7 +16,7 @@ import {
     useUpdateOrganizationMembership,
 } from "@/api/organizationMemberships";
 import { UserNode } from "@/api/users";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     isActive,
     Status,

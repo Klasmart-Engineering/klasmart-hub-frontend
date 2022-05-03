@@ -5,7 +5,7 @@ import {
     buildOrganizationSubjectFilter,
     buildSubjectsFilters,
 } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapSubjectNodeToSubjectRow } from "@/utils/subjects";
 import {
     DEFAULT_ROWS_PER_PAGE,

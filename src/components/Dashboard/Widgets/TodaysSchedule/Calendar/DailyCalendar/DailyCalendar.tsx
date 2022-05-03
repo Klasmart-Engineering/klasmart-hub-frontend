@@ -12,6 +12,10 @@ import {
     updateTimeMarkerPosition,
 } from "./DailyCalenderHelper";
 import useInterval from "@/utils/useInterval";
+import {
+    localeState,
+    useStateValue,
+} from "@kl-engineering/frontend-state";
 import clsx from "clsx";
 import moment from "moment";
 import React,
@@ -27,7 +31,6 @@ import {
     momentLocalizer,
     Views,
 } from "react-big-calendar";
-import { useCookies } from "react-cookie";
 import { useIntl } from "react-intl";
 
 interface Props {
@@ -40,7 +43,6 @@ interface Props {
 const CALENDAR_UPDATE_TIMEMARKER_TIMER = 10 * 1000;
 
 export default function DailySchedule (props: Props) {
-
     const {
         date = new Date(),
         mode = `vertical`,
@@ -48,10 +50,11 @@ export default function DailySchedule (props: Props) {
         enableTimeMarker = true,
     } = props;
 
+    const locale = useStateValue(localeState);
+
     const hasNoAllDayEvents = !events.some((event: Event) => event.allDay);
 
-    const [ cookies ] = useCookies([ `locale` ]);
-    moment.locale(cookies.locale);
+    moment.locale(locale);
     const localizer = momentLocalizer(moment);
     const intl = useIntl();
 
@@ -83,12 +86,12 @@ export default function DailySchedule (props: Props) {
 
     const min = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     const max = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-    const calendarRef = useRef<HTMLDivElement>();
+    const calendarRef = useRef<HTMLDivElement>(null);
     const [ eventFocused, setEventFocused ] = useState(false);
 
     useEffect(() => {
         const calendarEl = calendarRef.current;
-        if (calendarEl === undefined) return;
+        if (calendarEl === null) return;
         insertAllDayLabel(calendarEl, allDayLabel);
 
         if(!enableTimeMarker) return;
@@ -125,8 +128,8 @@ export default function DailySchedule (props: Props) {
         <div
             ref={calendarRef}
             style={{
-                width:`100%`,
-                height:`100%`,
+                width: `100%`,
+                height: `100%`,
             }}
             onMouseLeave={() => eventFocused && setEventFocused(false)}
         >

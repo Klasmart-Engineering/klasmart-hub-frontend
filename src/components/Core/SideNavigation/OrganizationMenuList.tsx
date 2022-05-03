@@ -1,5 +1,5 @@
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import { useOrganizationStack } from "@/store/organizationMemberships";
+import { useOrganizationStack } from "@/state/organizationMemberships";
 import { selectOrganizationMembership } from "@/utils/organizationMemberships";
 import {
     getHighestRole,

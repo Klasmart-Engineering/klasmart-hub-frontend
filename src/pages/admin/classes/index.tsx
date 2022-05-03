@@ -5,7 +5,7 @@ import {
     buildClassesFilters,
     buildOrganizationClassesFilter,
 } from "@/operations/queries/getPaginatedOrganizationClasses";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { mapClassNodeToClassRow } from "@/utils/classes";
 import { usePermission } from "@/utils/permissions";
 import {

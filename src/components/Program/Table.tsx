@@ -2,7 +2,7 @@ import ViewProgramDetailsDrawer from "./DetailsDrawer";
 import { useDeleteProgram } from "@/api/programs";
 import CreateProgramDialog from "@/components/Program/Dialog/Create";
 import EditProgramDialog from "@/components/Program/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";

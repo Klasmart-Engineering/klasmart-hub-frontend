@@ -2,7 +2,7 @@ import {
     buildDefaultAssessmentStatusTabs,
     getStatusLabel,
 } from "./utils";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     AssessmentItem,
     AssessmentStatus,

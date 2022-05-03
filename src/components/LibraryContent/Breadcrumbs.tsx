@@ -1,5 +1,5 @@
 import { useRestAPI } from "@/api/restapi";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Home as HomeIcon } from "@mui/icons-material";
 import {
     Breadcrumbs,

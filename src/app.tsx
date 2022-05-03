@@ -1,17 +1,17 @@
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import Layout from "@/layout";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
+import { organizationMembershipStackState } from "@/state/organizationMemberships";
+import { useSetState } from "@kl-engineering/frontend-state";
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
 
 interface Props {
 }
 
 export default function App (props: Props) {
-    const setOrganizationMembershipStack = useSetRecoilState(organizationMembershipStackState);
+    const setOrganizationMembershipStack = useSetState(organizationMembershipStackState);
     const {
         data: myUserData,
         loading: myUserLoading,

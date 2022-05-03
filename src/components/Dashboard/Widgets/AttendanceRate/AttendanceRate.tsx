@@ -5,7 +5,7 @@ import { ClassAttendanceLegendLabels } from "@/components/Dashboard/models/data.
 import DonutWithText from "@/components/Dashboard/Widgets/AttendanceRate/Donut/DonutWithText";
 import Legend from "@/components/Dashboard/Widgets/AttendanceRate/Donut/Legend";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useWidth } from "@kl-engineering/kidsloop-px";
 import { useGetClassAttendanceRateGroup } from "@kl-engineering/reports-api-client";
 import { FiberManualRecord } from "@mui/icons-material";

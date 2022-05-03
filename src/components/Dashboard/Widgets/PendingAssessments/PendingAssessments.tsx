@@ -3,7 +3,7 @@ import { WidgetType } from "../../models/widget.model";
 import pendingAssesmentsDataFormatter from "./pendingAssesmentsDataFormatter";
 import ProgressBar from "@/components/Dashboard/Widgets/PendingAssessments/ProgressBar";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useGetPendingAssignments } from "@kl-engineering/reports-api-client";
 import { List, ListItem, SvgIcon, Theme, Typography } from "@mui/material";
 import createStyles from '@mui/styles/createStyles';

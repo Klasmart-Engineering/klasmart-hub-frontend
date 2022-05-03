@@ -11,7 +11,7 @@ import CreateAndEditRoleDialog, {
 import DeleteRoleDialog from "@/components/Role/Dialog/Delete";
 import ViewRoleDetailsDialog from "@/components/Role/Dialog/ViewDetails";
 import globalStyles from "@/globalStyles";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import {

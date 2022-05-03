@@ -5,7 +5,7 @@ import {
 import RolesTable,
 { RoleRow } from "@/components/Role/Table";
 import { buildOrganizationRoleFilter } from "@/operations/queries/getPaginatedOrganizationRoles";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import {

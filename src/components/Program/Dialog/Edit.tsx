@@ -6,7 +6,7 @@ import {
     useCreateOrUpdatePrograms,
     useGetProgramNode,
 } from "@/api/programs";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     buildEmptyProgram,
     mapProgramNodeToProgramForm,

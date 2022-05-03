@@ -5,7 +5,7 @@ import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { getLiveEndpoint } from "@/config";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@/config/index";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";

@@ -12,7 +12,7 @@ import {
     CreateOrganizationMembershipRequest,
     useCreateOrganizationMembership,
 } from "@/api/organizationMemberships";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { ApolloError } from "@apollo/client";
 import {
     Dialog,

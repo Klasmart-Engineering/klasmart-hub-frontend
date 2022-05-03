@@ -1,7 +1,9 @@
-import { fallbackLocale } from "./locale/locale";
-import { useCurrentOrganization } from "./store/organizationMemberships";
-import { usePreviewOrganizationColor } from "./store/previewOrganizationColor";
-import { getLanguage } from "./utils/locale";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
+import { usePreviewOrganizationColor } from "@/state/previewOrganizationColor";
+import {
+    localeState,
+    useStateValue,
+} from "@kl-engineering/frontend-state";
 import { utils } from "@kl-engineering/kidsloop-px";
 import { colors } from "@mui/material";
 import {
@@ -16,20 +18,17 @@ import {
     lighten,
     PaletteOptions,
     responsiveFontSizes,
-    Theme,
 } from "@mui/material/styles";
-import { useCookies } from "react-cookie";
 
 export const PRIMARY_THEME_COLOR = `#0094FF`;
 
 export function useThemeProvider () {
-    const [ cookies ] = useCookies([ `locale` ]);
+    const locale = useStateValue(localeState);
     const currentOrganization = useCurrentOrganization();
     const [ previewOrganizationColor ] = usePreviewOrganizationColor();
 
     const organizationName = currentOrganization?.name ?? ``;
     const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
-    const locale = cookies.locale ?? fallbackLocale.locale;
 
     function setTypography () {
         let localeFontFamily = `Inter`;
@@ -160,7 +159,7 @@ export function useThemeProvider () {
             MuiTable: {
                 styleOverrides: {
                     root: {
-                        backgroundColor:`#fff`,
+                        backgroundColor: `#fff`,
                     },
                 },
             },
@@ -189,7 +188,7 @@ export function useThemeProvider () {
                 styleOverrides: {
                     root: {
                         color: `#1B365D`,
-                        backgroundColor:`#FFF`,
+                        backgroundColor: `#FFF`,
                         "&:hover": {
                             "-webkit-transition": `all .4s ease`,
                             color: `#FFF`,

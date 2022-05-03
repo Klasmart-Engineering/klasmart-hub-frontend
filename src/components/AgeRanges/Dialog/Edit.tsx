@@ -4,7 +4,7 @@ import {
     useEditAgeRange,
     useGetAgeRange,
 } from "@/api/ageRanges";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     buildAgeRangeLabel,
     buildEmptyAgeRange,

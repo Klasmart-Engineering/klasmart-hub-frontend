@@ -5,7 +5,7 @@ import {
 } from "@/api/categories";
 import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     isCustomValue,
     isNonSpecified,

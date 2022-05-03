@@ -2,7 +2,7 @@ import ViewSubjectDetailsDrawer from "./DetailsDrawer";
 import { useDeleteSubject } from "@/api/subjects";
 import CreateSubjectDialog from "@/components/Subject/Dialog/Create";
 import EditSubjectDialog from "@/components/Subject/Dialog/Edit";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { useGetTableFilters } from "@/utils/filters";
 import { usePermission } from "@/utils/permissions";

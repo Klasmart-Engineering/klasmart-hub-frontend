@@ -7,7 +7,7 @@ import {
     useEditClassPrograms,
     useEditClassSubjects,
 } from "@/api/classes";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { buildEmptyClassForm } from "@/utils/classes";
 import {
     Dialog,

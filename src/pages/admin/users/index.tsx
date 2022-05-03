@@ -15,7 +15,7 @@ import {
     buildOrganizationUserFilter,
     buildOrganizationUserFilters,
 } from "@/operations/queries/getPaginatedOrganizationUsers";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Status, UuidOperator } from "@/types/graphQL";
 import { mapOrganizationMembershipEdges } from "@/utils/organizationMemberships";
 import { mapSchoolsMembershipEdges, sortSchoolNames } from "@/utils/schools";

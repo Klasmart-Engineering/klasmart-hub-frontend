@@ -6,7 +6,7 @@ import {
     useGetAllSubcategories,
 } from "@/api/subcategories";
 import { useGetAllSubjects } from "@/api/subjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     isActive,
     isSystemValue,

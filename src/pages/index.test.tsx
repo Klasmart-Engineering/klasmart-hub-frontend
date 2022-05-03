@@ -1,6 +1,6 @@
 import HomePage from "./index";
 import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
-import * as hooks from "@/store/useDashboardMode";
+import * as hooks from "@/state/useDashboardMode";
 import {
     fireEvent,
     screen,

@@ -4,7 +4,7 @@ import {
     useRestAPI,
 } from "@/api/restapi";
 import FolderIcon from "@/assets/img/folder.svg";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
 import {
     Add as AddIcon,

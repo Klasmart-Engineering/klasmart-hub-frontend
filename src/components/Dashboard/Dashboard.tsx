@@ -5,7 +5,7 @@ import PlanSelection from "@/components/HomeCard/planSelection";
 import ScheduleInfoShort from "@/components/HomeCard/scheduleInfo";
 import TeacherFeedback from "@/components/HomeCard/TeacherFeedback/Table";
 import WelcomeMessage from "@/components/HomeCard/welcomeMessage";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";

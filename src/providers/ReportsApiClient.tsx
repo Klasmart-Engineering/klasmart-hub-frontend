@@ -2,7 +2,7 @@ import { authClient } from "@/api/auth/client";
 import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
 import { getReportsEndpoint } from "@/config";
 import { REQUEST_RETRY_COUNT_MAX } from "@/config/index";
-import { useDashboardMode } from "@/store/useDashboardMode";
+import { useDashboardMode } from "@/state/useDashboardMode";
 import { redirectToAuth } from "@/utils/routing";
 import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engineering/reports-api-client";
 import { AxiosError } from "axios";

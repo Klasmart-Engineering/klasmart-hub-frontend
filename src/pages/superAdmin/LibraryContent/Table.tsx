@@ -10,7 +10,7 @@ import EditContentFolderDialog from "@/components/LibraryContent/Folder/Dialog/E
 import DistributeContentFolderDialog from "@/components/LibraryContent/Folder/DistributeDialog";
 import MoveContentDialog from "@/components/LibraryContent/MoveDialog";
 import globalStyles from "@/globalStyles";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     ContentItemDetails,
     PublishedContentItem,

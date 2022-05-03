@@ -5,7 +5,7 @@ import {
     ProgramForm,
     useCreateOrUpdatePrograms,
 } from "@/api/programs";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";

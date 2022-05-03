@@ -2,7 +2,7 @@ import { useGetClassNodeRoster } from "@/api/classRoster";
 import { useRestAPI } from "@/api/restapi";
 import StyledFAB from "@/components/styled/fabButton";
 import { getLiveEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import {
     Box,

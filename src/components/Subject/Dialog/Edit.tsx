@@ -6,7 +6,7 @@ import {
     useDeleteSubject,
     useGetSubject,
 } from "@/api/subjects";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     isCustomValue,
     isSystemValue,

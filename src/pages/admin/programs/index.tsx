@@ -5,7 +5,7 @@ import {
     buildOrganizationProgramFilter,
     buildProgramFilters,
 } from "@/operations/queries/getPaginatedOrganizationPrograms";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { isActive } from "@/types/graphQL";
 import { mapProgramNodeToProgramRow } from "@/utils/programs";
 import {

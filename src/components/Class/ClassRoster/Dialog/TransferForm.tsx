@@ -2,7 +2,7 @@ import { ClassRosterSubgroup } from "../Table";
 import TruncateChip from "./TruncateChip";
 import { useGetClassNodeRoster } from "@/api/classRoster";
 import { useGetSchoolNodeWithClassRelations } from "@/api/schools";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { FormErrors } from "@/types/form";
 import { Status } from "@/types/graphQL";
 import { mapClassNodeToClassRow } from "@/utils/classes";

@@ -5,7 +5,7 @@ import CreateClassDialog from "@/components/Class/Dialog/Create";
 import UploadClassCsvDialog from "@/components/Class/Dialog/CsvUpload";
 import EditClassDialog from "@/components/Class/Dialog/Edit";
 import globalStyles from "@/globalStyles";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useCurrentOrganization } from "@/state/organizationMemberships";
 import {
     Class,
     Status,

@@ -1,18 +1,18 @@
 import { useQueryMyUser } from "@/api/myUser";
 import { WidgetView } from "@/components/Dashboard/WidgetManagement/defaultWidgets";
-import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
+import { useCurrentOrganizationMembership } from "@/state/organizationMemberships";
 import { usePermission } from "@/utils/permissions";
+import {
+    atomFamily,
+    statePersist,
+    useState,
+} from '@kl-engineering/frontend-state';
 import {
     useEffect,
     useMemo,
 } from "react";
-import {
-    atomFamily,
-    useRecoilState,
-} from "recoil";
-import { recoilPersist } from 'recoil-persist';
 
-const { persistAtom } = recoilPersist();
+const { persistAtom } = statePersist();
 
 const atomFamilyOptions = {
     key: `dashboardModeState`,
@@ -54,7 +54,7 @@ export const useDashboardMode = (): UseDashboardModeReturnType => {
 
     const organizationId = currentOrganizationMembership?.organization?.id;
     const userId = currentUser?.id;
-    const stateFamilyId = currentOrganizationMembership ? `${ userId }__${ organizationId }` : ``;
+    const stateFamilyId = currentOrganizationMembership ? `${userId}__${organizationId}` : ``;
 
     const hasPermissionLoading = teacherLoading || studentLoading || myUserLoading;
 
@@ -73,7 +73,7 @@ export const useDashboardMode = (): UseDashboardModeReturnType => {
     }, [ teacherPermission, studentPermission ]);
 
     const dashboardModeStateFamily = showDashboardNoticeToggle ? persistedDashboardModeAtomFamily(stateFamilyId) : dashboardModeAtomFamily(stateFamilyId);
-    const [ dashboardMode, setDashboardMode ] = useRecoilState(dashboardModeStateFamily);
+    const [ dashboardMode, setDashboardMode ] = useState(dashboardModeStateFamily);
 
     const loading = hasPermissionLoading || dashboardMode === undefined;
 

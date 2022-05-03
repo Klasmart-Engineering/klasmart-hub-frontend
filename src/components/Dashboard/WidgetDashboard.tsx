@@ -23,7 +23,7 @@ import {
 import WidgetDashboardWelcomeBanner from "@/components/Dashboard/WidgetManagement/WidgetDashboardWelcomeBanner";
 import WidgetGrid from "@/components/Dashboard/WidgetManagement/WidgetGrid";
 import { useFeatureFlags } from "@/feature-flag/utils";
-import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
+import { useCurrentOrganizationMembership } from "@/state/organizationMemberships";
 import {
     Box,
     Container,
