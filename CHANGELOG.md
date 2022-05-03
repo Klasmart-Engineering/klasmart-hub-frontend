@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.51.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.51.0%0Dv2.50.1) (2022-05-03)
+
+
+### ✨ Features
+
+* **AD-2197:** assign an academic term creating/editing a class (#82) ([57afc1e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/57afc1ee9685cc5fb84b70eca51f013b9c3b52e4)), closes [AD-2197](https://calmisland.atlassian.net/browse/AD-2197)
+
 ### [2.50.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.1%0Dv2.50.0) (2022-04-29)
 
 
