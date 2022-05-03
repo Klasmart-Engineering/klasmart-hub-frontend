@@ -9,10 +9,14 @@ import {
     AgeRangeNode,
     GetAllProgramsPaginatedResponse,
 } from "./programs";
-import { GetPaginatedSchoolsRequestResponse } from "./schools";
+import {
+    GetPaginatedSchoolsRequestResponse,
+    SchoolNode,
+} from "./schools";
 import { GetAllSubjectsPaginatedResponse } from "./subjects";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
+import { EDIT_CLASS_ACADEMIC_TERMS } from "@/operations/mutations/editClassAcademicTerm";
 import { EDIT_CLASS_AGE_RANGES } from "@/operations/mutations/editClassAgeRanges";
 import { EDIT_CLASS_GRADES } from "@/operations/mutations/editClassGrades";
 import { EDIT_CLASS_PROGRAMS } from "@/operations/mutations/editClassPrograms";
@@ -179,6 +183,28 @@ export const useEditClassAgeRanges = (options?: MutationHookOptions<
     return useMutation<EditClassAgeRangesResponse, EditClassAgeRangesRequest>(EDIT_CLASS_AGE_RANGES, options);
 };
 
+export interface SetAcademicTermOfClassInput {
+    classId: string;
+    academicTermId?: string;
+}
+
+interface EditClassAcademicTermsRequest {
+    input: SetAcademicTermOfClassInput[];
+}
+
+interface EditClassAcademicTermsResponse {
+    classes: {
+        id: string;
+    };
+}
+
+export const useEditClassAcademicTerm = (options?: MutationHookOptions<
+    EditClassAcademicTermsResponse,
+    EditClassAcademicTermsRequest
+>) => {
+    return useMutation<EditClassAcademicTermsResponse, EditClassAcademicTermsRequest>(EDIT_CLASS_ACADEMIC_TERMS, options);
+};
+
 interface ClassSchoolNode {
     id: string;
     name: string;
@@ -209,9 +235,13 @@ interface SummaryNode {
     }[];
 }
 
-interface AcademicTermNode {
+interface AcademicTermConnectionNode {
     id: string;
     name: string;
+    startDate: string;
+    endDate: string;
+    status: Status;
+    school: SchoolNode;
 }
 
 export interface ClassNode {
@@ -223,7 +253,7 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermNode;
+    academicTerm?: AcademicTermConnectionNode;
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
@@ -242,7 +272,7 @@ export interface ClassNodeConnections {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermNode;
+    academicTerm?: AcademicTermConnectionNode;
     schoolsConnection?: SummaryNode;
     studentsConnection?: SummaryNode;
     teachersConnection?: SummaryNode;

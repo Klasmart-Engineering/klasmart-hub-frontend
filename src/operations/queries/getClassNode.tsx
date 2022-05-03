@@ -115,6 +115,10 @@ export const GET_CLASS_NODE_CONNECTIONS = gql`
                 }
                 totalCount
             }
+            academicTerm {
+                id
+                name
+            }
         }
     }
 `;

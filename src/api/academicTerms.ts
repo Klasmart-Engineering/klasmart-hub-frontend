@@ -61,7 +61,7 @@ interface GetPaginatedAcademicTermsRequest {
     orderBy: string;
     search?: string;
 }
-interface GetPaginatedAcademicTermsResponse {
+export interface GetPaginatedAcademicTermsResponse {
     schoolNode: {
         id: string;
         name: string;

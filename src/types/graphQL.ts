@@ -196,6 +196,14 @@ export interface Class {
     teachers?: Teacher[] | null;
     status?: Status | null;
     organization?: Organization[] | null;
+    academicterm?: AcademicTerm | null;
+}
+
+export interface AcademicTerm {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
 }
 
 export interface SchoolDeprecated {
