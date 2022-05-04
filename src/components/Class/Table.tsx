@@ -224,7 +224,7 @@ export default function ClassesTable (props: Props) {
     const academicTermFilter: TableFilter<ClassRow> = {
         id: `academicTerm`,
         label: intl.formatMessage({
-            id: `academicTerm.todo`,
+            id: `academicTerm.label`,
             defaultMessage: `Academic Term`,
         }),
         operators: [
@@ -400,7 +400,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
-        ...showAcademicTermFilter?[ academicTermFilter ]: [],
+        ...showAcademicTermFilter ? [ academicTermFilter ] : [],
         {
             id: `status`,
             label: intl.formatMessage({
