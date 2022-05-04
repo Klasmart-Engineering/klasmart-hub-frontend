@@ -1,6 +1,6 @@
 import { useGetPaginatedSchools } from "@/api/schools";
 import SchoolTable,
-{ SchoolRow }  from "@/components/School/Table";
+{ SchoolRow } from "@/components/School/Table";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { isActive } from "@/types/graphQL";
