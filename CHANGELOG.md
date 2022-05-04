@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.51.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.51.0%0Dv2.50.1) (2022-05-03)
+
+
+### ✨ Features
+
+* **AD-2197:** assign an academic term creating/editing a class (#82) ([57afc1e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/57afc1ee9685cc5fb84b70eca51f013b9c3b52e4)), closes [AD-2197](https://calmisland.atlassian.net/browse/AD-2197)
+
+### [2.50.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.1%0Dv2.50.0) (2022-04-29)
+
+
+### 🐛 Bug Fixes
+
+* allow to choose dates in the past on academic term creation (#74) ([ba2d48c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ba2d48c992b7cc334b21b0e9af518a8ed0f28fcb))
+
+## [2.50.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.0%0Dv2.49.0) (2022-04-28)
+
+
+### ✨ Features
+
+* **DT-797:** cluster class roster into groups by performance merged classfilter statistics and class roster (#67) ([8ac377b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8ac377bece38b6dd3a6964185ffccb9f25c4d359)), closes [DT-797](https://calmisland.atlassian.net/browse/DT-797)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2471:** provide better error message on same name AT creation (#73) ([9330c46](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9330c4607f6b90d78d6d771c8c02915cd1a9478e)), closes [AD-2471](https://calmisland.atlassian.net/browse/AD-2471)
+
 ## [2.49.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.49.0%0Dv2.48.0) (2022-04-27)
 
 

@@ -2,6 +2,7 @@ import ClassDialogForm,
 { ClassForm } from "./Form";
 import {
     useDeleteClass,
+    useEditClassAcademicTerm,
     useEditClassAgeRanges,
     useEditClassGrades,
     useEditClassPrograms,
@@ -46,6 +47,7 @@ export default function EditClassDialog (props: Props) {
     const [ editSubjects ] = useEditClassSubjects();
     const [ editGrades ] = useEditClassGrades();
     const [ editAgeRanges ] = useEditClassAgeRanges();
+    const [ editAcademicTerm ] = useEditClassAcademicTerm();
     const canEditSchool = usePermission(`edit_school_20330`);
     const deletePrompt = useDeleteEntityPrompt();
     const [ initClass, setInitClass ] = useState<ClassForm>(buildEmptyClassForm());
@@ -74,6 +76,7 @@ export default function EditClassDialog (props: Props) {
                 subjects,
                 grades,
                 ageRanges,
+                academicTerm,
             } = initClass;
 
             const response = await updateClass({
@@ -123,6 +126,17 @@ export default function EditClassDialog (props: Props) {
                 variables: {
                     class_id: classId,
                     age_range_ids: ageRanges ?? [],
+                },
+            });
+
+            await editAcademicTerm({
+                variables: {
+                    input: [
+                        {
+                            classId: classId,
+                            academicTermId: academicTerm,
+                        },
+                    ],
                 },
             });
 
@@ -212,7 +226,8 @@ export default function EditClassDialog (props: Props) {
                 value={initClass}
                 loading={loading}
                 onChange={(value) => setInitClass(value)}
-                onValidation={setValid} />
+                onValidation={setValid}
+            />
         </Dialog>
     );
 }

@@ -37,6 +37,7 @@ export const buildEmptyClassForm = (): ClassForm => ({
     subjects: [],
     grades: [],
     ageRanges: [],
+    academicTerm: ``,
 });
 
 export const mapClassToForm = (classData: Class): ClassForm => ({
@@ -48,6 +49,7 @@ export const mapClassToForm = (classData: Class): ClassForm => ({
     subjects: classData.subjects?.map(subject => subject.id ?? ``) ?? [],
     grades: classData.grades?.map(grade => grade.id ?? ``) ?? [],
     ageRanges: classData.age_ranges?.map(ageRange => ageRange.id ?? ``) ?? [],
+    academicTerm: classData.academicterm?.id ?? ``,
 });
 
 export const buildEmptyClassDetails = (): ClassDetails => ({
