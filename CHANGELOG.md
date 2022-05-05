@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.52.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.2%0Dv2.52.1) (2022-05-05)
+
+
+### ♻️ Chores
+
+* **AD-2494:** update academic term permissions (#89) ([9826583](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9826583c365735e68252dea6f3b16a98fc8605f2)), closes [AD-2494](https://calmisland.atlassian.net/browse/AD-2494)
+
 ### [2.52.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.1%0Dv2.52.0) (2022-05-05)
 
 
