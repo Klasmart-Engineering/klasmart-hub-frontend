@@ -9,6 +9,7 @@ import { SchoolStepper } from "@/components/School/Dialog/Steps/shared";
 import { SchoolRow } from "@/components/School/Table";
 import { Status } from "@/types/graphQL";
 import { schoolB } from "@tests/mocks/mockSchools";
+import { AcademicTermA, AcademicTermB } from "@tests/mockAcademicTerms";
 
 describe(`schools utilities functions`, () => {
 
@@ -23,7 +24,8 @@ describe(`schools utilities functions`, () => {
             shortcode: undefined,
             status: undefined,
         };
-        expect(newEmptySchool).toStrictEqual(emptySchool);
+        expect(newEmptySchool)
+            .toStrictEqual(emptySchool);
     });
 
     test(`buildEmptySchool with existing school`, () => {
@@ -37,7 +39,8 @@ describe(`schools utilities functions`, () => {
             shortcode: null,
             status: Status.INACTIVE,
         };
-        expect(copiedSchool).toStrictEqual(school);
+        expect(copiedSchool)
+            .toStrictEqual(school);
     });
 
     test(`mapSchoolNodeToSchool`, () => {
@@ -54,7 +57,8 @@ describe(`schools utilities functions`, () => {
             shortcode: `4L5QHEV0NO`,
             programIds: [],
         };
-        expect(mapSchoolNodeToSchoolStepper(schoolNode)).toStrictEqual(school);
+        expect(mapSchoolNodeToSchoolStepper(schoolNode))
+            .toStrictEqual(school);
     });
 
     test(`mapSchoolNodeToSchoolRow`, () => {
@@ -63,14 +67,22 @@ describe(`schools utilities functions`, () => {
             name: `awdawd`,
             status: Status.ACTIVE,
             shortCode: `4L5QHEV0NO`,
+            academicTermsConnection: {
+                edges: [
+                    AcademicTermA,
+                    AcademicTermB
+                ],
+            },
         };
         const school: SchoolRow = {
             id: `8850c355-84eb-4244-b7f3-cd4aa1f85973`,
             name: `awdawd`,
             status: Status.ACTIVE,
             shortCode: `4L5QHEV0NO`,
+            academicTermNames: [ `Term 1`, `Term 2` ],
         };
-        expect(mapSchoolNodeToSchoolRow(schoolNode)).toStrictEqual(school);
+        expect(mapSchoolNodeToSchoolRow(schoolNode))
+            .toStrictEqual(school);
     });
 
     test(`sort English school names`, () => {
@@ -84,7 +96,8 @@ describe(`schools utilities functions`, () => {
             `School 2`,
             `School 3`,
         ];
-        expect(schoolNames).toStrictEqual(sortedSchoolNames);
+        expect(schoolNames)
+            .toStrictEqual(sortedSchoolNames);
     });
 
     test(`sort Vietnamese school names`, () => {
@@ -100,6 +113,7 @@ describe(`schools utilities functions`, () => {
             `đại học`,
             `Trường Đại học`,
         ];
-        expect(schoolNames).toStrictEqual(sortedSchoolNames);
+        expect(schoolNames)
+            .toStrictEqual(sortedSchoolNames);
     });
 });

@@ -101,6 +101,7 @@ export const useGetClassFormSelectedValues = (classId?: string) => {
             id: classId as string,
         },
         skip: !classId,
+        notifyOnNetworkStatusChange: true,
     });
 
     useEffect(() => {
@@ -114,6 +115,7 @@ export const useGetClassFormSelectedValues = (classId?: string) => {
             grades: data?.classNode?.gradesConnection?.edges.map(mapEdgeToIdString) ?? [],
             ageRanges: data?.classNode?.ageRangesConnection?.edges.map(mapEdgeToIdString) ?? [],
             subjects: data?.classNode?.subjectsConnection?.edges.map(mapEdgeToIdString) ?? [],
+            academicTerm: data?.classNode?.academicTerm?.id ?? ``,
         });
 
         if (data?.classNode?.schoolsConnection?.pageInfo?.hasNextPage) {

@@ -33,6 +33,7 @@ export const buildEmptyClassForm = (): ClassForm => ({
     subjects: [],
     grades: [],
     ageRanges: [],
+    academicTerm: ``,
 });
 
 export const mapClassToForm = (classData: Class): ClassForm => ({
@@ -44,6 +45,7 @@ export const mapClassToForm = (classData: Class): ClassForm => ({
     subjects: classData.subjects?.map(subject => subject.id ?? ``) ?? [],
     grades: classData.grades?.map(grade => grade.id ?? ``) ?? [],
     ageRanges: classData.age_ranges?.map(ageRange => ageRange.id ?? ``) ?? [],
+    academicTerm: classData.academicterm?.id ?? ``,
 });
 
 export const buildEmptyClassDetails = (): ClassDetails => ({
@@ -96,8 +98,9 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
 };
 
 export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
-    classEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
-        label: edge.node.name,
-        value: edge.node.id,
-    }))
+    classEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
 );

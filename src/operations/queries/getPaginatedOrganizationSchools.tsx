@@ -74,6 +74,16 @@ export const GET_PAGINATED_ORGANIZATION_SCHOOLS = gql`
                     name
                     status
                     shortCode
+                    academicTermsConnection (
+                            filter: { status: { operator: eq, value: "active" } }
+                    ) {
+                        edges {
+                                node {
+                                    id
+                                    name
+                                }
+                            }
+                    }
                 }
             }
         }
