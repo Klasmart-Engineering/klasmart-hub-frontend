@@ -1,7 +1,9 @@
+import { AcademicTermA, AcademicTermB, AcademicTermC } from "./mockAcademicTerms";
 import {
     programIdA,
     programIdB,
 } from "./mockDataPrograms";
+import { SchoolNode } from "@/api/schools";
 import { Status } from "@/types/graphQL";
 
 export const mockSchoolId1 = `c8864666-23b6-4eec-a810-182b8b004b8a`;
@@ -11,34 +13,48 @@ export const mockSchoolName1 = `Balham Primary School`;
 export const mockSchoolName2 = `Town Hall School`;
 export const mockSchoolName3 = `Old Mountain School`;
 
+export const schoolA: { node: SchoolNode } = {
+    node: {
+        id: mockSchoolId1,
+        name: mockSchoolName1,
+        shortCode: `65PJ61XQAV`,
+        status: Status.ACTIVE,
+        academicTermsConnection: {
+            edges: [ AcademicTermA ],
+        },
+    },
+};
+
+export const schoolB: { node: SchoolNode } = {
+    node: {
+        id: mockSchoolId2,
+        name: mockSchoolName2,
+        shortCode: `65PJ61XQAV`,
+        status: Status.ACTIVE,
+        academicTermsConnection: {
+            edges: [ AcademicTermB, AcademicTermC ],
+        },
+    },
+};
+
+export const schoolC: { node: SchoolNode } = {
+    node: {
+        id: mockSchoolId3,
+        name: mockSchoolName3,
+        shortCode: `65PJ61XQAV`,
+        status: Status.INACTIVE,
+        academicTermsConnection: {
+            edges: [],
+        },
+    },
+};
+
 export const mockSchoolsData = {
     schoolsConnection: {
         edges: [
-            {
-                node: {
-                    id: mockSchoolId1,
-                    name: mockSchoolName1,
-                    shortCode: `65PJ61XQAV`,
-                    status: Status.ACTIVE,
-
-                },
-            },
-            {
-                node: {
-                    id: mockSchoolId2,
-                    name: mockSchoolName2,
-                    shortCode: `65PJ61XQAV`,
-                    status: Status.ACTIVE,
-                },
-            },
-            {
-                node: {
-                    id: mockSchoolId3,
-                    name: mockSchoolName3,
-                    shortCode: `65PJ61XQAV`,
-                    status: Status.INACTIVE,
-                },
-            },
+            schoolA,
+            schoolB,
+            schoolC,
         ],
         pageInfo: {
             endCursor: `eyJzY2hvb2xfaWQiOiJjZWYyMjUxZS0wOTE0LTQyZTMtOTRlNC00MzY2Y2NjYzU3NmIiLCJzY2hvb2xfbmFtZSI6IlFBIFNjaG9vbCJ9`,

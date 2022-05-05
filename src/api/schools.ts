@@ -186,6 +186,9 @@ export interface SchoolNode {
     classesConnection?: {
         edges: ClassEdge[];
     };
+    academicTermsConnection?: {
+        edges: AcademicTermEdge[];
+    };
 }
 
 export interface SchoolEdge {

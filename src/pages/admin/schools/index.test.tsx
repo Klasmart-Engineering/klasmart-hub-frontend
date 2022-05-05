@@ -4,11 +4,11 @@ import SchoolTable from "@/components/School/Table";
 import { usePermission } from "@/utils/permissions";
 import { QueryHookOptions } from "@apollo/client";
 import { render } from "@testing-library/react";
-import { mockOrgId } from "@tests/mockOrganizationData";
 import {
     schoolA,
-    schoolB,
-} from "@tests/mocks/mockSchools";
+    schoolC,
+} from "@tests/mockDataSchools";
+import { mockOrgId } from "@tests/mockOrganizationData";
 import React from "react";
 
 jest.mock(`@/utils/permissions`, () => {
@@ -32,18 +32,22 @@ jest.mock(`@/store/organizationMemberships`, () => {
     };
 });
 
-const schoolNodes = [ schoolA, schoolB ].map((school) => {
+const schoolNodes = [ schoolA, schoolC ];
+
+const schoolRows = schoolNodes.map(({ node }) => {
     const {
-        school_id: id,
-        school_name: name,
+        id,
+        name,
         status,
-        shortcode: shortCode,
-    } = school;
+        shortCode,
+    } = node;
+    const academicTermNames = node.academicTermsConnection?.edges.map((edgeNode) => edgeNode.node.name);
     return {
         id,
         name,
         status,
         shortCode,
+        academicTermNames,
     };
 });
 
@@ -84,11 +88,7 @@ beforeAll(() => {
                         startCursor: `X`,
                         endCursor: `Y`,
                     },
-                    edges: schoolNodes.map((node) => {
-                        return {
-                            node,
-                        };
-                    }),
+                    edges: schoolNodes,
                 },
             },
         };
@@ -106,12 +106,13 @@ test(`if User doesn't have view_school or view_my_school Permission no rows are 
         return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? false : true;
     });
 
-    render(<SchoolsPage/>);
+    render(<SchoolsPage />);
 
-    expect(mockSchoolTable).toHaveBeenLastCalledWith(expect.objectContaining({
-        rows: [],
-        loading: false,
-    }), expect.anything());
+    expect(mockSchoolTable)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
+            rows: [],
+            loading: false,
+        }), expect.anything());
 });
 
 test(`if User has view_school or view_my_school Permission the table contains active Schools`, () => {
@@ -119,11 +120,12 @@ test(`if User has view_school or view_my_school Permission the table contains ac
     mockUsePermission.mockImplementation((perm) => {
         return (perm.OR.includes(`view_school_20110`) || perm.OR.includes(perm === `view_my_school_20119`)) ? true : false;
     });
-    render(<SchoolsPage/>);
+    render(<SchoolsPage />);
 
-    expect(mockSchoolTable).toHaveBeenLastCalledWith(expect.objectContaining({
+    expect(mockSchoolTable)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
         // Only School A is active
-        rows: [ schoolNodes[0] ],
-        loading: false,
-    }), expect.anything());
+            rows: [ schoolRows[0] ],
+            loading: false,
+        }), expect.anything());
 });

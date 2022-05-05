@@ -1,9 +1,10 @@
+import { SchoolNode } from "@/api/schools";
 import {
-    School,
+    SchoolDeprecated,
     Status,
 } from "@/types/graphQL";
 
-export const schoolA: School = {
+export const schoolA: SchoolDeprecated = {
     school_id: `2b15bed3-d371-4837-bd4d-4b40068c7c51`,
     school_name: `BTS University`,
     status: Status.ACTIVE,
@@ -41,7 +42,7 @@ export const schoolA: School = {
     ],
 };
 
-export const schoolB: School = {
+export const schoolB: SchoolDeprecated = {
     school_id: `b3ce8cc0-616b-43cc-b4a8-adae9b5c6940`,
     school_name: `Unam University`,
     status: Status.INACTIVE,
@@ -49,7 +50,7 @@ export const schoolB: School = {
     programs: [],
 };
 
-export const schoolC: School = {
+export const schoolC: SchoolDeprecated = {
     school_id: `6c1523f8-43f2-4816-8036-93bf29da1018`,
     school_name: `San Javier University`,
     status: Status.ACTIVE,
@@ -87,7 +88,7 @@ export const schoolC: School = {
     ],
 };
 
-export const schoolD: School = {
+export const schoolD: SchoolDeprecated = {
     school_id: `ef37c995-c7c1-42f5-8c0d-9bb0a91cd6ec`,
     school_name: `School for CSV`,
     status: Status.ACTIVE,

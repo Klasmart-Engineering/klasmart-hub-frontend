@@ -25,7 +25,10 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
-import { Paper } from "@mui/material";
+import {
+    Paper,
+    Typography,
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
@@ -44,6 +47,7 @@ export interface SchoolRow {
     id: string;
     name: string;
     shortCode: string;
+    academicTermNames: string[];
     status: string;
 }
 
@@ -93,6 +97,21 @@ export default function SchoolTable (props: Props) {
                 id: `schools_schoolNameTitle`,
             }),
             persistent: true,
+        },
+        {
+            id: `academicTermNames`,
+            label: intl.formatMessage({
+                id: `academicTerm.label`,
+            }),
+            render: (row) => row.academicTermNames?.map((termName, i) => (
+                <Typography
+                    key={`term-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {termName}
+                </Typography>
+            )),
         },
         {
             id: `shortCode`,
