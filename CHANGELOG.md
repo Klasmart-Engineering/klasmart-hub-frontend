@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.52.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.0%0Dv2.51.0) (2022-05-05)
+
+
+### ✨ Features
+
+* ad-2326 academic term filter (#86) ([b79cd6a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/b79cd6a67b8b43ef79220fbe2f369d360a6b5673)), closes [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326)
+* added academic term column to school table (#85) ([cb0339b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/cb0339bd6ffedb5c2c5b7981ec85b854aa95f671))
+
 ## [2.51.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.51.0%0Dv2.50.1) (2022-05-03)
 
 
