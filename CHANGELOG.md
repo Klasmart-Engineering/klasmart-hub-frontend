@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.52.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.1%0Dv2.52.0) (2022-05-05)
+
+
+### 🐛 Bug Fixes
+
+* **HU-7:** get all available classes on class transfer dialog (#88) ([81dd0c2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/81dd0c2be0a75ec39735af672e9490b5410ff5d1))
+
 ## [2.52.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.0%0Dv2.51.0) (2022-05-05)
 
 
