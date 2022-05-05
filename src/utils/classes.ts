@@ -2,6 +2,10 @@ import {
     buildAgeRangeEdgeLabel,
     buildAgeRangeLabel,
 } from "./ageRanges";
+import {
+    AcademicTermNode,
+    SchoolAcademicTermNode,
+} from "@/api/academicTerms";
 import { ClassEdge } from "@/api/classes";
 import { ClassForm } from "@/components/Class/Dialog/Form";
 import {
@@ -93,7 +97,7 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
         grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
         ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
         status: classItem.node.status ?? ``,
-        academicTerm: classItem.node.academicTerm?.name ?? undefined,
+        academicTerm: classItem.node?.academicTerm?.name ?? ``,
     };
 };
 
@@ -104,3 +108,12 @@ export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
             value: edge.node.id,
         }))
 );
+
+export const mapAcademicTerm = (schoolNode: SchoolAcademicTermNode) => {
+    const data = schoolNode?.academicTermsConnection?.edges ?? [];
+    const terms = data.map(({ node }: {node: AcademicTermNode}) => ({
+        label: node.name,
+        value: node.id,
+    }));
+    return terms;
+};

@@ -61,13 +61,17 @@ interface GetPaginatedAcademicTermsRequest {
     orderBy: string;
     search?: string;
 }
+
 export interface GetPaginatedAcademicTermsResponse {
-    schoolNode: {
-        id: string;
-        name: string;
-        academicTermsConnection: AcademicTermsConnection;
-    };
+    schoolNode: SchoolAcademicTermNode;
 }
+
+export interface SchoolAcademicTermNode {
+    id: string;
+    name: string;
+    academicTermsConnection: AcademicTermsConnection;
+}
+
 export interface AcademicTermEdge {
     node: AcademicTermNode;
 }

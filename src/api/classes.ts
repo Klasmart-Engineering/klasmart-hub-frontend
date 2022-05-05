@@ -1,3 +1,4 @@
+import { GetPaginatedAcademicTermsResponse } from "./academicTerms";
 import { GetPaginatedOrganizationAgeRangesResponse } from "./ageRanges";
 import { GetOrganizationGradesResponsePaginated } from "./grades";
 import {
@@ -220,6 +221,13 @@ interface ClassProgramNode {
     grades?: Grade[];
 }
 
+export interface AcademicTermNode {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+}
+
 interface SummaryNode {
     totalCount: number;
     pageInfo: {
@@ -235,15 +243,6 @@ interface SummaryNode {
     }[];
 }
 
-interface AcademicTermConnectionNode {
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-    status: Status;
-    school: SchoolNode;
-}
-
 export interface ClassNode {
     id: string;
     name: string;
@@ -253,7 +252,8 @@ export interface ClassNode {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermConnectionNode;
+    academicTerm?: AcademicTermNode;
+    academicTermsConnection?: GetPaginatedAcademicTermsResponse[];
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
@@ -272,7 +272,7 @@ export interface ClassNodeConnections {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermConnectionNode;
+    academicTerm?: AcademicTermNode[];
     schoolsConnection?: SummaryNode;
     studentsConnection?: SummaryNode;
     teachersConnection?: SummaryNode;
@@ -300,6 +300,7 @@ export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
     programId?: UuidFilter;
     subjectId?: UuidFilter;
     gradeId?: UuidFilter;
+    academicTermId?: UuidFilter;
 }
 
 interface GetAllClassesPaginatedRequest {

@@ -12,7 +12,8 @@ export const phoneNumberRegex = /^\++?[1-9][0-9]\d{6,14}$/;
 export const emailAddressRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export const formatPermissionName = (str: string) =>
-    str.replace(/[^A-Za-z]+/g, ` `).replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
+    str.replace(/[^A-Za-z]+/g, ` `)
+        .replace(/(?:^|\s|[_"'([{])+\S/g, (match) => match.toUpperCase());
 
 export const useValidations = () => {
     const intl = useIntl();
