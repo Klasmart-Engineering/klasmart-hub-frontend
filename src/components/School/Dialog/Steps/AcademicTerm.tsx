@@ -50,7 +50,7 @@ export default function AcademicTermStep (props: Props) {
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
 
-    const canView = usePermission(`view_academic_term_20116`);
+    const canView = usePermission(`view_academic_term_20120`);
 
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
