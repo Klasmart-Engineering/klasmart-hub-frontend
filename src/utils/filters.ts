@@ -302,7 +302,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     });
 
     useEffect(() => {
-        academicTermData?.schoolNode && setAcademicTermValueOptions(mapAcademicTerm(academicTermData.schoolNode));
+        if (academicTermData?.schoolNode) setAcademicTermValueOptions(mapAcademicTerm(academicTermData.schoolNode));
     }, [ academicTermData ]);
 
     return {

@@ -243,15 +243,6 @@ interface SummaryNode {
     }[];
 }
 
-interface AcademicTermConnectionNode {
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-    status: Status;
-    school: SchoolNode;
-}
-
 export interface ClassNode {
     id: string;
     name: string;

@@ -52,6 +52,7 @@ export default function CreateAcademicTermDialog (props: Props) {
                 startDate,
                 endDate,
             } = newAcademicTerm;
+
             await createAcademicTerm({
                 variables: {
                     schoolId,
