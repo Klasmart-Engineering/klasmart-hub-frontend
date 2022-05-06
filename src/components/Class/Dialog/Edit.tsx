@@ -129,16 +129,18 @@ export default function EditClassDialog (props: Props) {
                 },
             });
 
-            await editAcademicTerm({
-                variables: {
-                    input: [
-                        {
-                            classId: classId,
-                            academicTermId: academicTerm,
-                        },
-                    ],
-                },
-            });
+            if (academicTerm && schools?.length === 1) {
+                await editAcademicTerm({
+                    variables: {
+                        input: [
+                            {
+                                classId: classId,
+                                academicTermId: academicTerm,
+                            },
+                        ],
+                    },
+                });
+            }
 
             // Update cache. Since multiple mutation queries may occur, refetch needs to be
             // called manually instead of calling if from updateCache method.
