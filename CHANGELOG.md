@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.53.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.0%0Dv2.52.3) (2022-05-06)
+
+
+### ✨ Features
+
+* add performance rates widget in student reports  (#84) ([1b8a2f4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1b8a2f422be2c149a334e87a0eac801b8555de19))
+
 ### [2.52.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.3%0Dv2.52.2) (2022-05-06)
 
 
