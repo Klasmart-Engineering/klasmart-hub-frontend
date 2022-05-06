@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+import { Theme, createTheme } from '@mui/material/styles';
 import {
   Box,
   Chip,
@@ -11,7 +11,7 @@ import {
   tabsClasses,
 } from '@mui/material';
 import React, { createRef, useEffect, useState } from 'react';
-import classRoastersData from './mockClassRoastersData';
+import { classRoastersData } from './mockClassRoastersData';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     seperator: {
@@ -109,6 +109,7 @@ interface Props {
 
 export default function ClassTabs({ onClassChange }: Props) {
   const style = useStyles();
+  const theme = createTheme();
   const classesData = mockData;
   const [classess, setClassess] = useState<ClassDetail[]>(classesData.classes || []);
   const [count, setCount] = useState(1);
@@ -187,17 +188,27 @@ export default function ClassTabs({ onClassChange }: Props) {
           onClose={() => handleClose(classess[0])}
           PaperProps={{
             style: {
-              maxHeight: 210,
+              boxShadow: `none`,
+              marginTop: theme.spacing(2),
+              border: `1px solid ${theme.palette.primary.main}`,
+              borderRadius: theme.spacing(3),
+              overflow: `hidden`,
             },
           }}
         >
-          {classess
-            ?.slice(classess.length - count - 1)
-            .map((classDetail, index) => (
-              <MenuItem key={index} onClick={() => handleClose(classDetail)}>
-                {classDetail.class_name}
-              </MenuItem>
-            ))}
+          <Box style={{
+            overflowY: 'auto',
+            maxHeight: 210,
+            padding: theme.spacing(1),
+          }}>
+            {classess
+              ?.slice(classess.length - count - 1)
+              .map((classDetail, index) => (
+                <MenuItem style={{ borderRadius : theme.spacing(1.2) }} key={index} onClick={() => handleClose(classDetail)}>
+                  {classDetail.class_name}
+                </MenuItem>
+              ))}
+          </Box>
         </Menu>
       </Box>
     </Box>
