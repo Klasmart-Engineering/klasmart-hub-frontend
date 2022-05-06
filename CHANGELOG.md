@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.52.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.3%0Dv2.52.2) (2022-05-06)
+
+
+### ♻️ Chores
+
+* **localization:** update translations (#92) ([c4dfce8](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c4dfce85984d67f96ce2fa365e35a79f9caa6c10))
+
+
+### 🐛 Bug Fixes
+
+* ad-2491 lingering state for academic term filter (#91) ([2850d0d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/2850d0d4d40cf07edbc1f45cfdf7f94077683ad9)), closes [ad-2491](https://calmisland.atlassian.net/browse/ad-2491)
+
 ### [2.52.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.2%0Dv2.52.1) (2022-05-05)
 
 
