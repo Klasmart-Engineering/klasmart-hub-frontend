@@ -1,8 +1,4 @@
-
-import {
-  useSPRReportAPI,
-} from "@/api/sprreportapi";
-import * as React from 'react';
+import React from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -18,7 +14,6 @@ import averageIcon from "@/assets/img/studentreports/classroster/average.png";
 import lowIcon from "@/assets/img/studentreports/classroster/low.png";
 import { IntlShape, useIntl } from "react-intl";
 import { classRosterGradeStudentList } from './mockClassRoastersData';
-import { useCurrentOrganization } from "@/store/organizationMemberships";
 declare module 'react' {
   interface CSSProperties {
     '--tree-view-color'?: string;
@@ -243,16 +238,13 @@ interface Props {
   class_id: number;
 }
 
-export default async function ClassRoster(props: Props) {
+export default function ClassRoster(props: Props) {
   const intl = useIntl();
   const { class_id } = props;
-  const sprReportAPI = useSPRReportAPI();
   const classes = useFilterTreeStyles();
-  const currentOrganization = useCurrentOrganization();
   const [expanded, setExpanded] = React.useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
   const renderStudent = (student: Student, color: string) => <ClassRosterTreeItem key={student.student_id} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
-  const resp = await sprReportAPI.getPerformanceByGroups({});
   const data = [
     {
       id: `above`,
@@ -261,7 +253,6 @@ export default async function ClassRoster(props: Props) {
         defaultMessage: `Above Expectation`,
       }),
       color: `#40B8F4`,
-      students: [],
       ...classRosterGradeStudentList?.above,
     },
     {
@@ -271,7 +262,6 @@ export default async function ClassRoster(props: Props) {
         defaultMessage: `Meets Expectation`,
       }),
       color: `#37BA00`,
-      students: [],
       ...classRosterGradeStudentList?.meets,
     },
     {
@@ -281,7 +271,6 @@ export default async function ClassRoster(props: Props) {
         defaultMessage: `Below Expectation`,
       }),
       color: `#FFBC00`,
-      students: [],
       ...classRosterGradeStudentList.below,
     }
   ];

@@ -1,5 +1,5 @@
 import { getSPREndPoint } from "@/config";
-import { SPRAPIError, SPRAPIErrorType } from "./sprapierror";
+import { SPRAPIError, SPRAPIErrorType } from "./sprApiError";
 import queryString from "query-string";
 import { Cookies } from "react-cookie";
 
@@ -7,7 +7,7 @@ const AUTH_HEADER = `authorization`;
 const ACCESS_TOKEN_COOKIE = `access`;
 
 interface GetClassesRequest {
-    // org_id: string;
+    org_id: string;
 }
 interface Performance {
     total_students: number;
@@ -25,7 +25,8 @@ interface GetClassesRepsonse {
     classes: Classes[];
 }
 interface GetPerformancesRequest {
-   // org_id: string;
+    org_id: string;
+    class_id: string; 
 }
 interface GetPerformancesRepsonse {
     name: string;
@@ -40,8 +41,8 @@ interface PerformanceScore {
     above: number;
 }
 interface GetPerformanceGroupRequest {
-    /*org_id: string;
-    class_id: string;*/
+    org_id: string;
+    class_id: string;
 }
 interface Student {
     student_id: string;
@@ -60,30 +61,30 @@ export interface GetPerformancesGroupRepsonse {
 
 export class SPRReportAPI {
     public async getClasses(request: GetClassesRequest): Promise<GetClassesRepsonse | null> {
-        //const { org_id } = request;
+        const { org_id } = request;
         const str = queryString.stringify({
-            //org_id,
+            org_id,
         });
         const response = await this.sprCall(`GET`, `v1/classes?${str}`);
         const body: GetClassesRepsonse = await response.json() as GetClassesRepsonse;
         return body;
     }
     public async getPerformances(request: GetPerformancesRequest): Promise<GetPerformancesRepsonse | null> {
-        //const { org_id } = request;
+        const { org_id } = request;
         const str = queryString.stringify({
-            //org_id,
+            org_id,
         });
         const response = await this.sprCall(`GET`, `v1/performances?${str}`);
         const body: GetPerformancesRepsonse = await response.json() as GetPerformancesRepsonse;
         return body;
     }
     public async getPerformanceByGroups(request: GetPerformanceGroupRequest): Promise<GetPerformancesGroupRepsonse | null> {
-        // const { org_id, class_id } = request;
+        const { org_id, class_id } = request;
         const str = queryString.stringify({
-            //org_id,
-            //class_id,
+            org_id,
+            class_id,
         });
-        const response = await this.sprCall(`GET`, `v1/performances?${str}`);
+        const response = await this.sprCall(`GET`, `v1/performances/groups`);
         const body: GetPerformancesGroupRepsonse = await response.json() as GetPerformancesGroupRepsonse;
         return body;
     }
@@ -95,12 +96,11 @@ export class SPRReportAPI {
         return this.fetchRoute(method, prefix, route, body);
     }
     private async fetchRoute(method: string, prefix: string, route: string, body?: string) {
-       /* const cookie = new Cookies();
-        const accessToken = cookie.get(ACCESS_TOKEN_COOKIE);*/
+        const cookie = new Cookies();
+        const accessToken = cookie.get(ACCESS_TOKEN_COOKIE);
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
-        const accessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImlzc3VlciI6ImNhbG1pZC1kZWJ1ZyJ9.eyJpZCI6IjgxZDhlMWMxLWM3ZTEtNTdjZC05OGY1LTQ1NDlhOGUwYzAyNiIsImVtYWlsIjoicWErc3RyZXNzX3QxQGNhbG1pZC5jb20iLCJleHAiOjE5NDUyMDg5OTgsImlzcyI6ImNhbG1pZC1kZWJ1ZyIsImlhdCI6MTY0NTcxNjE3NH0.GuWdYRd2m79YLZZSb0vncpkLQwxGBP7ZFpGndh5k_Zo'`
         headers.append(AUTH_HEADER, accessToken);
         const url = prefix + route;
         const response = await fetch(url, {
