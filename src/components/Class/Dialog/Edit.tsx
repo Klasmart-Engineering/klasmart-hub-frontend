@@ -49,6 +49,7 @@ export default function EditClassDialog (props: Props) {
     const [ editAgeRanges ] = useEditClassAgeRanges();
     const [ editAcademicTerm ] = useEditClassAcademicTerm();
     const canEditSchool = usePermission(`edit_school_20330`);
+    const canDeleteClass = usePermission(`delete_class_20444`);
     const deletePrompt = useDeleteEntityPrompt();
     const [ initClass, setInitClass ] = useState<ClassForm>(buildEmptyClassForm());
     const {
@@ -202,6 +203,7 @@ export default function EditClassDialog (props: Props) {
                     color: `error`,
                     align: `left`,
                     onClick: handleDelete,
+                    disabled: !canDeleteClass,
                 },
                 {
                     label: intl.formatMessage({
