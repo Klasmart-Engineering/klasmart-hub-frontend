@@ -76,8 +76,8 @@ export default function AcademicTermTable (props: Props) {
     const deletePrompt = useDeleteEntityPrompt();
     const [ openCreateDialog, setOpenCreateDialog ] = useState(false);
     const [ deleteAcademicTerm ] = useDeleteAcademicTerm();
-    const canDelete = usePermission(`delete_academic_term_20448`);
-    const canCreate = usePermission(`create_academic_term_20228`);
+    const canDelete = usePermission(`delete_academic_term_20449`);
+    const canCreate = usePermission(`create_academic_term_20229`);
 
     const columns: TableColumn<AcademicTermRow>[] = [
         {

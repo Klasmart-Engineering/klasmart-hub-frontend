@@ -45,7 +45,6 @@ export default function CreateAcademicTermDialog (props: Props) {
     }, [ open ]);
 
     const handleCreate = async () => {
-
         try {
 
             const {

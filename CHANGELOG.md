@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.53.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.0%0Dv2.52.3) (2022-05-06)
+
+
+### ✨ Features
+
+* add performance rates widget in student reports  (#84) ([1b8a2f4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1b8a2f422be2c149a334e87a0eac801b8555de19))
+
+### [2.52.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.3%0Dv2.52.2) (2022-05-06)
+
+
+### ♻️ Chores
+
+* **localization:** update translations (#92) ([c4dfce8](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c4dfce85984d67f96ce2fa365e35a79f9caa6c10))
+
+
+### 🐛 Bug Fixes
+
+* ad-2491 lingering state for academic term filter (#91) ([2850d0d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/2850d0d4d40cf07edbc1f45cfdf7f94077683ad9)), closes [ad-2491](https://calmisland.atlassian.net/browse/ad-2491)
+
+### [2.52.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.2%0Dv2.52.1) (2022-05-05)
+
+
+### ♻️ Chores
+
+* **AD-2494:** update academic term permissions (#89) ([9826583](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9826583c365735e68252dea6f3b16a98fc8605f2)), closes [AD-2494](https://calmisland.atlassian.net/browse/AD-2494)
+
+### [2.52.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.1%0Dv2.52.0) (2022-05-05)
+
+
+### 🐛 Bug Fixes
+
+* **HU-7:** get all available classes on class transfer dialog (#88) ([81dd0c2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/81dd0c2be0a75ec39735af672e9490b5410ff5d1))
+
+## [2.52.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.0%0Dv2.51.0) (2022-05-05)
+
+
+### ✨ Features
+
+* ad-2326 academic term filter (#86) ([b79cd6a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/b79cd6a67b8b43ef79220fbe2f369d360a6b5673)), closes [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326)
+* added academic term column to school table (#85) ([cb0339b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/cb0339bd6ffedb5c2c5b7981ec85b854aa95f671))
+
 ## [2.51.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.51.0%0Dv2.50.1) (2022-05-03)
 
 
