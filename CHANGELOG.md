@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.53.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.1%0Dv2.53.0) (2022-05-06)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2497:** user is unable to create classes when selecting multiple schools (#93) ([528c4d4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/528c4d4d7f94275d5162345bf44c5dd06084fd63)), closes [AD-2497](https://calmisland.atlassian.net/browse/AD-2497)
+
 ## [2.53.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.0%0Dv2.52.3) (2022-05-06)
 
 
