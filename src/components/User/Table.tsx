@@ -413,6 +413,8 @@ export default function UserTable (props: Props) {
         },
     ];
 
+    const editUsers = () => {};
+
     const filters: TableFilter<UserRow>[] = [
         {
             id: `roleNames`,
@@ -605,6 +607,7 @@ export default function UserTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
+                    showSelectables
                     filters={filters}
                     columns={columns}
                     rows={rows}
@@ -628,6 +631,16 @@ export default function UserTable (props: Props) {
                         disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
                         onClick: () => setCreateDialogOpen(true),
                     }}
+                    selectActions={[
+                        {
+                            label: intl.formatMessage({
+                                id: `entity.user.template.edit.button`,
+                                defaultMessage: `Edit users`,
+                            }),
+                            icon: EditIcon,
+                            onClick: editUsers,
+                        },
+                    ]}
                     secondaryActions={[
                         {
                             label: intl.formatMessage({
