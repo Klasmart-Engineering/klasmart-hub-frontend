@@ -400,7 +400,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
-        ...showAcademicTermFilter ? [ academicTermFilter ] : [],
+        ...false ? [ academicTermFilter ] : [],
         {
             id: `status`,
             label: intl.formatMessage({
