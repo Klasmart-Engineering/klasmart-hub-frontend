@@ -166,12 +166,12 @@ export default function CompletionWidget () {
             error={isAssignmentCompletionError}
             noData={!data?.successful}
             reload={refetch}
-            link={{
-                url: `reports`,
+            /*link={{
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.completionWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.COMPLETION}
         >
             {completionData &&
