@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.54.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.0%0Dv2.53.1) (2022-05-09)
+
+
+### ✨ Features
+
+* removed the irrelevant links from students and teachers widget (#81) ([a4fa75f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a4fa75fa15d1f77c6b94dea74976c0f8d1b10919))
+
+
+### 🐛 Bug Fixes
+
+* rollback px version and disable academic term filter (#97) ([7e51db0](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7e51db0b10f0ceef8aa605a1a5aeca83526ea1fc)), closes [ad-2491](https://calmisland.atlassian.net/browse/ad-2491)
+* school admin now has delete button for class disabled in edit form (#75) ([90f3da4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/90f3da4c9b4bd2e9bf1587c944f336e3f3064dfd))
+
 ### [2.53.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.1%0Dv2.53.0) (2022-05-06)
 
 
