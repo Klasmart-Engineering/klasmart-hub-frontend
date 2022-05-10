@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.54.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.1%0Dv2.54.0) (2022-05-10)
+
+
+### 🐛 Bug Fixes
+
+* layout css issue fix (#101) ([8fc9c46](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8fc9c46725ebe44c8901e49658fde41480ec4947))
+* upgraded px to table fix version (#98) ([8e1bf5e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8e1bf5e0ecce4999f7371e32c05048f47d5b562f))
+
 ## [2.54.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.0%0Dv2.53.1) (2022-05-09)
 
 
