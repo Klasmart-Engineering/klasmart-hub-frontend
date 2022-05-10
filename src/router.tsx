@@ -72,8 +72,6 @@ export default function Router (props: Props) {
         redirectIfUnauthenticated();
     }, [ location ]);
 
-    const { teacherStudentProgressReport } = useFeatureFlags();
-
     return (
         <Switch>
             <Route
@@ -114,14 +112,13 @@ export default function Router (props: Props) {
             <Route path="/reports">
                 <ReportsPage />
             </Route>
-            {teacherStudentProgressReport &&
-                <ProtectedRoute
-                    exact
-                    path="/student-report"
-                    permissions={`report_student_progress_teacher_660`}
-                >
-                    <StudentReport />
-                </ProtectedRoute>}
+            <ProtectedRoute
+                exact
+                path="/student-report"
+                permissions={`report_student_progress_teacher_660`}
+            >
+                <StudentReport />
+            </ProtectedRoute>
             <ProtectedRoute
                 exact
                 path="/admin/organizations/:organizationId/edit"

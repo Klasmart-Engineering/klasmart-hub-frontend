@@ -112,6 +112,8 @@ export interface ClassRow {
 }
 
 interface Props extends TableProps<ClassRow> {
+    showAcademicTermFilter: boolean;
+    filteredSchoolId: string;
 }
 
 export default function ClassesTable (props: Props) {
@@ -133,7 +135,10 @@ export default function ClassesTable (props: Props) {
         onTableChange,
         refetch,
         loading,
+        showAcademicTermFilter,
+        filteredSchoolId,
     } = props;
+
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
@@ -158,12 +163,16 @@ export default function ClassesTable (props: Props) {
         ageRangesHighValueOptions,
         subjectFilterValueOptions,
         gradeFilterValueOptions,
+        academicTermValueOptions,
     } = useGetTableFilters(currentOrganization?.id ?? ``, {
         querySchools: true,
         queryPrograms: true,
         queryAgeRanges: true,
         querySubjects: true,
         queryGrades: true,
+        queryAcademicTerm: {
+            schoolId: filteredSchoolId,
+        },
     });
 
     const classCsvTemplateHeaders = [
@@ -177,6 +186,7 @@ export default function ClassesTable (props: Props) {
         `age_range_low_value`,
         `age_range_high_value`,
         `age_range_unit`,
+        `academic_term_name`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({
@@ -209,6 +219,33 @@ export default function ClassesTable (props: Props) {
 
         setSelectedClassId(classId);
         setClassRosterDialogOpen(true);
+    };
+
+    const academicTermFilter: TableFilter<ClassRow> = {
+        id: `academicTerm`,
+        label: intl.formatMessage({
+            id: `academicTerm.label`,
+            defaultMessage: `Academic Term`,
+        }),
+        operators: [
+            {
+                label: intl.formatMessage({
+                    id: `generic_filtersEqualsLabel`,
+                }),
+                value: `eq`,
+                multipleValues: true,
+                validations: [ required() ],
+                options: academicTermValueOptions,
+                chipLabel: (column, value) => (
+                    intl.formatMessage({
+                        id: `generic_filtersEqualsChipLabel`,
+                    }, {
+                        column,
+                        value,
+                    })
+                ),
+            },
+        ],
     };
 
     const filters: TableFilter<ClassRow>[] = [
@@ -287,6 +324,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
+
         {
             id: `grades`,
             label: intl.formatMessage({
@@ -362,6 +400,7 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
+        ...showAcademicTermFilter ? [ academicTermFilter ] : [],
         {
             id: `status`,
             label: intl.formatMessage({
@@ -498,7 +537,7 @@ export default function ClassesTable (props: Props) {
                 defaultMessage: `Academic Term`,
             }),
             disableSort: true,
-            disableSearch: true,
+            disableSearch: disabled,
             hidden: true,
             render: (row) => (
                 <>

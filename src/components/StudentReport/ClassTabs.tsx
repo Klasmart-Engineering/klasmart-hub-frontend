@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+import { Theme, createTheme } from '@mui/material/styles';
 import {
   Box,
   Chip,
@@ -11,7 +11,7 @@ import {
   tabsClasses,
 } from '@mui/material';
 import React, { createRef, useEffect, useState } from 'react';
-import classRoastersData from './mockClassRoastersData';
+import { classRoastersData } from './mockClassRoastersData';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     seperator: {
@@ -93,24 +93,25 @@ interface Performance {
   today_total_classes: number;
   today_activities: number;
 }
-interface ClassObj {
+interface ClassDetail {
   class_id: number;
   class_name: string;
   performance: Performance;
 }
 interface ClassRoasters {
   total: number;
-  classes: ClassObj[];
+  classes: ClassDetail[];
 }
 
 interface Props {
-  onClassChange: (classObj: ClassObj) => void;
+  onClassChange: (classDetail: ClassDetail) => void;
 }
 
 export default function ClassTabs({ onClassChange }: Props) {
   const style = useStyles();
+  const theme = createTheme();
   const classesData = mockData;
-  const [classess, setClassess] = useState<ClassObj[]>(classesData.classes || []);
+  const [classess, setClassess] = useState<ClassDetail[]>(classesData.classes || []);
   const [count, setCount] = useState(1);
   const tabsRef = createRef<any>();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -118,15 +119,15 @@ export default function ClassTabs({ onClassChange }: Props) {
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
-  const selectClass = (classObj: ClassObj) => {
-    onClassChange(classObj);
-    const index = classess.findIndex((v: ClassObj) => v.class_id === classObj.class_id);
+  const selectClass = (classDetail: ClassDetail) => {
+    onClassChange(classDetail);
+    const index = classess.findIndex((v: ClassDetail) => v.class_id === classDetail.class_id);
     classess.splice(index, 1);
-    setClassess([classObj, ...classess]);
+    setClassess([classDetail, ...classess]);
   };
-  const handleClose = (classObj: ClassObj) => {
+  const handleClose = (classDetail: ClassDetail) => {
     setAnchorEl(null);
-    selectClass(classObj);
+    selectClass(classDetail);
   };
 
   useEffect(() => {
@@ -165,11 +166,11 @@ export default function ClassTabs({ onClassChange }: Props) {
         }}
         ref={tabsRef}
       >
-        {classess.map((classObj, index) => (
+        {classess.map((classDetail, index) => (
           <ClassTab
-            key={classObj.class_id}
-            label={classObj.class_name}
-            onClick={() => selectClass(classObj)}
+            key={classDetail.class_id}
+            label={classDetail.class_name}
+            onClick={() => selectClass(classDetail)}
             className={index === 0 ? `` : style.seperator}
           />
         ))}
@@ -187,17 +188,27 @@ export default function ClassTabs({ onClassChange }: Props) {
           onClose={() => handleClose(classess[0])}
           PaperProps={{
             style: {
-              maxHeight: 210,
+              boxShadow: `none`,
+              marginTop: theme.spacing(2),
+              border: `1px solid ${theme.palette.primary.main}`,
+              borderRadius: theme.spacing(3),
+              overflow: `hidden`,
             },
           }}
         >
-          {classess
-            ?.slice(classess.length - count - 1)
-            .map((classObj, index) => (
-              <MenuItem key={index} onClick={() => handleClose(classObj)}>
-                {classObj.class_name}
-              </MenuItem>
-            ))}
+          <Box style={{
+            overflowY: 'auto',
+            maxHeight: 210,
+            padding: theme.spacing(1),
+          }}>
+            {classess
+              ?.slice(classess.length - count - 1)
+              .map((classDetail, index) => (
+                <MenuItem style={{ borderRadius : theme.spacing(1.2) }} key={index} onClick={() => handleClose(classDetail)}>
+                  {classDetail.class_name}
+                </MenuItem>
+              ))}
+          </Box>
         </Menu>
       </Box>
     </Box>

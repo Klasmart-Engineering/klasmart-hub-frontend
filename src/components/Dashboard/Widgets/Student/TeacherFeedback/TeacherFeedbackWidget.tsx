@@ -235,12 +235,12 @@ export default function TreacherFeedbackWidget () {
                     id: `home.student.teacherFeedbackWidget.containerTitleLabel`,
                 })
             }
-            link={{
-                url: `reports`,
+            /*link={{
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.teacherFeedbackWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.FEEDBACK}
         >
             <div

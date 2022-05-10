@@ -1,9 +1,11 @@
+import { mapAcademicTermEdgesToFilterValues } from "./academicTerms";
 import { mapAgeRangesToFilter } from "./ageRanges";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { buildProgramIdFilter } from "./sharedFilters";
 import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
+import { useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedPrograms } from "@/api/programs";
@@ -16,6 +18,7 @@ import {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 export const useGetClassFormValues = (programIds: string[], schoolIds: string[]) => {
     const [ gradeValueOptions, setGradeValueOptions ] = useState<FilterValueOption[]>([]);
@@ -23,10 +26,15 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const [ ageRangeValueOptions, setAgeRangeValueOptions ] = useState<FilterValueOption[]>([]);
     const [ programValueOptions, setProgramValueOptions ] = useState<FilterValueOption[]>([]);
     const [ schoolValueOptions, setSchoolValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ academicTermsValueOptions, setAcademicTermsValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ singleSchoolId, setSingleSchoolId ] = useState<string>();
+
+    const intl = useIntl();
+
     const {
         data: gradesData,
         loading: gradesLoading,
-        fetchMore: fetchMoreGrades,
+        refetch: refetchGrades,
     } = useGetPaginatedOrganizationGradesList({
         variables: {
             direction: `FORWARD`,
@@ -43,7 +51,7 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const {
         data: subjectsData,
         loading: subjectsLoading,
-        fetchMore: fetchMoreSubjects,
+        refetch: refetchSubjects,
     } = useGetAllPaginatedSubjects({
         variables: {
             direction: `FORWARD`,
@@ -59,7 +67,7 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const {
         data: ageRangesData,
         loading: ageRangesLoading,
-        fetchMore: fetchMoreAgeRanges,
+        refetch: refetchAgeRanges,
     } = useGetPaginatedAgeRangesList({
         variables: {
             direction: `FORWARD`,
@@ -77,7 +85,6 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
         data: programsData,
         refetch: refetchPrograms,
         loading: programsLoading,
-        fetchMore: fetchMorePrograms,
     } = useGetAllPaginatedPrograms({
         variables: {
             direction: `FORWARD`,
@@ -94,11 +101,12 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const {
         data: schoolsData,
         loading: schoolsLoading,
-        fetchMore: fetchMoreSchools,
+        refetch: refetchSchools,
     } = useGetPaginatedSchools({
-        fetchPolicy: `cache-first`,
         variables: {
             direction: `FORWARD`,
+            orderBy: `name`,
+            order: `ASC`,
             count: 50,
             filter: {
                 status: {
@@ -107,87 +115,152 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
                 },
             },
         },
+        notifyOnNetworkStatusChange: true,
+        fetchPolicy: `no-cache`,
+    });
+
+    const {
+        loading: academicTermsLoading,
+        data: academicTermData,
+        refetch: refetchAcademicTerms,
+    } = useGetPaginatedAcademicTerms({
+        variables: {
+            id: singleSchoolId,
+            direction: `FORWARD`,
+            orderBy: `name`,
+            order: `ASC`,
+            count: 50,
+            filter: {
+                status: {
+                    operator: `eq`,
+                    value: Status.ACTIVE,
+                },
+            },
+        },
+        skip: !singleSchoolId,
+        fetchPolicy: `no-cache`,
+        notifyOnNetworkStatusChange: true,
     });
 
     useEffect(() => {
-        if (!gradesData?.gradesConnection?.pageInfo?.hasPreviousPage) {
+        if (schoolIds?.length === 1){
+            setSingleSchoolId(schoolIds[0]);
+        }
+    }, [ schoolIds ]);
+
+    useEffect(() => {
+        if (!gradesData?.gradesConnection?.pageInfo?.hasPreviousPage && !gradesLoading) {
             setGradeValueOptions(mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []));
-        } else {
-            setGradeValueOptions([ ...gradeValueOptions, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]);
+        } else if (gradesData?.gradesConnection?.pageInfo?.hasPreviousPage) {
+            setGradeValueOptions((values) => ([ ...values, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]));
         }
 
         if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
-            fetchMoreGrades({
-                variables: {
-                    cursor: gradesData?.gradesConnection?.pageInfo?.endCursor ?? ``,
-                },
+            refetchGrades({
+                cursor: gradesData?.gradesConnection?.pageInfo?.endCursor ?? ``,
             });
         }
-    }, [ gradesData ]);
+    }, [
+        gradesData,
+        setGradeValueOptions,
+        refetchGrades,
+        gradesLoading,
+    ]);
 
     useEffect(() => {
-        if (!subjectsData?.subjectsConnection?.pageInfo?.hasPreviousPage) {
+        if (!subjectsData?.subjectsConnection?.pageInfo?.hasPreviousPage && !subjectsLoading) {
             setSubjectValueOptions(mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []));
-        } else {
-            setSubjectValueOptions([ ...subjectValueOptions, ...mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []) ]);
+        } else if (subjectsData?.subjectsConnection?.pageInfo?.hasPreviousPage) {
+            setSubjectValueOptions((values) => ([ ...values, ...mapSubjectEdgesToFilterValueOptions(subjectsData?.subjectsConnection?.edges ?? []) ]));
         }
 
         if (subjectsData?.subjectsConnection?.pageInfo?.hasNextPage) {
-            fetchMoreSubjects({
-                variables: {
-                    cursor: subjectsData?.subjectsConnection?.pageInfo?.endCursor ?? ``,
-                },
+            refetchSubjects({
+                cursor: subjectsData?.subjectsConnection?.pageInfo?.endCursor ?? ``,
             });
         }
-    }, [ subjectsData ]);
+    }, [
+        subjectsData,
+        setSubjectValueOptions,
+        refetchSubjects,
+        subjectsLoading,
+    ]);
 
     useEffect(() => {
-        if (!ageRangesData?.ageRangesConnection?.pageInfo?.hasPreviousPage) {
+        if (!ageRangesData?.ageRangesConnection?.pageInfo?.hasPreviousPage && !ageRangesLoading) {
             setAgeRangeValueOptions(mapAgeRangesToFilter(ageRangesData?.ageRangesConnection?.edges ?? []));
-        } else {
-            setAgeRangeValueOptions([ ...ageRangeValueOptions, ...mapAgeRangesToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]);
+        } else if (ageRangesData?.ageRangesConnection?.pageInfo?.hasPreviousPage) {
+            setAgeRangeValueOptions((values) => ([ ...values, ...mapAgeRangesToFilter(ageRangesData?.ageRangesConnection?.edges ?? []) ]));
         }
 
         if (ageRangesData?.ageRangesConnection?.pageInfo?.hasNextPage) {
-            fetchMoreAgeRanges({
-                variables: {
-                    cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
-                },
+            refetchAgeRanges({
+                cursor: ageRangesData?.ageRangesConnection?.pageInfo?.endCursor ?? ``,
             });
         }
-    }, [ ageRangesData ]);
+    }, [
+        ageRangesData,
+        setAgeRangeValueOptions,
+        refetchAgeRanges,
+        ageRangesLoading,
+    ]);
 
     useEffect(() => {
-        if (!programsData?.programsConnection?.pageInfo?.hasPreviousPage) {
+        if (!programsData?.programsConnection?.pageInfo?.hasPreviousPage && !programsLoading) {
             setProgramValueOptions(mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []));
-        } else {
-            setProgramValueOptions([ ...programValueOptions, ... mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []) ]);
+        } else if (programsData?.programsConnection?.pageInfo?.hasPreviousPage) {
+            setProgramValueOptions((values) => ([ ...values, ...mapProgramEdgesToFilterValues(programsData?.programsConnection?.edges ?? []) ]));
         }
 
         if (programsData?.programsConnection?.pageInfo?.hasNextPage) {
-            fetchMorePrograms({
-                variables: {
-                    cursor: programsData?.programsConnection?.pageInfo?.endCursor ?? ``,
-                },
+            refetchPrograms({
+                cursor: programsData?.programsConnection?.pageInfo?.endCursor ?? ``,
             });
         }
-    }, [ programsData ]);
+    }, [
+        programsData,
+        setProgramValueOptions,
+        refetchPrograms,
+        programsLoading,
+    ]);
 
     useEffect(() => {
-        if (!schoolsData?.schoolsConnection?.pageInfo?.hasPreviousPage) {
+        if (!schoolsData?.schoolsConnection?.pageInfo?.hasPreviousPage && !schoolsLoading) {
             setSchoolValueOptions(mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []));
         } else {
-            setSchoolValueOptions([ ...schoolValueOptions, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]);
+            setSchoolValueOptions((values) => ([ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
         }
 
         if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
-            fetchMoreSchools({
-                variables: {
-                    cursor: schoolsData?.schoolsConnection?.pageInfo?.endCursor ?? ``,
-                },
+            refetchSchools({
+                cursor: schoolsData?.schoolsConnection?.pageInfo?.endCursor ?? ``,
             });
         }
-    }, [ schoolsData ]);
+    }, [
+        schoolsData,
+        setSchoolValueOptions,
+        refetchSchools,
+        schoolsLoading,
+    ]);
+
+    useEffect(() => {
+        if (!academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasPreviousPage && !academicTermsLoading) {
+            setAcademicTermsValueOptions(mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl));
+        } else {
+            setAcademicTermsValueOptions((values) => ([ ...values, ...mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl) ]));
+        }
+
+        if (academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasNextPage) {
+            refetchAcademicTerms({
+                cursor: academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.endCursor ?? ``,
+            });
+        }
+    }, [
+        academicTermData,
+        setAcademicTermsValueOptions,
+        refetchAcademicTerms,
+        academicTermsLoading,
+    ]);
 
     return {
         gradeValueOptions,
@@ -195,11 +268,13 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
         ageRangeValueOptions,
         programValueOptions,
         schoolValueOptions,
+        academicTermsValueOptions,
         gradesLoading,
         subjectsLoading,
         ageRangesLoading,
         programsLoading,
         schoolsLoading,
         refetchPrograms,
+        academicTermsLoading,
     };
 };

@@ -1,4 +1,4 @@
-const classRoastersData = {
+export const classRoastersData = {
     total: 30,
     classes: [
         {
@@ -215,4 +215,65 @@ const classRoastersData = {
     ],
 };
 
-export default classRoastersData;
+export const classRosterGradeStudentList = {
+    above: {
+        total: 3,
+        students: [
+            {
+                student_id: `ae1`,
+                student_name: `Rajesh Kanna`,
+                avatar: ``, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `ae2`,
+                student_name: `Student B`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `ae3`,
+                student_name: `Student C`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+        ],
+    },
+    meets: {
+        total: 3,
+        students: [
+            {
+                student_id: `me1`,
+                student_name: `Student D`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `me2`,
+                student_name: `Student E`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `me3`,
+                student_name: `Student F`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+        ],
+    },
+    below: {
+        total: 3,
+        students: [
+            {
+                student_id: `be1`,
+                student_name: `Student Ganesh`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `be2`,
+                student_name: `Student H`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+            {
+                student_id: `be3`,
+                student_name: `Student I`,
+                avatar: `https://...`, // will be empty now because we (KL) don't have this information yet
+            },
+        ],
+    },
+};

@@ -195,6 +195,7 @@ export interface OrganizationConnectionNode {
     name: string;
     owners: {
         email: string;
+        id?: string;
     }[];
     contactInfo: OrganizationContactInfo;
     branding: {
@@ -211,6 +212,7 @@ export interface RoleConnectionNode {
 export interface OrganizationMembershipConnectionNode {
     userId?: string;
     organizationId?: string;
+    id?: string;
     status?: Status;
     shortCode?: string;
     joinTimestamp?: string;

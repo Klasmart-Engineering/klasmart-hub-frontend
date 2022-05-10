@@ -2,6 +2,7 @@ import ClassDialogForm,
 { ClassForm } from "./Form";
 import {
     useCreateClass,
+    useEditClassAcademicTerm,
     useEditClassAgeRanges,
     useEditClassGrades,
     useEditClassPrograms,
@@ -37,6 +38,7 @@ export default function CreateClassDialog (props: Props) {
     const [ createSubjects ] = useEditClassSubjects();
     const [ createGrades ] = useEditClassGrades();
     const [ createAgeRanges ] = useEditClassAgeRanges();
+    const [ createAcademicTerm ] = useEditClassAcademicTerm();
 
     useEffect(() => {
         if (!open) return;
@@ -52,6 +54,7 @@ export default function CreateClassDialog (props: Props) {
                 subjects,
                 grades,
                 ageRanges,
+                academicTerm,
             } = newClass;
 
             const variables = {
@@ -97,6 +100,19 @@ export default function CreateClassDialog (props: Props) {
                     age_range_ids: ageRanges ?? [],
                 },
             });
+
+            if (academicTerm && schools?.length === 1) {
+                await createAcademicTerm({
+                    variables: {
+                        input: [
+                            {
+                                classId: classId,
+                                academicTermId: academicTerm,
+                            },
+                        ],
+                    },
+                });
+            }
 
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({

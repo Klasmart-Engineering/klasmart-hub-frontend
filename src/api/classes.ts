@@ -1,3 +1,4 @@
+import { GetPaginatedAcademicTermsResponse } from "./academicTerms";
 import { GetPaginatedOrganizationAgeRangesResponse } from "./ageRanges";
 import { GetOrganizationGradesResponsePaginated } from "./grades";
 import {
@@ -9,10 +10,14 @@ import {
     AgeRangeNode,
     GetAllProgramsPaginatedResponse,
 } from "./programs";
-import { GetPaginatedSchoolsRequestResponse } from "./schools";
+import {
+    GetPaginatedSchoolsRequestResponse,
+    SchoolNode,
+} from "./schools";
 import { GetAllSubjectsPaginatedResponse } from "./subjects";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
+import { EDIT_CLASS_ACADEMIC_TERMS } from "@/operations/mutations/editClassAcademicTerm";
 import { EDIT_CLASS_AGE_RANGES } from "@/operations/mutations/editClassAgeRanges";
 import { EDIT_CLASS_GRADES } from "@/operations/mutations/editClassGrades";
 import { EDIT_CLASS_PROGRAMS } from "@/operations/mutations/editClassPrograms";
@@ -179,6 +184,28 @@ export const useEditClassAgeRanges = (options?: MutationHookOptions<
     return useMutation<EditClassAgeRangesResponse, EditClassAgeRangesRequest>(EDIT_CLASS_AGE_RANGES, options);
 };
 
+export interface SetAcademicTermOfClassInput {
+    classId: string;
+    academicTermId?: string;
+}
+
+interface EditClassAcademicTermsRequest {
+    input: SetAcademicTermOfClassInput[];
+}
+
+interface EditClassAcademicTermsResponse {
+    classes: {
+        id: string;
+    };
+}
+
+export const useEditClassAcademicTerm = (options?: MutationHookOptions<
+    EditClassAcademicTermsResponse,
+    EditClassAcademicTermsRequest
+>) => {
+    return useMutation<EditClassAcademicTermsResponse, EditClassAcademicTermsRequest>(EDIT_CLASS_ACADEMIC_TERMS, options);
+};
+
 interface ClassSchoolNode {
     id: string;
     name: string;
@@ -192,6 +219,13 @@ interface ClassProgramNode {
     ageRanges?: AgeRangeNode[];
     subjects?: Subject[];
     grades?: Grade[];
+}
+
+export interface AcademicTermNode {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
 }
 
 interface SummaryNode {
@@ -209,11 +243,6 @@ interface SummaryNode {
     }[];
 }
 
-interface AcademicTermNode {
-    id: string;
-    name: string;
-}
-
 export interface ClassNode {
     id: string;
     name: string;
@@ -224,6 +253,7 @@ export interface ClassNode {
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
     academicTerm?: AcademicTermNode;
+    academicTermsConnection?: GetPaginatedAcademicTermsResponse[];
     schoolsConnection?: GetPaginatedSchoolsRequestResponse[`schoolsConnection`];
     studentsConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
     teachersConnection?: GetOrganizationMembershipsResponse2[`usersConnection`];
@@ -242,7 +272,7 @@ export interface ClassNodeConnections {
     grades?: Grade[];
     schools?: ClassSchoolNode[];
     programs?: ClassProgramNode[];
-    academicTerm?: AcademicTermNode;
+    academicTerm?: AcademicTermNode[];
     schoolsConnection?: SummaryNode;
     studentsConnection?: SummaryNode;
     teachersConnection?: SummaryNode;
@@ -270,6 +300,7 @@ export interface ClassesFilter extends PaginationFilter<ClassesFilter> {
     programId?: UuidFilter;
     subjectId?: UuidFilter;
     gradeId?: UuidFilter;
+    academicTermId?: UuidFilter;
 }
 
 interface GetAllClassesPaginatedRequest {

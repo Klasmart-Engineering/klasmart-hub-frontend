@@ -8,7 +8,8 @@ import {
 import Breadcrumb from "@/components/StudentReport/BreadCrumb";
 import ClassTabs from "@/components/StudentReport/ClassTabs";
 import { useIntl } from "react-intl";
-import Statistics from "@/components/StudentReport/Statistics";
+
+import Performance from "@/components/StudentReport/PerformanceTab";
 
 interface Performance {
   total_students: number;
@@ -17,7 +18,7 @@ interface Performance {
   today_activities: number;
 }
 
-interface ClassObj {
+interface ClassDetail {
   class_id: number;
   class_name: string;
   performance: Performance;
@@ -27,7 +28,7 @@ interface Props { }
 
 export default function StudentReport(props: Props) {
   const [tab, setTab] = useState(`performance`);
-  const [classObj, setClassObj] = useState<ClassObj>();
+  const [classDetail, setClassDetail] = useState<ClassDetail>();
   const intl = useIntl();
 
   const performanceLabel = intl.formatMessage({
@@ -45,17 +46,17 @@ export default function StudentReport(props: Props) {
     },
   ];
 
-  const setClass = (classObj: ClassObj) => {
-    setClassObj(classObj);
+  const setClass = (classDetail: ClassDetail) => {
+    setClassDetail(classDetail);
     setTab(`performance`);
   };
 
   return (
     <Box padding={2}>
       <Box paddingY={1}>
-        <Breadcrumb links={links} />
+        { <Breadcrumb links={links} /> }
       </Box>
-      <ClassTabs onClassChange={setClass} />
+      { <ClassTabs onClassChange={setClass} /> }
       <Box>
         <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -65,8 +66,7 @@ export default function StudentReport(props: Props) {
             </TabList>
           </Box>
           <TabPanel value="performance" sx={{ padding: 0 }}>
-            {classObj?.performance &&
-              <Statistics performance={classObj.performance} />}
+            {classDetail && <Performance {...classDetail} />}
           </TabPanel>
         </TabContext>
       </Box>

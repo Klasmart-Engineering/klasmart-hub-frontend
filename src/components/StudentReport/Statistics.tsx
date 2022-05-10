@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: `flex`,
         justifyContent: `space-evenly`,
         border: `1px solid`,
-        borderColor: theme.palette.grey[400],
+        borderColor: theme.palette.grey[300],
         borderRadius: theme.spacing(1.2),
         padding: theme.spacing(2),
         margin: theme.spacing(2, 0),
@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         fontWeight: `700`,
         fontSize: `1.3rem`,
         alignItems: `center`,
+    },
+    perc: {
+        fontSize: `1rem`,
     },
 }));
 
@@ -63,7 +66,9 @@ export default function Statistics (props: Props) {
                     id: `student.report.statistic.averagePerfomance`,
                     defaultMessage: `Average performance`,
                 })}
-                <div className={classes.statisticsValue}>{average_performance}%</div>
+                <div className={classes.statisticsValue}>{average_performance}
+                    <span className={classes.perc}>%</span>
+                </div>
             </div>
             <Divider
                 flexItem

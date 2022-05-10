@@ -22,6 +22,7 @@ import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/componen
 import React,
 {
     useEffect,
+    useMemo,
     useState,
 } from "react";
 
@@ -40,6 +41,10 @@ export default function ClassesPage (props: Props) {
         order: `ASC`,
         orderBy: `name`,
     });
+
+    const filteredSchools = useMemo(() => tableFilters.filter(filter => filter.columnId === `schoolNames`)[0]?.values ?? ``, [ tableFilters ]);
+    const showAcademicTermFilter = filteredSchools.length === 1;
+    const filteredSchoolId = showAcademicTermFilter ? filteredSchools[0] : ``;
 
     const paginationFilter = buildOrganizationClassesFilter({
         organizationId: currentOrganization?.id ?? ``,
@@ -76,13 +81,23 @@ export default function ClassesPage (props: Props) {
     };
 
     const handleTableChange = async (tableData: CursorTableData<ClassRow>) => {
+        const tableFilters = tableData?.filters ?? [];
+
+        const anySchools = tableFilters.filter(({ columnId }: {columnId: string}) => columnId === `schoolNames`) ?? [];
+        const anyTerms = tableFilters.filter(({ columnId }: {columnId: string}) => columnId === `academicTerm`) ?? [];
+
+        if(anySchools.length === 0 && anyTerms.length > 0) {
+            setTableFilters([ ...tableFilters.filter(({ columnId }: {columnId: string}) => columnId !== `academicTerm`) ]);
+        } else {
+            setTableFilters(tableData?.filters ?? []);
+        }
+
         setServerPagination({
             order: tableToServerOrder(tableData.order),
             orderBy: tableData.orderBy,
             search: tableData.search,
             rowsPerPage: tableData.rowsPerPage,
         });
-        setTableFilters(tableData?.filters ?? []);
     };
 
     useEffect(() => {
@@ -103,19 +118,23 @@ export default function ClassesPage (props: Props) {
 
     const rows = data?.classesConnection?.edges?.map(mapClassNodeToClassRow) ?? [];
 
-    return (<ClassTable
-        rows={rows}
-        loading={loading}
-        hasNextPage={data?.classesConnection?.pageInfo.hasNextPage}
-        hasPreviousPage={data?.classesConnection?.pageInfo.hasPreviousPage}
-        startCursor={data?.classesConnection?.pageInfo.startCursor}
-        endCursor={data?.classesConnection?.pageInfo.endCursor}
-        total={data?.classesConnection?.totalCount}
-        order={serverToTableOrder(serverPagination.order)}
-        orderBy={serverPagination.orderBy}
-        rowsPerPage={serverPagination.rowsPerPage}
-        refetch={refetch}
-        onPageChange={handlePageChange}
-        onTableChange={handleTableChange}
-    />);
+    return (
+        <ClassTable
+            filteredSchoolId={filteredSchoolId}
+            showAcademicTermFilter={showAcademicTermFilter}
+            rows={rows}
+            loading={loading}
+            hasNextPage={data?.classesConnection?.pageInfo.hasNextPage}
+            hasPreviousPage={data?.classesConnection?.pageInfo.hasPreviousPage}
+            startCursor={data?.classesConnection?.pageInfo.startCursor}
+            endCursor={data?.classesConnection?.pageInfo.endCursor}
+            total={data?.classesConnection?.totalCount}
+            order={serverToTableOrder(serverPagination.order)}
+            orderBy={serverPagination.orderBy}
+            rowsPerPage={serverPagination.rowsPerPage}
+            refetch={refetch}
+            onPageChange={handlePageChange}
+            onTableChange={handleTableChange}
+        />
+    );
 }

@@ -14,10 +14,12 @@ import {
 import { GET_SCHOOLS_FROM_ORGANIZATION } from "@/operations/queries/getSchoolsFromOrganization";
 import {
     BaseEntity,
+    Direction,
     Organization,
     PageInfo,
     Program,
     SchoolDeprecated,
+    SortOrder,
     Status,
     StringFilter,
     UuidFilter,
@@ -136,8 +138,11 @@ interface GetSchoolNodeResponse {
 
 interface GetSchoolNodeWithClassRelationsRequest {
     id: string;
-    classCount?: number;
-    classCursor?: string;
+    count?: number;
+    cursor?: string;
+    direction?: Direction;
+    order: SortOrder;
+    orderBy: string;
 }
 
 export const useGetSchoolNode = (options?: QueryHookOptions<GetSchoolNodeResponse, GetSchoolNodeRequest>) => {
@@ -184,7 +189,12 @@ export interface SchoolNode {
         total?: number;
     };
     classesConnection?: {
+        pageInfo: PageInfo;
+        totalCount?: number;
         edges: ClassEdge[];
+    };
+    academicTermsConnection?: {
+        edges: AcademicTermEdge[];
     };
 }
 

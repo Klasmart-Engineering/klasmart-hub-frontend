@@ -1,11 +1,13 @@
 import { ClassRosterSubgroup } from "../Table";
 import TruncateChip from "./TruncateChip";
+import { ClassEdge } from "@/api/classes";
 import { useGetClassNodeRoster } from "@/api/classRoster";
 import { useGetSchoolNodeWithClassRelations } from "@/api/schools";
 import { useCurrentOrganization } from "@/state/organizationMemberships";
 import { FormErrors } from "@/types/form";
 import { Status } from "@/types/graphQL";
 import { mapClassNodeToClassRow } from "@/utils/classes";
+import { ServerCursorPagination } from "@/utils/table";
 import { mapUserRowPerRole } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import { Select } from "@kl-engineering/kidsloop-px";
@@ -71,6 +73,7 @@ export default function TransferForm (props: Props) {
     const [ targetClassId, setTargetClassId ] = useState(initialState.targetClassId);
     const [ targetClassIdValid, setTargetClassIdValid ] = useState(!errors?.targetClassId);
     const [ associatedSchoolId, setAssociatedSchoolId ] = useState(``);
+    const [ allData, setAllData ] = useState<ClassEdge[]>([]);
     const { required } = useValidations();
     const currentOrganization = useCurrentOrganization();
 
@@ -101,6 +104,13 @@ export default function TransferForm (props: Props) {
         currentClassData?.classNode?.teachersConnection?.edges.map((edge) => mapUserRowPerRole(edge, subgroupBy)) ?? [];
     const userNames = users.map(item => `${item.givenName} ${item.familyName}`);
 
+    const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
+        search: ``,
+        rowsPerPage: 50,
+        order: `ASC`,
+        orderBy: `name`,
+    });
+
     const {
         data: schoolNodeData,
         refetch: refetchSchoolNode,
@@ -108,17 +118,22 @@ export default function TransferForm (props: Props) {
     } = useGetSchoolNodeWithClassRelations({
         variables: {
             id: associatedSchoolId,
+            direction: `FORWARD`,
+            count: serverPagination.rowsPerPage,
+            order: serverPagination.order,
+            orderBy: serverPagination.orderBy,
         },
         fetchPolicy: `cache-and-network`,
         skip: !open || (associatedSchoolId === ``),
     });
 
-    const allClasses = schoolNodeData?.schoolNode?.classesConnection?.edges.filter(({ node }) => {
+    const allClasses = allData?.filter(({ node }) => {
         const match = node.id !== currentClassId &&
         node.status === Status.ACTIVE &&
         node.schoolsConnection?.totalCount === 1;
         return match;
-    }).map(mapClassNodeToClassRow) ?? [];
+    })
+        .map(mapClassNodeToClassRow) ?? [];
 
     useEffect(() => {
         if (!currentClassData) return;
@@ -147,6 +162,20 @@ export default function TransferForm (props: Props) {
         };
         onChange(newState);
     }, [ targetClassId ]);
+
+    useEffect(() => {
+        if (!schoolNodeData?.schoolNode?.classesConnection?.edges) return;
+
+        const latestAllData = [ ...allData, ...schoolNodeData?.schoolNode?.classesConnection?.edges ];
+
+        setAllData(latestAllData);
+
+        if (schoolNodeData?.schoolNode?.classesConnection?.pageInfo?.hasNextPage) {
+            refetchSchoolNode({
+                cursor: schoolNodeData?.schoolNode?.classesConnection?.pageInfo.endCursor,
+            });
+        }
+    }, [ schoolNodeData ]);
 
     const loading = loadingCurrentClassUserData || loadingSchoolData;
 

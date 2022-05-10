@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingTop: theme.spacing(.625),
             paddingBottom: theme.spacing(0),
             [theme.breakpoints.down(`sm`)]: {
-                paddingTop:  theme.spacing(0.12),
-                paddingBottom:  theme.spacing(.625),
+                paddingTop: theme.spacing(0.12),
+                paddingBottom: theme.spacing(.625),
             },
         },
         chartContainer: {
@@ -42,8 +42,8 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: `center`,
             justifyContent: `center`,
             flexWrap: `wrap`,
-            paddingTop:  theme.spacing(1.87),
-            paddingBottom:  theme.spacing(1.25),
+            paddingTop: theme.spacing(1.87),
+            paddingBottom: theme.spacing(1.25),
             [theme.breakpoints.down(`sm`)]: {
                 height: `25%`,
                 paddingBottom: theme.spacing(0),
@@ -74,14 +74,14 @@ const useStyles = makeStyles((theme: Theme) =>
                 paddingTop: theme.spacing(.625),
                 fontSize: `.7rem`,
             },
-            [theme.breakpoints.down(`md`)]:{
+            [theme.breakpoints.down(`md`)]: {
                 fontSize: `.6rem`,
             },
         },
         labelValue: {
             fontSize: `1.5rem`,
-            paddingLeft:theme.spacing(.625),
-            paddingRIght:theme.spacing(.625),
+            paddingLeft: theme.spacing(.625),
+            paddingRIght: theme.spacing(.625),
             color: theme.palette.info.light,
             [theme.breakpoints.down(`sm`)]: {
                 textAlign: `center`,
@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         labelText: {
             display: `flex`,
-            justifyContent:`center`,
+            justifyContent: `center`,
         },
         labelTextWrapper: {
             display: `flex`,
@@ -190,12 +190,12 @@ export default function AdaptiveLearningWidget (props: Props) {
             label={intl.formatMessage({
                 id: `home.student.adaptiveLearningWidget.containerTitleLabel`,
             })}
-            link={{
+            /*link={{
                 url: ``,
                 label: intl.formatMessage({
                     id: `home.student.adaptiveLearningWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.ADAPTIVELEARNING}
         >
             <Box className={classes.widgetContent}>
@@ -215,7 +215,8 @@ export default function AdaptiveLearningWidget (props: Props) {
                                 height={height}
                                 data={data}
                                 colorRange={chartColorRange}
-                                windowWidth={width} />
+                                windowWidth={width}
+                            />
                         )}
                     </ParentSize>
                 </Grid>
@@ -239,10 +240,12 @@ export default function AdaptiveLearningWidget (props: Props) {
                                     item
                                     xs={12}
                                     sm={5}
-                                    className={classes.labelText}>
+                                    className={classes.labelText}
+                                >
                                     <Typography
                                         variant="h1"
-                                        className={classes.labelName}>
+                                        className={classes.labelName}
+                                    >
                                         {label.dataName}
                                     </Typography>
                                 </Grid>
@@ -250,10 +253,12 @@ export default function AdaptiveLearningWidget (props: Props) {
                                     item
                                     xs={12}
                                     sm={5}
-                                    className={classes.labelText}>
+                                    className={classes.labelText}
+                                >
                                     <Typography
                                         variant="h1"
-                                        className={classes.labelValue}>
+                                        className={classes.labelValue}
+                                    >
                                         {label.value}
                                         <span className={classes.labelType}>{label.type}</span>
                                     </Typography>

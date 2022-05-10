@@ -239,10 +239,10 @@ export const permissions = [
     `publish_featured_content_for_all_hub_79000`,
     `publish_featured_content_for_specific_orgs_79001`,
     `publish_featured_content_for_all_orgs_79002`,
-    `view_academic_term_20116`,
-    `create_academic_term_20228`,
-    `edit_academic_term_20338`,
-    `delete_academic_term_20448`,
+    `view_academic_term_20120`,
+    `create_academic_term_20229`,
+    `edit_academic_term_20341`,
+    `delete_academic_term_20449`,
 ] as const;
 
 /**
