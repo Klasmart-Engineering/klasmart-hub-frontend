@@ -49,6 +49,7 @@ export default function EditClassDialog (props: Props) {
     const [ editAgeRanges ] = useEditClassAgeRanges();
     const [ editAcademicTerm ] = useEditClassAcademicTerm();
     const canEditSchool = usePermission(`edit_school_20330`);
+    const canDeleteClass = usePermission(`delete_class_20444`);
     const deletePrompt = useDeleteEntityPrompt();
     const [ initClass, setInitClass ] = useState<ClassForm>(buildEmptyClassForm());
     const {
@@ -129,16 +130,18 @@ export default function EditClassDialog (props: Props) {
                 },
             });
 
-            await editAcademicTerm({
-                variables: {
-                    input: [
-                        {
-                            classId: classId,
-                            academicTermId: academicTerm,
-                        },
-                    ],
-                },
-            });
+            if (academicTerm && schools?.length === 1) {
+                await editAcademicTerm({
+                    variables: {
+                        input: [
+                            {
+                                classId: classId,
+                                academicTermId: academicTerm,
+                            },
+                        ],
+                    },
+                });
+            }
 
             // Update cache. Since multiple mutation queries may occur, refetch needs to be
             // called manually instead of calling if from updateCache method.
@@ -200,6 +203,7 @@ export default function EditClassDialog (props: Props) {
                     color: `error`,
                     align: `left`,
                     onClick: handleDelete,
+                    disabled: !canDeleteClass,
                 },
                 {
                     label: intl.formatMessage({

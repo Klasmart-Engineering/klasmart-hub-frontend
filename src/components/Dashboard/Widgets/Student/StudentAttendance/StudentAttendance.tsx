@@ -44,12 +44,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         flexDirection: `row`,
         justifyContent: `space-between`,
         alignItems: `center`,
-        "& .bannerLeft":{
+        "& .bannerLeft": {
             display: `flex`,
             flexDirection: `row`,
             justifyContent: `flex-start`,
             alignItems: `center`,
-            "& *":{
+            "& *": {
                 marginRight: 10,
             },
         },
@@ -94,12 +94,12 @@ export default function StudentAttendanceWidget (props: Props) {
                     id: `home.student.attendanceWidget.containerTitleLabel`,
                 })
             }
-            link={{
-                url: `reports`,
+            /*link={{
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.attendanceWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.STUDENTATTENDANCE}
         >
             <Box className={classes.widgetContent}>

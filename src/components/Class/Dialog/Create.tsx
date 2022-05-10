@@ -101,16 +101,18 @@ export default function CreateClassDialog (props: Props) {
                 },
             });
 
-            await createAcademicTerm({
-                variables: {
-                    input: [
-                        {
-                            classId: classId,
-                            academicTermId: academicTerm,
-                        },
-                    ],
-                },
-            });
+            if (academicTerm && schools?.length === 1) {
+                await createAcademicTerm({
+                    variables: {
+                        input: [
+                            {
+                                classId: classId,
+                                academicTermId: academicTerm,
+                            },
+                        ],
+                    },
+                });
+            }
 
             onClose(newClass);
             enqueueSnackbar(intl.formatMessage({

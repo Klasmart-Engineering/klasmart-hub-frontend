@@ -142,12 +142,12 @@ export default function AchievementWidget () {
                     id: `home.student.achievementWidget.containerTitleLabel`,
                 })
             }
-            link={{
-                url: `reports`,
+            /*link={{
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.achievementWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.ACHIEVEMENT}
         >
             <div className={classes.widgetContent}>

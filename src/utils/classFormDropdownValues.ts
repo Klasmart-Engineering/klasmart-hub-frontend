@@ -18,6 +18,7 @@ import {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 export const useGetClassFormValues = (programIds: string[], schoolIds: string[]) => {
     const [ gradeValueOptions, setGradeValueOptions ] = useState<FilterValueOption[]>([]);
@@ -27,6 +28,8 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const [ schoolValueOptions, setSchoolValueOptions ] = useState<FilterValueOption[]>([]);
     const [ academicTermsValueOptions, setAcademicTermsValueOptions ] = useState<FilterValueOption[]>([]);
     const [ singleSchoolId, setSingleSchoolId ] = useState<string>();
+
+    const intl = useIntl();
 
     const {
         data: gradesData,
@@ -242,9 +245,9 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
 
     useEffect(() => {
         if (!academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasPreviousPage && !academicTermsLoading) {
-            setAcademicTermsValueOptions(mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? []));
+            setAcademicTermsValueOptions(mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl));
         } else {
-            setAcademicTermsValueOptions((values) => ([ ...values, ...mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? []) ]));
+            setAcademicTermsValueOptions((values) => ([ ...values, ...mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl) ]));
         }
 
         if (academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasNextPage) {
