@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -6,7 +6,11 @@ import TreeItem, { TreeItemProps, treeItemClasses } from '@mui/lab/TreeItem';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import { makeStyles } from '@material-ui/core';
+import { Theme } from "@mui/material/styles";
+import {
+  createStyles,
+  makeStyles,
+} from '@mui/styles';
 import { Avatar, Divider, TextField } from '@mui/material';
 import { SearchOutlined } from '@mui/icons-material';
 import highIcon from "@/assets/img/studentreports/classroster/high.png";
@@ -83,7 +87,7 @@ const CustomSearchField = styled(TextField)(({ theme }) => (
   }
 ));
 
-const useFilterTreeStyles = makeStyles(theme => ({
+const useFilterTreeStyles = makeStyles((theme: Theme) => createStyles({
   componentTitle: {
     fontWeight: 600,
     fontSize: '0.8rem',
@@ -244,7 +248,7 @@ export default function ClassRoster(props: Props) {
   const { class_id, handleSelect, selectedNodeId } = props;
 
   const classes = useFilterTreeStyles();
-  const [expanded, setExpanded] = React.useState<string[] | undefined>([]);
+  const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
   const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleSelect(selectedNodeId === student.student_id ? id : student.student_id)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
@@ -256,7 +260,6 @@ export default function ClassRoster(props: Props) {
         defaultMessage: `Above Expectation`,
       }),
       color: `#40B8F4`,
-      students: [],
       ...classRosterGradeStudentList?.above,
     },
     {
@@ -266,7 +269,6 @@ export default function ClassRoster(props: Props) {
         defaultMessage: `Meets Expectation`,
       }),
       color: `#37BA00`,
-      students: [],
       ...classRosterGradeStudentList?.meets,
     },
     {
@@ -276,7 +278,6 @@ export default function ClassRoster(props: Props) {
         defaultMessage: `Below Expectation`,
       }),
       color: `#FFBC00`,
-      students: [],
       ...classRosterGradeStudentList.below,
     }
   ];
