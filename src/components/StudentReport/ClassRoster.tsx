@@ -243,22 +243,26 @@ interface Student {
 interface Props {
   class_id: string;
   selectedNodeId: string | undefined;
-  handleSelect: (id: string | undefined) => void;
+  handleSelect: (id: string) => void;
+  updateStudentData: (obj: Student) => void
   setError: (error: boolean) => void;
 }
 
 export default function ClassRoster(props: Props) {
   const intl = useIntl();
-  const { class_id, handleSelect, selectedNodeId, setError } = props;
+  const { class_id, handleSelect, updateStudentData, selectedNodeId, setError } = props;
 
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
-  const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleSelect(selectedNodeId === student.student_id ? id : student.student_id)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
+  const handleStudentClick = (id: string, student:Student) => {
+    updateStudentData(student);
+    handleSelect(selectedNodeId === student.student_id ? id : student.student_id);
+  }
+  const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleStudentClick(id, student)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
   const sprApi = useSPRReportAPI();
   useEffect(() => {
-    console.log(class_id);
     sprApi.getPerformanceByGroups({
       classId: class_id,
       timezone: timeZoneOffset, // No Required
@@ -324,7 +328,7 @@ export default function ClassRoster(props: Props) {
   const renderPerformanceGradeTree = ((performanceGrade: PerformanceGrade, index: number, size: number) => {
     return (
       <div key={performanceGrade.id}>
-        <ClassRosterTreeItem onClick={() => handleSelect(selectedNodeId === performanceGrade.id ? undefined : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
+        <ClassRosterTreeItem onClick={() => handleSelect(selectedNodeId === performanceGrade.id ? `all` : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
           {performanceGrade?.students?.map((student: Student) => renderStudent(student, performanceGrade.color, performanceGrade.id))}
         </ClassRosterTreeItem>
         {size != index + 1 ? <Divider className={classes.divider} /> : ``}

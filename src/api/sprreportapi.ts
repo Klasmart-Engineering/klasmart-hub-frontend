@@ -31,8 +31,12 @@ interface GetClassesRepsonse {
     classes: ClassDetail[];
 }
 interface GetPerformancesRequest {
-    org_id: string;
-    class_id: string;
+    classId: string;
+    timezone: number;
+    days: number;
+    viewLOs: boolean;
+    group?: string;
+    studentId?: string;
 }
 interface GetPerformancesRepsonse {
     name: string;
@@ -80,10 +84,7 @@ export class SPRReportAPI {
         return body;
     }
     public async getPerformances (request: GetPerformancesRequest): Promise<GetPerformancesRepsonse | null> {
-        const { org_id } = request;
-        const str = queryString.stringify({
-            org_id,
-        });
+        const str = queryString.stringify(request);
         const response = await this.sprCall(`GET`, `/performances?${str}`);
         const body: GetPerformancesRepsonse = await response.json() as GetPerformancesRepsonse;
         return body;
@@ -104,7 +105,7 @@ export class SPRReportAPI {
     private async fetchRoute (method: string, prefix: string, route: string, body?: string) {
         const cookie = new Cookies();
         const accessToken =
-        `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjI0OTUwNiwiaXNzIjoia2lkc2xvb3AifQ.sdkd35j55t2uVayY4dhUUspKdz66dpwHJ8rAARPysLee-5XwOIqk-Na7pwoqo7_zQyh-_IcJpi-WCKJKPvaMTA2xfe5B2PIDhRTSqV5JBowDmGgg0VuiwRAc0ysoNGP0U7yjYe4ZMN0qeJGcRTr6cSipndceYS71zZ9Bw15hqaeEERJyaUtfSUNYazsHE-5KSp5UjfsDqGsZt1hdzVf3gfAwq-cNTyzL26wvTTw96Nn0mR-yeoKxs5fvQKSIkai1noZ5Y2tbkmU2rom4AD1T3h2EoePotVNI3HcK1Y7ZIzSR9cUZQ-jP5fcEPGlCisja6k-ZCzFGVjbTx1r1bmlQ-g`;
+        `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjI3MjQzNiwiaXNzIjoia2lkc2xvb3AifQ.Zsn8cZs7Op5QMUtoxeMlzzdIZVFFEXuKU01zDqjORjMB1MMQN8Y-ZpibZqlHFlSvLCjkF2CXwl03lIl7Skf11sem-SYDPuldvCxf-PFRdtsZpY7_FclKQCthjZFHDrHaJqyzFDHeCwV5p1tkoJYoM3ejTRAiZX1ot9CseuJwbNm6xb6toQ7b9H_iLDu7Bi-1fOUKC72NM9kXBHEX9cMH7Gpq9Y2a1LWownzL_MxRJ_zO3KJJIqmsYIuA5yKmgeFeAcMcjs75C4LY4Uo5Qe_tSE9CFfeMTnmVRzOXbqDfisNQo6lJfLi6nVIlECUcpMhDSoghP0ILLx0FS5oMeNgL2A`;
         // cookie.get(ACCESS_TOKEN_COOKIE);
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);

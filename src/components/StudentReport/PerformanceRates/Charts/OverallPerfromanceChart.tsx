@@ -72,6 +72,13 @@ interface DataProps {
     },
 }
 
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
+  }
+  
+
 interface Props {
     viewScores: boolean;
     width: number;
@@ -79,7 +86,8 @@ interface Props {
     data: DataProps[];
     timeRange: string;
     filterItems: any[];
-    selectedNodeId: string | undefined;
+    selectedNodeId: string;
+    selectedStudent: StudentProps | undefined;
 }
 
 const margin = {
@@ -91,7 +99,7 @@ const margin = {
 
 export default function OverallPerformanceChart(props: Props) {
 
-    const { viewScores, filterItems, timeRange, width, height, data, selectedNodeId } = props;
+    const { viewScores, filterItems, timeRange, width, height, data, selectedNodeId, selectedStudent } = props;
     const [tooltipColor, setTooltipColor] = useState<string | undefined>(``);
     const [tooltipTop, setTooltipTop] = useState(0);
     const [avatarPosition, setAvatarPosition] = useState({ x: 0, y: 0 });
@@ -100,7 +108,7 @@ export default function OverallPerformanceChart(props: Props) {
     const intl = useIntl();
     const innerHeight = 370 - margin.top - margin.bottom;
     const innerWidth = width - margin.left - margin.right;
-
+    console.log(selectedStudent);
     const keys = useMemo(() => Object.keys(data[0]).filter(key => key !== `date` && key !== `score`), [data]);
     const overAllScores = keys.map(key => data.map(data => ({ date: data.date, value: data[key as keyof typeof data] })));
     const learningOutcomeScores = keys.map(key => data.map(data => ({ date: data.date, value: data.score[key as keyof typeof data.score] })));
@@ -145,6 +153,10 @@ export default function OverallPerformanceChart(props: Props) {
                 theme.palette.grey[400] :
             colorScale[key as keyof typeof colorScale];
     }
+    const getAvatarContent = (name: string) => {
+        let splittedArray = name.trim().split(' ');
+        return splittedArray.length > 1 ? splittedArray[0][0] + splittedArray[1][0] : splittedArray.length == 1 ? splittedArray[0][0] : ``;
+      }
 
     return (
         <XYChart
@@ -213,9 +225,9 @@ export default function OverallPerformanceChart(props: Props) {
                     }}>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{tooltipData?.nearestDatum?.datum?.value}%</Typography>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={15} fontWeight={200}>
-                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0] ? {
+                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0].label ? {
                                 weekday: `short`,
-                            } : timeRange === filterItems[1] ? {
+                            } : timeRange === filterItems[1].label ? {
                                 day: `2-digit`,
                                 month: `2-digit`,
                             } : {
@@ -266,9 +278,9 @@ export default function OverallPerformanceChart(props: Props) {
                     fill: theme.palette.common.black
                 })}
                 tickFormat={(day) => {
-                    return intl.formatDate(day, timeRange === filterItems[0] ? {
+                    return intl.formatDate(day, timeRange === filterItems[0].label ? {
                         weekday: `short`,
-                    } : timeRange === filterItems[1] ? {
+                    } : timeRange === filterItems[1].label ? {
                         day: `2-digit`,
                         month: `2-digit`,
                     } : {
@@ -302,7 +314,7 @@ export default function OverallPerformanceChart(props: Props) {
                         xAccessor={getDate}
                         yAccessor={getValue}
                         renderGlyph={(glyph) => (
-                            selectedNodeId && (keys.indexOf(selectedNodeId) < 0) ?
+                            selectedNodeId !== "all" && (keys.indexOf(selectedNodeId) < 0) ?
                                 <HtmlLabel
                                     x={glyph.x}
                                     y={glyph.y}
@@ -311,7 +323,7 @@ export default function OverallPerformanceChart(props: Props) {
                                     verticalAnchor="middle"
                                 >
                                     <Avatar 
-                                        src="../" 
+                                        src={selectedStudent?.avatar} 
                                         sx={{ 
                                             width: 30, 
                                             height: 30, 
@@ -320,7 +332,7 @@ export default function OverallPerformanceChart(props: Props) {
                                             border: `2px solid ${theme.palette.common.white}`, 
                                         }}>
                                         <Typography fontSize={14}>
-                                            {selectedNodeId}
+                                            {getAvatarContent(selectedStudent?.student_name ?? ``)}
                                         </Typography>
                                     </Avatar>
                                 </HtmlLabel> :

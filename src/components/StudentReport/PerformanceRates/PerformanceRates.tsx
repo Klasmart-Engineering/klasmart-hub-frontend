@@ -27,6 +27,7 @@ import { ParentSize } from '@visx/responsive';
 import OverallPerformanceLegend from './Charts/Legends/OverallPerformanceLegend';
 import SkillPerformanceLegend from './Charts/Legends/SkillPerformanceLegend';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useSPRReportAPI } from '@/api/sprreportapi';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -137,14 +138,37 @@ interface SkillSlides {
     };
 }
 
+interface OverallPerformanceData {
+    date: string,
+    above?: number,
+    meets?: number,
+    below?: number,
+    score: {
+        above?: number,
+        meets?: number,
+        below?: number,
+    },
+}
+
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
+}
+
 interface Props {
     width: number;
     height: number;
-    selectedNodeId: string | undefined;
+    selectedNodeId: string;
+    class_id: string;
+    selectedStudent: StudentProps | undefined;
 }
 
+const timeZoneOffset = new Date()
+    .getTimezoneOffset() / -60;
+
 export default function PerformanceRates(props: Props) {
-    const { selectedNodeId, width, height } = props;
+    const { selectedNodeId, width, height, class_id, selectedStudent } = props;
     const classes = useStyles();
     const theme = createTheme();
     const intl = useIntl();
@@ -155,23 +179,56 @@ export default function PerformanceRates(props: Props) {
     const [skillCategories, setSkillCategories] = useState<string[]>([]);
     const [tabIndex, setTabIndex] = useState(0);
     const filterItems = [
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterWeek`,
-            defaultMessage: `Week`
-        }),
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterMonth`,
-            defaultMessage: `Month`
-        }),
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterYear`,
-            defaultMessage: `Year`
-        })
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterWeek`,
+                defaultMessage: `Week`
+            }),
+            value: 7
+        },
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterMonth`,
+                defaultMessage: `Month`
+            }),
+            value: 30
+        }
+        ,
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterYear`,
+                defaultMessage: `Year`
+            }),
+            value: 365
+        }
     ];
-    const [timeRange, setTimeRange] = useState(filterItems[0]);
-    const overallPerformanceData = getOverallPerformanceData(selectedNodeId, timeRange);
+    const [timeRange, setTimeRange] = useState<any>(filterItems[0]);
+    const overallPerformanceData = getOverallPerformanceData(selectedNodeId, timeRange.label);
+    // const [ overallPerformanceData, setOverallPerformanceData ] = useState<OverallPerformanceData>([]);
+    const [error, setError] = useState(false);
+    const keys = ["above", "meets", "below", "all"];
+    const sprApi = useSPRReportAPI();
+    useEffect(() => {
+        sprApi.getPerformances({
+            classId: class_id,
+            days: timeRange.value,
+            viewLOs: true,
+            timezone: timeZoneOffset, // No Required
+            [keys.indexOf(selectedNodeId) < 0 ? `studentId` : `group`]: selectedNodeId,
+        }).then(data => {
+            console.log(JSON.stringify(data));
+            setError(false);
+        })
+            .catch(_ => {
+                setError(true);
+            });
+    }, [class_id, selectedNodeId, timeRange]);
+
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTimeRange(event.target.value);
+        const timeRange = filterItems.find(item => item.label === event.target.value);
+        setTimeRange(timeRange);
+
     };
     const handleViewScores = (event: React.ChangeEvent<HTMLInputElement>) => {
         setViewScores(event.target.checked);
@@ -206,7 +263,7 @@ export default function PerformanceRates(props: Props) {
                         <FormControl className={classes.selectInput}>
                             <Select
                                 displayEmpty
-                                value={timeRange}
+                                value={timeRange.label}
                                 inputProps={{
                                     'aria-label': `Without label`,
                                 }}
@@ -220,7 +277,7 @@ export default function PerformanceRates(props: Props) {
                                 }}
                             >
                                 {filterItems.map(item => (
-                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                    <MenuItem key={item.label} value={item.label}>{item.label}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -255,12 +312,13 @@ export default function PerformanceRates(props: Props) {
                         <>
                             <OverallPerformanceChart
                                 data={overallPerformanceData}
-                                timeRange={timeRange}
+                                timeRange={timeRange.label}
                                 filterItems={filterItems}
                                 viewScores={viewScores}
                                 width={width}
                                 height={height}
                                 selectedNodeId={selectedNodeId}
+                                selectedStudent={selectedStudent}
                             />
                             <OverallPerformanceLegend />
                         </>

@@ -13,14 +13,23 @@ import WidgetWrapperError from '../Dashboard/WidgetManagement/WidgetWrapperError
 
 interface Props extends ClassDetail {
 }
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
+}
 
 export default function PerformanceTab(props: Props) {
     const { class_id, performance } = props;
-    const [selectedNode, setSelectedNode] = useState<string | undefined>(``);
+    const [selectedNode, setSelectedNode] = useState<string>(`all`);
+    const [selectedStudent, setSelectedStudent] = useState<StudentProps>();
     const [error, setError] = useState<boolean>(false);
-    const handleSelect = (id: string | undefined) => {
+    const handleSelect = (id: string) => {
         setSelectedNode(id);
     };
+    const updateStudentData = (obj : StudentProps) => {
+        setSelectedStudent(selectedStudent?.student_id === obj.student_id ? undefined : obj);
+    }
     useEffect(() => {
         setError(false);
     }, [class_id]);
@@ -36,6 +45,7 @@ export default function PerformanceTab(props: Props) {
                             handleSelect={handleSelect}
                             setError={setError}
                             selectedNodeId={selectedNode}
+                            updateStudentData={updateStudentData}
                         />
                     </Grid>
                     <Grid item md={9} xs={12}>
@@ -43,6 +53,8 @@ export default function PerformanceTab(props: Props) {
                             {({ width, height }) => (
                                 <PerformanceRates
                                     selectedNodeId={selectedNode}
+                                    class_id={class_id}
+                                    selectedStudent={selectedStudent}
                                     width={width}
                                     height={height}
                                 />
