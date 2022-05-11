@@ -26,7 +26,12 @@ import React,
 
 export default function AgeRangesPage () {
     const currentOrganization = useCurrentOrganization();
-    const combinedOrderBy = [ `lowValueUnit`, `lowValue` ];
+    const combinedOrderBy = [
+        `lowValueUnit`,
+        `lowValue`,
+        `highValueUnit`,
+        `highValue`,
+    ];
     const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,
