@@ -9,7 +9,7 @@ interface DeleteEntity {
     entityName: string;
 }
 
-interface MarkInactiveEntity extends DeleteEntity {}
+interface MarkInactiveEntity extends DeleteEntity { }
 
 export const useDeleteEntityPrompt = () => {
     const intl = useIntl();
@@ -38,7 +38,8 @@ export const useDeleteEntityPrompt = () => {
                         id: `generic_typeToRemovePrompt`,
                     }, {
                         value: <strong>{entityName}</strong>,
-                    })}</DialogContentText>
+                    })}
+                    </DialogContentText>
                 </>
             ),
             validations: [ required(), equals(entityName) ],
@@ -79,7 +80,65 @@ export const useMarkInactiveEntityPrompt = () => {
                         id: `user.inactivate.typeToMarkInactivePrompt`,
                     }, {
                         value: <strong>{entityName}</strong>,
-                    })}</DialogContentText>
+                    })}
+                    </DialogContentText>
+                </>
+            ),
+            validations: [ required(), equals(entityName) ],
+        });
+    };
+};
+interface BlukEditProp {
+    action: '' | 'Active' | 'InActive';
+    entityName: string;
+    isMismatch: boolean;
+}
+
+export const useBulkUserAction = () => {
+    const intl = useIntl();
+    const { required, equals } = useValidations();
+    const prompt = usePrompt();
+    return (props: BlukEditProp) => {
+        const {
+            action,
+            entityName,
+            isMismatch,
+        } = props;
+
+        return prompt({
+            variant: `error`,
+            title: action === `Active` ? intl.formatMessage({
+                id: `entity.user.template.editprompt.activate`,
+                defaultMessage: `Mark user Active`,
+            }) : intl.formatMessage({
+                id: `entity.user.template.editprompt.inactive`,
+                defaultMessage: `Mark user InActive`,
+            }),
+            content: (
+                <>
+                    <DialogContentText>
+                        {action === `Active` ? intl.formatMessage({
+                            id: `user.activate.status.confirm`,
+                            defaultMessage: `Are you sure you want to mark users active?`,
+                        }) : intl.formatMessage({
+                            id: `user.inactivate.status.confirm`,
+                            defaultMessage: `Are you sure you want to mark users inactive?`,
+                        })}
+                    </DialogContentText>
+                    {action === `InActive` &&
+                        <DialogContentText>
+                            {intl.formatMessage({
+                                id: `user.inactivate.details`,
+                            })}
+                        </DialogContentText>}
+                    {isMismatch ? <p>There is a mix of active and inactive users on your selection.</p> : ` `}
+
+                    <DialogContentText>{intl.formatMessage({
+                        id: `user.inactivate.typeToMarkInactivePrompt`,
+                    }, {
+                        value: <strong>{entityName}</strong>,
+                    })}
+                    </DialogContentText>
                 </>
             ),
             validations: [ required(), equals(entityName) ],

@@ -6,7 +6,10 @@ mutation reactivateAllUserInOrganization($userIds: [ID!]!, $organizationId: ID!)
         input: [{
             organizationId: $organizationId
             userIds: $userIds, 
-        }]
-    )
-}
+        }]){
+            organizations {
+                id
+            }  
+        }
+    }
 `;
