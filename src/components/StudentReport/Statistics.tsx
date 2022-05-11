@@ -1,3 +1,4 @@
+import { Performance } from '@/api/sprreportapi';
 import Divider from '@mui/material/Divider';
 import { Theme } from '@mui/material/styles';
 import {
@@ -28,13 +29,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         fontSize: `1rem`,
     },
 }));
-
-interface Performance {
-    total_students: number;
-    average_performance: number;
-    today_total_classes: number;
-    today_activities: number;
-}
 
 interface Props {
     performance: Performance;

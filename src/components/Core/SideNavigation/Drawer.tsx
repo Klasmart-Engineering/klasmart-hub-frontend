@@ -2,6 +2,7 @@ import NavigationMenuList from "./NavigationMenuList";
 import OrganizationMenuList from "./OrganizationMenuList";
 import OrganizationSwitcher from "./OrganizationSwitcher";
 import { MOBILE_WIDTHS } from "@/layout";
+import { useWidth } from "@kl-engineering/kidsloop-px";
 import {
     Drawer,
     useTheme,
@@ -11,7 +12,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import { useWidth } from "@kl-engineering/kidsloop-px";
 import React,
 {
     useEffect,
@@ -22,7 +22,7 @@ const DRAWER_WIDTH = 256;
 
 const useStyles = makeStyles((theme) => createStyles({
     drawer: {
-        width: DRAWER_WIDTH,
+        // width: DRAWER_WIDTH,
         flexShrink: 0,
         flex: 0,
         transition: theme.transitions.create([ `flex` ], {
@@ -81,10 +81,11 @@ export default function SideNavigationDrawer (props: Props) {
                 onClick={() => {
                     if (!MOBILE_WIDTHS.includes(width)) return;
                     onClose(false);
-                }}>
+                }}
+            >
                 {showOrganizations
                     ? <OrganizationMenuList onOrganizationChange={() => setShowOrganizations(false)} />
-                    : <NavigationMenuList/>
+                    : <NavigationMenuList />
                 }
             </div>
         </>

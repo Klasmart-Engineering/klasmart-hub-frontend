@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -17,7 +17,7 @@ import highIcon from "@/assets/img/studentreports/classroster/high.png";
 import averageIcon from "@/assets/img/studentreports/classroster/average.png";
 import lowIcon from "@/assets/img/studentreports/classroster/low.png";
 import { IntlShape, useIntl } from "react-intl";
-import { classRosterGradeStudentList } from './mockClassRoastersData';
+import { useSPRReportAPI } from '@/api/sprreportapi';
 declare module 'react' {
   interface CSSProperties {
     '--tree-view-color'?: string;
@@ -160,6 +160,9 @@ const useFilterTreeStyles = makeStyles((theme: Theme) => createStyles({
 
 const contains = (term: string) => ({ student_name }: Student) => student_name.toLowerCase().indexOf(term.toLowerCase()) !== -1;
 
+const timeZoneOffset = new Date()
+.getTimezoneOffset()/-60;
+
 const getAvatarContent = (name: string) => {
   let splittedArray = name.trim().split(' ');
   return splittedArray.length > 1 ? splittedArray[0][0] + splittedArray[1][0] : splittedArray.length == 1 ? splittedArray[0][0] : ``;
@@ -238,22 +241,40 @@ interface Student {
 }
 
 interface Props {
-  class_id: number;
+  class_id: string;
   selectedNodeId: string | undefined;
-  handleSelect : (id: string | undefined) => void;
+  handleSelect: (id: string | undefined) => void;
+  setError: (error: boolean) => void;
 }
 
 export default function ClassRoster(props: Props) {
   const intl = useIntl();
-  const { class_id, handleSelect, selectedNodeId } = props;
+  const { class_id, handleSelect, selectedNodeId, setError } = props;
 
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
   const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleSelect(selectedNodeId === student.student_id ? id : student.student_id)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
-  const data = [
-    {
+  const sprApi = useSPRReportAPI();
+  useEffect(() => {
+    console.log(class_id);
+    sprApi.getPerformanceByGroups({
+      classId: class_id,
+      timezone: timeZoneOffset, // No Required
+    }).then(data => {
+      formatData(data);
+      setError(false);
+    })
+    .catch(_ => {
+      setError(true);
+    });
+  }, [class_id]);
+
+  const [searchData, setSearchData] = useState<PerformanceGrade[]>([]);
+
+  const formatData = (classRosterGradeStudentList: any) => {
+    const data = [{
       id: `above`,
       name: intl.formatMessage({
         id: `student.report.classroster.above`,
@@ -279,9 +300,9 @@ export default function ClassRoster(props: Props) {
       }),
       color: `#FFBC00`,
       ...classRosterGradeStudentList.below,
-    }
-  ];
-  const [searchData, setSearchData] = React.useState<PerformanceGrade[]>(data);
+    }];
+    setSearchData(data);
+  };
 
   const getSearchData = (searchTerm: string, performanceCategories: PerformanceGrade[]) => {
     if (searchTerm === '') {
@@ -320,7 +341,7 @@ export default function ClassRoster(props: Props) {
         })}
       </Typography>
       <div className={classes.filterTreeContainer}>
-        <div className={classes.filterContainer}>
+      <div className={classes.filterContainer}>
           <CustomSearchField
             fullWidth
             InputProps={{
@@ -335,21 +356,19 @@ export default function ClassRoster(props: Props) {
             })}
             variant="outlined"
             size="small"
-            onChange={(e) => getSearchData(e.target.value, data)}
-          />
-        </div>
-        <div className={classes.treeviewContainer}>
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            defaultEndIcon={<div style={{ width: 24 }} />}
-            expanded={expanded}
-            onNodeToggle={handleChange}
-            sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
-          >
-            {searchData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, searchData.length))}
-          </TreeView>
-        </div>
+            onChange={(e) => getSearchData(e.target.value, searchData)} />
+        </div><div className={classes.treeviewContainer}>
+            <TreeView
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              defaultEndIcon={<div style={{ width: 24 }} />}
+              expanded={expanded}
+              onNodeToggle={handleChange}
+              sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
+            >
+              {searchData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, searchData.length))}
+            </TreeView>
+          </div>
       </div>
     </Box>);
 }

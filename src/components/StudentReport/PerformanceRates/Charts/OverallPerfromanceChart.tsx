@@ -151,7 +151,7 @@ export default function OverallPerformanceChart(props: Props) {
             xScale={dateScaleConfig}
             yScale={valueScaleConfig}
             height={400}
-            width={width}
+            width={width - 10}
             margin={margin}
             onPointerMove={handleMouseOver}
             onPointerOut={handleHideTooltip}
@@ -315,6 +315,7 @@ export default function OverallPerformanceChart(props: Props) {
                                         sx={{ 
                                             width: 30, 
                                             height: 30, 
+                                            display: `grid`,
                                             bgcolor : getStrokeColor(key), 
                                             border: `2px solid ${theme.palette.common.white}`, 
                                         }}>

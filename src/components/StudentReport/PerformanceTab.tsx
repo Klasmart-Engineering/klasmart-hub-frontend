@@ -4,62 +4,51 @@ import Statistics from './Statistics';
 import { Box, Grid } from '@mui/material';
 import { ParentSize } from '@visx/responsive';
 import React,
-{ useState } from 'react';
+{
+    useEffect,
+    useState
+} from 'react';
+import { ClassDetail, Performance } from '@/api/sprreportapi';
+import WidgetWrapperError from '../Dashboard/WidgetManagement/WidgetWrapperError';
 
-interface Performance {
-    total_students: number;
-    average_performance: number;
-    today_total_classes: number;
-    today_activities: number;
-}
-interface PerformanceGrade {
-    id: string;
-    name: string;
-    color: string;
-    students: Student[];
-}
-interface Student {
-    student_id: string;
-    student_name: string;
-    avatar: string;
-}
-
-interface Props {
-    class_id: number;
-    performance: Performance;
+interface Props extends ClassDetail {
 }
 
 export default function PerformanceTab(props: Props) {
     const { class_id, performance } = props;
-    const [selectedNodeId, setSelectedNodeId] = useState<string | undefined>(``);
-
+    const [selectedNode, setSelectedNode] = useState<string | undefined>(``);
+    const [error, setError] = useState<boolean>(false);
     const handleSelect = (id: string | undefined) => {
-        setSelectedNodeId(id);
+        setSelectedNode(id);
     };
+    useEffect(() => {
+        setError(false);
+    }, [class_id]);
 
     return (
         <>
             <Statistics performance={performance} />
-            <Grid container spacing={2}>
-                <Grid item md={3}>
-                    <ClassRoster
-                        class_id={class_id}
-                        handleSelect={handleSelect}
-                        selectedNodeId={selectedNodeId}
-                    />
-                </Grid>
-                <Grid item md={9}>
-                    <ParentSize>
-                        {({ width, height }) => (
-                            <PerformanceRates
-                                selectedNodeId={selectedNodeId}
-                                width={width}
-                                height={height}
-                            />
-                        )}
-                    </ParentSize>
-                </Grid>
-            </Grid>
-        </>
-    );
+            {error ? <WidgetWrapperError /> :
+                <Grid container spacing={2} wrap={'wrap'}>
+                    <Grid item md={3} xs={12}>
+                        <ClassRoster
+                            class_id={class_id}
+                            handleSelect={handleSelect}
+                            setError={setError}
+                            selectedNodeId={selectedNode}
+                        />
+                    </Grid>
+                    <Grid item md={9} xs={12}>
+                        <ParentSize>
+                            {({ width, height }) => (
+                                <PerformanceRates
+                                    selectedNodeId={selectedNode}
+                                    width={width}
+                                    height={height}
+                                />
+                            )}
+                        </ParentSize>
+                    </Grid>
+                </Grid>}
+        </>);
 }
