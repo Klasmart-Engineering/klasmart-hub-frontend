@@ -44,7 +44,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
     list: {
         listStyle: `none`,
         padding: 0,
-        margin:0,
+        margin: 0,
         display: `flex`,
         flexDirection: `column`,
         justifyContent: `space-around`,
@@ -55,7 +55,7 @@ const useStyles = makeStyles(((theme: Theme) => createStyles({
         gridTemplateRows: `1fr`,
         gridTemplateColumns: `50% 25% 25%`,
         alignItems: `center`,
-        justifyItems:`center`,
+        justifyItems: `center`,
         backgroundColor: theme.palette.grey[100],
         padding: `1.1rem 0 1.1rem 0`,
         borderRadius: `0.5rem`,
@@ -83,8 +83,10 @@ export default function TeacherLoadWidget () {
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
     const now = new Date();
-    const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
-    const unixNext7daysIncludeToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59).getTime();
+    const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+        .getTime();
+    const unixNext7daysIncludeToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59)
+        .getTime();
     const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
     const [ totalClasses, setTotalClasses ] = useState<(number)>(0);
@@ -148,12 +150,12 @@ export default function TeacherLoadWidget () {
             error={isTeacherDataError || isScheduleError}
             noData={!teacherData?.successful || !schedulesData?.data}
             reload={reload}
-            link={{
+            /*link={{
                 url: `reports`,
                 label: intl.formatMessage({
                     id: `home.teacherLoad.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.TEACHERLOAD}
         >
             <div className={classes.widgetContent}>

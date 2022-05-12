@@ -2,6 +2,101 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.54.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.1%0Dv2.54.0) (2022-05-10)
+
+
+### 🐛 Bug Fixes
+
+* layout css issue fix (#101) ([8fc9c46](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8fc9c46725ebe44c8901e49658fde41480ec4947))
+* upgraded px to table fix version (#98) ([8e1bf5e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8e1bf5e0ecce4999f7371e32c05048f47d5b562f))
+
+## [2.54.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.0%0Dv2.53.1) (2022-05-09)
+
+
+### ✨ Features
+
+* removed the irrelevant links from students and teachers widget (#81) ([a4fa75f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a4fa75fa15d1f77c6b94dea74976c0f8d1b10919))
+
+
+### 🐛 Bug Fixes
+
+* rollback px version and disable academic term filter (#97) ([7e51db0](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7e51db0b10f0ceef8aa605a1a5aeca83526ea1fc)), closes [ad-2491](https://calmisland.atlassian.net/browse/ad-2491)
+* school admin now has delete button for class disabled in edit form (#75) ([90f3da4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/90f3da4c9b4bd2e9bf1587c944f336e3f3064dfd))
+
+### [2.53.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.1%0Dv2.53.0) (2022-05-06)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2497:** user is unable to create classes when selecting multiple schools (#93) ([528c4d4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/528c4d4d7f94275d5162345bf44c5dd06084fd63)), closes [AD-2497](https://calmisland.atlassian.net/browse/AD-2497)
+
+## [2.53.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.53.0%0Dv2.52.3) (2022-05-06)
+
+
+### ✨ Features
+
+* add performance rates widget in student reports  (#84) ([1b8a2f4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1b8a2f422be2c149a334e87a0eac801b8555de19))
+
+### [2.52.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.3%0Dv2.52.2) (2022-05-06)
+
+
+### ♻️ Chores
+
+* **localization:** update translations (#92) ([c4dfce8](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/c4dfce85984d67f96ce2fa365e35a79f9caa6c10))
+
+
+### 🐛 Bug Fixes
+
+* ad-2491 lingering state for academic term filter (#91) ([2850d0d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/2850d0d4d40cf07edbc1f45cfdf7f94077683ad9)), closes [ad-2491](https://calmisland.atlassian.net/browse/ad-2491)
+
+### [2.52.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.2%0Dv2.52.1) (2022-05-05)
+
+
+### ♻️ Chores
+
+* **AD-2494:** update academic term permissions (#89) ([9826583](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9826583c365735e68252dea6f3b16a98fc8605f2)), closes [AD-2494](https://calmisland.atlassian.net/browse/AD-2494)
+
+### [2.52.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.1%0Dv2.52.0) (2022-05-05)
+
+
+### 🐛 Bug Fixes
+
+* **HU-7:** get all available classes on class transfer dialog (#88) ([81dd0c2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/81dd0c2be0a75ec39735af672e9490b5410ff5d1))
+
+## [2.52.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.52.0%0Dv2.51.0) (2022-05-05)
+
+
+### ✨ Features
+
+* ad-2326 academic term filter (#86) ([b79cd6a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/b79cd6a67b8b43ef79220fbe2f369d360a6b5673)), closes [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [ad-2332](https://calmisland.atlassian.net/browse/ad-2332) [AD-1895](https://calmisland.atlassian.net/browse/AD-1895) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326) [ad-2326](https://calmisland.atlassian.net/browse/ad-2326)
+* added academic term column to school table (#85) ([cb0339b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/cb0339bd6ffedb5c2c5b7981ec85b854aa95f671))
+
+## [2.51.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.51.0%0Dv2.50.1) (2022-05-03)
+
+
+### ✨ Features
+
+* **AD-2197:** assign an academic term creating/editing a class (#82) ([57afc1e](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/57afc1ee9685cc5fb84b70eca51f013b9c3b52e4)), closes [AD-2197](https://calmisland.atlassian.net/browse/AD-2197)
+
+### [2.50.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.1%0Dv2.50.0) (2022-04-29)
+
+
+### 🐛 Bug Fixes
+
+* allow to choose dates in the past on academic term creation (#74) ([ba2d48c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ba2d48c992b7cc334b21b0e9af518a8ed0f28fcb))
+
+## [2.50.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.50.0%0Dv2.49.0) (2022-04-28)
+
+
+### ✨ Features
+
+* **DT-797:** cluster class roster into groups by performance merged classfilter statistics and class roster (#67) ([8ac377b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8ac377bece38b6dd3a6964185ffccb9f25c4d359)), closes [DT-797](https://calmisland.atlassian.net/browse/DT-797)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2471:** provide better error message on same name AT creation (#73) ([9330c46](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9330c4607f6b90d78d6d771c8c02915cd1a9478e)), closes [AD-2471](https://calmisland.atlassian.net/browse/AD-2471)
+
 ## [2.49.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.49.0%0Dv2.48.0) (2022-04-27)
 
 

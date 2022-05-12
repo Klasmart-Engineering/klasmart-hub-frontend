@@ -79,12 +79,12 @@ export default function LearningOutcomeSummary (props: Props) {
             label={intl.formatMessage({
                 id: `home.student.learningOutcomeWidget.containerTitleLabel`,
             })}
-            link={{
-                url: `reports`,
+            /*link={{
+                url: ``,
                 label: intl.formatMessage({
                     id: `home.student.learningOutcomeWidget.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.LEARNINGOUTCOME}
         >
             <ParentSize>

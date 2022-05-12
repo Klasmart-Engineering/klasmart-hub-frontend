@@ -214,7 +214,6 @@ export default function AcademicTermDialogForm (props: Props) {
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <Stack spacing={3}>
                     <DatePicker
-                        disablePast
                         label={intl.formatMessage({
                             id: `common.startDate.label`,
                             defaultMessage: `Start date`,
@@ -242,7 +241,6 @@ export default function AcademicTermDialogForm (props: Props) {
                         }}
                     />
                     <DatePicker
-                        disablePast
                         label={intl.formatMessage({
                             id: `common.endDate.label`,
                             defaultMessage: `End date`,

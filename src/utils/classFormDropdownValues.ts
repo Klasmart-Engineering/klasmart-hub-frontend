@@ -1,9 +1,11 @@
+import { mapAcademicTermEdgesToFilterValues } from "./academicTerms";
 import { mapAgeRangesToFilter } from "./ageRanges";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { buildProgramIdFilter } from "./sharedFilters";
 import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
+import { useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetPaginatedOrganizationGradesList } from "@/api/grades";
 import { useGetAllPaginatedPrograms } from "@/api/programs";
@@ -16,6 +18,7 @@ import {
     useEffect,
     useState,
 } from "react";
+import { useIntl } from "react-intl";
 
 export const useGetClassFormValues = (programIds: string[], schoolIds: string[]) => {
     const [ gradeValueOptions, setGradeValueOptions ] = useState<FilterValueOption[]>([]);
@@ -23,6 +26,11 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
     const [ ageRangeValueOptions, setAgeRangeValueOptions ] = useState<FilterValueOption[]>([]);
     const [ programValueOptions, setProgramValueOptions ] = useState<FilterValueOption[]>([]);
     const [ schoolValueOptions, setSchoolValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ academicTermsValueOptions, setAcademicTermsValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ singleSchoolId, setSingleSchoolId ] = useState<string>();
+
+    const intl = useIntl();
+
     const {
         data: gradesData,
         loading: gradesLoading,
@@ -110,6 +118,35 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
         notifyOnNetworkStatusChange: true,
         fetchPolicy: `no-cache`,
     });
+
+    const {
+        loading: academicTermsLoading,
+        data: academicTermData,
+        refetch: refetchAcademicTerms,
+    } = useGetPaginatedAcademicTerms({
+        variables: {
+            id: singleSchoolId,
+            direction: `FORWARD`,
+            orderBy: `name`,
+            order: `ASC`,
+            count: 50,
+            filter: {
+                status: {
+                    operator: `eq`,
+                    value: Status.ACTIVE,
+                },
+            },
+        },
+        skip: !singleSchoolId,
+        fetchPolicy: `no-cache`,
+        notifyOnNetworkStatusChange: true,
+    });
+
+    useEffect(() => {
+        if (schoolIds?.length === 1){
+            setSingleSchoolId(schoolIds[0]);
+        }
+    }, [ schoolIds ]);
 
     useEffect(() => {
         if (!gradesData?.gradesConnection?.pageInfo?.hasPreviousPage && !gradesLoading) {
@@ -206,17 +243,38 @@ export const useGetClassFormValues = (programIds: string[], schoolIds: string[])
         schoolsLoading,
     ]);
 
+    useEffect(() => {
+        if (!academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasPreviousPage && !academicTermsLoading) {
+            setAcademicTermsValueOptions(mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl));
+        } else {
+            setAcademicTermsValueOptions((values) => ([ ...values, ...mapAcademicTermEdgesToFilterValues(academicTermData?.schoolNode?.academicTermsConnection?.edges ?? [], intl) ]));
+        }
+
+        if (academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.hasNextPage) {
+            refetchAcademicTerms({
+                cursor: academicTermData?.schoolNode?.academicTermsConnection?.pageInfo?.endCursor ?? ``,
+            });
+        }
+    }, [
+        academicTermData,
+        setAcademicTermsValueOptions,
+        refetchAcademicTerms,
+        academicTermsLoading,
+    ]);
+
     return {
         gradeValueOptions,
         subjectValueOptions,
         ageRangeValueOptions,
         programValueOptions,
         schoolValueOptions,
+        academicTermsValueOptions,
         gradesLoading,
         subjectsLoading,
         ageRangesLoading,
         programsLoading,
         schoolsLoading,
         refetchPrograms,
+        academicTermsLoading,
     };
 };

@@ -45,7 +45,6 @@ export default function CreateAcademicTermDialog (props: Props) {
     }, [ open ]);
 
     const handleCreate = async () => {
-
         try {
 
             const {
@@ -73,33 +72,49 @@ export default function CreateAcademicTermDialog (props: Props) {
             });
         } catch (error) {
 
-            let errors = [];
+            let errorCode;
+
+            const ERR_OVERLAPPING_DATE_RANGE = `ERR_OVERLAPPING_DATE_RANGE`;
+            const ERR_DUPLICATE_CHILD_ENTITY = `ERR_DUPLICATE_CHILD_ENTITY`;
 
             if (error instanceof ApolloError && error.message === `ERR_API_BAD_INPUT`) {
-                errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === `ERR_API_BAD_INPUT`)
+                const errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === `ERR_API_BAD_INPUT`)
                     ?.map(graphQLError => graphQLError.extensions?.exception?.errors)
-                    ?.flatMap(graphQLErrors=> graphQLErrors)
-                    ?.filter(specificError=> specificError.code === `ERR_OVERLAPPING_DATE_RANGE`);
+                    ?.flatMap(graphQLErrors=> graphQLErrors);
+
+                const overlappingDateErrors = errors?.filter(specificError=> specificError.code === ERR_OVERLAPPING_DATE_RANGE);
+                const duplicateNameErrors = errors?.filter(specificError=> specificError.code === ERR_DUPLICATE_CHILD_ENTITY);
+
+                errorCode = overlappingDateErrors.length > 0 ? ERR_OVERLAPPING_DATE_RANGE :
+                    ( duplicateNameErrors.length > 0 ? ERR_DUPLICATE_CHILD_ENTITY : undefined);
             }
 
-            if (errors.length > 0){
+            switch(errorCode) {
+            case ERR_OVERLAPPING_DATE_RANGE:
                 enqueueSnackbar(intl.formatMessage({
                     id: `academicTerm.validationError.dateRangeConflict`,
                     defaultMessage: `Current date range conflicts with an existing academic term date range`,
                 }), {
                     variant: `error`,
                 });
-
-                return;
+                break;
+            case ERR_DUPLICATE_CHILD_ENTITY:
+                enqueueSnackbar(intl.formatMessage({
+                    id: `academicTerm.validationError.duplicateName`,
+                    defaultMessage: `Current academic term name conflicts with an existing academic term name`,
+                }), {
+                    variant: `error`,
+                });
+                break;
+            default:
+                enqueueSnackbar(intl.formatMessage({
+                    id: `academicTerm.create.error.general`,
+                    defaultMessage: `Academic term create has failed`,
+                }), {
+                    variant: `error`,
+                });
+                break;
             }
-
-            enqueueSnackbar(intl.formatMessage({
-                id: `academicTerm.create.error.general`,
-                defaultMessage: `Academic term create has failed`,
-            }), {
-                variant: `error`,
-            });
-
         }
     };
 

@@ -3,12 +3,16 @@ import {
     mapAgeRangesLowValueToFilter,
 } from "./ageRanges";
 import { mapCategoriesToFilterOptions } from "./categories";
-import { mapClassEdgesToFilterValues } from "./classes";
+import {
+    mapAcademicTerm,
+    mapClassEdgesToFilterValues,
+} from "./classes";
 import { mapGradeEdgesToFilterOptions } from "./grades";
 import { mapProgramEdgesToFilterValues } from "./programs";
 import { mapSchoolEdgesToFilterValues } from "./schools";
 import { mapSubjectEdgesToFilterValueOptions } from "./subjects";
 import { mapUserRolesToFilterValueOptions } from "./users";
+import { useGetPaginatedAcademicTerms } from "@/api/academicTerms";
 import { useGetPaginatedAgeRangesList } from "@/api/ageRanges";
 import { useGetAllCategories } from "@/api/categories";
 import { useGetAllPaginatedClasses } from "@/api/classes";
@@ -39,6 +43,7 @@ interface SelectFilters {
     queryPrograms?: boolean;
     queryUserRoles?: boolean;
     queryCategories?: boolean;
+    queryAcademicTerm?: { schoolId: string };
 }
 
 export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters, skipAll?: boolean) => {
@@ -51,6 +56,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     const [ programsFilterValueOptions, setProgramsFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ userRolesFilterValueOptions, setUserRolesFilterValueOptions ] = useState<FilterValueOption[]>([]);
     const [ categoriesFilterValueOptions, setCategoriesFilterValueOptions ] = useState<FilterValueOption[]>([]);
+    const [ academicTermValueOptions, setAcademicTermValueOptions ] = useState<FilterValueOption[]>([]);
     const gradeFilter = buildGradeFilter({
         organizationId: orgId ?? ``,
         search: ``,
@@ -237,6 +243,7 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ ageRangesData, fetchMoreAgeRanges ]);
 
     useEffect(() => {
+
         setSchoolsFilterValueOptions((values) => ([ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
         if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
             fetchMoreSchools({
@@ -284,6 +291,20 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         setCategoriesFilterValueOptions(mapCategoriesToFilterOptions(categoriesData?.organization?.categories ?? []));
     }, [ categoriesData ]);
 
+    const { data: academicTermData } = useGetPaginatedAcademicTerms({
+        variables: {
+            id: selectedFilters.queryAcademicTerm?.schoolId ?? ``,
+            direction: `FORWARD`,
+            order: `ASC`,
+            orderBy: `name`,
+        },
+        skip: !orgId || skipAll || !selectedFilters.queryAcademicTerm?.schoolId,
+    });
+
+    useEffect(() => {
+        if (academicTermData?.schoolNode) setAcademicTermValueOptions(mapAcademicTerm(academicTermData.schoolNode));
+    }, [ academicTermData ]);
+
     return {
         gradeFilterValueOptions,
         subjectFilterValueOptions,
@@ -294,5 +315,6 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         programsFilterValueOptions,
         userRolesFilterValueOptions,
         categoriesFilterValueOptions,
+        academicTermValueOptions,
     };
 };

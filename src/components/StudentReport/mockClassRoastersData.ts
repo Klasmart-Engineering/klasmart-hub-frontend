@@ -1,4 +1,4 @@
-const classRoastersData = {
+export const classRoastersData = {
     total: 30,
     classes: [
         {
@@ -214,8 +214,6 @@ const classRoastersData = {
         },
     ],
 };
-
-export default classRoastersData;
 
 export const classRosterGradeStudentList = {
     above: {

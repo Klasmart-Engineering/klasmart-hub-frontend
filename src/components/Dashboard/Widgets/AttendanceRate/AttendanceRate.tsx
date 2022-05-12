@@ -101,12 +101,12 @@ export default function AttendanceRateWidget () {
                     id: `home.attendance.containerTitleLabel`,
                 })
             }
-            link={{
+            /*link={{
                 url: `reports`,
                 label: intl.formatMessage({
                     id: `home.attendance.containerUrlLabel`,
                 }),
-            }}
+            }}*/
             id={WidgetType.ATTENDANCERATE}
         >
             <div className={classes.titleWrapper}>

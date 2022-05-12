@@ -1,6 +1,11 @@
-import { AcademicTermNode } from "@/api/academicTerms";
+import {
+    AcademicTermEdge,
+    AcademicTermNode,
+} from "@/api/academicTerms";
 import { AcademicTermForm } from "@/components/School/AcademicTerm/Dialog/Form";
 import { AcademicTermRow } from "@/components/School/AcademicTerm/Table";
+import { Status } from "@/types/graphQL";
+import { IntlShape } from "react-intl";
 
 export const buildEmptyAcademicTerm = (): AcademicTermRow => ({
     id: ``,
@@ -22,3 +27,18 @@ export const mapAcademicTermNodeToAcademicTermRow = (node: AcademicTermNode): Ac
     endDate: node.endDate,
     status: node.status,
 });
+
+export const mapAcademicTermEdgesToFilterValues = (schoolEdges: AcademicTermEdge[], intl: IntlShape) => (
+    schoolEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
+        .concat({
+            label: intl.formatMessage({
+                id: `groups_none`,
+                defaultMessage: `None`,
+            }),
+            value: ``,
+        })
+);
