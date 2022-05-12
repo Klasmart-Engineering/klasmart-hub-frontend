@@ -2,12 +2,12 @@ import { OrganizationMembershipConnectionNode } from "@/api/organizationMembersh
 import {
     atom,
     selector,
-    useRecoilState,
-    useRecoilValue,
-} from "recoil";
-import { recoilPersist } from 'recoil-persist';
+    statePersist,
+    useGlobalState,
+    useGlobalStateValue,
+} from "@kl-engineering/frontend-state";
 
-const { persistAtom } = recoilPersist();
+const { persistAtom } = statePersist();
 
 export const organizationMembershipStackState = atom<OrganizationMembershipConnectionNode[]>({
     key: `organizationStackState`,
@@ -15,7 +15,7 @@ export const organizationMembershipStackState = atom<OrganizationMembershipConne
     // eslint-disable-next-line @typescript-eslint/naming-convention
     effects_UNSTABLE: [ persistAtom ],
 });
-export const useOrganizationStack = () => useRecoilState(organizationMembershipStackState);
+export const useOrganizationStack = () => useGlobalState(organizationMembershipStackState);
 
 export const currentOrganizationMembershipValue = selector({
     key: `currentOrganizationMembershipValue`,
@@ -25,7 +25,7 @@ export const currentOrganizationMembershipValue = selector({
         return memberships[0];
     },
 });
-export const useCurrentOrganizationMembership = () => useRecoilValue(currentOrganizationMembershipValue);
+export const useCurrentOrganizationMembership = () => useGlobalStateValue(currentOrganizationMembershipValue);
 
 export const currentOrganizationValue = selector({
     key: `currentOrganizationValue`,
@@ -34,4 +34,4 @@ export const currentOrganizationValue = selector({
         return memberships[0]?.organization;
     },
 });
-export const useCurrentOrganization = () => useRecoilValue(currentOrganizationValue);
+export const useCurrentOrganization = () => useGlobalStateValue(currentOrganizationValue);
