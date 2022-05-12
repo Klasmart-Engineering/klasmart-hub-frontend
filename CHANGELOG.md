@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.55.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.55.0%0Dv2.54.2) (2022-05-12)
+
+
+### ⚙️ Continuous Integrations
+
+* enabling multi arch containers (#80) ([75fdda9](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/75fdda98de4e20da5bd81b4d8f9c87c7bb4cb48c))
+
+
+### ♻️ Chores
+
+* add KLS Jira tag ([9e38057](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9e380571b4bdce6d8c424eee982304225f324a61))
+* **DT-847:** Student Progress Report Translations (#108) ([f0de6f0](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f0de6f01296c9ec4bb0a408bd0d2381e49fecda0)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
+
+### ✨ Features
+
+* **KLS-449:** add schedule MFE to schedule page behind feature flag (#109) ([29b4149](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/29b41491be3f6d04fcad8a74da85d4a4c5857af2)), closes [KLS-449](https://calmisland.atlassian.net/browse/KLS-449) [KLS-449](https://calmisland.atlassian.net/browse/KLS-449)
+
 ### [2.54.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.2%0Dv2.54.1) (2022-05-12)
 
 
