@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const timeZoneOffset = new Date()
-.getTimezoneOffset()/-60;
+  .getTimezoneOffset() / -60;
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -105,6 +105,7 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
   const style = useStyles();
   const theme = createTheme();
   const [classess, setClassess] = useState<ClassDetail[]>([]);
+  const [selectedClass, setSelectedClass] = useState<ClassDetail>();
   const [count, setCount] = useState(1);
   const tabsRef = createRef<any>();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -112,6 +113,7 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
   const sprApi = useSPRReportAPI();
   const currentOrganization = useCurrentOrganization();
   const orgId = currentOrganization?.id || ``;
+  const [index, setIndex] = useState<number>(0);
   useEffect(() => {
     sprApi.getClasses({
       orgId,
@@ -119,18 +121,18 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
       timezone: timeZoneOffset, // No Required
     }).then(data => {
       setClassess(data?.classes || []);
+      setSelectedClass(data?.classes[0]);
       setError(false);
     })
-    .catch(() => setError(true));
+      .catch(() => setError(true));
   }, [orgId]);
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
   const selectClass = (classDetail: ClassDetail) => {
     onClassChange(classDetail);
-    const index = classess.findIndex((v: ClassDetail) => v.class_id === classDetail.class_id);
-    classess.splice(index, 1);
-    setClassess([classDetail, ...classess]);
+    setSelectedClass(classDetail);
+    setIndex(classess.findIndex((v: ClassDetail) => v.class_id === classDetail?.class_id))
   };
   const handleClose = (classDetail: ClassDetail) => {
     setAnchorEl(null);
@@ -147,7 +149,7 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
       if (!element) return;
       // Getting access to class list array
       const classess = Array.from(
-        element?.children[0]?.children[0]?.children || []
+        element?.children[1]?.children[0]?.children || []
       );
       // filter the number of class name outside of view.
       const count = classess.filter(isInViewport).length;
@@ -159,8 +161,9 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
   return (
     <Box className={style.classessBar}>
       <Tabs
-        value={0}
+        value={index}
         scrollButtons={false}
+        variant="scrollable"
         sx={{
           [`& .${tabsClasses.scrollButtons}`]: {
             '&.Mui-disabled': { opacity: 0.3 },
@@ -168,16 +171,17 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
           [`& .${tabsClasses.indicator}`]: {
             backgroundColor: `unset`,
           },
-          margin: `auto`,
+          marginRight: `auto`,
+          width: '90%',
         }}
         ref={tabsRef}
       >
-        {classess.map((classDetail, index) => (
+        {classess.map((classDetail, i) => (
           <ClassTab
             key={classDetail.class_id}
             label={classDetail.class_name}
             onClick={() => selectClass(classDetail)}
-            className={index === 0 ? `` : style.seperator}
+            className={ ((i === index) || (i === index - 1)) ? `` : style.seperator}
           />
         ))}
       </Tabs>
