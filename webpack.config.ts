@@ -9,16 +9,14 @@ import Dotenv from "dotenv-webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import UnusedWebpackPlugin from "unused-webpack-plugin";
-import {
+import webpack, {
     Configuration,
     EnvironmentPlugin,
 } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import zlib from "zlib";
 
-config({
-    path: process.env.ENV_PATH,
-});
+config();
 
 const modes: Required<Configuration["mode"]>[] = [
     `development`,
@@ -38,7 +36,7 @@ const webpackConfig: Configuration = {
     mode: nodeEnv,
     devtool: isDev ? `eval-cheap-module-source-map` : `source-map`,
     entry: {
-        hubui: `./src/client-entry.tsx`,
+        hubui: `./src/bootstrap.ts`,
     },
     module: {
         rules: [
@@ -99,7 +97,10 @@ const webpackConfig: Configuration = {
     plugins: [
         new EnvironmentPlugin({
             VERSION: pkg.version,
-            GIT_COMMIT: execSync(`git rev-parse HEAD`).toString().trim().slice(0, 7),
+            GIT_COMMIT: execSync(`git rev-parse HEAD`)
+                .toString()
+                .trim()
+                .slice(0, 7),
         }),
         new CopyWebpackPlugin({
             patterns: [
@@ -144,6 +145,27 @@ const webpackConfig: Configuration = {
                     test: /\.(js|css|html|svg|otf|ttf)$/,
                 }),
             ],
+        new webpack.container.ModuleFederationPlugin({
+            name: `hub`,
+            filename: `remoteEntry.js`,
+            remotes: {
+                schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
+            },
+            shared: {
+                '@kl-engineering/frontend-state': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
+                },
+                react: {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react`],
+                },
+                'react-dom': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react-dom`],
+                },
+            },
+        }),
         // new UnusedWebpackPlugin({
         //     // Source directories
         //     directories: [ path.join(__dirname, `src`) ],

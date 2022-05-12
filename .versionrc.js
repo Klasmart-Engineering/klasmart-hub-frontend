@@ -62,5 +62,9 @@ module.exports = {
     commitUrlFormat: `{{host}}/{{owner}}/{{repository}}/commits/{{hash}}`,
     compareUrlFormat: `{{host}}/{{owner}}/{{repository}}/branches/compare/{{currentTag}}%0D{{previousTag}}`,
     issueUrlFormat: `https://calmisland.atlassian.net/browse/{{prefix}}{{id}}`,
-    issuePrefixes: [ `AD-`, `DT-` ],
+    issuePrefixes: [
+        `AD-`,
+        `DT-`,
+        `HU-`,
+    ],
 };
