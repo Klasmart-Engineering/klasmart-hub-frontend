@@ -38,12 +38,12 @@ interface GetPerformancesRequest {
     group?: string;
     studentId?: string;
 }
-interface GetPerformancesRepsonse {
+export interface GetPerformancesRepsonse {
     name: string;
     above: number;
     meets: number;
     below: number;
-    score: PerformanceScore;
+    learningOutcome: PerformanceScore;
 }
 interface PerformanceScore {
     below: number;
@@ -83,10 +83,10 @@ export class SPRReportAPI {
         const body: GetClassesRepsonse = await response.json() as GetClassesRepsonse;
         return body;
     }
-    public async getPerformances (request: GetPerformancesRequest): Promise<GetPerformancesRepsonse | null> {
+    public async getPerformances (request: GetPerformancesRequest): Promise<GetPerformancesRepsonse[] | null> {
         const str = queryString.stringify(request);
         const response = await this.sprCall(`GET`, `/performances?${str}`);
-        const body: GetPerformancesRepsonse = await response.json() as GetPerformancesRepsonse;
+        const body: GetPerformancesRepsonse[] = await response.json() as GetPerformancesRepsonse[];
         return body;
     }
     public async getPerformanceByGroups (request: GetPerformanceGroupRequest): Promise<GetPerformancesGroupRepsonse | null> {
@@ -105,7 +105,7 @@ export class SPRReportAPI {
     private async fetchRoute (method: string, prefix: string, route: string, body?: string) {
         const cookie = new Cookies();
         const accessToken =
-        `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjMzMTM1MywiaXNzIjoia2lkc2xvb3AifQ.mXm2Y4QxYVmiBELGUrrlXi7KfVkiGDersbiFNqsU4jjb4CsSsLFmNOHdg634-wjDsJ__-akxDG5L0Er0TTZeN3LNi3g-A812vDGnlQIbYS1Dzq7qD_lXGVOiwB8vC2TjE2Sqr67Gi4S8YR3wMUVvrm344Qjj6czXz8QBplBba-vaRdbyWVER6-pqgVjxroU_Eiw1OVbmqobYuZYfBY4QCmcO1evGGlBcAKzU7p2nprspbdovBExvcakE5HXgzpgF9kT8-guo_PFDKSF0P4sCG6AvDTlKcYUMc6lYx7-Q9FZhdUebwCweE3Dug8wIk9Yercc8QWfE219KRG5araG7PA`;
+        `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjMzODU1OCwiaXNzIjoia2lkc2xvb3AifQ.BO276zIDzQSqSPg9DczFsdxgdKd2PT4WQ2ygIiDPj3x7J6Xluhum0cjlZZRI9De7Um-DUf_G4S_1sIjDi-1kciMwUZzyAM7OE71RnZSPjM1t4xQkY4DD1wRi6e-GpWM7Cksp3NqlSHlvxtk6T3S1-BOQGUuqb4T7AGBvY4AXQD277S7A_159ecS1w-GDCz_REbDsUesG3-xHtL4MMRXrPYEXJOh2Rtk6oz6FykxKuseKNp9gzVy6G61bJjOH2yX6No8t_b_zMek_zssOwLDv5I8WYt7_0Wh4qm7kcRu_f9HIrv8IrAUc7n6o5Hi4rVja2g-ihGJr0kOIBphH1p-7Jg`;
         // cookie.get(ACCESS_TOKEN_COOKIE);
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);

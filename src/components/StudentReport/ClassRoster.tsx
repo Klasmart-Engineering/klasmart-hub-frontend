@@ -229,7 +229,7 @@ const ClassRosterTreeItem = (props: ClassRosterTreeItemProps) => {
   );
 }
 interface PerformanceGrade {
-  id: string;
+  id: `all` | `above` | `below` | `meets`;
   name: string;
   color: string;
   students: Student[];
@@ -243,21 +243,23 @@ interface Student {
 interface Props {
   class_id: string;
   selectedNodeId: string | undefined;
-  handleSelect: (id: string) => void;
+  selectedGroup: string;
+  handleSelect: (id: string | undefined) => void;
   updateStudentData: (obj: Student) => void
   setError: (error: boolean) => void;
+  updateGroup: (obj: `all` | `above` | `below` | `meets`) => void
 }
 
 export default function ClassRoster(props: Props) {
   const intl = useIntl();
-  const { class_id, handleSelect, updateStudentData, selectedNodeId, setError } = props;
+  const { class_id, handleSelect, updateStudentData, selectedNodeId, setError, updateGroup, selectedGroup } = props;
 
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
   const handleStudentClick = (id: string, student:Student) => {
     updateStudentData(student);
-    handleSelect(selectedNodeId === student.student_id ? id : student.student_id);
+    handleSelect(selectedNodeId === student.student_id ? undefined : student.student_id);
   }
   const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleStudentClick(id, student)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
@@ -275,7 +277,8 @@ export default function ClassRoster(props: Props) {
     });
   }, [class_id]);
 
-  const [searchData, setSearchData] = useState<PerformanceGrade[]>([]);
+  const [initalData, setInitalData] = useState<PerformanceGrade[]>([]);
+  const [filteredData, setFilteredData] = useState<PerformanceGrade[]>([]);
 
   const formatData = (classRosterGradeStudentList: any) => {
     const data = [{
@@ -305,12 +308,13 @@ export default function ClassRoster(props: Props) {
       color: `#FFBC00`,
       ...classRosterGradeStudentList.below,
     }];
-    setSearchData(data);
+    setInitalData(data);
+    setFilteredData(data);
   };
 
   const getSearchData = (searchTerm: string, performanceCategories: PerformanceGrade[]) => {
     if (searchTerm === '') {
-      setSearchData(performanceCategories);
+      setFilteredData(performanceCategories);
       setExpanded([]);
       return;
     }
@@ -321,14 +325,14 @@ export default function ClassRoster(props: Props) {
     const expandedNodes = filterStudents
       .filter(category => !!category.students.length)
       .map(caterogy => caterogy.id);
-    setSearchData(filterStudents);
+    setFilteredData(filterStudents);
     setExpanded(expandedNodes);
   }
 
   const renderPerformanceGradeTree = ((performanceGrade: PerformanceGrade, index: number, size: number) => {
     return (
       <div key={performanceGrade.id}>
-        <ClassRosterTreeItem onClick={() => handleSelect(selectedNodeId === performanceGrade.id ? `all` : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
+        <ClassRosterTreeItem onClick={() => updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
           {performanceGrade?.students?.map((student: Student) => renderStudent(student, performanceGrade.color, performanceGrade.id))}
         </ClassRosterTreeItem>
         {size != index + 1 ? <Divider className={classes.divider} /> : ``}
@@ -360,7 +364,7 @@ export default function ClassRoster(props: Props) {
             })}
             variant="outlined"
             size="small"
-            onChange={(e) => getSearchData(e.target.value, searchData)} />
+            onChange={(e) => getSearchData(e.target.value, initalData)} />
         </div><div className={classes.treeviewContainer}>
             <TreeView
               defaultCollapseIcon={<ExpandMoreIcon />}
@@ -370,7 +374,7 @@ export default function ClassRoster(props: Props) {
               onNodeToggle={handleChange}
               sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
             >
-              {searchData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, searchData.length))}
+              {filteredData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, filteredData.length))}
             </TreeView>
           </div>
       </div>

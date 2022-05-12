@@ -9,7 +9,7 @@ import RadioButtonCheckedOutlinedIcon from '@mui/icons-material/RadioButtonCheck
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
 import OverallPerformanceChart from "./Charts/OverallPerfromanceChart";
 import { getOverallPerformanceData, skillPerformanceData, getSkillSlides } from "./utilities";
-import { aggregateData } from "./DataFormatter";
+import aggregateData from "./DataFormatter";
 //TODO : These will be enabled once the skill based chart Api  is ready
 // import SkillPerformance from "./Charts/SkillPerformance";
 // import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
@@ -160,16 +160,17 @@ interface StudentProps {
 interface Props {
     width: number;
     height: number;
-    selectedNodeId: string;
+    selectedNodeId: string | undefined;
     class_id: string;
     selectedStudent: StudentProps | undefined;
+    selectedGroup: `all` | `above` | `below` | `meets`;
 }
 
 const timeZoneOffset = new Date()
     .getTimezoneOffset() / -60;
 
 export default function PerformanceRates(props: Props) {
-    const { selectedNodeId, width, height, class_id, selectedStudent } = props;
+    const { selectedNodeId, width, height, class_id, selectedStudent, selectedGroup } = props;
     const classes = useStyles();
     const theme = createTheme();
     const intl = useIntl();
@@ -215,16 +216,18 @@ export default function PerformanceRates(props: Props) {
             days: timeRange.value,
             viewLOs: true,
             timezone: timeZoneOffset, // No Required
-            [keys.indexOf(selectedNodeId) < 0 ? `studentId` : `group`]: selectedNodeId,
+            ...(selectedNodeId && { studentId: selectedNodeId}),
+            ...(!selectedNodeId && { group: selectedGroup })
         }).then(data => {
-            const formattedData = aggregateData(data);
+            console.log(data);
+            const formattedData = aggregateData(data || [], selectedGroup, true, timeRange.value);
             console.log(formattedData);
             setError(false);
         })
             .catch(_ => {
                 setError(true);
             });
-    }, [class_id, selectedNodeId, timeRange]);
+    }, [class_id, selectedNodeId, timeRange, selectedGroup]);
 
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

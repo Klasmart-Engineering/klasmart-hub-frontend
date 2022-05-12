@@ -21,14 +21,18 @@ interface StudentProps {
 
 export default function PerformanceTab(props: Props) {
     const { class_id, performance } = props;
-    const [selectedNode, setSelectedNode] = useState<string>(`all`);
+    const [selectedNode, setSelectedNode] = useState<string | undefined>();
     const [selectedStudent, setSelectedStudent] = useState<StudentProps>();
+    const [selectedGroup, setSelectedGroup] = useState<`all` | `above` | `below` | `meets`>(`all`);
     const [error, setError] = useState<boolean>(false);
     const handleSelect = (id: string) => {
         setSelectedNode(id);
     };
     const updateStudentData = (obj : StudentProps) => {
         setSelectedStudent(selectedStudent?.student_id === obj.student_id ? undefined : obj);
+    }
+    const updateGroup = (id: `all` | `above` | `below` | `meets`) => {
+        setSelectedGroup(id);
     }
     useEffect(() => {
         setError(false);
@@ -46,6 +50,8 @@ export default function PerformanceTab(props: Props) {
                             setError={setError}
                             selectedNodeId={selectedNode}
                             updateStudentData={updateStudentData}
+                            updateGroup={updateGroup}
+                            selectedGroup={selectedGroup}
                         />
                     </Grid>
                     <Grid item md={9} xs={12}>
@@ -57,6 +63,7 @@ export default function PerformanceTab(props: Props) {
                                     selectedStudent={selectedStudent}
                                     width={width}
                                     height={height}
+                                    selectedGroup={selectedGroup}
                                 />
                             )}
                         </ParentSize>
