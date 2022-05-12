@@ -104,9 +104,8 @@ export class SPRReportAPI {
     }
     private async fetchRoute (method: string, prefix: string, route: string, body?: string) {
         const cookie = new Cookies();
-        const accessToken =
-        `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjMzODU1OCwiaXNzIjoia2lkc2xvb3AifQ.BO276zIDzQSqSPg9DczFsdxgdKd2PT4WQ2ygIiDPj3x7J6Xluhum0cjlZZRI9De7Um-DUf_G4S_1sIjDi-1kciMwUZzyAM7OE71RnZSPjM1t4xQkY4DD1wRi6e-GpWM7Cksp3NqlSHlvxtk6T3S1-BOQGUuqb4T7AGBvY4AXQD277S7A_159ecS1w-GDCz_REbDsUesG3-xHtL4MMRXrPYEXJOh2Rtk6oz6FykxKuseKNp9gzVy6G61bJjOH2yX6No8t_b_zMek_zssOwLDv5I8WYt7_0Wh4qm7kcRu_f9HIrv8IrAUc7n6o5Hi4rVja2g-ihGJr0kOIBphH1p-7Jg`;
-        // cookie.get(ACCESS_TOKEN_COOKIE);
+        const accessToken = cookie.get(ACCESS_TOKEN_COOKIE);
+        // `eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhODA3ZjhhLWNlYmItNDRlYS1hN2ZhLTYzYTg2NjljODFjNyIsImVtYWlsIjoicWF2bjErdGVhY2hlcjJAY2FsbWlkLmNvbSIsImV4cCI6MTY1MjMzODU1OCwiaXNzIjoia2lkc2xvb3AifQ.BO276zIDzQSqSPg9DczFsdxgdKd2PT4WQ2ygIiDPj3x7J6Xluhum0cjlZZRI9De7Um-DUf_G4S_1sIjDi-1kciMwUZzyAM7OE71RnZSPjM1t4xQkY4DD1wRi6e-GpWM7Cksp3NqlSHlvxtk6T3S1-BOQGUuqb4T7AGBvY4AXQD277S7A_159ecS1w-GDCz_REbDsUesG3-xHtL4MMRXrPYEXJOh2Rtk6oz6FykxKuseKNp9gzVy6G61bJjOH2yX6No8t_b_zMek_zssOwLDv5I8WYt7_0Wh4qm7kcRu_f9HIrv8IrAUc7n6o5Hi4rVja2g-ihGJr0kOIBphH1p-7Jg`;
         const headers = new Headers();
         headers.append(`Accept`, `application/json`);
         headers.append(`Content-Type`, `application/json`);
