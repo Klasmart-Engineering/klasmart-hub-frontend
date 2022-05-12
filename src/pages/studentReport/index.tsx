@@ -27,14 +27,12 @@ export default function StudentReport(props: Props) {
   const intl = useIntl();
   const performanceLabel = intl.formatMessage({
     id: `student.report.tabs.performance`,
-    defaultMessage: `Performance`,
   });
   const [error, setError] = useState<boolean>(false);
   const links = [
     {
       label: intl.formatMessage({
         id: `navMenu_studentReportTitle`,
-        defaultMessage: `Student Report`,
       }),
       href: `#/student-report`,
     },

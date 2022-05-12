@@ -205,10 +205,8 @@ const ClassRosterTreeItem = (props: ClassRosterTreeItemProps) => {
               <Typography variant="body2" className={classes.totalStudents} sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
                 {count} {count != 1 ? intl?.formatMessage({
                   id: `student.report.classroster.studentsLabel`,
-                  defaultMessage: `students`,
                 }) : intl?.formatMessage({
                   id: `student.report.classroster.studentLabel`,
-                  defaultMessage: `student`,
                 })}
               </Typography>
             </div>
@@ -286,7 +284,6 @@ export default function ClassRoster(props: Props) {
       id: `above`,
       name: intl.formatMessage({
         id: `student.report.classroster.above`,
-        defaultMessage: `Above Expectation`,
       }),
       color: `#40B8F4`,
       ...classRosterGradeStudentList?.above,
@@ -295,7 +292,6 @@ export default function ClassRoster(props: Props) {
       id: `meets`,
       name: intl.formatMessage({
         id: `student.report.classroster.meets`,
-        defaultMessage: `Meets Expectation`,
       }),
       color: `#37BA00`,
       ...classRosterGradeStudentList?.meets,
@@ -304,7 +300,6 @@ export default function ClassRoster(props: Props) {
       id: `below`,
       name: intl.formatMessage({
         id: `student.report.classroster.below`,
-        defaultMessage: `Below Expectation`,
       }),
       color: `#FFBC00`,
       ...classRosterGradeStudentList.below,
@@ -355,7 +350,6 @@ export default function ClassRoster(props: Props) {
       <Typography className={classes.componentTitle}>
         {intl.formatMessage({
           id: `student.report.classroster.title`,
-          defaultMessage: `Class Roster`,
         })}
       </Typography>
       <div className={classes.filterTreeContainer}>
@@ -370,7 +364,6 @@ export default function ClassRoster(props: Props) {
             }}
             placeholder={intl.formatMessage({
               id: `student.report.classroster.searchStudent`,
-              defaultMessage: `Search Student`,
             })}
             variant="outlined"
             size="small"

@@ -185,14 +185,12 @@ export default function PerformanceRates(props: Props) {
         {
             label: intl.formatMessage({
                 id: `student.report.performanceRates.filterWeek`,
-                defaultMessage: `Week`
             }),
             value: 7
         },
         {
             label: intl.formatMessage({
                 id: `student.report.performanceRates.filterMonth`,
-                defaultMessage: `Month`
             }),
             value: 30
         }
@@ -200,7 +198,6 @@ export default function PerformanceRates(props: Props) {
         {
             label: intl.formatMessage({
                 id: `student.report.performanceRates.filterYear`,
-                defaultMessage: `Year`
             }),
             value: 365
         }
