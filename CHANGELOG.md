@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.54.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.2%0Dv2.54.1) (2022-05-12)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2431:** adding fields to combined age range sorting (#94) ([ae90591](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ae905916a41300e736c3d56a8ecd4190f5560408)), closes [AD-2431](https://calmisland.atlassian.net/browse/AD-2431) [AD-2431](https://calmisland.atlassian.net/browse/AD-2431) [AD-2431](https://calmisland.atlassian.net/browse/AD-2431)
+
+
+### 📦 Refactor
+
+* setup MFE base and migrate to shared frontend state library (#102) ([281c976](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/281c976d1945582103c7b8bd49a9640ad0058061)), closes [HU-71](https://calmisland.atlassian.net/browse/HU-71)
+
+
+### ♻️ Chores
+
+* add HU Jira project tag ([57c58f2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/57c58f280f93a9640376bd3fd0d261302b6aebb5))
+
 ### [2.54.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.1%0Dv2.54.0) (2022-05-10)
 
 
