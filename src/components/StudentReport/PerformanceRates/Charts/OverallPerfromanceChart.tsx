@@ -60,16 +60,17 @@ interface PerformaceResults {
     value: number;
 }
 
-interface DataProps {
-    date: string,
-    above?: number,
-    meets?: number,
-    below?: number,
+interface OverallPerformanceData {
     score: {
-        above?: number,
-        meets?: number,
-        below?: number,
-    },
+        below?: number | undefined;
+        meets?: number | undefined;
+        above?: number | undefined;
+    };
+    below?: number | undefined;
+    meets?: number | undefined;
+    above?: number | undefined;
+    label: string;
+    date: Date;
 }
 
 interface StudentProps {
@@ -83,11 +84,12 @@ interface Props {
     viewScores: boolean;
     width: number;
     height: number;
-    data: DataProps[];
+    data: OverallPerformanceData[];
     timeRange: string;
     filterItems: any[];
-    selectedNodeId: string;
+    selectedNodeId: string | undefined;
     selectedStudent: StudentProps | undefined;
+    selectedGroup: `all` | `above` | `below` | `meets`;
 }
 
 const margin = {
@@ -108,17 +110,21 @@ export default function OverallPerformanceChart(props: Props) {
     const intl = useIntl();
     const innerHeight = 370 - margin.top - margin.bottom;
     const innerWidth = width - margin.left - margin.right;
-    
-    const keys = useMemo(() => Object.keys(data[0]).filter(key => key !== `date` && key !== `score`), [data]);
-    const overAllScores = keys.map(key => data.map(data => ({ date: data.date, value: data[key as keyof typeof data] })));
-    const learningOutcomeScores = keys.map(key => data.map(data => ({ date: data.date, value: data.score[key as keyof typeof data.score] })));
+
+    const keys = useMemo(() => data[0] ? Object.keys(data[0]).filter(key => key !== `date` && key !== `score` && key !== `label`) : [], [data]);
+    const overAllScores = keys.map(key => data.map(data => ({ date: data.label, value: data[key as keyof typeof data] })));
+    const learningOutcomeScores = keys.map(key => data.map(data => ({ date: data.label, value: data.score[key as keyof typeof data.score] })));
     const glyphData = overAllScores.map(set => set[set.length - 1]);
     const totalScores = data.reduce((prev, current) => [
         ...prev,
-        ...keys.map(key => current[key as keyof typeof current] as number)
+        ...keys.map(key => current[key as keyof typeof current] as number),
+    ], [] as number[]);
+    const viewScoresTotal = data.reduce((prev, current) => [
+        ...prev,
+        ...keys.map(key => current.score[key as keyof typeof current.score] as number),
     ], [] as number[]);
 
-    const getDate = (d: PerformaceResults) => new Date(`${d.date}T00:00:00`);
+    const getDate = (d: PerformaceResults) => d.date;
     const getValue = (d: PerformaceResults) => d.value;
     const dateScaleConfig = {
         type: `band`,
@@ -130,9 +136,9 @@ export default function OverallPerformanceChart(props: Props) {
         () =>
             scaleLinear<number>({
                 range: [innerHeight, 0],
-                domain: [0, Math.max(...totalScores)],
+                domain: [0, Math.max(...(viewScores ? viewScoresTotal : totalScores))],
             }),
-        [data]
+        [data, viewScores]
     );
     const colorScale = {
         above: theme.palette.info.light,
@@ -223,17 +229,9 @@ export default function OverallPerformanceChart(props: Props) {
                         borderRadius: theme.spacing(2.5),
                         pointerEvents: "none"
                     }}>
-                        <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{tooltipData?.nearestDatum?.datum?.value}%</Typography>
+                        <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{Math.round(tooltipData?.nearestDatum?.datum?.value)}%</Typography>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={15} fontWeight={200}>
-                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0].label ? {
-                                weekday: `short`,
-                            } : timeRange === filterItems[1].label ? {
-                                day: `2-digit`,
-                                month: `2-digit`,
-                            } : {
-                                month: `short`,
-                                year: `2-digit`,
-                            })}
+                            {tooltipData?.nearestDatum?.datum?.date}
                         </Typography>
                         <ArrowDropDownIcon className={classes.tooltipArrow} sx={{ color: tooltipColor ?? `transparent` }} />
                     </div>
@@ -277,17 +275,6 @@ export default function OverallPerformanceChart(props: Props) {
                     fontSize: theme.typography.pxToRem(14),
                     fill: theme.palette.common.black
                 })}
-                tickFormat={(day) => {
-                    return intl.formatDate(day, timeRange === filterItems[0].label ? {
-                        weekday: `short`,
-                    } : timeRange === filterItems[1].label ? {
-                        day: `2-digit`,
-                        month: `2-digit`,
-                    } : {
-                        month: `short`,
-                        year: `2-digit`,
-                    });
-                }}
             />
             <Axis
                 hideTicks
@@ -302,7 +289,7 @@ export default function OverallPerformanceChart(props: Props) {
                     textAnchor: `start`,
                 })}
                 tickFormat={(number) => {
-                    return `${number}%`;
+                    return `${Math.round(number)}%`;
                 }}
             />
             {keys.map((key, i) => (
@@ -314,7 +301,7 @@ export default function OverallPerformanceChart(props: Props) {
                         xAccessor={getDate}
                         yAccessor={getValue}
                         renderGlyph={(glyph) => (
-                            selectedNodeId !== "all" && (keys.indexOf(selectedNodeId) < 0) ?
+                            selectedNodeId ?
                                 <HtmlLabel
                                     x={glyph.x}
                                     y={glyph.y}

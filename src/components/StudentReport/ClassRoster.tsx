@@ -233,6 +233,7 @@ interface PerformanceGrade {
   name: string;
   color: string;
   students: Student[];
+  total: number;
 }
 interface Student {
   student_id: string;
@@ -332,7 +333,16 @@ export default function ClassRoster(props: Props) {
   const renderPerformanceGradeTree = ((performanceGrade: PerformanceGrade, index: number, size: number) => {
     return (
       <div key={performanceGrade.id}>
-        <ClassRosterTreeItem onClick={() => updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
+        <ClassRosterTreeItem
+           disabled={!performanceGrade.total}
+           onClick={() => !!performanceGrade.total && updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id)} 
+           nodeId={performanceGrade.id} 
+           labelText={performanceGrade.name} 
+           color={performanceGrade.color} 
+           count={performanceGrade.students.length} 
+           gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} 
+           intl={intl} 
+        >
           {performanceGrade?.students?.map((student: Student) => renderStudent(student, performanceGrade.color, performanceGrade.id))}
         </ClassRosterTreeItem>
         {size != index + 1 ? <Divider className={classes.divider} /> : ``}

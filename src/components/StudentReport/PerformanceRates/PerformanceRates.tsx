@@ -101,7 +101,7 @@ const Tab = styled(TabUnstyled, {
 })<StyledTabProps>(({ performanceRates, theme }) => ({
     width: 150,
     fontWeight: theme.typography.fontWeightRegular,
-    fontSize: theme.typography.pxToRem(16),
+    fontSize: theme.typography.pxToRem(14),
     padding: theme.spacing(1),
     color: theme.palette.info.main,
     backgroundColor: theme.palette.common.white,
@@ -140,15 +140,16 @@ interface SkillSlides {
 }
 
 interface OverallPerformanceData {
-    date: string,
-    above?: number,
-    meets?: number,
-    below?: number,
     score: {
-        above?: number,
-        meets?: number,
-        below?: number,
-    },
+        below?: number | undefined;
+        meets?: number | undefined;
+        above?: number | undefined;
+    };
+    below?: number | undefined;
+    meets?: number | undefined;
+    above?: number | undefined;
+    label: string;
+    date: Date;
 }
 
 interface StudentProps {
@@ -205,8 +206,7 @@ export default function PerformanceRates(props: Props) {
         }
     ];
     const [timeRange, setTimeRange] = useState<any>(filterItems[0]);
-    const overallPerformanceData = getOverallPerformanceData(selectedNodeId, timeRange.label);
-    // const [ overallPerformanceData, setOverallPerformanceData ] = useState<OverallPerformanceData>([]);
+    const [ overallPerformanceData, setOverallPerformanceData ] = useState<OverallPerformanceData[]>([]);
     const [error, setError] = useState(false);
     const keys = ["above", "meets", "below", "all"];
     const sprApi = useSPRReportAPI();
@@ -219,9 +219,8 @@ export default function PerformanceRates(props: Props) {
             ...(selectedNodeId && { studentId: selectedNodeId}),
             ...(!selectedNodeId && { group: selectedGroup })
         }).then(data => {
-            console.log(data);
             const formattedData = aggregateData(data || [], selectedGroup, true, timeRange.value);
-            console.log(formattedData);
+            setOverallPerformanceData(formattedData);
             setError(false);
         })
             .catch(_ => {
@@ -324,6 +323,7 @@ export default function PerformanceRates(props: Props) {
                                 height={height}
                                 selectedNodeId={selectedNodeId}
                                 selectedStudent={selectedStudent}
+                                selectedGroup={selectedGroup}
                             />
                             <OverallPerformanceLegend />
                         </>

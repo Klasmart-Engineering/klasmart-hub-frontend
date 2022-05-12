@@ -42,6 +42,7 @@ interface Props {
 
 export default function Router (props: Props) {
     const [ timeUntilExpiry, setTimeUntilExpiry ] = useState(0);
+    const { teacherStudentProgressReport } = useFeatureFlags();
 
     const redirectIfUnauthenticated = useCallback(async () => {
         try {
@@ -96,6 +97,7 @@ export default function Router (props: Props) {
             <Route path="/reports">
                 <ReportsPage />
             </Route>
+            {teacherStudentProgressReport &&
             <ProtectedRoute
                 exact
                 path="/student-report"
@@ -103,6 +105,7 @@ export default function Router (props: Props) {
             >
                 <StudentReport />
             </ProtectedRoute>
+            }
             <ProtectedRoute
                 exact
                 path="/admin/organizations/:organizationId/edit"
