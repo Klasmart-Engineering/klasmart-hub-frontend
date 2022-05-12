@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.56.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.0%0Dv2.55.0) (2022-05-12)
+
+
+### ✨ Features
+
+* integrate student reports with api (#110) ([64a61c7](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/64a61c78d429feb662e7da8d5c3783a522ef0f53))
+
 ## [2.55.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.55.0%0Dv2.54.2) (2022-05-12)
 
 
