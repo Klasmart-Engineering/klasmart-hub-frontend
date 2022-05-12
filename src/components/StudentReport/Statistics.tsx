@@ -1,3 +1,4 @@
+import { Performance } from '@/api/sprReportApi';
 import Divider from '@mui/material/Divider';
 import { Theme } from '@mui/material/styles';
 import {
@@ -29,13 +30,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
 }));
 
-interface Performance {
-    total_students: number;
-    average_performance: number;
-    today_total_classes: number;
-    today_activities: number;
-}
-
 interface Props {
     performance: Performance;
 }
@@ -53,7 +47,6 @@ export default function Statistics (props: Props) {
             <div>
                 {intl.formatMessage({
                     id: `student.report.statistic.totalStudent`,
-                    defaultMessage: `Total students`,
                 })}
                 <div className={classes.statisticsValue}>{total_students}</div>
             </div>
@@ -64,7 +57,6 @@ export default function Statistics (props: Props) {
             <div>
                 {intl.formatMessage({
                     id: `student.report.statistic.averagePerfomance`,
-                    defaultMessage: `Average performance`,
                 })}
                 <div className={classes.statisticsValue}>{average_performance}
                     <span className={classes.perc}>%</span>
@@ -77,7 +69,6 @@ export default function Statistics (props: Props) {
             <div>
                 {intl.formatMessage({
                     id: `student.report.statistic.todaysClass`,
-                    defaultMessage: `Today's classes`,
                 })}
                 <div className={classes.statisticsValue}>{today_total_classes}</div>
             </div>
@@ -88,7 +79,6 @@ export default function Statistics (props: Props) {
             <div>
                 {intl.formatMessage({
                     id: `student.report.statistic.todayActivies`,
-                    defaultMessage: `Today's activities`,
                 })}
                 <div className={classes.statisticsValue}>{today_activities}</div>
             </div>

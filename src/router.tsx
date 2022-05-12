@@ -1,5 +1,6 @@
 import ErrorBoundary from "./components/Common/ErrorBoundary";
 import ErrorPage from "./components/Common/ErrorPage";
+import { useFeatureFlags } from "./feature-flag/utils";
 import StudentReport from "./pages/studentReport";
 import { authClient } from "@/api/auth/client";
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
@@ -42,6 +43,7 @@ interface Props {
 
 export default function Router (props: Props) {
     const [ timeUntilExpiry, setTimeUntilExpiry ] = useState(0);
+    const { teacherStudentProgressReport } = useFeatureFlags();
 
     const redirectIfUnauthenticated = useCallback(async () => {
         try {
@@ -101,13 +103,15 @@ export default function Router (props: Props) {
                 <Route path="/reports">
                     <ReportsPage />
                 </Route>
-                <ProtectedRoute
-                    exact
-                    path="/student-report"
-                    permissions={`report_student_progress_teacher_660`}
-                >
-                    <StudentReport />
-                </ProtectedRoute>
+                {teacherStudentProgressReport &&
+                    <ProtectedRoute
+                        exact
+                        path="/student-report"
+                        permissions={`report_student_progress_teacher_660`}
+                    >
+                        <StudentReport />
+                    </ProtectedRoute>
+                }
                 <ProtectedRoute
                     exact
                     path="/admin/organizations/:organizationId/edit"

@@ -59,19 +59,15 @@ export default function ChartLegend (props: Props) {
     const domain = [
         intl.formatMessage({
             id: `student.report.performanceRates.skillLegendAttained`,
-            defaultMessage: `Attained`,
         }),
         intl.formatMessage({
             id: `student.report.performanceRates.skillLegendNotAttained`,
-            defaultMessage: `Not Attained`,
         }),
         intl.formatMessage({
             id: `student.report.performanceRates.skillLegendLOsAttained`,
-            defaultMessage: `LOs Attained`,
         }),
         intl.formatMessage({
             id: `student.report.performanceRates.skillLegendLOsNotAttained`,
-            defaultMessage: `LOs Not Attained`,
         }),
     ];
     const colorRange = [
