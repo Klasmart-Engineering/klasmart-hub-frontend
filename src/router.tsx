@@ -1,5 +1,5 @@
-
-import { useFeatureFlags } from "./feature-flag/utils";
+import ErrorBoundary from "./components/Common/ErrorBoundary";
+import ErrorPage from "./components/Common/ErrorPage";
 import StudentReport from "./pages/studentReport";
 import { authClient } from "@/api/auth/client";
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
@@ -65,162 +65,168 @@ export default function Router (props: Props) {
     }, [ location ]);
 
     return (
-        <Switch>
-            <Route
-                exact
-                path="/"
-            >
-                <HomePage />
-            </Route>
-            <Route
-                exact
-                path="/library"
-            >
-                <Redirect to="/library/organization-content" />
-            </Route>
-            <Route path="/library/organization-content">
-                <OrganizationContentPage />
-            </Route>
-            <Route path="/library/badanamu-content">
-                <BadanamuContentPage />
-            </Route>
-            <Route path="/library/more-featured-content">
-                <MoreFeaturedContentPage />
-            </Route>
-            <Route path="/schedule">
-                <SchedulePage />
-            </Route>
-            <Route path="/assessments">
-                <AssessmentsPage />
-            </Route>
-            <Route path="/reports">
-                <ReportsPage />
-            </Route>
-            <ProtectedRoute
-                exact
-                path="/student-report"
-                permissions={`report_student_progress_teacher_660`}
-            >
-                <StudentReport />
-            </ProtectedRoute>
-            <ProtectedRoute
-                exact
-                path="/admin/organizations/:organizationId/edit"
-                permissions={{
-                    OR: [
-                        `edit_this_organization_10330`,
-                        {
-                            AND: [
-                                `organizational_profile_10100`,
-                                `view_this_organization_profile_10110`,
-                                `edit_my_organization_10331`,
-                            ],
-                        },
-                    ],
-                }}
-            >
-                <Layout>
-                    <EditOrganizationPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/organizations/create"
-                permissions={`create_own_organization_10220`}
-            >
-                <Layout>
-                    <CreateOrganizationPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/organizations"
-                permissions={{
-                    AND: [ `organizational_profile_10100` ],
-                    OR: [ `view_this_organization_profile_10110`, `view_my_organization_profile_10111` ],
-                }}
-            >
-                <Layout>
-                    <OrganizationsPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/roles"
-                permissions={`roles_30100`}
-            >
-                <Layout>
-                    <RolesPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/schools"
-                permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}
-            >
-                <Layout>
-                    <SchoolsPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/classes"
-                permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}
-            >
-                <Layout>
-                    <ClassesPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/programs"
-                permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}
-            >
-                <Layout>
-                    <ProgramsPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/grades"
-                permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}
-            >
-                <Layout>
-                    <Grades />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/subjects"
-                permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}
-            >
-                <Layout>
-                    <SubjectsPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path="/admin/age-ranges"
-                permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}
-            >
-                <Layout>
-                    <AgeRangesPage />
-                </Layout>
-            </ProtectedRoute>
-            <ProtectedRoute
-                path={[ `/admin/users`, `/admin` ]}
-                permissions={{
-                    AND: [ `view_user_page_40101` ],
-                    OR: [
-                        `view_users_40110`,
-                        `view_my_school_users_40111`,
-                        `view_my_class_users_40112`,
-                    ],
-                }}
-            >
-                <Layout>
-                    <UsersPage />
-                </Layout>
-            </ProtectedRoute>
-            <Route path="/super-admin/content-library">
-                <Layout>
-                    <SuperAdminContentLibraryTable />
-                </Layout>
-            </Route>
-            <Route>
-                <HomePage />
-            </Route>
-        </Switch>
+        <ErrorBoundary
+            errorComponent={(
+                <ErrorPage />
+            )}
+        >
+            <Switch>
+                <Route
+                    exact
+                    path="/"
+                >
+                    <HomePage />
+                </Route>
+                <Route
+                    exact
+                    path="/library"
+                >
+                    <Redirect to="/library/organization-content" />
+                </Route>
+                <Route path="/library/organization-content">
+                    <OrganizationContentPage />
+                </Route>
+                <Route path="/library/badanamu-content">
+                    <BadanamuContentPage />
+                </Route>
+                <Route path="/library/more-featured-content">
+                    <MoreFeaturedContentPage />
+                </Route>
+                <Route path="/schedule">
+                    <SchedulePage />
+                </Route>
+                <Route path="/assessments">
+                    <AssessmentsPage />
+                </Route>
+                <Route path="/reports">
+                    <ReportsPage />
+                </Route>
+                <ProtectedRoute
+                    exact
+                    path="/student-report"
+                    permissions={`report_student_progress_teacher_660`}
+                >
+                    <StudentReport />
+                </ProtectedRoute>
+                <ProtectedRoute
+                    exact
+                    path="/admin/organizations/:organizationId/edit"
+                    permissions={{
+                        OR: [
+                            `edit_this_organization_10330`,
+                            {
+                                AND: [
+                                    `organizational_profile_10100`,
+                                    `view_this_organization_profile_10110`,
+                                    `edit_my_organization_10331`,
+                                ],
+                            },
+                        ],
+                    }}
+                >
+                    <Layout>
+                        <EditOrganizationPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/organizations/create"
+                    permissions={`create_own_organization_10220`}
+                >
+                    <Layout>
+                        <CreateOrganizationPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/organizations"
+                    permissions={{
+                        AND: [ `organizational_profile_10100` ],
+                        OR: [ `view_this_organization_profile_10110`, `view_my_organization_profile_10111` ],
+                    }}
+                >
+                    <Layout>
+                        <OrganizationsPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/roles"
+                    permissions={`roles_30100`}
+                >
+                    <Layout>
+                        <RolesPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/schools"
+                    permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}
+                >
+                    <Layout>
+                        <SchoolsPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/classes"
+                    permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}
+                >
+                    <Layout>
+                        <ClassesPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/programs"
+                    permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}
+                >
+                    <Layout>
+                        <ProgramsPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/grades"
+                    permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}
+                >
+                    <Layout>
+                        <Grades />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/subjects"
+                    permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}
+                >
+                    <Layout>
+                        <SubjectsPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path="/admin/age-ranges"
+                    permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}
+                >
+                    <Layout>
+                        <AgeRangesPage />
+                    </Layout>
+                </ProtectedRoute>
+                <ProtectedRoute
+                    path={[ `/admin/users`, `/admin` ]}
+                    permissions={{
+                        AND: [ `view_user_page_40101` ],
+                        OR: [
+                            `view_users_40110`,
+                            `view_my_school_users_40111`,
+                            `view_my_class_users_40112`,
+                        ],
+                    }}
+                >
+                    <Layout>
+                        <UsersPage />
+                    </Layout>
+                </ProtectedRoute>
+                <Route path="/super-admin/content-library">
+                    <Layout>
+                        <SuperAdminContentLibraryTable />
+                    </Layout>
+                </Route>
+                <Route>
+                    <HomePage />
+                </Route>
+            </Switch>
+        </ErrorBoundary>
     );
 }

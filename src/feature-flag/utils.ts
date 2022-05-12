@@ -1,16 +1,13 @@
 import { useFlags } from "launchdarkly-react-client-sdk";
 
-export type FeatureFlags = {
-    studentWidgetAdaptiveLearning: boolean;
-    studentWidgetAdaptiveLearningJourney: boolean;
-    teacherStudentProgressReport: boolean;
-}
-
-const defaultFlags: FeatureFlags = {
+const defaultFlags = {
     studentWidgetAdaptiveLearning: false,
     studentWidgetAdaptiveLearningJourney: false,
     teacherStudentProgressReport: false,
-};
+    showScheduleMicroFrontend: false,
+} as const;
+
+export type FeatureFlags = typeof defaultFlags;
 
 export const useFeatureFlags = () => {
     const flags = useFlags() as FeatureFlags;
