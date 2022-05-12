@@ -9,6 +9,7 @@ import RadioButtonCheckedOutlinedIcon from '@mui/icons-material/RadioButtonCheck
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
 import OverallPerformanceChart from "./Charts/OverallPerfromanceChart";
 import { getOverallPerformanceData, skillPerformanceData, getSkillSlides } from "./utilities";
+import { aggregateData } from "./DataFormatter";
 //TODO : These will be enabled once the skill based chart Api  is ready
 // import SkillPerformance from "./Charts/SkillPerformance";
 // import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
@@ -216,7 +217,8 @@ export default function PerformanceRates(props: Props) {
             timezone: timeZoneOffset, // No Required
             [keys.indexOf(selectedNodeId) < 0 ? `studentId` : `group`]: selectedNodeId,
         }).then(data => {
-            console.log(JSON.stringify(data));
+            const formattedData = aggregateData(data);
+            console.log(formattedData);
             setError(false);
         })
             .catch(_ => {

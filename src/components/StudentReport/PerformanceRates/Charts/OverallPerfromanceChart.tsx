@@ -108,7 +108,7 @@ export default function OverallPerformanceChart(props: Props) {
     const intl = useIntl();
     const innerHeight = 370 - margin.top - margin.bottom;
     const innerWidth = width - margin.left - margin.right;
-    console.log(selectedStudent);
+    
     const keys = useMemo(() => Object.keys(data[0]).filter(key => key !== `date` && key !== `score`), [data]);
     const overAllScores = keys.map(key => data.map(data => ({ date: data.date, value: data[key as keyof typeof data] })));
     const learningOutcomeScores = keys.map(key => data.map(data => ({ date: data.date, value: data.score[key as keyof typeof data.score] })));
