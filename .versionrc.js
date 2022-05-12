@@ -66,5 +66,6 @@ module.exports = {
         `AD-`,
         `DT-`,
         `HU-`,
+        `KLS-`,
     ],
 };
