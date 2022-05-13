@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.56.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.1%0Dv2.56.0) (2022-05-13)
+
+
+### 🐛 Bug Fixes
+
+* update the overall performance service call (#111) ([fcbd4fb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/fcbd4fb4ff7d91452fb71a36cdf6a4161e9ec1a5))
+
 ## [2.56.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.0%0Dv2.55.0) (2022-05-12)
 
 
