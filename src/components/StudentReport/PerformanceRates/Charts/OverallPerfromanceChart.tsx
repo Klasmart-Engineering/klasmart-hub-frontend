@@ -31,7 +31,7 @@ import { useIntl } from "react-intl";
 import { Group } from "@visx/group";
 import { Line } from "@visx/shape";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { GroupName, GroupNameAll } from "../DataFormatter";
+import { GroupName, GroupNameAll, OverallPerformanceData } from "../DataFormatter";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,21 +53,8 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface PerformaceResults {
-    date: string;
-    value: number;
-}
-
-interface OverallPerformanceData {
-    score: {
-        below?: number | undefined;
-        meets?: number | undefined;
-        above?: number | undefined;
-    };
-    below?: number | undefined;
-    meets?: number | undefined;
-    above?: number | undefined;
-    label: string;
     date: Date;
+    value: number;
 }
 
 interface StudentProps {
@@ -75,7 +62,6 @@ interface StudentProps {
     student_name: string;
     avatar: string;
 }
-
 
 interface Props {
     viewScores: boolean;
@@ -110,12 +96,12 @@ export default function OverallPerformanceChart(props: Props) {
 
     const keys = useMemo(() => data[0] ?
         Object.keys(data[0])
-            .filter(key => key !== `date` && key !== `score` && key !== `label`)
+            .filter(key => key !== `date` && key !== `score` && key !== `name`)
         : [], [data]);
     const overAllScores = keys
-        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.label, value: d[key] })));
+        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.date, value: d[key] })));
     const learningOutcomeScores = keys
-        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.label, value: d.score[key] })));
+        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.date, value: d.score[key] })));
     const glyphData = overAllScores.map(set => set[set.length - 1]);
     const totalScores = data.reduce((prev, current) => [
         ...prev,
@@ -123,6 +109,7 @@ export default function OverallPerformanceChart(props: Props) {
     ], []);
     const viewScoresTotal = data.reduce((prev, current) => [
         ...prev,
+        ...keys.map((key: GroupName) => current[key] as number),
         ...keys.map((key: GroupName) => current.score[key] as number),
     ], [] as number[]);
 
@@ -233,7 +220,15 @@ export default function OverallPerformanceChart(props: Props) {
                     }}>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{Math.round(tooltipData?.nearestDatum?.datum?.value)}%</Typography>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={15} fontWeight={200}>
-                            {tooltipData?.nearestDatum?.datum?.date}
+                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0].label ? {
+                                weekday: `short`,
+                            } : timeRange === filterItems[1].label ? {
+                                day: `2-digit`,
+                                month: `2-digit`,
+                            } : {
+                                month: `short`,
+                                year: `2-digit`,
+                            })}
                         </Typography>
                         <ArrowDropDownIcon className={classes.tooltipArrow} sx={{ color: tooltipColor ?? `transparent` }} />
                     </div>
@@ -277,6 +272,17 @@ export default function OverallPerformanceChart(props: Props) {
                     fontSize: theme.typography.pxToRem(14),
                     fill: theme.palette.common.black
                 })}
+                tickFormat={(day) => {
+                    return intl.formatDate(day, timeRange === filterItems[0].label ? {
+                        weekday: `short`,
+                    } : timeRange === filterItems[1].label ? {
+                        day: `2-digit`,
+                        month: `2-digit`,
+                    } : {
+                        month: `short`,
+                        year: `2-digit`,
+                    });
+                }}
             />
             <Axis
                 hideTicks

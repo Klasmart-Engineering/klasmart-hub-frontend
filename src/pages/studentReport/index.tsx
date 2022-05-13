@@ -43,22 +43,25 @@ export default function StudentReport(props: Props) {
     setTab(`performance`);
   };
 
-  return error ? <WidgetWrapperError />  :
-      <Box padding={2}>
-        <Box paddingY={1}>
-          <Breadcrumb links={links} />
-        </Box>
-        <ClassTabs onClassChange={setClass} setError={setError} />
-          <TabContext value={tab}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <TabList onChange={(_, tab) => setTab(tab)}>
+  return error ? <WidgetWrapperError /> :
+    <Box padding={2}>
+      <Box paddingY={1}>
+        <Breadcrumb links={links} />
+      </Box>
+      <ClassTabs onClassChange={setClass} setError={setError} />
+      {
+        !!classDetail &&
+        <TabContext value={tab}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList onChange={(_, tab) => setTab(tab)}>
 
-                <Tab label={performanceLabel} value="performance" />
-              </TabList>
-            </Box>
-            <TabPanel value="performance" sx={{ padding: 0 }}>
-              {classDetail && <Performance {...classDetail} />}
-            </TabPanel>
-          </TabContext>
-      </Box>;
+              <Tab label={performanceLabel} value="performance" />
+            </TabList>
+          </Box>
+          <TabPanel value="performance" sx={{ padding: 0 }}>
+            {classDetail && <Performance {...classDetail} />}
+          </TabPanel>
+        </TabContext>
+      }
+    </Box>;
 }

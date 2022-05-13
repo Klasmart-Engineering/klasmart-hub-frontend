@@ -258,7 +258,7 @@ export default function ClassRoster(props: Props) {
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
-  const handleStudentClick = (id: string, student:Student) => {
+  const handleStudentClick = (id: string , student:Student) => {
     updateStudentData(student);
     handleSelect(selectedNodeId === student.student_id ? undefined : student.student_id);
   }
@@ -267,6 +267,10 @@ export default function ClassRoster(props: Props) {
   const sprApi = useSPRReportAPI();
   useEffect(() => {
     let didUnmount = false;
+    updateGroup("all");
+    handleSelect(undefined);
+    setSearchData('');
+    setExpanded([]);
     sprApi.getPerformanceByGroups({
       classId: class_id,
       timezone: timeZoneOffset, // No Required
@@ -284,6 +288,7 @@ export default function ClassRoster(props: Props) {
 
   const [initalData, setInitalData] = useState<PerformanceGrade[]>([]);
   const [filteredData, setFilteredData] = useState<PerformanceGrade[]>([]);
+  const [searchData, setSearchData] = useState<string>('');
 
   const formatData = (classRosterGradeStudentList: any) => {
     const data = [{
@@ -315,6 +320,7 @@ export default function ClassRoster(props: Props) {
   };
 
   const getSearchData = (searchTerm: string, performanceCategories: PerformanceGrade[]) => {
+    setSearchData(searchTerm);
     if (searchTerm === '') {
       setFilteredData(performanceCategories);
       setExpanded([]);
@@ -362,6 +368,7 @@ export default function ClassRoster(props: Props) {
       <div className={classes.filterContainer}>
           <CustomSearchField
             fullWidth
+            value={searchData}
             InputProps={{
               endAdornment: (
                 <SearchOutlined className={classes.searchIcon} />

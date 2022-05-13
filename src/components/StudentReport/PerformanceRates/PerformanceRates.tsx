@@ -9,7 +9,7 @@ import RadioButtonCheckedOutlinedIcon from '@mui/icons-material/RadioButtonCheck
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
 import OverallPerformanceChart from "./Charts/OverallPerfromanceChart";
 import { skillPerformanceData, getSkillSlides } from "./utilities";
-import aggregateData, { GroupNameAll } from "./DataFormatter";
+import { GroupNameAll, OverallPerformanceData } from "./DataFormatter";
 //TODO : These will be enabled once the skill based chart Api  is ready
 // import SkillPerformance from "./Charts/SkillPerformance";
 // import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
@@ -30,6 +30,7 @@ import SkillPerformanceLegend from './Charts/Legends/SkillPerformanceLegend';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useSPRReportAPI } from '@/api/sprReportApi';
 import { GetPerformancesRepsonse } from '@/api/sprReportApi';
+import mapGraph from './DataFormatter';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -140,20 +141,6 @@ interface SkillSlides {
         notAchieved: number;
     };
 }
-
-interface OverallPerformanceData {
-    score: {
-        below?: number | undefined;
-        meets?: number | undefined;
-        above?: number | undefined;
-    };
-    below?: number | undefined;
-    meets?: number | undefined;
-    above?: number | undefined;
-    label: string;
-    date: Date;
-}
-
 interface StudentProps {
     student_id: string;
     student_name: string;
@@ -219,7 +206,7 @@ export default function PerformanceRates(props: Props) {
             ...(selectedNodeId && { studentId: selectedNodeId}),
             ...(!selectedNodeId && { group: selectedGroup })
         }).then((data: GetPerformancesRepsonse[]) => {
-            const formattedData = aggregateData(data || [], selectedGroup, true, timeRange.value);
+            const formattedData = mapGraph(data || [], selectedGroup);
             if(!didUnmount) {
                 setOverallPerformanceData(formattedData);
                 setError(false);
