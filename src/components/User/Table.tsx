@@ -135,6 +135,7 @@ export default function UserTable(props: Props) {
     const [showBulkUserDilog, setShowBulkUserDilog] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string>();
     const [selectedUsers, setSelectedUsers] = useState<UserRow[]>([]);
+    const [isMismatch, setIsMismatch] = useState(false);
     const createUsersPermissions = usePermission(`create_users_40220`);
     const createMySchoolsUsersPermissions = usePermission(`create_my_school_users_40221`);
     const canEdit = usePermission(`edit_users_40330`);
@@ -610,21 +611,39 @@ export default function UserTable(props: Props) {
         },
     ];
 
+    const onSelected = (ids: string[]) => {
+        const updatedUsers = ids.reduce<any>((obj, id) =>
+        ({
+            ...obj, [id]: {
+                id, ...[...selectedUsers, ...rows]
+                    .find(row => row.id === id)
+            }
+        }),
+            {}) || {};
+        setSelectedUsers(Object.values(updatedUsers));
+    };
+
+    const resteSelected = () => {
+        setSelectedUsers([]);
+    }
+
     const verifyEdit = (selectedUsers: UserRow[]) => {
-        console.log({selectedUsers, userId});
         const hasCurrectUser = !!selectedUsers.find(user => user.id === userId);
-        if(hasCurrectUser) {
+        if (hasCurrectUser) {
             enqueueSnackbar(intl.formatMessage({
                 id: `entity.user.edit.self.error`,
-                defaultMessage: `Cannot Modify Yourself`
+                defaultMessage: `You cannot modify your own account`
             }), {
                 variant: `error`,
             });
             return;
         }
+        const hasActiveUser = !!selectedUsers.find(user => user.status === 'active');
+        const hasInactiveUser = !!selectedUsers.find(user => user.status === 'inactive');
+        setIsMismatch(hasActiveUser && hasInactiveUser);
         setShowBulkUserDilog(true);
     };
-    
+
     return (
         <>
             <Paper className={classes.root}>
@@ -645,13 +664,8 @@ export default function UserTable(props: Props) {
                     startCursor={startCursor}
                     endCursor={endCursor}
                     total={total}
-                    onSelected={(ids: string[]) => {
-                        const updatedUsers = ids.reduce<any>((obj, id) => 
-                        ({ ...obj, [id]: { id, ...[...rows, ...selectedUsers]
-                            .find(row => row.id === id)} }), 
-                        {}) || {};
-                        setSelectedUsers(Object.values(updatedUsers));
-                    }}
+                    onSelected={onSelected}
+                    selectedRows={selectedUsers.map(({ id }) => id)}
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `users_createUser`,
@@ -755,7 +769,9 @@ export default function UserTable(props: Props) {
             <EditBulkUserDialog
                 open={showBulkUserDilog}
                 selectedUsers={selectedUsers}
+                isMismatch={isMismatch}
                 onClose={() => setShowBulkUserDilog(false)}
+                handleReset={resteSelected}
             />
             <CreateUserDialog
                 open={createDialogOpen}

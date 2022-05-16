@@ -1,51 +1,72 @@
-import { User } from "@/types/graphQL";
-import { Dialog, Select } from "@kl-engineering/kidsloop-px";
+import {
+    Dialog,
+    Select
+} from "@kl-engineering/kidsloop-px";
 import { useValidations } from "@/utils/validations";
-import React, { useState } from "react";
-import { useIntl } from "react-intl";
-import { useBulkUserAction } from "@/utils/common";
-import { useDeactivateAllUsersInOrganization, useReactivateAllUsersInOrganization } from "@/api/organizationMemberships";
+import React, {
+    useEffect,
+    useState
+} from "react";
+import {
+    FormattedMessage,
+    useIntl
+} from "react-intl";
+import {
+    useDeactivateAllUsersInOrganization,
+    useReactivateAllUsersInOrganization
+} from "@/api/organizationMemberships";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
-
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
 import { UserRow } from "../Table";
+import {
+    Theme,
+    Typography
+} from "@mui/material";
+import {
+    createStyles,
+    makeStyles
+} from "@mui/styles";
 interface Props {
     open: boolean;
-    selectedUsers: UserRow[]
+    selectedUsers: UserRow[];
+    isMismatch: boolean;
     onClose: (didEdit?: boolean) => void;
+    handleReset: () => void;
 }
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    warning: {
+        color: theme.palette.error.main,
+    },
+}));
 export default function EditBulkUserDialog(props: Props) {
     const {
         open,
         onClose,
-        selectedUsers
+        selectedUsers,
+        isMismatch,
+        handleReset,
     } = props;
-    const { required } = useValidations();
     const intl = useIntl();
-    const useBulkUserPrompt = useBulkUserAction();
-    const [actionStatus, setActionStatus] = useState<`` | `Active` | `InActive`>(``);
+    const classes = useStyles();
+    const [actionStatus, setActionStatus] = useState<`` | `Active` | `Inactive`>(``);
     const [reactivateUser] = useReactivateAllUsersInOrganization();
     const [deactivateUser] = useDeactivateAllUsersInOrganization();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
     const { enqueueSnackbar } = useSnackbar();
-    const confirmAction = async (actionStatus: `` | `Active` | `InActive`, selectedUser: UserRow[]) => {
-        console.log("selectedUser", selectedUser);
+    const { required } = useValidations();
+    const confirmAction = async (actionStatus: `` | `Active` | `Inactive`, selectedUser: UserRow[]) => {
+        setActionStatus('');
         if (actionStatus === ``) return;
         onClose();
-        const filterUser = selectedUser.filter(({ status }) => status === (actionStatus === 'Active' ? 'inactive' : 'active'));
-        const userIds = filterUser.map((user) => {
-            return user.id
-        });
-        const isMismatch = !!selectedUser.find(({ status }) => status === (actionStatus === 'Active' ? 'active' : 'inactive'));
-        console.log("isMismatch", isMismatch);
-        if (!await useBulkUserPrompt({
-            entityName: actionStatus,
-            action: actionStatus,
-            isMismatch
-        })) return;
+        const [user, ...rest] = selectedUser;
+        const userIds = selectedUser.map(user => user.id);
+        if (user.status.toUpperCase() === actionStatus.toUpperCase()) {
+            handleReset();
+            return;
+        }
         try {
             if (actionStatus === 'Active') {
                 await reactivateUser({
@@ -54,7 +75,7 @@ export default function EditBulkUserDialog(props: Props) {
                         userIds,
                     },
                 });
-            } else if (actionStatus === 'InActive') {
+            } else if (actionStatus === 'Inactive') {
                 await deactivateUser({
                     variables: {
                         organizationId,
@@ -64,15 +85,17 @@ export default function EditBulkUserDialog(props: Props) {
             }
             actionStatus === `Active` ? enqueueSnackbar(intl.formatMessage({
                 id: `user.activate.success`,
-                defaultMessage: `User has been reactivated successfully`
+                defaultMessage: `Users have been marked as active`
             }), {
                 variant: `success`,
-            }) : enqueueSnackbar(intl.formatMessage({
-                id: `user.inactivate.success`,
-                defaultMessage: `User has been marked inactive`
-            }), {
-                variant: `success`,
-            });
+            }) :
+                enqueueSnackbar(intl.formatMessage({
+                    id: `user.inactivate.success`,
+                    defaultMessage: `Users have been marked as inactive`
+                }), {
+                    variant: `success`,
+                });
+            handleReset();
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
                 id: `editDialog_deleteError`,
@@ -103,8 +126,9 @@ export default function EditBulkUserDialog(props: Props) {
                         defaultMessage: `Proceed`,
                     }),
                     color: `primary`,
+                    disabled: isMismatch,
                     onClick: () => confirmAction(actionStatus, selectedUsers),
-                },
+                }
             ]}
             onClose={onClose}
         >
@@ -115,7 +139,7 @@ export default function EditBulkUserDialog(props: Props) {
                     defaultMessage: `Status`
                 })}
 
-                items={[`Active`, `InActive`]}
+                items={[`Active`, `Inactive`]}
                 value={actionStatus}
                 validations={[
                     required(intl.formatMessage({
@@ -125,10 +149,11 @@ export default function EditBulkUserDialog(props: Props) {
                 ]}
                 onChange={(value) => setActionStatus(value)}
             />
+            {isMismatch &&
+                <Typography className={classes.warning}>
+                    <FormattedMessage id="entity.user.status.mix.error"
+                        defaultMessage="There is a mix of active and inactive users in your selection." />
+                </Typography>}
         </Dialog>
     );
 }
-function enqueueSnackbar(arg0: string, arg1: { variant: string; }) {
-    throw new Error("Function not implemented.");
-}
-
