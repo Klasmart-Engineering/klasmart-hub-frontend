@@ -8,7 +8,8 @@ import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUnc
 import RadioButtonCheckedOutlinedIcon from '@mui/icons-material/RadioButtonCheckedOutlined';
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
 import OverallPerformanceChart from "./Charts/OverallPerfromanceChart";
-import { getOverallPerformanceData, skillPerformanceData, getSkillSlides } from "./utilities";
+import { skillPerformanceData, getSkillSlides } from "./utilities";
+import { GroupNameAll, OverallPerformanceData } from "./DataFormatter";
 //TODO : These will be enabled once the skill based chart Api  is ready
 // import SkillPerformance from "./Charts/SkillPerformance";
 // import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
@@ -27,6 +28,9 @@ import { ParentSize } from '@visx/responsive';
 import OverallPerformanceLegend from './Charts/Legends/OverallPerformanceLegend';
 import SkillPerformanceLegend from './Charts/Legends/SkillPerformanceLegend';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useSPRReportAPI } from '@/api/sprReportApi';
+import { GetPerformancesRepsonse } from '@/api/sprReportApi';
+import mapGraph from './DataFormatter';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -91,15 +95,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface StyledTabProps {
     performanceRates?: boolean;
+    theme: Theme
 }
 
 //TODO: update the css once the skill based graph is enabled
 const Tab = styled(TabUnstyled, {
     shouldForwardProp: (prop) => prop !== `performanceRates`,
-})<StyledTabProps>(({ performanceRates, theme }) => ({
+})<StyledTabProps>(({ performanceRates, theme }: StyledTabProps) => ({
     width: 150,
     fontWeight: theme.typography.fontWeightRegular,
-    fontSize: theme.typography.pxToRem(16),
+    fontSize: theme.typography.pxToRem(14),
     padding: theme.spacing(1),
     color: theme.palette.info.main,
     backgroundColor: theme.palette.common.white,
@@ -111,7 +116,7 @@ const Tab = styled(TabUnstyled, {
     },
 }));
 
-const StyledInput = styled(InputBase)(({ theme }) => ({
+const StyledInput = styled(InputBase)(({ theme } : { theme: Theme}) => ({
     width: 100,
     fontSize: theme.typography.pxToRem(14),
     color: theme.palette.common.black,
@@ -136,15 +141,26 @@ interface SkillSlides {
         notAchieved: number;
     };
 }
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
+}
 
 interface Props {
     width: number;
     height: number;
     selectedNodeId: string | undefined;
+    class_id: string;
+    selectedStudent: StudentProps | undefined;
+    selectedGroup: GroupNameAll;
 }
 
+const timeZoneOffset = new Date()
+    .getTimezoneOffset() / -60;
+
 export default function PerformanceRates(props: Props) {
-    const { selectedNodeId, width, height } = props;
+    const { selectedNodeId, width, height, class_id, selectedStudent, selectedGroup } = props;
     const classes = useStyles();
     const theme = createTheme();
     const intl = useIntl();
@@ -155,23 +171,58 @@ export default function PerformanceRates(props: Props) {
     const [skillCategories, setSkillCategories] = useState<string[]>([]);
     const [tabIndex, setTabIndex] = useState(0);
     const filterItems = [
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterWeek`,
-            defaultMessage: `Week`
-        }),
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterMonth`,
-            defaultMessage: `Month`
-        }),
-        intl.formatMessage({
-            id: `student.report.performanceRates.filterYear`,
-            defaultMessage: `Year`
-        })
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterWeek`,
+            }),
+            value: 7
+        },
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterMonth`,
+            }),
+            value: 30
+        }
+        ,
+        {
+            label: intl.formatMessage({
+                id: `student.report.performanceRates.filterYear`,
+            }),
+            value: 365
+        }
     ];
-    const [timeRange, setTimeRange] = useState(filterItems[0]);
-    const overallPerformanceData = getOverallPerformanceData(selectedNodeId, timeRange);
+    const [timeRange, setTimeRange] = useState<any>(filterItems[0]);
+    const [ overallPerformanceData, setOverallPerformanceData ] = useState<OverallPerformanceData[]>([]);
+    const [error, setError] = useState(false);
+    const keys = ["above", "meets", "below", "all"];
+    const sprApi = useSPRReportAPI();
+    useEffect(() => {
+        let didUnmount = false;
+        sprApi.getPerformances({
+            classId: class_id,
+            days: timeRange.value,
+            viewLOs: true,
+            timezone: timeZoneOffset, // No Required
+            ...(selectedNodeId && { studentId: selectedNodeId}),
+            ...(!selectedNodeId && { group: selectedGroup })
+        }).then((data: GetPerformancesRepsonse[]) => {
+            const formattedData = mapGraph(data || [], selectedGroup);
+            if(!didUnmount) {
+                setOverallPerformanceData(formattedData);
+                setError(false);
+            }
+        })
+            .catch(_ => {
+                setError(true);
+            });
+        return () => { didUnmount = true };
+    }, [class_id, selectedNodeId, timeRange, selectedGroup]);
+
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTimeRange(event.target.value);
+        const timeRange = filterItems.find(item => item.label === event.target.value);
+        setTimeRange(timeRange);
+
     };
     const handleViewScores = (event: React.ChangeEvent<HTMLInputElement>) => {
         setViewScores(event.target.checked);
@@ -206,7 +257,7 @@ export default function PerformanceRates(props: Props) {
                         <FormControl className={classes.selectInput}>
                             <Select
                                 displayEmpty
-                                value={timeRange}
+                                value={timeRange.label}
                                 inputProps={{
                                     'aria-label': `Without label`,
                                 }}
@@ -220,12 +271,12 @@ export default function PerformanceRates(props: Props) {
                                 }}
                             >
                                 {filterItems.map(item => (
-                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                    <MenuItem key={item.label} value={item.label}>{item.label}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
                         <TabsListUnstyled onClick={() => setViewScores(false)}>
-                            <Tab performanceRates onClick={() => setTabIndex(0)}>
+                            <Tab performanceRates onClick={() => setTabIndex(0)} theme={theme}>
                                 <FormattedMessage id="student.report.performanceRates.tab1" defaultMessage="Overall" />
                             </Tab>
                             {/* //TODO : Enable the skill based chart once the API is ready */}
@@ -255,12 +306,14 @@ export default function PerformanceRates(props: Props) {
                         <>
                             <OverallPerformanceChart
                                 data={overallPerformanceData}
-                                timeRange={timeRange}
+                                timeRange={timeRange.label}
                                 filterItems={filterItems}
                                 viewScores={viewScores}
                                 width={width}
                                 height={height}
                                 selectedNodeId={selectedNodeId}
+                                selectedStudent={selectedStudent}
+                                selectedGroup={selectedGroup}
                             />
                             <OverallPerformanceLegend />
                         </>

@@ -49,23 +49,18 @@ export default function OverallPerformanceLegend (props: Props) {
     const legendShapeHeight = 10;
     const legendTitle = intl.formatMessage({
         id: `student.report.performanceRates.overallLegendTitle`,
-        defaultMessage: `Scores`,
     });
     const legendSubTitle = intl.formatMessage({
         id: `student.report.performanceRates.overallLegendSubtitle`,
-        defaultMessage: `Learning Outcomes`,
     });
     const above = intl.formatMessage({
         id: `student.report.performanceRates.overallLegendAbove`,
-        defaultMessage: `Above`,
     });
     const meets = intl.formatMessage({
         id: `student.report.performanceRates.overallLegendMeets`,
-        defaultMessage: `Meets`,
     });
     const below = intl.formatMessage({
         id: `student.report.performanceRates.overallLegendBelow`,
-        defaultMessage: `Below`,
     });
     const ordinalColorScale = scaleOrdinal({
         domain: [

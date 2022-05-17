@@ -174,7 +174,8 @@ export default function NavigationMenuList (props: Props) {
         viewGrades: usePermission(`define_grade_page_20103`),
         viewAgeRanges: usePermission(`define_age_ranges_page_20102`),
     };
-    const givenManagePermissionsValues = Object.values(managePermissions).filter((permission) => permission);
+    const givenManagePermissionsValues = Object.values(managePermissions)
+        .filter((permission) => permission);
     const manageSection = {
         ...givenManagePermissionsValues.length > 1 // show header when users has 2 or more permissions
             ? {
@@ -291,7 +292,8 @@ export default function NavigationMenuList (props: Props) {
         viewStudentReport: usePermission(`report_student_progress_teacher_660`),
         viewAssessments: usePermission(`assessments_page_406`),
     };
-    const givenDataPermissionsValues = Object.values(dataPermissions).filter((permission) => permission);
+    const givenDataPermissionsValues = Object.values(dataPermissions)
+        .filter((permission) => permission);
     const dataSection = {
         ...givenDataPermissionsValues.length > 1
             ? {
@@ -317,7 +319,6 @@ export default function NavigationMenuList (props: Props) {
                     {
                         text: intl.formatMessage({
                             id: `navMenu_studentReportTitle`,
-                            defaultMessage: `Student Report`,
                         }),
                         icon: ShowChartTwoTone,
                         link: `/student-report`,

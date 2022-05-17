@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -17,7 +17,9 @@ import highIcon from "@/assets/img/studentreports/classroster/high.png";
 import averageIcon from "@/assets/img/studentreports/classroster/average.png";
 import lowIcon from "@/assets/img/studentreports/classroster/low.png";
 import { IntlShape, useIntl } from "react-intl";
-import { classRosterGradeStudentList } from './mockClassRoastersData';
+import { useSPRReportAPI } from '@/api/sprReportApi';
+import { GroupNameAll } from './PerformanceRates/DataFormatter';
+import { GetPerformancesGroupRepsonse } from '@/api/sprReportApi';
 declare module 'react' {
   interface CSSProperties {
     '--tree-view-color'?: string;
@@ -160,6 +162,9 @@ const useFilterTreeStyles = makeStyles((theme: Theme) => createStyles({
 
 const contains = (term: string) => ({ student_name }: Student) => student_name.toLowerCase().indexOf(term.toLowerCase()) !== -1;
 
+const timeZoneOffset = new Date()
+.getTimezoneOffset()/-60;
+
 const getAvatarContent = (name: string) => {
   let splittedArray = name.trim().split(' ');
   return splittedArray.length > 1 ? splittedArray[0][0] + splittedArray[1][0] : splittedArray.length == 1 ? splittedArray[0][0] : ``;
@@ -202,10 +207,8 @@ const ClassRosterTreeItem = (props: ClassRosterTreeItemProps) => {
               <Typography variant="body2" className={classes.totalStudents} sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
                 {count} {count != 1 ? intl?.formatMessage({
                   id: `student.report.classroster.studentsLabel`,
-                  defaultMessage: `students`,
                 }) : intl?.formatMessage({
                   id: `student.report.classroster.studentLabel`,
-                  defaultMessage: `student`,
                 })}
               </Typography>
             </div>
@@ -226,10 +229,11 @@ const ClassRosterTreeItem = (props: ClassRosterTreeItemProps) => {
   );
 }
 interface PerformanceGrade {
-  id: string;
+  id: GroupNameAll;
   name: string;
   color: string;
   students: Student[];
+  total: number;
 }
 interface Student {
   student_id: string;
@@ -238,26 +242,59 @@ interface Student {
 }
 
 interface Props {
-  class_id: number;
+  class_id: string;
   selectedNodeId: string | undefined;
-  handleSelect : (id: string | undefined) => void;
+  selectedGroup: string;
+  handleSelect: (id: string | undefined) => void;
+  updateStudentData: (obj: Student) => void
+  setError: (error: boolean) => void;
+  updateGroup: (obj: GroupNameAll) => void
 }
 
 export default function ClassRoster(props: Props) {
   const intl = useIntl();
-  const { class_id, handleSelect, selectedNodeId } = props;
+  const { class_id, handleSelect, updateStudentData, selectedNodeId, setError, updateGroup, selectedGroup } = props;
 
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
   const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
-  const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleSelect(selectedNodeId === student.student_id ? id : student.student_id)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
+  const handleStudentClick = (id: string , student:Student) => {
+    updateStudentData(student);
+    handleSelect(selectedNodeId === student.student_id ? undefined : student.student_id);
+  }
+  const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleStudentClick(id, student)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
-  const data = [
-    {
+  const sprApi = useSPRReportAPI();
+  useEffect(() => {
+    let didUnmount = false;
+    updateGroup("all");
+    handleSelect(undefined);
+    setSearchData('');
+    setExpanded([]);
+    sprApi.getPerformanceByGroups({
+      classId: class_id,
+      timezone: timeZoneOffset, // No Required
+    }).then((data: GetPerformancesGroupRepsonse) => {
+      if(!didUnmount) {
+        formatData(data);
+        setError(false);
+      }
+    })
+    .catch((e: any) => {
+      !didUnmount && setError(true);
+    });
+    return () => { didUnmount = true };
+  }, [class_id]);
+
+  const [initalData, setInitalData] = useState<PerformanceGrade[]>([]);
+  const [filteredData, setFilteredData] = useState<PerformanceGrade[]>([]);
+  const [searchData, setSearchData] = useState<string>('');
+
+  const formatData = (classRosterGradeStudentList: any) => {
+    const data = [{
       id: `above`,
       name: intl.formatMessage({
         id: `student.report.classroster.above`,
-        defaultMessage: `Above Expectation`,
       }),
       color: `#40B8F4`,
       ...classRosterGradeStudentList?.above,
@@ -266,7 +303,6 @@ export default function ClassRoster(props: Props) {
       id: `meets`,
       name: intl.formatMessage({
         id: `student.report.classroster.meets`,
-        defaultMessage: `Meets Expectation`,
       }),
       color: `#37BA00`,
       ...classRosterGradeStudentList?.meets,
@@ -275,17 +311,18 @@ export default function ClassRoster(props: Props) {
       id: `below`,
       name: intl.formatMessage({
         id: `student.report.classroster.below`,
-        defaultMessage: `Below Expectation`,
       }),
       color: `#FFBC00`,
       ...classRosterGradeStudentList.below,
-    }
-  ];
-  const [searchData, setSearchData] = React.useState<PerformanceGrade[]>(data);
+    }];
+    setInitalData(data);
+    setFilteredData(data);
+  };
 
   const getSearchData = (searchTerm: string, performanceCategories: PerformanceGrade[]) => {
+    setSearchData(searchTerm);
     if (searchTerm === '') {
-      setSearchData(performanceCategories);
+      setFilteredData(performanceCategories);
       setExpanded([]);
       return;
     }
@@ -296,14 +333,23 @@ export default function ClassRoster(props: Props) {
     const expandedNodes = filterStudents
       .filter(category => !!category.students.length)
       .map(caterogy => caterogy.id);
-    setSearchData(filterStudents);
+    setFilteredData(filterStudents);
     setExpanded(expandedNodes);
   }
 
   const renderPerformanceGradeTree = ((performanceGrade: PerformanceGrade, index: number, size: number) => {
     return (
       <div key={performanceGrade.id}>
-        <ClassRosterTreeItem onClick={() => handleSelect(selectedNodeId === performanceGrade.id ? undefined : performanceGrade.id)} nodeId={performanceGrade.id} labelText={performanceGrade.name} color={performanceGrade.color} count={performanceGrade.students.length} gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} intl={intl} >
+        <ClassRosterTreeItem
+           disabled={!performanceGrade.total}
+           onClick={() => !!performanceGrade.total && updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id)} 
+           nodeId={performanceGrade.id} 
+           labelText={performanceGrade.name} 
+           color={performanceGrade.color} 
+           count={performanceGrade.students.length} 
+           gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} 
+           intl={intl} 
+        >
           {performanceGrade?.students?.map((student: Student) => renderStudent(student, performanceGrade.color, performanceGrade.id))}
         </ClassRosterTreeItem>
         {size != index + 1 ? <Divider className={classes.divider} /> : ``}
@@ -316,13 +362,13 @@ export default function ClassRoster(props: Props) {
       <Typography className={classes.componentTitle}>
         {intl.formatMessage({
           id: `student.report.classroster.title`,
-          defaultMessage: `Class Roster`,
         })}
       </Typography>
       <div className={classes.filterTreeContainer}>
-        <div className={classes.filterContainer}>
+      <div className={classes.filterContainer}>
           <CustomSearchField
             fullWidth
+            value={searchData}
             InputProps={{
               endAdornment: (
                 <SearchOutlined className={classes.searchIcon} />
@@ -331,25 +377,22 @@ export default function ClassRoster(props: Props) {
             }}
             placeholder={intl.formatMessage({
               id: `student.report.classroster.searchStudent`,
-              defaultMessage: `Search Student`,
             })}
             variant="outlined"
             size="small"
-            onChange={(e) => getSearchData(e.target.value, data)}
-          />
-        </div>
-        <div className={classes.treeviewContainer}>
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            defaultEndIcon={<div style={{ width: 24 }} />}
-            expanded={expanded}
-            onNodeToggle={handleChange}
-            sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
-          >
-            {searchData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, searchData.length))}
-          </TreeView>
-        </div>
+            onChange={(e) => getSearchData(e.target.value, initalData)} />
+        </div><div className={classes.treeviewContainer}>
+            <TreeView
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              defaultEndIcon={<div style={{ width: 24 }} />}
+              expanded={expanded}
+              onNodeToggle={handleChange}
+              sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
+            >
+              {filteredData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, filteredData.length))}
+            </TreeView>
+          </div>
       </div>
     </Box>);
 }

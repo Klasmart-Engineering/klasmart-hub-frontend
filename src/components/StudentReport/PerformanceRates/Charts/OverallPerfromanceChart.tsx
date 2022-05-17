@@ -1,9 +1,6 @@
 
 import {
     Avatar,
-    Box,
-    Chip,
-    Icon,
     lighten,
     Typography,
 } from "@mui/material";
@@ -28,13 +25,13 @@ import {
     Tooltip,
     Grid,
     GlyphSeries,
-    Annotation
 } from "@visx/xychart";
 import React, { useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 import { Group } from "@visx/group";
 import { Line } from "@visx/shape";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { GroupName, GroupNameAll, OverallPerformanceData } from "../DataFormatter";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -56,30 +53,26 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface PerformaceResults {
-    date: string;
+    date: Date;
     value: number;
 }
 
-interface DataProps {
-    date: string,
-    above?: number,
-    meets?: number,
-    below?: number,
-    score: {
-        above?: number,
-        meets?: number,
-        below?: number,
-    },
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
 }
 
 interface Props {
     viewScores: boolean;
     width: number;
     height: number;
-    data: DataProps[];
+    data: OverallPerformanceData[];
     timeRange: string;
     filterItems: any[];
     selectedNodeId: string | undefined;
+    selectedStudent: StudentProps | undefined;
+    selectedGroup: GroupNameAll;
 }
 
 const margin = {
@@ -91,7 +84,7 @@ const margin = {
 
 export default function OverallPerformanceChart(props: Props) {
 
-    const { viewScores, filterItems, timeRange, width, height, data, selectedNodeId } = props;
+    const { viewScores, filterItems, timeRange, width, height, data, selectedNodeId, selectedStudent } = props;
     const [tooltipColor, setTooltipColor] = useState<string | undefined>(``);
     const [tooltipTop, setTooltipTop] = useState(0);
     const [avatarPosition, setAvatarPosition] = useState({ x: 0, y: 0 });
@@ -101,16 +94,26 @@ export default function OverallPerformanceChart(props: Props) {
     const innerHeight = 370 - margin.top - margin.bottom;
     const innerWidth = width - margin.left - margin.right;
 
-    const keys = useMemo(() => Object.keys(data[0]).filter(key => key !== `date` && key !== `score`), [data]);
-    const overAllScores = keys.map(key => data.map(data => ({ date: data.date, value: data[key as keyof typeof data] })));
-    const learningOutcomeScores = keys.map(key => data.map(data => ({ date: data.date, value: data.score[key as keyof typeof data.score] })));
+    const keys = useMemo(() => data[0] ?
+        Object.keys(data[0])
+            .filter(key => key !== `date` && key !== `score` && key !== `name`)
+        : [], [data]);
+    const overAllScores = keys
+        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.date, value: d[key] })));
+    const learningOutcomeScores = keys
+        .map((key: GroupName) => data.map((d: OverallPerformanceData) => ({ date: d.date, value: d.score[key] })));
     const glyphData = overAllScores.map(set => set[set.length - 1]);
     const totalScores = data.reduce((prev, current) => [
         ...prev,
-        ...keys.map(key => current[key as keyof typeof current] as number)
+        ...keys.map((key: GroupName) => current[key] as number),
+    ], []);
+    const viewScoresTotal = data.reduce((prev, current) => [
+        ...prev,
+        ...keys.map((key: GroupName) => current[key] as number),
+        ...keys.map((key: GroupName) => current.score[key] as number),
     ], [] as number[]);
 
-    const getDate = (d: PerformaceResults) => new Date(`${d.date}T00:00:00`);
+    const getDate = (d: PerformaceResults) => d.date;
     const getValue = (d: PerformaceResults) => d.value;
     const dateScaleConfig = {
         type: `band`,
@@ -122,9 +125,9 @@ export default function OverallPerformanceChart(props: Props) {
         () =>
             scaleLinear<number>({
                 range: [innerHeight, 0],
-                domain: [0, Math.max(...totalScores)],
+                domain: [0, Math.max(...(viewScores ? viewScoresTotal : totalScores))],
             }),
-        [data]
+        [data, viewScores]
     );
     const colorScale = {
         above: theme.palette.info.light,
@@ -145,13 +148,17 @@ export default function OverallPerformanceChart(props: Props) {
                 theme.palette.grey[400] :
             colorScale[key as keyof typeof colorScale];
     }
+    const getAvatarContent = (name: string) => {
+        let splittedArray = name.trim().split(' ');
+        return splittedArray.length > 1 ? splittedArray[0][0] + splittedArray[1][0] : splittedArray.length == 1 ? splittedArray[0][0] : ``;
+    }
 
     return (
         <XYChart
             xScale={dateScaleConfig}
             yScale={valueScaleConfig}
             height={400}
-            width={width}
+            width={width - 10}
             margin={margin}
             onPointerMove={handleMouseOver}
             onPointerOut={handleHideTooltip}
@@ -211,11 +218,11 @@ export default function OverallPerformanceChart(props: Props) {
                         borderRadius: theme.spacing(2.5),
                         pointerEvents: "none"
                     }}>
-                        <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{tooltipData?.nearestDatum?.datum?.value}%</Typography>
+                        <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={20}>{Math.round(tooltipData?.nearestDatum?.datum?.value)}%</Typography>
                         <Typography color={tooltipColor ? theme.palette.common.white : `transparent`} lineHeight={1} fontSize={15} fontWeight={200}>
-                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0] ? {
+                            {intl.formatDate(tooltipData?.nearestDatum?.datum?.date, timeRange === filterItems[0].label ? {
                                 weekday: `short`,
-                            } : timeRange === filterItems[1] ? {
+                            } : timeRange === filterItems[1].label ? {
                                 day: `2-digit`,
                                 month: `2-digit`,
                             } : {
@@ -266,9 +273,9 @@ export default function OverallPerformanceChart(props: Props) {
                     fill: theme.palette.common.black
                 })}
                 tickFormat={(day) => {
-                    return intl.formatDate(day, timeRange === filterItems[0] ? {
+                    return intl.formatDate(day, timeRange === filterItems[0].label ? {
                         weekday: `short`,
-                    } : timeRange === filterItems[1] ? {
+                    } : timeRange === filterItems[1].label ? {
                         day: `2-digit`,
                         month: `2-digit`,
                     } : {
@@ -290,7 +297,7 @@ export default function OverallPerformanceChart(props: Props) {
                     textAnchor: `start`,
                 })}
                 tickFormat={(number) => {
-                    return `${number}%`;
+                    return `${Math.round(number)}%`;
                 }}
             />
             {keys.map((key, i) => (
@@ -302,7 +309,7 @@ export default function OverallPerformanceChart(props: Props) {
                         xAccessor={getDate}
                         yAccessor={getValue}
                         renderGlyph={(glyph) => (
-                            selectedNodeId && (keys.indexOf(selectedNodeId) < 0) ?
+                            selectedNodeId ?
                                 <HtmlLabel
                                     x={glyph.x}
                                     y={glyph.y}
@@ -310,16 +317,17 @@ export default function OverallPerformanceChart(props: Props) {
                                     horizontalAnchor="middle"
                                     verticalAnchor="middle"
                                 >
-                                    <Avatar 
-                                        src="../" 
-                                        sx={{ 
-                                            width: 30, 
-                                            height: 30, 
-                                            bgcolor : getStrokeColor(key), 
-                                            border: `2px solid ${theme.palette.common.white}`, 
+                                    <Avatar
+                                        src={selectedStudent?.avatar}
+                                        sx={{
+                                            width: 30,
+                                            height: 30,
+                                            display: `grid`,
+                                            bgcolor: getStrokeColor(key),
+                                            border: `2px solid ${theme.palette.common.white}`,
                                         }}>
                                         <Typography fontSize={14}>
-                                            {selectedNodeId}
+                                            {getAvatarContent(selectedStudent?.student_name ?? ``)}
                                         </Typography>
                                     </Avatar>
                                 </HtmlLabel> :

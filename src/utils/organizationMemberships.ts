@@ -1,8 +1,11 @@
-import { MyUserResponse } from "@/api/myUser";
-import { OrganizationMembershipConnectionEdge, OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import { OrganizationMembership } from "@/types/graphQL";
-import { SetterOrUpdater } from "recoil";
 import { mapRoles } from "./userRoles";
+import { MyUserResponse } from "@/api/myUser";
+import {
+    OrganizationMembershipConnectionEdge,
+    OrganizationMembershipConnectionNode,
+} from "@/api/organizationMemberships";
+import { OrganizationMembership } from "@/types/graphQL";
+import { SetterOrUpdater } from "@kl-engineering/frontend-state";
 
 export const buildEmptyOrganizationMembership = (): OrganizationMembership => ({
     organization_id: ``,

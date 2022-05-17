@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.56.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.1%0Dv2.56.0) (2022-05-13)
+
+
+### 🐛 Bug Fixes
+
+* update the overall performance service call (#111) ([fcbd4fb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/fcbd4fb4ff7d91452fb71a36cdf6a4161e9ec1a5))
+
+## [2.56.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.0%0Dv2.55.0) (2022-05-12)
+
+
+### ✨ Features
+
+* integrate student reports with api (#110) ([64a61c7](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/64a61c78d429feb662e7da8d5c3783a522ef0f53))
+
+## [2.55.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.55.0%0Dv2.54.2) (2022-05-12)
+
+
+### ⚙️ Continuous Integrations
+
+* enabling multi arch containers (#80) ([75fdda9](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/75fdda98de4e20da5bd81b4d8f9c87c7bb4cb48c))
+
+
+### ♻️ Chores
+
+* add KLS Jira tag ([9e38057](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9e380571b4bdce6d8c424eee982304225f324a61))
+* **DT-847:** Student Progress Report Translations (#108) ([f0de6f0](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f0de6f01296c9ec4bb0a408bd0d2381e49fecda0)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
+
+### ✨ Features
+
+* **KLS-449:** add schedule MFE to schedule page behind feature flag (#109) ([29b4149](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/29b41491be3f6d04fcad8a74da85d4a4c5857af2)), closes [KLS-449](https://calmisland.atlassian.net/browse/KLS-449) [KLS-449](https://calmisland.atlassian.net/browse/KLS-449)
+
+### [2.54.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.2%0Dv2.54.1) (2022-05-12)
+
+
+### 🐛 Bug Fixes
+
+* **AD-2431:** adding fields to combined age range sorting (#94) ([ae90591](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ae905916a41300e736c3d56a8ecd4190f5560408)), closes [AD-2431](https://calmisland.atlassian.net/browse/AD-2431) [AD-2431](https://calmisland.atlassian.net/browse/AD-2431) [AD-2431](https://calmisland.atlassian.net/browse/AD-2431)
+
+
+### 📦 Refactor
+
+* setup MFE base and migrate to shared frontend state library (#102) ([281c976](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/281c976d1945582103c7b8bd49a9640ad0058061)), closes [HU-71](https://calmisland.atlassian.net/browse/HU-71)
+
+
+### ♻️ Chores
+
+* add HU Jira project tag ([57c58f2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/57c58f280f93a9640376bd3fd0d261302b6aebb5))
+
 ### [2.54.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.54.1%0Dv2.54.0) (2022-05-10)
 
 

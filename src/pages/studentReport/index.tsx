@@ -8,8 +8,9 @@ import {
 import Breadcrumb from "@/components/StudentReport/BreadCrumb";
 import ClassTabs from "@/components/StudentReport/ClassTabs";
 import { useIntl } from "react-intl";
-
 import Performance from "@/components/StudentReport/PerformanceTab";
+import { ClassDetail } from "@/api/sprReportApi";
+import WidgetWrapperError from "@/components/Dashboard/WidgetManagement/WidgetWrapperError";
 
 interface Performance {
   total_students: number;
@@ -18,29 +19,20 @@ interface Performance {
   today_activities: number;
 }
 
-interface ClassDetail {
-  class_id: number;
-  class_name: string;
-  performance: Performance;
-}
-
 interface Props { }
 
 export default function StudentReport(props: Props) {
   const [tab, setTab] = useState(`performance`);
   const [classDetail, setClassDetail] = useState<ClassDetail>();
   const intl = useIntl();
-
   const performanceLabel = intl.formatMessage({
     id: `student.report.tabs.performance`,
-    defaultMessage: `Performance`,
   });
-
+  const [error, setError] = useState<boolean>(false);
   const links = [
     {
       label: intl.formatMessage({
         id: `navMenu_studentReportTitle`,
-        defaultMessage: `Student Report`,
       }),
       href: `#/student-report`,
     },
@@ -51,13 +43,14 @@ export default function StudentReport(props: Props) {
     setTab(`performance`);
   };
 
-  return (
+  return error ? <WidgetWrapperError /> :
     <Box padding={2}>
       <Box paddingY={1}>
-        { <Breadcrumb links={links} /> }
+        <Breadcrumb links={links} />
       </Box>
-      { <ClassTabs onClassChange={setClass} /> }
-      <Box>
+      <ClassTabs onClassChange={setClass} setError={setError} />
+      {
+        !!classDetail &&
         <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={(_, tab) => setTab(tab)}>
@@ -69,7 +62,6 @@ export default function StudentReport(props: Props) {
             {classDetail && <Performance {...classDetail} />}
           </TabPanel>
         </TabContext>
-      </Box>
-    </Box>
-  );
+      }
+    </Box>;
 }

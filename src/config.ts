@@ -11,3 +11,5 @@ export const getLiveEndpoint = () => process.env.LIVE_ENDPOINT ?? ``;
 export const getCookieDomain = () => process.env.COOKIE_DOMAIN ?? ``;
 
 export const getReportsEndpoint = () => process.env.REPORTS_ENDPOINT ?? ``;
+
+export const getSPREndPoint = () => process.env.SPR_ENDPOINT ?? ``;
