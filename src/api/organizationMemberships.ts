@@ -1,5 +1,7 @@
 import { ClassesFilter } from "./classes";
 import { UserNode } from "./users";
+import { REACTIVATE_BULK_USERS_IN_ORGANIZATION } from "@/operations/mutations/activateBulkUsers";
+import { DEACTIVATE_BULK_USERS_IN_ORGANIZATION } from "@/operations/mutations/deactivateBulkUsers";
 import { DEACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/deactivateUser";
 import { DELETE_USER_IN_ORGANIZATION } from "@/operations/mutations/deleteUser";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
@@ -94,6 +96,20 @@ export interface ReactivateUsersInOrganizationResponse {
 export interface DeactivateUsersInOrganizationResponse {
 }
 
+export interface DeactivateBulkUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
+}
+export interface DeactivateBulkUsersInOrganizationResponse {
+}
+
+export interface ReactivateBulkUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
+}
+export interface ReactivateBulkUsersInOrganizationResponse {
+}
+
 export const useDeleteUsersInOrganization = (options?: MutationHookOptions<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>) => {
     return useMutation<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>(DELETE_USER_IN_ORGANIZATION, {
         ...options,
@@ -110,6 +126,20 @@ export const useReactivateUsersInOrganization = (options?: MutationHookOptions<R
 
 export const useDeactivateUsersInOrganization = (options?: MutationHookOptions<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>) => {
     return useMutation<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>(DEACTIVATE_USER_IN_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
+};
+
+export const useDeactivateAllUsersInOrganization = (options?: MutationHookOptions<DeactivateBulkUsersInOrganizationResponse, DeactivateBulkUsersInOrganizationRequest>) => {
+    return useMutation<DeactivateBulkUsersInOrganizationResponse, DeactivateBulkUsersInOrganizationRequest>(DEACTIVATE_BULK_USERS_IN_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
+};
+
+export const useReactivateAllUsersInOrganization = (options?: MutationHookOptions<ReactivateBulkUsersInOrganizationResponse, ReactivateBulkUsersInOrganizationRequest>) => {
+    return useMutation<ReactivateBulkUsersInOrganizationResponse, ReactivateBulkUsersInOrganizationRequest>(REACTIVATE_BULK_USERS_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
