@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.57.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.1%0Dv2.57.0) (2022-05-18)
+
+
+### 🐛 Bug Fixes
+
+* **css:** page width reverted (#115) ([fe4d38b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/fe4d38b402700db665cb1d638b8114a86230d4d3))
+
+
+### ♻️ Chores
+
+* **DT-847:** Student Progress Report Translations (#116) ([38f5ba3](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/38f5ba30a0b755387bb6bf1ca2aa183e1142b1d2)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
 ## [2.57.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.0%0Dv2.56.1) (2022-05-18)
 
 
