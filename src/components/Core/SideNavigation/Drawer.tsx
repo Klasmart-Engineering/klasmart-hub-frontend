@@ -1,7 +1,10 @@
 import NavigationMenuList from "./NavigationMenuList";
 import OrganizationMenuList from "./OrganizationMenuList";
 import OrganizationSwitcher from "./OrganizationSwitcher";
-import { MOBILE_WIDTHS } from "@/layout";
+import {
+    DRAWER_WIDTH,
+    MOBILE_WIDTHS,
+} from "@/layout";
 import { useWidth } from "@kl-engineering/kidsloop-px";
 import {
     Drawer,
@@ -18,10 +21,9 @@ import React,
     useState,
 } from "react";
 
-const DRAWER_WIDTH = 256;
-
 const useStyles = makeStyles((theme) => createStyles({
     drawer: {
+        width: DRAWER_WIDTH,
         flexShrink: 0,
         flex: 0,
         transition: theme.transitions.create([ `flex` ], {
@@ -112,9 +114,9 @@ export default function SideNavigationDrawer (props: Props) {
                         keepMounted: true, // Better open performance on mobile.
                     }}
                     onClose={handleClose}
-                  >
+                >
                     {drawer}
-                  </Drawer>
+                </Drawer>
                 : <Drawer
                     variant="persistent"
                     open={drawerOpen}
@@ -122,9 +124,9 @@ export default function SideNavigationDrawer (props: Props) {
                     classes={{
                         paper: classes.drawerPaper,
                     }}
-                  >
+                >
                     {drawer}
-                  </Drawer>
+                </Drawer>
             }
         </nav>
     );
