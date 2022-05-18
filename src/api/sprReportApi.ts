@@ -54,10 +54,39 @@ interface GetPerformanceGroupRequest {
     classId: string;
     timezone: number;
 }
+
+interface GetPerformanceSkillRequest {
+    classId: string;
+    timezone: number;
+    days: number;
+    viewLOs: boolean;
+    group?: string;
+    studentId?: string;
+}
+
+export interface GetPerformancesCategorySkill {
+    category: string;
+    subcategories: SubCategorySkill;
+}
+
+export interface SubCategorySkill {
+    name: string;
+    achieved: number;
+    notAchieved: number;
+    total: string;
+    learningOutcome: LearningOutcomeSkill;
+}
+
+interface LearningOutcomeSkill {
+    achieved: number;
+    notAchieved: number;
+    total: string;
+}
+
 interface Student {
     student_id: string;
     student_name: string;
-    avatar: string;
+    avatar: string | null;
 }
 interface PerformancesGroup {
     total: number;
@@ -71,9 +100,6 @@ export interface GetPerformancesGroupRepsonse {
 
 export class SPRReportAPI {
     public async getClasses (request: GetClassesRequest): Promise<GetClassesRepsonse | null> {
-        request = {
-            ...request,
-        };
         const str = queryString.stringify({
             ...request,
         });
@@ -91,6 +117,13 @@ export class SPRReportAPI {
         const str = queryString.stringify(request);
         const response = await this.sprCall(`GET`, `/performances/groups?${str}`);
         const body: GetPerformancesGroupRepsonse = await response.json() as GetPerformancesGroupRepsonse;
+        return body;
+    }
+
+    public async getPerformanceSkills (request: GetPerformanceSkillRequest): Promise<GetPerformancesCategorySkill[] | null> {
+        const str = queryString.stringify(request);
+        const response = await this.sprCall(`GET`, `/performances/skills?${str}`);
+        const body: GetPerformancesCategorySkill[] = await response.json() as GetPerformancesCategorySkill[];
         return body;
     }
 

@@ -1,4 +1,8 @@
-import { GetPerformancesRepsonse } from "@/api/sprReportApi";
+import {
+    GetPerformancesCategorySkill,
+    GetPerformancesRepsonse,
+    SubCategorySkill,
+} from "@/api/sprReportApi";
 
 export interface OverallPerformanceData {
     name: string;
@@ -12,9 +16,21 @@ export interface OverallPerformanceData {
         below?: number;
     };
 }
+interface Score {
+    name: string;
+    achieved: number;
+    notAchieved: number;
+}
+interface SkillData {
+    learningOutcomeScores: Score;
+    performanceScores: Score;
+}
 
 export type GroupName = 'above' | 'below' | 'meets';
 export type GroupNameAll = 'all' | GroupName;
+
+const chunk = (arr: any, size: number) => arr.reduce((acc: any, e: any, i: number) =>
+    (i % size ? acc[acc.length - 1].push(e) : acc.push([ e ]), acc), []);
 
 const mapData = (type: GroupNameAll) => (c: GetPerformancesRepsonse) => {
     return {
@@ -43,7 +59,32 @@ const mapData = (type: GroupNameAll) => (c: GetPerformancesRepsonse) => {
     };
 };
 
-export default function mapGraph (data: GetPerformancesRepsonse[], type: GroupNameAll): OverallPerformanceData[] {
+export const mapPerfomanceGraph = (data: GetPerformancesRepsonse[], type: GroupNameAll): OverallPerformanceData[] => {
     return data.map(mapData(type))
         .reverse();
-}
+};
+
+export const mapSkillGraph = (data: GetPerformancesCategorySkill[]) => data.map((d: GetPerformancesCategorySkill) => ({
+    ...d,
+    subcategories: chunk(d.subcategories, 5)
+        .map((subCategory: SubCategorySkill[]) => subCategory.map((s: SubCategorySkill) => ({
+            performanceScores: {
+                name: s.name,
+                achieved: s.achieved,
+                notAchieved: s.notAchieved,
+            },
+            learningOutcomeScores: {
+                name: s.name,
+                achieved: s.learningOutcome.achieved,
+                notAchieved: s.learningOutcome.notAchieved,
+            },
+        }))),
+}))
+    .reverse()
+    .reduce((p: SkillData[], c: any) => {
+        const splite = c.subcategories.map((data: SkillData) => ({
+            category: c.category,
+            data,
+        }));
+        return [ ...splite, ...p ];
+    }, []);

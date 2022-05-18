@@ -100,9 +100,10 @@ interface Performance {
 interface Props {
   onClassChange: (classDetail: ClassDetail) => void;
   setError: (error: boolean) => void;
+  setLoading: (loading: boolean) => void;
 }
 
-export default function ClassTabs({ onClassChange, setError }: Props) {
+export default function ClassTabs({ onClassChange, setError, setLoading}: Props) {
   const style = useStyles();
   const theme = createTheme();
   const [classess, setClassess] = useState<ClassDetail[]>([]);
@@ -117,6 +118,7 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
   const [index, setIndex] = useState<number>(0);
   useEffect(() => {
     let unMounted = false;
+    setLoading(true);
     sprApi.getClasses({
       orgId,
       isTeacher: true,
@@ -126,10 +128,11 @@ export default function ClassTabs({ onClassChange, setError }: Props) {
         onClassChange(data?.classes[0]);
         setClassess(data?.classes || []);
         setSelectedClass(data?.classes[0]);
-        setError(false);
+        setError(!data?.classes.length);
       }
     })
-      .catch(() => setError(true));
+      .catch(() => !unMounted && setError(true))
+      .then(() => !unMounted && setLoading(false));
     return () => { unMounted = true };
   }, [orgId]);
   const handleClick = (event: any) => {

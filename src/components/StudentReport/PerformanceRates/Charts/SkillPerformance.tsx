@@ -1,3 +1,4 @@
+import { GroupNameAll } from "../DataFormatter";
 import {
     Box,
     lighten,
@@ -68,15 +69,37 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 const roundNumber = (num: number) => Math.round((num / 10) * 10);
+
+interface Score {
+    name: string;
+    achieved: number;
+    notAchieved: number;
+}
 interface Data {
-    learningOutcomeScores: any;
-    performanceScores: any;
+    learningOutcomeScores: Score;
+    performanceScores: Score;
+}
+
+interface FilterItems {
+    label: string;
+    value: number;
+}
+
+interface StudentProps {
+    student_id: string;
+    student_name: string;
+    avatar: string;
 }
 interface Props {
     data: Data[];
     width: number;
     height: number;
     viewScores: boolean;
+    timeRange: string;
+    filterItems: FilterItems[];
+    selectedNodeId: string | undefined;
+    selectedStudent: StudentProps | undefined;
+    selectedGroup: GroupNameAll;
 }
 const margin = {
     top: 60,
@@ -106,15 +129,18 @@ export default function SkillPerformance (props: Props) {
     const achievementTotals = data.reduce((totals, skill) => (
         totals.concat(skill.performanceScores.achieved + skill.performanceScores.notAchieved + skill.learningOutcomeScores.achieved + skill.learningOutcomeScores.notAchieved)
     ), [] as number[]);
-    const maxScore = roundNumber(Math.max(...achievementTotals));
+    const maxScore = roundNumber(Math.max(...achievementTotals)) + 40;
     const axisLeftNumTick = 5;
-
-    const getSkill = (d: any) => d.name;
-    const getGroupSkill = (d: any) => d.performanceScores.name;
+    const others = intl.formatMessage({
+        id: `home.student.learningOutcomeWidget.others`,
+        defaultMessage: `Others`,
+    });
+    const getSkill = (d: any) => d.name ? d.name : others;
+    const getGroupSkill = (d: Data) => d.performanceScores.name ? d.performanceScores.name : others;
     // Defining scales
     const xScale = scaleBand<string>({
         range: [ margin.left, innerWidth ],
-        domain: data.map((d: any) => getSkill(d.performanceScores)),
+        domain: data.map((d: Data) => getSkill(d.performanceScores)),
         paddingOuter: 3.8 / (data.length + 0.7),
         paddingInner: 0.7,
     });
@@ -263,7 +289,7 @@ export default function SkillPerformance (props: Props) {
                                                                             all={key !== `performanceScores`}
                                                                             top={
                                                                                 barStack.key === `notAchieved` ||
-                                                                                    !bar?.data?.notAchieved
+                                                                                !bar?.data?.notAchieved
                                                                             }
                                                                         />
                                                                         <HtmlLabel
@@ -272,7 +298,7 @@ export default function SkillPerformance (props: Props) {
                                                                             anchorLineStroke="none"
                                                                             x={!viewScores ? x : key === `performanceScores` ? x - (width / 2) : x + width}
                                                                             y={
-                                                                                barStack.key === `notAchieved` ? y - 43 : y
+                                                                                barStack.key === `notAchieved` ? y - 50 : y
                                                                             }
                                                                         >
                                                                             {color === notAchievedColor ? (
