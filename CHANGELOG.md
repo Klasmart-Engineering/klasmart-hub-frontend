@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.57.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.0%0Dv2.56.1) (2022-05-18)
+
+
+### ✨ Features
+
+* bulk status action for users (#112) ([a0a4d10](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a0a4d10040fd71634b815e203499c689a40f9457))
+
 ### [2.56.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.56.1%0Dv2.56.0) (2022-05-13)
 
 
