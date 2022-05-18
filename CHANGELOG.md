@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.57.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.2%0Dv2.57.1) (2022-05-18)
+
+
+### 🗑 Reverts
+
+* Revert "feat: bulk status action for users (#112)" (#117) ([9538451](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/9538451b32aa7c8e8d7d346dd1e5051386b9ac24))
+
 ### [2.57.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.1%0Dv2.57.0) (2022-05-18)
 
 
