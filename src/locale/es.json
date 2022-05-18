@@ -1261,5 +1261,16 @@
     "classRoster_transferInfo": "Transferir {users} de {class} a una nueva clase",
     "classRoster_selectClass": "Seleccione una nueva clase a continuación",
     "academicTerm.validationError.duplicateName": "El nombre del período académico introducido coincide con el nombre de otro período académico",
-    "validation.error.class.name.duplicate": "The name that you have entered for this class is already in use. Please enter another name."
+    "validation.error.class.name.duplicate": "The name that you have entered for this class is already in use. Please enter another name.",
+    "entity.user.edit.self.error": "No puede modificar su propio usuario",
+    "entity.user.status.mix.error": "There is a mix of active and inactive users in your selection",
+    "home.student.learningOutcomeWidget.others": "otros",
+    "entity.user.template.edit.button": "Editar usuarios",
+    "user.activate.success": "Los usuarios han sido activados",
+    "user.inactivate.success": "Los usuarios han sido inactivados",
+    "entity.user.template.editpopup.cancel": "Cancelar",
+    "entity.user.template.editpopup.proceed": "Continuar",
+    "entity.user.template.editpopup.title": "Edit Users",
+    "entity.user.template.editpopup.select": "Estado",
+    "entity.user.template.editpopup.select.required": "Obligatorio"
 }
