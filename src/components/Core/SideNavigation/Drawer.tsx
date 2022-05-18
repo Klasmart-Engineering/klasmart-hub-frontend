@@ -22,6 +22,7 @@ const DRAWER_WIDTH = 256;
 
 const useStyles = makeStyles((theme) => createStyles({
     drawer: {
+        width: DRAWER_WIDTH,
         flexShrink: 0,
         flex: 0,
         transition: theme.transitions.create([ `flex` ], {

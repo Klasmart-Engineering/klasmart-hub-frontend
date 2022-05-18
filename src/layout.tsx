@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: `flex`,
         flex: 1,
         flexDirection: `column`,
+        width: `calc(100vw - 256px)`,
         height: `100vh`,
     },
 }));
