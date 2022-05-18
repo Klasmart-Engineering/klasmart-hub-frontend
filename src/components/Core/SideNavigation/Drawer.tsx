@@ -1,7 +1,7 @@
 import NavigationMenuList from "./NavigationMenuList";
 import OrganizationMenuList from "./OrganizationMenuList";
 import OrganizationSwitcher from "./OrganizationSwitcher";
-import { MOBILE_WIDTHS } from "@/layout";
+import { DRAWER_WIDTH, MOBILE_WIDTHS } from "@/layout";
 import { useWidth } from "@kl-engineering/kidsloop-px";
 import {
     Drawer,
@@ -17,8 +17,6 @@ import React,
     useEffect,
     useState,
 } from "react";
-
-const DRAWER_WIDTH = 256;
 
 const useStyles = makeStyles((theme) => createStyles({
     drawer: {
