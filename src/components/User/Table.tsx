@@ -1,4 +1,3 @@
-import EditBulkUserDialog from "./Dialog/EditBulkStatus";
 import {
     useDeactivateUsersInOrganization,
     useDeleteUsersInOrganization,
@@ -7,8 +6,8 @@ import {
 import CreateUserDialog from "@/components/User/Dialog/Create";
 import UploadUserCsvDialog from "@/components/User/Dialog/CsvUpload";
 import EditUserDialog from "@/components/User/Dialog/Edit";
-import { useCurrentOrganization, useCurrentOrganizationMembership } from "@/store/organizationMemberships";
-import { Status, User } from "@/types/graphQL";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { Status } from "@/types/graphQL";
 import {
     useDeleteEntityPrompt,
     useMarkInactiveEntityPrompt,
@@ -56,8 +55,6 @@ import { escapeRegExp } from "lodash";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
-import is from "date-fns/esm/locale/is/index.js";
-import { useQueryMyUser } from "@/api/myUser";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -101,7 +98,7 @@ export interface UserRow {
 interface Props extends TableProps<UserRow> {
 }
 
-export default function UserTable(props: Props) {
+export default function UserTable (props: Props) {
     const {
         rows,
         loading,
@@ -120,31 +117,26 @@ export default function UserTable(props: Props) {
         onTableChange,
     } = props;
     const classes = useStyles();
-    const [uploadCsvDialogOpen, setUploadCsvDialogOpen] = useState(false);
+    const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const deletePrompt = useDeleteEntityPrompt();
     const markInactivePrompt = useMarkInactiveEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
-    const { data: userData } = useQueryMyUser();
     const organizationId = currentOrganization?.id ?? ``;
-    const userId = userData?.myUser.node.id;
     const { required } = useValidations();
-    const [createDialogOpen, setCreateDialogOpen] = useState(false);
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [showBulkUserDilog, setShowBulkUserDilog] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState<string>();
-    const [selectedUsers, setSelectedUsers] = useState<UserRow[]>([]);
-    const [isMismatch, setIsMismatch] = useState(false);
+    const [ createDialogOpen, setCreateDialogOpen ] = useState(false);
+    const [ editDialogOpen, setEditDialogOpen ] = useState(false);
+    const [ selectedUserId, setSelectedUserId ] = useState<string>();
     const createUsersPermissions = usePermission(`create_users_40220`);
     const createMySchoolsUsersPermissions = usePermission(`create_my_school_users_40221`);
     const canEdit = usePermission(`edit_users_40330`);
     const canDelete = usePermission(`delete_users_40440`);
     const canReactivateUserInOrg = usePermission(`reactivate_user_40884`);
     const canDeactivateUserInOrg = usePermission(`deactivate_user_40883`);
-    const [deleteUserInOrganization] = useDeleteUsersInOrganization();
-    const [reactivateUserInOrganization] = useReactivateUsersInOrganization();
-    const [deactivateUserInOrganization] = useDeactivateUsersInOrganization();
+    const [ deleteUserInOrganization ] = useDeleteUsersInOrganization();
+    const [ reactivateUserInOrganization ] = useReactivateUsersInOrganization();
+    const [ deactivateUserInOrganization ] = useDeactivateUsersInOrganization();
     const {
         schoolsFilterValueOptions,
         userRolesFilterValueOptions,
@@ -189,7 +181,7 @@ export default function UserTable(props: Props) {
             await reactivateUserInOrganization({
                 variables: {
                     organizationId,
-                    userIds: [row.id],
+                    userIds: [ row.id ],
                 },
             });
 
@@ -219,7 +211,7 @@ export default function UserTable(props: Props) {
             await deactivateUserInOrganization({
                 variables: {
                     organizationId,
-                    userIds: [row.id],
+                    userIds: [ row.id ],
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -248,7 +240,7 @@ export default function UserTable(props: Props) {
             await deleteUserInOrganization({
                 variables: {
                     organizationId,
-                    userIds: [row.id],
+                    userIds: [ row.id ],
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -309,11 +301,10 @@ export default function UserTable(props: Props) {
                 count: 2,
             }),
             search: (row: string[], searchValue: string) => {
-                const values = Array.isArray(row) ? row : [row];
+                const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
                 return values.some((value) => {
-                    const result = getCustomRoleName(intl, value)
-                        .match(regexp);
+                    const result = getCustomRoleName(intl, value).match(regexp);
                     return !!result;
                 });
             },
@@ -392,11 +383,10 @@ export default function UserTable(props: Props) {
                 id: `classes_statusTitle`,
             }),
             search: (row: string[], searchValue: string) => {
-                const values = Array.isArray(row) ? row : [row];
+                const values = Array.isArray(row) ? row : [ row ];
                 const regexp = new RegExp(escapeRegExp(searchValue.trim()), `gi`);
                 return values.some((value) => {
-                    const result = getCustomStatus(intl, value)
-                        .match(regexp);
+                    const result = getCustomStatus(intl, value).match(regexp);
                     return !!result;
                 });
             },
@@ -438,7 +428,7 @@ export default function UserTable(props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [required()],
+                    validations: [ required() ],
                     options: userRolesFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
@@ -462,7 +452,7 @@ export default function UserTable(props: Props) {
                         id: `generic_filtersEqualsLabel`,
                     }),
                     value: `eq`,
-                    validations: [required()],
+                    validations: [ required() ],
                     options: [
                         {
                             value: Status.ACTIVE,
@@ -500,7 +490,7 @@ export default function UserTable(props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [required()],
+                    validations: [ required() ],
                     options: schoolsFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
@@ -525,7 +515,7 @@ export default function UserTable(props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [required()],
+                    validations: [ required() ],
                     options: classFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
@@ -550,7 +540,7 @@ export default function UserTable(props: Props) {
                     }),
                     value: `eq`,
                     multipleValues: true,
-                    validations: [required()],
+                    validations: [ required() ],
                     options: gradeFilterValueOptions,
                     chipLabel: (column, value) => (
                         intl.formatMessage({
@@ -574,7 +564,7 @@ export default function UserTable(props: Props) {
                         id: `generic_filtersContainsLabel`,
                     }),
                     value: `contains`,
-                    validations: [required()],
+                    validations: [ required() ],
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersContainsChipLabel`,
@@ -597,7 +587,7 @@ export default function UserTable(props: Props) {
                         id: `generic_filtersContainsLabel`,
                     }),
                     value: `contains`,
-                    validations: [required()],
+                    validations: [ required() ],
                     chipLabel: (column, value) => (
                         intl.formatMessage({
                             id: `generic_filtersContainsChipLabel`,
@@ -611,44 +601,10 @@ export default function UserTable(props: Props) {
         },
     ];
 
-    const onSelected = (ids: string[]) => {
-        const updatedUsers = ids.reduce<any>((obj, id) =>
-        ({
-            ...obj, [id]: {
-                id, ...[...selectedUsers, ...rows]
-                    .find(row => row.id === id)
-            }
-        }),
-            {}) || {};
-        setSelectedUsers(Object.values(updatedUsers));
-    };
-
-    const resteSelected = () => {
-        setSelectedUsers([]);
-    }
-
-    const verifyEdit = (selectedUsers: UserRow[]) => {
-        const hasCurrectUser = !!selectedUsers.find(user => user.id === userId);
-        if (hasCurrectUser) {
-            enqueueSnackbar(intl.formatMessage({
-                id: `entity.user.edit.self.error`,
-                defaultMessage: `You cannot modify your own account`
-            }), {
-                variant: `error`,
-            });
-            return;
-        }
-        const hasActiveUser = !!selectedUsers.find(user => user.status === 'active');
-        const hasInactiveUser = !!selectedUsers.find(user => user.status === 'inactive');
-        setIsMismatch(hasActiveUser && hasInactiveUser);
-        setShowBulkUserDilog(true);
-    };
-
     return (
         <>
             <Paper className={classes.root}>
                 <CursorTable
-                    showSelectables
                     filters={filters}
                     columns={columns}
                     rows={rows}
@@ -664,8 +620,6 @@ export default function UserTable(props: Props) {
                     startCursor={startCursor}
                     endCursor={endCursor}
                     total={total}
-                    onSelected={onSelected}
-                    selectedRows={selectedUsers.map(({ id }) => id)}
                     primaryAction={{
                         label: intl.formatMessage({
                             id: `users_createUser`,
@@ -674,16 +628,6 @@ export default function UserTable(props: Props) {
                         disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
                         onClick: () => setCreateDialogOpen(true),
                     }}
-                    selectActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.template.edit.button`,
-                                defaultMessage: `Edit users`,
-                            }),
-                            icon: EditIcon,
-                            onClick: () => verifyEdit(selectedUsers),
-                        },
-                    ]}
                     secondaryActions={[
                         {
                             label: intl.formatMessage({
@@ -765,13 +709,6 @@ export default function UserTable(props: Props) {
                     setSelectedUserId(undefined);
                     setEditDialogOpen(false);
                 }}
-            />
-            <EditBulkUserDialog
-                open={showBulkUserDilog}
-                selectedUsers={selectedUsers}
-                isMismatch={isMismatch}
-                onClose={() => setShowBulkUserDilog(false)}
-                handleReset={resteSelected}
             />
             <CreateUserDialog
                 open={createDialogOpen}

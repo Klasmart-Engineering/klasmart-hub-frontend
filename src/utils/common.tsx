@@ -9,7 +9,7 @@ interface DeleteEntity {
     entityName: string;
 }
 
-interface MarkInactiveEntity extends DeleteEntity { }
+interface MarkInactiveEntity extends DeleteEntity {}
 
 export const useDeleteEntityPrompt = () => {
     const intl = useIntl();
@@ -38,8 +38,7 @@ export const useDeleteEntityPrompt = () => {
                         id: `generic_typeToRemovePrompt`,
                     }, {
                         value: <strong>{entityName}</strong>,
-                    })}
-                    </DialogContentText>
+                    })}</DialogContentText>
                 </>
             ),
             validations: [ required(), equals(entityName) ],
@@ -80,8 +79,7 @@ export const useMarkInactiveEntityPrompt = () => {
                         id: `user.inactivate.typeToMarkInactivePrompt`,
                     }, {
                         value: <strong>{entityName}</strong>,
-                    })}
-                    </DialogContentText>
+                    })}</DialogContentText>
                 </>
             ),
             validations: [ required(), equals(entityName) ],
