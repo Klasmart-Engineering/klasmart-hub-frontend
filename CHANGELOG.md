@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.58.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.58.0%0Dv2.57.2) (2022-05-18)
+
+
+### ✨ Features
+
+* **spr:** add skill perfomance spr and refinement (#113) ([5bc2217](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5bc2217b4fb7e8e0c6e8db7b733bc2daf175f39c))
+
 ### [2.57.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.57.2%0Dv2.57.1) (2022-05-18)
 
 
