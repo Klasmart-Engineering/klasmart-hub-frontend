@@ -632,7 +632,6 @@ export default function UserTable(props: Props) {
         if (hasCurrectUser) {
             enqueueSnackbar(intl.formatMessage({
                 id: `entity.user.edit.self.error`,
-                defaultMessage: `You cannot modify your own account`
             }), {
                 variant: `error`,
             });
@@ -678,7 +677,6 @@ export default function UserTable(props: Props) {
                         {
                             label: intl.formatMessage({
                                 id: `entity.user.template.edit.button`,
-                                defaultMessage: `Edit users`,
                             }),
                             icon: EditIcon,
                             onClick: () => verifyEdit(selectedUsers),

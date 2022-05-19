@@ -85,13 +85,11 @@ export default function EditBulkUserDialog(props: Props) {
             }
             actionStatus === `Active` ? enqueueSnackbar(intl.formatMessage({
                 id: `user.activate.success`,
-                defaultMessage: `Users have been marked as active`
             }), {
                 variant: `success`,
             }) :
                 enqueueSnackbar(intl.formatMessage({
                     id: `user.inactivate.success`,
-                    defaultMessage: `Users have been marked as inactive`
                 }), {
                     variant: `success`,
                 });
@@ -108,14 +106,12 @@ export default function EditBulkUserDialog(props: Props) {
         <Dialog
             title={intl.formatMessage({
                 id: `entity.user.template.editpopup.title`,
-                defaultMessage: `Edit Users`,
             })}
             open={open}
             actions={[
                 {
                     label: intl.formatMessage({
                         id: `entity.user.template.editpopup.cancel`,
-                        defaultMessage: `Cancel`,
                     }),
                     color: `primary`,
                     onClick: onClose,
@@ -123,7 +119,6 @@ export default function EditBulkUserDialog(props: Props) {
                 {
                     label: intl.formatMessage({
                         id: `entity.user.template.editpopup.proceed`,
-                        defaultMessage: `Proceed`,
                     }),
                     color: `primary`,
                     disabled: isMismatch,
@@ -136,7 +131,6 @@ export default function EditBulkUserDialog(props: Props) {
                 fullWidth
                 label={intl.formatMessage({
                     id: `entity.user.template.editpopup.select`,
-                    defaultMessage: `Status`
                 })}
 
                 items={[`Active`, `Inactive`]}
@@ -144,15 +138,13 @@ export default function EditBulkUserDialog(props: Props) {
                 validations={[
                     required(intl.formatMessage({
                         id: `entity.user.template.editpopup.select.required`,
-                        defaultMessage: `required`
                     })),
                 ]}
                 onChange={(value) => setActionStatus(value)}
             />
             {isMismatch &&
                 <Typography className={classes.warning}>
-                    <FormattedMessage id="entity.user.status.mix.error"
-                        defaultMessage="There is a mix of active and inactive users in your selection." />
+                    <FormattedMessage id="entity.user.status.mix.error" />
                 </Typography>}
         </Dialog>
     );
