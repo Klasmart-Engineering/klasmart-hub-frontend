@@ -157,6 +157,9 @@ const useFilterTreeStyles = makeStyles((theme: Theme) => createStyles({
   },
   spacing4: {
     paddingLeft: theme.spacing(0.5),
+  },
+  disabled: {
+    opacity: 0.5,
   }
 }));
 
@@ -199,7 +202,7 @@ const ClassRosterTreeItem = (props: ClassRosterTreeItemProps) => {
           }
           <div className={classes.spacing4}>
             <div className={classes.middleContent}>
-              <Typography variant="body1" className={count ? classes.labelTextParent : classes.labelTextChild} sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+              <Typography variant="body1" className={classes.labelTextParent} sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
                 {labelText}
               </Typography>
             </div>
@@ -246,7 +249,7 @@ interface Props {
   selectedNodeId: string | undefined;
   selectedGroup: string;
   handleSelect: (id: string | undefined) => void;
-  updateStudentData: (obj: Student) => void
+  updateStudentData: (student: Student) => void
   setError: (error: boolean) => void;
   updateGroup: (obj: GroupNameAll) => void
 }
@@ -257,12 +260,14 @@ export default function ClassRoster(props: Props) {
 
   const classes = useFilterTreeStyles();
   const [expanded, setExpanded] = useState<string[] | undefined>([]);
-  const handleChange = (event: any, nodes: string[]) => setExpanded(nodes);
-  const handleStudentClick = (id: string , student:Student) => {
+  const handleChange = (nodes: string[]) => setExpanded(nodes);
+  const handleStudentClick = (student: Student, id: GroupNameAll = 'all') => {
+    updateGroup(id);
     updateStudentData(student);
     handleSelect(selectedNodeId === student.student_id ? undefined : student.student_id);
+    setExpanded([id]);
   }
-  const renderStudent = (student: Student, color: string, id: string) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleStudentClick(id, student)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
+  const renderStudent = (student: Student, color: string, id: GroupNameAll) => <ClassRosterTreeItem key={student.student_id} onClick={() => handleStudentClick(student, id)} nodeId={student.student_id} labelText={student.student_name} color={color} imgUrl={student.avatar} />;
 
   const sprApi = useSPRReportAPI();
   useEffect(() => {
@@ -341,14 +346,18 @@ export default function ClassRoster(props: Props) {
     return (
       <div key={performanceGrade.id}>
         <ClassRosterTreeItem
-           disabled={!performanceGrade.total}
-           onClick={() => !!performanceGrade.total && updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id)} 
+           onClick={() => {
+            handleChange(selectedGroup === performanceGrade.id ? [] : [performanceGrade.id]);
+            handleSelect(undefined);
+             !!performanceGrade.total && updateGroup(selectedGroup === performanceGrade.id ? `all` : performanceGrade.id);
+            }}
            nodeId={performanceGrade.id} 
            labelText={performanceGrade.name} 
            color={performanceGrade.color} 
            count={performanceGrade.students.length} 
            gradeImg={performanceGrade.id === 'above' ? highIcon : performanceGrade.id === 'meets' ? averageIcon : lowIcon} 
-           intl={intl} 
+           intl={intl}
+           className={!performanceGrade.students.length ? classes.disabled : ''}
         >
           {performanceGrade?.students?.map((student: Student) => renderStudent(student, performanceGrade.color, performanceGrade.id))}
         </ClassRosterTreeItem>
@@ -387,10 +396,10 @@ export default function ClassRoster(props: Props) {
               defaultExpandIcon={<ChevronRightIcon />}
               defaultEndIcon={<div style={{ width: 24 }} />}
               expanded={expanded}
-              onNodeToggle={handleChange}
               sx={{ height: 450, flexGrow: 1, overflowY: 'auto' }}
             >
-              {filteredData?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, filteredData.length))}
+              {filteredData
+              ?.map((performanceGrade, index) => renderPerformanceGradeTree(performanceGrade, index, filteredData.length))}
             </TreeView>
           </div>
       </div>

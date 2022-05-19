@@ -13,6 +13,8 @@ import React,
     useState,
 } from "react";
 
+export const DRAWER_WIDTH = 256;
+
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         display: `flex`,
@@ -25,6 +27,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: `flex`,
         flex: 1,
         flexDirection: `column`,
+        width: `calc(100vw - ${DRAWER_WIDTH}px)`,
         height: `100vh`,
     },
 }));
