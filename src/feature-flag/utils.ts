@@ -4,7 +4,6 @@ const defaultFlags = {
     studentWidgetAdaptiveLearning: false,
     studentWidgetAdaptiveLearningJourney: false,
     teacherStudentProgressReport: false,
-    showScheduleMicroFrontend: false,
 } as const;
 
 export type FeatureFlags = typeof defaultFlags;
