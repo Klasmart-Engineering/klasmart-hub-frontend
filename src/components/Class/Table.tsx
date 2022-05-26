@@ -27,8 +27,8 @@ import {
     CursorTable,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
@@ -244,6 +244,7 @@ export default function ClassesTable (props: Props) {
                         value,
                     })
                 ),
+                valueComponent: `select`,
             },
         ],
     };
@@ -271,6 +272,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -296,6 +298,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -321,6 +324,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -347,6 +351,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -372,6 +377,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -397,6 +403,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -435,6 +442,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },

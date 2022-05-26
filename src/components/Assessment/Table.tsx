@@ -9,18 +9,18 @@ import {
     useGetAssessments,
     useGetAssessmentsSummary,
 } from "@kl-engineering/cms-api-client";
+import {
+    PageTable,
+    UserAvatar,
+} from "@kl-engineering/kidsloop-px";
+import { SubgroupTab } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/GroupTabs";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Page/Table";
 import { Box } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    PageTable,
-    UserAvatar,
-} from "@kl-engineering/kidsloop-px";
-import { SubgroupTab } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/GroupTabs";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Page/Table";
 import { sumBy } from "lodash";
 import React,
 {
@@ -133,14 +133,15 @@ export default function AssessmentTable (props: Props) {
                     display="flex"
                     flexDirection="row"
                 >
-                    {row.teachers?.sort((a, b) => a.name.localeCompare(b.name)).map((teacher) => (
-                        <UserAvatar
-                            key={teacher.id}
-                            className={classes.teacherAvatar}
-                            name={teacher.name}
-                            size="small"
-                        />
-                    ))}
+                    {row.teachers?.sort((a, b) => a.name.localeCompare(b.name))
+                        .map((teacher) => (
+                            <UserAvatar
+                                key={teacher.id}
+                                className={classes.teacherAvatar}
+                                name={teacher.name}
+                                size="small"
+                            />
+                        ))}
                 </Box>
             ),
         },

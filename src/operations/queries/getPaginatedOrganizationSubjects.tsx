@@ -7,7 +7,7 @@ import {
 } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface SubjectPaginationFilter {
     organizationId: string;
@@ -57,7 +57,7 @@ export const buildOrganizationSubjectFilter = (filter: SubjectPaginationFilter):
             ],
         },
         {
-            AND: [ buildOrganizationSubjectSearchFilter(filter.search), ...filter.filters  ],
+            AND: [ buildOrganizationSubjectSearchFilter(filter.search), ...filter.filters ],
         },
     ],
 });

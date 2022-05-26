@@ -13,6 +13,13 @@ import {
 } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
 import {
+    Button,
+    FullScreenDialog,
+    Stepper,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { Step } from "@kl-engineering/kidsloop-px/dist/src/components/Stepper";
+import {
     Box,
     Toolbar,
 } from "@mui/material";
@@ -20,13 +27,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    FullScreenDialog,
-    Stepper,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
 import { isEqual } from "lodash";
 import React,
 {
@@ -120,7 +120,8 @@ export default function CreateProgramDialog (props: Props) {
                     max(35)(updatedProgram?.name),
                     required()(updatedProgram?.grades),
                     required()(updatedProgram?.ageRanges),
-                ].filter(((error): error is string => error !== true)).find((error) => error),
+                ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -132,7 +133,8 @@ export default function CreateProgramDialog (props: Props) {
                         onChange={handleValue}
                     />
                 ),
-                error: [ required()(updatedProgram?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(updatedProgram?.subjects) ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({

@@ -3,7 +3,7 @@ import { ClassRow } from "@/components/Class/Table";
 import { Status } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface ClassPaginationFilter {
     organizationId: string;

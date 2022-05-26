@@ -8,7 +8,7 @@ import {
     Program,
     Status,
 } from "@/types/graphQL";
-import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     isEqual,
     pickBy,
@@ -37,7 +37,8 @@ export const mapGradeEdgesToFilterOptions = (edges: GradeEdge[]) =>
     }));
 
 export const mapGradesFromPrograms = (programs: Program[]): Grade[] => {
-    const grades = programs.filter(program => program.grades?.length).flatMap(program => program.grades)
+    const grades = programs.filter(program => program.grades?.length)
+        .flatMap(program => program.grades)
         .filter((grade, i, array) => (i === array.findIndex(foundFilter => isEqual(foundFilter, grade))));
 
     return grades as Grade[] ?? [];

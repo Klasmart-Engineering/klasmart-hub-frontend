@@ -20,7 +20,7 @@ import {
     Stepper,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
+import { Step } from "@kl-engineering/kidsloop-px/dist/src/components/Stepper";
 import {
     Box,
     Toolbar,

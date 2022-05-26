@@ -27,6 +27,23 @@ import {
 import { sortRoleNames } from "@/utils/userRoles";
 import { useValidations } from "@/utils/validations";
 import { ApolloQueryResult } from "@apollo/client";
+import {
+    CursorTable,
+    Fab,
+    useConfirm,
+    UserAvatar,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import {
+    Filter,
+    TableFilter,
+} from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import {
+    Order,
+    TableColumn,
+} from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import CloseIcon from "@mui/icons-material/Close";
 import {
     Box,
@@ -49,23 +66,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    CursorTable,
-    Fab,
-    useConfirm,
-    UserAvatar,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import {
-    Filter,
-    TableFilter,
-} from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import {
-    Order,
-    TableColumn,
-} from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
 import React, {
     useEffect,
     useState,
@@ -134,8 +134,12 @@ export const mapDeleteRoleUserRow = (edge: UserEdge) => {
         avatar: user.avatar ?? ``,
         email: user?.contactInfo?.email ?? ``,
         phone: user?.contactInfo?.phone ?? ``,
-        roleNames: user?.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId).map((role) => role.name).sort(sortRoleNames) ?? [],
-        schoolNames: user?.schools?.filter((school) => school.status === Status.ACTIVE).map((school) => school.name).sort(sortSchoolNames) ?? [],
+        roleNames: user?.roles?.filter((role) => role.status === Status.ACTIVE && !!role.organizationId)
+            .map((role) => role.name)
+            .sort(sortRoleNames) ?? [],
+        schoolNames: user?.schools?.filter((school) => school.status === Status.ACTIVE)
+            .map((school) => school.name)
+            .sort(sortSchoolNames) ?? [],
         status: user.organizations?.[0]?.userStatus ?? ``,
         joinDate: user?.organizations?.[0]?.joinDate ? new Date(user?.organizations?.[0]?.joinDate) : new Date(),
         newRoleId: ``,
@@ -394,6 +398,7 @@ export default function DeleteRoleDialog (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `text-field`,
                 },
             ],
         },
@@ -417,6 +422,7 @@ export default function DeleteRoleDialog (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `text-field`,
                 },
             ],
         },
@@ -433,20 +439,23 @@ export default function DeleteRoleDialog (props: Props) {
         >
             <AppBar
                 color="primary"
-                className={classes.appBar}>
+                className={classes.appBar}
+            >
                 <Toolbar>
                     <IconButton
                         edge="start"
                         color="inherit"
                         aria-label="close"
                         size="large"
-                        onClick={handleClose}>
+                        onClick={handleClose}
+                    >
                         <CloseIcon />
                     </IconButton>
                     <Grid
                         container
                         item
-                        wrap="nowrap">
+                        wrap="nowrap"
+                    >
                         <Typography
                             id="nav-menu-title"
                             variant="h6"
@@ -458,18 +467,21 @@ export default function DeleteRoleDialog (props: Props) {
                         container
                         item
                         justifyContent="flex-end"
-                        wrap="nowrap">
+                        wrap="nowrap"
+                    >
                         <div>
                             <Button
                                 className={classes.backButton}
-                                onClick={handleClose}>
+                                onClick={handleClose}
+                            >
                                 Cancel
                             </Button>
                             <Fab
                                 color="primary"
                                 label="Next"
                                 variant="extended"
-                                onClick={deleteRoleHandler} />
+                                onClick={deleteRoleHandler}
+                            />
                         </div>
                     </Grid>
                 </Toolbar>
@@ -479,7 +491,8 @@ export default function DeleteRoleDialog (props: Props) {
                 direction="row"
                 justifyContent="center"
                 spacing={2}
-                className={classes.menuContainer}>
+                className={classes.menuContainer}
+            >
                 {getAllRolesLoading ? (
                     <Card className={classes.root}>
                         <CardContent>
@@ -487,7 +500,8 @@ export default function DeleteRoleDialog (props: Props) {
                             <Typography
                                 variant="body1"
                                 color="textSecondary"
-                                component="div">
+                                component="div"
+                            >
                                 <div
                                     style={{
                                         paddingTop: `10px`,
@@ -506,7 +520,8 @@ export default function DeleteRoleDialog (props: Props) {
                             textFieldLabel={`Reassign all users to`}
                             handleCopyFromRoleReset={() => { console.log(`function not implemented`);}}
                             replayButtonIsVisible={false}
-                            onChange={reAssignAllUsersHandler}                        />
+                            onChange={reAssignAllUsersHandler}
+                        />
 
                         <Paper className={classes.root}>
                             <CursorTable

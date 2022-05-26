@@ -10,6 +10,13 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { buildEmptySchoolNode } from "@/utils/schools";
 import { useValidations } from "@/utils/validations";
 import {
+    Button,
+    FullScreenDialog,
+    Stepper,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { Step } from "@kl-engineering/kidsloop-px/dist/src/components/Stepper";
+import {
     Box,
     Toolbar,
 } from "@mui/material";
@@ -17,13 +24,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    FullScreenDialog,
-    Stepper,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
 import { isEqual } from "lodash";
 import React,
 {
@@ -95,14 +95,15 @@ export default function CreateSchoolDialog (props: Props) {
                 content: <SchoolInfoStep
                     value={newSchool}
                     onChange={handleChange}
-                />,
+                         />,
                 error: [
                     required()(newSchool?.name),
                     letternumeric()(newSchool?.name),
                     max(120)(newSchool?.name ?? ``),
                     max(10)(newSchool?.shortcode?.length ?? ``),
                     alphanumeric()(newSchool?.shortcode),
-                ].filter(((error): error is string => error !== true)).find((error) => error),
+                ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
@@ -114,7 +115,8 @@ export default function CreateSchoolDialog (props: Props) {
                         onChange={handleChange}
                     />
                 ),
-                error: [ required()(newSchool.programIds) ].filter(((error): error is string => error !== true)).find((error) => error),
+                error: [ required()(newSchool.programIds) ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({

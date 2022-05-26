@@ -14,9 +14,9 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import { Info as InfoIcon } from "@mui/icons-material";
 import Alert from '@mui/material/Alert';
 import {

@@ -9,7 +9,7 @@ import {
     PaginationFilter,
 } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface ProgramPaginationFilter {
     organizationId: string;
@@ -59,7 +59,7 @@ export const buildOrganizationProgramFilter = (filter: ProgramPaginationFilter):
             ],
         },
         {
-            AND: [ buildOrganizationProgramSearchFilter(filter.search), ...filter.filters  ],
+            AND: [ buildOrganizationProgramSearchFilter(filter.search), ...filter.filters ],
         },
     ],
 });

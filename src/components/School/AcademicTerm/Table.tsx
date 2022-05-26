@@ -11,7 +11,7 @@ import {
     CursorTable,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,

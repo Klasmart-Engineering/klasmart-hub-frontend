@@ -28,7 +28,7 @@ import { buildOrganizationProgramFilter } from "@/operations/queries/getPaginate
 import { buildOrganizationRoleFilter } from "@/operations/queries/getPaginatedOrganizationRoles";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
 import { buildOrganizationSubjectFilter } from "@/operations/queries/getPaginatedOrganizationSubjects";
-import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     useEffect,
     useState,

@@ -8,7 +8,7 @@ import {
     SpreadsheetFileInput,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { Column } from "@kl-engineering/kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+import { Column } from "@kl-engineering/kidsloop-px/dist/src/components/Input/File/Spreadsheet/Base";
 import React,
 {
     useEffect,
@@ -22,7 +22,7 @@ const columns: Column[] = [
         required: true,
     },
     {
-        text:`user_given_name`,
+        text: `user_given_name`,
         required: true,
     },
     {

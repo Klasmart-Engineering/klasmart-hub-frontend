@@ -2,7 +2,7 @@ import { AgeRangeQueryFilter } from "@/api/ageRanges";
 import { AgeRangeRow } from "@/components/AgeRanges/Table";
 import { Status } from "@/types/graphQL";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface AgeRangePaginationFilter {
     organizationId: string;

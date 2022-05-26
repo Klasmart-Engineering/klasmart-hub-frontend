@@ -11,6 +11,12 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    CursorTable,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -20,12 +26,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    CursorTable,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
@@ -103,8 +103,8 @@ export default function GradeTable (props: Props) {
                             column,
                             value,
                         })
-
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -129,8 +129,8 @@ export default function GradeTable (props: Props) {
                             column,
                             value,
                         })
-
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -227,7 +227,7 @@ export default function GradeTable (props: Props) {
                                 id: `grades_editLabel`,
                             }),
                             icon: EditIcon,
-                            disabled: !canEdit  || row.system,
+                            disabled: !canEdit || row.system,
                             onClick: handleEditRowClick,
                         },
                         {
@@ -235,7 +235,7 @@ export default function GradeTable (props: Props) {
                                 id: `grades_deleteLabel`,
                             }),
                             icon: DeleteIcon,
-                            disabled: !canDelete  || row.system,
+                            disabled: !canDelete || row.system,
                             onClick: handleDeleteRowClick,
                         },
                     ]}

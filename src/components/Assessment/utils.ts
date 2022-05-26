@@ -1,11 +1,11 @@
 import { AssessmentStatus } from "@kl-engineering/cms-api-client";
 import { GetAssessmentsSummaryResponse } from "@kl-engineering/cms-api-client/dist/api/assessment";
+import { SubgroupTab } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/GroupTabs";
 import {
     lighten,
     Theme,
     useTheme,
 } from "@mui/material";
-import { SubgroupTab } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/GroupTabs";
 import { sumBy } from "lodash";
 import { useMemo } from "react";
 import {

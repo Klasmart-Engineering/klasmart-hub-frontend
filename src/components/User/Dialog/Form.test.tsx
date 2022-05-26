@@ -79,7 +79,7 @@ beforeEach(() => {
     mockOnChange.mockClear();
     mockOnValidation.mockClear();
     mockUsePermission.mockReturnValue({
-        loading:false,
+        loading: false,
         hasPermission: true,
     });
 });
@@ -96,16 +96,20 @@ const defaultProps = {
 const render = (props?: Partial<Props>) => {
     return renderWithIntl(<Form
         {...defaultProps}
-        {...props}/>);
+        {...props}
+    />);
 };
 
 function expectOtherGender (value: string) {
-    expect(inputs.gender.radio.other()).toBeChecked();
+    expect(inputs.gender.radio.other())
+        .toBeChecked();
 
     const otherGender = inputs.gender.other();
 
-    expect(otherGender).toBeVisible();
-    expect(otherGender.value).toBe(value);
+    expect(otherGender)
+        .toBeVisible();
+    expect(otherGender.value)
+        .toBe(value);
 }
 
 export const inputs = {
@@ -249,7 +253,8 @@ export const buttons = {
 test(`givenName, familyName, contactInfo and roles are required`, async () => {
     render();
 
-    expect(mockOnValidation).toHaveBeenLastCalledWith(false);
+    expect(mockOnValidation)
+        .toHaveBeenLastCalledWith(false);
 
     const fields = {
         givenName: {
@@ -270,24 +275,27 @@ test(`givenName, familyName, contactInfo and roles are required`, async () => {
         },
     };
 
-    Object.values(fields).forEach(value => {
-        expectInputToHaveError(value.input, mockIntl.formatMessage({
-            id: `validation.error.attribute.required`,
-        }, {
-            attribute: value.attributeName,
-        }));
-    });
+    Object.values(fields)
+        .forEach(value => {
+            expectInputToHaveError(value.input, mockIntl.formatMessage({
+                id: `validation.error.attribute.required`,
+            }, {
+                attribute: value.attributeName,
+            }));
+        });
 
     enter.givenName(`Joe`);
     enter.familyName(`Bloggs`);
     enter.contactInfo(`joe.bloggs@calmid.com`);
     await enter.roles([ mockRoles.student.role_id ]);
 
-    Object.values(fields).map(value => {
-        expectInputNotToHaveError(value.input);
-    });
+    Object.values(fields)
+        .map(value => {
+            expectInputNotToHaveError(value.input);
+        });
 
-    expect(mockOnValidation).toHaveBeenLastCalledWith(true);
+    expect(mockOnValidation)
+        .toHaveBeenLastCalledWith(true);
 });
 
 test(`non-empty errors makes validation fail`, () => {
@@ -302,7 +310,8 @@ test(`non-empty errors makes validation fail`, () => {
         initialState: validState,
     });
 
-    expect(mockOnValidation).toHaveBeenLastCalledWith(true);
+    expect(mockOnValidation)
+        .toHaveBeenLastCalledWith(true);
 
     rerender(withMockIntl(<Form
         {...defaultProps}
@@ -312,9 +321,11 @@ test(`non-empty errors makes validation fail`, () => {
                 code: APIErrorCode.ERR_INVALID_MAX_LENGTH,
                 message: `Too Long`,
             },
-        }}/>));
+        }}
+    />));
 
-    expect(mockOnValidation).toHaveBeenLastCalledWith(false);
+    expect(mockOnValidation)
+        .toHaveBeenLastCalledWith(false);
 });
 
 test(`opens alternateContactInfo when clicked`, () => {
@@ -355,9 +366,10 @@ test(`preserves MM-YYYY format of birthday from initial render`, () => {
         },
     });
 
-    expect(mockOnChange).toHaveBeenLastCalledWith(expect.objectContaining({
-        birthday: `01-2000`,
-    }));
+    expect(mockOnChange)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
+            birthday: `01-2000`,
+        }));
 });
 
 test(`converts birthday input from YYYY-MM to MM-YYYY format`, () => {
@@ -365,9 +377,10 @@ test(`converts birthday input from YYYY-MM to MM-YYYY format`, () => {
 
     enter.birthday(`2000-01`);
 
-    expect(mockOnChange).toHaveBeenLastCalledWith(expect.objectContaining({
-        birthday: `01-2000`,
-    }));
+    expect(mockOnChange)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
+            birthday: `01-2000`,
+        }));
 });
 
 test(`fails validation if birthday input is in the future`, () => {
@@ -391,7 +404,8 @@ test(`it disables contactInfo if isExistingUser=true`, () => {
         isExistingUser: true,
     });
 
-    expect(inputs.contactInfo()).toBeDisabled();
+    expect(inputs.contactInfo())
+        .toBeDisabled();
 });
 
 test(`it enables contactInfo if isExistingUser=false`, () => {
@@ -399,7 +413,8 @@ test(`it enables contactInfo if isExistingUser=false`, () => {
         isExistingUser: false,
     });
 
-    expect(inputs.contactInfo()).toBeEnabled();
+    expect(inputs.contactInfo())
+        .toBeEnabled();
 });
 
 test(`allows input of custom gender if 'Other' is selected`, () => {
@@ -420,13 +435,15 @@ test.each([ inputs.gender.radio.male, inputs.gender.radio.preferNotToSay ])(`all
     render();
 
     // defaults to Female
-    expect(inputs.gender.radio.female()).toBeChecked();
+    expect(inputs.gender.radio.female())
+        .toBeChecked();
 
     const genderOption = labelCallback();
 
     userEvent.click(genderOption);
 
-    expect(genderOption).toBeChecked();
+    expect(genderOption)
+        .toBeChecked();
 });
 
 test.each([
@@ -443,7 +460,8 @@ test.each([
         },
     });
 
-    expect(radioOption()).toBeChecked();
+    expect(radioOption())
+        .toBeChecked();
 });
 
 test(`preselects 'Other' and shows a text input if initial state doesn't match a radio option`, () => {
@@ -489,7 +507,10 @@ test(`multiple schools selected in initial state`, () => {
             schools: [ mockSchoolsData.schoolsConnection.edges[0].node.id, mockSchoolsData.schoolsConnection.edges[1].node.id ],
         },
     });
-    expect(screen.getByText([ mockSchoolsData.schoolsConnection.edges[0].node.name, mockSchoolsData.schoolsConnection.edges[1].node.name ].join(`, `))).toBeInTheDocument();
+    expect(screen.getByText(mockSchoolsData.schoolsConnection.edges[0].node.name))
+        .toBeInTheDocument();
+    expect(screen.getByText(mockSchoolsData.schoolsConnection.edges[1].node.name))
+        .toBeInTheDocument();
 });
 
 test(`schools use 'id' as the value of the <Select>`, async () => {
@@ -499,9 +520,10 @@ test(`schools use 'id' as the value of the <Select>`, async () => {
 
     await enter.schools(schools);
 
-    expect(mockOnChange).toHaveBeenLastCalledWith(expect.objectContaining({
-        schools,
-    }));
+    expect(mockOnChange)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
+            schools,
+        }));
 });
 
 test(`schools use 'name' as the text of the <Select>`, () => {
@@ -509,7 +531,8 @@ test(`schools use 'name' as the text of the <Select>`, () => {
 
     userEvent.click(inputs.schools());
 
-    expect(screen.getByText(mockSchoolsData.schoolsConnection.edges[0].node.name as string)).toBeInTheDocument();
+    expect(screen.getByText(mockSchoolsData.schoolsConnection.edges[0].node.name as string))
+        .toBeInTheDocument();
 });
 
 test(`multiple roles selected in initial state`, () => {
@@ -520,7 +543,10 @@ test(`multiple roles selected in initial state`, () => {
         },
     });
 
-    expect(screen.getByText(`Student, Parent`)).toBeInTheDocument();
+    expect(screen.getByText(`Student`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Parent`))
+        .toBeInTheDocument();
 });
 
 test(`roles use 'role_id' as the value of the <Select>`, async () => {
@@ -530,9 +556,10 @@ test(`roles use 'role_id' as the value of the <Select>`, async () => {
 
     await enter.roles(roles);
 
-    expect(mockOnChange).toHaveBeenLastCalledWith(expect.objectContaining({
-        roles,
-    }));
+    expect(mockOnChange)
+        .toHaveBeenLastCalledWith(expect.objectContaining({
+            roles,
+        }));
 });
 
 test(`roles use 'role_name' as the text of the <Select>`, () => {
@@ -540,12 +567,13 @@ test(`roles use 'role_name' as the text of the <Select>`, () => {
 
     userEvent.click(inputs.roles());
 
-    expect(screen.getByText(mockRoles.student.role_name as string)).toBeInTheDocument();
+    expect(screen.getByText(mockRoles.student.role_name as string))
+        .toBeInTheDocument();
 });
 
 test(`if the user has no full permissions some roles are restricted`, () => {
     mockUsePermission.mockReturnValue({
-        loading:false,
+        loading: false,
         hasPermission: false,
     });
     render();

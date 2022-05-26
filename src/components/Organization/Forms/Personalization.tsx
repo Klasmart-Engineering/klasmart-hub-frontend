@@ -1,6 +1,15 @@
 import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/themeProvider";
 import { Organization } from "@/types/graphQL";
 import {
+    Button,
+    ColorPicker,
+    FileInputButton,
+    ImagePicker,
+    OrganizationAvatar,
+    utils,
+} from "@kl-engineering/kidsloop-px";
+import { CroppedImage } from "@kl-engineering/kidsloop-px/dist/src/components/ImagePicker/ImagePicker";
+import {
     FormHelperText,
     Grid,
 } from "@mui/material";
@@ -9,15 +18,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    ColorPicker,
-    FileInputButton,
-    ImagePicker,
-    OrganizationAvatar,
-    utils,
-} from "@kl-engineering/kidsloop-px";
-import { CroppedImage } from "@kl-engineering/kidsloop-px/dist/types/components/ImagePicker/ImagePicker";
 import React,
 {
     useEffect,
@@ -138,7 +138,7 @@ export default function Personalization (props: Props) {
         return () => setPreviewOrganizationColor(undefined);
     }, []);
 
-    return <>
+    return (<>
         <Grid
             item
             xs={12}
@@ -280,5 +280,5 @@ export default function Personalization (props: Props) {
             }}
             onError={setImageSelectError}
         />
-    </>;
+    </>);
 }

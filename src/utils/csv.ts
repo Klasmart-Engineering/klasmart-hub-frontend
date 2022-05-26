@@ -3,7 +3,7 @@ import { ApolloError } from "@apollo/client";
 import {
     Props as SpreadsheetFileInputProps,
     SpreadsheetValidationError,
-} from "@kl-engineering/kidsloop-px/dist/types/components/Input/File/Spreadsheet/Base";
+} from "@kl-engineering/kidsloop-px/dist/src/components/Input/File/Spreadsheet/Base";
 import { ExportToCsv } from 'export-to-csv';
 import { IntlShape } from "react-intl";
 
@@ -470,7 +470,7 @@ export function buildDefaultSpreadsheetFileInputProps (intl: IntlShape): Partial
             count,
         }),
         validationLocalization: {
-            emptyFileError: (fileName) =>  intl.formatMessage({
+            emptyFileError: (fileName) => intl.formatMessage({
                 id: `validation.error.spreadsheet.empty`,
             }, {
                 fileName,

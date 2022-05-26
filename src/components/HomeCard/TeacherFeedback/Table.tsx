@@ -8,6 +8,15 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { mapAssessmentScheduleServerToClientType } from "@/utils/assessments";
 import { getTableLocalization } from "@/utils/table";
 import {
+    Button,
+    FileCounterIconButton,
+    PageTable,
+    UserAvatar,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Page/Table";
+import {
     HelpOutline,
     SentimentDissatisfied,
     SentimentSatisfied,
@@ -26,15 +35,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    FileCounterIconButton,
-    PageTable,
-    UserAvatar,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Page/Table";
 import React,
 {
     useCallback,
@@ -245,7 +245,8 @@ export default function TeacherFeedback (props: Props) {
                     <FeedbackComment
                         id={row.id}
                         feedback={row.feedback}
-                        handleMoreFeedbackOpen={handleMoreFeedbackOpen}/>
+                        handleMoreFeedbackOpen={handleMoreFeedbackOpen}
+                    />
                 );
             },
         },
@@ -474,7 +475,7 @@ export default function TeacherFeedback (props: Props) {
                         >
                             {selectedRow?.teacherName}
                         </Typography>
-                        <Box flex="1"/>
+                        <Box flex="1" />
                         <Button
                             color="primary"
                             label={intl.formatMessage({

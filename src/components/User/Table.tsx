@@ -31,8 +31,8 @@ import {
     UserAvatar,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudUploadIcon,
@@ -448,6 +448,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -485,6 +486,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -510,6 +512,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -535,6 +538,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -560,6 +564,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -583,6 +588,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `text-field`,
                 },
             ],
         },
@@ -606,6 +612,7 @@ export default function UserTable(props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `text-field`,
                 },
             ],
         },

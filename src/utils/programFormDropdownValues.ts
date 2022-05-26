@@ -6,7 +6,7 @@ import { buildGradeFilter } from "@/operations/queries/getOrganizationGrades";
 import { buildOrganizationAgeRangeFilter } from "@/operations/queries/getPaginatedAgeRanges";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { NON_SPECIFIED } from "@/types/graphQL";
-import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     useEffect,
     useState,
