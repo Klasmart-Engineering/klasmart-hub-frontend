@@ -1,10 +1,10 @@
-import BarChart from "./BarChart";
+import LoadingPage from "@/components/Common/LoadingPage";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { useGetStudentLearningOutcome } from "@kl-engineering/reports-api-client";
-import { ParentSize } from "@visx/responsive";
-import React from "react";
+import React,
+{ Suspense } from "react";
 import { useIntl } from "react-intl";
 
 interface Props { }
@@ -20,6 +20,10 @@ interface SkillTypeForGraph {
     achieved: number;
     notAchieved: number;
 }
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const LearningOutcomeSummaryWidget = React.lazy(() => import(`reports/LearningOutcomeSummary`));
 
 export default function LearningOutcomeSummary (props: Props) {
     const intl = useIntl();
@@ -87,15 +91,13 @@ export default function LearningOutcomeSummary (props: Props) {
             }}*/
             id={WidgetType.LEARNINGOUTCOME}
         >
-            <ParentSize>
-                {({ width, height }) => (
-                    <BarChart
-                        data={learningOutComeData}
-                        width={width}
-                        height={height}
-                    />
+            <Suspense
+                fallback={(
+                    <LoadingPage />
                 )}
-            </ParentSize>
+            >
+                <LearningOutcomeSummaryWidget />
+            </Suspense>
         </WidgetWrapper>
     );
 }

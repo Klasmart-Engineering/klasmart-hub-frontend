@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import "webpack-dev-server";
 import pkg from "./package.json";
 import { execSync } from "child_process";
@@ -150,6 +151,7 @@ const webpackConfig: Configuration = {
             filename: `remoteEntry.js`,
             remotes: {
                 schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
+                reports: `reports@https://fe.alpha.kidsloop.net:8082/remoteEntry.js`,
             },
             shared: {
                 '@kl-engineering/frontend-state': {
@@ -163,6 +165,43 @@ const webpackConfig: Configuration = {
                 'react-dom': {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`react-dom`],
+                },
+                'react-intl': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react-intl`],
+                },
+                'react-cookie': {
+                    singleton: true,
+                },
+                '@mui/icons-material': {
+                    singleton: true,
+                },
+                '@mui/lab': {
+                    singleton: true,
+                },
+                '@mui/material': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`@mui/material`],
+                },
+                '@mui/styles': {
+                    singleton: true,
+                },
+                '@kl-engineering/reports-api-client': {
+                    singleton: true,
+                },
+                '@kl-engineering/kidsloop-px': {
+                    singleton: true,
+                },
+                lodash: {
+                    singleton: true,
+                },
+                '@emotion/styled': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`@emotion/styled`],
+                },
+                '@emotion/react': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`@emotion/react`],
                 },
             },
         }),
