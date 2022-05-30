@@ -1272,5 +1272,6 @@
     "entity.user.template.editpopup.proceed": "Proceed",
     "entity.user.template.editpopup.title": "Edit Users",
     "entity.user.template.editpopup.select": "Status",
-    "entity.user.template.editpopup.select.required": "required"
+    "entity.user.template.editpopup.select.required": "required",
+    "class.type.autoreview": "자동 복습"
 }

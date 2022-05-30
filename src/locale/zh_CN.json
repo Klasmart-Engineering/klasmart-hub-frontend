@@ -1264,7 +1264,7 @@
     "validation.error.class.name.duplicate": "The name that you have entered for this class is already in use. Please enter another name.",
     "entity.user.edit.self.error": "You cannot modify your own user",
     "entity.user.status.mix.error": "There is a mix of active and inactive users in your selection",
-    "home.student.learningOutcomeWidget.others": "others",
+    "home.student.learningOutcomeWidget.others": "其它",
     "entity.user.template.edit.button": "Edit Users",
     "user.activate.success": "Users have been marked as active",
     "user.inactivate.success": "Users have been marked as inactive",
@@ -1272,5 +1272,6 @@
     "entity.user.template.editpopup.proceed": "Proceed",
     "entity.user.template.editpopup.title": "Edit Users",
     "entity.user.template.editpopup.select": "Status",
-    "entity.user.template.editpopup.select.required": "required"
+    "entity.user.template.editpopup.select.required": "required",
+    "class.type.autoreview": "个性化学习"
 }

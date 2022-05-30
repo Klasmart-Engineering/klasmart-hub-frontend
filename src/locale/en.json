@@ -375,7 +375,7 @@
     "navMenu_metricsAndReportDescription": "It's the same as the one below, but super!",
     "navMenu_home": "Home",
     "navMenu_homeDescription": "There is no place like home",
-    "navMenu_analyticsAndReportsTitle": "Analytics and Reports",
+    "navMenu_analyticsAndReportsTitle": "Analytics & Reports",
     "navMenu_analyticsAndReportsDescription": "Monitor usage across your organization",
     "navMenu_assessmentsTitle": "Assessments",
     "navMenu_assessmentsDescription": "View and edit your assessments",
@@ -1272,5 +1272,6 @@
     "entity.user.template.editpopup.proceed": "Proceed",
     "entity.user.template.editpopup.title": "Edit Users",
     "entity.user.template.editpopup.select": "Status",
-    "entity.user.template.editpopup.select.required": "required"
+    "entity.user.template.editpopup.select.required": "required",
+    "class.type.autoreview": "Auto Review"
 }
