@@ -1,6 +1,8 @@
+import LoadingPage from "@/components/Common/LoadingPage";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import React from "react";
+import React,
+{ Suspense } from "react";
 import { useIntl } from "react-intl";
 
 interface Props { }
@@ -33,7 +35,13 @@ function AdaptiveLearningJourney (props: Props) {
             }}*/
             id={WidgetType.ADAPTIVELEARNINGJOURNEY}
         >
-            <AdaptiveLearningJourneyWidget />
+            <Suspense
+                fallback={(
+                    <LoadingPage />
+                )}
+            >
+                <AdaptiveLearningJourneyWidget />
+            </Suspense>
         </WidgetWrapper>
     );
 }
