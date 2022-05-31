@@ -79,7 +79,10 @@ export interface ClassSummaryNode extends BaseEntity {
 }
 
 export const useUpdateClass = (options?: MutationHookOptions<UpdateClassResponse, UpdateClassRequest>) => {
-    return useMutation<UpdateClassResponse, UpdateClassRequest>(UPDATE_CLASS, options);
+    return useMutation<UpdateClassResponse, UpdateClassRequest>(UPDATE_CLASS, {
+        ...options,
+        refetchQueries: [ GET_CLASS_NODE_CONNECTIONS ],
+    });
 };
 
 interface UpdateClassSchoolsRequest {
