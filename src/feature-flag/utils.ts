@@ -13,5 +13,6 @@ export const useFeatureFlags = () => {
     return {
         ...defaultFlags,
         ...flags,
+        teacherStudentProgressReport: process.env.TEACHER_STUDENT_PROGRESS_REPORT === `true`,
     } as FeatureFlags;
 };
