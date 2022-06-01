@@ -3,6 +3,7 @@ import { StyledIcon } from "@styled-icons/styled-icon";
 export type PublishStatus = `draft` | `pending` | `published` | `rejected` | `attachment` | `archive` | `hidden`
 
 export interface PublishedContentPayload {
+    thumbnail: string;
     total: number;
     list: PublishedContentItem[];
 }
@@ -37,7 +38,7 @@ export interface SchedulePayload {
     title: string;
 }
 
-export type TimeView = `day` | `work_week` | `week` | `month` | `year` |  `full_view`;
+export type TimeView = `day` | `work_week` | `week` | `month` | `year` | `full_view`;
 export interface LivePreviewJWT {
     aud: string;
     exp: number;
