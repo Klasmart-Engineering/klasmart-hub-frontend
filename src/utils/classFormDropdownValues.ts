@@ -13,7 +13,7 @@ import { useGetPaginatedSchools } from "@/api/schools";
 import { useGetAllPaginatedSubjects } from "@/api/subjects";
 import { buildSchoolIdFilter } from "@/operations/queries/getPaginatedOrganizationPrograms";
 import { Status } from "@/types/graphQL";
-import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     useEffect,
     useState,

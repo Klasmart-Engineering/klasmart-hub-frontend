@@ -12,6 +12,12 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    CursorTable,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -25,12 +31,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    CursorTable,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -122,6 +122,7 @@ export default function SubjectsTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -156,6 +157,7 @@ export default function SubjectsTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -226,7 +228,7 @@ export default function SubjectsTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.categories.map((category, i) => (
                     <Chip
                         key={`category-${i}`}
@@ -234,7 +236,7 @@ export default function SubjectsTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+                              </>),
         },
         {
             id: `system`,

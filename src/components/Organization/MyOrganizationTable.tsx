@@ -13,6 +13,12 @@ import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    PageTable,
+    usePrompt,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -27,12 +33,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    PageTable,
-    usePrompt,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 {
     useEffect,
@@ -126,13 +126,15 @@ export default function MyOrganizationTable (props: Props) {
                     id: `allOrganization_deleteConfirmLabel`,
                 }, {
                     name: <strong>{organizationName}</strong>,
-                })}</DialogContentText>
+                })}
+                </DialogContentText>
                 <DialogContentText>{intl.formatMessage({
                     id: `generic_typeToDeletePrompt`,
                 }, {
                     value: <strong>{organizationName}</strong>,
-                })}</DialogContentText>
-            </>,
+                })}
+                </DialogContentText>
+                     </>,
             okLabel: intl.formatMessage({
                 id: `allOrganization_okButton`,
             }),
@@ -207,7 +209,8 @@ export default function MyOrganizationTable (props: Props) {
                     <Typography
                         key={`role-${i}`}
                         noWrap
-                        variant="body2">
+                        variant="body2"
+                    >
                         {role}
                     </Typography>
                 )),
@@ -220,7 +223,7 @@ export default function MyOrganizationTable (props: Props) {
                 id: `organizations_statusLabel`,
             }),
             render: (row) =>
-                <span
+                (<span
                     className={clsx(classes.statusText, {
                         [classes.successColor]: row.status === Status.ACTIVE,
                         [classes.errorColor]: row.status === Status.INACTIVE,
@@ -229,7 +232,7 @@ export default function MyOrganizationTable (props: Props) {
                     {intl.formatMessage({
                         id: `data_${row.status}Status`,
                     })}
-                </span>,
+                </span>),
         },
     ];
 

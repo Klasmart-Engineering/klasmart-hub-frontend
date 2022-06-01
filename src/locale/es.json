@@ -1272,5 +1272,6 @@
     "entity.user.template.editpopup.proceed": "Continuar",
     "entity.user.template.editpopup.title": "Edit Users",
     "entity.user.template.editpopup.select": "Estado",
-    "entity.user.template.editpopup.select.required": "Obligatorio"
+    "entity.user.template.editpopup.select.required": "Obligatorio",
+    "class.type.autoreview": "Aprendizaje adaptativo"
 }

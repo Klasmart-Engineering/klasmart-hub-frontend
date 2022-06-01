@@ -13,6 +13,13 @@ import {
 } from "@/types/graphQL";
 import { useValidations } from "@/utils/validations";
 import {
+    Dialog,
+    PageTable,
+    usePrompt,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
 } from "@mui/icons-material";
@@ -25,13 +32,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Dialog,
-    PageTable,
-    usePrompt,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { uniq } from "lodash";
 import React,
 {
@@ -205,8 +205,13 @@ export default function CategorySelectDialog (props: Props) {
     const rows: CategoryRow[] = categories.map((category) => ({
         id: category.id ?? ``,
         name: category.name ?? ``,
-        programs: uniq(programs.filter((program) => program.subjects?.filter(isActive).flatMap((subject) => subject.categories?.filter(isActive) ?? []).find((c) => c.id === category.id)).map((program) => program.name ?? ``)),
-        subjects: uniq(subjects.filter((subject) => subject.categories?.filter(isActive).find((c) => c.id === category.id)).map((subject) => subject.name ?? ``)),
+        programs: uniq(programs.filter((program) => program.subjects?.filter(isActive)
+            .flatMap((subject) => subject.categories?.filter(isActive) ?? [])
+            .find((c) => c.id === category.id))
+            .map((program) => program.name ?? ``)),
+        subjects: uniq(subjects.filter((subject) => subject.categories?.filter(isActive)
+            .find((c) => c.id === category.id))
+            .map((subject) => subject.name ?? ``)),
         system: category.system ?? false,
     }));
 
@@ -224,7 +229,7 @@ export default function CategorySelectDialog (props: Props) {
             id: `programs`,
             label: `Programs using`,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.programs.map((program, i) => (
                     <Chip
                         key={`program-${i}`}
@@ -232,13 +237,13 @@ export default function CategorySelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+            </>),
         },
         {
             id: `subjects`,
             label: `Subjects using`,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.subjects.map((subject, i) => (
                     <Chip
                         key={`subject-${i}`}
@@ -246,7 +251,7 @@ export default function CategorySelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+            </>),
         },
     ];
 

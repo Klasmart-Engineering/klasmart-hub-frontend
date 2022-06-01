@@ -4,7 +4,6 @@ const defaultFlags = {
     studentWidgetAdaptiveLearning: false,
     studentWidgetAdaptiveLearningJourney: false,
     teacherStudentProgressReport: false,
-    showScheduleMicroFrontend: false,
 } as const;
 
 export type FeatureFlags = typeof defaultFlags;
@@ -14,5 +13,6 @@ export const useFeatureFlags = () => {
     return {
         ...defaultFlags,
         ...flags,
+        teacherStudentProgressReport: process.env.TEACHER_STUDENT_PROGRESS_REPORT === `true`,
     } as FeatureFlags;
 };

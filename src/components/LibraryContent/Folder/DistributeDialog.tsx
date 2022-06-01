@@ -3,6 +3,13 @@ import { useRestAPI } from "@/api/restapi";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { Status } from "@/types/graphQL";
 import { ContentItemDetails } from "@/types/objectTypes";
+import {
+    FullScreenDialog,
+    PageTable,
+    useSnackbar,
+    utils,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import { Info as InfoIcon } from "@mui/icons-material";
 import {
     alpha,
@@ -21,13 +28,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    FullScreenDialog,
-    PageTable,
-    useSnackbar,
-    utils,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import { isEqual } from "lodash";
 import React, {
     useEffect,
@@ -218,7 +218,8 @@ export default function (props: Props) {
                         style={{
                             color: `white`,
                             backgroundColor: utils.stringToColor(row.name),
-                        }}>
+                        }}
+                    >
                         {utils.nameToInitials(row.name, 4)}
                     </Avatar>
                     <span>{row.name}</span>
@@ -233,7 +234,7 @@ export default function (props: Props) {
         },
     ];
 
-    return <FullScreenDialog
+    return (<FullScreenDialog
         open={open}
         title={`Distribute "${value?.name ?? ``}"`}
         action={{
@@ -298,5 +299,5 @@ export default function (props: Props) {
                 </>}
             </Paper>
         </RadioGroup>
-    </FullScreenDialog>;
+    </FullScreenDialog>);
 }

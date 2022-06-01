@@ -19,7 +19,7 @@ import {
     usePrompt,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -213,9 +213,18 @@ export default function SubcategoriesSelectDialog (props: Props) {
     const rows: SubcategoryRow[] = subcategories.map((subcategory) => ({
         id: subcategory.id ?? ``,
         name: subcategory.name ?? ``,
-        programs: uniq(programs.filter((program) => program.subjects?.filter(isActive).flatMap((subject) => subject.categories?.filter(isActive).flatMap((category) => category.subcategories?.filter(isActive) ?? [])).find((c) => c?.id === subcategory.id)).map((program) => program.name ?? ``)),
-        subjects: uniq(subjects.filter((subject) => subject.categories?.filter(isActive).flatMap((category) => category.subcategories?.filter(isActive) ?? []).find((sc) => sc.id === subcategory.id)).map((subject) => subject.name ?? ``)),
-        categories: uniq(categories.filter((category) => category.subcategories?.filter(isActive).find((sc) => sc.id === subcategory.id)).map((category) => category.name ?? ``)),
+        programs: uniq(programs.filter((program) => program.subjects?.filter(isActive)
+            .flatMap((subject) => subject.categories?.filter(isActive)
+                .flatMap((category) => category.subcategories?.filter(isActive) ?? []))
+            .find((c) => c?.id === subcategory.id))
+            .map((program) => program.name ?? ``)),
+        subjects: uniq(subjects.filter((subject) => subject.categories?.filter(isActive)
+            .flatMap((category) => category.subcategories?.filter(isActive) ?? [])
+            .find((sc) => sc.id === subcategory.id))
+            .map((subject) => subject.name ?? ``)),
+        categories: uniq(categories.filter((category) => category.subcategories?.filter(isActive)
+            .find((sc) => sc.id === subcategory.id))
+            .map((category) => category.name ?? ``)),
         system: subcategory.system ?? false,
     }));
 
@@ -241,7 +250,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>),
+                              </>),
         },
         {
             id: `subjects`,
@@ -255,7 +264,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>),
+                              </>),
         },
         {
             id: `categories`,
@@ -269,7 +278,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>),
+                              </>),
         },
     ];
 

@@ -87,6 +87,7 @@ export default function NavigationMenuList (props: Props) {
     const intl = useIntl();
     const location = useLocation();
     const { teacherStudentProgressReport } = useFeatureFlags();
+
     const homeSection: MenuSection = {
         items: [
             {

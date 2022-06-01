@@ -26,9 +26,9 @@ import {
 import {
     Order,
     TableColumn,
-} from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+} from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import {
     Delete as DeleteIcon,
     PersonAdd as PersonAddIcon,
@@ -239,7 +239,8 @@ export default function ClassRoster (props: Props) {
         const removeProps = {
             variables: {
                 class_id: classId ?? ``,
-                user_id: row.id.replace(`-Student`, ``).replace(`-Teacher`, ``),
+                user_id: row.id.replace(`-Student`, ``)
+                    .replace(`-Teacher`, ``),
             },
         };
 

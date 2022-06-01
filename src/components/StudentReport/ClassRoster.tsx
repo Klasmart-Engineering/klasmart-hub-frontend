@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { TreeItemProps, treeItemClasses } from '@mui/lab/TreeItem';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Theme } from "@mui/material/styles";
 import {
   createStyles,

@@ -27,10 +27,10 @@ import {
     tableToServerOrder,
 } from "@/utils/table";
 import { sortRoleNames } from "@/utils/userRoles";
-import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { Filter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import React,
 {
     useEffect,

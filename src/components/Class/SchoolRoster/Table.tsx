@@ -20,9 +20,9 @@ import {
 import {
     Order,
     TableColumn,
-} from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+} from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import {
     Paper,
     Typography,

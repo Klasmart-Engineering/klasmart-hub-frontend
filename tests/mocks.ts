@@ -2,6 +2,13 @@ import { ReactNode } from "react";
 
 export const mockEnqueueSnackbar = jest.fn();
 
+global.ResizeObserver = jest.fn()
+    .mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn(),
+    }));
+
 jest.mock(`react-dom`, () => {
     const original = jest.requireActual(`react-dom`);
     return {

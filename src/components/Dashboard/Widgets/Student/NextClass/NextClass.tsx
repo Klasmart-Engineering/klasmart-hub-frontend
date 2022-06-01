@@ -9,7 +9,7 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
-import LiveTvIcon from '@material-ui/icons/LiveTv';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
 import {
     Box,
     Chip,
@@ -177,8 +177,10 @@ function StudentNextClass (props: Props) {
     const organizationId = currentOrganization?.id ?? ``;
 
     const secondsBeforeClassCanStart = 900;
-    const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
-    const unixEndOfDateRange = new Date(now.getFullYear(), now.getMonth(), now.getDate() + maxDays, 23, 59, 59).getTime();
+    const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+        .getTime();
+    const unixEndOfDateRange = new Date(now.getFullYear(), now.getMonth(), now.getDate() + maxDays, 23, 59, 59)
+        .getTime();
 
     const {
         data: schedulesData,
@@ -234,7 +236,8 @@ function StudentNextClass (props: Props) {
 
     useEffect(() => {
         if (!nextClass) return;
-        setTimeBeforeClass(nextClass?.start_at - new Date().getTime() / 1000);
+        setTimeBeforeClass(nextClass?.start_at - new Date()
+            .getTime() / 1000);
     }, [ nextClass ]);
 
     useEffect(() => {

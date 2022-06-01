@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.60.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.60.0%0Dv2.59.0) (2022-05-27)
+
+
+### ✨ Features
+
+* remove schedule iframe (#122) ([bd27f6a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/bd27f6aa92013b7ce505184b6707ea9c980b57aa))
+
+
+### ♻️ Chores
+
+* **deps:** bump @kl-engineering/kidsloop-px from 1.11.2 to 2.2.4 (#83) ([29d8410](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/29d841075a321e5d725e2e66d759aacbbb908659))
+
 ## [2.59.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.59.0%0Dv2.58.0) (2022-05-23)
 
 
