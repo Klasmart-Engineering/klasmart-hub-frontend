@@ -1,33 +1,32 @@
-import {
-    Dialog,
-    Select
-} from "@kl-engineering/kidsloop-px";
-import { useValidations } from "@/utils/validations";
-import React, {
-    useEffect,
-    useState
-} from "react";
-import {
-    FormattedMessage,
-    useIntl
-} from "react-intl";
-import {
-    useDeactivateAllUsersInOrganization,
-    useReactivateAllUsersInOrganization
-} from "@/api/organizationMemberships";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
 import { UserRow } from "../Table";
 import {
+    useDeactivateAllUsersInOrganization,
+    useReactivateAllUsersInOrganization,
+} from "@/api/organizationMemberships";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useValidations } from "@/utils/validations";
+import {
+    Dialog,
+    Select,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import {
     Theme,
-    Typography
+    Typography,
 } from "@mui/material";
 import {
     createStyles,
-    makeStyles
+    makeStyles,
 } from "@mui/styles";
+import React, {
+    useEffect,
+    useState,
+} from "react";
+import {
+    FormattedMessage,
+    useIntl,
+} from "react-intl";
+
 interface Props {
     open: boolean;
     selectedUsers: UserRow[];
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         color: theme.palette.error.main,
     },
 }));
-export default function EditBulkUserDialog(props: Props) {
+export default function EditBulkUserDialog (props: Props) {
     const {
         open,
         onClose,
@@ -50,37 +49,37 @@ export default function EditBulkUserDialog(props: Props) {
     } = props;
     const intl = useIntl();
     const classes = useStyles();
-    const [actionStatus, setActionStatus] = useState<`` | `Active` | `Inactive`>(``);
-    const [reactivateUser] = useReactivateAllUsersInOrganization();
-    const [deactivateUser] = useDeactivateAllUsersInOrganization();
+    const [ actionStatus, setActionStatus ] = useState<`` | `Active` | `Inactive`>(``);
+    const [ reactivateUser ] = useReactivateAllUsersInOrganization();
+    const [ deactivateUser ] = useDeactivateAllUsersInOrganization();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
     const { enqueueSnackbar } = useSnackbar();
     const { required } = useValidations();
     const confirmAction = async (actionStatus: `` | `Active` | `Inactive`, selectedUser: UserRow[]) => {
-        setActionStatus('');
+        setActionStatus(``);
         if (actionStatus === ``) return;
         onClose();
-        const [user, ...rest] = selectedUser;
+        const [ user, ...rest ] = selectedUser;
         const userIds = selectedUser.map(user => user.id);
         if (user.status.toUpperCase() === actionStatus.toUpperCase()) {
             handleReset();
             return;
         }
         try {
-            if (actionStatus === 'Active') {
+            if (actionStatus === `Active`) {
                 await reactivateUser({
                     variables: {
                         organizationId,
                         userIds,
                     },
                 });
-            } else if (actionStatus === 'Inactive') {
+            } else if (actionStatus === `Inactive`) {
                 await deactivateUser({
                     variables: {
                         organizationId,
                         userIds,
-                    }
+                    },
                 });
             }
             actionStatus === `Active` ? enqueueSnackbar(intl.formatMessage({
@@ -123,7 +122,7 @@ export default function EditBulkUserDialog(props: Props) {
                     color: `primary`,
                     disabled: isMismatch,
                     onClick: () => confirmAction(actionStatus, selectedUsers),
-                }
+                },
             ]}
             onClose={onClose}
         >
@@ -133,7 +132,7 @@ export default function EditBulkUserDialog(props: Props) {
                     id: `entity.user.template.editpopup.select`,
                 })}
 
-                items={[`Active`, `Inactive`]}
+                items={[ `Active`, `Inactive` ]}
                 value={actionStatus}
                 validations={[
                     required(intl.formatMessage({
