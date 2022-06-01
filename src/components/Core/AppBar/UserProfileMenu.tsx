@@ -4,9 +4,11 @@ import { authClient } from "@/api/auth/client";
 import { useQueryMyUser } from "@/api/myUser";
 import StyledButton from "@/components/styled/button";
 import { LANGUAGES_LABEL } from "@/locale/locale";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
 import { redirectToAuth } from "@/utils/routing";
-import { useSetGlobalState } from "@kl-engineering/frontend-state";
+import {
+    organizationMembershipStackState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import {
     Box,
