@@ -349,8 +349,8 @@ export default function NavigationMenuList (props: Props) {
         ...homeSection.items.length ? [ homeSection ] : [],
         ...superAdminSection.items.length ? [ superAdminSection ] : [],
         ...scheduleSection.items.length ? [ scheduleSection ] : [],
-        ...dataSection.items.length ? [ dataSection ] : [],
         ...manageSection.items.length ? [ manageSection ] : [],
+        ...dataSection.items.length ? [ dataSection ] : [],
     ];
 
     function isLinkSelected (item: MenuItem) {
