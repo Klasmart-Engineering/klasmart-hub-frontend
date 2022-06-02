@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.61.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.0%0Dv2.60.0) (2022-06-02)
+
+
+### ♻️ Chores
+
+* **DT-847:** Student Progress Report Translations (#126) ([255e72a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/255e72a74ec16eefc7f89d7be4629fdcfa2e49f3)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
+
+### ✨ Features
+
+* launchdarkly alternative local solution (#131) ([7d89fc7](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7d89fc788863fb5eebe9a5541e440c4ef64ff665))
+* moving the feature flag from launchdarkly to local env file for student progress report (#123) ([a1f7fca](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a1f7fca9f9e4d1998c34d9b5c0f378cc14fbb00b))
+
+
+### 🐛 Bug Fixes
+
+* 768 update the label for home fun and auto review type of study  (#120) ([ad37add](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ad37add891e07b33ad52d8857c43a210a008df1b))
+* refetchQueries classNode data on update (#128) ([7b0e40d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7b0e40dc4905667485531975f6bec2d09ea1e291))
+* roudup the perc on completion widget (#124) ([1e845cf](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1e845cfd2de27c6c032b203f8c83184daa8fca7e))
+* to show correct thumbnail image in next class widget (#121) ([1da1b1c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1da1b1c2ee4e6a0103a7c93085fdf1c148710ee1))
+
+
+### 📦 Refactor
+
+* hub core ui (#125) ([01dd3cc](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/01dd3ccf7137287f496c50b14bc195e857d90f93))
+
 ## [2.60.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.60.0%0Dv2.59.0) (2022-05-27)
 
 
