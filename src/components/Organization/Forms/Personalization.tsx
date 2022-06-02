@@ -1,4 +1,4 @@
-import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/themeProvider";
+import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/theme/utils/utils";
 import { Organization } from "@/types/graphQL";
 import {
     Button,

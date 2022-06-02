@@ -3,7 +3,7 @@ import App from "@/app";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
 import UserServiceProvider from "@/providers/UserServiceProvider";
-import { useThemeProvider } from "@/themeProvider";
+import ThemeProvider from "@/theme/Provider";
 import { getLanguage } from "@/utils/locale";
 import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kl-engineering/cms-api-client";
 import {
@@ -18,12 +18,11 @@ import {
     SnackbarProvider,
 } from "@kl-engineering/kidsloop-px";
 import { ReactQueryDevtools as ReportsReactQueryDevtools } from "@kl-engineering/reports-api-client";
-import CssBaseline from "@mui/material/CssBaseline";
 import {
     StyledEngineProvider,
     Theme,
-    ThemeProvider,
-} from "@mui/material/styles";
+} from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
 import React from 'react';
 import { RawIntlProvider } from "react-intl";
 
@@ -43,7 +42,7 @@ function ClientSide () {
                     <LDProvider>
                         <RawIntlProvider value={langage}>
                             <StyledEngineProvider injectFirst>
-                                <ThemeProvider theme={useThemeProvider()}>
+                                <ThemeProvider>
                                     <ConfirmDialogProvider>
                                         <PromptDialogProvider>
                                             <AlertDialogProvider>

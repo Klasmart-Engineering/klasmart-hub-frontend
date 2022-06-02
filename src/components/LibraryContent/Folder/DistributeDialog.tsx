@@ -234,70 +234,74 @@ export default function (props: Props) {
         },
     ];
 
-    return (<FullScreenDialog
-        open={open}
-        title={`Distribute "${value?.name ?? ``}"`}
-        action={{
-            label: `Save`,
-            disabled: !initSelectedOrganizationIds || isEqual(finalOrganizationIds, initSelectedOrganizationIds),
-            onClick: putFolderDistributeStatus,
-        }}
-        style={{
-            backgroundColor: `red`,
-        }}
-        onClose={onClose}
-    >
-        <RadioGroup
-            aria-label="gender"
-            name="gender1"
-            value={distributeStatus}
-            onChange={handleDistributeStatusChange}
+    return (
+        <FullScreenDialog
+            open={open}
+            title={`Distribute "${value?.name ?? ``}"`}
+            action={{
+                label: `Save`,
+                disabled: !initSelectedOrganizationIds || isEqual(finalOrganizationIds, initSelectedOrganizationIds),
+                onClick: putFolderDistributeStatus,
+            }}
+            style={{
+                backgroundColor: `red`,
+            }}
+            onClose={onClose}
         >
-            <Paper className={classes.paperRoot}>
-                <Toolbar>
-                    <FormControlLabel
-                        value={DistributeStatus.PRESET}
-                        control={<Radio />}
-                        label="Preset"
-                    />
-                    <Tooltip
-                        arrow
-                        title={intl.formatMessage({
-                            id: `library_distributeTooltip`,
-                        })}
-                        placement="right"
-                    >
-                        <InfoIcon
-                            color="action"
-                            fontSize="small"
+            <RadioGroup
+                aria-label="gender"
+                name="gender1"
+                value={distributeStatus}
+                onChange={handleDistributeStatusChange}
+            >
+                <Paper className={classes.paperRoot}>
+                    <Toolbar>
+                        <FormControlLabel
+                            value={DistributeStatus.PRESET}
+                            control={<Radio />}
+                            label="Preset"
                         />
-                    </Tooltip>
-                </Toolbar>
-            </Paper>
-            <Paper className={clsx(classes.paperRoot, classes.organizationsPaper)}>
-                <Toolbar>
-                    <FormControlLabel
-                        value={DistributeStatus.SELECTED}
-                        control={<Radio />}
-                        label={intl.formatMessage({
-                            id: `library_selectOrganizations`,
-                        })}
-                    />
-                </Toolbar>
-                {distributeStatus === DistributeStatus.SELECTED && <>
-                    <Divider />
-                    <PageTable
-                        showSelectables
-                        idField="id"
-                        orderBy="name"
-                        loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}
-                        rows={rows}
-                        columns={columns}
-                        selectedRows={selectedOrganizationIds}
-                        onSelected={handleSelected}
-                    />
-                </>}
-            </Paper>
-        </RadioGroup>
-    </FullScreenDialog>);
+                        <Tooltip
+                            arrow
+                            title={intl.formatMessage({
+                                id: `library_distributeTooltip`,
+                            })}
+                            placement="right"
+                        >
+                            <InfoIcon
+                                color="action"
+                                fontSize="small"
+                            />
+                        </Tooltip>
+                    </Toolbar>
+                </Paper>
+                <Paper className={clsx(classes.paperRoot, classes.organizationsPaper)}>
+                    <Toolbar>
+                        <FormControlLabel
+                            value={DistributeStatus.SELECTED}
+                            control={<Radio />}
+                            label={intl.formatMessage({
+                                id: `library_selectOrganizations`,
+                            })}
+                        />
+                    </Toolbar>
+                    {distributeStatus === DistributeStatus.SELECTED && (
+                        <>
+                            <Divider />
+                            <PageTable
+                                showSelectables
+                                idField="id"
+                                orderBy="name"
+                                loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}
+                                rows={rows}
+                                columns={columns}
+                                selectedRows={selectedOrganizationIds}
+                                onSelected={handleSelected}
+                            />
+                        </>
+                    )}
+                </Paper>
+            </RadioGroup>
+        </FullScreenDialog>
+    );
 }

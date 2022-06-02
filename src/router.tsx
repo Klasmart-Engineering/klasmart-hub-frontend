@@ -1,9 +1,9 @@
-import ErrorBoundary from "./components/Common/ErrorBoundary";
-import ErrorPage from "./components/Common/ErrorPage";
-import { useFeatureFlags } from "./feature-flag/utils";
-import StudentReport from "./pages/studentReport";
 import { authClient } from "@/api/auth/client";
+import ErrorBoundary from "@/components/Common/ErrorBoundary";
+import ErrorPage from "@/components/Common/ErrorPage";
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
+import { useFeatureFlags } from "@/feature-flag/utils";
+import ContentLibraryLayout from "@/layout/ContentLibrary";
 import AgeRangesPage from "@/pages/admin/age-ranges";
 import ClassesPage from "@/pages/admin/classes";
 import Grades from "@/pages/admin/grades";
@@ -18,11 +18,9 @@ import SubjectsPage from "@/pages/admin/subjects";
 import UsersPage from "@/pages/admin/users";
 import AssessmentsPage from "@/pages/assessments";
 import HomePage from "@/pages/index";
-import BadanamuContentPage from "@/pages/library/badanamu-content";
-import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
-import OrganizationContentPage from "@/pages/library/organization-content";
 import ReportsPage from "@/pages/reports";
 import SchedulePage from "@/pages/schedule";
+import StudentReport from "@/pages/studentReport";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
 import { redirectToAuth } from "@/utils/routing";
 import React,
@@ -32,7 +30,6 @@ import React,
     useState,
 } from "react";
 import {
-    Redirect,
     Route,
     Switch,
     useLocation,
@@ -79,20 +76,8 @@ export default function Router (props: Props) {
                 >
                     <HomePage />
                 </Route>
-                <Route
-                    exact
-                    path="/library"
-                >
-                    <Redirect to="/library/organization-content" />
-                </Route>
-                <Route path="/library/organization-content">
-                    <OrganizationContentPage />
-                </Route>
-                <Route path="/library/badanamu-content">
-                    <BadanamuContentPage />
-                </Route>
-                <Route path="/library/more-featured-content">
-                    <MoreFeaturedContentPage />
+                <Route path="/library">
+                    <ContentLibraryLayout />
                 </Route>
                 <Route path="/schedule">
                     <SchedulePage />
@@ -103,7 +88,7 @@ export default function Router (props: Props) {
                 <Route path="/reports">
                     <ReportsPage />
                 </Route>
-                {teacherStudentProgressReport &&
+                {teacherStudentProgressReport && (
                     <ProtectedRoute
                         exact
                         path="/student-report"
@@ -111,7 +96,7 @@ export default function Router (props: Props) {
                     >
                         <StudentReport />
                     </ProtectedRoute>
-                }
+                )}
                 <ProtectedRoute
                     exact
                     path="/admin/organizations/:organizationId/edit"

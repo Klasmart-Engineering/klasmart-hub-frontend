@@ -1,17 +1,19 @@
 import LanguageSelect from "./LanguageSelect";
-import UserProfileSwitcher from "./UserProfileSwitcher";
 import { authClient } from "@/api/auth/client";
 import { useQueryMyUser } from "@/api/myUser";
-import StyledButton from "@/components/styled/button";
 import { LANGUAGES_LABEL } from "@/locale/locale";
 import { organizationMembershipStackState } from "@/store/organizationMemberships";
+import { PRIMARY_THEME_COLOR } from "@/theme/utils/utils";
 import { redirectToAuth } from "@/utils/routing";
 import { useSetGlobalState } from "@kl-engineering/frontend-state";
-import { UserAvatar } from "@kl-engineering/kidsloop-px";
+import {
+    Button,
+    UserAvatar,
+    validations,
+} from "@kl-engineering/kidsloop-px";
 import {
     Box,
     ButtonBase,
-    Divider,
     Grid,
     List,
     ListItem,
@@ -29,23 +31,35 @@ import React,
     useMemo,
     useState,
 } from "react";
-import { FormattedMessage } from "react-intl";
+import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
+        userProfileMenuButton: {
+            padding: theme.spacing(1),
+        },
         contactInfo: {
             color: theme.palette.grey[600],
+            display: `-webkit-box`,
+            overflow: `hidden`,
+            wordBreak: `break-all`,
+            textOverflow: `ellipsis`,
+            boxOrient: `vertical`,
+            lineClamp: 2,
         },
-        userProfileMenu: {
-            borderRadius: `50%`,
+        signOutButton: {
+            border: `1px solid #dadce0`,
+            padding: theme.spacing(0.75, 1.5),
         },
     }));
 
-const StyledMenu = withStyles({
+const StyledMenu = withStyles((theme) => ({
     paper: {
         border: `1px solid #dadce0`,
+        borderRadius: theme.spacing(1.25),
+        width: 256,
     },
-})((props: PopoverProps) => (
+}))((props: PopoverProps) => (
     <Popover
         elevation={0}
         anchorOrigin={{
@@ -65,17 +79,10 @@ interface Props {
 
 export default function UserProfileMenu (props: Props) {
     const classes = useStyles();
+    const intl = useIntl();
     const setOrganizationStack = useSetGlobalState(organizationMembershipStackState);
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const { data: meData } = useQueryMyUser();
-
-    const userName = useMemo(() => {
-        const givenName = meData?.myUser.node.givenName ?? ``;
-        const familyName = meData?.myUser.node.familyName ?? ``;
-        const fullName = `${givenName} ${familyName}`.trim();
-        const username = meData?.myUser.node.contactInfo?.username ?? ``;
-        return fullName === ` ` ? username ?? `Name undefined` : fullName;
-    }, [ meData ]);
 
     const contactInfo = useMemo(() => {
         const contactInfo = meData?.myUser.node.contactInfo;
@@ -106,17 +113,28 @@ export default function UserProfileMenu (props: Props) {
         }
     };
 
+    const emailUserName = contactInfo.split(`@`)[0]?.split(/[^\w]/g)
+        .join(` `);
+
+    const hasPhoneMainContactInfo = validations.phone(`Invalid phone error message`)(contactInfo) === true;
+
     return (
         <Grid item>
             <ButtonBase
+                disableRipple
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 data-testid="profile-icon"
-                className={classes.userProfileMenu}
+                className={classes.userProfileMenuButton}
                 onClick={handleMenu}
             >
-                <UserAvatar name={userName} />
+                <UserAvatar
+                    size="small"
+                    name={hasPhoneMainContactInfo ? `` : emailUserName}
+                    src={meData?.myUser.node?.avatar ?? ``}
+                    color={hasPhoneMainContactInfo ? PRIMARY_THEME_COLOR : undefined}
+                />
             </ButtonBase>
             <StyledMenu
                 keepMounted
@@ -127,23 +145,20 @@ export default function UserProfileMenu (props: Props) {
             >
                 <Box
                     display="flex"
-                    flexDirection="column"
+                    flexDirection="row"
                     alignItems="center"
                     pt={2}
                     px={2}
                     pb={1}
+                    gap={1}
                     tabIndex={undefined}
                 >
                     <UserAvatar
-                        name={userName ?? ``}
+                        size="medium"
+                        name={hasPhoneMainContactInfo ? `` : emailUserName}
                         src={meData?.myUser.node?.avatar ?? ``}
-                        size="large"
+                        color={hasPhoneMainContactInfo ? PRIMARY_THEME_COLOR : undefined}
                     />
-                    <Typography
-                        variant="body1"
-                    >
-                        {userName}
-                    </Typography>
                     <Typography
                         variant="body2"
                         className={classes.contactInfo}
@@ -151,9 +166,11 @@ export default function UserProfileMenu (props: Props) {
                         {contactInfo}
                     </Typography>
                 </Box>
-                <UserProfileSwitcher />
-                <Divider />
-                <List>
+                <List
+                    sx={{
+                        paddingTop: 0,
+                    }}
+                >
                     <ListItem>
                         <Grid
                             container
@@ -169,7 +186,17 @@ export default function UserProfileMenu (props: Props) {
                                     textAlign: `center`,
                                 }}
                             >
-                                <LanguageSelect languages={LANGUAGES_LABEL} />
+                                <Button
+                                    fullWidth
+                                    size="small"
+                                    label={intl.formatMessage({
+                                        id: `userSettings_signout`,
+                                    })}
+                                    variant="outlined"
+                                    data-testid="logout-button"
+                                    className={classes.signOutButton}
+                                    onClick={() => handleSignOut()}
+                                />
                             </Grid>
                             <Grid
                                 item
@@ -178,19 +205,7 @@ export default function UserProfileMenu (props: Props) {
                                     textAlign: `center`,
                                 }}
                             >
-                                <StyledButton
-                                    extendedOnly
-                                    data-testid="logout-button"
-                                    style={{
-                                        backgroundColor: `#fff`,
-                                        border: `1px solid #dadce0`,
-                                        color: `#000`,
-                                        padding: `8px 16px`,
-                                    }}
-                                    onClick={() => handleSignOut()}
-                                >
-                                    <FormattedMessage id="userSettings_signout" />
-                                </StyledButton>
+                                <LanguageSelect languages={LANGUAGES_LABEL} />
                             </Grid>
                         </Grid>
                     </ListItem>

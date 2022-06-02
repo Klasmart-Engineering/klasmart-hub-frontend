@@ -229,29 +229,33 @@ export default function CategorySelectDialog (props: Props) {
             id: `programs`,
             label: `Programs using`,
             disableSort: true,
-            render: (row) => (<>
-                {row.programs.map((program, i) => (
-                    <Chip
-                        key={`program-${i}`}
-                        label={program}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.programs.map((program, i) => (
+                        <Chip
+                            key={`program-${i}`}
+                            label={program}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
         {
             id: `subjects`,
             label: `Subjects using`,
             disableSort: true,
-            render: (row) => (<>
-                {row.subjects.map((subject, i) => (
-                    <Chip
-                        key={`subject-${i}`}
-                        label={subject}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.subjects.map((subject, i) => (
+                        <Chip
+                            key={`subject-${i}`}
+                            label={subject}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
     ];
 
