@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.61.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.1%0Dv2.61.0) (2022-06-03)
+
+
+### 🐛 Bug Fixes
+
+* order of side navigation items ([8683309](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8683309345b5fe5cdcc6ecaa2f6faadfcdbb6a60))
+* reduce rerenders when changing language (#133) ([1240e41](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1240e4109c8e3f1635006d86e3ecc31baad52f8f))
+
 ## [2.61.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.0%0Dv2.60.0) (2022-06-02)
 
 
