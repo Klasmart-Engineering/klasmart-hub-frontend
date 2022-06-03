@@ -23,8 +23,7 @@ import SchedulePage from "@/pages/schedule";
 import StudentReport from "@/pages/studentReport";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
 import { redirectToAuth } from "@/utils/routing";
-import React,
-{
+import {
     useCallback,
     useEffect,
     useState,

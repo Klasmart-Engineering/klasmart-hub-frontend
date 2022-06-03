@@ -1,16 +1,12 @@
-import LDProvider from "./feature-flag/LDProvider";
 import App from "@/app";
+import LDProvider from "@/feature-flag/LDProvider";
+import LocaleProvider from "@/locale/Provider";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
 import UserServiceProvider from "@/providers/UserServiceProvider";
 import ThemeProvider from "@/theme/Provider";
-import { getLanguage } from "@/utils/locale";
 import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kl-engineering/cms-api-client";
-import {
-    GlobalStateProvider,
-    localeState,
-    useGlobalStateValue,
-} from "@kl-engineering/frontend-state";
+import { GlobalStateProvider } from "@kl-engineering/frontend-state";
 import {
     AlertDialogProvider,
     ConfirmDialogProvider,
@@ -24,7 +20,6 @@ import {
 } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import React from 'react';
-import { RawIntlProvider } from "react-intl";
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -32,15 +27,12 @@ declare module '@mui/styles/defaultTheme' {
 }
 
 function ClientSide () {
-    const locale = useGlobalStateValue(localeState);
-    const langage = getLanguage(locale);
-
     return (
         <UserServiceProvider>
             <ReportsApiClientProvider>
                 <CmsApiClientProvider>
                     <LDProvider>
-                        <RawIntlProvider value={langage}>
+                        <LocaleProvider>
                             <StyledEngineProvider injectFirst>
                                 <ThemeProvider>
                                     <ConfirmDialogProvider>
@@ -55,7 +47,7 @@ function ClientSide () {
                                     </ConfirmDialogProvider>
                                 </ThemeProvider>
                             </StyledEngineProvider>
-                        </RawIntlProvider>
+                        </LocaleProvider>
                     </LDProvider>
                     {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
                 </CmsApiClientProvider>

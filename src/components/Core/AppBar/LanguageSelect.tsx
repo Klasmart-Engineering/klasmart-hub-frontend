@@ -105,7 +105,6 @@ export default function LanguageSelect (props: Props) {
                 </Button>
             </Tooltip>
             <StyledMenu
-                keepMounted
                 id="language-menu"
                 anchorEl={languageMenuElement}
                 open={Boolean(languageMenuElement)}
@@ -115,7 +114,10 @@ export default function LanguageSelect (props: Props) {
                     <MenuItem
                         key={language.code}
                         selected={locale === language.code}
-                        onClick={() => setLocale(language.code)}
+                        onClick={() => {
+                            setLocale(language.code);
+                            setLanguageMenuElement(null);
+                        }}
                     >
                         {language.text}
                     </MenuItem>

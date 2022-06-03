@@ -1,7 +1,7 @@
 import LanguageSelect from "./LanguageSelect";
 import { authClient } from "@/api/auth/client";
 import { useQueryMyUser } from "@/api/myUser";
-import { LANGUAGES_LABEL } from "@/locale/locale";
+import { LANGUAGES_LABEL } from "@/locale/config";
 import { organizationMembershipStackState } from "@/store/organizationMemberships";
 import { PRIMARY_THEME_COLOR } from "@/theme/utils/utils";
 import { redirectToAuth } from "@/utils/routing";

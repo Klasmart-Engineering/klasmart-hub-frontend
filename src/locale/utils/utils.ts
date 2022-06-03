@@ -2,7 +2,7 @@ import {
     fallbackLocale,
     getIntl,
     localeCodes,
-} from "../locale/locale";
+} from "@/locale/config";
 
 const localeCache = new Map<string, ReturnType<typeof getIntl>>();
 
