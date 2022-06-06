@@ -1,13 +1,10 @@
 import { WidgetType } from './models/widget.model';
 import WidgetContext from './WidgetManagement/widgetCustomisation/widgetContext';
-import WidgetWrapperError from './WidgetManagement/WidgetWrapperError';
-import WidgetWrapperNoData from './WidgetManagement/WidgetWrapperNoData';
 import { Cancel } from '@mui/icons-material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
     Box,
     Card,
-    CircularProgress,
     IconButton,
     Link,
     Typography,
@@ -98,12 +95,8 @@ export type BaseWidgetProps = {
     label: string;
     link?: LinkProps;
     overrideLink?: React.ReactNode;
-    loading: boolean;
-    error?: any;
-    noData?: boolean;
     noBackground?: boolean;
     editable?: boolean;
-    reload?: () => any | Promise<any>;
     id: WidgetType;
 }
 
@@ -114,12 +107,8 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
         label,
         link,
         overrideLink,
-        loading,
-        error,
-        noData,
         noBackground,
         editable = true,
-        reload,
         id,
     } = props;
 
@@ -139,26 +128,12 @@ export default function WidgetWrapper (props: BaseWidgetProps) {
                 className={`${classes.card} ${(noBackground && classes.cardNoBackground)} ${(editing && editable && classes.pointerNone)}`}
             >
                 <Box sx={
-                    loading ? {
-                        m: `auto`,
-                        display: `flex`,
-                        alignItems: `center`,
-                        pointerEvents: `none`,
-                    } :
-                        {
-                            height: `100%`,
-                        }
+                    {
+                        height: `100%`,
+                    }
                 }
                 >
-                    {loading ?
-                        <CircularProgress color="primary" />
-                        : error ?
-                            <WidgetWrapperError reload={reload} />
-                            : noData ?
-                                <WidgetWrapperNoData />
-                                :
-                                children
-                    }
+                    {children}
                 </Box>
             </Card>
         </Box>
@@ -174,6 +149,7 @@ type CardAnnotationProps = {
     editable?: boolean;
 }
 
+// eslint-disable-next-line react/no-multi-comp
 function CardAnnotation ({
     classes,
     label,

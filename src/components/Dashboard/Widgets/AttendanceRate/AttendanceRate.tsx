@@ -14,10 +14,6 @@ export default function AttendanceRateWidget () {
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={false}
-            noData={false}
-            // reload={refetch}
             label={
                 intl.formatMessage({
                     id: `home.attendance.containerTitleLabel`,

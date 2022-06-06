@@ -14,10 +14,6 @@ export default function AchievementWidget () {
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={false}
-            noData={false}
-            // reload={reload}
             label={
                 intl.formatMessage({
                     id: `home.student.achievementWidget.containerTitleLabel`,

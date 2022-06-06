@@ -15,10 +15,6 @@ export default function ContentStatusWidget () {
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={false}
-            noData={false}
-            // reload={refetch}
             label={
                 intl.formatMessage({
                     id: `home.contentStatus.containerTitleLabel`,

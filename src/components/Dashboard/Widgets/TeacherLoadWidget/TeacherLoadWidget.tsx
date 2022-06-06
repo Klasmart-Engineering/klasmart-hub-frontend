@@ -19,10 +19,6 @@ export default function TeacherLoadWidget () {
                     id: `home.teacherLoad.containerTitleLabel`,
                 })
             }
-            loading={false}
-            error={false}
-            noData={false}
-            // reload={reload}
             /*link={{
                 url: `reports`,
                 label: intl.formatMessage({

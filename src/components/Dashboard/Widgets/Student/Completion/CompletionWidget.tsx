@@ -19,10 +19,6 @@ export default function CompletionWidget () {
                     id: `home.student.completionWidget.containerTitleLabel`,
                 })
             }
-            loading={false}
-            error={false}
-            noData={false}
-            // reload={refetch}
             /*link={{
                 url: ``,
                 label: intl.formatMessage({

@@ -17,12 +17,6 @@ export default function AdaptiveLearningWidget (props: Props) {
 
     return (
         <WidgetWrapper
-            loading={false}
-            error={undefined}
-            noData={false}
-            reload={() => {
-                return;
-            }}
             label={intl.formatMessage({
                 id: `home.student.adaptiveLearningWidget.containerTitleLabel`,
             })}
