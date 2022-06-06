@@ -1,7 +1,7 @@
 import { getInitialOwnedOrg } from "./utils/organizationMemberships";
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import Layout from "@/layout";
+import BaseLayout from "@/layout/Base/Base";
 import {
     organizationMembershipStackState,
     useSetGlobalState,
@@ -56,6 +56,6 @@ export default function App (props: Props) {
     ]);
 
     return (
-        myUserLoading ? <></> : <Layout />
+        myUserLoading ? <></> : <BaseLayout />
     );
 }

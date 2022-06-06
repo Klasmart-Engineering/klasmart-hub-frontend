@@ -13,6 +13,8 @@ export const useFeatureFlags = () => {
     return {
         ...defaultFlags,
         ...flags,
+        studentWidgetAdaptiveLearningJourney: process.env.STUDENT_WIDGET_ADAPTIVE_LEARNING_JOURNEY === `true`,
+        studentWidgetAdaptiveLearning: process.env.STUDENT_WIDGET_ADAPTIVE_LEARNING === `true`,
         teacherStudentProgressReport: process.env.TEACHER_STUDENT_PROGRESS_REPORT === `true`,
     } as FeatureFlags;
 };

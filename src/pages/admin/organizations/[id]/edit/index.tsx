@@ -15,18 +15,17 @@ import {
     Button,
     Card,
     Tabs,
+    useSnackbar,
 } from "@kl-engineering/kidsloop-px";
 import {
     Box,
     Grid,
 } from "@mui/material";
 import Container from "@mui/material/Container";
-import { Theme } from "@mui/material/styles";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { useSnackbar } from "notistack";
 import React,
 {
     useEffect,
@@ -35,7 +34,7 @@ import React,
 import { useIntl } from "react-intl";
 import { useParams } from "react-router";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         cardHead: {
             padding: theme.spacing(0, 4),

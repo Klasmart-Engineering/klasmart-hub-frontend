@@ -6,7 +6,6 @@ import {
     useCreateOrUpdatePrograms,
 } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
 import {
@@ -89,10 +88,12 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_programsInfoLabel`,
                 }),
-                content: <ProgramInfoStep
-                    value={value_}
-                    onChange={handleValue}
-                         />,
+                content: (
+                    <ProgramInfoStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
                 error: [
                     required()(value_?.name),
                     letternumeric()(value_?.name),
@@ -106,10 +107,12 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_subjects`,
                 }),
-                content: <SubjectsStep
-                    value={value_}
-                    onChange={handleValue}
-                         />,
+                content: (
+                    <SubjectsStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
                 error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true))
                     .find((error) => error),
             },
@@ -117,10 +120,12 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_summaryLabel`,
                 }),
-                content: <SummaryStep
-                    value={value_}
-                    onChange={handleValue}
-                         />,
+                content: (
+                    <SummaryStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
             },
         ];
         setSteps(steps);

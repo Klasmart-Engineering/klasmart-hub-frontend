@@ -1,6 +1,6 @@
 {
   "name": "kidsloop-hub-frontend",
-  "version": "2.60.0",
+  "version": "2.61.1",
   "private": true,
   "description": "",
   "scripts": {
@@ -88,7 +88,7 @@
     "@kl-engineering/cms-api-client": "2.2.3",
     "@kl-engineering/frontend-state": "1.1.0",
     "@kl-engineering/kidsloop-branding": "2.0.5",
-    "@kl-engineering/kidsloop-px": "^2.2.4",
+    "@kl-engineering/kidsloop-px": "^2.2.5",
     "@kl-engineering/reports-api-client": "2.3.0",
     "@mui/icons-material": "^5.3.1",
     "@mui/lab": "^5.0.0-alpha.77",

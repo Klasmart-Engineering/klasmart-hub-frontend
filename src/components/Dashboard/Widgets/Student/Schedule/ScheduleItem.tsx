@@ -38,16 +38,16 @@ export interface StyleProps {
 
 const useStyles = makeStyles<Theme, StyleProps>(((theme: Theme) => createStyles({
     root: {
-        border: ({ classTypeTheme }) => `2px solid ${ classTypeTheme }`,
+        border: ({ classTypeTheme }) => `2px solid ${classTypeTheme}`,
         borderRadius: `15px`,
         padding: theme.spacing(1),
         background: ({ isActive }) => isActive ? THEME_COLOR_CLASS_TYPE_LIVE : `transparent`,
     },
     title: {
-        color: ({ classTypeTheme }) => `${ classTypeTheme }`,
+        color: ({ classTypeTheme }) => `${classTypeTheme}`,
     },
     chip: {
-        backgroundColor:  ({ classTypeTheme, isActive }) => isActive ? darken(THEME_COLOR_CLASS_TYPE_LIVE, .2) : `${ classTypeTheme }`,
+        backgroundColor: ({ classTypeTheme, isActive }) => isActive ? darken(THEME_COLOR_CLASS_TYPE_LIVE, .2) : `${classTypeTheme}`,
         color: theme.palette.common.white,
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1),
@@ -68,16 +68,29 @@ const useStyles = makeStyles<Theme, StyleProps>(((theme: Theme) => createStyles(
     },
     timeLabel: {
         paddingTop: theme.spacing(.5),
-        color: ({ classTypeTheme }) => `${ classTypeTheme }`,
+        color: ({ classTypeTheme }) => `${classTypeTheme}`,
     },
     durationLabel: {
-        color: ({ classTypeTheme }) => `${ classTypeTheme }`,
+        color: ({ classTypeTheme }) => `${classTypeTheme}`,
     },
     teacherName: {
         color: ({ isActive }) => isActive ? theme.palette.common.white : theme.palette.grey[700],
         paddingLeft: theme.spacing(.5),
     },
 })));
+
+const getClassType = ({
+    class_type: classType,
+    is_review: isReview,
+    is_home_fun: isHomeFun,
+}: SchedulePayload) => {
+    if(classType === `Homework` && isReview) {
+        return `StudyAutoReview`;
+    } else if(classType === `Homework` && !isHomeFun) {
+        return `Study`;
+    }
+    return classType;
+};
 
 function ScheduleItem (props: Props) {
     const {
@@ -86,14 +99,12 @@ function ScheduleItem (props: Props) {
         active,
     } = props;
     const showImage = width ? width > SHOW_IMAGE_BREAKPOINT : false;
-
-    const classIdentity = retrieveClassTypeIdentityOrDefault(item.class_type);
-
+    const classType = getClassType(item);
+    const classIdentity = retrieveClassTypeIdentityOrDefault(classType);
     const classes = useStyles({
         classTypeTheme: active ? `white` : classIdentity.color,
         isActive: active,
     });
-
     const maxTeachers = 2;
     const { data: rosterData } = useGetClassNodeRoster({
         fetchPolicy: `no-cache`,
@@ -116,13 +127,14 @@ function ScheduleItem (props: Props) {
                 alignItems="stretch"
                 wrap="nowrap"
             >
-                { showImage && (
+                {showImage && (
                     <Grid
                         item
                         xs={3}
                         className={classes.imageContainer}
                     >
                         <img
+                            alt=""
                             className={classes.image}
                             src={NextClassThumb}
                         />
@@ -141,9 +153,7 @@ function ScheduleItem (props: Props) {
                             <Chip
                                 size="small"
                                 className={classes.chip}
-                                icon={<SvgIcon
-                                    component={classIdentity.icon}
-                                />}
+                                icon={<SvgIcon component={classIdentity.icon} />}
                                 label={classIdentity.intlKey}
                             />
                             <Typography
@@ -188,25 +198,25 @@ function ScheduleItem (props: Props) {
                                                     className={classes.teacher}
                                                 >
                                                     {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) <= maxTeachers &&
-                                                    <Box
-                                                        display="flex"
-                                                        flexDirection="row"
-                                                        alignItems="center"
-                                                        className="singleTeacher"
-                                                    >
-                                                        <UserAvatar
-                                                            name={`${edge.node.givenName} ${edge.node.familyName}`}
-                                                            className={classes.avatar}
-                                                            size="small"
-                                                        />
-                                                        <span style={{
-                                                            display: `inline-block`,
-                                                            paddingLeft: `0.5em`,
-                                                            paddingRight: `0.5em`,
-                                                        }}
-                                                        >{edge.node.givenName} {edge.node.familyName}
-                                                        </span>
-                                                    </Box>}
+                                                        <Box
+                                                            display="flex"
+                                                            flexDirection="row"
+                                                            alignItems="center"
+                                                            className="singleTeacher"
+                                                        >
+                                                            <UserAvatar
+                                                                name={`${edge.node.givenName} ${edge.node.familyName}`}
+                                                                className={classes.avatar}
+                                                                size="small"
+                                                            />
+                                                            <span style={{
+                                                                display: `inline-block`,
+                                                                paddingLeft: `0.5em`,
+                                                                paddingRight: `0.5em`,
+                                                            }}
+                                                            >{edge.node.givenName} {edge.node.familyName}
+                                                            </span>
+                                                        </Box>}
                                                     {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) > maxTeachers &&
                                                         <Box
                                                             display="flex"

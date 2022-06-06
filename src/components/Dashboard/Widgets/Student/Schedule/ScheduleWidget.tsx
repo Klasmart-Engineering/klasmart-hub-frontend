@@ -52,15 +52,12 @@ export default function ScheduleWidget () {
     const intl = useIntl();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
-
     const organizationId = currentOrganization?.id ?? ``;
-
     const now = new Date();
     const yesterday = new Date().setDate(new Date().getDate() - 1) / 1000;
     const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
     const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
     const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
-
     const {
         data: schedulesData,
         isFetching: isSchedulesFetching,
@@ -98,8 +95,7 @@ export default function ScheduleWidget () {
         }))
         .filter((event) => event.status !== `Closed`)
         .filter((event) => event.start_at > yesterday);
-
-    const daysWithClass = schedule
+     const daysWithClass = schedule
         ?.map((e) => ({
             ...e,
             start_at_date: new Date(((e.start_at + 1 + timeZoneOffset) * 1000)).toISOString().split(`T`)[0],
@@ -111,7 +107,6 @@ export default function ScheduleWidget () {
                 ? global
                 : global.concat(current.start_at_date);
         }, []);
-
     return (
         <WidgetWrapper
             loading={isSchedulesFetching}

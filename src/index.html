@@ -31,34 +31,36 @@
 
 <style>
     html,
-    body {
-        display: flex;
+    body,
+    #app {
         width: 100%;
-        min-height: 100%;
-        min-width: 320px;
+        height: 100%;
+        margin: 0;
+        padding: 0;
     }
 
-    iframe {
-        border-width: 0px;
+    iframe,
+    img {
+        border-width: 0;
+        display: block;
     }
     
-    div#app {
+    #app {
         display: flex;
-        flex-grow: 1;
         flex-direction: column;
     }
 
-    body#body {
+    body {
         scrollbar-width: none;
     }
 
-    body#body::-webkit-scrollbar {
+    body::-webkit-scrollbar {
         display: none;
     }
 </style>
 
 
-<body id="body">
+<body>
     <div id="app" />
 </body>
 

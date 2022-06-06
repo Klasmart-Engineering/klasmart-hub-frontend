@@ -2,21 +2,26 @@ import { useFeatureFlags } from "@/feature-flag/utils";
 import { usePermission } from "@/utils/permissions";
 import { useIsSuperAdmin } from "@/utils/userRoles";
 import {
-    Assessment,
-    AssignmentInd,
+    AgeRangeIcon,
+    AnalyticsReportsIcon,
+    AssessmentIcon,
+    ClassIcon,
+    ContentsLibraryIcon,
+    GradeIcon,
+    HomeIcon,
+    OrganizationIcon,
+    ProgramIcon,
+    RoleIcon,
+    ScheduleIcon,
+    SchoolIcon,
+    SubjectIcon,
+    UserIcon,
+} from "@kl-engineering/kidsloop-px";
+import {
     Business,
-    ChildCare,
-    Class,
     CreditCard,
-    Event,
-    Grade,
-    Group,
-    Home,
     Inbox,
-    LibraryBooks,
-    MenuBook,
     Person,
-    School,
     ShowChartTwoTone,
     SvgIconComponent,
     TableChart,
@@ -28,15 +33,14 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    ListSubheader,
+    Tooltip,
 } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React,
-{ Fragment } from "react";
+import { Fragment } from "react";
 import { useIntl } from "react-intl";
 import {
     Link,
@@ -44,26 +48,44 @@ import {
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({
-    sectionHeader: {
-        backgroundColor: `#fff`,
-        lineHeight: `36px`,
-        fontSize: `0.8em`,
-        fontWeight: 600,
-        textTransform: `uppercase`,
+    listItem: {
+        width: `calc(100% - ${theme.spacing(3)})`,
+        height: theme.spacing(5),
+        borderRadius: theme.spacing(2.5, 1, 2.5, 2.5),
+        margin: theme.spacing(0, 1.5),
+        padding: theme.spacing(1),
+        transition: theme.transitions.create([ `width`, `border-radius` ], {
+            easing: theme.transitions.easing.easeInOut,
+            duration: theme.transitions.duration.short,
+        }),
     },
-    defaultLink: {
-        width: `90%`,
-        margin: `0 auto`,
-        borderRadius: theme.spacing(2),
+    listItemMini: {
+        width: theme.spacing(5),
     },
     selectedLink: {
-        backgroundColor: lighten(theme.palette.primary.main, 0.9),
+        backgroundColor: lighten(theme.palette.primary.main, 0.85),
         "& .MuiListItemText-primary": {
-            color: theme.palette.primary.contrastText,
+            color: theme.palette.primary.main,
         },
         "& .MuiListItemIcon-root": {
-            color: theme.palette.primary.contrastText,
+            color: theme.palette.primary.main,
         },
+    },
+    textListItem: {
+        opacity: 1,
+        overflow: `hidden`,
+        textOverflow: `ellipsis`,
+        display: `-webkit-box`,
+        WebkitLineClamp: 2,
+        lineClamp: 2,
+        WebkitBoxOrient: `vertical`,
+        transition: theme.transitions.create([ `opacity` ], {
+            easing: theme.transitions.easing.easeInOut,
+            duration: theme.transitions.duration.short,
+        }),
+    },
+    textListItemMini: {
+        opacity: 0,
     },
 }));
 
@@ -75,11 +97,12 @@ interface MenuItem {
 }
 
 interface MenuSection {
-    header?: string;
+    id: string;
     items: MenuItem[];
 }
 
 interface Props {
+    isMiniVariant?: boolean;
 }
 
 export default function NavigationMenuList (props: Props) {
@@ -89,12 +112,13 @@ export default function NavigationMenuList (props: Props) {
     const { teacherStudentProgressReport } = useFeatureFlags();
 
     const homeSection: MenuSection = {
+        id: `Home`,
         items: [
             {
                 text: intl.formatMessage({
                     id: `navMenu_home`,
                 }),
-                icon: Home,
+                icon: HomeIcon,
                 link: `/`,
                 exact: true,
             },
@@ -102,9 +126,7 @@ export default function NavigationMenuList (props: Props) {
     };
 
     const superAdminSection: MenuSection = {
-        header: intl.formatMessage({
-            id: `navMenu_superAdminLabel`,
-        }),
+        id: `Super Admin`,
         items: useIsSuperAdmin() ? [
             {
                 text: intl.formatMessage({
@@ -140,25 +162,23 @@ export default function NavigationMenuList (props: Props) {
         ] : [],
     };
 
-    const librarySection = {
-        items: usePermission(`library_200`) ? [
-            {
-                text: intl.formatMessage({
-                    id: `navMenu_contentLibraryTitle`,
-                }),
-                icon: Inbox,
-                link: `/library`,
-            },
-        ] : [],
-    };
-
-    const scheduleSection = {
+    const scheduleSection: MenuSection = {
+        id: `schedule`,
         items: [
+            ...usePermission(`library_200`) ? [
+                {
+                    text: intl.formatMessage({
+                        id: `navMenu_contentLibraryTitle`,
+                    }),
+                    icon: ContentsLibraryIcon,
+                    link: `/library`,
+                },
+            ] : [],
             {
                 text: intl.formatMessage({
                     id: `navMenu_scheduleTitle`,
                 }),
-                icon: Event,
+                icon: ScheduleIcon,
                 link: `/schedule`,
             },
         ],
@@ -175,16 +195,8 @@ export default function NavigationMenuList (props: Props) {
         viewGrades: usePermission(`define_grade_page_20103`),
         viewAgeRanges: usePermission(`define_age_ranges_page_20102`),
     };
-    const givenManagePermissionsValues = Object.values(managePermissions)
-        .filter((permission) => permission);
-    const manageSection = {
-        ...givenManagePermissionsValues.length > 1 // show header when users has 2 or more permissions
-            ? {
-                header: intl.formatMessage({
-                    id: `navMenu_manageLabel`,
-                }),
-            }
-            : {},
+    const manageSection: MenuSection = {
+        id: `manage`,
         items: [
             ...managePermissions.viewOrganizations
                 ? [
@@ -192,7 +204,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_organizationTitle`,
                         }),
-                        icon: Business,
+                        icon: OrganizationIcon,
                         link: `/admin/organizations`,
                     },
                 ]
@@ -203,7 +215,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_usersTitle`,
                         }),
-                        icon: Group,
+                        icon: UserIcon,
                         link: `/admin/users`,
                     },
                 ]
@@ -214,7 +226,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_groupsTitle`,
                         }),
-                        icon: AssignmentInd,
+                        icon: RoleIcon,
                         link: `/admin/roles`,
                     },
                 ]
@@ -225,7 +237,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_schoolsTitle`,
                         }),
-                        icon: School,
+                        icon: SchoolIcon,
                         link: `/admin/schools`,
                     },
                 ]
@@ -236,7 +248,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_programsTitle`,
                         }),
-                        icon: LibraryBooks,
+                        icon: ProgramIcon,
                         link: `/admin/programs`,
                     },
                 ]
@@ -247,7 +259,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_classesTitle`,
                         }),
-                        icon: Class,
+                        icon: ClassIcon,
                         link: `/admin/classes`,
                     },
                 ]
@@ -258,7 +270,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_subjectsTitle`,
                         }),
-                        icon: MenuBook,
+                        icon: SubjectIcon,
                         link: `/admin/subjects`,
                     },
                 ]
@@ -269,7 +281,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_gradesTitle`,
                         }),
-                        icon: Grade,
+                        icon: GradeIcon,
                         link: `/admin/grades`,
                     },
                 ]
@@ -280,7 +292,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_ageRangesTitle`,
                         }),
-                        icon: ChildCare,
+                        icon: AgeRangeIcon,
                         link: `/admin/age-ranges`,
                     },
                 ]
@@ -293,16 +305,8 @@ export default function NavigationMenuList (props: Props) {
         viewStudentReport: usePermission(`report_student_progress_teacher_660`),
         viewAssessments: usePermission(`assessments_page_406`),
     };
-    const givenDataPermissionsValues = Object.values(dataPermissions)
-        .filter((permission) => permission);
-    const dataSection = {
-        ...givenDataPermissionsValues.length > 1
-            ? {
-                header: intl.formatMessage({
-                    id: `navMenu_dataLabel`,
-                }),
-            }
-            : {},
+    const dataSection: MenuSection = {
+        id: `data`,
         items: [
             ...( dataPermissions.viewReports
                 ? [
@@ -310,7 +314,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_analyticsAndReportsTitle`,
                         }),
-                        icon: TableChart,
+                        icon: AnalyticsReportsIcon,
                         link: `/reports`,
                     },
                 ]
@@ -332,7 +336,7 @@ export default function NavigationMenuList (props: Props) {
                         text: intl.formatMessage({
                             id: `navMenu_assessmentsTitle`,
                         }),
-                        icon: Assessment,
+                        icon: AssessmentIcon,
                         link: `/assessments`,
                     },
                 ]
@@ -344,7 +348,6 @@ export default function NavigationMenuList (props: Props) {
     const menuSections: MenuSection[] = [
         ...homeSection.items.length ? [ homeSection ] : [],
         ...superAdminSection.items.length ? [ superAdminSection ] : [],
-        ...librarySection.items.length ? [ librarySection ] : [],
         ...scheduleSection.items.length ? [ scheduleSection ] : [],
         ...manageSection.items.length ? [ manageSection ] : [],
         ...dataSection.items.length ? [ dataSection ] : [],
@@ -359,31 +362,58 @@ export default function NavigationMenuList (props: Props) {
     return (
         <>
             {menuSections.map((section, i) => (
-                <Fragment key={`section-${i}`}>
-                    {i !== 0 && <Divider />}
+                <Fragment key={section.id}>
+                    {i !== 0 && (
+                        <Divider
+                            sx={{
+                                margin: `0 24px`,
+                            }}
+                        />
+                    )}
                     <List dense>
-                        {section.header && (
-                            <ListSubheader className={classes.sectionHeader}>
-                                {section.header}
-                            </ListSubheader>
-                        )}
-                        {section.items.map((item, j) => (
-                            <ListItem
-                                key={`item-${i}-${j}`}
-                                button
-                                color="primary"
-                                disabled={!item.link}
-                                component={Link}
-                                to={item.link ?? ``}
-                                className={clsx(classes.defaultLink, {
-                                    [classes.selectedLink]: isLinkSelected(item),
-                                })}
+                        {section.items.map((item) => (
+                            <Tooltip
+                                key={`item-${item.link}-${item.text}`}
+                                title={props.isMiniVariant ? item.text : ``}
+                                placement="right"
+                                sx={{
+                                    borderRadius: 2,
+                                }}
                             >
-                                <ListItemIcon>
-                                    <item.icon />
-                                </ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItem>
+                                <ListItem
+                                    button
+                                    color="primary"
+                                    disabled={!item.link}
+                                    component={Link}
+                                    to={item.link ?? ``}
+                                    className={clsx(classes.listItem, {
+                                        [classes.selectedLink]: isLinkSelected(item),
+                                        [classes.listItemMini]: props.isMiniVariant,
+                                    })}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                        }}
+                                    >
+                                        <item.icon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={item.text}
+                                        sx={{
+                                            marginLeft: 1.5,
+                                        }}
+                                        primaryTypographyProps={{
+                                            sx: {
+                                                lineHeight: 1.1,
+                                            },
+                                        }}
+                                        className={clsx(classes.textListItem, {
+                                            [classes.textListItemMini]: props.isMiniVariant,
+                                        })}
+                                    />
+                                </ListItem>
+                            </Tooltip>
                         ))}
                     </List>
                 </Fragment>

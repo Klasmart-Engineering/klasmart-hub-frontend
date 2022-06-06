@@ -12,34 +12,7 @@ export interface MyUserRequest {
 export interface MyUserResponse {
   myUser: {
     profiles: UserNode[];
-    node: (UserNode & {
-      organizationMembershipsConnection: {
-        edges: {
-          node: {
-            organization: {
-              id: string;
-              name: string;
-              branding: {
-                primaryColor: string | null;
-                iconImageURL: string | null;
-              };
-              owners: {
-                email: string;
-                id: string;
-              };
-              contactInfo: {
-                phone: string;
-              };
-            };
-            rolesConnection: {
-              edges: {
-                node: RoleConnectionNode;
-              }[];
-            };
-          };
-        }[];
-      };
-    });
+    node: UserNode;
   };
 }
 
