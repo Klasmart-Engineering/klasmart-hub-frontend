@@ -85,7 +85,7 @@ export default function SubjectDialogForm (props: Props) {
     useEffect(()=> {
         setSubjectName(value.name ?? ``);
         setSubjectCategories(value.categories ?? []);
-    }, [ value ]);
+    }, [ ]);
 
     const removeSubcategory = (category: Category, subcategory: Subcategory) => {
         setSubjectCategories((categories) => categories.map((c) => c.id === category.id
