@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.61.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.2%0Dv2.61.1) (2022-06-07)
+
+
+### 🐛 Bug Fixes
+
+* update excel row name from academic term to academic period (#119) ([3ba1028](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3ba1028e6cacf67acbcfccfd2768c67d4e0760b7))
+
 ### [2.61.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.1%0Dv2.61.0) (2022-06-03)
 
 
