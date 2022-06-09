@@ -111,6 +111,7 @@
     "date-fns": "^2.19.0",
     "deep-object-diff": "^1.1.0",
     "export-to-csv": "0.2.1",
+    "firebase": "^9.8.2",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "iframe-resizer-react": "^1.1.0",
