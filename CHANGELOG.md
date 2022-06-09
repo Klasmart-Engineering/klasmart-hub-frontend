@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.62.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.0%0Dv2.61.3) (2022-06-09)
+
+
+### ♻️ Chores
+
+* bump @kl-engineering/frontend-state version to 1.1.1 (#142) ([5815682](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/58156825548dd7361dae608607729e534c08b8d9))
+
+
+### ✨ Features
+
+* add firebase analytics (#136) ([4a83a91](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4a83a915d733aef708a668f0445ae08cf92cca80))
+
 ### [2.61.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.3%0Dv2.61.2) (2022-06-07)
 
 ### [2.61.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.2%0Dv2.61.1) (2022-06-07)
