@@ -2,10 +2,12 @@ import LanguageSelect from "./LanguageSelect";
 import { authClient } from "@/api/auth/client";
 import { useQueryMyUser } from "@/api/myUser";
 import { LANGUAGES_LABEL } from "@/locale/config";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
 import { PRIMARY_THEME_COLOR } from "@/theme/utils/utils";
 import { redirectToAuth } from "@/utils/routing";
-import { useSetGlobalState } from "@kl-engineering/frontend-state";
+import {
+    organizationMembershipStackState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
 import {
     Button,
     UserAvatar,

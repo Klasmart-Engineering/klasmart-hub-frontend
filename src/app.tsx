@@ -2,8 +2,10 @@ import { getInitialOwnedOrg } from "./utils/organizationMemberships";
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
 import BaseLayout from "@/layout/Base/Base";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
-import { useSetGlobalState } from "@kl-engineering/frontend-state";
+import {
+    organizationMembershipStackState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
