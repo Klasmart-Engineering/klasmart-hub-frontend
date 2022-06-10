@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.63.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.0%0Dv2.62.1) (2022-06-10)
+
+
+### 🐛 Bug Fixes
+
+* **analytics:** add page route events ([311cd19](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/311cd19723f222b59aab18e37dcafae5b7e3faae))
+
+
+### ♻️ Chores
+
+* remove unused Schedule MFE organization ID prop and related imports ([09a440d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/09a440d4db3fcf8c91ded88d6c9461a48de23eb0))
+
+
+### ✨ Features
+
+* **KLS-507:** apply Assessment MFE (#129) ([0a0c452](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0a0c45239330c54dbe085e464ac1222392b0165b)), closes [KLS-507](https://calmisland.atlassian.net/browse/KLS-507) [KLS-507](https://calmisland.atlassian.net/browse/KLS-507)
+
 ### [2.62.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.1%0Dv2.62.0) (2022-06-09)
 
 
