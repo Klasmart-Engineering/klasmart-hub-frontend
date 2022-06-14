@@ -1,13 +1,11 @@
 import "@babel/polyfill";
-import "node-source-han-sans-sc/SourceHanSansSC-Regular-all.css";
-import "typeface-nanum-square-round";
-import "inter-ui";
 import './index.css';
 import AuthEntry from "@/auth-entry";
-import React from "react";
+import { initializeFirebase } from '@/firebase/config';
 import * as ReactDOM from "react-dom";
 
 function main () {
+    initializeFirebase();
     const div = document.getElementById(`app`);
     ReactDOM.render(<AuthEntry />, div);
 }

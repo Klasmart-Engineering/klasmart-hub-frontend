@@ -156,7 +156,7 @@ export default function CategorySelectDialog (props: Props) {
         if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
-                id: `generic_confirmDelete`,
+                id: `subjects_deleteCategoryLabel`,
             }),
             content: (
                 <>
@@ -224,6 +224,7 @@ export default function CategorySelectDialog (props: Props) {
         {
             id: `name`,
             label: `Name`,
+            persistent: true,
         },
         {
             id: `programs`,

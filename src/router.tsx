@@ -1,3 +1,4 @@
+import { updatePageEvent } from "./firebase/config";
 import { authClient } from "@/api/auth/client";
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import ErrorPage from "@/components/Common/ErrorPage";
@@ -23,8 +24,7 @@ import SchedulePage from "@/pages/schedule";
 import StudentReport from "@/pages/studentReport";
 import SuperAdminContentLibraryTable from "@/pages/superAdmin/LibraryContent/Table";
 import { redirectToAuth } from "@/utils/routing";
-import React,
-{
+import {
     useCallback,
     useEffect,
     useState,
@@ -60,6 +60,7 @@ export default function Router (props: Props) {
 
     const location = useLocation().pathname;
     useEffect(() => {
+        updatePageEvent();
         redirectIfUnauthenticated();
     }, [ location ]);
 

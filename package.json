@@ -1,6 +1,6 @@
 {
   "name": "kidsloop-hub-frontend",
-  "version": "2.61.0",
+  "version": "2.63.1",
   "private": true,
   "description": "",
   "scripts": {
@@ -86,9 +86,9 @@
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@kl-engineering/cms-api-client": "2.2.3",
-    "@kl-engineering/frontend-state": "1.0.0",
+    "@kl-engineering/frontend-state": "1.1.1",
     "@kl-engineering/kidsloop-branding": "2.0.5",
-    "@kl-engineering/kidsloop-px": "^2.2.5",
+    "@kl-engineering/kidsloop-px": "2.3.4",
     "@kl-engineering/reports-api-client": "2.3.0",
     "@mui/icons-material": "^5.3.1",
     "@mui/lab": "^5.0.0-alpha.77",
@@ -111,6 +111,7 @@
     "date-fns": "^2.19.0",
     "deep-object-diff": "^1.1.0",
     "export-to-csv": "0.2.1",
+    "firebase": "^9.8.2",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "iframe-resizer-react": "^1.1.0",

@@ -1,4 +1,4 @@
-import { fallbackLocale } from "@/locale/locale";
+import { fallbackLocale } from "@/locale/config";
 import {
     createTheme,
     StyledEngineProvider,

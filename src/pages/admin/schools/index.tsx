@@ -56,6 +56,7 @@ export default function SchoolsPage (props: Props) {
             filter: paginationFilter,
         },
         skip: !currentOrganization?.id || !canView,
+        fetchPolicy: `no-cache`,
         notifyOnNetworkStatusChange: true,
     });
 

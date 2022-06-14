@@ -3,7 +3,7 @@ import createStyles from '@mui/styles/createStyles';
 
 export default (theme: Theme) => createStyles({
     primaryText: {
-        color: theme.palette.primary.contrastText,
+        color: theme.palette.primary.main,
     },
     statusText: {
         fontWeight: `bold`,
