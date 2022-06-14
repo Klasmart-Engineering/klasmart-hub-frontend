@@ -2,7 +2,6 @@ import LanguageSelect from "./LanguageSelect";
 import { authClient } from "@/api/auth/client";
 import { useQueryMyUser } from "@/api/myUser";
 import { LANGUAGES_LABEL } from "@/locale/config";
-import { PRIMARY_THEME_COLOR } from "@/theme/utils/utils";
 import { redirectToAuth } from "@/utils/routing";
 import {
     organizationMembershipStackState,
@@ -22,6 +21,7 @@ import {
     Popover,
     PopoverProps,
     Typography,
+    useTheme,
 } from "@mui/material";
 import {
     createStyles,
@@ -81,6 +81,7 @@ interface Props {
 
 export default function UserProfileMenu (props: Props) {
     const classes = useStyles();
+    const theme = useTheme();
     const intl = useIntl();
     const setOrganizationStack = useSetGlobalState(organizationMembershipStackState);
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
@@ -135,7 +136,7 @@ export default function UserProfileMenu (props: Props) {
                     size="small"
                     name={hasPhoneMainContactInfo ? `` : emailUserName}
                     src={meData?.myUser.node?.avatar ?? ``}
-                    color={hasPhoneMainContactInfo ? PRIMARY_THEME_COLOR : undefined}
+                    color={hasPhoneMainContactInfo ? theme.palette.primary.main : undefined}
                 />
             </ButtonBase>
             <StyledMenu
@@ -159,7 +160,7 @@ export default function UserProfileMenu (props: Props) {
                         size="medium"
                         name={hasPhoneMainContactInfo ? `` : emailUserName}
                         src={meData?.myUser.node?.avatar ?? ``}
-                        color={hasPhoneMainContactInfo ? PRIMARY_THEME_COLOR : undefined}
+                        color={hasPhoneMainContactInfo ? theme.palette.primary.main : undefined}
                     />
                     <Typography
                         variant="body2"

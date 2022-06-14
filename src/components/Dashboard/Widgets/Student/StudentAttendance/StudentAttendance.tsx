@@ -4,7 +4,6 @@ import XYLineChart,
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { PRIMARY_THEME_COLOR } from "@/theme/utils/utils";
 import { utils } from "@kl-engineering/kidsloop-px";
 import { useGetStudentAttendanceRate } from "@kl-engineering/reports-api-client";
 import { CalendarTodayOutlined } from '@mui/icons-material';
@@ -12,6 +11,7 @@ import {
     Box,
     Theme,
     Typography,
+    useTheme,
 } from "@mui/material";
 import {
     createStyles,
@@ -61,11 +61,12 @@ interface Props {
 
 export default function StudentAttendanceWidget (props: Props) {
     const intl = useIntl();
+    const theme = useTheme();
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationName = currentOrganization?.name ?? ``;
     const organizationId = currentOrganization?.id ?? ``;
-    const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : PRIMARY_THEME_COLOR);
+    const organizationPrimaryColor = currentOrganization?.branding?.primaryColor ?? (organizationName ? utils.stringToColor(organizationName) : theme.palette.primary.main);
     const [ attendanceData, setAttendanceData ] = useState<LineChartData[]>([]);
     const [ averageAttendance, setAverageAttendance ] = useState(0);
     const {

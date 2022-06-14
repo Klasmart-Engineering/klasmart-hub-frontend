@@ -1,17 +1,27 @@
 /* eslint-disable react/prop-types */
-import { useThemeProvider } from "@/theme/utils/utils";
-import { ThemeProvider as MUIThemeProvider } from "@mui/material";
+import {
+    localeState,
+    useGlobalStateValue,
+} from "@kl-engineering/frontend-state";
+import {
+    buildTheme,
+    ThemeProvider as PXThemeProvider,
+} from "@kl-engineering/kidsloop-px";
+import { useMemo } from "react";
 
 interface ThemeProviderProps {
 }
 
 const ThemeProvider: React.FC<ThemeProviderProps> = (props) => {
-    const theme = useThemeProvider();
+    const locale = useGlobalStateValue(localeState);
+    const theme = useMemo(() => buildTheme({
+        locale,
+    }), [ locale ]);
 
     return (
-        <MUIThemeProvider theme={theme}>
+        <PXThemeProvider theme={theme}>
             {props.children}
-        </MUIThemeProvider>
+        </PXThemeProvider>
     );
 };
 
