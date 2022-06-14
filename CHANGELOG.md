@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.63.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.0%0Dv2.62.1) (2022-06-10)
+
+
+### 🐛 Bug Fixes
+
+* **analytics:** add page route events ([311cd19](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/311cd19723f222b59aab18e37dcafae5b7e3faae))
+
+
+### ♻️ Chores
+
+* remove unused Schedule MFE organization ID prop and related imports ([09a440d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/09a440d4db3fcf8c91ded88d6c9461a48de23eb0))
+
+
+### ✨ Features
+
+* **KLS-507:** apply Assessment MFE (#129) ([0a0c452](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0a0c45239330c54dbe085e464ac1222392b0165b)), closes [KLS-507](https://calmisland.atlassian.net/browse/KLS-507) [KLS-507](https://calmisland.atlassian.net/browse/KLS-507)
+
+### [2.62.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.1%0Dv2.62.0) (2022-06-09)
+
+
+### 🐛 Bug Fixes
+
+* update the measurementid for firebase analytics (#143) ([5de7b9f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5de7b9f4f818b6bba5e03561b197b4344cb6258e))
+
+## [2.62.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.0%0Dv2.61.3) (2022-06-09)
+
+
+### ♻️ Chores
+
+* bump @kl-engineering/frontend-state version to 1.1.1 (#142) ([5815682](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/58156825548dd7361dae608607729e534c08b8d9))
+
+
+### ✨ Features
+
+* add firebase analytics (#136) ([4a83a91](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4a83a915d733aef708a668f0445ae08cf92cca80))
+
+### [2.61.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.3%0Dv2.61.2) (2022-06-07)
+
+### [2.61.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.2%0Dv2.61.1) (2022-06-07)
+
+
+### 🐛 Bug Fixes
+
+* update excel row name from academic term to academic period (#119) ([3ba1028](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3ba1028e6cacf67acbcfccfd2768c67d4e0760b7))
+
 ### [2.61.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.1%0Dv2.61.0) (2022-06-03)
 
 

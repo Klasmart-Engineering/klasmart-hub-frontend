@@ -1,31 +1,20 @@
-import { getCmsSiteEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React from "react";
+import LoadingPage from "@/components/Common/LoadingPage";
+import React,
+{ Suspense } from "react";
 
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-        height: `100%`,
-    },
-}));
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const AssessmentPageMFE = React.lazy(() => import(`assessment/Assessment`));
 
-interface Props {
-}
-
-export default function AssessmentsPage (props: Props) {
-    const classes = useStyles();
-    const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.id ?? ``;
+export default function AssessmentsPage () {
 
     return (
-        <iframe
-            src={`${getCmsSiteEndpoint()}?org_id=${organizationId}#/assessments/assessment-list`}
-            frameBorder="0"
-            className={classes.root}
-        />
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
+        >
+            <AssessmentPageMFE />
+        </Suspense>
     );
 }

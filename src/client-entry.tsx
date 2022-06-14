@@ -4,10 +4,12 @@ import "typeface-nanum-square-round";
 import "inter-ui";
 import './index.css';
 import AuthEntry from "@/auth-entry";
+import { initializeFirebase } from '@/firebase/config';
 import React from "react";
 import * as ReactDOM from "react-dom";
 
 function main () {
+    initializeFirebase();
     const div = document.getElementById(`app`);
     ReactDOM.render(<AuthEntry />, div);
 }

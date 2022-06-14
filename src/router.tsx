@@ -1,3 +1,4 @@
+import { updatePageEvent } from "./firebase/config";
 import { authClient } from "@/api/auth/client";
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import ErrorPage from "@/components/Common/ErrorPage";
@@ -59,6 +60,7 @@ export default function Router (props: Props) {
 
     const location = useLocation().pathname;
     useEffect(() => {
+        updatePageEvent();
         redirectIfUnauthenticated();
     }, [ location ]);
 

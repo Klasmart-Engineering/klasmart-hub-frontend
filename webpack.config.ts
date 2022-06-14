@@ -9,12 +9,10 @@ import { config } from "dotenv";
 import Dotenv from "dotenv-webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
-import UnusedWebpackPlugin from "unused-webpack-plugin";
 import webpack, {
     Configuration,
     EnvironmentPlugin,
 } from "webpack";
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import zlib from "zlib";
 
 config();
@@ -152,6 +150,7 @@ const webpackConfig: Configuration = {
             remotes: {
                 schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
                 reports: `reports@https://fe.alpha.kidsloop.net:8082/remoteEntry.js`,
+                assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`,
             },
             shared: {
                 '@kl-engineering/frontend-state': {
