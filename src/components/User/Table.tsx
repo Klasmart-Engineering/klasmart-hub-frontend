@@ -654,7 +654,7 @@ export default function UserTable(props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
-                    showSelectables
+                    showSelectables={canEdit}
                     filters={filters}
                     columns={columns}
                     rows={rows}
@@ -680,7 +680,7 @@ export default function UserTable(props: Props) {
                         disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
                         onClick: () => setCreateDialogOpen(true),
                     }}
-                    selectActions={[
+                    selectActions={canEdit ? [
                         {
                             label: intl.formatMessage({
                                 id: `entity.user.template.edit.button`,
@@ -688,7 +688,7 @@ export default function UserTable(props: Props) {
                             icon: EditIcon,
                             onClick: () => verifyEdit(selectedUsers),
                         },
-                    ]}
+                    ]: []}
                     secondaryActions={[
                         {
                             label: intl.formatMessage({
