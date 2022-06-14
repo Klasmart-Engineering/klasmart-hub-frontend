@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: `10px`,
         },
         accordionContainer: {
-            width: theme.breakpoints.values.lg,
+            width: `100%`,
             display: `grid`,
         },
     }));
