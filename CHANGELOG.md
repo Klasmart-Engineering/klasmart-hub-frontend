@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.63.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.1%0Dv2.63.0) (2022-06-14)
+
+
+### 📦 Refactor
+
+* use px theme config (#141) ([969a3d9](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/969a3d9eef35c6bc7acb921b3cec3988f9766100))
+
+
+### 🐛 Bug Fixes
+
+* "bulk edit users is disabled for school admin/teacher" (#148) ([339c90f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/339c90f8b42fb0091434c248a2ff21ad31326e2e))
+* "modify alternative contact info styling " (#138) ([42aa721](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/42aa721edf4141bee23ea541feb4e5d800d57978))
+* "subject name appears after selecting the category" (#139) ([82896fb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/82896fb9ca702ec27899a8078490b39cef3c5f4e))
+* academic terms are displayed properly in school table (#134) ([85d2c51](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/85d2c5190fe20abdb57a43427ca52df9e4519cb5))
+* column name selected by default for category and subcategory (#145) ([0472350](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0472350eafa262ed5ea7dfff79b24ca5424f49e0))
+* full list of schools displayed when filtering by schools in the user and Classes screen (#135) ([aaf371b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/aaf371b507d7f9d16b4bbfee07b3a6a39ec736ce))
+* Hiding Inactive Users in Class Roster (#137) ([d8813a4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/d8813a49d15e78cc305f0f3a16b353305c5e7667))
+* update the category and subcategory delete model title (#144) ([3b8bb49](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3b8bb49c01247a1f4d6b8e9f7cc7a0a4b35864e3))
+
 ## [2.63.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.0%0Dv2.62.1) (2022-06-10)
 
 
