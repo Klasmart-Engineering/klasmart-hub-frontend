@@ -207,6 +207,10 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
         skip: !orgId || skipAll || !selectedFilters.queryCategories,
     });
 
+    const shouldReset = (hasPreviousPage: boolean, hasNoPreviousData: boolean) => {
+        return hasPreviousPage && hasNoPreviousData;
+    };
+
     useEffect(() => {
         setGradeFilterValueOptions((values) => ([ ...values, ...mapGradeEdgesToFilterOptions(gradesData?.gradesConnection?.edges ?? []) ]));
         if (gradesData?.gradesConnection?.pageInfo?.hasNextPage) {
@@ -243,12 +247,12 @@ export const useGetTableFilters = (orgId: string, selectedFilters: SelectFilters
     }, [ ageRangesData, fetchMoreAgeRanges ]);
 
     useEffect(() => {
-
-        setSchoolsFilterValueOptions((values) => ([ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
-        if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage) {
+        const reset = shouldReset(schoolsData?.schoolsConnection?.pageInfo?.hasPreviousPage === true, !schoolsFilterValueOptions.length);
+        setSchoolsFilterValueOptions((values) => (reset ? [] : [ ...values, ...mapSchoolEdgesToFilterValues(schoolsData?.schoolsConnection?.edges ?? []) ]));
+        if (schoolsData?.schoolsConnection?.pageInfo?.hasNextPage || reset) {
             fetchMoreSchools({
                 variables: {
-                    cursor: schoolsData?.schoolsConnection?.pageInfo?.endCursor ?? ``,
+                    cursor: reset ? `` : schoolsData?.schoolsConnection?.pageInfo?.endCursor,
                 },
             });
         }
