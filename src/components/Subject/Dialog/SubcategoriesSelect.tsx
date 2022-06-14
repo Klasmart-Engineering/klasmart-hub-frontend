@@ -237,6 +237,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
         {
             id: `name`,
             label: `Name`,
+            persistent: true,
         },
         {
             id: `programs`,

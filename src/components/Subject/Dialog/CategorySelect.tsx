@@ -224,6 +224,7 @@ export default function CategorySelectDialog (props: Props) {
         {
             id: `name`,
             label: `Name`,
+            persistent: true,
         },
         {
             id: `programs`,
