@@ -164,7 +164,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
         if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
-                id: `generic_confirmDelete`,
+                id: `subjects_deleteSubcategoryLabel`,
             }),
             content: (
                 <>
