@@ -189,7 +189,7 @@ export default function CategorySelectDialog (props: Props) {
             });
             if (updatedCategory?.id === row.id) setUpdatedCategory((category) => category?.id === row.id ? category : undefined);
             enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoryCreateError`,
+                id: `categories_categoryDeleteMessage`,
             }), {
                 variant: `success`,
             });
