@@ -29,7 +29,7 @@ interface Props {
     onClose: (value?: Subject) => void;
 }
 
-export default function CreateSubjectDialog (props: Props) {
+export default function CreateSubjectDialog(props: Props) {
     const {
         open,
         onClose,
@@ -37,13 +37,13 @@ export default function CreateSubjectDialog (props: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const currentOrganization = useCurrentOrganization();
-    const [ valid, setValid ] = useState(true);
-    const [ newSubject, setNewSubject ] = useState(buildEmptySubject({
-        categories: [ buildEmptyCategory() ],
+    const [valid, setValid] = useState(true);
+    const [newSubject, setNewSubject] = useState(buildEmptySubject({
+        categories: [buildEmptyCategory()],
     }));
-    const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
-    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
-    const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
+    const [createOrUpdateSubcategories] = useCreateOrUpdateSubcategories();
+    const [createOrUpdateCategories] = useCreateOrUpdateCategories();
+    const [createOrUpdateSubjects] = useCreateOrUpdateSubjects();
     const organizationId = currentOrganization?.id ?? ``;
     const { data: categoriesData } = useGetAllCategories({
         variables: {
@@ -56,9 +56,9 @@ export default function CreateSubjectDialog (props: Props) {
         if (!open) return;
         const noneSpecifiedCategory = categoriesData?.organization.categories.find(isNonSpecified);
         setNewSubject(buildEmptySubject({
-            categories: [ noneSpecifiedCategory ?? buildEmptyCategory() ],
+            categories: [noneSpecifiedCategory ?? buildEmptyCategory()],
         }));
-    }, [ open, categoriesData ]);
+    }, [open]);
 
     const handleCreateOrUpdate = async () => {
         try {
@@ -82,7 +82,7 @@ export default function CreateSubjectDialog (props: Props) {
                 });
                 return buildEmptyCategory({
                     ...category,
-                    subcategories: [ ...systemSubcategories, ...(subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? []) ],
+                    subcategories: [...systemSubcategories, ...(subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? [])],
                 });
             }));
 
@@ -106,7 +106,7 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id).filter((id): id is string => !!id),
+                            categories: [...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? [])].map((category) => category.id).filter((id): id is string => !!id),
                         },
                     ],
                 },

@@ -61,7 +61,7 @@ interface Props {
     loading?: boolean;
 }
 
-export default function SubjectDialogForm (props: Props) {
+export default function SubjectDialogForm(props: Props) {
     const {
         value,
         onChange,
@@ -76,16 +76,16 @@ export default function SubjectDialogForm (props: Props) {
         required,
     } = useValidations();
     const intl = useIntl();
-    const [ subjectName, setSubjectName ] = useState(value.name ?? ``);
-    const [ subjectNameValid, setSubjectNameValid ] = useState(true);
-    const [ subjectCategories, setSubjectCategories ] = useState(value.categories ?? []);
-    const [ selectedCategoryIndex, setSelectedCategoryIndex ] = useState<number>();
-    const [ selectedSubcategoriesIndex, setSelectedSubcategoriesIndex ] = useState<number>();
+    const [subjectName, setSubjectName] = useState(value.name ?? ``);
+    const [subjectNameValid, setSubjectNameValid] = useState(true);
+    const [subjectCategories, setSubjectCategories] = useState(value.categories ?? []);
+    const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>();
+    const [selectedSubcategoriesIndex, setSelectedSubcategoriesIndex] = useState<number>();
 
-    useEffect(()=> {
+    useEffect(() => {
         setSubjectName(value.name ?? ``);
         setSubjectCategories(value.categories ?? []);
-    }, [ ]);
+    }, [value]);
 
     const removeSubcategory = (category: Category, subcategory: Subcategory) => {
         setSubjectCategories((categories) => categories.map((c) => c.id === category.id
@@ -104,8 +104,8 @@ export default function SubjectDialogForm (props: Props) {
         ]
             .filter((error) => error)
             .filter((error): error is string => error !== true);
-        onValidation([ subjectNameValid, categoryInputs.every((error) => !error) ].every((validation) => validation));
-    }, [ subjectNameValid, subjectCategories ]);
+        onValidation([subjectNameValid, categoryInputs.every((error) => !error)].every((validation) => validation));
+    }, [subjectNameValid, subjectCategories]);
 
     useEffect(() => {
         const updatedSubject: Subject = {
@@ -114,7 +114,7 @@ export default function SubjectDialogForm (props: Props) {
             categories: subjectCategories,
         };
         onChange(updatedSubject);
-    }, [ subjectName, subjectCategories ]);
+    }, [subjectName, subjectCategories]);
 
     const getCategoryError = (category: Category) => {
         return [
@@ -258,7 +258,7 @@ export default function SubjectDialogForm (props: Props) {
                                 tooltip="Remove"
                                 size="medium"
                                 onClick={() => {
-                                    setSubjectCategories((subjectCategories) => [ ...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length) ]);
+                                    setSubjectCategories((subjectCategories) => [...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length)]);
                                 }} />
                         </Box>}
                     </Box>
@@ -294,7 +294,7 @@ export default function SubjectDialogForm (props: Props) {
                     variant="outlined"
                     icon={Add}
                     onClick={() => {
-                        setSubjectCategories([ ...subjectCategories, buildEmptyCategory() ]);
+                        setSubjectCategories([...subjectCategories, buildEmptyCategory()]);
                     }}
                 />
             </Box>
