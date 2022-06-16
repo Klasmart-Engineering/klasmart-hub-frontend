@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.63.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.2%0Dv2.63.1) (2022-06-16)
+
+
+### 🐛 Bug Fixes
+
+* delete category message for subject fix (#150) ([ed36936](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ed36936df42b6ab4ecf7e1c0de176c804570e817))
+* next page button is not working inside schools list (#154) ([7cb9df4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7cb9df42144fd97a09d5c4094b439317e2d92bfd))
+* the caption of the pop-up message after creating class is changed (#149) ([882dc7f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/882dc7f509bfb115aa69a2e611841a8d89e7b8ed))
+
 ### [2.63.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.1%0Dv2.63.0) (2022-06-14)
 
 
