@@ -1,4 +1,4 @@
-import { useGetPaginatedSchools } from "@/api/schools";
+import { GetPaginatedSchoolsRequest, useGetPaginatedSchools } from "@/api/schools";
 import SchoolTable,
 { SchoolRow } from "@/components/School/Table";
 import { buildOrganizationSchoolFilter } from "@/operations/queries/getPaginatedOrganizationSchools";
@@ -37,6 +37,7 @@ export default function SchoolsPage (props: Props) {
         orderBy: `name`,
     });
 
+    const [ perviousCursor, setPreviosCursor ] = useState<GetPaginatedSchoolsRequest>();
     const paginationFilter = buildOrganizationSchoolFilter({
         organizationId: currentOrganization?.id ?? ``,
         search: serverPagination.search,
@@ -47,6 +48,7 @@ export default function SchoolsPage (props: Props) {
         data,
         refetch,
         fetchMore,
+        variables,
     } = useGetPaginatedSchools({
         variables: {
             direction: `FORWARD`,
@@ -61,6 +63,11 @@ export default function SchoolsPage (props: Props) {
 
     const handlePageChange = async (pageChange: PageChange, order: Order, cursor: string | undefined, count: number) => {
         const direction = pageChangeToDirection(pageChange);
+        setPreviosCursor({
+                count,
+                cursor,
+                direction,
+            });
         await fetchMore({
             variables: {
                 count,
@@ -112,7 +119,7 @@ export default function SchoolsPage (props: Props) {
             hasPreviousPage={data?.schoolsConnection?.pageInfo?.hasPreviousPage}
             startCursor={data?.schoolsConnection?.pageInfo?.startCursor}
             endCursor={data?.schoolsConnection?.pageInfo?.endCursor}
-            refetch={refetch}
+            refetch={() => fetchMore({variables: {...perviousCursor,}})}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />
