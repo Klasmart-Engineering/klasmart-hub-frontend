@@ -58,7 +58,6 @@ export default function CreateSubjectDialog (props: Props) {
         setNewSubject(buildEmptySubject({
             categories: [ noneSpecifiedCategory ?? buildEmptyCategory() ],
         }));
-        console.log(`new subject`, newSubject);
     }, [ open ]);
 
     const handleCreateOrUpdate = async () => {
