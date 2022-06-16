@@ -56,7 +56,6 @@ export default function SchoolsPage (props: Props) {
             filter: paginationFilter,
         },
         skip: !currentOrganization?.id || !canView,
-        fetchPolicy: `no-cache`,
         notifyOnNetworkStatusChange: true,
     });
 
@@ -113,6 +112,7 @@ export default function SchoolsPage (props: Props) {
             hasPreviousPage={data?.schoolsConnection?.pageInfo?.hasPreviousPage}
             startCursor={data?.schoolsConnection?.pageInfo?.startCursor}
             endCursor={data?.schoolsConnection?.pageInfo?.endCursor}
+            refetch={refetch}
             onPageChange={handlePageChange}
             onTableChange={handleTableChange}
         />
