@@ -3,9 +3,11 @@ import {
     createMemoryHistory,
     MemoryHistory,
 } from "history";
-import React,
-{ ReactNode } from "react";
-import { Router } from "react-router-dom";
+import { ReactNode } from "react";
+import {
+    BrowserRouter,
+    Router,
+} from "react-router-dom";
 
 export interface RenderWithRouterOptions {
     route?: string;
@@ -20,7 +22,14 @@ export function renderWithRouter (ui: ReactNode,
         }),
     }: RenderWithRouterOptions = {}) {
     return {
-        ...render(<Router history={history}>{ui}</Router>),
+        ...render((
+            <Router
+                location={history.location}
+                navigator={history}
+            >
+                {ui}
+            </Router>
+        )),
         history,
     };
 }

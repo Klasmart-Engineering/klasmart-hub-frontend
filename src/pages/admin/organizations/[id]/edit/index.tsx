@@ -9,7 +9,6 @@ import {
 import OrganizationForm,
 { OrganizationTabName } from '@/components/Organization/Form';
 import { OrganizationTab } from "@/types/graphQL";
-import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
 import {
     Button,
@@ -26,13 +25,15 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React,
-{
+import {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-import { useParams } from "react-router";
+import {
+    useNavigate,
+    useParams,
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -68,6 +69,7 @@ export interface Params {
 export default function EditOrganizationPage () {
     const classes = useStyles();
     const { organizationId } = useParams<Params>();
+    const navigate = useNavigate();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const [ isValid, setValid ] = useState(true);
@@ -105,7 +107,7 @@ export default function EditOrganizationPage () {
     ];
 
     const handleCancel = () => {
-        history.goBack();
+        navigate(-1);
     };
 
     const handleSave = async () => {
@@ -155,7 +157,7 @@ export default function EditOrganizationPage () {
                 ] : [] as Promise<any>[]),
             ]);
             await refetchMemberships();
-            history.goBack();
+            navigate(-1);
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_editSuccess`,
             }), {

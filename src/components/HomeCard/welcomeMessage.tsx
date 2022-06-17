@@ -61,9 +61,11 @@ export default function WelcomeMessage (props: Props) {
                             id="home_welcomeLabel"
                             values={{
                                 userName: (
-                                    <span style={{
-                                        color: theme.palette.primary.main !== theme.palette.primary.contrastText ? lighten(theme.palette.primary.contrastText, 0.4) : theme.palette.primary.main,
-                                    }}>
+                                    <span
+                                        style={{
+                                            color: theme.palette.primary.main,
+                                        }}
+                                    >
                                         {user.givenName}
                                     </span>
                                 ),

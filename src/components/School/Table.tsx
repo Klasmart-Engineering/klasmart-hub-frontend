@@ -52,6 +52,7 @@ export interface SchoolRow {
 }
 
 interface Props extends TableProps<SchoolRow> {
+    refetch: () => void;
 }
 
 export default function SchoolTable (props: Props) {
@@ -70,6 +71,7 @@ export default function SchoolTable (props: Props) {
         endCursor,
         onPageChange,
         onTableChange,
+        refetch,
     } = props;
 
     const classes = useStyles();
@@ -257,6 +259,7 @@ export default function SchoolTable (props: Props) {
                 onClose={() => {
                     setSelectedSchoolId(undefined);
                     setOpenEditDialog(false);
+                    refetch();
                 }}
             />
 

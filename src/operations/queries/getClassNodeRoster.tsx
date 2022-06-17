@@ -1,8 +1,17 @@
 import { USER_NODE_FIELDS } from "../fragments";
 import { UserFilter } from "@/api/organizationMemberships";
+import { Status } from "@/types/graphQL";
 import { gql } from "@apollo/client";
 
 export const buildClassNodeUserSearchFilter = (search: string): UserFilter => ({
+    AND: [
+        {
+            organizationUserStatus: {
+                operator: `eq`,
+                value: Status.ACTIVE,
+            }
+        }
+    ],
     OR: [
         {
             givenName: {
@@ -31,7 +40,7 @@ export const buildClassNodeUserSearchFilter = (search: string): UserFilter => ({
                 caseInsensitive: true,
                 value: search,
             },
-        },
+        }
     ],
 });
 

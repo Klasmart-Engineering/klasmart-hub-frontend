@@ -2,7 +2,6 @@ import { authClient } from "@/api/auth/client";
 import SiteLoading from "@/components/Utility/SiteLoading";
 import HealthPage from "@/pages/health";
 import VersionPage from "@/pages/version";
-import { history } from "@/utils/history";
 import { redirectToAuth } from "@/utils/routing";
 import React,
 {
@@ -11,32 +10,29 @@ import React,
     useState,
 } from "react";
 import {
+    HashRouter,
     Route,
-    Router,
-    Switch,
+    Routes,
 } from "react-router-dom";
 
 export default function AuthEntry () {
     return (
-        <Router history={history}>
-            <Switch>
+        <HashRouter>
+            <Routes>
                 <Route
-                    exact
                     path="/version"
-                >
-                    <VersionPage />
-                </Route>
+                    element={<VersionPage />}
+                />
                 <Route
-                    exact
                     path="/health"
-                >
-                    <HealthPage />
-                </Route>
-                <Route>
-                    <ProtectedEntry />
-                </Route>
-            </Switch>
-        </Router>
+                    element={<HealthPage />}
+                />
+                <Route
+                    path="/*"
+                    element={<ProtectedEntry />}
+                />
+            </Routes>
+        </HashRouter>
     );
 }
 

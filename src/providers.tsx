@@ -14,53 +14,39 @@ import {
     SnackbarProvider,
 } from "@kl-engineering/kidsloop-px";
 import { ReactQueryDevtools as ReportsReactQueryDevtools } from "@kl-engineering/reports-api-client";
-import {
-    StyledEngineProvider,
-    Theme,
-} from "@mui/material";
-import CssBaseline from "@mui/material/CssBaseline";
-import React from 'react';
+import { Theme } from "@mui/material";
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface DefaultTheme extends Theme { }
 }
 
-function ClientSide () {
+export default function ClientEntry () {
     return (
-        <UserServiceProvider>
-            <ReportsApiClientProvider>
-                <CmsApiClientProvider>
-                    <LDProvider>
-                        <LocaleProvider>
-                            <StyledEngineProvider injectFirst>
+        <GlobalStateProvider cookieDomain={process.env.COOKIE_DOMAIN ?? ``}>
+            <UserServiceProvider>
+                <ReportsApiClientProvider>
+                    <CmsApiClientProvider>
+                        <LDProvider>
+                            <LocaleProvider>
                                 <ThemeProvider>
                                     <ConfirmDialogProvider>
                                         <PromptDialogProvider>
                                             <AlertDialogProvider>
                                                 <SnackbarProvider closeButtonLabel="Dismiss">
-                                                    <CssBaseline />
                                                     <App />
                                                 </SnackbarProvider>
                                             </AlertDialogProvider>
                                         </PromptDialogProvider>
                                     </ConfirmDialogProvider>
                                 </ThemeProvider>
-                            </StyledEngineProvider>
-                        </LocaleProvider>
-                    </LDProvider>
-                    {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
-                </CmsApiClientProvider>
-                {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
-            </ReportsApiClientProvider>
-        </UserServiceProvider>
-    );
-}
-
-export default function ClientEntry () {
-    return (
-        <GlobalStateProvider cookieDomain={process.env.COOKIE_DOMAIN ?? ``}>
-            <ClientSide />
+                            </LocaleProvider>
+                        </LDProvider>
+                        {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
+                    </CmsApiClientProvider>
+                    {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
+                </ReportsApiClientProvider>
+            </UserServiceProvider>
         </GlobalStateProvider>
     );
 }

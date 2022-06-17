@@ -57,8 +57,8 @@ import {
 } from "react-intl";
 import {
     useLocation,
-    useRouteMatch,
-} from "react-router";
+    useMatch,
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
     const {
@@ -142,7 +142,7 @@ export default function LibraryTable (props: Props) {
     const prompt = usePrompt();
     const restApi = useRestAPI();
     const location = useLocation();
-    const route = useRouteMatch();
+    const route = useMatch(`/`);
     const currentOrganization = useCurrentOrganization();
     const [ selectedContent, setSelectedContent ] = useState<ContentItemDetails>();
     const [ selectedContentBulk, setSelectedContentBulk ] = useState<PublishedContentItem[]>();
@@ -153,7 +153,7 @@ export default function LibraryTable (props: Props) {
     const [ loadingGet, setLoadingGet ] = useState(false);
     const [ rows, setRows ] = useState<ContentRow[]>([]);
     const [ data, setData ] = useState<PublishedContentPayload>();
-    const paths = location.pathname.replace(route.path, ``)
+    const paths = location.pathname.replace(route?.pathnameBase ?? ``, ``)
         .split(`/`)
         .filter((path) => !!path);
     const folderId = paths[paths.length - 1];
@@ -162,7 +162,7 @@ export default function LibraryTable (props: Props) {
     const getContentsFolders = async () => {
         setLoadingGet(true);
         try {
-            const path = location.pathname.replace(route.path, ``);
+            const path = location.pathname.replace(route?.pathnameBase ?? ``, ``);
             const resp = await restApi.getContentFolders({
                 org_id: organizationId,
                 page: 1,

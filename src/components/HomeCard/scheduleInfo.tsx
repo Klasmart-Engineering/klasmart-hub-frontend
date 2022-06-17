@@ -3,7 +3,6 @@ import {
     EventClassType,
     SchedulePayload,
 } from "@/types/objectTypes";
-import { history } from "@/utils/history";
 import {
     Box,
     Button,
@@ -24,6 +23,7 @@ import {
     FormattedTime,
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
     const { fontWeightBold } = globalStyles(theme);
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => {
             fontSize: `0.9em`,
             fontWeight: `bold`,
         },
-        duration:{
+        duration: {
             fontWeight: `bold`,
             fontSize: `1em`,
         },
@@ -133,7 +133,10 @@ export default function ScheduleInfoShort (props: Props) {
         loading,
     } = props;
     const classes = useStyles();
-    const yesterday = new Date().setDate(new Date().getDate() - 1) / 1000;
+    const navigate = useNavigate();
+    const yesterday = new Date()
+        .setDate(new Date()
+            .getDate() - 1) / 1000;
     const now = new Date();
     const timeZoneOffset = now.getTimezoneOffset() * 60000;
     const SCHEDULE_PAGINATION_DELAY = 1000;
@@ -144,7 +147,9 @@ export default function ScheduleInfoShort (props: Props) {
     const scheduledClass = schedule
         ?.map((e) => ({
             ...e,
-            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset).toISOString().split(`T`)[0],
+            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset)
+                .toISOString()
+                .split(`T`)[0],
         }))
         .filter((event) => event.status !== `Closed`)
         .filter((event) => event.start_at > yesterday);
@@ -152,7 +157,9 @@ export default function ScheduleInfoShort (props: Props) {
     const daysWithClass = schedule
         ?.map((e) => ({
             ...e,
-            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset).toISOString().split(`T`)[0],
+            start_at_date: new Date((e.start_at * 1000) - timeZoneOffset)
+                .toISOString()
+                .split(`T`)[0],
         }))
         .filter((event) => event.status !== `Closed`)
         .filter((event) => event.start_at > yesterday)
@@ -181,7 +188,7 @@ export default function ScheduleInfoShort (props: Props) {
                         variant="contained"
                         className={classes.cardButton}
                         onClick={(e: React.MouseEvent) => {
-                            history.push(`/schedule`);
+                            navigate(`/schedule`);
                             e.preventDefault();
                         }}
                     >
@@ -197,13 +204,15 @@ export default function ScheduleInfoShort (props: Props) {
                     ref={scrollRef}
                     item
                     xs
-                    className={classes.cardBodyInner}>
+                    className={classes.cardBodyInner}
+                >
                     {scheduledClass && scheduledClass.length !== 0 ? (
                         <>
                             {daysWithClass?.map((dayWithClass) => (
                                 <Box
                                     key={dayWithClass}
-                                    className={classes.dayGroup}>
+                                    className={classes.dayGroup}
+                                >
                                     <Typography className={classes.dayGroupTitle}>
                                         <FormattedDate
                                             value={dayWithClass}
@@ -229,7 +238,8 @@ export default function ScheduleInfoShort (props: Props) {
                                                         <Grid item>
                                                             <Grid
                                                                 container
-                                                                alignItems="center">
+                                                                alignItems="center"
+                                                            >
                                                                 <div
                                                                     className={clsx(classes.classTypeChip, {
                                                                         [classes.classTypeChipLive]: item.class_type === `OnlineClass`,
@@ -247,7 +257,8 @@ export default function ScheduleInfoShort (props: Props) {
                                                             item
                                                             style={{
                                                                 textAlign: `right`,
-                                                            }}>
+                                                            }}
+                                                        >
                                                             <FormattedTime
                                                                 value={item.start_at * 1000}
                                                                 hour="2-digit"
@@ -255,7 +266,8 @@ export default function ScheduleInfoShort (props: Props) {
                                                             />
                                                             <Typography
                                                                 variant="body2"
-                                                                className={classes.duration}>
+                                                                className={classes.duration}
+                                                            >
                                                                 <FormattedDuration
                                                                     seconds={item?.end_at - item?.start_at}
                                                                     format="{hours} {minutes}"
@@ -281,7 +293,8 @@ export default function ScheduleInfoShort (props: Props) {
                     ) : (
                         <Typography
                             gutterBottom
-                            variant="body2">
+                            variant="body2"
+                        >
                             <FormattedMessage id="scheduleInfo_noClasses" />
                         </Typography>
                     )}

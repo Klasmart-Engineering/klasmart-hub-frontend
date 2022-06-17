@@ -4,7 +4,6 @@ import StyledFAB from "@/components/styled/fabButton";
 import { getLiveEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentItem } from "@/types/objectTypes";
-import { history } from "@/utils/history";
 import { usePermission } from "@/utils/permissions";
 import { Button } from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -27,6 +26,7 @@ import {
     FormattedMessage,
     useIntl,
 } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({
     cardHead: {
@@ -76,9 +76,9 @@ const useStyles = makeStyles((theme) => createStyles({
     select: {
         display: `block`,
     },
-    input:{
+    input: {
         top: `auto`,
-        bottom : `70%`,
+        bottom: `70%`,
         paddingRight: 22,
     },
 }));
@@ -86,6 +86,7 @@ const useStyles = makeStyles((theme) => createStyles({
 export default function PlanSelection () {
     const classes = useStyles();
     const theme = useTheme();
+    const navigate = useNavigate();
     const restApi = useRestAPI();
     const intl = useIntl();
 
@@ -152,84 +153,89 @@ export default function PlanSelection () {
         window.open(liveLink);
     }
 
-    return <>
-        <Grid container>
-            <Grid
-                container
-                justifyContent="space-between"
-                alignItems="center"
-                className={classes.cardHead}
-            >
-                <Grid item>
-                    <Typography className={classes.cardTitle}>
-                        <FormattedMessage id="planSelection_title" />
-                    </Typography>
-                </Grid>
-                {permissionAccessLibrary && <Grid item>
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        className={classes.cardButton}
-                        onClick={(e: React.MouseEvent) => {
-                            history.push(`/library`);
-                            e.preventDefault();
-                        }}
-                    >
-                        {intl.formatMessage({
-                            id: `planSelection_viewLibraryLabel`,
-                        })}
-                    </Button>
-                </Grid>}
-            </Grid>
-            <Grid
-                container
-                justifyContent="space-between"
-                alignItems="center"
-                className={classes.cardBody}
-            >
+    return (
+        <>
+            <Grid container>
                 <Grid
-                    item
-                    xs>
-                    <LessonPlanSelect
-                        lessonPlans={lessonPlans}
-                        lessonPlan={lessonPlan}
-                        setLessonPlan={setLessonPlan}
-                    />
-                </Grid>
-                <Grid item>
-                    <StyledFAB
-                        extendedOnly
-                        flat
-                        disabled={liveToken === ``}
-                        className={classes.liveButton}
-                        size="medium"
-                        onClick={() => goLive()}
-                    >
-                        <FormattedMessage id="live_liveButton" />
-                    </StyledFAB>
-                    {shareLink !== `` && (
-                        <>
-                            <StyledFAB
-                                flat
-                                style={{
-                                    marginLeft: theme.spacing(1),
-                                    minWidth: 0,
+                    container
+                    justifyContent="space-between"
+                    alignItems="center"
+                    className={classes.cardHead}
+                >
+                    <Grid item>
+                        <Typography className={classes.cardTitle}>
+                            <FormattedMessage id="planSelection_title" />
+                        </Typography>
+                    </Grid>
+                    {permissionAccessLibrary && (
+                        <Grid item>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                className={classes.cardButton}
+                                onClick={(e: React.MouseEvent) => {
+                                    navigate(`/library`);
+                                    e.preventDefault();
                                 }}
-                                size="small"
-                                onClick={() => setOpenShareLink(!openShareLink)}
                             >
-                                <ShareIcon size="1rem" />
-                            </StyledFAB>
-
-                            <Collapse in={openShareLink}>
-                                <InviteButton url={`${getLiveEndpoint()}?roomId=${shareLink}`} />
-                            </Collapse>
-                        </>
+                                {intl.formatMessage({
+                                    id: `planSelection_viewLibraryLabel`,
+                                })}
+                            </Button>
+                        </Grid>
                     )}
                 </Grid>
+                <Grid
+                    container
+                    justifyContent="space-between"
+                    alignItems="center"
+                    className={classes.cardBody}
+                >
+                    <Grid
+                        item
+                        xs
+                    >
+                        <LessonPlanSelect
+                            lessonPlans={lessonPlans}
+                            lessonPlan={lessonPlan}
+                            setLessonPlan={setLessonPlan}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <StyledFAB
+                            extendedOnly
+                            flat
+                            disabled={liveToken === ``}
+                            className={classes.liveButton}
+                            size="medium"
+                            onClick={() => goLive()}
+                        >
+                            <FormattedMessage id="live_liveButton" />
+                        </StyledFAB>
+                        {shareLink !== `` && (
+                            <>
+                                <StyledFAB
+                                    flat
+                                    style={{
+                                        marginLeft: theme.spacing(1),
+                                        minWidth: 0,
+                                    }}
+                                    size="small"
+                                    onClick={() => setOpenShareLink(!openShareLink)}
+                                >
+                                    <ShareIcon size="1rem" />
+                                </StyledFAB>
+
+                                <Collapse in={openShareLink}>
+                                    <InviteButton url={`${getLiveEndpoint()}?roomId=${shareLink}`} />
+                                </Collapse>
+                            </>
+                        )}
+                    </Grid>
+                </Grid>
             </Grid>
-        </Grid>
-    </>;
+        </>
+    );
 }
 
 function LessonPlanSelect ({

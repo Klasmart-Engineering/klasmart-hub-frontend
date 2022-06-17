@@ -24,10 +24,7 @@ interface CreateOrUpdateSubcategoriesResponse {
 }
 
 export const useCreateOrUpdateSubcategories = (options?: MutationHookOptions<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>) => {
-    return useMutation<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>(CREATE_OR_UPDATE_SUBCATEGORIES, {
-        ...options,
-        refetchQueries: [ GET_ALL_SUBCATEGORIES ],
-    });
+    return useMutation<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>(CREATE_OR_UPDATE_SUBCATEGORIES, options);
 };
 
 interface DeleteSubcategoryRequest {
