@@ -8,7 +8,6 @@ import {
     OrganizationOwnership,
     Status,
 } from "@/types/graphQL";
-import { history } from "@/utils/history";
 import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -33,12 +32,12 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React,
-{
+import {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
     const {
@@ -71,6 +70,7 @@ interface Props {
 export default function MyOrganizationTable (props: Props) {
     const classes = useStyles();
     const intl = useIntl();
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const { equals, required } = useValidations();
     const prompt = usePrompt();
@@ -121,20 +121,22 @@ export default function MyOrganizationTable (props: Props) {
             title: intl.formatMessage({
                 id: `allOrganization_deleteButton`,
             }),
-            content: <>
-                <DialogContentText>{intl.formatMessage({
-                    id: `allOrganization_deleteConfirmLabel`,
-                }, {
-                    name: <strong>{organizationName}</strong>,
-                })}
-                </DialogContentText>
-                <DialogContentText>{intl.formatMessage({
-                    id: `generic_typeToDeletePrompt`,
-                }, {
-                    value: <strong>{organizationName}</strong>,
-                })}
-                </DialogContentText>
-                     </>,
+            content: (
+                <>
+                    <DialogContentText>{intl.formatMessage({
+                        id: `allOrganization_deleteConfirmLabel`,
+                    }, {
+                        name: <strong>{organizationName}</strong>,
+                    })}
+                    </DialogContentText>
+                    <DialogContentText>{intl.formatMessage({
+                        id: `generic_typeToDeletePrompt`,
+                    }, {
+                        value: <strong>{organizationName}</strong>,
+                    })}
+                    </DialogContentText>
+                </>
+            ),
             okLabel: intl.formatMessage({
                 id: `allOrganization_okButton`,
             }),
@@ -222,8 +224,8 @@ export default function MyOrganizationTable (props: Props) {
             label: intl.formatMessage({
                 id: `organizations_statusLabel`,
             }),
-            render: (row) =>
-                (<span
+            render: (row) => ((
+                <span
                     className={clsx(classes.statusText, {
                         [classes.successColor]: row.status === Status.ACTIVE,
                         [classes.errorColor]: row.status === Status.INACTIVE,
@@ -232,7 +234,8 @@ export default function MyOrganizationTable (props: Props) {
                     {intl.formatMessage({
                         id: `data_${row.status}Status`,
                     })}
-                </span>),
+                </span>
+            )),
         },
     ];
 
@@ -249,7 +252,7 @@ export default function MyOrganizationTable (props: Props) {
                             id: `button_create`,
                         }),
                         icon: AddIcon,
-                        onClick: () => history.push(`/admin/organizations/create`),
+                        onClick: () => navigate(`/admin/organizations/create`),
                         disabled: organizationOwnerships.length > 0 || !canCreate,
                     }}
                     rowActions={(row) => [
@@ -259,7 +262,7 @@ export default function MyOrganizationTable (props: Props) {
                             }),
                             icon: EditIcon,
                             disabled: row.status === Status.INACTIVE || !canEdit,
-                            onClick: (row) => history.push(`/admin/organizations/${row.id}/edit`),
+                            onClick: (row) => navigate(`/admin/organizations/${row.id}/edit`),
                         },
                         {
                             label: intl.formatMessage({

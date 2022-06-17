@@ -1,31 +1,31 @@
+/* eslint-disable react/prop-types */
 import {
     PermissionOption,
     usePermission,
 } from "@/utils/permissions";
-import React from "react";
-import {
-    Redirect,
-    Route,
-    RouteProps,
-} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-interface Props extends Omit<RouteProps, "render"> {
+interface ProtectedRouteProps {
     permissions: PermissionOption;
 }
 
-export default function ProtectedRoute (props: Props) {
-    const {
-        children,
-        permissions,
-        ...rest
-    } = props;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
+    const { permissions } = props;
     const { hasPermission, loading } = usePermission(permissions, true);
     const canViewPage = hasPermission || loading;
 
-    return (
-        <Route
-            {...rest}
-            render={() => canViewPage ? children : <Redirect to="/" />}
+    if (!canViewPage) return (
+        <Navigate
+            replace
+            to="/"
         />
     );
-}
+
+    return (
+        <>
+            {props.children}
+        </>
+    );
+};
+
+export default ProtectedRoute;

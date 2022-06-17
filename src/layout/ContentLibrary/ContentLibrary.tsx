@@ -1,6 +1,4 @@
-import BadanamuContentPage from "@/pages/library/badanamu-content";
-import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
-import OrganizationContentPage from "@/pages/library/organization-content";
+/* eslint-disable react/prop-types */
 import { Tabs } from "@kl-engineering/kidsloop-px";
 import { Tab } from "@kl-engineering/kidsloop-px/dist/src/components/Tabs";
 import { Theme } from "@mui/material";
@@ -10,20 +8,14 @@ import {
 } from '@mui/styles';
 import { useIntl } from "react-intl";
 import {
-    Redirect,
-    Route,
-    Switch,
+    Navigate,
+    Outlet,
     useLocation,
-    useRouteMatch,
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     tabs: {
         padding: theme.spacing(0, 2),
-    },
-    tabContent: {
-        width: `100%`,
-        height: `calc(100% - ${theme.spacing(6)})`, // minus height of tabs toolbar
     },
 }));
 
@@ -40,8 +32,8 @@ interface ContentLibraryLayoutProps {
 const ContentLibraryLayout: React.VFC<ContentLibraryLayoutProps> = (props) => {
     const classes = useStyles();
     const location = useLocation();
-    const { path, url } = useRouteMatch();
     const intl = useIntl();
+    const basePath = `/library`;
 
     const getTranslationIdByPageId = (id: ContentLibraryPage) => {
         switch (id) {
@@ -54,15 +46,15 @@ const ContentLibraryLayout: React.VFC<ContentLibraryLayoutProps> = (props) => {
     const tabs: Tab[] = ([
         {
             id: `Organization Content`,
-            path: `${path}/organization-content`,
+            path: `${basePath}/organization-content`,
         },
         {
             id: `Badanamu Content`,
-            path: `${path}/badanamu-content`,
+            path: `${basePath}/badanamu-content`,
         },
         {
             id: `More Featured Content`,
-            path: `${path}/more-featured-content`,
+            path: `${basePath}/more-featured-content`,
         },
     ] as ContentTab[]).map((tab) => ({
         text: intl.formatMessage({
@@ -70,6 +62,13 @@ const ContentLibraryLayout: React.VFC<ContentLibraryLayoutProps> = (props) => {
         }),
         value: tab.path,
     }));
+
+    if (location.pathname.endsWith(basePath)) return (
+        <Navigate
+            replace
+            to={tabs[0].value ?? ``}
+        />
+    );
 
     return (
         <>
@@ -79,23 +78,7 @@ const ContentLibraryLayout: React.VFC<ContentLibraryLayoutProps> = (props) => {
                 tabs={tabs}
                 value={location.pathname}
             />
-            <Switch>
-                <Route
-                    exact
-                    path={path}
-                >
-                    <Redirect to={`${path}/organization-content`} />
-                </Route>
-                <Route path={`${path}/organization-content`}>
-                    <OrganizationContentPage className={classes.tabContent} />
-                </Route>
-                <Route path={`${path}/badanamu-content`}>
-                    <BadanamuContentPage className={classes.tabContent} />
-                </Route>
-                <Route path={`${path}/more-featured-content`}>
-                    <MoreFeaturedContentPage className={classes.tabContent} />
-                </Route>
-            </Switch>
+            <Outlet />
         </>
     );
 };

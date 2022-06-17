@@ -7,7 +7,7 @@ import { useFeatureFlags } from "@/feature-flag/utils";
 import ContentLibraryLayout from "@/layout/ContentLibrary";
 import AgeRangesPage from "@/pages/admin/age-ranges";
 import ClassesPage from "@/pages/admin/classes";
-import Grades from "@/pages/admin/grades";
+import GradesPage from "@/pages/admin/grades";
 import Layout from "@/pages/admin/Layout";
 import OrganizationsPage from "@/pages/admin/organizations";
 import EditOrganizationPage from "@/pages/admin/organizations/[id]/edit";
@@ -19,6 +19,9 @@ import SubjectsPage from "@/pages/admin/subjects";
 import UsersPage from "@/pages/admin/users";
 import AssessmentsPage from "@/pages/assessments";
 import HomePage from "@/pages/index";
+import BadanamuContentPage from "@/pages/library/badanamu-content";
+import MoreFeaturedContentPage from "@/pages/library/more-featured-content";
+import OrganizationContentPage from "@/pages/library/organization-content";
 import ReportsPage from "@/pages/reports";
 import SchedulePage from "@/pages/schedule";
 import StudentReport from "@/pages/studentReport";
@@ -30,8 +33,9 @@ import {
     useState,
 } from "react";
 import {
+    Navigate,
     Route,
-    Switch,
+    Routes,
     useLocation,
 } from "react-router-dom";
 
@@ -70,153 +74,220 @@ export default function Router (props: Props) {
                 <ErrorPage />
             )}
         >
-            <Switch>
+            <Routes>
                 <Route
-                    exact
-                    path="/"
+                    path="/*"
+                    element={<HomePage />}
+                />
+                <Route
+                    path="library"
+                    element={<ContentLibraryLayout />}
                 >
-                    <HomePage />
+                    <Route
+                        path="organization-content/*"
+                        element={<OrganizationContentPage />}
+                    />
+                    <Route
+                        path="badanamu-content/*"
+                        element={<BadanamuContentPage />}
+                    />
+                    <Route
+                        path="more-featured-content/*"
+                        element={<MoreFeaturedContentPage />}
+                    />
                 </Route>
-                <Route path="/library">
-                    <ContentLibraryLayout />
-                </Route>
-                <Route path="/schedule">
-                    <SchedulePage />
-                </Route>
-                <Route path="/assessments">
-                    <AssessmentsPage />
-                </Route>
-                <Route path="/reports">
-                    <ReportsPage />
-                </Route>
+                <Route
+                    path="/schedule/*"
+                    element={<SchedulePage />}
+                />
+                <Route
+                    path="/assessments/*"
+                    element={<AssessmentsPage />}
+                />
+                <Route
+                    path="/reports/*"
+                    element={<ReportsPage />}
+                />
                 {teacherStudentProgressReport && (
-                    <ProtectedRoute
-                        exact
+                    <Route
                         path="/student-report"
-                        permissions={`report_student_progress_teacher_660`}
-                    >
-                        <StudentReport />
-                    </ProtectedRoute>
+                        element={(
+                            <ProtectedRoute permissions={`report_student_progress_teacher_660`}>
+                                <StudentReport />
+                            </ProtectedRoute>
+                        )}
+                    />
                 )}
-                <ProtectedRoute
-                    exact
+                <Route
                     path="/admin/organizations/:organizationId/edit"
-                    permissions={{
-                        OR: [
-                            `edit_this_organization_10330`,
-                            {
-                                AND: [
-                                    `organizational_profile_10100`,
-                                    `view_this_organization_profile_10110`,
-                                    `edit_my_organization_10331`,
+                    element={(
+                        <ProtectedRoute
+                            permissions={{
+                                OR: [
+                                    `edit_this_organization_10330`,
+                                    {
+                                        AND: [
+                                            `organizational_profile_10100`,
+                                            `view_this_organization_profile_10110`,
+                                            `edit_my_organization_10331`,
+                                        ],
+                                    },
                                 ],
-                            },
-                        ],
-                    }}
-                >
-                    <Layout>
-                        <EditOrganizationPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                            }}
+                        >
+                            <Layout>
+                                <EditOrganizationPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/organizations/create"
-                    permissions={`create_own_organization_10220`}
-                >
-                    <Layout>
-                        <CreateOrganizationPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute permissions={`create_own_organization_10220`}>
+                            <Layout>
+                                <CreateOrganizationPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/organizations"
-                    permissions={{
-                        AND: [ `organizational_profile_10100` ],
-                        OR: [ `view_this_organization_profile_10110`, `view_my_organization_profile_10111` ],
-                    }}
-                >
-                    <Layout>
-                        <OrganizationsPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute
+                            permissions={{
+                                AND: [ `organizational_profile_10100` ],
+                                OR: [ `view_this_organization_profile_10110`, `view_my_organization_profile_10111` ],
+                            }}
+                        >
+                            <Layout>
+                                <OrganizationsPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/roles"
-                    permissions={`roles_30100`}
-                >
-                    <Layout>
-                        <RolesPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute permissions={`roles_30100`}>
+                            <Layout>
+                                <RolesPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/schools"
-                    permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}
-                >
-                    <Layout>
-                        <SchoolsPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute permissions={[ `academic_profile_20100`, `define_school_program_page_20101` ]}>
+                            <Layout>
+                                <SchoolsPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/classes"
-                    permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}
-                >
-                    <Layout>
-                        <ClassesPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}>
+                            <Layout>
+                                <ClassesPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
+                    path="/admin/classes"
+                    element={(
+                        <ProtectedRoute
+                            permissions={[ `academic_profile_20100`, `define_class_page_20104` ]}
+                        >
+                            <Layout>
+                                <ClassesPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/programs"
-                    permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}
-                >
-                    <Layout>
-                        <ProgramsPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute
+                            permissions={[ `academic_profile_20100`, `define_program_page_20105` ]}
+                        >
+                            <Layout>
+                                <ProgramsPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/grades"
-                    permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}
-                >
-                    <Layout>
-                        <Grades />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute
+                            permissions={[ `academic_profile_20100`, `define_grade_page_20103` ]}
+                        >
+                            <Layout>
+                                <GradesPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/subjects"
-                    permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}
-                >
-                    <Layout>
-                        <SubjectsPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
+                    element={(
+                        <ProtectedRoute
+                            permissions={[ `academic_profile_20100`, `define_subject_page_20106` ]}
+                        >
+                            <Layout>
+                                <SubjectsPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
                     path="/admin/age-ranges"
-                    permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}
-                >
-                    <Layout>
-                        <AgeRangesPage />
-                    </Layout>
-                </ProtectedRoute>
-                <ProtectedRoute
-                    path={[ `/admin/users`, `/admin` ]}
-                    permissions={{
-                        AND: [ `view_user_page_40101` ],
-                        OR: [
-                            `view_users_40110`,
-                            `view_my_school_users_40111`,
-                            `view_my_class_users_40112`,
-                        ],
-                    }}
-                >
-                    <Layout>
-                        <UsersPage />
-                    </Layout>
-                </ProtectedRoute>
-                <Route path="/super-admin/content-library">
-                    <Layout>
-                        <SuperAdminContentLibraryTable />
-                    </Layout>
-                </Route>
-                <Route>
-                    <HomePage />
-                </Route>
-            </Switch>
+                    element={(
+                        <ProtectedRoute
+                            permissions={[ `academic_profile_20100`, `define_age_ranges_page_20102` ]}
+                        >
+                            <Layout>
+                                <AgeRangesPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
+                    path="/admin/users"
+                    element={(
+                        <ProtectedRoute
+                            permissions={{
+                                AND: [ `view_user_page_40101` ],
+                                OR: [
+                                    `view_users_40110`,
+                                    `view_my_school_users_40111`,
+                                    `view_my_class_users_40112`,
+                                ],
+                            }}
+                        >
+                            <Layout>
+                                <UsersPage />
+                            </Layout>
+                        </ProtectedRoute>
+                    )}
+                />
+                <Route
+                    path="/super-admin/content-library"
+                    element={(
+                        <Layout>
+                            <SuperAdminContentLibraryTable />
+                        </Layout>
+                    )}
+                />
+                <Route
+                    path="/*"
+                    element={<HomePage />}
+                />
+            </Routes>
         </ErrorBoundary>
     );
 }

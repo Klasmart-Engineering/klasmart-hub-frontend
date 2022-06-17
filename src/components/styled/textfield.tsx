@@ -8,7 +8,7 @@ import {
 } from '@mui/styles';
 import * as React from "react";
 import { FormattedMessage } from "react-intl";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface Props extends StandardTextFieldProps {
     children?: React.ReactNode;
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function StyledTextField (props: Props) {
     const classes = useStyles();
-    const history = useHistory();
+    const navigate = useNavigate();
     const {
         children,
         className,
@@ -78,7 +78,9 @@ export default function StyledTextField (props: Props) {
                 type={type}
                 variant="outlined"
                 onInput={type === `number` ? (e) => {
-                    (e.target as HTMLTextAreaElement).value = Math.max(0, parseInt((e.target as HTMLTextAreaElement).value)).toString().slice(0, 4);
+                    (e.target as HTMLTextAreaElement).value = Math.max(0, parseInt((e.target as HTMLTextAreaElement).value))
+                        .toString()
+                        .slice(0, 4);
                 } : () => { }}
             />
             { showForgotPassword ?
@@ -86,7 +88,7 @@ export default function StyledTextField (props: Props) {
                     href="#"
                     variant="subtitle2"
                     onClick={(e: React.MouseEvent) => {
-                        history.push(`/password-forgot`);
+                        navigate(`/password-forgot`);
                         e.preventDefault();
                     }}
                 >
