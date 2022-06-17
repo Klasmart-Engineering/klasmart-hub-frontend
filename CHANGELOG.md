@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.63.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.3%0Dv2.63.2) (2022-06-17)
+
+
+### ♻️ Chores
+
+* bump @kl-engineering/kidsloop-px to version 2.3.5 (#158) ([7ae0657](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7ae0657089dfbe11d11ecd36085e69ee0270a7ab))
+* bump react-router-dom to verison 6.3.0 (#152) ([6f54cf1](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/6f54cf1843beb014fb0ef95df2c47782d8e55ab1))
+
+
+### 🐛 Bug Fixes
+
+* re-fetch the current page (#156) ([286d965](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/286d965c53db2999d332b89999c46de4656d71f1))
+* subject name disappears after selecting the category popup very slow optimized (#161) ([afbdd91](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/afbdd91b301d72c5d940c5f803e3161fb8b8e364))
+
 ### [2.63.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.2%0Dv2.63.1) (2022-06-16)
 
 
