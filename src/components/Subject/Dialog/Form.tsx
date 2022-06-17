@@ -9,6 +9,11 @@ import {
 import { buildEmptyCategory } from "@/utils/categories";
 import { useValidations } from "@/utils/validations";
 import {
+    Button,
+    IconButton,
+    TextField,
+} from "@kl-engineering/kidsloop-px";
+import {
     Add,
     ArrowDropDown,
     Delete,
@@ -25,11 +30,6 @@ import {
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import {
-    Button,
-    IconButton,
-    TextField,
-} from "@kl-engineering/kidsloop-px";
 import React, {
     Fragment,
     useEffect,
@@ -53,6 +53,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         margin: theme.spacing(0.25),
     },
 }));
+
+interface Subcategories {
+    subcategories: Subcategory[];
+    id: string;
+}
 
 interface Props {
     value: Subject;
@@ -79,13 +84,13 @@ export default function SubjectDialogForm (props: Props) {
     const [ subjectName, setSubjectName ] = useState(value.name ?? ``);
     const [ subjectNameValid, setSubjectNameValid ] = useState(true);
     const [ subjectCategories, setSubjectCategories ] = useState(value.categories ?? []);
-    const [ selectedCategoryIndex, setSelectedCategoryIndex ] = useState<number>();
-    const [ selectedSubcategoriesIndex, setSelectedSubcategoriesIndex ] = useState<number>();
+    const [ selectedCategory, setSelectedCategory ] = useState<Category>();
+    const [ selectedSubcategories, setSelectedSubcategories ] = useState<Subcategories>();
 
     useEffect(()=> {
-        setSubjectName(value.name ?? ``);
-        setSubjectCategories(value.categories ?? []);
-    }, [ ]);
+        setSubjectName(value?.name ?? ``);
+        setSubjectCategories(value?.categories ?? []);
+    }, [ value ]);
 
     const removeSubcategory = (category: Category, subcategory: Subcategory) => {
         setSubjectCategories((categories) => categories.map((c) => c.id === category.id
@@ -130,7 +135,7 @@ export default function SubjectDialogForm (props: Props) {
     };
 
     return (
-        <div className={classes.root}>
+        <Box className={classes.root}>
             <TextField
                 fullWidth
                 value={subjectName}
@@ -159,7 +164,8 @@ export default function SubjectDialogForm (props: Props) {
                         flexDirection="row"
                         mb={4}
                     >
-                        {subjectCategories.length > 1 && <Box
+                        {subjectCategories.length > 1 &&
+                        <Box
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
@@ -197,7 +203,7 @@ export default function SubjectDialogForm (props: Props) {
                                 variant="outlined"
                                 icon={ArrowDropDown}
                                 label={category.name}
-                                onClick={() => setSelectedCategoryIndex(i)}
+                                onClick={() => setSelectedCategory(category)}
                             />
                             <FormHelperText
                                 error
@@ -220,26 +226,32 @@ export default function SubjectDialogForm (props: Props) {
                                 variant="outlined"
                                 icon={ArrowDropDown}
                                 disabled={!!category.system}
-                                label={category.subcategories
-                                    ? <Box
-                                        flexWrap="wrap"
-                                        display="flex"
-                                        flexDirection="row"
-                                        justifyContent="center"
-                                    >
-                                        {category.subcategories?.filter(isActive).map((subcategory) => (
-                                            <Chip
-                                                key={subcategory.id ?? ``}
-                                                disabled={!!category.system}
-                                                label={subcategory.name}
-                                                className={classes.chip}
-                                                onDelete={() => removeSubcategory(category, subcategory)}
-                                            />
-                                        ))}
-                                    </Box>
-                                    : ``
+                                label={
+                                    category?.subcategories
+                                        ?
+                                        <Box
+                                            flexWrap="wrap"
+                                            display="flex"
+                                            flexDirection="row"
+                                            justifyContent="center"
+                                        >
+                                            {category.subcategories?.filter(isActive)
+                                                .map((subcategory) => (
+                                                    <Chip
+                                                        key={subcategory.id ?? ``}
+                                                        disabled={!!category.system}
+                                                        label={subcategory.name}
+                                                        className={classes.chip}
+                                                        onDelete={() => removeSubcategory(category, subcategory)}
+                                                    />
+                                                ))}
+                                        </Box>
+                                        : ``
                                 }
-                                onClick={() => setSelectedSubcategoriesIndex(i)}
+                                onClick={() => setSelectedSubcategories({
+                                    subcategories: category?.subcategories || [],
+                                    id: category?.id || ``,
+                                })}
                             />
                             <FormHelperText
                                 error
@@ -248,7 +260,8 @@ export default function SubjectDialogForm (props: Props) {
                                 {getSubcategoriesError(category.subcategories ?? []) ?? ` `}
                             </FormHelperText>
                         </Box>
-                        {subjectCategories.length > 1 && <Box
+                        {subjectCategories.length > 1 &&
+                        <Box
                             flex="0"
                             m={0.5}
                             pt={1}
@@ -259,32 +272,39 @@ export default function SubjectDialogForm (props: Props) {
                                 size="medium"
                                 onClick={() => {
                                     setSubjectCategories((subjectCategories) => [ ...subjectCategories.slice(0, i), ...subjectCategories.slice(i + 1, subjectCategories.length) ]);
-                                }} />
+                                }}
+                            />
                         </Box>}
                     </Box>
-                    <CategorySelectDialog
-                        value={category}
-                        open={selectedCategoryIndex === i}
-                        onClose={(value) => {
-                            setSelectedCategoryIndex(undefined);
-                            if (!value) return;
-                            setSubjectCategories((categories) => categories.map((category, index) => index === i ? value : category));
-                        }}
-                    />
-                    <SubcategoriesSelectDialog
-                        value={category.subcategories ?? []}
-                        open={selectedSubcategoriesIndex === i}
-                        onClose={(value) => {
-                            setSelectedSubcategoriesIndex(undefined);
-                            if (!value) return;
-                            setSubjectCategories((categories) => categories.map((category, index) => index === i ? {
-                                ...category,
-                                subcategories: value ?? [],
-                            } : category));
-                        }}
-                    />
                 </Fragment>
             ))}
+            {selectedSubcategories &&
+            <SubcategoriesSelectDialog
+                value={selectedSubcategories?.subcategories ?? []}
+                open={!!selectedSubcategories}
+                onClose={(value) => {
+                    const { id } = selectedSubcategories;
+                    if (value) {
+                        setSubjectCategories((categories) => categories.map((category) => category.id === id ? {
+                            ...category,
+                            subcategories: value ?? [],
+                        } : category));
+                    }
+                    setSelectedSubcategories(undefined);
+                }}
+            /> }
+            <CategorySelectDialog
+                value={selectedCategory}
+                open={!!selectedCategory}
+                onClose={(value) => {
+                    const { id } = selectedCategory || {
+                        id: ``,
+                    };
+                    setSelectedCategory(undefined);
+                    if (!value) return;
+                    setSubjectCategories((categories) => categories.map((category) => category.id === id ? value : category));
+                }}
+            />
             <Box ml={subjectCategories.length > 1 ? 3 : 0}>
                 <Button
                     color="primary"
@@ -298,6 +318,6 @@ export default function SubjectDialogForm (props: Props) {
                     }}
                 />
             </Box>
-        </div>
+        </Box>
     );
 }
