@@ -190,27 +190,45 @@ test(`Class edit component renders with correct information`, async () => {
         open
         classId={mockClassId}
         onClose={(() => jest.fn())}
-           />, {
+    />, {
         mockedResponses: mocks,
     });
 
-    expect(screen.getByText(`Edit class`)).toBeInTheDocument();
-    expect(screen.getAllByText(`Class name`).length).toBeTruthy();
-    expect(await screen.findByDisplayValue(`Demo Class`)).toBeInTheDocument();
-    expect(await screen.findByText(mockSchoolName2)).toBeInTheDocument();
-    expect(await screen.findByText(programNameA)).toBeInTheDocument();
-    expect(await screen.findByText(`1 - 5 Year(s)`)).toBeInTheDocument();
-    expect(await screen.findByText(grade2Name)).toBeInTheDocument();
-    expect(await screen.findByText(subjectA)).toBeInTheDocument();
+    expect(screen.getByText(`Edit class`))
+        .toBeInTheDocument();
+    expect(screen.getAllByText(`Class name`).length)
+        .toBeTruthy();
+    expect(await screen.findByDisplayValue(`Demo Class`))
+        .toBeInTheDocument();
+    expect(await screen.findByText(mockSchoolName2))
+        .toBeInTheDocument();
+    expect(await screen.findByText(programNameA))
+        .toBeInTheDocument();
+    expect(await screen.findByText(`1 - 5 Year(s)`))
+        .toBeInTheDocument();
+    expect(await screen.findByText(grade2Name))
+        .toBeInTheDocument();
+    expect(await screen.findByText(subjectA))
+        .toBeInTheDocument();
 
     const schools = await screen.findByTestId(`Schools (optional)SelectTextInput`);
-    expect(schools?.value).toBe(mockSchoolId2);
+    expect(schools?.value)
+        .toBe(mockSchoolId2);
     const programs = await screen.findByTestId(`Program (optional)SelectTextInput`);
-    expect(programs?.value).toBe(programIdA);
+    expect(programs?.value)
+        .toBe(programIdA);
     const ageRanges = await screen.findByTestId(`Age range (optional)SelectTextInput`);
-    expect(ageRanges?.value).toBe(ageRangeId2);
+    expect(ageRanges?.value)
+        .toBe(ageRangeId2);
     const grades = await screen.findByTestId(`Grade (optional)SelectTextInput`);
-    expect(grades?.value).toBe(grade2Id);
+    expect(grades?.value)
+        .toBe(grade2Id);
     const subjects = await screen.findByTestId(`Subjects (optional)SelectTextInput`);
-    expect(subjects?.value).toBe(mathId1);
+    expect(subjects?.value)
+        .toBe(mathId1);
 });
+
+const nice = [];
+
+nice.map(() => {})
+    .filter(() => {});

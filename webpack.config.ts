@@ -44,7 +44,7 @@ const webpackConfig: Configuration = {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: `babel-loader`,
+                    loader: `swc-loader`,
                 },
             },
             {
@@ -150,7 +150,7 @@ const webpackConfig: Configuration = {
             filename: `remoteEntry.js`,
             remotes: {
                 schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
-                assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`
+                assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`,
             },
             shared: {
                 '@kl-engineering/frontend-state': {

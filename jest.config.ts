@@ -22,6 +22,14 @@ const config: Config.InitialOptions = {
         }),
     },
     maxWorkers: `50%`,
+    transform: {
+        "^.+\\.(t|j)sx?$": [
+            `@swc/jest`,
+            {
+                sourceMaps: true,
+            },
+        ],
+    },
 };
 
 export default config;
