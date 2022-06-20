@@ -1,40 +1,22 @@
-
-import { WidgetType } from "../../models/widget.model";
 import LoadingPage from "@/components/Common/LoadingPage";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
+{ Suspense, useContext } from "react";
+import WidgetContext from "../../WidgetManagement/widgetCustomisation/widgetContext";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const ContentStatus = React.lazy(() => import(`reports/ContentStatus`));
 
-export default function ContentStatusWidget () {
-    const intl = useIntl();
-
+const ContentStatusWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            label={
-                intl.formatMessage({
-                    id: `home.contentStatus.containerTitleLabel`,
-                })
-            }
-            link={{
-                url: `library/organization-content`,
-                label: intl.formatMessage({
-                    id: `home.contentStatus.containerUrlLabel`,
-                }),
-            }}
-            id={WidgetType.CONTENTSTATUS}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <ContentStatus />
-            </Suspense>
-        </WidgetWrapper>
+            <ContentStatus widgetContext={useContext(WidgetContext)} />
+        </Suspense>
     );
 }
+
+export default ContentStatusWidget;

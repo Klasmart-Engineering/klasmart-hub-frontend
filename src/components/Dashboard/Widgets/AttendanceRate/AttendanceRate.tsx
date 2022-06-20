@@ -1,39 +1,22 @@
-import { WidgetType } from "../../models/widget.model";
 import LoadingPage from "@/components/Common/LoadingPage";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
+{ Suspense, useContext } from "react";
+import WidgetContext from "../../WidgetManagement/widgetCustomisation/widgetContext";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const AttendanceRate = React.lazy(() => import(`reports/AttendanceRate`));
 
-export default function AttendanceRateWidget () {
-    const intl = useIntl();
-
+const AttendanceRateWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            label={
-                intl.formatMessage({
-                    id: `home.attendance.containerTitleLabel`,
-                })
-            }
-            /*link={{
-                url: `reports`,
-                label: intl.formatMessage({
-                    id: `home.attendance.containerUrlLabel`,
-                }),
-            }}*/
-            id={WidgetType.ATTENDANCERATE}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <AttendanceRate />
-            </Suspense>
-        </WidgetWrapper>
+            <AttendanceRate widgetContext={useContext(WidgetContext)} />
+        </Suspense>
     );
 }
+
+export default AttendanceRateWidget;

@@ -1,39 +1,22 @@
 import LoadingPage from "@/components/Common/LoadingPage";
-import { WidgetType } from "@/components/Dashboard/models/widget.model";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import WidgetContext from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetContext";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
+{ Suspense, useContext } from "react";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const CompletionWidgetCard = React.lazy(() => import(`reports/CompletionWidget`));
+const Completion = React.lazy(() => import(`reports/CompletionWidget`));
 
-export default function CompletionWidget () {
-    const intl = useIntl();
-
+const CompletionWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            label={
-                intl.formatMessage({
-                    id: `home.student.completionWidget.containerTitleLabel`,
-                })
-            }
-            /*link={{
-                url: ``,
-                label: intl.formatMessage({
-                    id: `home.student.completionWidget.containerUrlLabel`,
-                }),
-            }}*/
-            id={WidgetType.COMPLETION}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <CompletionWidgetCard />
-            </Suspense>
-        </WidgetWrapper>
+            <Completion widgetContext={useContext(WidgetContext)} />
+        </Suspense>
     );
 }
+
+export default CompletionWidget;

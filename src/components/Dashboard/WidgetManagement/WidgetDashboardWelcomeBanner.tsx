@@ -1,5 +1,5 @@
 import { WidgetType } from "../models/widget.model";
-import AdaptiveLearningJourney from "../Widgets/Student/AdaptiveLearningJourney/AdaptiveLearningJourney";
+import AdaptiveLearningJourneyWidget from "../Widgets/Student/AdaptiveLearningJourney";
 import StudentNextClass from "../Widgets/Student/NextClass/NextClass";
 import getLayouts, {
     defaultStudentWidgetMap,
@@ -252,8 +252,8 @@ export default function WidgetDashboardWelcomeBanner (props: Props) {
                         <Box paddingY={2}>
                             <StudentNextClass />
                         </Box>
-                        <Box paddingY={2}>
-                            {showStudentWidgetAdaptiveLearningJourney && <AdaptiveLearningJourney />}
+                        <Box paddingY={showStudentWidgetAdaptiveLearningJourney ? 2 : 0}>
+                            {showStudentWidgetAdaptiveLearningJourney && <AdaptiveLearningJourneyWidget />}
                         </Box>
                     </>
                 }

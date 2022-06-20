@@ -1,49 +1,22 @@
 import LoadingPage from "@/components/Common/LoadingPage";
-import { WidgetType } from "@/components/Dashboard/models/widget.model";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import WidgetContext from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetContext";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
-
-interface Props { }
+{ Suspense, useContext } from "react";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const AdaptiveLearningJourneyWidget = React.lazy(() => import(`reports/AdaptiveLearningJourneyWidget`));
+const AdaptiveLearningJourney = React.lazy(() => import(`reports/AdaptiveLearningJourneyWidget`));
 
-function AdaptiveLearningJourney (props: Props) {
-    const intl = useIntl();
-
+const AdaptiveLearningJourneyWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            noBackground
-            editable={false}
-            error={false}
-            loading={false}
-            noData={false}
-            reload={() => { false; }}
-            label={
-                intl.formatMessage({
-                    id: `home.student.adaptiveLearningJourney.containerTitleLabel`,
-                })
-            }
-            /*link={{
-                url: ``,
-                label: intl.formatMessage({
-                    id: `home.student.adaptiveLearningWidget.containerUrlLabel`,
-                }),
-            }}*/
-            id={WidgetType.ADAPTIVELEARNINGJOURNEY}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <AdaptiveLearningJourneyWidget />
-            </Suspense>
-        </WidgetWrapper>
+            <AdaptiveLearningJourney widgetContext={useContext(WidgetContext)}/>
+        </Suspense>
     );
 }
 
-export default AdaptiveLearningJourney;
+export default AdaptiveLearningJourneyWidget;

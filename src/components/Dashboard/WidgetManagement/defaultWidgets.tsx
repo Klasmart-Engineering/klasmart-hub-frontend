@@ -1,19 +1,18 @@
 import { WidgetType } from "../../../components/Dashboard/models/widget.model";
-import AttendanceRateWidget from "../Widgets/AttendanceRate/AttendanceRate";
-import ContentStatusWidget from "../Widgets/ContentStatus/ContentStatus";
+import AttendanceRateWidget from "../Widgets/AttendanceRate";
+import ContentStatusWidget from "../Widgets/ContentStatus";
 import NextClassWidget from "../Widgets/NextClass/NextClass";
-import PendingAssessmentsWidget from "../Widgets/PendingAssessments/PendingAssessments";
-import AchievementWidget from "../Widgets/Student/Achievement/AchievementWidget";
-import AdaptiveLearningWidget from "../Widgets/Student/AdaptiveLearning/AdaptiveLearningWidget";
-import CompletionWidget from "../Widgets/Student/Completion/CompletionWidget";
-import LearningOutcomeSummary from "../Widgets/Student/LearningOutcomeSummary/LearningOutcomeSummary";
+import PendingAssessmentsWidget from "../Widgets/PendingAssessments";
+import AchievementWidget from "../Widgets/Student/Achievement";
+import AdaptiveLearningWidget from "../Widgets/Student/AdaptiveLearning";
+import CompletionWidget from "../Widgets/Student/Completion";
+import LearningOutcomeSummaryWidget from "../Widgets/Student/LearningOutcomeSummary";
 import StudentSchedule from "../Widgets/Student/Schedule/ScheduleWidget";
-import StudentAttendanceWidget from "../Widgets/Student/StudentAttendance/StudentAttendance";
+import StudentAttendanceWidget from "../Widgets/Student/StudentAttendance";
 import TreacherFeedbackWidget from "../Widgets/Student/TeacherFeedback/TeacherFeedbackWidget";
-import TeacherLoadWidget from "../Widgets/TeacherLoadWidget/TeacherLoadWidget";
+import TeacherLoadWidget from "../Widgets/TeacherLoadWidget";
 import TodaysScheduleWidget from "../Widgets/TodaysSchedule/TodaysSchedule";
-import React,
-{ ReactElement } from "react";
+import { ReactElement } from "react";
 
 export type Widgets = { [P: string]: ReactElement }
 
@@ -82,7 +81,7 @@ export const defaultStudentWidgetMap: Widgets = {
     [WidgetType.COMPLETION]: <CompletionWidget />,
     [WidgetType.STUDENTSCHEDULE]: <StudentSchedule />,
     [WidgetType.ADAPTIVELEARNING]: <AdaptiveLearningWidget />,
-    [WidgetType.LEARNINGOUTCOME]: <LearningOutcomeSummary />,
+    [WidgetType.LEARNINGOUTCOME]: <LearningOutcomeSummaryWidget />,
 };
 
 export const defaultStudentLgLayout: Layout[] = [

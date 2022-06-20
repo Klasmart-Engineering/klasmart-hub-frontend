@@ -1,42 +1,22 @@
 import LoadingPage from "@/components/Common/LoadingPage";
-import { WidgetType } from "@/components/Dashboard/models/widget.model";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
+import WidgetContext from "@/components/Dashboard/WidgetManagement/widgetCustomisation/widgetContext";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
-
-interface Props {
-}
+{ Suspense, useContext } from "react";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const StudentAttendanceWidgetCard = React.lazy(() => import(`reports/StudentAttendance`));
+const StudentAttendance = React.lazy(() => import(`reports/StudentAttendance`));
 
-export default function StudentAttendanceWidget (props: Props) {
-    const intl = useIntl();
-
+const StudentAttendanceWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            label={
-                intl.formatMessage({
-                    id: `home.student.attendanceWidget.containerTitleLabel`,
-                })
-            }
-            /*link={{
-                url: ``,
-                label: intl.formatMessage({
-                    id: `home.student.attendanceWidget.containerUrlLabel`,
-                }),
-            }}*/
-            id={WidgetType.STUDENTATTENDANCE}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <StudentAttendanceWidgetCard />
-            </Suspense>
-        </WidgetWrapper>
+            <StudentAttendance widgetContext={useContext(WidgetContext)}/>
+        </Suspense>
     );
 }
+
+export default StudentAttendanceWidget;

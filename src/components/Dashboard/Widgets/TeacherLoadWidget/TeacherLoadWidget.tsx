@@ -1,39 +1,22 @@
-import { WidgetType } from "../../models/widget.model";
 import LoadingPage from "@/components/Common/LoadingPage";
-import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
 import React,
-{ Suspense } from "react";
-import { useIntl } from "react-intl";
+{ Suspense, useContext } from "react";
+import WidgetContext from "../../WidgetManagement/widgetCustomisation/widgetContext";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const TeacherLoad = React.lazy(() => import(`reports/TeacherLoad`));
 
-export default function TeacherLoadWidget () {
-    const intl = useIntl();
-
+const TeacherLoadWidget: React.FC = () => {
     return (
-        <WidgetWrapper
-            label={
-                intl.formatMessage({
-                    id: `home.teacherLoad.containerTitleLabel`,
-                })
-            }
-            /*link={{
-                url: `reports`,
-                label: intl.formatMessage({
-                    id: `home.teacherLoad.containerUrlLabel`,
-                }),
-            }}*/
-            id={WidgetType.TEACHERLOAD}
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
         >
-            <Suspense
-                fallback={(
-                    <LoadingPage />
-                )}
-            >
-                <TeacherLoad />
-            </Suspense>
-        </WidgetWrapper>
+            <TeacherLoad widgetContext={useContext(WidgetContext)} />
+        </Suspense>
     );
 }
+
+export default TeacherLoadWidget;
