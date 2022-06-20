@@ -1,4 +1,4 @@
-import { fallbackLocale } from '@/locale/locale';
+import { fallbackLocale } from '@/locale/config';
 import {
     MockedProvider,
     MockedResponse,
@@ -16,6 +16,7 @@ import {
     IntlShape,
     RawIntlProvider,
 } from 'react-intl';
+import { BrowserRouter } from 'react-router-dom';
 
 export interface RenderOptions {
     locale?: IntlShape;
@@ -30,27 +31,29 @@ export const render = (component: ReactNode, options: RenderOptions = {}) => {
         mockedResponses,
     } = options;
     return reactTestingLibraryRender((
-        <MockedProvider
-            mocks={mockedResponses}
-            defaultOptions={{
-                watchQuery: {
-                    fetchPolicy: `no-cache`,
-                },
-                query: {
-                    fetchPolicy: `no-cache`,
-                },
-            }}
-            addTypename={false}
-        >
-            <GlobalStateProvider cookieDomain={process.env.COOKIE_DOMAIN ?? ``}>
-                <RawIntlProvider value={locale}>
-                    <StyledEngineProvider injectFirst>
-                        <ThemeProvider theme={theme}>
-                            {component}
-                        </ThemeProvider>
-                    </StyledEngineProvider>
-                </RawIntlProvider>
-            </GlobalStateProvider>
-        </MockedProvider>
+        <BrowserRouter>
+            <MockedProvider
+                mocks={mockedResponses}
+                defaultOptions={{
+                    watchQuery: {
+                        fetchPolicy: `no-cache`,
+                    },
+                    query: {
+                        fetchPolicy: `no-cache`,
+                    },
+                }}
+                addTypename={false}
+            >
+                <GlobalStateProvider cookieDomain={process.env.COOKIE_DOMAIN ?? ``}>
+                    <RawIntlProvider value={locale}>
+                        <StyledEngineProvider injectFirst>
+                            <ThemeProvider theme={theme}>
+                                {component}
+                            </ThemeProvider>
+                        </StyledEngineProvider>
+                    </RawIntlProvider>
+                </GlobalStateProvider>
+            </MockedProvider>
+        </BrowserRouter>
     ));
 };

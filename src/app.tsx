@@ -1,9 +1,11 @@
 import { getInitialOwnedOrg } from "./utils/organizationMemberships";
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import Layout from "@/layout";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
-import { useSetGlobalState } from "@kl-engineering/frontend-state";
+import BaseLayout from "@/layout/Base/Base";
+import {
+    organizationMembershipStackState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
@@ -54,6 +56,6 @@ export default function App (props: Props) {
     ]);
 
     return (
-        myUserLoading ? <></> : <Layout />
+        myUserLoading ? <></> : <BaseLayout />
     );
 }

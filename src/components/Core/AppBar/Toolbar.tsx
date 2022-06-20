@@ -1,54 +1,44 @@
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
-import UserProfileMenu from "@/components/Core/AppBar/UserProfileMenu";
+import UserProfileMenu from "@/components/Core/AppBar/AccountMenu";
+import { useIsMobileTabletScreen } from "@/layout/utils";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
+    isSideNavigationDrawerMiniVariantState,
+    sideNavigationDrawerOpenState,
+} from "@/store/site";
+import {
+    useGlobalState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
+import {
     IconButton,
-    Tabs,
+    OrganizationAvatar,
 } from "@kl-engineering/kidsloop-px";
-import { Tab } from "@kl-engineering/kidsloop-px/dist/src/components/Tabs";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import {
     AppBar,
     Box,
-    Button,
+    ButtonBase,
     Grid,
     Theme,
     Toolbar as AppToolbar,
-    useMediaQuery,
-    useTheme,
 } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React from "react";
-import { useIntl } from "react-intl";
-import {
-    Link,
-    useLocation,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    logo: {
-        backgroundColor: `#FFF`,
-        borderRadius: 12,
-        "&:hover": {
-            backgroundColor: theme.palette.grey[300],
-        },
-    },
     menuButton: {
-        marginLeft: theme.spacing(-1),
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(1.5),
         color: `black`,
     },
     safeArea: {
         paddingLeft: `env(safe-area-inset-left)`,
         paddingRight: `env(safe-area-inset-right)`,
         zIndex: theme.zIndex.drawer - 1,
-    },
-    tabs: {
-        padding: theme.spacing(0, 2),
     },
     appBar: {
         transition: theme.transitions.create([ `margin`, `width` ], {
@@ -65,58 +55,31 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface Props {
-    sideNavigationDrawerOpen: boolean | undefined;
-    onMenuButtonClick: () => void;
+    isMiniVariant?: boolean;
 }
 
 export default function Toolbar (props: Props) {
-    const { sideNavigationDrawerOpen, onMenuButtonClick } = props;
-    const classes = useStyles();
-    const theme = useTheme();
-    const location = useLocation();
-    const intl = useIntl();
-    const minHeight = useMediaQuery(theme.breakpoints.up(`sm`)) ? 64 : 56;
+    const [ navigationDrawerOpen, setNavigationDrawerOpen ] = useGlobalState(sideNavigationDrawerOpenState);
+
+    const setIsSideNavigationDrawerMiniVariant = useSetGlobalState(isSideNavigationDrawerMiniVariantState);
     const currentOrganization = useCurrentOrganization();
-    const organizationLogo = currentOrganization?.branding?.iconImageURL;
-    const showSiteLogo = !organizationLogo && currentOrganization;
+    const isSmallScreen = useIsMobileTabletScreen();
+    const classes = useStyles();
 
-    const contentTabs: Tab[] = [
-        {
-            text: `Organization Content`,
-            value: `/library/organization-content`,
-        },
-        {
-            text: `Badanamu Content`,
-            value: `/library/badanamu-content`,
-        },
-        {
-            text: `More Featured Content`,
-            value: `/library/more-featured-content`,
-        },
-    ];
-
-    const findTabs = (tabs: Tab[], path: string) => tabs.find((tab) => tab.value === path) ? tabs : undefined;
-
-    const getTabs = (path: string): Tab[] => {
-        return findTabs(contentTabs, path)
-        ?? [];
+    const handleOnMenuButtonClick = () => {
+        if (isSmallScreen) {
+            setNavigationDrawerOpen((open) => !open);
+            return;
+        }
+        setIsSideNavigationDrawerMiniVariant((isMiniVariant) => !isMiniVariant);
     };
-
-    const tabs = getTabs(location.pathname)
-        .map((tab) => ({
-            ...tab,
-            text: intl.formatMessage({
-                id: `navbar_${tab.text.split(` `)
-                    .join(``)}Tab`,
-            }),
-        }));
 
     return (
         <AppBar
             color="primary"
-            position="relative"
+            position="sticky"
             className={clsx(classes.safeArea, classes.appBar, {
-                [classes.appBarShift]: sideNavigationDrawerOpen !== false,
+                [classes.appBarShift]: navigationDrawerOpen !== false,
             })}
         >
             <AppToolbar>
@@ -125,8 +88,8 @@ export default function Toolbar (props: Props) {
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                    style={{
-                        minHeight,
+                    sx={{
+                        minHeight: 50,
                     }}
                 >
                     <Box
@@ -134,43 +97,45 @@ export default function Toolbar (props: Props) {
                         flexDirection="row"
                         alignItems="center"
                         flexWrap="nowrap"
-                        order={1}
                     >
                         <IconButton
                             className={classes.menuButton}
                             icon={MenuIcon}
                             size="medium"
-                            onClick={() => onMenuButtonClick()}
+                            onClick={handleOnMenuButtonClick}
                         />
-                        {showSiteLogo && (
-                            <Button
-                                className={classes.logo}
-                                component={Link}
-                                to="/"
-                            >
-                                <img
-                                    src={KidsloopLogo}
-                                    height="40"
-                                />
-                            </Button>
-                        )}
+                        <ButtonBase
+                            sx={{
+                                borderRadius: 1,
+                            }}
+                            component={Link}
+                            to="/"
+                        >
+                            {currentOrganization?.branding.iconImageURL
+                                ? (
+                                    <OrganizationAvatar
+                                        size="small"
+                                        name={currentOrganization?.name ?? ``}
+                                        src={currentOrganization?.branding.iconImageURL ?? ``}
+                                        color={currentOrganization?.branding.primaryColor ?? undefined}
+                                    />
+                                )
+                                : (
+                                    <img
+                                        alt="KidsLoop Logo - Home"
+                                        src={KidsloopLogo}
+                                        height="30"
+                                    />
+                                )}
+                        </ButtonBase>
                     </Box>
-                    <Box
-                        display="flex"
-                        order={2}
-                    >
-                        <UserProfileMenu />
-                    </Box>
+                    {!props.isMiniVariant && (
+                        <Box display="flex">
+                            <UserProfileMenu />
+                        </Box>
+                    )}
                 </Grid>
             </AppToolbar>
-            {tabs.length > 0 && (
-                <Tabs
-                    valuesAsPaths
-                    className={classes.tabs}
-                    tabs={tabs}
-                    value={location.pathname}
-                />
-            )}
         </AppBar>
     );
 }

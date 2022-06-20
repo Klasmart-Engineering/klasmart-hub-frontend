@@ -36,10 +36,10 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     avatar?: StringFilter;
     email?: StringFilter;
     phone?: StringFilter;
+    organizationUserStatus?: StringFilter;
     organizationId?: UuidFilter;
     roleId?: UuidFilter;
     schoolId?: UuidExclusiveFilter;
-    organizationUserStatus?: StringFilter;
     classId?: UuidFilter;
     gradeId?: UuidFilter;
 }

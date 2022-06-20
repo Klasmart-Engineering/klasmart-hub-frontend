@@ -3,17 +3,17 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     createStyles,
     makeStyles,
-} from '@mui/styles';
-import React from "react";
+} from "@mui/styles";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
         width: `100%`,
-        height: `100%`,
+        height: `calc(100% - ${theme.spacing(6)})`,
     },
 }));
 
 interface Props {
+    className?: string;
 }
 
 export default function BadanamuContentPage (props: Props) {

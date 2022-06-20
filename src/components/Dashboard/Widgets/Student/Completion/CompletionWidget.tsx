@@ -150,8 +150,8 @@ export default function CompletionWidget () {
         const info = data.info;
         return {
             ...info,
-            completed_perc: info.completed_perc * 100,
-            incomplete_perc: info.incomplete_perc * 100,
+            completed_perc: Math.round(info.completed_perc * 100),
+            incomplete_perc: Math.round(info.incomplete_perc * 100),
         };
     }, [ data ]);
 

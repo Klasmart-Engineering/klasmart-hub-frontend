@@ -2,6 +2,139 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.63.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.3%0Dv2.63.2) (2022-06-17)
+
+
+### ♻️ Chores
+
+* bump @kl-engineering/kidsloop-px to version 2.3.5 (#158) ([7ae0657](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7ae0657089dfbe11d11ecd36085e69ee0270a7ab))
+* bump react-router-dom to verison 6.3.0 (#152) ([6f54cf1](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/6f54cf1843beb014fb0ef95df2c47782d8e55ab1))
+
+
+### 🐛 Bug Fixes
+
+* re-fetch the current page (#156) ([286d965](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/286d965c53db2999d332b89999c46de4656d71f1))
+* subject name disappears after selecting the category popup very slow optimized (#161) ([afbdd91](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/afbdd91b301d72c5d940c5f803e3161fb8b8e364))
+
+### [2.63.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.2%0Dv2.63.1) (2022-06-16)
+
+
+### 🐛 Bug Fixes
+
+* delete category message for subject fix (#150) ([ed36936](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ed36936df42b6ab4ecf7e1c0de176c804570e817))
+* next page button is not working inside schools list (#154) ([7cb9df4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7cb9df42144fd97a09d5c4094b439317e2d92bfd))
+* the caption of the pop-up message after creating class is changed (#149) ([882dc7f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/882dc7f509bfb115aa69a2e611841a8d89e7b8ed))
+
+### [2.63.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.1%0Dv2.63.0) (2022-06-14)
+
+
+### 📦 Refactor
+
+* use px theme config (#141) ([969a3d9](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/969a3d9eef35c6bc7acb921b3cec3988f9766100))
+
+
+### 🐛 Bug Fixes
+
+* "bulk edit users is disabled for school admin/teacher" (#148) ([339c90f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/339c90f8b42fb0091434c248a2ff21ad31326e2e))
+* "modify alternative contact info styling " (#138) ([42aa721](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/42aa721edf4141bee23ea541feb4e5d800d57978))
+* "subject name appears after selecting the category" (#139) ([82896fb](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/82896fb9ca702ec27899a8078490b39cef3c5f4e))
+* academic terms are displayed properly in school table (#134) ([85d2c51](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/85d2c5190fe20abdb57a43427ca52df9e4519cb5))
+* column name selected by default for category and subcategory (#145) ([0472350](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0472350eafa262ed5ea7dfff79b24ca5424f49e0))
+* full list of schools displayed when filtering by schools in the user and Classes screen (#135) ([aaf371b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/aaf371b507d7f9d16b4bbfee07b3a6a39ec736ce))
+* Hiding Inactive Users in Class Roster (#137) ([d8813a4](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/d8813a49d15e78cc305f0f3a16b353305c5e7667))
+* update the category and subcategory delete model title (#144) ([3b8bb49](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3b8bb49c01247a1f4d6b8e9f7cc7a0a4b35864e3))
+
+## [2.63.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.0%0Dv2.62.1) (2022-06-10)
+
+
+### 🐛 Bug Fixes
+
+* **analytics:** add page route events ([311cd19](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/311cd19723f222b59aab18e37dcafae5b7e3faae))
+
+
+### ♻️ Chores
+
+* remove unused Schedule MFE organization ID prop and related imports ([09a440d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/09a440d4db3fcf8c91ded88d6c9461a48de23eb0))
+
+
+### ✨ Features
+
+* **KLS-507:** apply Assessment MFE (#129) ([0a0c452](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0a0c45239330c54dbe085e464ac1222392b0165b)), closes [KLS-507](https://calmisland.atlassian.net/browse/KLS-507) [KLS-507](https://calmisland.atlassian.net/browse/KLS-507)
+
+### [2.62.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.1%0Dv2.62.0) (2022-06-09)
+
+
+### 🐛 Bug Fixes
+
+* update the measurementid for firebase analytics (#143) ([5de7b9f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/5de7b9f4f818b6bba5e03561b197b4344cb6258e))
+
+## [2.62.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.62.0%0Dv2.61.3) (2022-06-09)
+
+
+### ♻️ Chores
+
+* bump @kl-engineering/frontend-state version to 1.1.1 (#142) ([5815682](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/58156825548dd7361dae608607729e534c08b8d9))
+
+
+### ✨ Features
+
+* add firebase analytics (#136) ([4a83a91](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4a83a915d733aef708a668f0445ae08cf92cca80))
+
+### [2.61.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.3%0Dv2.61.2) (2022-06-07)
+
+### [2.61.2](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.2%0Dv2.61.1) (2022-06-07)
+
+
+### 🐛 Bug Fixes
+
+* update excel row name from academic term to academic period (#119) ([3ba1028](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/3ba1028e6cacf67acbcfccfd2768c67d4e0760b7))
+
+### [2.61.1](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.1%0Dv2.61.0) (2022-06-03)
+
+
+### 🐛 Bug Fixes
+
+* order of side navigation items ([8683309](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8683309345b5fe5cdcc6ecaa2f6faadfcdbb6a60))
+* reduce rerenders when changing language (#133) ([1240e41](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1240e4109c8e3f1635006d86e3ecc31baad52f8f))
+
+## [2.61.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.61.0%0Dv2.60.0) (2022-06-02)
+
+
+### ♻️ Chores
+
+* **DT-847:** Student Progress Report Translations (#126) ([255e72a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/255e72a74ec16eefc7f89d7be4629fdcfa2e49f3)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
+
+### ✨ Features
+
+* launchdarkly alternative local solution (#131) ([7d89fc7](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7d89fc788863fb5eebe9a5541e440c4ef64ff665))
+* moving the feature flag from launchdarkly to local env file for student progress report (#123) ([a1f7fca](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/a1f7fca9f9e4d1998c34d9b5c0f378cc14fbb00b))
+
+
+### 🐛 Bug Fixes
+
+* 768 update the label for home fun and auto review type of study  (#120) ([ad37add](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ad37add891e07b33ad52d8857c43a210a008df1b))
+* refetchQueries classNode data on update (#128) ([7b0e40d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/7b0e40dc4905667485531975f6bec2d09ea1e291))
+* roudup the perc on completion widget (#124) ([1e845cf](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1e845cfd2de27c6c032b203f8c83184daa8fca7e))
+* to show correct thumbnail image in next class widget (#121) ([1da1b1c](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1da1b1c2ee4e6a0103a7c93085fdf1c148710ee1))
+
+
+### 📦 Refactor
+
+* hub core ui (#125) ([01dd3cc](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/01dd3ccf7137287f496c50b14bc195e857d90f93))
+
+## [2.60.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.60.0%0Dv2.59.0) (2022-05-27)
+
+
+### ✨ Features
+
+* remove schedule iframe (#122) ([bd27f6a](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/bd27f6aa92013b7ce505184b6707ea9c980b57aa))
+
+
+### ♻️ Chores
+
+* **deps:** bump @kl-engineering/kidsloop-px from 1.11.2 to 2.2.4 (#83) ([29d8410](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/29d841075a321e5d725e2e66d759aacbbb908659))
+
 ## [2.59.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.59.0%0Dv2.58.0) (2022-05-23)
 
 

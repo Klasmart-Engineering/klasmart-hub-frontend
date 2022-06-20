@@ -17,16 +17,9 @@ import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Com
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React,
-{
     useEffect,
     useState,
 } from "react";
-
-const useStyles = makeStyles((theme) => createStyles({}));
 
 interface Props {
 
@@ -37,7 +30,6 @@ export default function SelectedSubjectsTable (props: EntityStepContent<ProgramF
         value,
         disabled,
     } = props;
-    const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,

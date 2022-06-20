@@ -3,13 +3,13 @@ import { useRestAPI } from "@/api/restapi";
 import NextClassThumb from "@/assets/img/mock/next_class_thumb.png";
 import { WidgetType } from "@/components/Dashboard/models/widget.model";
 import WidgetWrapper from "@/components/Dashboard/WidgetWrapper";
-import { getLiveEndpoint } from "@/config";
+import { getCmsApiEndpoint, getLiveEndpoint } from "@/config";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@/config/index";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { SchedulePayload } from "@/types/objectTypes";
+import { PublishedContentPayload, SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
-import LiveTvIcon from '@mui/icons-material/LiveTv';
+import { LiveTv as LiveTvIcon } from '@mui/icons-material';
 import {
     Box,
     Chip,
@@ -37,6 +37,7 @@ import {
     useIntl,
 } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
+import { useResizeDetector } from "react-resize-detector";
 import { ReactResizeDetectorDimensions } from "react-resize-detector/build/ResizeDetector";
 
 export interface StyleProps {
@@ -156,10 +157,13 @@ const LARGE_TEXT_BREAKPOINT = 900;
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
-interface Props extends ReactResizeDetectorDimensions {}
+interface Props extends ReactResizeDetectorDimensions { }
 
-function StudentNextClass (props: Props) {
-    const { width } = props;
+function StudentNextClass(props: Props) {
+    const {
+        width,
+        ref,
+    } = useResizeDetector();
     const isVerticalMode = width ? width < VERTICAL_MODE_BREAKPOINT : false;
     const smallTextInHorizontal = width ? !isVerticalMode && width < LARGE_TEXT_BREAKPOINT : false;
     const intl = useIntl();
@@ -168,11 +172,12 @@ function StudentNextClass (props: Props) {
         smallTextInHorizontal,
     });
     const restApi = useRestAPI();
-    const [ liveToken, setLiveToken ] = useState(``);
-    const [ nextClass, setNextClass ] = useState<SchedulePayload>();
-    const [ maxTeachers, _ ] = useState(3);
-    const [ timeBeforeClass, setTimeBeforeClass ] = useState(Number.MAX_SAFE_INTEGER);
-    const [ schedule, setSchedule ] = useState<SchedulePayload[]>([]);
+    const [liveToken, setLiveToken] = useState(``);
+    const [nextClass, setNextClass] = useState<SchedulePayload>();
+    const [maxTeachers, _] = useState(3);
+    const [timeBeforeClass, setTimeBeforeClass] = useState(Number.MAX_SAFE_INTEGER);
+    const [schedule, setSchedule] = useState<SchedulePayload[]>([]);
+    const [thumbnail, setThumbnail] = useState<string>();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
 
@@ -219,7 +224,7 @@ function StudentNextClass (props: Props) {
         skip: !nextClass?.class_id,
     });
 
-    function goLive () {
+    function goLive() {
         const liveLink = `${getLiveEndpoint()}?token=${liveToken}`;
         window.open(liveLink);
     }
@@ -232,13 +237,22 @@ function StudentNextClass (props: Props) {
 
         if (!scheduledClass) return;
         setNextClass(scheduledClass[0]);
-    }, [ schedule ]);
+        if (!!scheduledClass.length) {
+            restApi.getContentsById({
+                content_id: scheduledClass[0].lesson_plan_id,
+                org_id: organizationId,
+            }).then((contentDetails: PublishedContentPayload) => {
+                contentDetails.thumbnail ? setThumbnail(`${getCmsApiEndpoint()}v1/contents_resources/${contentDetails.thumbnail}`) : setThumbnail(NextClassThumb)
+            })
+                .catch(() => setThumbnail(NextClassThumb));
+        }
+    }, [schedule]);
 
     useEffect(() => {
         if (!nextClass) return;
         setTimeBeforeClass(nextClass?.start_at - new Date()
             .getTime() / 1000);
-    }, [ nextClass ]);
+    }, [nextClass]);
 
     useEffect(() => {
         if (!schedulesData?.data.length) { setSchedule([]); return; }
@@ -247,8 +261,8 @@ function StudentNextClass (props: Props) {
             if (startDiff === 0) return a.title.localeCompare(b.title);
             return startDiff;
         });
-        setSchedule([ ...schedulesData.data ]);
-    }, [ schedulesData ]);
+        setSchedule([...schedulesData.data]);
+    }, [schedulesData]);
 
     useEffect(() => {
         if (timeBeforeClass > secondsBeforeClassCanStart || !nextClass) return;
@@ -263,7 +277,7 @@ function StudentNextClass (props: Props) {
             }
             setLiveToken(json.token);
         })();
-    }, [ timeBeforeClass ]);
+    }, [timeBeforeClass]);
 
     return (
         <WidgetWrapper
@@ -285,7 +299,7 @@ function StudentNextClass (props: Props) {
             editable={false}
             id={WidgetType.STUDENTNEXTCLASS}
         >
-            <Box className={classes.root}>
+            <Box className={classes.root} ref={ref}>
                 {(nextClass) ?
                     <Grid
                         container
@@ -296,20 +310,21 @@ function StudentNextClass (props: Props) {
                             xs={isVerticalMode ? 12 : 3}
                             className={classes.imageContainer}
                         >
-                            <img
-                                className={classes.image}
-                                src={NextClassThumb}
-                            />
-                            {
-                                isVerticalMode &&
-                        <Fab
-                            color="primary"
-                            className={clsx(classes.liveButton, classes.liveButtonImageOverlay)}
-                            onClick={() => goLive()}
-                        >
-                            <span className={classes.liveButtonLabel}><FormattedMessage id="home.nextClass.goLive" /></span>
-                        </Fab>
-                            }
+                            {thumbnail && (
+                                <img
+                                    className={classes.image}
+                                    src={thumbnail}
+                                />
+                            )}
+                            {isVerticalMode && (
+                                <Fab
+                                    color="primary"
+                                    className={clsx(classes.liveButton, classes.liveButtonImageOverlay)}
+                                    onClick={() => goLive()}
+                                >
+                                    <span className={classes.liveButtonLabel}><FormattedMessage id="home.nextClass.goLive" /></span>
+                                </Fab>
+                            )}
                         </Grid>
 
                         <Grid
@@ -347,119 +362,119 @@ function StudentNextClass (props: Props) {
                                 <Divider className={classes.divider} />
                                 <Box>
                                     {rosterData?.classNode.teachersConnection?.totalCount !== 0 &&
-                                <Box
-                                    className={classes.classDetails}
-                                >
-                                    <div className={classes.teacherList}>
-                                        <Chip
-                                            className={classes.darkChip}
-                                            label={
-                                                intl.formatMessage({
-                                                    id: `home.nextClass.teachersTitle`,
-                                                }, {
-                                                    count: rosterData?.classNode.teachersConnection?.totalCount || 0,
-                                                })
-                                            }
-                                        />
-                                        <Box paddingTop={1}>
-                                            <Grid
-                                                container
-                                            >
-                                                {rosterData?.classNode?.teachersConnection?.edges.map(({ node }: any, i) => (
+                                        <Box
+                                            className={classes.classDetails}
+                                        >
+                                            <div className={classes.teacherList}>
+                                                <Chip
+                                                    className={classes.darkChip}
+                                                    label={
+                                                        intl.formatMessage({
+                                                            id: `home.nextClass.teachersTitle`,
+                                                        }, {
+                                                            count: rosterData?.classNode.teachersConnection?.totalCount || 0,
+                                                        })
+                                                    }
+                                                />
+                                                <Box paddingTop={1}>
                                                     <Grid
-                                                        key={`teacher-${i}`}
-                                                        item
-                                                        className={classes.teacher}
+                                                        container
                                                     >
-                                                        <Box
-                                                            display="flex"
-                                                            flexDirection="row"
-                                                            alignItems="center"
-                                                            className="singleTeacher"
-                                                        >
-                                                            <UserAvatar
-                                                                name={`${node?.givenName} ${node?.familyName}`}
-                                                                className={classes.avatar}
-                                                                size={smallTextInHorizontal ? `small` : `medium`}
-                                                            />
-                                                            <Typography variant={smallTextInHorizontal ? `body2` : `body1`}>{node?.givenName}</Typography>
-                                                        </Box>
+                                                        {rosterData?.classNode?.teachersConnection?.edges.map(({ node }: any, i) => (
+                                                            <Grid
+                                                                key={`teacher-${i}`}
+                                                                item
+                                                                className={classes.teacher}
+                                                            >
+                                                                <Box
+                                                                    display="flex"
+                                                                    flexDirection="row"
+                                                                    alignItems="center"
+                                                                    className="singleTeacher"
+                                                                >
+                                                                    <UserAvatar
+                                                                        name={`${node?.givenName} ${node?.familyName}`}
+                                                                        className={classes.avatar}
+                                                                        size={smallTextInHorizontal ? `small` : `medium`}
+                                                                    />
+                                                                    <Typography variant={smallTextInHorizontal ? `body2` : `body1`}>{node?.givenName}</Typography>
+                                                                </Box>
+                                                            </Grid>
+                                                        ))
+                                                        }
                                                     </Grid>
-                                                ))
-                                                }
-                                            </Grid>
-                                        </Box>
-                                    </div>
-                                    {nextClass ?
-                                        <div>
-                                            {timeBeforeClass < 0 ? (
-                                                <FormattedMessage id="home.nextClass.alreadyStarted" />
-                                            ) : (
-                                                timeBeforeClass < secondsBeforeClassCanStart && (
-                                                    <FormattedMessage id="home.nextClass.startsSoon" />
-                                                )
-                                            )}
-                                            <Typography
-                                                noWrap
-                                                variant={smallTextInHorizontal ? `body2` : `body1`}
-                                            >
-                                                <FormattedDate
-                                                    value={(nextClass?.start_at || 0) * 1000}
-                                                    day="2-digit"
-                                                    month="long"
-                                                    weekday="long"
-                                                />
-                                            </Typography>
-                                            <Typography
-                                                noWrap
-                                                variant={smallTextInHorizontal ? `body2` : `body1`}
-                                            >
-                                                <FormattedDate
-                                                    hour12
-                                                    value={(nextClass?.start_at || 0) * 1000}
-                                                    hour="2-digit"
-                                                    minute="2-digit"
-                                                />
-                                                <FormattedDuration
-                                                    seconds={(nextClass?.end_at || 0) - (nextClass?.start_at || 0)}
-                                                    format=" - {hours} {minutes}"
-                                                />
-                                            </Typography>
-                                        </div> : <></>}
-                                </Box>}
+                                                </Box>
+                                            </div>
+                                            {nextClass ?
+                                                <div>
+                                                    {timeBeforeClass < 0 ? (
+                                                        <FormattedMessage id="home.nextClass.alreadyStarted" />
+                                                    ) : (
+                                                        timeBeforeClass < secondsBeforeClassCanStart && (
+                                                            <FormattedMessage id="home.nextClass.startsSoon" />
+                                                        )
+                                                    )}
+                                                    <Typography
+                                                        noWrap
+                                                        variant={smallTextInHorizontal ? `body2` : `body1`}
+                                                    >
+                                                        <FormattedDate
+                                                            value={(nextClass?.start_at || 0) * 1000}
+                                                            day="2-digit"
+                                                            month="long"
+                                                            weekday="long"
+                                                        />
+                                                    </Typography>
+                                                    <Typography
+                                                        noWrap
+                                                        variant={smallTextInHorizontal ? `body2` : `body1`}
+                                                    >
+                                                        <FormattedDate
+                                                            hour12
+                                                            value={(nextClass?.start_at || 0) * 1000}
+                                                            hour="2-digit"
+                                                            minute="2-digit"
+                                                        />
+                                                        <FormattedDuration
+                                                            seconds={(nextClass?.end_at || 0) - (nextClass?.start_at || 0)}
+                                                            format=" - {hours} {minutes}"
+                                                        />
+                                                    </Typography>
+                                                </div> : <></>}
+                                        </Box>}
                                 </Box>
                             </div>
                         </Grid>
                         {!isVerticalMode &&
-                    <Grid
-                        item
-                        xs={2}
-                        className={classes.liveButtonContainer}
-                    >
-                        <Fab
-                            color="primary"
-                            className={clsx(classes.liveButton, classes.liveButtonInContainer)}
-                            disabled={liveToken === ``}
-                            onClick={() => goLive()}
-                        >
-                            <span className={classes.liveButtonLabel}>
-                                {timeBeforeClass < secondsBeforeClassCanStart ?
-                                    <FormattedMessage id="home.nextClass.goLive" /> :
-                                    <Typography>
-                                        <FormattedRelativeTime
-                                            value={timeBeforeClass}
-                                            updateIntervalInSeconds={1}
-                                        />
-                                    </Typography>
-                                }
-                            </span>
-                        </Fab>
-                    </Grid>}
+                            <Grid
+                                item
+                                xs={2}
+                                className={classes.liveButtonContainer}
+                            >
+                                <Fab
+                                    color="primary"
+                                    className={clsx(classes.liveButton, classes.liveButtonInContainer)}
+                                    disabled={liveToken === ``}
+                                    onClick={() => goLive()}
+                                >
+                                    <span className={classes.liveButtonLabel}>
+                                        {timeBeforeClass < secondsBeforeClassCanStart ?
+                                            <FormattedMessage id="home.nextClass.goLive" /> :
+                                            <Typography>
+                                                <FormattedRelativeTime
+                                                    value={timeBeforeClass}
+                                                    updateIntervalInSeconds={1}
+                                                />
+                                            </Typography>
+                                        }
+                                    </span>
+                                </Fab>
+                            </Grid>}
                     </Grid>
                     : (schedulesData &&
-                    <Typography className={classes.noClass}>
-                        <FormattedMessage id="home.nextClass.noClass" />
-                    </Typography>
+                        <Typography className={classes.noClass}>
+                            <FormattedMessage id="home.nextClass.noClass" />
+                        </Typography>
                     )}
             </Box>
         </WidgetWrapper>

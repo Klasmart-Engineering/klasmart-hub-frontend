@@ -3,6 +3,7 @@ import { StyledIcon } from "@styled-icons/styled-icon";
 export type PublishStatus = `draft` | `pending` | `published` | `rejected` | `attachment` | `archive` | `hidden`
 
 export interface PublishedContentPayload {
+    thumbnail: string;
     total: number;
     list: PublishedContentItem[];
 }
@@ -35,9 +36,11 @@ export interface SchedulePayload {
     start_at: number;
     status: EventStatus;
     title: string;
+    is_home_fun: boolean;
+    is_review: boolean;
 }
 
-export type TimeView = `day` | `work_week` | `week` | `month` | `year` |  `full_view`;
+export type TimeView = `day` | `work_week` | `week` | `month` | `year` | `full_view`;
 export interface LivePreviewJWT {
     aud: string;
     exp: number;
@@ -160,6 +163,6 @@ export interface IframeMessageUnauthorized {
 
 export type IframeMessage = IframeMessageChangeLocale | IframeMessageChangeOrganization | IframeMessageUnauthorized;
 
-export type EventStatus = `NotStart` | `Started` | `Closed`
+export type EventStatus = `NotStart` | `Started` | `Closed`;
 
-export type EventClassType = `OnlineClass` | `OfflineClass` | `Homework` | `Task`
+export type EventClassType = `OnlineClass` | `OfflineClass` | `Homework` | `Task` | `Study` | 'StudyAutoReview';

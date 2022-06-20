@@ -1,5 +1,6 @@
 import { useRestAPI } from "@/api/restapi";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import { useWidth } from "@kl-engineering/kidsloop-px";
 import { Home as HomeIcon } from "@mui/icons-material";
 import {
     Breadcrumbs,
@@ -11,15 +12,14 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { useWidth } from "@kl-engineering/kidsloop-px";
 import React, {
     useEffect,
     useState,
 } from "react";
 import {
     useLocation,
-    useRouteMatch,
-} from "react-router";
+    useMatch,
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => createStyles({
     root: {
@@ -55,13 +55,15 @@ const getCountAfterCollapse = (breakpoint: Breakpoint) => {
 
 export default function TableBreadcrumbs (props: Props) {
     const classes = useStyles();
-    const route = useRouteMatch();
+    const route = useMatch(`/`);
     const location = useLocation();
     const restApi = useRestAPI();
     const breakpoint = useWidth();
     const currentOrganization = useCurrentOrganization();
-    const root = route.path;
-    const paths = location.pathname.replace(root, ``).split(`/`).filter((path) => !!path);
+    const root = route?.pathnameBase ?? ``;
+    const paths = location.pathname.replace(root, ``)
+        .split(`/`)
+        .filter((path) => !!path);
     const [ pathNames, setPathNames ] = useState(new Map<string, string | undefined>());
 
     const fetchPathNames = async (paths: string[]) => {
@@ -79,7 +81,9 @@ export default function TableBreadcrumbs (props: Props) {
     };
 
     useEffect(() => {
-        const paths = location.pathname.replace(root, ``).split(`/`).filter((path) => !!path);
+        const paths = location.pathname.replace(root, ``)
+            .split(`/`)
+            .filter((path) => !!path);
         if (!currentOrganization || !paths.length) return;
         fetchPathNames(paths);
     }, [ currentOrganization, location ]);
@@ -99,14 +103,17 @@ export default function TableBreadcrumbs (props: Props) {
                 >
                     <HomeIcon />
                 </Link>
-                {paths?.slice(0, paths.length - 1).map((path, i) =>
-                    <Link
-                        key={`path-${i}`}
-                        href={`#${root}/${paths.slice(0, i + 1).join(`/`)}`}
-                        className={classes.link}
-                    >
-                        <Typography>{pathNames.get(path) ?? `...`}</Typography>
-                    </Link>)}
+                {paths?.slice(0, paths.length - 1)
+                    .map((path, i) => ((
+                        <Link
+                            key={`path-${i}`}
+                            href={`#${root}/${paths.slice(0, i + 1)
+                                .join(`/`)}`}
+                            className={classes.link}
+                        >
+                            <Typography>{pathNames.get(path) ?? `...`}</Typography>
+                        </Link>
+                    )))}
                 {(paths?.length ?? 0) > 0 &&
                     <Typography>{pathNames.get(paths[paths.length - 1]) ?? `...`}</Typography>
                 }
