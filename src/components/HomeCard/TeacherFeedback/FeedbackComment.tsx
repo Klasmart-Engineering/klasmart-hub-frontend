@@ -1,4 +1,3 @@
-import { TeacherFeedbackRow } from "./Table";
 import globalStyles from "@/globalStyles";
 import {
     Link,

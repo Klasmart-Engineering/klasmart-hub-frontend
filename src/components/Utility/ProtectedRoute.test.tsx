@@ -1,7 +1,6 @@
 import ProtectedRoute from "@/components/Utility/ProtectedRoute";
 import { usePermission } from "@/utils/permissions";
 import { renderWithRouter } from "@tests/router";
-import React from "react";
 
 jest.mock(`@/utils/permissions`, () => {
     return {
@@ -9,7 +8,8 @@ jest.mock(`@/utils/permissions`, () => {
     };
 });
 
-const MockComponent = jest.fn().mockReturnValue(`div`);
+const MockComponent = jest.fn()
+    .mockReturnValue(`div`);
 
 const mockUsePermission = usePermission as jest.MockedFunction<
     typeof usePermission
@@ -18,12 +18,11 @@ const mockUsePermission = usePermission as jest.MockedFunction<
 const protectedPath = `/protected-route`;
 
 const App = () => {
-    return <ProtectedRoute
-        path={protectedPath}
-        permissions={`library_200`}
-    >
-        <MockComponent/>
-    </ProtectedRoute>;
+    return (
+        <ProtectedRoute permissions={`library_200`}>
+            <MockComponent />
+        </ProtectedRoute>
+    );
 };
 
 beforeEach(() => {
@@ -36,12 +35,14 @@ test.each([ true, false ])(`if Permission API is loading and User hasPermission=
         hasPermission,
     });
 
-    const { history } = renderWithRouter(<App/>, {
+    const { history } = renderWithRouter(<App />, {
         route: protectedPath,
     });
 
-    expect(history.location.pathname).toBe(protectedPath);
-    expect(MockComponent).toHaveBeenCalledTimes(1);
+    expect(history.location.pathname)
+        .toBe(protectedPath);
+    expect(MockComponent)
+        .toHaveBeenCalledTimes(1);
 });
 
 test(`if Permission API is loaded and User doesn't have permission, it redirects to the homepage`, () => {
@@ -50,11 +51,10 @@ test(`if Permission API is loaded and User doesn't have permission, it redirects
         hasPermission: false,
     });
 
-    const { history } = renderWithRouter(<App/>, {
-        route: protectedPath,
-    });
+    const { history } = renderWithRouter(<App />);
 
-    expect(history.location.pathname).toBe(`/`);
+    expect(history.location.pathname)
+        .toBe(`/`);
     expect(MockComponent).not.toHaveBeenCalled();
 });
 
@@ -64,10 +64,12 @@ test(`if Permission API is loaded and User has permission, it renders the child 
         hasPermission: true,
     });
 
-    const { history } = renderWithRouter(<App/>, {
+    const { history } = renderWithRouter(<App />, {
         route: protectedPath,
     });
 
-    expect(history.location.pathname).toBe(protectedPath);
-    expect(MockComponent).toHaveBeenCalledTimes(1);
+    expect(history.location.pathname)
+        .toBe(protectedPath);
+    expect(MockComponent)
+        .toHaveBeenCalledTimes(1);
 });

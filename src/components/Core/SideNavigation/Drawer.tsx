@@ -1,47 +1,61 @@
+import Toolbar from "../AppBar/Toolbar";
+import CompositeProfileSwitcher from "./CompositeProfileSwitcher";
 import NavigationMenuList from "./NavigationMenuList";
-import OrganizationMenuList from "./OrganizationMenuList";
-import OrganizationSwitcher from "./OrganizationSwitcher";
+import { MOBILE_WIDTHS } from "@/layout/Base/Base";
 import {
-    DRAWER_WIDTH,
-    MOBILE_WIDTHS,
-} from "@/layout";
+    useIsMobileScreen,
+    useIsMobileTabletScreen,
+    useIsTabletScreen,
+} from "@/layout/utils";
+import {
+    isSideNavigationDrawerMiniVariantState,
+    sideNavigationDrawerOpenState,
+} from "@/store/site";
+import {
+    useGlobalState,
+    useGlobalStateValue,
+} from "@kl-engineering/frontend-state";
 import { useWidth } from "@kl-engineering/kidsloop-px";
 import {
+    Box,
     Drawer,
-    useTheme,
+    Stack,
 } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React,
-{
-    useEffect,
-    useState,
-} from "react";
+
+export const DRAWER_WIDTH_FULL = 200;
+export const DRAWER_WIDTH_MINI = 64;
 
 const useStyles = makeStyles((theme) => createStyles({
-    drawer: {
-        width: DRAWER_WIDTH,
+    drawerContainer: {
         flexShrink: 0,
-        flex: 0,
-        transition: theme.transitions.create([ `flex` ], {
+        flexGrow: 0,
+        flexBasis: DRAWER_WIDTH_FULL,
+        display: `flex`,
+        transition: theme.transitions.create([ `flex-basis` ], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
     },
-    drawerPaper: {
-        width: DRAWER_WIDTH,
+    drawerContainerMini: {
+        flexBasis: DRAWER_WIDTH_MINI,
     },
-    drawerShift: {
-        [theme.breakpoints.up(`md`)]: {
-            flex: `0 0 ${DRAWER_WIDTH}px`,
-            transition: theme.transitions.create([ `flex` ], {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-            }),
-        },
+    drawerContainerMobile: {
+        flexBasis: 0,
+    },
+    drawer: {
+        width: DRAWER_WIDTH_FULL,
+        transition: theme.transitions.create([ `width` ], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    drawerMini: {
+        width: DRAWER_WIDTH_MINI,
     },
     menuContainer: {
         display: `flex`,
@@ -51,83 +65,80 @@ const useStyles = makeStyles((theme) => createStyles({
 }));
 
 interface Props {
-    open: boolean | undefined;
-    onClose: (open: boolean) => void;
 }
 
 export default function SideNavigationDrawer (props: Props) {
-    const { open, onClose } = props;
     const classes = useStyles();
-    const theme = useTheme();
-    const [ drawerOpen, setDrawerOpen ] = useState(open);
-    const [ showOrganizations, setShowOrganizations ] = useState(false);
     const width = useWidth();
-
-    const anchor = theme.direction === `rtl` ? `right` : `left`;
+    const [ drawerOpen, setDrawerOpen ] = useGlobalState(sideNavigationDrawerOpenState);
+    const isSideNavigationDrawerMiniVariant = useGlobalStateValue(isSideNavigationDrawerMiniVariantState);
+    const isSmallScreen = useIsMobileTabletScreen();
+    const isMobileScreen = useIsMobileScreen();
+    const isTabletScreen = useIsTabletScreen();
 
     const handleClose = () => {
-        const open = !drawerOpen;
-        setDrawerOpen(open);
-        onClose(open);
+        setDrawerOpen((open) => !open);
     };
-
-    const drawer = (
-        <>
-            <OrganizationSwitcher
-                showOrganizations={showOrganizations}
-                onShowOrganizationsChange={setShowOrganizations}
-            />
-            <div
-                className={classes.menuContainer}
-                onClick={() => {
-                    if (!MOBILE_WIDTHS.includes(width)) return;
-                    onClose(false);
-                }}
-            >
-                {showOrganizations
-                    ? <OrganizationMenuList onOrganizationChange={() => setShowOrganizations(false)} />
-                    : <NavigationMenuList />
-                }
-            </div>
-        </>
-    );
-
-    useEffect(() => {
-        setDrawerOpen(open);
-    }, [ open ]);
 
     return (
         <nav
-            className={clsx(classes.drawer, {
-                [classes.drawerShift]: drawerOpen,
+            className={clsx(classes.drawerContainer, {
+                [classes.drawerContainerMini]: !isSmallScreen && isSideNavigationDrawerMiniVariant,
+                [classes.drawerContainerMobile]: isSmallScreen,
             })}
         >
-            {MOBILE_WIDTHS.includes(width)
-                ? <Drawer
+            {MOBILE_WIDTHS.includes(width) && (
+                <Drawer
+                    className={classes.drawer}
                     variant="temporary"
                     open={drawerOpen}
-                    anchor={anchor}
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
                     ModalProps={{
                         keepMounted: true, // Better open performance on mobile.
                     }}
+                    PaperProps={{
+                        sx: {
+                            position: `static`,
+                        },
+                    }}
                     onClose={handleClose}
                 >
-                    {drawer}
+                    <Toolbar isMiniVariant />
+                    <Stack
+                        direction="column"
+                        height="100%"
+                    >
+                        <CompositeProfileSwitcher />
+                        <Box flex="1">
+                            <NavigationMenuList />
+                        </Box>
+                    </Stack>
                 </Drawer>
-                : <Drawer
-                    variant="persistent"
+            )}
+            {!isMobileScreen && (
+                <Drawer
+                    className={clsx(classes.drawer, {
+                        [classes.drawerMini]: isSideNavigationDrawerMiniVariant || isTabletScreen,
+                    })}
+                    variant="permanent"
                     open={drawerOpen}
-                    anchor={anchor}
-                    classes={{
-                        paper: classes.drawerPaper,
+                    PaperProps={{
+                        sx: {
+                            position: `static`,
+                            overflowX: `hidden`,
+                        },
                     }}
                 >
-                    {drawer}
+                    <Stack
+                        direction="column"
+                        height="100%"
+                    >
+                        <CompositeProfileSwitcher isMiniVariant={isSideNavigationDrawerMiniVariant || isTabletScreen} />
+                        <Box flex="1">
+                            <NavigationMenuList isMiniVariant={isSideNavigationDrawerMiniVariant || isTabletScreen} />
+                        </Box>
+                    </Stack>
                 </Drawer>
-            }
+            )}
         </nav>
     );
 }

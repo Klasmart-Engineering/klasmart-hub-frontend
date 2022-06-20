@@ -1,13 +1,15 @@
 import { useQueryMyUser } from "@/api/myUser";
-import { RolesConnectionEdge } from "@/api/organizationMemberships";
+import {
+    OrganizationMembershipConnectionNode,
+    RolesConnectionEdge,
+} from "@/api/organizationMemberships";
 import { RoleSummaryNode } from "@/api/roles";
-import { 
-    orderedSystemRoleNames, 
-    Status, 
-} from "@/types/graphQL";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
+import {
+    orderedSystemRoleNames,
+    Status,
+} from "@/types/graphQL";
 import { IntlShape } from "react-intl";
-
 
 export const roleNameTranslations: { [key: string]: string } = {
     'Super Admin': `users_superAdminRole`,
@@ -62,4 +64,20 @@ export const getCustomRoleName = (intl: IntlShape, roleName: string) => {
     return intl.formatMessage({
         id: translatedRoleName,
     });
+};
+
+export const getHighestTranslatedRole = (membership: OrganizationMembershipConnectionNode, intl: IntlShape) => {
+    const roleNames = membership?.rolesConnection?.edges
+        .map((edge) => edge.node.name)
+        .filter((roleName): roleName is string => !!roleName)
+        ?? [];
+    const highestRole = getHighestRole(roleNames);
+    const translatedRole = highestRole
+        ? (roleNameTranslations[highestRole]
+            ? intl.formatMessage({
+                id: roleNameTranslations[highestRole],
+            })
+            : highestRole)
+        : highestRole;
+    return translatedRole;
 };

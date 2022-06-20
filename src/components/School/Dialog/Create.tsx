@@ -92,10 +92,12 @@ export default function CreateSchoolDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `schools_schoolInfoLabel`,
                 }),
-                content: <SchoolInfoStep
-                    value={newSchool}
-                    onChange={handleChange}
-                         />,
+                content: (
+                    <SchoolInfoStep
+                        value={newSchool}
+                        onChange={handleChange}
+                    />
+                ),
                 error: [
                     required()(newSchool?.name),
                     letternumeric()(newSchool?.name),

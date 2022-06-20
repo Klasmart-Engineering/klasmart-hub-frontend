@@ -2,6 +2,7 @@
 import { CREATE_ACADEMIC_TERM } from "@/operations/mutations/createAcademicTerm";
 import { DELETE_ACADEMIC_TERM } from "@/operations/mutations/deleteAcademicTerm";
 import { GET_PAGINATED_ACADEMIC_TERMS } from "@/operations/queries/getPaginatedAcademicTerms";
+import { GET_PAGINATED_ORGANIZATION_SCHOOLS } from "@/operations/queries/getPaginatedOrganizationSchools";
 import {
     Direction,
     PageInfo,
@@ -32,7 +33,7 @@ interface CreateAcademicResponse {
 export const useCreateAcademicTerm = (options?: MutationHookOptions<CreateAcademicResponse, CreateAcademicTermRequest>) => {
     return useMutation<CreateAcademicResponse, CreateAcademicTermRequest>(CREATE_ACADEMIC_TERM, {
         ...options,
-        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS ],
+        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS, GET_PAGINATED_ORGANIZATION_SCHOOLS ],
     });
 };
 
@@ -47,7 +48,7 @@ interface DeleteAcademicTermResponse {
 export const useDeleteAcademicTerm = (options?: MutationHookOptions<DeleteAcademicTermResponse, DeleteAcademicTermRequest>) => {
     return useMutation<DeleteAcademicTermResponse, DeleteAcademicTermRequest>(DELETE_ACADEMIC_TERM, {
         ...options,
-        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS ],
+        refetchQueries: [ GET_PAGINATED_ACADEMIC_TERMS, GET_PAGINATED_ORGANIZATION_SCHOOLS ],
     });
 };
 

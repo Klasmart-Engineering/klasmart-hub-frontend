@@ -156,7 +156,7 @@ export default function CategorySelectDialog (props: Props) {
         if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
-                id: `generic_confirmDelete`,
+                id: `subjects_deleteCategoryLabel`,
             }),
             content: (
                 <>
@@ -189,7 +189,7 @@ export default function CategorySelectDialog (props: Props) {
             });
             if (updatedCategory?.id === row.id) setUpdatedCategory((category) => category?.id === row.id ? category : undefined);
             enqueueSnackbar(intl.formatMessage({
-                id: `categories_categoryCreateError`,
+                id: `categories_categoryDeleteMessage`,
             }), {
                 variant: `success`,
             });
@@ -224,34 +224,39 @@ export default function CategorySelectDialog (props: Props) {
         {
             id: `name`,
             label: `Name`,
+            persistent: true,
         },
         {
             id: `programs`,
             label: `Programs using`,
             disableSort: true,
-            render: (row) => (<>
-                {row.programs.map((program, i) => (
-                    <Chip
-                        key={`program-${i}`}
-                        label={program}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.programs.map((program, i) => (
+                        <Chip
+                            key={`program-${i}`}
+                            label={program}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
         {
             id: `subjects`,
             label: `Subjects using`,
             disableSort: true,
-            render: (row) => (<>
-                {row.subjects.map((subject, i) => (
-                    <Chip
-                        key={`subject-${i}`}
-                        label={subject}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.subjects.map((subject, i) => (
+                        <Chip
+                            key={`subject-${i}`}
+                            label={subject}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
     ];
 

@@ -9,7 +9,7 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { PublishedContentPayload, SchedulePayload } from "@/types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
-import LiveTvIcon from '@mui/icons-material/LiveTv';
+import { LiveTv as LiveTvIcon } from '@mui/icons-material';
 import {
     Box,
     Chip,
@@ -310,12 +310,13 @@ function StudentNextClass(props: Props) {
                             xs={isVerticalMode ? 12 : 3}
                             className={classes.imageContainer}
                         >
-                            {thumbnail && <img
-                                className={classes.image}
-                                src={thumbnail}
-                            />}
-                            {
-                                isVerticalMode &&
+                            {thumbnail && (
+                                <img
+                                    className={classes.image}
+                                    src={thumbnail}
+                                />
+                            )}
+                            {isVerticalMode && (
                                 <Fab
                                     color="primary"
                                     className={clsx(classes.liveButton, classes.liveButtonImageOverlay)}
@@ -323,7 +324,7 @@ function StudentNextClass(props: Props) {
                                 >
                                     <span className={classes.liveButtonLabel}><FormattedMessage id="home.nextClass.goLive" /></span>
                                 </Fab>
-                            }
+                            )}
                         </Grid>
 
                         <Grid
