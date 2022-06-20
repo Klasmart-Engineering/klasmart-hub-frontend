@@ -10,28 +10,28 @@ export interface SchoolPaginationFilter {
 
 export const buildOrganizationSchoolSearchFilter = (search: string): SchoolFilter => ({
     ...(isUuid(search) ? {
-            schoolId: {
-                operator: `eq`,
-                value: search,
+        schoolId: {
+            operator: `eq`,
+            value: search,
+        },
+    } : {
+        OR: [
+            {
+                name: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
+                },
             },
-        } : {
-            OR: [
-                {
-                    name: {
-                        operator: `contains`,
-                        value: search,
-                        caseInsensitive: true,
-                    },
+            {
+                shortCode: {
+                    operator: `contains`,
+                    value: search,
+                    caseInsensitive: true,
                 },
-                {
-                    shortCode: {
-                        operator: `contains`,
-                        value: search,
-                        caseInsensitive: true,
-                    },
-                },
-            ],
-        }),
+            },
+        ],
+    }),
 });
 
 export const buildOrganizationSchoolFilter = (filter: SchoolPaginationFilter): SchoolFilter => ({
@@ -74,6 +74,16 @@ export const GET_PAGINATED_ORGANIZATION_SCHOOLS = gql`
                     name
                     status
                     shortCode
+                    academicTermsConnection (
+                            filter: { status: { operator: eq, value: "active" } }
+                    ) {
+                        edges {
+                                node {
+                                    id
+                                    name
+                                }
+                            }
+                    }
                 }
             }
         }

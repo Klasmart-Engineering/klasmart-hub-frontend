@@ -1,31 +1,22 @@
-import { getCmsSiteEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React from "react";
-
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-        height: `100%`,
-    },
-}));
+import LoadingPage from "@/components/Common/LoadingPage";
+import React,
+{ Suspense } from "react";
 
 interface Props {
 }
 
-export default function SchedulePage (props: Props) {
-    const classes = useStyles();
-    const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.id ?? ``;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const SchedulePageMFE = React.lazy(() => import(`schedule/Schedule`));
 
+export default function SchedulePage (props: Props) {
     return (
-        <iframe
-            src={`${getCmsSiteEndpoint()}?org_id=${organizationId}#/schedule/calendar`}
-            frameBorder="0"
-            className={classes.root}
-        />
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
+        >
+            <SchedulePageMFE />
+        </Suspense>
     );
 }

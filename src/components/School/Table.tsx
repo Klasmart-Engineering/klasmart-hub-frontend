@@ -14,22 +14,25 @@ import {
     TableProps,
 } from "@/utils/table";
 import {
+    CursorTable,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
     CloudUpload as CloudIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
-import { Paper } from "@mui/material";
+import {
+    Paper,
+    Typography,
+} from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    CursorTable,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
@@ -44,10 +47,12 @@ export interface SchoolRow {
     id: string;
     name: string;
     shortCode: string;
+    academicTermNames: string[];
     status: string;
 }
 
 interface Props extends TableProps<SchoolRow> {
+    refetch: () => void;
 }
 
 export default function SchoolTable (props: Props) {
@@ -66,6 +71,7 @@ export default function SchoolTable (props: Props) {
         endCursor,
         onPageChange,
         onTableChange,
+        refetch,
     } = props;
 
     const classes = useStyles();
@@ -93,6 +99,21 @@ export default function SchoolTable (props: Props) {
                 id: `schools_schoolNameTitle`,
             }),
             persistent: true,
+        },
+        {
+            id: `academicTermNames`,
+            label: intl.formatMessage({
+                id: `academicTerm.label`,
+            }),
+            render: (row) => row.academicTermNames?.map((termName, i) => (
+                <Typography
+                    key={`term-${i}`}
+                    noWrap
+                    variant="body2"
+                >
+                    {termName}
+                </Typography>
+            )),
         },
         {
             id: `shortCode`,
@@ -238,6 +259,7 @@ export default function SchoolTable (props: Props) {
                 onClose={() => {
                     setSelectedSchoolId(undefined);
                     setOpenEditDialog(false);
+                    refetch();
                 }}
             />
 

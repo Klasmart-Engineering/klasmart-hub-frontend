@@ -58,7 +58,7 @@ export default function CreateSubjectDialog (props: Props) {
         setNewSubject(buildEmptySubject({
             categories: [ noneSpecifiedCategory ?? buildEmptyCategory() ],
         }));
-    }, [ open, categoriesData ]);
+    }, [ open ]);
 
     const handleCreateOrUpdate = async () => {
         try {
@@ -94,7 +94,8 @@ export default function CreateSubjectDialog (props: Props) {
                     categories: customCategories.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
-                        subcategories: category.subcategories?.map((subcategory) => subcategory.id).filter((id): id is string => !!id) ?? [],
+                        subcategories: category.subcategories?.map((subcategory) => subcategory.id)
+                            .filter((id): id is string => !!id) ?? [],
                     })),
                 },
             });
@@ -106,7 +107,8 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id).filter((id): id is string => !!id),
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
+                                .filter((id): id is string => !!id),
                         },
                     ],
                 },

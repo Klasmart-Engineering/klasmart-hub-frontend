@@ -12,6 +12,12 @@ import {
 } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
 import {
+    CursorTable,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
@@ -25,12 +31,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    CursorTable,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
 import React, {
     useEffect,
     useState,
@@ -133,6 +133,7 @@ export default function ProgramTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -158,6 +159,7 @@ export default function ProgramTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -183,6 +185,7 @@ export default function ProgramTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -208,6 +211,7 @@ export default function ProgramTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -279,7 +283,7 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.grades.map((grade, i) => (
                     <Chip
                         key={`grade-${i}`}
@@ -287,7 +291,7 @@ export default function ProgramTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+            </>),
         },
         {
             id: `ageRanges`,
@@ -296,7 +300,7 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.ageRanges.map((ageRange, i) => (
                     <Chip
                         key={`ageRange-${i}`}
@@ -304,7 +308,7 @@ export default function ProgramTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+            </>),
         },
         {
             id: `subjects`,
@@ -313,7 +317,7 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => <>
+            render: (row) => (<>
                 {row.subjects.map((subject, i) => (
                     <Chip
                         key={`subject-${i}`}
@@ -321,7 +325,7 @@ export default function ProgramTable (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>,
+            </>),
         },
     ];
 
@@ -410,6 +414,7 @@ export default function ProgramTable (props: Props) {
         <>
             <Paper className={classes.root}>
                 <CursorTable
+                    hideSelectAll
                     filters={!hideFilters ? filters : undefined}
                     showSelectables={showSelectables}
                     idField="id"

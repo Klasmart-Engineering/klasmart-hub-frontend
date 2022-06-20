@@ -1,4 +1,5 @@
 // import ClassesStep from "./Classes";
+import AcademicTermStep from "../AcademicTerm";
 import SchoolInfoStep from "../SchoolInfo";
 import { SchoolStepper } from "../shared";
 import SelectedProgramsSummary from "./SelectedPrograms";
@@ -21,6 +22,11 @@ export default function SummaryStep (props: Props) {
         <>
             <SchoolInfoStep
                 key={`schoolInfo-${value.id}`}
+                disabled
+                value={value}
+            />
+            <AcademicTermStep
+                key={`academicTerm-${value.id}`}
                 disabled
                 value={value}
             />

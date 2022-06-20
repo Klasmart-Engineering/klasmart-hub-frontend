@@ -7,15 +7,13 @@ import {
     ApolloClient,
     ApolloLink,
     ApolloProvider,
-    Operation,
-    ServerError,
 } from "@apollo/client";
 import { createPersistedQueryLink } from "@apollo/client/link/persisted-queries";
 import { RetryLink } from "@apollo/client/link/retry";
+import { utils } from "@kl-engineering/kidsloop-px";
 import { createUploadLink } from "apollo-upload-client";
 import { sha256 } from 'crypto-hash';
 import { GraphQLError } from "graphql";
-import { utils } from "@kl-engineering/kidsloop-px";
 import React,
 { useMemo } from "react";
 
@@ -25,7 +23,8 @@ const persistedQueryLink = createPersistedQueryLink({
 
 const objectCleanerLink = new ApolloLink((operation, forward) => {
     operation.variables = utils.trimStrings(operation.variables); // clean request data
-    return forward(operation).map((value) => utils.trimStrings(value)); // clean response data
+    return forward(operation)
+        .map((value) => utils.trimStrings(value)); // clean response data
 });
 
 const checkForAuthError = (error: GraphQLError) => {
@@ -35,7 +34,7 @@ const checkForAuthError = (error: GraphQLError) => {
 const retryLink = new RetryLink({
     attempts: async (count, operation, error) => {
         if (count > REQUEST_RETRY_COUNT_MAX) return false;
-        const isAuthError = error.result?.errors.find(checkForAuthError);
+        const isAuthError = error.result?.errors?.find(checkForAuthError);
         if (!isAuthError) return false;
         try {
             await authClient.refreshToken();
@@ -55,13 +54,14 @@ const retryLink = new RetryLink({
  * solution inspired by https://github.com/apollographql/apollo-link/issues/541
  */
 const graphQLAuthErrorPromoterLink = new ApolloLink((operation, forward) => {
-    return forward(operation).map((data) => {
-        const isAuthError = data?.errors?.find(checkForAuthError);
-        if (isAuthError) throw {
-            result: data,
-        };
-        return data;
-    });
+    return forward(operation)
+        .map((data) => {
+            const isAuthError = data?.errors?.find(checkForAuthError);
+            if (isAuthError) throw {
+                result: data,
+            };
+            return data;
+        });
 });
 
 const uploadLink = createUploadLink({

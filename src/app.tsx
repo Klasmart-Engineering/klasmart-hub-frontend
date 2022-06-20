@@ -1,17 +1,20 @@
+import { getInitialOwnedOrg } from "./utils/organizationMemberships";
 import { useQueryMyUser } from "@/api/myUser";
 import { OrganizationMembershipConnectionNode } from "@/api/organizationMemberships";
-import Layout from "@/layout";
-import { organizationMembershipStackState } from "@/store/organizationMemberships";
+import BaseLayout from "@/layout/Base/Base";
+import {
+    organizationMembershipStackState,
+    useSetGlobalState,
+} from "@kl-engineering/frontend-state";
 import { isEqual } from "lodash";
 import React,
 { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
 
 interface Props {
 }
 
 export default function App (props: Props) {
-    const setOrganizationMembershipStack = useSetRecoilState(organizationMembershipStackState);
+    const setOrganizationMembershipStack = useSetGlobalState(organizationMembershipStackState);
     const {
         data: myUserData,
         loading: myUserLoading,
@@ -20,12 +23,20 @@ export default function App (props: Props) {
 
     const setOrganizationMemberships = (memberships: OrganizationMembershipConnectionNode[]) => {
         setOrganizationMembershipStack((membershipStack) => {
+            const ownedId = getInitialOwnedOrg(myUserData);
             const sortedMemberships = memberships.sort((a, b) => {
                 const aIndex = membershipStack.findIndex((membership) => membership.organization?.id === a.organization?.id);
                 const bIndex = membershipStack.findIndex((membership) => membership.organization?.id === b.organization?.id);
                 if (aIndex === bIndex && a.organization?.name && b.organization?.name) return a.organization.name.localeCompare(b.organization.name);
                 return aIndex - bIndex;
             });
+
+            if (!membershipStack.length && ownedId) {
+                const ownedIndex = sortedMemberships.findIndex(membership => membership.organization?.id === ownedId);
+                const ownedOrg = sortedMemberships.splice(ownedIndex, 1)[0];
+                sortedMemberships.unshift(ownedOrg);
+            }
+
             return isEqual(sortedMemberships, membershipStack) ? membershipStack : sortedMemberships;
         });
     };
@@ -45,6 +56,6 @@ export default function App (props: Props) {
     ]);
 
     return (
-        myUserLoading ? <></> : <Layout />
+        myUserLoading ? <></> : <BaseLayout />
     );
 }

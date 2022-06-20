@@ -1,3 +1,4 @@
+import { SchoolsMembershipConnectionEdge } from "@/api/organizationMemberships";
 import {
     SchoolEdge,
     SchoolNode,
@@ -40,13 +41,26 @@ export const mapSchoolNodeToSchoolRow = (node: SchoolNode): SchoolRow => ({
     name: node.name,
     status: node.status,
     shortCode: node.shortCode,
+    academicTermNames: node.academicTermsConnection?.edges.map(({ node }) => node.name) ?? [],
 });
+
+export const mapSchoolsMembershipEdges = (edge: SchoolsMembershipConnectionEdge) => {
+    const schoolMembership = edge.node.school;
+
+    return {
+        id: schoolMembership.id,
+        name: schoolMembership.name,
+        organizationId: schoolMembership.organizationId,
+        status: schoolMembership.status,
+    };
+};
 
 export const sortSchoolNames = (a: string, b: string, locale?: string, collatorOptions?: Intl.CollatorOptions) => a.localeCompare(b, locale, collatorOptions);
 
 export const mapSchoolEdgesToFilterValues = (schoolEdges: SchoolEdge[]) => (
-    schoolEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
-        label: edge.node.name,
-        value: edge.node.id,
-    }))
+    schoolEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
 );

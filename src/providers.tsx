@@ -1,11 +1,12 @@
-import LDProvider from "./feature-flag/LDProvider";
 import App from "@/app";
+import LDProvider from "@/feature-flag/LDProvider";
+import LocaleProvider from "@/locale/Provider";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
 import UserServiceProvider from "@/providers/UserServiceProvider";
-import { useThemeProvider } from "@/themeProvider";
-import { getLanguage } from "@/utils/locale";
+import ThemeProvider from "@/theme/Provider";
 import { ReactQueryDevtools as CmsReactQueryDevtools } from "@kl-engineering/cms-api-client";
+import { GlobalStateProvider } from "@kl-engineering/frontend-state";
 import {
     AlertDialogProvider,
     ConfirmDialogProvider,
@@ -13,61 +14,39 @@ import {
     SnackbarProvider,
 } from "@kl-engineering/kidsloop-px";
 import { ReactQueryDevtools as ReportsReactQueryDevtools } from "@kl-engineering/reports-api-client";
-import CssBaseline from "@mui/material/CssBaseline";
-import {
-    StyledEngineProvider,
-    Theme,
-    ThemeProvider,
-} from "@mui/material/styles";
-import React from 'react';
-import { useCookies } from "react-cookie";
-import { RawIntlProvider } from "react-intl";
-import { RecoilRoot } from 'recoil';
+import { Theme } from "@mui/material";
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface DefaultTheme extends Theme { }
 }
 
-export function ClientSide () {
-    const [ cookies ] = useCookies([ `locale` ]);
-    const languageCode = cookies.locale;
-    const locale = getLanguage(languageCode);
-
+export default function ClientEntry () {
     return (
-        <UserServiceProvider>
-            <ReportsApiClientProvider>
-                <CmsApiClientProvider>
-                    <LDProvider>
-                        <RawIntlProvider value={locale}>
-                            <StyledEngineProvider injectFirst>
-                                <ThemeProvider theme={useThemeProvider()}>
+        <GlobalStateProvider cookieDomain={process.env.COOKIE_DOMAIN ?? ``}>
+            <UserServiceProvider>
+                <ReportsApiClientProvider>
+                    <CmsApiClientProvider>
+                        <LDProvider>
+                            <LocaleProvider>
+                                <ThemeProvider>
                                     <ConfirmDialogProvider>
                                         <PromptDialogProvider>
                                             <AlertDialogProvider>
                                                 <SnackbarProvider closeButtonLabel="Dismiss">
-                                                    <CssBaseline />
                                                     <App />
                                                 </SnackbarProvider>
                                             </AlertDialogProvider>
                                         </PromptDialogProvider>
                                     </ConfirmDialogProvider>
                                 </ThemeProvider>
-                            </StyledEngineProvider>
-                        </RawIntlProvider>
-                    </LDProvider>
-                    {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
-                </CmsApiClientProvider>
-                {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
-            </ReportsApiClientProvider>
-        </UserServiceProvider>
-    );
-}
-
-export default function ClientEntry () {
-    return (
-        <RecoilRoot>
-            <ClientSide />
-        </RecoilRoot>
+                            </LocaleProvider>
+                        </LDProvider>
+                        {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
+                    </CmsApiClientProvider>
+                    {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
+                </ReportsApiClientProvider>
+            </UserServiceProvider>
+        </GlobalStateProvider>
     );
 }

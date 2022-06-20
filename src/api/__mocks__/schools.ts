@@ -27,5 +27,6 @@ export const mockUseGetSchools = {
 
 export const mockUseGetPaginatedSchools = {
     data: mockSchoolsData,
+    refetch: jest.fn(),
     loading: false,
-} as QueryResult<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>;
+} as unknown as QueryResult<GetPaginatedSchoolsRequestResponse, GetPaginatedSchoolsRequest>;

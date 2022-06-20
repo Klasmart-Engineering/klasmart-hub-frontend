@@ -6,9 +6,15 @@ import {
     useCreateOrUpdatePrograms,
 } from "@/api/programs";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Program } from "@/types/graphQL";
 import { buildEmptyProgram } from "@/utils/programs";
 import { useValidations } from "@/utils/validations";
+import {
+    Button,
+    FullScreenDialog,
+    Stepper,
+    useSnackbar,
+} from "@kl-engineering/kidsloop-px";
+import { Step } from "@kl-engineering/kidsloop-px/dist/src/components/Stepper";
 import {
     Box,
     Toolbar,
@@ -17,13 +23,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import {
-    Button,
-    FullScreenDialog,
-    Stepper,
-    useSnackbar,
-} from "@kl-engineering/kidsloop-px";
-import { Step } from "@kl-engineering/kidsloop-px/dist/types/components/Stepper";
 import { isEqual } from "lodash";
 import React,
 {
@@ -89,36 +88,44 @@ export default function CreateProgramDialog (props: Props) {
                 label: intl.formatMessage({
                     id: `programs_programsInfoLabel`,
                 }),
-                content: <ProgramInfoStep
-                    value={value_}
-                    onChange={handleValue}
-                />,
+                content: (
+                    <ProgramInfoStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
                 error: [
                     required()(value_?.name),
                     letternumeric()(value_?.name),
                     max(35)(value_?.name),
                     required()(value_?.grades),
                     required()(value_?.ageRanges),
-                ].filter(((error): error is string => error !== true)).find((error) => error),
+                ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
                     id: `programs_subjects`,
                 }),
-                content: <SubjectsStep
-                    value={value_}
-                    onChange={handleValue}
-                />,
-                error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true)).find((error) => error),
+                content: (
+                    <SubjectsStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
+                error: [ required()(value_?.subjects) ].filter(((error): error is string => error !== true))
+                    .find((error) => error),
             },
             {
                 label: intl.formatMessage({
                     id: `programs_summaryLabel`,
                 }),
-                content: <SummaryStep
-                    value={value_}
-                    onChange={handleValue}
-                />,
+                content: (
+                    <SummaryStep
+                        value={value_}
+                        onChange={handleValue}
+                    />
+                ),
             },
         ];
         setSteps(steps);

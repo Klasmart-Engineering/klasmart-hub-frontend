@@ -8,7 +8,7 @@ import { ReportsApiClientProvider as KLReportsApiClientProvider } from "@kl-engi
 import { AxiosError } from "axios";
 import React,
 { useMemo } from "react";
-import Cookies from "universal-cookie";
+import { Cookies } from "react-cookie";
 
 const AUTH_HEADER = `authorization`;
 const ACCESS_TOKEN_COOKIE = `access`;

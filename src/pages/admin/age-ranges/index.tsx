@@ -14,10 +14,10 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import { Filter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { Filter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import React,
 {
     useEffect,
@@ -26,7 +26,12 @@ import React,
 
 export default function AgeRangesPage () {
     const currentOrganization = useCurrentOrganization();
-    const combinedOrderBy = [ `lowValueUnit`, `lowValue` ];
+    const combinedOrderBy = [
+        `lowValueUnit`,
+        `lowValue`,
+        `highValueUnit`,
+        `highValue`,
+    ];
     const [ tableFilters, setTableFilters ] = useState<Filter[]>([]);
     const [ serverPagination, setServerPagination ] = useState<ServerCursorPagination>({
         search: ``,

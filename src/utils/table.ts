@@ -1,8 +1,8 @@
 import { SortOrder } from "@/types/graphQL";
-import { TableLocalization } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
-import { Order } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
-import { PageChange } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Pagination/shared";
-import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Cursor/Table";
+import { TableLocalization } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
+import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
+import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
+import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import { merge } from "lodash";
 import { IntlShape } from "react-intl";
 

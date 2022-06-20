@@ -37,6 +37,7 @@ export const MY_USER_QUERY = gql`
               }
               owners {
                 email
+                id
               }
               contactInfo {
                 phone

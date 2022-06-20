@@ -9,6 +9,7 @@ import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { SchedulePayload } from "@/types/objectTypes";
 import { usePermission } from "@/utils/permissions";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
+import { Card } from "@kl-engineering/kidsloop-px";
 import {
     Box,
     Container,
@@ -20,7 +21,6 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { Card } from "@kl-engineering/kidsloop-px";
 import {
     clamp,
     uniqBy,
@@ -47,8 +47,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 const now = new Date();
-const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
-const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59).getTime() / 1000;
+const todayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    .getTime() / 1000;
+const twoWeeksFromTodayTimestamp = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59)
+    .getTime() / 1000;
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
 interface Props {
@@ -160,7 +162,8 @@ export default function Dashboard (props: Props) {
                                     xs
                                     style={{
                                         marginBottom: theme.spacing(4),
-                                    }}>
+                                    }}
+                                >
                                     <Card className={classes.assessmentCard}>
                                         <TeacherFeedback />
                                     </Card>
@@ -171,7 +174,8 @@ export default function Dashboard (props: Props) {
                                     item
                                     style={{
                                         marginBottom: theme.spacing(4),
-                                    }}>
+                                    }}
+                                >
                                     <Card>
                                         <PlanSelection />
                                     </Card>
@@ -182,7 +186,8 @@ export default function Dashboard (props: Props) {
                                 xs
                                 style={{
                                     marginBottom: theme.spacing(4),
-                                }}>
+                                }}
+                            >
                                 <Card className={classes.assessmentCard}>
                                     <Assessment />
                                 </Card>

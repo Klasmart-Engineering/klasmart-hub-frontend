@@ -1,4 +1,7 @@
+import { ClassesFilter } from "./classes";
 import { UserNode } from "./users";
+import { REACTIVATE_BULK_USERS_IN_ORGANIZATION } from "@/operations/mutations/activateBulkUsers";
+import { DEACTIVATE_BULK_USERS_IN_ORGANIZATION } from "@/operations/mutations/deactivateBulkUsers";
 import { DEACTIVATE_USER_IN_ORGANIZATION } from "@/operations/mutations/deactivateUser";
 import { DELETE_USER_IN_ORGANIZATION } from "@/operations/mutations/deleteUser";
 import { EDIT_MEMBERSHIP_OF_ORGANIZATION } from "@/operations/mutations/editMembershipOfOrganization";
@@ -33,12 +36,16 @@ export interface UserFilter extends PaginationFilter<UserFilter> {
     avatar?: StringFilter;
     email?: StringFilter;
     phone?: StringFilter;
+    organizationUserStatus?: StringFilter;
     organizationId?: UuidFilter;
     roleId?: UuidFilter;
     schoolId?: UuidExclusiveFilter;
-    organizationUserStatus?: StringFilter;
     classId?: UuidFilter;
     gradeId?: UuidFilter;
+}
+
+export interface OrganizationMembershipFilter extends PaginationFilter<OrganizationMembershipFilter> {
+    organizationId: UuidFilter;
 }
 
 export interface UpdateOrganizationMembershipRequest {
@@ -89,6 +96,20 @@ export interface ReactivateUsersInOrganizationResponse {
 export interface DeactivateUsersInOrganizationResponse {
 }
 
+export interface DeactivateBulkUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
+}
+export interface DeactivateBulkUsersInOrganizationResponse {
+}
+
+export interface ReactivateBulkUsersInOrganizationRequest {
+    organizationId: string;
+    userIds: string[];
+}
+export interface ReactivateBulkUsersInOrganizationResponse {
+}
+
 export const useDeleteUsersInOrganization = (options?: MutationHookOptions<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>) => {
     return useMutation<DeleteUsersInOrganizationResponse, DeleteUsersInOrganizationRequest>(DELETE_USER_IN_ORGANIZATION, {
         ...options,
@@ -105,6 +126,20 @@ export const useReactivateUsersInOrganization = (options?: MutationHookOptions<R
 
 export const useDeactivateUsersInOrganization = (options?: MutationHookOptions<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>) => {
     return useMutation<DeactivateUsersInOrganizationResponse, DeactivateUsersInOrganizationRequest>(DEACTIVATE_USER_IN_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
+};
+
+export const useDeactivateAllUsersInOrganization = (options?: MutationHookOptions<DeactivateBulkUsersInOrganizationResponse, DeactivateBulkUsersInOrganizationRequest>) => {
+    return useMutation<DeactivateBulkUsersInOrganizationResponse, DeactivateBulkUsersInOrganizationRequest>(DEACTIVATE_BULK_USERS_IN_ORGANIZATION, {
+        ...options,
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
+    });
+};
+
+export const useReactivateAllUsersInOrganization = (options?: MutationHookOptions<ReactivateBulkUsersInOrganizationResponse, ReactivateBulkUsersInOrganizationRequest>) => {
+    return useMutation<ReactivateBulkUsersInOrganizationResponse, ReactivateBulkUsersInOrganizationRequest>(REACTIVATE_BULK_USERS_IN_ORGANIZATION, {
         ...options,
         refetchQueries: [ GET_PAGINATED_ORGANIZATION_USERS ],
     });
@@ -151,7 +186,7 @@ export interface GetOrganizationUserNodeRequest {
     userId: string;
 }
 export interface GetOrganizationUserNodeResponse {
-    userNode: UserNode & Partial<User>; // until we migrate completely to UserNode
+    userNode: UserNode;
 }
 
 export const useGetOrganizationUserNode = (options?: QueryHookOptions<GetOrganizationUserNodeResponse, GetOrganizationUserNodeRequest>) => {
@@ -177,6 +212,8 @@ interface GetOrganizationMembershipsRequest2 {
     order: SortOrder;
     orderBy: string;
     filter?: UserFilter;
+    organizationMembershipFilter: OrganizationMembershipFilter;
+    classFilter: ClassesFilter;
 }
 
 export interface OrganizationContactInfo {
@@ -188,6 +225,7 @@ export interface OrganizationConnectionNode {
     name: string;
     owners: {
         email: string;
+        id?: string;
     }[];
     contactInfo: OrganizationContactInfo;
     branding: {
@@ -204,6 +242,7 @@ export interface RoleConnectionNode {
 export interface OrganizationMembershipConnectionNode {
     userId?: string;
     organizationId?: string;
+    id?: string;
     status?: Status;
     shortCode?: string;
     joinTimestamp?: string;
@@ -216,6 +255,7 @@ export interface SchoolMembershipConnectionNode {
     school: {
         id?: string;
         name?: string;
+        organizationId?: string;
         status?: Status;
     };
 }

@@ -5,13 +5,14 @@ import { useGetClassFormValues } from "@/utils/classFormDropdownValues";
 import { usePermission } from "@/utils/permissions";
 import { useValidations } from "@/utils/validations";
 import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import {
     Select,
     TextField,
 } from "@kl-engineering/kidsloop-px";
+import { Theme } from "@mui/material/styles";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
 {
     useEffect,
@@ -37,6 +38,7 @@ export interface ClassForm {
     subjects?: string[];
     grades?: string[];
     status?: Status;
+    academicTerm: string;
 }
 
 interface Props {
@@ -66,7 +68,8 @@ export default function ClassDialogForm (props: Props) {
     const [ gradeIds, setGradeIds ] = useState<string[]>(value?.grades ?? []);
     const [ subjectIds, setSubjectIds ] = useState<string[]>(value.subjects ?? []);
     const [ ageRangeIds, setAgeRangeIds ] = useState<string[]>(value.ageRanges ?? []);
-    const [ className, setClassName ] = useState(value.name ?? ``);
+    const [ academicTerm, setAcademicTerm ] = useState<string>(value?.academicTerm);
+    const [ className, setClassName ] = useState(value.name);
     const [ classNameValid, setClassNameValid ] = useState(true);
 
     const {
@@ -75,11 +78,13 @@ export default function ClassDialogForm (props: Props) {
         ageRangeValueOptions,
         programValueOptions,
         schoolValueOptions,
+        academicTermsValueOptions,
         gradesLoading,
         subjectsLoading,
         ageRangesLoading,
         programsLoading,
         schoolsLoading,
+        academicTermsLoading,
         refetchPrograms,
     } = useGetClassFormValues(programIds, schoolIds);
 
@@ -92,6 +97,7 @@ export default function ClassDialogForm (props: Props) {
             grades: gradeIds,
             subjects: subjectIds,
             ageRanges: ageRangeIds,
+            academicTerm: academicTerm,
         };
 
         onChange(updatedClass);
@@ -102,6 +108,7 @@ export default function ClassDialogForm (props: Props) {
         gradeIds,
         subjectIds,
         ageRangeIds,
+        academicTerm,
     ]);
 
     useEffect(() => {
@@ -135,6 +142,12 @@ export default function ClassDialogForm (props: Props) {
             setProgramIds(programIds);
         }
     }, [ programValueOptions ]);
+
+    useEffect(() => {
+        if (!academicTermsLoading) {
+            setAcademicTerm(value.academicTerm);
+        }
+    }, [ academicTermsValueOptions ]);
 
     useEffect(() => {
         onValidation([ classNameValid ].every((value) => value));
@@ -192,10 +205,29 @@ export default function ClassDialogForm (props: Props) {
                 items={schoolValueOptions}
                 value={schoolIds}
                 disabled={!canEditSchool || loading || schoolsLoading}
-                itemText={(school) => school.label ?? ``}
-                itemValue={(school) => school.value}
+                itemText={(school) => school?.label}
+                itemValue={(school) => school?.value}
                 loading={loading || schoolsLoading}
                 onChange={schoolOnChange}
+            />
+            <Select
+                fullWidth
+                id="class-dialog-academic-term"
+                label={intl.formatMessage({
+                    id: `common.inputField.optional`,
+                }, {
+                    inputField: intl.formatMessage({
+                        id: `academicTerm.label`,
+                        defaultMessage: `Academic Term`,
+                    }),
+                })}
+                items={academicTermsValueOptions}
+                value={academicTerm}
+                disabled={loading || academicTermsLoading || schoolIds?.length !==1}
+                itemText={(academicTerm) => academicTerm.label}
+                itemValue={(academicTerm) => academicTerm.value}
+                loading={loading || academicTermsLoading}
+                onChange={(values) => setAcademicTerm(values)}
             />
             <Select
                 fullWidth
@@ -209,10 +241,10 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={programValueOptions}
                 value={programIds}
-                itemText={(program) => program.label ?? ``}
-                itemValue={(program) => program.value ?? ``}
+                itemText={(program) => program?.label}
+                itemValue={(program) => program?.value}
                 loading={loading || schoolsLoading || programsLoading}
-                disabled={loading || schoolsLoading }
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setProgramIds(values)}
             />
             <Select
@@ -227,9 +259,9 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={gradeValueOptions}
                 value={gradeIds}
-                itemText={(grade) => grade.label ?? ``}
-                itemValue={(grade) => grade.value ?? ``}
-                loading={loading || schoolsLoading }
+                itemText={(grade) => grade?.label}
+                itemValue={(grade) => grade?.value}
+                loading={loading || schoolsLoading}
                 onChange={(values) => setGradeIds(values)}
             />
             <Select
@@ -244,10 +276,10 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={ageRangeValueOptions}
                 value={ageRangeIds}
-                itemText={(ageRange) => ageRange.label}
-                itemValue={(ageRange) => ageRange.value ?? ``}
-                loading={loading || schoolsLoading }
-                disabled={loading || schoolsLoading }
+                itemText={(ageRange) => ageRange?.label}
+                itemValue={(ageRange) => ageRange?.value}
+                loading={loading || schoolsLoading}
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setAgeRangeIds(values)}
             />
             <Select
@@ -262,10 +294,10 @@ export default function ClassDialogForm (props: Props) {
                 })}
                 items={subjectValueOptions}
                 value={subjectIds}
-                itemText={(subject) => subject.label ?? ``}
-                itemValue={(subject) => subject.value ?? ``}
-                loading={loading || schoolsLoading }
-                disabled={loading || schoolsLoading }
+                itemText={(subject) => subject?.label}
+                itemValue={(subject) => subject?.value}
+                loading={loading || schoolsLoading}
+                disabled={loading || schoolsLoading}
                 onChange={(values) => setSubjectIds(values)}
             />
         </div>

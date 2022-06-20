@@ -82,6 +82,8 @@ const mocks: MockedResponse[] = [
             variables: {
                 direction: `FORWARD`,
                 count: 50,
+                orderBy: `name`,
+                order: `ASC`,
                 filter: {
                     status: {
                         operator: `eq`,
@@ -185,15 +187,15 @@ beforeAll(() => {
 
 test(`Class edit component renders with correct information`, async () => {
     render(<EditClassDialog
-        open={true}
+        open
         classId={mockClassId}
         onClose={(() => jest.fn())}
-    />, {
+           />, {
         mockedResponses: mocks,
     });
 
-    expect(screen.queryByText(`Edit class`)).toBeInTheDocument();
-    expect(screen.queryAllByText(`Class name`).length).toBeTruthy();
+    expect(screen.getByText(`Edit class`)).toBeInTheDocument();
+    expect(screen.getAllByText(`Class name`).length).toBeTruthy();
     expect(await screen.findByDisplayValue(`Demo Class`)).toBeInTheDocument();
     expect(await screen.findByText(mockSchoolName2)).toBeInTheDocument();
     expect(await screen.findByText(programNameA)).toBeInTheDocument();

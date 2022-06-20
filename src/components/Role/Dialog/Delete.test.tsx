@@ -75,36 +75,39 @@ const mocks = [
 ];
 
 test(`Delete role user table renders correctly`, async () => {
-    const component = <DeleteRoleDialog
-        open={true}
+    const component = (<DeleteRoleDialog
+        open
         handleClose={() => {return;}}
         row={initialRow}
         roles={[]}
         getAllRolesLoading={false}
         refetch={() => {return;}}
-    />;
+    />);
     render(component, {
         mockedResponses: mocks,
     });
 
-    expect(await screen.findByText(`Users with Test`)).toBeInTheDocument();
+    expect(await screen.findByText(`Users with Test`))
+        .toBeInTheDocument();
     // assert users in the table once the mocks are working
 });
 
 test(`Delete role user table filter dropdown opens`, async () => {
-    const component = <DeleteRoleDialog
-        open={true}
+    const component = (<DeleteRoleDialog
+        open
         handleClose={() => {return;}}
         row={initialRow}
         roles={[]}
         getAllRolesLoading={false}
         refetch={() => {return;}}
-    />;
+    />);
     render(component);
 
     await waitFor(() => {
-        expect(screen.queryAllByText(`Email`)).toHaveLength(0);
-        expect(screen.queryByText(`Column`)).toBeFalsy();
+        expect(screen.queryAllByText(`Email`))
+            .toHaveLength(0);
+        expect(screen.queryByText(`Column`))
+            .toBeFalsy();
     });
 
     fireEvent.click(screen.getByText(`Add Filter`));
@@ -112,8 +115,10 @@ test(`Delete role user table filter dropdown opens`, async () => {
     await waitFor(() => {
         expect(screen.queryAllByText(`Email`, {
             selector: `span`,
-        })).toHaveLength(1);
-        expect(screen.queryAllByText(`Column`)).toHaveLength(2);
+        }))
+            .toHaveLength(1);
+        expect(screen.queryAllByText(`Column`))
+            .toHaveLength(2);
     });
 });
 

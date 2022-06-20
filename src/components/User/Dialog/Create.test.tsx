@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-closing-bracket-location */
 import CreateDialog from "./Create";
 import { commonDialogTests } from "./shared.test";
 import { mockGetOrganizationRoles } from "@/api/__mocks__/roles";
@@ -20,6 +21,7 @@ import {
 import { usePermission } from "@/utils/permissions";
 import { UserGenders } from "@/utils/users";
 import { MutationTuple } from "@apollo/client";
+import { utils } from "@kl-engineering/kidsloop-px";
 import {
     getElementError,
     screen,
@@ -31,7 +33,6 @@ import { mockOrg } from "@tests/mockOrganizationData";
 import { mockRoles } from "@tests/mockRoles";
 import { mockEnqueueSnackbar } from "@tests/mocks";
 import { waitForButtonToLoad } from "@tests/waitFor";
-import { utils } from "@kl-engineering/kidsloop-px";
 import React from "react";
 
 const mockOnClose = jest.fn();
@@ -91,12 +92,16 @@ const validOrganizationMembership = {
 };
 
 const render = () => {
+
     const renderResult = renderWithIntl(<CreateDialog
         open
-        onClose={mockOnClose} />);
+        onClose={mockOnClose}
+    />);
+
     const submitButton = screen.getByText(mockIntl.formatMessage({
         id: `createUser_create`,
-    })).closest(`button`);
+    }))
+        .closest(`button`);
     if (submitButton === null) {
         throw getElementError(`Unable to find submitButton`, renderResult.container);
     }
@@ -127,7 +132,7 @@ beforeEach(() => {
     mockCreateOrganizationMembership.mockClear();
     mockEnqueueSnackbar.mockClear();
     mockUsePermission.mockReturnValue({
-        loading:false,
+        loading: false,
         hasPermission: true,
     });
 });
@@ -169,31 +174,35 @@ describe(`submitting the form`, () => {
 
         await waitForButtonToLoad(submitButton);
 
-        expect(mockCreateOrganizationMembership).toHaveBeenCalledTimes(1);
-        expect(mockCreateOrganizationMembership).toHaveBeenCalledWith({
-            variables: {
-                alternate_email: ``,
-                alternate_phone: ``,
-                date_of_birth: ``,
-                email: validOrganizationMembership.user.email,
-                family_name: validOrganizationMembership.user.family_name,
-                // Gender defaults to FEMALE
-                gender: UserGenders.FEMALE,
-                given_name: validOrganizationMembership.user.given_name,
-                organization_id: validOrganizationMembership.organization_id,
-                organization_role_ids: validOrganizationMembership.roles.map((role) => role.role_id),
-                phone: undefined,
-                school_ids: [],
-                shortcode: ``,
-            },
-        });
+        expect(mockCreateOrganizationMembership)
+            .toHaveBeenCalledTimes(1);
+        expect(mockCreateOrganizationMembership)
+            .toHaveBeenCalledWith({
+                variables: {
+                    alternate_email: ``,
+                    alternate_phone: ``,
+                    date_of_birth: ``,
+                    email: validOrganizationMembership.user.email,
+                    family_name: validOrganizationMembership.user.family_name,
+                    // Gender defaults to FEMALE
+                    gender: UserGenders.FEMALE,
+                    given_name: validOrganizationMembership.user.given_name,
+                    organization_id: validOrganizationMembership.organization_id,
+                    organization_role_ids: validOrganizationMembership.roles.map((role) => role.role_id),
+                    phone: undefined,
+                    school_ids: [],
+                    shortcode: ``,
+                },
+            });
 
         expectSnackbarSuccess(mockIntl.formatMessage({
             id: `createUser_success`,
         }));
 
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-        expect(mockOnClose).toHaveBeenCalledWith(true);
+        expect(mockOnClose)
+            .toHaveBeenCalledTimes(1);
+        expect(mockOnClose)
+            .toHaveBeenCalledWith(true);
         expect(global.console.error).not.toHaveBeenCalled();
     });
 });
@@ -205,7 +214,8 @@ test(`clears the form after closing and reopening the dialog`, async () => {
 
     rerender(withMockIntl(<CreateDialog
         open={false}
-        onClose={mockOnClose} />));
+        onClose={mockOnClose}
+    />));
 
     await waitForElementToBeRemoved(screen.getAllByRole(`presentation`, {
         hidden: true,
@@ -213,7 +223,9 @@ test(`clears the form after closing and reopening the dialog`, async () => {
 
     rerender(withMockIntl(<CreateDialog
         open
-        onClose={mockOnClose} />));
+        onClose={mockOnClose}
+    />));
 
-    expect(inputs.givenName()).toHaveValue(``);
+    expect(inputs.givenName())
+        .toHaveValue(``);
 });

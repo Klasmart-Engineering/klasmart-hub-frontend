@@ -36,6 +36,10 @@ const rows = mockPaginatedUsers?.usersConnection?.edges?.map((edge) => ({
     joinDate: edge.node.organizations ? new Date(edge.node.organizations?.[0].joinDate) : new Date(),
 })) ?? [];
 
+const FILTER_DROPDOWN_OPTION_CLASS_SELECTOR = `MuiTypography-root`;
+const FILTER_DROPDOWN_SELECTED_VALUES_CLASS_SELECTOR = `MuiChip-label`;
+
+
 jest.mock(`@/store/organizationMemberships`, () => {
     return {
         useCurrentOrganization: () => ({
@@ -184,9 +188,10 @@ describe(`Users Table`, () => {
 
             await waitFor(() => {
                 expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
-                expect(screen.queryAllByText(`Test Organization Admin`, {
+                const filterOption = screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+                expect(filterOption).toHaveLength(1);
             });
 
             fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
@@ -236,9 +241,10 @@ describe(`Users Table`, () => {
 
             await waitFor(() => {
                 expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
-                expect(screen.queryAllByText(`Test Organization Admin`, {
+                const filterOption = screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+                expect(filterOption).toHaveLength(1);
             });
 
             fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
@@ -260,9 +266,10 @@ describe(`Users Table`, () => {
                 expect(screen.getByRole(`listbox`, {
                     hidden: true,
                 })).not.toBeNull();
-                expect(screen.queryAllByText(`Test Organization Admin`, {
+                const filterOption = screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+                expect(filterOption).toHaveLength(1);
             });
 
             valueOptions = screen.getAllByRole(`option`, {
@@ -273,9 +280,10 @@ describe(`Users Table`, () => {
 
             await waitFor(() => {
                 expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690b`);
-                expect(screen.queryAllByText(`Test School Admin`, {
+                const filterOption = screen.queryAllByText(`Test School Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+                expect(filterOption).toHaveLength(1);
             });
 
             fireEvent.click(screen.getByText(`Save Filter`));
@@ -315,6 +323,7 @@ describe(`Users Table`, () => {
                 })).not.toBeNull();
                 expect(screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
+                    
                 })).toHaveLength(1);
             });
 
@@ -325,9 +334,11 @@ describe(`Users Table`, () => {
 
             await waitFor(() => {
                 expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
-                expect(screen.queryAllByText(`Test Organization Admin`, {
+                const filterOption = screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+
+                expect(filterOption).toHaveLength(1);
             });
 
             fireEvent.click(screen.getAllByText(`Add Filter`)[1]);
@@ -385,6 +396,7 @@ describe(`Users Table`, () => {
                 })).not.toBeNull();
                 expect(screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
+                    
                 })).toHaveLength(1);
             });
 
@@ -395,9 +407,10 @@ describe(`Users Table`, () => {
 
             await waitFor(() => {
                 expect(valueSelectInput.value).toEqual(`87aca549-fdb6-4a63-97d4-d563d4a4690a`);
-                expect(screen.queryAllByText(`Test Organization Admin`, {
+                const filterOption = screen.queryAllByText(`Test Organization Admin`, {
                     selector: `span`,
-                })).toHaveLength(1);
+                }).filter(el => el.classList.contains(FILTER_DROPDOWN_OPTION_CLASS_SELECTOR));
+                expect(filterOption).toHaveLength(1);
             });
 
             fireEvent.click(screen.getAllByText(`Add Filter`)[1]);

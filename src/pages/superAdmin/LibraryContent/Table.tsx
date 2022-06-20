@@ -25,7 +25,7 @@ import {
     useSnackbar,
     validations,
 } from "@kl-engineering/kidsloop-px";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     CreateNewFolder as CreateNewFolderIcon,
     Delete as DeleteIcon,
@@ -57,8 +57,8 @@ import {
 } from "react-intl";
 import {
     useLocation,
-    useRouteMatch,
-} from "react-router";
+    useMatch,
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
     const {
@@ -142,7 +142,7 @@ export default function LibraryTable (props: Props) {
     const prompt = usePrompt();
     const restApi = useRestAPI();
     const location = useLocation();
-    const route = useRouteMatch();
+    const route = useMatch(`/`);
     const currentOrganization = useCurrentOrganization();
     const [ selectedContent, setSelectedContent ] = useState<ContentItemDetails>();
     const [ selectedContentBulk, setSelectedContentBulk ] = useState<PublishedContentItem[]>();
@@ -153,14 +153,16 @@ export default function LibraryTable (props: Props) {
     const [ loadingGet, setLoadingGet ] = useState(false);
     const [ rows, setRows ] = useState<ContentRow[]>([]);
     const [ data, setData ] = useState<PublishedContentPayload>();
-    const paths = location.pathname.replace(route.path, ``).split(`/`).filter((path) => !!path);
+    const paths = location.pathname.replace(route?.pathnameBase ?? ``, ``)
+        .split(`/`)
+        .filter((path) => !!path);
     const folderId = paths[paths.length - 1];
     const organizationId = currentOrganization?.id ?? ``;
 
     const getContentsFolders = async () => {
         setLoadingGet(true);
         try {
-            const path = location.pathname.replace(route.path, ``);
+            const path = location.pathname.replace(route?.pathnameBase ?? ``, ``);
             const resp = await restApi.getContentFolders({
                 org_id: organizationId,
                 page: 1,
@@ -224,47 +226,51 @@ export default function LibraryTable (props: Props) {
                 id: `superAdmin_nameLabel`,
             }),
             render: (row) => {
-                if (row.contentType === ContentType.FOLDER) return <Link
-                    className={clsx({
-                        [classes.unclickableText]: loadingGet,
-                    })}
-                    href={`#${location.pathname}/${row.id}`}
-                >
+                if (row.contentType === ContentType.FOLDER) return (
+                    <Link
+                        className={clsx({
+                            [classes.unclickableText]: loadingGet,
+                        })}
+                        href={`#${location.pathname}/${row.id}`}
+                    >
+                        <Box
+                            display="flex"
+                            flexDirection="row"
+                            alignItems="center"
+                        >
+                            <Badge
+                                badgeContent={row.itemCount}
+                                color="primary"
+                                anchorOrigin={{
+                                    vertical: `top`,
+                                    horizontal: `left`,
+                                }}
+                            >
+                                <img
+                                    alt="Folder icon"
+                                    className={classes.folderIcon}
+                                    src={FolderIcon}
+                                />
+                            </Badge>
+                            {row.name}
+                        </Box>
+                    </Link>
+                );
+                return (
                     <Box
                         display="flex"
                         flexDirection="row"
                         alignItems="center"
                     >
-                        <Badge
-                            badgeContent={row.itemCount}
-                            color="primary"
-                            anchorOrigin={{
-                                vertical: `top`,
-                                horizontal: `left`,
-                            }}
-                        >
-                            <img
-                                alt="Folder icon"
-                                className={classes.folderIcon}
-                                src={FolderIcon}
-                            />
-                        </Badge>
-                        {row.name}
+                        <img
+                            alt="Thumbail"
+                            src={`v1/contents_resources/${row.thumbnail}`}
+                            className={classes.itemThumbnail}
+                            onError={handleError}
+                        />
+                        <span>{row.name}</span>
                     </Box>
-                </Link>;
-                return <Box
-                    display="flex"
-                    flexDirection="row"
-                    alignItems="center"
-                >
-                    <img
-                        alt="Thumbail"
-                        src={`v1/contents_resources/${row.thumbnail}`}
-                        className={classes.itemThumbnail}
-                        onError={handleError}
-                    />
-                    <span>{row.name}</span>
-                </Box>;
+                );
             },
         },
         {
@@ -323,22 +329,26 @@ export default function LibraryTable (props: Props) {
             label: intl.formatMessage({
                 id: `superAdmin_keywordsLabel`,
             }),
-            render: (row) => row.keywords.map((keyword, i) => <Chip
-                key={`keyword-${i}`}
-                label={keyword}
-                className={classes.keywordChip}
-            />),
+            render: (row) => row.keywords.map((keyword, i) => (
+                <Chip
+                    key={`keyword-${i}`}
+                    label={keyword}
+                    className={classes.keywordChip}
+                />
+            )),
         },
         {
             id: `publishStatus`,
             label: intl.formatMessage({
                 id: `superAdmin_publishStatusLabel`,
             }),
-            render: (row) => <span
-                className={clsx(classes.statusText, getPublishStatusColor(row.publishStatus, classes))}
-            >
-                {row.publishStatus}
-            </span>,
+            render: (row) => (
+                <span
+                    className={clsx(classes.statusText, getPublishStatusColor(row.publishStatus, classes))}
+                >
+                    {row.publishStatus}
+                </span>
+            ),
         },
         {
             id: `createdAt`,
@@ -379,10 +389,12 @@ export default function LibraryTable (props: Props) {
             title: intl.formatMessage({
                 id: `superAdmin_deleteContentTitle`,
             }),
-            content: <>
-                <DialogContentText>Are you sure you want to delete {`"${selectedContent.name}"`}?</DialogContentText>
-                <DialogContentText><FormattedMessage id="superAdmin_type" /> <strong>{selectedContent.name}</strong> <FormattedMessage id="superAdmin_confirmDeletion" /></DialogContentText>
-            </>,
+            content: (
+                <>
+                    <DialogContentText>Are you sure you want to delete {`"${selectedContent.name}"`}?</DialogContentText>
+                    <DialogContentText><FormattedMessage id="superAdmin_type" /> <strong>{selectedContent.name}</strong> <FormattedMessage id="superAdmin_confirmDeletion" /></DialogContentText>
+                </>
+            ),
             validations: [ validations.required(`Required`), validations.equals(selectedContent.name, `Input doesn't match the expected value`) ],
             variant: `error`,
         });
@@ -425,7 +437,8 @@ export default function LibraryTable (props: Props) {
     const findContentById = (rowId: string) => data?.list.find((content) => content.id === rowId);
 
     const moveSelectedBulk = (rowIds: string[]) => {
-        const selectedContentBulk = rowIds.map(findContentById).filter((c) => !!c) as PublishedContentItem[];
+        const selectedContentBulk = rowIds.map(findContentById)
+            .filter((c) => !!c) as PublishedContentItem[];
         if (!selectedContentBulk.length) return;
         setSelectedContentBulk(selectedContentBulk);
         setOpenMoveDialog(true);
@@ -434,7 +447,7 @@ export default function LibraryTable (props: Props) {
     return (
         <>
             <Paper className={classes.root}>
-                <Breadcrumbs/>
+                <Breadcrumbs />
                 <Divider />
                 <PageTable
                     rows={rows}

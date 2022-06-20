@@ -3,7 +3,7 @@ import { ClassRow } from "@/components/Class/Table";
 import { Status } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface ClassPaginationFilter {
     organizationId: string;
@@ -116,6 +116,21 @@ export const buildClassesFilters = (filters: BaseTableData<ClassRow>['filters'] 
                 OR: values,
             };
         }
+        case `academicTerm`: {
+            const values = filter.values.map((value) => {
+                const academicTermFilter: ClassesFilter = {
+                    academicTermId: {
+                        operator: `eq`,
+                        value,
+                    },
+                };
+                return academicTermFilter;
+            });
+
+            return {
+                OR: values,
+            };
+        }
         case `ageRangeFrom`: {
             const values = filter.values.map((value) => {
                 const [ fromValue, fromUnit ] = value.split(` `);
@@ -221,6 +236,10 @@ query getOrganizationClasses(
                     name
                 }
                 programs {
+                    id
+                    name
+                }
+                academicTerm {
                     id
                     name
                 }

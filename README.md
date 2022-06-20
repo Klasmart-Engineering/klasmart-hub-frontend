@@ -34,7 +34,7 @@ Since the content of the `Assessment v3.pdf` is often out of date, if you have a
 
 - Make sure to be on a local development branch based on `master`, e.g. `release/test`
 - Run `npm start` to start a local development server
-- If you want to target a local API server, follow instructions on [the user-service repo](https://bitbucket.org/calmisland/kidsloop-user-service/src)
+- If you want to target a local API server, follow instructions on [the user-service repo](https://github.com/KL-Engineering/user-service)
 
 ### Build for Beta
 

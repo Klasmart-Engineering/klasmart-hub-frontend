@@ -8,7 +8,7 @@ import {
 } from "@/types/graphQL";
 import { isUuid } from "@/utils/pagination";
 import { gql } from "@apollo/client";
-import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/BaseTable";
+import { BaseTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/BaseTable";
 
 export interface ProgramQueryFilter {
     organizationId: string;
@@ -203,7 +203,9 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                 $cursor: String
                 $order: SortOrder!
                 $orderBy: UserSortBy!
-                $filter: UserFilter
+                $filter: UserFilter,
+                $organizationMembershipFilter: OrganizationMembershipFilter,
+                $classFilter: ClassFilter,
             ) {
                 usersConnection(
                     direction: $direction
@@ -232,13 +234,14 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                         }
                         dateOfBirth
                         gender
-                        organizationMembershipsConnection(count: 50, direction: FORWARD) {
+                        organizationMembershipsConnection(count: 50, direction: FORWARD, filter:$organizationMembershipFilter) {
                             edges {
                                 node {
                                     joinTimestamp
                                     status
                                     shortCode
                                     organization {
+                                        id
                                         name
                                     }
                                     rolesConnection(count: 50, direction: FORWARD) {
@@ -259,6 +262,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                                 node {
                                     school {
                                         id
+                                        organizationId
                                         name
                                         status
                                     }
@@ -266,7 +270,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                             
                             }
                         }
-                        classesStudyingConnection {
+                        classesStudyingConnection (count: 50, direction: FORWARD, filter: $classFilter) {
                             edges {
                                 node {
                                     id
@@ -282,7 +286,7 @@ export const GET_PAGINATED_ORGANIZATION_USERS = gql`
                                 }
                             }
                         }
-                        classesTeachingConnection {
+                        classesTeachingConnection (count: 50, direction: FORWARD, filter: $classFilter) {
                             edges {
                                 node {
                                     id

@@ -1,10 +1,10 @@
 import {
     atom,
-    useRecoilState,
-} from "recoil";
+    useGlobalState,
+} from "@kl-engineering/frontend-state";
 
 export const previewOrganizationColorState = atom<string | undefined>({
     key: `previewOrganizationColor`,
     default: undefined,
 });
-export const usePreviewOrganizationColor = () => useRecoilState(previewOrganizationColorState);
+export const usePreviewOrganizationColor = () => useGlobalState(previewOrganizationColorState);

@@ -2,6 +2,10 @@ import {
     buildAgeRangeEdgeLabel,
     buildAgeRangeLabel,
 } from "./ageRanges";
+import {
+    AcademicTermNode,
+    SchoolAcademicTermNode,
+} from "@/api/academicTerms";
 import { ClassEdge } from "@/api/classes";
 import { ClassForm } from "@/components/Class/Dialog/Form";
 import {
@@ -33,6 +37,7 @@ export const buildEmptyClassForm = (): ClassForm => ({
     subjects: [],
     grades: [],
     ageRanges: [],
+    academicTerm: ``,
 });
 
 export const mapClassToForm = (classData: Class): ClassForm => ({
@@ -44,6 +49,7 @@ export const mapClassToForm = (classData: Class): ClassForm => ({
     subjects: classData.subjects?.map(subject => subject.id ?? ``) ?? [],
     grades: classData.grades?.map(grade => grade.id ?? ``) ?? [],
     ageRanges: classData.age_ranges?.map(ageRange => ageRange.id ?? ``) ?? [],
+    academicTerm: classData.academicterm?.id ?? ``,
 });
 
 export const buildEmptyClassDetails = (): ClassDetails => ({
@@ -91,12 +97,23 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
         grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
         ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
         status: classItem.node.status ?? ``,
+        academicTerm: classItem.node?.academicTerm?.name ?? ``,
     };
 };
 
 export const mapClassEdgesToFilterValues = (classEdges: ClassEdge[]) => (
-    classEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
-        label: edge.node.name,
-        value: edge.node.id,
-    }))
+    classEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
 );
+
+export const mapAcademicTerm = (schoolNode: SchoolAcademicTermNode) => {
+    const data = schoolNode?.academicTermsConnection?.edges ?? [];
+    const terms = data.map(({ node }: {node: AcademicTermNode}) => ({
+        label: node.name,
+        value: node.id,
+    }));
+    return terms;
+};

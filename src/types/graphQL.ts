@@ -1,4 +1,4 @@
-import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
+import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     Dispatch,
     SetStateAction,
@@ -196,6 +196,14 @@ export interface Class {
     teachers?: Teacher[] | null;
     status?: Status | null;
     organization?: Organization[] | null;
+    academicterm?: AcademicTerm | null;
+}
+
+export interface AcademicTerm {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
 }
 
 export interface SchoolDeprecated {

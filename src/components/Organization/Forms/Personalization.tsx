@@ -1,14 +1,4 @@
-import { PRIMARY_THEME_COLOR as THEME_PRIMARY_COLOR } from "@/themeProvider";
 import { Organization } from "@/types/graphQL";
-import {
-    FormHelperText,
-    Grid,
-} from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
 import {
     Button,
     ColorPicker,
@@ -17,7 +7,17 @@ import {
     OrganizationAvatar,
     utils,
 } from "@kl-engineering/kidsloop-px";
-import { CroppedImage } from "@kl-engineering/kidsloop-px/dist/types/components/ImagePicker/ImagePicker";
+import { CroppedImage } from "@kl-engineering/kidsloop-px/dist/src/components/ImagePicker/ImagePicker";
+import {
+    FormHelperText,
+    Grid,
+    useTheme,
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import {
+    createStyles,
+    makeStyles,
+} from '@mui/styles';
 import React,
 {
     useEffect,
@@ -73,6 +73,7 @@ export default function Personalization (props: Props) {
         onChange,
     } = props;
     const classes = useStyles();
+    const theme = useTheme();
     const intl = useIntl();
     const [ tempOrganizationLogo, setTempOrganizationLogo ] = useState<CroppedImage>();
     const [ organizationLogoPreview, setOrganizationLogoPreview ] = useState<string | null>(null);
@@ -80,7 +81,7 @@ export default function Personalization (props: Props) {
     const [ isCropperOpen, setIsCropperOpen ] = useState(false);
     const [ imageSelectError, setImageSelectError ] = useState(``);
 
-    const [ previewOrganizationColor, setPreviewOrganizationColor ] = useState(value?.branding?.primaryColor || THEME_PRIMARY_COLOR);
+    const [ previewOrganizationColor, setPreviewOrganizationColor ] = useState(value?.branding?.primaryColor || theme.palette.primary.main);
     const organizationName = value.organization_name;
 
     const onImageChange = (file: File) => {
@@ -107,11 +108,11 @@ export default function Personalization (props: Props) {
 
     useEffect(() => {
         setOrganizationLogoPreview(tempOrganizationLogo ? tempOrganizationLogo.base64 : (value.branding?.iconImageURL ?? ``));
-        setPreviewOrganizationColor(value?.branding?.primaryColor || THEME_PRIMARY_COLOR);
-    }, [ value ]);
+        setPreviewOrganizationColor(value?.branding?.primaryColor || theme.palette.primary.main);
+    }, [ value, theme ]);
 
     const handleColorChange = (color: string) => {
-        setPreviewOrganizationColor(color || THEME_PRIMARY_COLOR);
+        setPreviewOrganizationColor(color || theme.palette.primary.main);
     };
 
     useEffect(() => {
@@ -134,11 +135,10 @@ export default function Personalization (props: Props) {
     ]);
 
     useEffect(() => {
-        setPreviewOrganizationColor(value.branding?.primaryColor ?? (value.organization_name ? utils.stringToColor(value.organization_name) : THEME_PRIMARY_COLOR));
-        return () => setPreviewOrganizationColor(undefined);
+        setPreviewOrganizationColor(value.branding?.primaryColor ?? (value.organization_name ? utils.stringToColor(value.organization_name) : theme.palette.primary.main));
     }, []);
 
-    return <>
+    return (<>
         <Grid
             item
             xs={12}
@@ -245,7 +245,7 @@ export default function Personalization (props: Props) {
                         label="Color"
                         variant="standard"
                         defaultButtonLabel="Default"
-                        defaultColor={THEME_PRIMARY_COLOR}
+                        defaultColor={theme.palette.primary.main}
                         onChange={handleColorChange}
                     />
                 </Grid>
@@ -280,5 +280,5 @@ export default function Personalization (props: Props) {
             }}
             onError={setImageSelectError}
         />
-    </>;
+            </>);
 }

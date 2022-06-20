@@ -27,16 +27,32 @@ export const GET_SCHOOL_NODE = gql`
 `;
 
 export const GET_SCHOOL_NODE_WITH_CLASS_RELATIONS = gql`
-    query getSchoolNodeWithClassRelations($id: ID!, $classCount: PageSize, $classCursor: String) {
+    query getSchoolNodeWithClassRelations(
+        $id: ID!, 
+        $direction: ConnectionDirection!
+        $count: PageSize
+        $cursor: String
+        $orderBy: ClassSortBy!
+        $order: SortOrder!
+        ) {
         schoolNode(id: $id) {
             id
             name
             status
             shortCode
             classesConnection(
-                count: $classCount
-                cursor: $classCursor
+                direction: $direction,
+                count: $count, 
+                cursor: $cursor,
+                sort: { field: $orderBy, order: $order }
             ){
+                totalCount
+                pageInfo {
+                    hasNextPage
+                    hasPreviousPage
+                    endCursor
+                    startCursor
+                }
                 edges{
                     node {
                         id

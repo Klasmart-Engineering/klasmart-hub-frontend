@@ -27,8 +27,8 @@ import {
     CursorTable,
     useSnackbar,
 } from "@kl-engineering/kidsloop-px";
-import { TableFilter } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Filter/Filters";
-import { TableColumn } from "@kl-engineering/kidsloop-px/dist/types/components/Table/Common/Head";
+import { TableFilter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
+import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import {
     Add as AddIcon,
     AssignmentReturned as AssignmentReturnedIcon,
@@ -108,9 +108,12 @@ export interface ClassRow {
     status: string;
     ageRangeFrom?: string;
     ageRangeTo?: string;
+    academicTerm?: string;
 }
 
 interface Props extends TableProps<ClassRow> {
+    showAcademicTermFilter: boolean;
+    filteredSchoolId: string;
 }
 
 export default function ClassesTable (props: Props) {
@@ -132,7 +135,10 @@ export default function ClassesTable (props: Props) {
         onTableChange,
         refetch,
         loading,
+        showAcademicTermFilter,
+        filteredSchoolId,
     } = props;
+
     const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
@@ -157,12 +163,16 @@ export default function ClassesTable (props: Props) {
         ageRangesHighValueOptions,
         subjectFilterValueOptions,
         gradeFilterValueOptions,
+        academicTermValueOptions,
     } = useGetTableFilters(currentOrganization?.id ?? ``, {
         querySchools: true,
         queryPrograms: true,
         queryAgeRanges: true,
         querySubjects: true,
         queryGrades: true,
+        queryAcademicTerm: {
+            schoolId: filteredSchoolId,
+        },
     });
 
     const classCsvTemplateHeaders = [
@@ -176,6 +186,7 @@ export default function ClassesTable (props: Props) {
         `age_range_low_value`,
         `age_range_high_value`,
         `age_range_unit`,
+        `academic_period`,
     ];
 
     const csvExporter = buildCsvTemplateOptions({
@@ -210,6 +221,34 @@ export default function ClassesTable (props: Props) {
         setClassRosterDialogOpen(true);
     };
 
+    const academicTermFilter: TableFilter<ClassRow> = {
+        id: `academicTerm`,
+        label: intl.formatMessage({
+            id: `academicTerm.label`,
+            defaultMessage: `Academic Term`,
+        }),
+        operators: [
+            {
+                label: intl.formatMessage({
+                    id: `generic_filtersEqualsLabel`,
+                }),
+                value: `eq`,
+                multipleValues: true,
+                validations: [ required() ],
+                options: academicTermValueOptions,
+                chipLabel: (column, value) => (
+                    intl.formatMessage({
+                        id: `generic_filtersEqualsChipLabel`,
+                    }, {
+                        column,
+                        value,
+                    })
+                ),
+                valueComponent: `select`,
+            },
+        ],
+    };
+
     const filters: TableFilter<ClassRow>[] = [
         {
             id: `schoolNames`,
@@ -233,6 +272,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -258,6 +298,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -283,9 +324,11 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
+
         {
             id: `grades`,
             label: intl.formatMessage({
@@ -308,6 +351,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -333,6 +377,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -358,9 +403,11 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
+        ...showAcademicTermFilter ? [ academicTermFilter ] : [],
         {
             id: `status`,
             label: intl.formatMessage({
@@ -395,6 +442,7 @@ export default function ClassesTable (props: Props) {
                             value,
                         })
                     ),
+                    valueComponent: `select`,
                 },
             ],
         },
@@ -460,15 +508,16 @@ export default function ClassesTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: disabled,
-            render: (row) => (<>
-                {row.schoolNames.map((school, i) => (
-                    <Chip
-                        key={`school-${i}`}
-                        label={school}
-                        className={classes.chip}
-                    />
-                ))}
-                              </>),
+            render: (row) => (
+                <>
+                    {row.schoolNames.map((school, i) => (
+                        <Chip
+                            key={`school-${i}`}
+                            label={school}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>),
         },
         {
             id: `ageRanges`,
@@ -486,6 +535,26 @@ export default function ClassesTable (props: Props) {
                             className={classes.chip}
                         />
                     ))}
+                </>
+            ),
+        },
+        {
+            id: `academicTerm`,
+            label: intl.formatMessage({
+                id: `academicTerm.label`,
+                defaultMessage: `Academic Term`,
+            }),
+            disableSort: true,
+            disableSearch: disabled,
+            hidden: true,
+            render: (row) => (
+                <>
+                    {row.academicTerm &&
+                        <Chip
+                            label={row.academicTerm}
+                            className={classes.chip}
+                        />
+                    }
                 </>
             ),
         },

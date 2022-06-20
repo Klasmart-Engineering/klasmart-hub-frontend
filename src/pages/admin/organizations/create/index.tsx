@@ -7,7 +7,6 @@ import {
 import OrganizationForm,
 { OrganizationTabName } from "@/components/Organization/Form";
 import { OrganizationTab } from "@/types/graphQL";
-import { history } from "@/utils/history";
 import { buildEmptyOrganization } from "@/utils/organization";
 import {
     Button,
@@ -28,6 +27,7 @@ import {
 import React,
 { useState } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -68,6 +68,7 @@ export default function CreateOrganizationPage () {
     const { data: myUserData, refetch: refetchMyUser } = useQueryMyUser({
         nextFetchPolicy: `network-only`,
     });
+    const navigate = useNavigate();
 
     const currentUser = myUserData?.myUser.node;
     const [ currentTab, setCurrentTab ] = useState<OrganizationTab>(OrganizationTabName.ORGANIZATIONINFO);
@@ -88,7 +89,7 @@ export default function CreateOrganizationPage () {
     ];
 
     const handleCancel = () => {
-        history.goBack();
+        navigate(-1);
     };
 
     const handleCreate = async () => {
@@ -120,7 +121,7 @@ export default function CreateOrganizationPage () {
             const organizationMembership = organizationMembershipResp.data?.organization.addUser;
             if (!organizationMembership) throw Error(`No organization joined`);
             await refetchMyUser();
-            history.goBack();
+            navigate(-1);
             enqueueSnackbar(intl.formatMessage({
                 id: `allOrganization_createSuccess`,
             }), {

@@ -14,5 +14,6 @@ export const mockGetOrganizationRoles = {
             roles: [ ...mockSystemRoles, mockRoles.customRole ],
         },
     },
+    refetch: jest.fn(),
     loading: false,
-} as QueryResult<GetAllRolesResponse, GetAllRolesRequest>;
+} as unknown as QueryResult<GetAllRolesResponse, GetAllRolesRequest>;
