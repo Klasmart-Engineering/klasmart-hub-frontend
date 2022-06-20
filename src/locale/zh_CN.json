@@ -1276,7 +1276,7 @@
     "class.type.autoreview": "个性化学习",
     "ageRanges_editError": "The Age Range already exists. Please try a different Age Range value.",
     "schools_title": "Schools",
-    "user.delete.warning": "All of ${entityName} ${link} will be transferred to ${adminName}",
+    "user.delete.warning": "All of {entityName} {link} will be transferred to {adminName}",
     "user.generatedData.link": "Generated Data",
     "generatedData.userDeletion.label": "User Deletion",
     "generatedData.userDeletion.description": "When a user is deleted, they lose access to the organization that deleted them. In order to prevent disruptions to other parts of Kidsloop platform, some pieces of data are maintained when the user is deleted.For detailed information about how each day entity is affected, see the list below",
