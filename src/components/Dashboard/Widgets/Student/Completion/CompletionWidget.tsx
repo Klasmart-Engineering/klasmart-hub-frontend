@@ -5,7 +5,7 @@ import React,
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const Completion = React.lazy(() => import(`reports/CompletionWidget`));
+const Completion = React.lazy(() => import(`reports/Completion`));
 
 const CompletionWidget: React.FC = () => {
     return (

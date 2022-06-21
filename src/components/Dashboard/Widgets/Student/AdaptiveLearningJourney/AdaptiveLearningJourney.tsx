@@ -5,7 +5,7 @@ import React,
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const AdaptiveLearningJourney = React.lazy(() => import(`reports/AdaptiveLearningJourneyWidget`));
+const AdaptiveLearningJourney = React.lazy(() => import(`reports/AdaptiveLearningJourney`));
 
 const AdaptiveLearningJourneyWidget: React.FC = () => {
     return (

@@ -5,7 +5,7 @@ import React,
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const Achievement = React.lazy(() => import(`reports/AchievementWidget`));
+const Achievement = React.lazy(() => import(`reports/Achievement`));
 
 const AchievementWidget: React.FC = () => {
     return (

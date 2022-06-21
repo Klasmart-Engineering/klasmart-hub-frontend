@@ -187,9 +187,11 @@ const webpackConfig: Configuration = {
                 },
                 '@kl-engineering/reports-api-client': {
                     singleton: true,
+                    requiredVersion: pkg.dependencies[`@kl-engineering/reports-api-client`],
                 },
                 '@kl-engineering/cms-api-client': {
                     singleton: true,
+                    requiredVersion: pkg.dependencies[`@kl-engineering/cms-api-client`],
                 },
                 '@kl-engineering/kidsloop-px': {
                     singleton: true,
