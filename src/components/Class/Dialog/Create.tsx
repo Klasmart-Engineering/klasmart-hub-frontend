@@ -1,6 +1,7 @@
 import ClassDialogForm,
 { ClassForm } from "./Form";
 import {
+    useAddClassToSchools,
     useCreateClass,
     useEditClassAcademicTerm,
     useEditClassAgeRanges,
@@ -10,6 +11,7 @@ import {
 } from "@/api/classes";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import { buildEmptyClassForm } from "@/utils/classes";
+import { ApolloError } from "@apollo/client";
 import {
     Dialog,
     useSnackbar,
@@ -34,6 +36,7 @@ export default function CreateClassDialog (props: Props) {
     const [ valid, setValid ] = useState(true);
     const [ newClass, setNewClass ] = useState(buildEmptyClassForm());
     const [ createClass ] = useCreateClass();
+    const [ addClassToSchools ] = useAddClassToSchools();
     const [ createPrograms ] = useEditClassPrograms();
     const [ createSubjects ] = useEditClassSubjects();
     const [ createGrades ] = useEditClassGrades();
@@ -58,19 +61,31 @@ export default function CreateClassDialog (props: Props) {
             } = newClass;
 
             const variables = {
-                organization_id: currentOrganization?.id ?? ``,
-                class_name: name ?? ``,
-                school_ids: schools ?? [],
+                organizationId: currentOrganization?.id ?? ``,
+                name: name ?? ``,
             };
 
             const response = await createClass({
                 variables,
             });
 
-            const classId = response?.data?.organization?.createClass?.class_id;
+            const classId = response?.data?.createClasses.classes[0]?.id;
 
             if (!classId) {
                 throw Error();
+            }
+
+            const schoolsInput = schools?.map(id => ({
+                schoolId: id,
+                classIds: [ classId ],
+            }));
+
+            if (schoolsInput && schoolsInput.length) {
+                await addClassToSchools({
+                    variables: {
+                        input: schoolsInput,
+                    },
+                });
             }
 
             await createPrograms({
@@ -121,8 +136,19 @@ export default function CreateClassDialog (props: Props) {
                 variant: `success`,
             });
         } catch (error) {
+            const ERR_DUPLICATE_CHILD_ENTITY = `ERR_DUPLICATE_CHILD_ENTITY_ATTRIBUTE`;
+            let errorId = `classes_classSaveError`;
+
+            if (error instanceof ApolloError && error.message === `ERR_API_BAD_INPUT`) {
+                const errors = error?.graphQLErrors?.filter((graphqlError)=> graphqlError?.extensions?.code === `ERR_API_BAD_INPUT`)
+                    ?.map(graphQLError => graphQLError.extensions?.exception?.errors)
+                    ?.flatMap(graphQLErrors=> graphQLErrors);
+
+                errorId = errors?.filter(specificError=> specificError.code === ERR_DUPLICATE_CHILD_ENTITY)?.length ? `validation.error.class.name.duplicate` : errorId;
+            }
+
             enqueueSnackbar(intl.formatMessage({
-                id: `classes_classSaveError`,
+                id: errorId,
             }), {
                 variant: `error`,
             });
