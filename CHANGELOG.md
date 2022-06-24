@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.64.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.64.0%0Dv2.63.3) (2022-06-24)
+
+
+### ♻️ Chores
+
+* **DT-880:** No Data Widget Update Translations (#164) ([8d33752](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8d337521357d72d02f6abaa5d1bc9f15ec63b119)), closes [DT-880](https://calmisland.atlassian.net/browse/DT-880)
+
+
+### 🐛 Bug Fixes
+
+* [AD-246](https://calmisland.atlassian.net/browse/AD-246) class creation duplicate error message, removed deprecated mutation (#95) ([1d9320f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/1d9320fbc09e3f86b21edabc7bf926709526c203))
+
+
+### ✨ Features
+
+* [AD-959](https://calmisland.atlassian.net/browse/AD-959) datepicker added to user form (#87) ([e7fb546](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/e7fb5464872405ae36601efcf4ed0c8e8ef3b3ae))
+
 ### [2.63.3](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.63.3%0Dv2.63.2) (2022-06-17)
 
 
