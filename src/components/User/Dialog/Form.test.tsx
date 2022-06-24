@@ -71,6 +71,20 @@ const mockUsePermission = usePermission as jest.MockedFunction<
 >;
 
 beforeAll(() => {
+    Object.defineProperty(window, `matchMedia`, {
+        writable: true,
+        value: (query: string): MediaQueryList => ({
+            media: query,
+            // this is the media query that @material-ui/pickers uses to determine if a device is a desktop device
+            matches: query === `(pointer: fine)`,
+            onchange: () => {},
+            addEventListener: () => {},
+            removeEventListener: () => {},
+            addListener: () => {},
+            removeListener: () => {},
+            dispatchEvent: () => false,
+        }),
+    });
     (useGetPaginatedSchools as jest.MockedFunction<typeof useGetPaginatedSchools>).mockReturnValue(mockUseGetPaginatedSchools);
     (useGetOrganizationRoles as jest.MockedFunction<typeof useGetOrganizationRoles>).mockReturnValue(mockGetOrganizationRoles);
 });
@@ -372,31 +386,48 @@ test(`preserves MM-YYYY format of birthday from initial render`, () => {
         }));
 });
 
-test(`converts birthday input from YYYY-MM to MM-YYYY format`, () => {
+test(`user interaction correctly updates birthday input`, () => {
     render();
+    const element = screen.getByTestId(`CalendarIcon`);
+    userEvent.click(element);
 
-    enter.birthday(`2000-01`);
+    expect(screen.getAllByText(`2022`).length)
+        .toBeGreaterThanOrEqual(1);
+    const buttonYear = screen.getByRole(`button`, {
+        name: `2022`,
+    });
+    userEvent.click(buttonYear);
 
+    expect(screen.getAllByText(`Jan`).length)
+        .toBeGreaterThanOrEqual(1);
+
+    const buttonMonth = screen.getByRole(`button`, {
+        name: `Jan`,
+    });
+    userEvent.click(buttonMonth);
+
+    expect(inputs.birthday())
+        .toHaveValue(`January 2022`);
     expect(mockOnChange)
         .toHaveBeenLastCalledWith(expect.objectContaining({
-            birthday: `01-2000`,
+            birthday: `01-2022`,
         }));
 });
 
 test(`fails validation if birthday input is in the future`, () => {
     render();
 
-    enter.birthday(`2030-01`);
+    enter.birthday(`May 2040`);
 
-    expectInputToHaveError(inputs.birthday(), /The date must be on or before/);
+    expectInputToHaveError(inputs.birthday(), /^The date must be on or before/);
 });
 
 test(`fails validation if birthday input is over 100 years ago`, () => {
     render();
 
-    enter.birthday(`1900-01`);
+    enter.birthday(`May 1900`);
 
-    expectInputToHaveError(inputs.birthday(), /The date must be on or after/);
+    expectInputToHaveError(inputs.birthday(), /^The date must be on or after/);
 });
 
 test(`it disables contactInfo if isExistingUser=true`, () => {

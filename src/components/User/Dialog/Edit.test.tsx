@@ -62,6 +62,7 @@ import {
     mockUserNode,
 } from "@tests/mockUsers";
 import { waitForButtonToLoad } from "@tests/waitFor";
+import dayjs from "dayjs";
 import { cloneDeep } from "lodash";
 import React from "react";
 
@@ -237,7 +238,8 @@ describe(`user edit form`, () => {
             expect(inputs.contactInfo())
                 .toHaveValue(mockUserNode.contactInfo?.email);
             expect(inputs.birthday())
-                .toHaveValue(formatDateOfBirth(mockUserNode.dateOfBirth as string));
+                .toHaveValue(dayjs(formatDateOfBirth(mockUserNode.dateOfBirth as string))
+                    .format(`MMMM YYYY`));
             expect(inputs.shortcode())
                 .toHaveValue(mockUserNode.organizationMembershipsConnection?.edges[0]?.node.shortCode);
             expect(inputs.roles())

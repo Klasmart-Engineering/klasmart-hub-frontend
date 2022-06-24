@@ -5,6 +5,8 @@ import {
     Theme,
     ThemeProvider,
 } from '@mui/material/styles';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { render } from "@testing-library/react";
 import React from "react";
 import {
@@ -30,15 +32,18 @@ export const mockIntl = createIntl({
     onError: mockOnTranslationError,
 }, mockIntlCache);
 
-export const withMockIntl = (ui: React.ReactNode) => ((
+export const withMockIntl = (ui: React.ReactNode) => (
     <RawIntlProvider value={mockIntl}>
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-                {ui}
-            </ThemeProvider>
-        </StyledEngineProvider>
-    </RawIntlProvider>
-));
+        <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+        >
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    {ui}
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </LocalizationProvider>
+    </RawIntlProvider>);
 
 export function renderWithIntl (ui: React.ReactNode) {
     return render(withMockIntl(ui));

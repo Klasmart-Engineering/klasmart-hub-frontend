@@ -1,21 +1,25 @@
-/* eslint-disable react/prop-types */
-import { getLanguage } from "@/locale/utils";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { getLanguage } from "@/utils/locale";
 import {
     localeState,
     useGlobalStateValue,
 } from "@kl-engineering/frontend-state";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import React,
+{
+    useEffect,
+    useState,
+} from "react";
 import { RawIntlProvider } from "react-intl";
-import { useEffect, useState } from "react";
 
-interface LocaleProviderProps {
+interface Props {
 }
 
-const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
-    const locale = useGlobalStateValue(localeState);
-    const langage = getLanguage(locale);
-    const [pickerLanguage, setPickerLanguage] = useState<Record<string, any>>();
+const LocaleProvider: React.FC<Props> = (props) => {
+    const localeStateValue = useGlobalStateValue(localeState);
+    const languageCode = localeStateValue ?? `en`;
+    const locale = getLanguage(languageCode);
+    const [ pickerLanguage, setPickerLanguage ] = useState<Record<string, any>>();
 
     const loadPickerLanguage = async (locale: string) => {
         const pickerCode = locale ? locale.toLowerCase()
@@ -27,11 +31,11 @@ const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
 
     useEffect(() => {
         if (!locale) return;
-        loadPickerLanguage(locale);
-    }, [locale]);
+        loadPickerLanguage(locale.locale);
+    }, [ locale ]);
 
     return (
-        <RawIntlProvider value={langage}>
+        <RawIntlProvider value={locale}>
             <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 locale={pickerLanguage}
