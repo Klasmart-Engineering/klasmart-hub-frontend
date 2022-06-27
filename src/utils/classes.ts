@@ -14,6 +14,7 @@ import {
 } from "@/components/Class/Table";
 import {
     Class,
+    isActive,
     Status,
 } from "@/types/graphQL";
 
@@ -93,7 +94,8 @@ export const mapClassNodeToClassRow = (classItem: ClassEdge): ClassRow => {
         name: classItem.node.name ?? ``,
         schoolNames: classItem.node.schools?.map((school) => school.name ?? ``) ?? [],
         programs: classItem.node.programs?.map((program) => program.name ?? ``) ?? [],
-        subjects: classItem.node.subjects?.map((subject) => subject.name ?? ``) ?? [],
+        subjects: classItem.node.subjects?.filter(isActive)
+            ?.map((subject) => subject.name ?? ``) ?? [],
         grades: classItem.node.grades?.map((grade) => grade.name ?? ``) ?? [],
         ageRanges: classItem.node.ageRanges?.map(buildAgeRangeEdgeLabel) ?? [],
         status: classItem.node.status ?? ``,

@@ -234,6 +234,7 @@ query getOrganizationClasses(
                 subjects {
                     id
                     name
+                    status
                 }
                 programs {
                     id
