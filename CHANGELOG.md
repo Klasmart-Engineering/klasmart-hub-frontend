@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.65.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.65.0%0Dv2.64.0) (2022-06-27)
+
+
+### ✨ Features
+
+* user deletion confirmation page (#140) ([dded3c3](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/dded3c36fcaa543fd370d4a206418ec251d3cca3))
+
+
+### 🐛 Bug Fixes
+
+* add school table title translation (#160) ([2122ba2](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/2122ba2d7f89e26f054d9ff5b9b93008c71c2c8c))
+* age range create and edit error messages changed (#157) ([d946820](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/d9468202c6fe44b1218c1361f4c24bdb524880f0))
+* filter inactive agerange, grade and subject from programme table (#159) ([f9414ff](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/f9414ffc7c223ce84bffa448939c6a87bf6b0287))
+* filter inactive subjects from program, school and classes (#167) ([8b990ad](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8b990ad4744efc8648123be67813fd29bfac43da))
+* remove auth logout route enabled feature flag from hub frontend (#163) ([e2004a8](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/e2004a82dc49d3b24e7b803e8812c7396703170f))
+* remove launchdarkly dependency and code (#165) ([384320b](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/384320bd69ecabcc1fe66a6cff33ec886adef26b))
+
 ## [2.64.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.64.0%0Dv2.63.3) (2022-06-24)
 
 
