@@ -81,7 +81,7 @@ export default function EditAgeRangeDialog (props: Props) {
             });
         } catch (error) {
             enqueueSnackbar(intl.formatMessage({
-                id: `ageRanges_createError`,
+                id: `ageRanges_editError`,
             }), {
                 variant: `error`,
             });
