@@ -10,6 +10,7 @@ import {
 } from "@/api/programs";
 import { ProgramRow } from "@/components/Program/Table";
 import {
+    isActive,
     Program,
     Status,
 } from "@/types/graphQL";
@@ -44,8 +45,10 @@ export const mapProgramToProgramRow = (program: Program): ProgramRow => ({
     id: program.id ?? ``,
     name: program.name ?? ``,
     ageRanges: program.age_ranges?.map(buildAgeRangeLabel) ?? [],
-    grades: program.grades?.map((grade) => grade.name).filter((name): name is string => !!name) ?? [],
-    subjects: program.subjects?.map((subject) => subject.name).filter((name): name is string => !!name) ?? [],
+    grades: program.grades?.map((grade) => grade.name)
+        .filter((name): name is string => !!name) ?? [],
+    subjects: program.subjects?.map((subject) => subject.name)
+        .filter((name): name is string => !!name) ?? [],
     system: program.system ?? false,
 });
 
@@ -53,14 +56,20 @@ export const mapProgramNodeToProgramRow = (node: ProgramNode): ProgramRow => ({
     id: node.id,
     name: node.name,
     system: node.system,
-    ageRanges: node.ageRanges?.map(mapAgeRangeNodeToAgeRange).map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
-    grades: node.grades?.map((grade) => grade.name ?? ``) ?? [],
-    subjects: node.subjects?.map((subject) => subject.name ?? ``) ?? [],
+    ageRanges: node.ageRanges?.filter(isActive)
+        ?.map(mapAgeRangeNodeToAgeRange)
+        .map((ageRange) => buildAgeRangeLabel(ageRange)) ?? [],
+    grades: node.grades?.filter(isActive)
+        ?.map((grade) => grade.name ?? ``)
+         ?? [],
+    subjects: node.subjects?.filter(isActive)
+        ?.map((subject) => subject.name ?? ``) ?? [],
 });
 
 export const mapProgramEdgesToFilterValues = (programEdges: ProgramEdge[]) => (
-    programEdges.filter((edge) => edge.node.status === Status.ACTIVE).map((edge) => ({
-        label: edge.node.name,
-        value: edge.node.id,
-    }))
+    programEdges.filter((edge) => edge.node.status === Status.ACTIVE)
+        .map((edge) => ({
+            label: edge.node.name,
+            value: edge.node.id,
+        }))
 );
