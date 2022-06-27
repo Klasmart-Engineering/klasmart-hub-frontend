@@ -1,5 +1,4 @@
 import App from "@/app";
-import LDProvider from "@/feature-flag/LDProvider";
 import LocaleProvider from "@/locale/Provider";
 import CmsApiClientProvider from "@/providers/CmsApiClient";
 import ReportsApiClientProvider from "@/providers/ReportsApiClient";
@@ -27,26 +26,24 @@ export default function ClientEntry () {
             <UserServiceProvider>
                 <ReportsApiClientProvider>
                     <CmsApiClientProvider>
-                        <LDProvider>
-                            <LocaleProvider>
-                                <ThemeProvider>
-                                    <ConfirmDialogProvider>
-                                        <PromptDialogProvider>
-                                            <AlertDialogProvider>
-                                                <SnackbarProvider closeButtonLabel="Dismiss">
-                                                    <App />
-                                                </SnackbarProvider>
-                                            </AlertDialogProvider>
-                                        </PromptDialogProvider>
-                                    </ConfirmDialogProvider>
-                                </ThemeProvider>
-                            </LocaleProvider>
-                        </LDProvider>
+                        <LocaleProvider>
+                            <ThemeProvider>
+                                <ConfirmDialogProvider>
+                                    <PromptDialogProvider>
+                                        <AlertDialogProvider>
+                                            <SnackbarProvider closeButtonLabel="Dismiss">
+                                                <App />
+                                            </SnackbarProvider>
+                                        </AlertDialogProvider>
+                                    </PromptDialogProvider>
+                                </ConfirmDialogProvider>
+                            </ThemeProvider>
+                        </LocaleProvider>
                         {process.env.NODE_ENV === `development` && <CmsReactQueryDevtools position="bottom-right" />}
                     </CmsApiClientProvider>
                     {process.env.NODE_ENV === `development` && <ReportsReactQueryDevtools position="bottom-left" />}
                 </ReportsApiClientProvider>
             </UserServiceProvider>
-        </GlobalStateProvider>
+        </GlobalStateProvider >
     );
 }
