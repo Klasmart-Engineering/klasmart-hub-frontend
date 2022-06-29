@@ -1121,7 +1121,6 @@
     "home.student.completionWidget.totalAssignment": "Total assignment",
     "home.student.completionWidget.containerTitleLabel": "Completion",
     "home.student.completionWidget.containerUrlLabel": "View all completions",
-    "home.student.completionWidget.title": "This week",
     "home.student.teacherFeedbackWidget.alexFeedback": "That’s a really great start, perhaps you could play with your friends using English for 10 minutes. It will be good fun!",
     "home.student.teacherFeedbackWidget.christinaFeedback": "You did a great job! Reading books will help a lot in improving your vocabulary. Try reading some English books!",
     "home.student.teacherFeedbackWidget.butterflyClass": "Butterfly Class",
@@ -1316,5 +1315,6 @@
     "home.teacher.pendingAssesments.assesmentsToComplete": "Assessments to complete",
     "home.teacher.contentStatus.noData": "Create content, submit it, and check the status from here.",
     "home.teacher.contentStatus.createLessonPlan": "Create lesson plan",
-    "home.teacher.noDataStatus.scheduleClass": "Schedule a class"
+    "home.teacher.noDataStatus.scheduleClass": "Schedule a class",
+    "home.student.completionWidget.title": "Last 7 Days"
 }

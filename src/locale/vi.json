@@ -1121,7 +1121,6 @@
     "home.student.completionWidget.totalAssignment": "Tổng số bài tập",
     "home.student.completionWidget.containerTitleLabel": "Hoàn thành",
     "home.student.completionWidget.containerUrlLabel": "Xem tất cả bài hoàn thành",
-    "home.student.completionWidget.title": "Tuần này",
     "home.student.teacherFeedbackWidget.alexFeedback": "Đó là một khởi đầu tuyệt vời, có lẽ bạn có thể vui chơi với bạn bè sử dụng tiếng Anh trong 10 phút. Nó sẽ rất thú vị!",
     "home.student.teacherFeedbackWidget.christinaFeedback": "Bạn đã làm rất tốt! Đọc sách sẽ giúp ích rất nhiều trong việc cải thiện vốn từ vựng. Hãy thử đọc một số cuốn sách tiếng Anh!",
     "home.student.teacherFeedbackWidget.butterflyClass": "Lớp con bướm",
@@ -1298,7 +1297,7 @@
     "home.student.adaptiveLearningJourney.noData": "Visually follow your Adaptive learning journey with this interactive map.",
     "home.student.adaptiveLearningJourneyNoData.sample": "Sample",
     "home.student.completion.noData": "Get a summary of the completion status of all assignments from your teacher",
-    "home.student.learningOutcomeSummary.noData": "You will see your top 5 skill areas from the last 7 days.",
+    "home.student.learningOutcomeSummary.noData": "Bạn sẽ được xem 5 kỹ năng tốt nhất của bạn trong vòng 7 ngày vừa qua.",
     "home.student.attendence.noData": "Monitor your attendance within a two weeks period.",
     "home.student.nextClass.noData": "After a teacher schedules classes, you can join your next class from here.",
     "home.student.schedule.nodata": "After a teacher schedules classes, you can view your upcoming classes from here.",
@@ -1316,5 +1315,6 @@
     "home.teacher.pendingAssesments.assesmentsToComplete": "Assessments to complete",
     "home.teacher.contentStatus.noData": "Create content, submit it, and check the status from here.",
     "home.teacher.contentStatus.createLessonPlan": "Create lesson plan",
-    "home.teacher.noDataStatus.scheduleClass": "Schedule a class"
+    "home.teacher.noDataStatus.scheduleClass": "Lên lịch cho một Lớp học",
+    "home.student.completionWidget.title": "7 ngày qua"
 }
