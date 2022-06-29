@@ -150,7 +150,8 @@ const webpackConfig: Configuration = {
             filename: `remoteEntry.js`,
             remotes: {
                 schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
-                assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`
+                assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`,
+                cms: `cms@${process.env.FRONTEND_URL}/remoteEntry.js`,
             },
             shared: {
                 '@kl-engineering/frontend-state': {

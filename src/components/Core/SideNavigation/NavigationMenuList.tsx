@@ -315,7 +315,7 @@ export default function NavigationMenuList (props: Props) {
                             id: `navMenu_analyticsAndReportsTitle`,
                         }),
                         icon: AnalyticsReportsIcon,
-                        link: `/reports`,
+                        link: `/report`,
                     },
                 ]
                 : []),
