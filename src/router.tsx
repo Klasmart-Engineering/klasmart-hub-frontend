@@ -105,7 +105,7 @@ export default function Router (props: Props) {
                     element={<AssessmentsPage />}
                 />
                 <Route
-                    path="/reports/*"
+                    path="/report/*"
                     element={<ReportsPage />}
                 />
                 {teacherStudentProgressReport && (

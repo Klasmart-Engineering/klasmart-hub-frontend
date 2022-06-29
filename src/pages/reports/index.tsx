@@ -1,31 +1,21 @@
-import { getCmsSiteEndpoint } from "@/config";
-import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React from "react";
 
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-        height: `100%`,
-    },
-}));
+import LoadingPage from "@/components/Common/LoadingPage";
+import React,
+{ Suspense } from "react";
 
-interface Props {
-}
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const ReportPageMFE = React.lazy(() => import(`cms/report`));
 
-export default function ReportsPage (props: Props) {
-    const classes = useStyles();
-    const currentOrganization = useCurrentOrganization();
-    const organizationId = currentOrganization?.id ?? ``;
+export default function ReportsPage () {
 
     return (
-        <iframe
-            src={`${getCmsSiteEndpoint()}?org_id=${organizationId}#/report/achievement-list`}
-            frameBorder="0"
-            className={classes.root}
-        />
+        <Suspense
+            fallback={(
+                <LoadingPage />
+            )}
+        >
+            <ReportPageMFE />
+        </Suspense>
     );
 }
