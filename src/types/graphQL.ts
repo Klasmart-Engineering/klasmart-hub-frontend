@@ -370,6 +370,13 @@ export interface Branding {
     primaryColor: string | null;
 }
 
+export interface AgeRangesMutationResult {
+    ageRanges: AgeRangeConnectionNode[];
+}
+
+export interface AgeRangeConnectionNode {
+    id: string;
+}
 export interface SubjectsMutationResult {
     subjects: SubjectConnectionNode[];
 }

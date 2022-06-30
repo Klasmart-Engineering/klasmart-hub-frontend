@@ -7,6 +7,7 @@ import { GET_PAGINATED_AGE_RANGES } from "@/operations/queries/getPaginatedAgeRa
 import {
     AgeRange,
     AgeRangeFilter,
+    AgeRangesMutationResult,
     BooleanFilter,
     Direction,
     SortOrder,
@@ -60,6 +61,10 @@ interface DeleteAgeRangeRequest {
 
 interface EmptyAgeRangeResponse { }
 
+interface DeleteAgeRangeResponse {
+    deleteAgeRanges: AgeRangesMutationResult;
+}
+
 export const useGetAllAgeRanges = (options?: QueryHookOptions<GetAgeRangesResponse, GetAgeRangesRequest>) => {
     return useQuery<GetAgeRangesResponse, GetAgeRangesRequest>(GET_AGE_RANGES, options);
 };
@@ -78,8 +83,8 @@ export const useEditAgeRange = (options?: MutationHookOptions<EmptyAgeRangeRespo
     });
 };
 
-export const useDeleteAgeRange = (options?: MutationHookOptions<EmptyAgeRangeResponse, DeleteAgeRangeRequest>) => {
-    return useMutation<EmptyAgeRangeResponse, DeleteAgeRangeRequest>(DELETE_AGE_RANGE, {
+export const useDeleteAgeRange = (options?: MutationHookOptions<DeleteAgeRangeResponse, DeleteAgeRangeRequest>) => {
+    return useMutation<DeleteAgeRangeResponse, DeleteAgeRangeRequest>(DELETE_AGE_RANGE, {
         ...options,
         refetchQueries: [ GET_PAGINATED_AGE_RANGES ],
     });
