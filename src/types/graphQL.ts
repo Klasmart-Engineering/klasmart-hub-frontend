@@ -1,3 +1,4 @@
+import { GradeNode } from "@/api/grades";
 import { FilterValueOption } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import {
     Dispatch,
@@ -72,6 +73,11 @@ export interface BaseEntity {
     name?: string | null;
     status?: Status | null;
     system?: boolean | null;
+}
+
+export interface PageBaseEntity {
+    totalCount?: number;
+    pageInfo?: PageInfo;
 }
 
 export interface User {
@@ -258,6 +264,89 @@ export interface Program extends BaseEntity {
     subjects?: Subject[] | null;
 }
 
+export interface ProgramsMutationResult {
+    programs?: ProgramConnectionNode[];
+}
+
+export interface ProgramConnectionNode extends BaseEntity {
+    subjectsConnection?: SubjectsConnectionResponse;
+    gradesConnection?: GradesConnectionResponse;
+    ageRangesConnection?: AgeRangesConnectionResponse;
+}
+
+export interface SubjectsConnectionResponse extends PageBaseEntity {
+    edges?: SubjectsConnectionEdge[];
+}
+
+export interface GradesConnectionResponse extends PageBaseEntity {
+    edges?: GradesConnectionEdge[];
+}
+
+export interface AgeRangesConnectionResponse extends PageBaseEntity {
+    edges?: AgeRangesConnectionEdge[];
+}
+
+export interface SubjectsConnectionEdge {
+    cursor?: string;
+    node?: SubjectConnectionNode;
+}
+
+export interface GradesConnectionEdge {
+    cursor?: string;
+    node?: GradeConnectionNode;
+}
+
+export interface AgeRangesConnectionEdge {
+    cursor?: string;
+    node?: AgeRangeConnectionNode;
+}
+
+export interface SubjectConnectionNode extends BaseEntity {
+    categoriesConnection?: CategoriesConnectionResponse;
+}
+
+export interface GradeConnectionNode extends GradeNode {
+
+}
+
+export interface AgeRangeConnectionNode {
+    id: string;
+    name: string;
+    status?: Status;
+    system?: boolean;
+    lowValue?: number;
+    lowValueUnit?: AgeRangeUnit;
+    highValue?: number;
+    highValueUnit?: AgeRangeUnit;
+}
+
+export interface CategoriesConnectionResponse extends PageBaseEntity {
+    edges?: CategoriesConnectionEdge[];
+}
+
+export interface CategoriesConnectionEdge {
+    cursor?: string;
+    node?: CategoryConnectionNode;
+}
+
+export interface CategoryConnectionNode extends BaseEntity {
+    subjectsConnection?: SubjectsConnectionResponse;
+    subcategoriesConnection?: SubcategoriesConnectionResponse;
+}
+
+export interface SubcategoriesConnectionResponse extends PageBaseEntity {
+    edges?: SubcategoriesConnectionEdge[];
+}
+
+export interface SubcategoriesConnectionEdge {
+    cursor?: string;
+    node?: SubcategoryConnectionNode;
+}
+
+export interface SubcategoryConnectionNode extends BaseEntity {
+
+}
+
 export interface Category extends BaseEntity {
     subcategories?: Subcategory[] | null;
 }
@@ -290,6 +379,7 @@ export interface UuidFilter {
     operator: UuidOperator;
     value: string;
 }
+
 export interface UuidExclusiveFilter {
     operator: UuidExclusiveOperator;
     value?: string;
