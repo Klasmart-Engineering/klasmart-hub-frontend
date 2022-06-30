@@ -1,4 +1,5 @@
 import LoadingPage from "@/components/Common/LoadingPage";
+import { TabTitle } from "@/utils/tabTitle";
 import React,
 { Suspense } from "react";
 
@@ -7,6 +8,7 @@ import React,
 const AssessmentPageMFE = React.lazy(() => import(`assessment/Assessment`));
 
 export default function AssessmentsPage () {
+    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Assessments`);
 
     return (
         <Suspense

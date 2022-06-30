@@ -15,6 +15,7 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
+import { TabTitle } from "@/utils/tabTitle";
 import { Filter } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Filter/Filters";
 import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
@@ -117,6 +118,8 @@ export default function ClassesPage (props: Props) {
     ]);
 
     const rows = data?.classesConnection?.edges?.map(mapClassNodeToClassRow) ?? [];
+
+    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Classes`);
 
     return (
         <ClassTable

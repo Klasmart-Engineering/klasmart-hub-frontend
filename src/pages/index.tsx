@@ -6,6 +6,7 @@ import {
     DashboardMode,
     useDashboardMode,
 } from "@/store/useDashboardMode";
+import { TabTitle } from "@/utils/tabTitle";
 import CachedIcon from '@mui/icons-material/Cached';
 import { CircularProgress } from "@mui/material";
 import {
@@ -26,6 +27,9 @@ const useStyles = makeStyles(() => createStyles({
 export default function HomePage () {
     const intl = useIntl();
     const classes = useStyles();
+
+    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Home`);
+
     const {
         dashboardMode,
         showDashboardNoticeToggle,
@@ -36,9 +40,10 @@ export default function HomePage () {
     } = useDashboardMode();
 
     if (loading)
-        return <CircularProgress
+        return (<CircularProgress
             color="primary"
-            className={classes.pageLoading}/>;
+            className={classes.pageLoading}
+                />);
 
     if (dashboardMode === DashboardMode.WIDGET && (view === WidgetView.STUDENT || view === WidgetView.TEACHER)) {
         return (
@@ -63,7 +68,8 @@ export default function HomePage () {
                             onClick: () => {
                                 setToOriginalDashboard();
                             },
-                        }} />
+                        }}
+                    />
                 }
                 <div id="widgetDashBaord"><WidgetDashboard view={view} /></div>
             </>
@@ -87,7 +93,8 @@ export default function HomePage () {
                         onClick: () => {
                             setToWidgetDashboard();
                         },
-                    }} />
+                    }}
+                />
             }
             <Dashboard />
         </>
