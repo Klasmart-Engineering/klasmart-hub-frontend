@@ -366,6 +366,14 @@ export interface Branding {
     primaryColor: string | null;
 }
 
+export interface SubjectsMutationResult {
+    subjects: SubjectConnectionNode[];
+}
+
+export interface SubjectConnectionNode {
+    id: string;
+}
+
 export type UuidOperator = `eq` | `neq`;
 
 export type UuidExclusiveOperator = `eq` | `neq` | `isNull`;
