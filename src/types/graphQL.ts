@@ -353,6 +353,14 @@ export interface Category extends BaseEntity {
 
 export type Subcategory = BaseEntity
 
+export interface SchoolsMutationResult {
+   schools: SchoolConnectionNode[];
+}
+
+export interface SchoolConnectionNode {
+    id: string;
+    name: string;
+}
 export interface Branding {
     iconImageURL: string | null;
     primaryColor: string | null;
