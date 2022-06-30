@@ -11,6 +11,7 @@ import {
     BooleanFilter,
     Direction,
     Grade,
+    GradesMutationResult,
     SortOrder,
     Status,
     StatusFilter,
@@ -110,7 +111,7 @@ interface DeleteGradeRequest {
 }
 
 interface DeleteGradeResponse {
-    result: boolean;
+    deleteGrades: GradesMutationResult;
 }
 
 export const useDeleteGrade = (options?: MutationHookOptions<DeleteGradeResponse, DeleteGradeRequest>) => {
