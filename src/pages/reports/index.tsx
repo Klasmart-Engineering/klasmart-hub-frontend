@@ -1,6 +1,6 @@
 import { getCmsSiteEndpoint } from "@/config";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { TabTitle } from "@/utils/tabTitle";
+import { tabTitle } from "@/utils/tabTitle";
 import {
     createStyles,
     makeStyles,
@@ -21,7 +21,7 @@ export default function ReportsPage (props: Props) {
     const classes = useStyles();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
-    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Analytics & Reports`);
+    tabTitle(`Analytics & Reports`);
 
     return (
         <iframe

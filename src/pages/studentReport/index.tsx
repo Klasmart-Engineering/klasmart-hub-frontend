@@ -15,6 +15,7 @@ import {
   createStyles,
   makeStyles,
 } from '@mui/styles';
+import { tabTitle } from "@/utils/tabTitle";
 
 const useStyles = makeStyles(() => createStyles({
   pageLoading: {
@@ -55,6 +56,8 @@ export default function StudentReport(props: Props) {
     setClassDetail(classDetail);
     setTab(`performance`);
   };
+
+  tabTitle(`Student Report`);
 
   return (error ? <WidgetWrapperError /> :
     <Box padding={2} height={'100%'}>

@@ -10,6 +10,7 @@ import OrganizationForm,
 { OrganizationTabName } from '@/components/Organization/Form';
 import { OrganizationTab } from "@/types/graphQL";
 import { buildEmptyOrganization } from "@/utils/organization";
+import { tabTitle } from "@/utils/tabTitle";
 import {
     Button,
     Card,
@@ -176,6 +177,8 @@ export default function EditOrganizationPage () {
         if (!organizationData) return;
         setOrganizationState(organizationData.organization);
     }, [ loading, organizationData ]);
+
+    tabTitle(`Edit Organization`);
 
     return (
         <Container

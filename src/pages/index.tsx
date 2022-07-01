@@ -6,7 +6,7 @@ import {
     DashboardMode,
     useDashboardMode,
 } from "@/store/useDashboardMode";
-import { TabTitle } from "@/utils/tabTitle";
+import { tabTitle } from "@/utils/tabTitle";
 import CachedIcon from '@mui/icons-material/Cached';
 import { CircularProgress } from "@mui/material";
 import {
@@ -28,7 +28,7 @@ export default function HomePage () {
     const intl = useIntl();
     const classes = useStyles();
 
-    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Home`);
+    tabTitle(`Home`);
 
     const {
         dashboardMode,

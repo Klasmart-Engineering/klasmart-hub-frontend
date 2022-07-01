@@ -1,4 +1,5 @@
 import KidsloopLogo from "@/assets/img/kidsloop.svg";
+import { tabTitle } from "@/utils/tabTitle";
 import { Typography } from "@mui/material";
 import { Theme } from '@mui/material/styles';
 import {
@@ -42,6 +43,9 @@ const useStyles = makeStyles((theme: Theme) => {
 
 export default function GeneratedData () {
     const classes = useStyles();
+
+    tabTitle(`User Deletion`);
+
     return (
         <div className={classes.root}>
             <div className={classes.container}>

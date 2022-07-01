@@ -11,6 +11,7 @@ import { useIntl } from "react-intl";
 import { Button } from "@kl-engineering/kidsloop-px"
 import { Theme } from "@mui/material";
 import { useState } from "react";
+import { tabTitle } from "@/utils/tabTitle";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -64,6 +65,9 @@ export default function UserDeleteConfirmationPage() {
     const redirectUser = (result: `success` | `cancel` | `error`) => {
         window.location.href = `kidsloopstudent://account-deletion?result=${result}`;
     };
+    
+    tabTitle(`User Delete Confirmation`);
+
     return (
         <Box className={classes.root} >
             <img src={KidsloopLogo} className={classes.kidsloopLogo} />

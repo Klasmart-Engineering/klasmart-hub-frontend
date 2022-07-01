@@ -8,6 +8,7 @@ import OrganizationForm,
 { OrganizationTabName } from "@/components/Organization/Form";
 import { OrganizationTab } from "@/types/graphQL";
 import { buildEmptyOrganization } from "@/utils/organization";
+import { tabTitle } from "@/utils/tabTitle";
 import {
     Button,
     Card,
@@ -135,6 +136,8 @@ export default function CreateOrganizationPage () {
             });
         }
     };
+
+    tabTitle(`Create Organization`);
 
     return (
         <Container

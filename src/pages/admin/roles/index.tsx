@@ -15,7 +15,7 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import { TabTitle } from "@/utils/tabTitle";
+import { tabTitle } from "@/utils/tabTitle";
 import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
@@ -118,7 +118,7 @@ export default function RolesPage () {
         setRows(rows ?? []);
     }, [ rolesData ]);
 
-    TabTitle(`Kidsloop | Interactive Digital Platform for Education | Roles`);
+    tabTitle(`Roles`);
 
     return (
         <RolesTable

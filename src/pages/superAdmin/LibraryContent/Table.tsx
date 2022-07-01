@@ -19,6 +19,7 @@ import {
 } from "@/types/objectTypes";
 import { handleError } from "@/utils/images";
 import { getTableLocalization } from "@/utils/table";
+import { tabTitle } from "@/utils/tabTitle";
 import {
     PageTable,
     usePrompt,
@@ -443,6 +444,8 @@ export default function LibraryTable (props: Props) {
         setSelectedContentBulk(selectedContentBulk);
         setOpenMoveDialog(true);
     };
+
+    tabTitle(`Content Library`);
 
     return (
         <>

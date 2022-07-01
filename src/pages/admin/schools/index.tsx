@@ -13,7 +13,7 @@ import {
     serverToTableOrder,
     tableToServerOrder,
 } from "@/utils/table";
-import { TabTitle } from "@/utils/tabTitle";
+import { tabTitle } from "@/utils/tabTitle";
 import { Order } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
@@ -107,7 +107,7 @@ export default function SchoolsPage (props: Props) {
         .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
         ?? [];
 
-        TabTitle(`Kidsloop | Interactive Digital Platform for Education | Schools`);
+        tabTitle(`Schools`);
 
     return (
         <SchoolTable
