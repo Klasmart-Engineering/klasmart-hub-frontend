@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { tabTitle } from "@/utils/tabTitle";
 import { Tabs } from "@kl-engineering/kidsloop-px";
 import { Tab } from "@kl-engineering/kidsloop-px/dist/src/components/Tabs";
 import { Theme } from "@mui/material";
@@ -70,8 +69,6 @@ const ContentLibraryLayout: React.VFC<ContentLibraryLayoutProps> = (props) => {
             to={tabs[0].value ?? ``}
         />
     );
-
-    tabTitle(`Content Library`);
 
     return (
         <>
