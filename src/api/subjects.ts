@@ -17,6 +17,7 @@ import {
     StatusFilter,
     StringFilter,
     Subject,
+    SubjectsMutationResult,
     UuidFilter,
 } from "@/types/graphQL";
 import { PaginationFilter } from "@/utils/pagination";
@@ -54,6 +55,7 @@ interface DeleteSubjectRequest {
 }
 
 interface DeleteSubjectResponse {
+    deleteSubjects: SubjectsMutationResult;
 }
 
 export const useDeleteSubject = (options?: MutationHookOptions<DeleteSubjectResponse, DeleteSubjectRequest>) => {

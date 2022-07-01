@@ -28,7 +28,8 @@ export const mapProgramNodeToProgramForm = (node: ProgramNode): ProgramForm => (
     name: node.name,
     ageRanges: node.ageRanges?.map(mapNodeToIdString) ?? [],
     grades: node.grades?.map(mapNodeToIdString) ?? [],
-    subjects: node.subjects?.map(mapNodeToIdString) ?? [],
+    subjects: node.subjects?.filter(isActive)
+        ?.map(mapNodeToIdString) ?? [],
 });
 
 export const mapProgramNodeToProgram = (node: ProgramNode): Program => ({

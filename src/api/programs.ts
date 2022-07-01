@@ -18,6 +18,7 @@ import {
     PageInfo,
     PaginationDirection,
     Program,
+    ProgramsMutationResult,
     Status,
     StatusFilter,
     StringFilter,
@@ -72,11 +73,11 @@ export const useDeleteProgram = (options?: MutationHookOptions<DeleteProgramResp
 
 interface EditProgramAgeRangesRequest {
     id: string;
-    age_range_ids: string[];
+    ageRangeIds: string[];
 }
 
 interface EditProgramAgeRangesResponse {
-    program: Program;
+    updatePrograms: ProgramsMutationResult;
 }
 
 export const useEditProgramAgeRanges = (options?: MutationHookOptions<EditProgramAgeRangesResponse, EditProgramAgeRangesRequest>) => {
@@ -85,11 +86,11 @@ export const useEditProgramAgeRanges = (options?: MutationHookOptions<EditProgra
 
 interface EditProgramGradesRequest {
     id: string;
-    grade_ids: string[];
+    gradeIds: string[];
 }
 
 interface EditProgramGradesResponse {
-    program: Program;
+    updatePrograms: ProgramsMutationResult;
 }
 
 export const useEditProgramGrades = (options?: MutationHookOptions<EditProgramGradesResponse, EditProgramGradesRequest>) => {
@@ -98,11 +99,11 @@ export const useEditProgramGrades = (options?: MutationHookOptions<EditProgramGr
 
 interface EditProgramSubjectsRequest {
     id: string;
-    subject_ids: string[];
+    subjectIds: string[];
 }
 
 interface EditProgramSubjectsResponse {
-    program: Program;
+    updatePrograms: ProgramsMutationResult;
 }
 
 export const useEditProgramSubjects = (options?: MutationHookOptions<EditProgramSubjectsResponse, EditProgramSubjectsRequest>) => {

@@ -172,7 +172,7 @@ export default function SubjectsTable (props: Props) {
         const last = ids[ids.length - 1];
 
         if (ids.length > 1 && last === nonSpecifiedId) {
-            ids.splice(0, ids.length -1);
+            ids.splice(0, ids.length - 1);
             setTableSelectedIds([ ...ids ]);
             return;
         }
@@ -228,15 +228,16 @@ export default function SubjectsTable (props: Props) {
             }),
             disableSort: true,
             disableSearch: true,
-            render: (row) => (<>
-                {row.categories.map((category, i) => (
-                    <Chip
-                        key={`category-${i}`}
-                        label={category}
-                        className={classes.chip}
-                    />
-                ))}
-                              </>),
+            render: (row) => (
+                <>
+                    {row.categories.map((category, i) => (
+                        <Chip
+                            key={`category-${i}`}
+                            label={category}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>),
         },
         {
             id: `system`,

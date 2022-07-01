@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.66.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.66.0%0Dv2.65.0) (2022-06-30)
+
+
+### ♻️ Chores
+
+* **DT-847:** Student Progress Report Translations (#169) ([367bd9d](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/367bd9d398e2a568230cb7afb30f5d09c327194c)), closes [DT-847](https://calmisland.atlassian.net/browse/DT-847)
+
+
+### ✨ Features
+
+* display warning for delete user by admin level (#130) ([8749603](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/8749603106ad2e93247b961e5af57a5841bc79e1))
+
+
+### 🐛 Bug Fixes
+
+* remove inactive subjects from program summary (#173) ([ca1b910](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/ca1b91043ca61fbc8f47d2416da45abb4c378f28))
+* remove reference of all the program mutation which are deprecating (#146) ([bd1ae1f](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/bd1ae1f866c8c0134546f7d67709e6d89a242e0e))
+* update mutation school set (#166) ([0a49971](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/0a499715e29594ec0678d20a87f84ed7962986cd))
+* update the mutation agerange (#170) ([56b75f8](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/56b75f83812f8e9521392a84932cbcdb2cf4730c))
+* update the mutation grade delete (#168) ([4422f06](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/4422f06494a8d04efbc2c0533c9d3321d4154c53))
+* update the mutation subject (#147) ([97b6c60](https://github.com/KL-Engineering/kidsloop-hub-frontend/commits/97b6c60ac3b296ae20d3f3e6fad68dd626a4b383))
+
 ## [2.65.0](https://github.com/KL-Engineering/kidsloop-hub-frontend/branches/compare/v2.65.0%0Dv2.64.0) (2022-06-27)
 
 

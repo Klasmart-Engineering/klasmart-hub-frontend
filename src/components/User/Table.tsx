@@ -243,7 +243,8 @@ export default function UserTable(props: Props) {
                 id: `users_deleteTitle`,
             }),
             entityName: userName,
-        }))) return;
+            isUser: true
+           }))) return;
         try {
             await deleteUserInOrganization({
                 variables: {

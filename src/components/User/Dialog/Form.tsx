@@ -161,7 +161,7 @@ export default function UserDialogForm (props: Props) {
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
-    const [ birthdayErrorMessge, setBirthdayErrorMessage ] = useState<string | nulll>(null);
+    const [ birthdayErrorMessge, setBirthdayErrorMessage ] = useState<string | null>(null);
     const [ allSchools, setAllSchools ] = useState<SchoolRow[]>([]);
     const { data: schoolsData, refetch: refetchSchoolsData } = useGetPaginatedSchools({
         variables: {

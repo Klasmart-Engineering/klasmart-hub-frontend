@@ -1,12 +1,14 @@
+import { useQueryMyUser } from "@/api/myUser";
 import { useValidations } from "@/utils/validations";
 import { usePrompt } from "@kl-engineering/kidsloop-px";
-import { DialogContentText } from "@mui/material";
+import { DialogContentText, Link } from "@mui/material";
 import React from "react";
 import { useIntl } from "react-intl";
 
 interface DeleteEntity {
     title: string;
     entityName: string;
+    isUser?: boolean
 }
 
 interface MarkInactiveEntity extends DeleteEntity { }
@@ -15,8 +17,10 @@ export const useDeleteEntityPrompt = () => {
     const intl = useIntl();
     const { required, equals } = useValidations();
     const prompt = usePrompt();
+    const { data: meData } = useQueryMyUser();
+    const adminName = meData && `${meData.myUser.node.givenName} ${meData.myUser.node.familyName}`;
     return (props: DeleteEntity) => {
-        const { entityName, title } = props;
+        const { entityName, title, isUser } = props;
         return prompt({
             variant: `error`,
             title,
@@ -34,6 +38,26 @@ export const useDeleteEntityPrompt = () => {
                             userName: entityName,
                         })}
                     </DialogContentText>
+                    {isUser &&
+                        <DialogContentText>
+                            {
+                                intl.formatMessage({
+                                    id: `user.delete.warning`,
+                                }, {
+                                    entityName,
+                                    link:
+                                        <Link
+                                            href="#/user-deletion-warning"
+                                            target="_blank"
+                                        >
+                                            {intl.formatMessage({
+                                                id: `user.generatedData.link`,
+                                            })}
+                                        </Link>,
+                                    adminName,
+                                })}
+                        </DialogContentText>
+                    }
                     <DialogContentText>{intl.formatMessage({
                         id: `generic_typeToRemovePrompt`,
                     }, {

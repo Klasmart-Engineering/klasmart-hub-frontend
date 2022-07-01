@@ -9,6 +9,7 @@ import {
     useGetSchoolNode,
     useUpdateSchool,
 } from "@/api/schools";
+import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
     buildEmptySchoolNode,
     mapSchoolNodeToSchoolStepper,
@@ -72,6 +73,7 @@ export default function EditSchoolDialog (props: Props) {
     } = useValidations();
     const { enqueueSnackbar } = useSnackbar();
     const [ updateSchool ] = useUpdateSchool();
+    const currentOrganization = useCurrentOrganization();
     const {
         data: schoolNodeData,
         refetch,
@@ -200,9 +202,10 @@ export default function EditSchoolDialog (props: Props) {
         try {
             await updateSchool({
                 variables: {
-                    school_id: id,
-                    school_name: name ?? ``,
-                    shortcode: shortcode ?? undefined,
+                    id: id,
+                    organizationId: currentOrganization?.id ?? ``,
+                    name: name ?? ``,
+                    shortCode: shortcode ?? undefined,
                 },
             });
             await editSchoolPrograms({
