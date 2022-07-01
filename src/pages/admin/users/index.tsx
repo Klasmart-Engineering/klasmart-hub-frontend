@@ -178,7 +178,7 @@ export default function UsersPage () {
         setRows(rows);
     }, [ usersData ]);
 
-    tabTitle(`User`);
+    tabTitle(`Users`);
 
     return (
         <UserTable
