@@ -338,34 +338,36 @@ export default function PerformanceRates(props: Props) {
                                             <OverallPerformanceLegend />
                                         </>}
                                 </TabPanelUnstyled>
-                                <TabPanelUnstyled value={1}>
-                                    {!skillPerformanceData.length ?
-                                        <WidgetWrapperNoData /> :
-                                        <ParentSize>
-                                            {({ width, height }) => (
-                                                <>
-                                                    <SkillPerformance
-                                                        data={skillPerformanceData[page].data}
-                                                        width={width}
-                                                        height={height}
-                                                        timeRange={timeRange.label}
-                                                        filterItems={filterItems}
-                                                        viewScores={viewScores}
-                                                        selectedNodeId={selectedNodeId}
-                                                        selectedStudent={selectedStudent}
-                                                        selectedGroup={selectedGroup} />
-                                                    <Box style={{ height: 40, width: width, textAlign: 'center' }}>
-                                                        <Typography color={theme.palette.grey[600]}>{page + 1}/{skillPerformanceData.length}</Typography>
-                                                    </Box>
-                                                    <ArrowForwardIosRoundedIcon onClick={handleNext} className={classes.skillArrowIcons} style={{ right: 10, display: (page + 1) === skillPerformanceData.length ? `none` : `initial` }} />
-                                                    <ArrowBackIosRoundedIcon onClick={handlePrevious} className={classes.skillArrowIcons} style={{ left: 10, display: page === 0 ? `none` : `initial` }} />
-                                                    <Box display="flex" paddingLeft={theme.spacing(5)}>
-                                                        <SkillPerformanceLegend height={height} />
-                                                    </Box>
-                                                </>
-                                            )}
-                                        </ParentSize>}
-                                </TabPanelUnstyled>
+                                <Box paddingTop={theme.spacing(3)}>
+                                    <TabPanelUnstyled value={1}>
+                                        {!skillPerformanceData.length ?
+                                            <WidgetWrapperNoData /> :
+                                            <ParentSize>
+                                                {({ width, height }) => (
+                                                    <>
+                                                        <SkillPerformance
+                                                            data={skillPerformanceData[page].data}
+                                                            width={width}
+                                                            height={height}
+                                                            timeRange={timeRange.label}
+                                                            filterItems={filterItems}
+                                                            viewScores={viewScores}
+                                                            selectedNodeId={selectedNodeId}
+                                                            selectedStudent={selectedStudent}
+                                                            selectedGroup={selectedGroup} />
+                                                        <Box style={{ height: 40, width: width, textAlign: 'center' }}>
+                                                            <Typography color={theme.palette.grey[600]}>{page + 1}/{skillPerformanceData.length}</Typography>
+                                                        </Box>
+                                                        <ArrowForwardIosRoundedIcon onClick={handleNext} className={classes.skillArrowIcons} style={{ right: 10, display: (page + 1) === skillPerformanceData.length ? `none` : `initial` }} />
+                                                        <ArrowBackIosRoundedIcon onClick={handlePrevious} className={classes.skillArrowIcons} style={{ left: 10, display: page === 0 ? `none` : `initial` }} />
+                                                        <Box display="flex" paddingLeft={theme.spacing(5)}>
+                                                            <SkillPerformanceLegend height={height} />
+                                                        </Box>
+                                                    </>
+                                                )}
+                                            </ParentSize>}
+                                    </TabPanelUnstyled>
+                                </Box>
                             </>}
                 </TabsUnstyled>
             </Box>

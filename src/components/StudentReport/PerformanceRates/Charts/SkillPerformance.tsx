@@ -129,7 +129,7 @@ export default function SkillPerformance (props: Props) {
     const achievementTotals = data.reduce((totals, skill) => (
         totals.concat(skill.performanceScores.achieved + skill.performanceScores.notAchieved + skill.learningOutcomeScores.achieved + skill.learningOutcomeScores.notAchieved)
     ), [] as number[]);
-    const maxScore = roundNumber(Math.max(...achievementTotals)) + 40;
+    const maxScore = roundNumber(Math.max(...achievementTotals)) + 20;
     const axisLeftNumTick = 5;
     const others = intl.formatMessage({
         id: `home.student.learningOutcomeWidget.others`,
@@ -137,6 +137,8 @@ export default function SkillPerformance (props: Props) {
     });
     const getSkill = (d: any) => d.name ? d.name : others;
     const getGroupSkill = (d: Data) => d.performanceScores.name ? d.performanceScores.name : others;
+    const maxGroupHeight = 340; // The max height of the box contains all visx elements.
+    
     // Defining scales
     const xScale = scaleBand<string>({
         range: [ margin.left, innerWidth ],
@@ -156,7 +158,7 @@ export default function SkillPerformance (props: Props) {
         domain: [ 0, maxScore ],
     });
     const yScale = scaleLinear<number>({
-        domain: [ 0, maxScore ],
+        domain: [ 0, maxScore < maxGroupHeight ? maxScore : (maxScore + (maxScore - maxGroupHeight)*2/3) ],
         range: [ innerHeight, 0 ],
     });
     const colorRange = [ achievedColor, notAchievedColor ];
@@ -198,11 +200,11 @@ export default function SkillPerformance (props: Props) {
     return (
         <Box
             position="relative"
-            paddingTop={theme.spacing(3)}
+            // paddingTop={theme.spacing(3)}
         >
             <svg
                 width="100%"
-                height={340}
+                height={maxGroupHeight}
             >
                 {/* Chart Grid Lines */}
                 <GridRows
@@ -242,7 +244,7 @@ export default function SkillPerformance (props: Props) {
                     <BarGroup
                         data={data}
                         keys={scoreKeys}
-                        height={height}
+                        height={innerHeight}
                         x0={getGroupSkill}
                         x0Scale={x0Scale}
                         x1Scale={x1Scale}
