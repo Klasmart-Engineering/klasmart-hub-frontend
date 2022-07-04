@@ -107,7 +107,7 @@ export default function ContentStatusWidget () {
                 })
             }
             link={{
-                url: `library/organization-content`,
+                url: `library/my-content-list?publish_status=published&page=1`,
                 label: intl.formatMessage({
                     id: `home.contentStatus.containerUrlLabel`,
                 }),
