@@ -56,8 +56,14 @@ export function mapUserNodeToFormState (organizationId: string, user: UserNode):
         alternativeEmail: user?.alternateContactInfo?.email ?? ``,
         alternativePhone: user?.alternateContactInfo?.phone ?? ``,
         shortcode: user.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
-        schools: schoolMemberships.filter((school) => organizationId === school.organizationId && school.status === Status.ACTIVE)?.map(school => school.id ?? ``) ?? [],
-        roles: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.id ?? ``) ?? [],
+        schools: schoolMemberships.filter((school) => organizationId === school.organizationId && school.status === Status.ACTIVE)
+            ?.map(school => school.id ?? ``) ?? [],
+        roles: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE))
+            .flat()
+            .map((role) => ({
+                value: role?.id,
+                label: role?.name,
+            })) ?? [],
     };
 }
 

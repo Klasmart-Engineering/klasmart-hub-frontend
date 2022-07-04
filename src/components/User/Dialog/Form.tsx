@@ -11,6 +11,7 @@ import { roleNameTranslations } from "@/utils/userRoles";
 import { UserGenders } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import {
+    ComboBox,
     Select,
     TextField,
 } from "@kl-engineering/kidsloop-px";
@@ -120,7 +121,7 @@ export interface State {
     birthday: string;
     shortcode: string;
     gender: string;
-    roles: string[];
+    roles: any[];
     schools: string[];
     alternativeEmail: string;
     alternativePhone: string;
@@ -643,14 +644,17 @@ export default function UserDialogForm (props: Props) {
                     />
                 )}
             </FormControl>
-            <Select
+            <ComboBox
                 multiple
                 fullWidth
                 id={`roles`}
                 label={intl.formatMessage({
                     id: `createUser_rolesLabel`,
                 })}
-                items={availableRoles}
+                options={availableRoles.map(role => ({
+                    value: role.role_id,
+                    label: role.role_name,
+                }))}
                 value={roleIds}
                 validations={[
                     required(intl.formatMessage({
@@ -659,17 +663,6 @@ export default function UserDialogForm (props: Props) {
                         attribute: attributes.roles,
                     })),
                 ]}
-                itemText={(role) =>
-                    role.role_name && roleNameTranslations[role.role_name]
-                        ? intl.formatMessage({
-                            id: roleNameTranslations[role.role_name],
-                        })
-                        : role.role_name ?? ``
-                }
-                itemValue={(role) => role.role_id}
-                selectAllLabel={intl.formatMessage({
-                    id: `users_selectAll`,
-                })}
                 onChange={setRoleIds}
                 onValidate={setRoleIdsValid}
             />
