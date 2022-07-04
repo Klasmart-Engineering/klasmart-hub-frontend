@@ -200,7 +200,6 @@ export default function SkillPerformance (props: Props) {
     return (
         <Box
             position="relative"
-            // paddingTop={theme.spacing(3)}
         >
             <svg
                 width="100%"
