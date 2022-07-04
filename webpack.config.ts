@@ -148,15 +148,12 @@ const webpackConfig: Configuration = {
             name: `hub`,
             filename: `remoteEntry.js`,
             remotes: {
-                schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
                 reports: `reports@https://fe.alpha.kidsloop.net:8082/remoteEntry.js`,
+                schedule: `schedule@${process.env.SCHEDULE_FRONTEND_URL}/remoteEntry.js`,
                 assessment: `assessment@${process.env.ASSESSMENT_FRONTEND_URL}/remoteEntry.js`,
             },
             shared: {
-                '@kl-engineering/frontend-state': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
-                },
+                "react-query": `3.32.1`,
                 react: {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`react`],
@@ -165,25 +162,12 @@ const webpackConfig: Configuration = {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`react-dom`],
                 },
-                'react-intl': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`react-intl`],
-                },
                 'react-cookie': {
                     singleton: true,
                 },
-                '@mui/icons-material': {
+                'react-intl': {
                     singleton: true,
-                },
-                '@mui/lab': {
-                    singleton: true,
-                },
-                '@mui/material': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/material`],
-                },
-                '@mui/styles': {
-                    singleton: true,
+                    requiredVersion: pkg.dependencies[`react-intl`],
                 },
                 '@kl-engineering/reports-api-client': {
                     singleton: true,
@@ -193,15 +177,20 @@ const webpackConfig: Configuration = {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`@kl-engineering/cms-api-client`],
                 },
+                '@kl-engineering/frontend-state': {
+                    singleton: true,
+                    requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
+                },
                 '@kl-engineering/kidsloop-px': {
                     singleton: true,
+                    requiredVersion: pkg.dependencies[`@kl-engineering/kidsloop-px`],
                 },
-                lodash: {
+                '@mui/material': {
                     singleton: true,
+                    requiredVersion: pkg.dependencies[`@mui/material`],
                 },
-                '@emotion/styled': {
+                '@mui/styles': {
                     singleton: true,
-                    requiredVersion: pkg.dependencies[`@emotion/styled`],
                 },
                 '@emotion/react': {
                     singleton: true,
