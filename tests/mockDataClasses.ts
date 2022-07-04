@@ -41,7 +41,7 @@ export const mockClass = {
                 ],
             },
         ],
-        schools:[
+        schools: [
             {
                 school_id: mockSchoolId2,
                 school_name: mockSchoolName2,
@@ -89,7 +89,7 @@ export const mockClass = {
 };
 
 export const mockClasses = {
-    totalCount:10,
+    totalCount: 10,
     pageInfo: {
         hasNextPage: true,
         hasPreviousPage: false,
@@ -99,350 +99,361 @@ export const mockClasses = {
     edges: [
         {
             node: {
-                id:`7d9c1f10-8be7-4501-a541-5cf0d5382025`,
-                name:`Class 6`,
+                id: `7d9c1f10-8be7-4501-a541-5cf0d5382025`,
+                name: `Class 6`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
             node: {
-                id:`ab3807a6-1f98-4c16-9a38-c0d5426bcab4`,
-                name:`Class 7`,
+                id: `ab3807a6-1f98-4c16-9a38-c0d5426bcab4`,
+                name: `Class 7`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
             node: {
-                id:`a4e5acc2-b00a-4797-95bd-fcaaec2729af`,
-                name:`Class 9`,
+                id: `a4e5acc2-b00a-4797-95bd-fcaaec2729af`,
+                name: `Class 9`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
-            },
-        },
-        {
-            node:{
-                id:`abf4c567-dd65-43c1-919b-7c19e6463eaf`,
-                name:`Class Grade 2`,
-                status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
             node: {
-                id:`738d15ec-138d-4596-acba-30d89747abe6`,
-                name:`Class Grade 3`,
+                id: `abf4c567-dd65-43c1-919b-7c19e6463eaf`,
+                name: `Class Grade 2`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
-            node:{
-                id:`419b79c3-0b64-4e46-8f7d-12e35abb7e26`,
-                name:`Elem 10`,
+            node: {
+                id: `738d15ec-138d-4596-acba-30d89747abe6`,
+                name: `Class Grade 3`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
-            node:{
-                id:`9b44b46c-4597-4ce3-8320-250e958c989a`,
-                name:`Elem 8`,
+            node: {
+                id: `419b79c3-0b64-4e46-8f7d-12e35abb7e26`,
+                name: `Elem 10`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
-            node:{
-                id:`4f9ddd93-4ac5-4c59-95ee-4a29698588c6`,
-                name:`Elementary 5`,
+            node: {
+                id: `9b44b46c-4597-4ce3-8320-250e958c989a`,
+                name: `Elem 8`,
                 status: Status.ACTIVE,
-                schools:[
-                    {
-                        id:`649e1722-1cab-4930-99b2-ad6bd0278e0d`,
-                        name:`Online Elementary`,
-                    },
-                ],
-                ageRanges:[],
-                grades:[
-                    {
-                        id:`98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
-                        name:`None Specified`,
-                    },
-                ],
-                subjects:[],
-                programs:[
-                    {
-                        id:`75004121-0c0d-486c-ba65-4c57deacb44b`,
-                        name:`ESL`,
-                    },
-                    {
-                        id:`14d350f1-a7ba-4f46-bef9-dc847f0cbac5`,
-                        name:`Math`,
-                    },
-                    {
-                        id:`04c630cc-fabe-4176-80f2-30a029907a33`,
-                        name:`Science`,
-                    },
-                    {
-                        id:`b39edb9a-ab91-4245-94a4-eb2b5007c033`,
-                        name:`Bada Genius`,
-                    },
-                    {
-                        id:`4591423a-2619-4ef8-a900-f5d924939d02`,
-                        name:`Bada Math`,
-                    },
-                    {
-                        id:`7a8c5021-142b-44b1-b60b-275c29d132fe`,
-                        name:`Bada Read`,
-                    },
-                    {
-                        id:`93f293e8-2c6a-47ad-bc46-1554caac99e4`,
-                        name:`Bada Rhyme`,
-                    },
-                    {
-                        id:`56e24fa0-e139-4c80-b365-61c9bc42cd3f`,
-                        name:`Bada Sound`,
-                    },
-                    {
-                        id:`d1bbdcc5-0d80-46b0-b98e-162e7439058f`,
-                        name:`Bada STEM`,
-                    },
-                    {
-                        id:`f6617737-5022-478d-9672-0354667e0338`,
-                        name:`Bada Talk`,
-                    },
-                    {
-                        id:`cdba0679-5719-47dc-806d-78de42026db6`,
-                        name:`Bada STEAM 1`,
-                    },
-                ],
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
         {
-            node:{
-                id:`c578a23d-a8d2-4284-a24f-0326d62853d7`,
-                name:`Grade 1 Class`,
+            node: {
+                id: `4f9ddd93-4ac5-4c59-95ee-4a29698588c6`,
+                name: `Elementary 5`,
                 status: Status.ACTIVE,
-                schools:[
+                schools: [
                     {
-                        id:`649e1722-1cab-4930-99b2-ad6bd0278e0d`,
-                        name:`Online Elementary`,
+                        id: `649e1722-1cab-4930-99b2-ad6bd0278e0d`,
+                        name: `Online Elementary`,
                     },
                 ],
-                ageRanges:[
+                ageRanges: [],
+                grades: [
                     {
-                        id:`7965d220-619d-400f-8cab-42bd98c7d23c`,
-                        name:`3 - 4 year(s)`,
-                        lowValue:3,
-                        lowValueUnit:`year`,
-                        highValue:4,
-                        highValueUnit:`year`,
-                    },
-                    {
-                        id:`bb7982cd-020f-4e1a-93fc-4a6874917f07`,
-                        name:`4 - 5 year(s)`,
-                        lowValue:4,
-                        lowValueUnit:`year`,
-                        highValue:5,
-                        highValueUnit:`year`,
-                    },
-                    {
-                        id:`fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
-                        name:`5 - 6 year(s)`,
-                        lowValue:5,
-                        lowValueUnit:`year`,
-                        highValue:6,
-                        highValueUnit:`year`,
-                    },
-                    {
-                        id:`145edddc-2019-43d9-97e1-c5830e7ed689`,
-                        name:`6 - 7 year(s)`,
-                        lowValue:6,
-                        lowValueUnit:`year`,
-                        highValue:7,
-                        highValueUnit:`year`,
-                    },
-                    {
-                        id:`21f1da64-b6c8-4e74-9fef-09d08cfd8e6c`,
-                        name:`7 - 8 year(s)`,
-                        lowValue:7,
-                        lowValueUnit:`year`,
-                        highValue:8,
-                        highValueUnit:`year`,
+                        id: `98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
+                        name: `None Specified`,
                     },
                 ],
-                grades:[
+                subjects: [],
+                programs: [
                     {
-                        id:`a9f0217d-f7ec-4add-950d-4e8986ab2c82`,
-                        name:`Kindergarten`,
+                        id: `75004121-0c0d-486c-ba65-4c57deacb44b`,
+                        name: `ESL`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`e4d16af5-5b8f-4051-b065-13acf6c694be`,
-                        name:`Grade 1`,
+                        id: `14d350f1-a7ba-4f46-bef9-dc847f0cbac5`,
+                        name: `Math`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`b20eaf10-3e40-4ef7-9d74-93a13782d38f`,
-                        name:`PreK-3`,
+                        id: `04c630cc-fabe-4176-80f2-30a029907a33`,
+                        name: `Science`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`89d71050-186e-4fb2-8cbd-9598ca312be9`,
-                        name:`PreK-4`,
+                        id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+                        name: `Bada Genius`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`abc900b9-5b8c-4e54-a4a8-54f102b2c1c6`,
-                        name:`PreK-5`,
+                        id: `4591423a-2619-4ef8-a900-f5d924939d02`,
+                        name: `Bada Math`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`3ee3fd4c-6208-494f-9551-d48fabc4f42a`,
-                        name:`PreK-6`,
+                        id: `7a8c5021-142b-44b1-b60b-275c29d132fe`,
+                        name: `Bada Read`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`781e8a08-29e8-4171-8392-7e8ac9f183a0`,
-                        name:`PreK-7`,
+                        id: `93f293e8-2c6a-47ad-bc46-1554caac99e4`,
+                        name: `Bada Rhyme`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`d7e2e258-d4b3-4e95-b929-49ae702de4be`,
-                        name:`PreK-1`,
+                        id: `56e24fa0-e139-4c80-b365-61c9bc42cd3f`,
+                        name: `Bada Sound`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`3e7979f6-7375-450a-9818-ddb09b250bb2`,
-                        name:`PreK-2`,
+                        id: `d1bbdcc5-0d80-46b0-b98e-162e7439058f`,
+                        name: `Bada STEM`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`81dcbcc6-3d70-4bdf-99bc-14833c57c628`,
-                        name:`K`,
+                        id: `f6617737-5022-478d-9672-0354667e0338`,
+                        name: `Bada Talk`,
+                        status: Status.ACTIVE,
                     },
                     {
-                        id:`100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
-                        name:`Grade 1`,
-                    },
-                    {
-                        id:`9d3e591d-06a6-4fc4-9714-cf155a15b415`,
-                        name:`Grade 2`,
-                    },
-                    {
-                        id:`0ecb8fa9-d77e-4dd3-b220-7e79704f1b03`,
-                        name:`PreK-1`,
-                    },
-                    {
-                        id:`66fcda51-33c8-4162-a8d1-0337e1d6ade3`,
-                        name:`PreK-2`,
-                    },
-                    {
-                        id:`98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
-                        name:`None Specified`,
-                    },
-                ],
-                subjects:[
-                    {
-                        id:`7cf8d3a3-5493-46c9-93eb-12f220d101d0`,
-                        name:`Math`,
-                    },
-                    {
-                        id:`fab745e8-9e31-4d0c-b780-c40120c98b27`,
-                        name:`Science`,
-                    },
-                    {
-                        id:`36c4f793-9aa3-4fb8-84f0-68a2ab920d5a`,
-                        name:`Math`,
-                    },
-                    {
-                        id:`29d24801-0089-4b8e-85d3-77688e961efb`,
-                        name:`Science 2`,
-                    },
-                    {
-                        id:`f12276a9-4331-4699-b0fa-68e8df172843`,
-                        name:`STEAM`,
-                    },
-                ],
-                programs:[
-                    {
-                        id:`75004121-0c0d-486c-ba65-4c57deacb44b`,
-                        name:`ESL`,
-                    },
-                    {
-                        id:`14d350f1-a7ba-4f46-bef9-dc847f0cbac5`,
-                        name:`Math`,
-                    },
-                    {
-                        id:`04c630cc-fabe-4176-80f2-30a029907a33`,
-                        name:`Science`,
-                    },
-                    {
-                        id:`b39edb9a-ab91-4245-94a4-eb2b5007c033`,
-                        name:`Bada Genius`,
-                    },
-                    {
-                        id:`4591423a-2619-4ef8-a900-f5d924939d02`,
-                        name:`Bada Math`,
-                    },
-                    {
-                        id:`7a8c5021-142b-44b1-b60b-275c29d132fe`,
-                        name:`Bada Read`,
-                    },
-                    {
-                        id:`93f293e8-2c6a-47ad-bc46-1554caac99e4`,
-                        name:`Bada Rhyme`,
-                    },
-                    {
-                        id:`56e24fa0-e139-4c80-b365-61c9bc42cd3f`,
-                        name:`Bada Sound`,
-                    },
-                    {
-                        id:`d1bbdcc5-0d80-46b0-b98e-162e7439058f`,
-                        name:`Bada STEM`,
-                    },
-                    {
-                        id:`f6617737-5022-478d-9672-0354667e0338`,
-                        name:`Bada Talk`,
-                    },
-                    {
-                        id:`cdba0679-5719-47dc-806d-78de42026db6`,
-                        name:`Bada STEAM 1`,
+                        id: `cdba0679-5719-47dc-806d-78de42026db6`,
+                        name: `Bada STEAM 1`,
+                        status: Status.ACTIVE,
                     },
                 ],
             },
         },
         {
-            node:{
-                id:`9b44b46c-4597-4ce3-8320-250e958c9800`,
-                name:`Last Class`,
+            node: {
+                id: `c578a23d-a8d2-4284-a24f-0326d62853d7`,
+                name: `Grade 1 Class`,
                 status: Status.ACTIVE,
-                schools:[],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                schools: [
+                    {
+                        id: `649e1722-1cab-4930-99b2-ad6bd0278e0d`,
+                        name: `Online Elementary`,
+                    },
+                ],
+                ageRanges: [
+                    {
+                        id: `7965d220-619d-400f-8cab-42bd98c7d23c`,
+                        name: `3 - 4 year(s)`,
+                        lowValue: 3,
+                        lowValueUnit: `year`,
+                        highValue: 4,
+                        highValueUnit: `year`,
+                    },
+                    {
+                        id: `bb7982cd-020f-4e1a-93fc-4a6874917f07`,
+                        name: `4 - 5 year(s)`,
+                        lowValue: 4,
+                        lowValueUnit: `year`,
+                        highValue: 5,
+                        highValueUnit: `year`,
+                    },
+                    {
+                        id: `fe0b81a4-5b02-4548-8fb0-d49cd4a4604a`,
+                        name: `5 - 6 year(s)`,
+                        lowValue: 5,
+                        lowValueUnit: `year`,
+                        highValue: 6,
+                        highValueUnit: `year`,
+                    },
+                    {
+                        id: `145edddc-2019-43d9-97e1-c5830e7ed689`,
+                        name: `6 - 7 year(s)`,
+                        lowValue: 6,
+                        lowValueUnit: `year`,
+                        highValue: 7,
+                        highValueUnit: `year`,
+                    },
+                    {
+                        id: `21f1da64-b6c8-4e74-9fef-09d08cfd8e6c`,
+                        name: `7 - 8 year(s)`,
+                        lowValue: 7,
+                        lowValueUnit: `year`,
+                        highValue: 8,
+                        highValueUnit: `year`,
+                    },
+                ],
+                grades: [
+                    {
+                        id: `a9f0217d-f7ec-4add-950d-4e8986ab2c82`,
+                        name: `Kindergarten`,
+                    },
+                    {
+                        id: `e4d16af5-5b8f-4051-b065-13acf6c694be`,
+                        name: `Grade 1`,
+                    },
+                    {
+                        id: `b20eaf10-3e40-4ef7-9d74-93a13782d38f`,
+                        name: `PreK-3`,
+                    },
+                    {
+                        id: `89d71050-186e-4fb2-8cbd-9598ca312be9`,
+                        name: `PreK-4`,
+                    },
+                    {
+                        id: `abc900b9-5b8c-4e54-a4a8-54f102b2c1c6`,
+                        name: `PreK-5`,
+                    },
+                    {
+                        id: `3ee3fd4c-6208-494f-9551-d48fabc4f42a`,
+                        name: `PreK-6`,
+                    },
+                    {
+                        id: `781e8a08-29e8-4171-8392-7e8ac9f183a0`,
+                        name: `PreK-7`,
+                    },
+                    {
+                        id: `d7e2e258-d4b3-4e95-b929-49ae702de4be`,
+                        name: `PreK-1`,
+                    },
+                    {
+                        id: `3e7979f6-7375-450a-9818-ddb09b250bb2`,
+                        name: `PreK-2`,
+                    },
+                    {
+                        id: `81dcbcc6-3d70-4bdf-99bc-14833c57c628`,
+                        name: `K`,
+                    },
+                    {
+                        id: `100f774a-3d7e-4be5-9c2c-ae70f40f0b50`,
+                        name: `Grade 1`,
+                    },
+                    {
+                        id: `9d3e591d-06a6-4fc4-9714-cf155a15b415`,
+                        name: `Grade 2`,
+                    },
+                    {
+                        id: `0ecb8fa9-d77e-4dd3-b220-7e79704f1b03`,
+                        name: `PreK-1`,
+                    },
+                    {
+                        id: `66fcda51-33c8-4162-a8d1-0337e1d6ade3`,
+                        name: `PreK-2`,
+                    },
+                    {
+                        id: `98461ca1-06a1-432a-97d0-4e1dff33e1a5`,
+                        name: `None Specified`,
+                    },
+                ],
+                subjects: [
+                    {
+                        id: `7cf8d3a3-5493-46c9-93eb-12f220d101d0`,
+                        name: `Math`,
+                    },
+                    {
+                        id: `fab745e8-9e31-4d0c-b780-c40120c98b27`,
+                        name: `Science`,
+                    },
+                    {
+                        id: `36c4f793-9aa3-4fb8-84f0-68a2ab920d5a`,
+                        name: `Math`,
+                    },
+                    {
+                        id: `29d24801-0089-4b8e-85d3-77688e961efb`,
+                        name: `Science 2`,
+                    },
+                    {
+                        id: `f12276a9-4331-4699-b0fa-68e8df172843`,
+                        name: `STEAM`,
+                    },
+                ],
+                programs: [
+                    {
+                        id: `75004121-0c0d-486c-ba65-4c57deacb44b`,
+                        name: `ESL`,
+                    },
+                    {
+                        id: `14d350f1-a7ba-4f46-bef9-dc847f0cbac5`,
+                        name: `Math`,
+                    },
+                    {
+                        id: `04c630cc-fabe-4176-80f2-30a029907a33`,
+                        name: `Science`,
+                    },
+                    {
+                        id: `b39edb9a-ab91-4245-94a4-eb2b5007c033`,
+                        name: `Bada Genius`,
+                    },
+                    {
+                        id: `4591423a-2619-4ef8-a900-f5d924939d02`,
+                        name: `Bada Math`,
+                    },
+                    {
+                        id: `7a8c5021-142b-44b1-b60b-275c29d132fe`,
+                        name: `Bada Read`,
+                    },
+                    {
+                        id: `93f293e8-2c6a-47ad-bc46-1554caac99e4`,
+                        name: `Bada Rhyme`,
+                    },
+                    {
+                        id: `56e24fa0-e139-4c80-b365-61c9bc42cd3f`,
+                        name: `Bada Sound`,
+                    },
+                    {
+                        id: `d1bbdcc5-0d80-46b0-b98e-162e7439058f`,
+                        name: `Bada STEM`,
+                    },
+                    {
+                        id: `f6617737-5022-478d-9672-0354667e0338`,
+                        name: `Bada Talk`,
+                    },
+                    {
+                        id: `cdba0679-5719-47dc-806d-78de42026db6`,
+                        name: `Bada STEAM 1`,
+                    },
+                ],
+            },
+        },
+        {
+            node: {
+                id: `9b44b46c-4597-4ce3-8320-250e958c9800`,
+                name: `Last Class`,
+                status: Status.ACTIVE,
+                schools: [],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
     ],
@@ -526,20 +537,20 @@ export const mockSearchClasses = {
     },
     edges: [
         {
-            node:{
-                id:`9b44b46c-4597-4ce3-8320-250e958c9800`,
-                name:`Mock Class`,
+            node: {
+                id: `9b44b46c-4597-4ce3-8320-250e958c9800`,
+                name: `Mock Class`,
                 status: Status.ACTIVE,
-                schools:[
+                schools: [
                     {
-                        id:`649e1722-1cab-4930-99b2-ad6bd0278e0d`,
-                        name:`Online Mock Elementary`,
+                        id: `649e1722-1cab-4930-99b2-ad6bd0278e0d`,
+                        name: `Online Mock Elementary`,
                     },
                 ],
-                ageRanges:[],
-                grades:[],
-                subjects:[],
-                programs:[],
+                ageRanges: [],
+                grades: [],
+                subjects: [],
+                programs: [],
             },
         },
     ],

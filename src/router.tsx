@@ -1,4 +1,6 @@
+import GeneratedData from "./components/User/Warning/GeneratedData";
 import { updatePageEvent } from "./firebase/config";
+import UserDeleteConfirmationPage from "./pages/admin/users/user-delete-confirmation";
 import { authClient } from "@/api/auth/client";
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import ErrorPage from "@/components/Common/ErrorPage";
@@ -282,6 +284,14 @@ export default function Router (props: Props) {
                             <SuperAdminContentLibraryTable />
                         </Layout>
                     )}
+                />
+                <Route
+                    path="/user-deletion-warning"
+                    element={<GeneratedData />}
+                />
+                <Route
+                    path="/user-deletion-confirmation"
+                    element={<UserDeleteConfirmationPage />}
                 />
                 <Route
                     path="/*"

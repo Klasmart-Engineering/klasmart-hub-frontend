@@ -60,7 +60,7 @@ export default function EditSubjectDialog (props: Props) {
     const [ updatedSubject, setUpdatedSubject ] = useState<Subject>(buildEmptySubject());
 
     useEffect(() => {
-        if (!open){
+        if (!open) {
             setUpdatedSubject(buildEmptySubject());
             return;
         }
@@ -101,7 +101,8 @@ export default function EditSubjectDialog (props: Props) {
                     categories: customCategories.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
-                        subcategories: category.subcategories?.map((subcategory) => subcategory.id).filter((id): id is string => !!id) ?? [],
+                        subcategories: category.subcategories?.map((subcategory) => subcategory.id)
+                            .filter((id): id is string => !!id) ?? [],
                     })),
                 },
             });
@@ -113,7 +114,8 @@ export default function EditSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id).filter((id): id is string => !!id),
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
+                                .filter((id): id is string => !!id),
                         },
                     ],
                 },

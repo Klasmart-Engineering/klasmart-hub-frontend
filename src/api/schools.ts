@@ -19,6 +19,7 @@ import {
     PageInfo,
     Program,
     SchoolDeprecated,
+    SchoolsMutationResult,
     SortOrder,
     Status,
     StringFilter,
@@ -67,16 +68,14 @@ export const useCreateSchool = (options?: MutationHookOptions<CreateSchoolRespon
 };
 
 interface UpdateSchoolRequest {
-    school_id: string;
-    school_name: string;
-    shortcode?: string;
+    id: string;
+    organizationId: string;
+    name: string;
+    shortCode: string;
 }
 
 interface UpdateSchoolResponse {
-    school: {
-        school_id: string;
-        set: SchoolDeprecated[];
-    };
+    updateSchools: SchoolsMutationResult;
 }
 
 export const useUpdateSchool = (options?: MutationHookOptions<UpdateSchoolResponse, UpdateSchoolRequest>) => {

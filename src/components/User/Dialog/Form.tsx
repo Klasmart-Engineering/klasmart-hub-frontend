@@ -15,7 +15,10 @@ import {
     TextField,
 } from "@kl-engineering/kidsloop-px";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Theme } from "@mui/material";
+import {
+    TextField as MUITextField,
+    Theme,
+} from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -29,6 +32,9 @@ import {
     makeStyles,
 } from '@mui/styles';
 import withStyles from '@mui/styles/withStyles';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs,
+{ type Dayjs } from "dayjs";
 import React,
 {
     useEffect,
@@ -155,6 +161,7 @@ export default function UserDialogForm (props: Props) {
     const intl = useIntl();
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
+    const [ birthdayErrorMessge, setBirthdayErrorMessage ] = useState<string | null>(null);
     const [ allSchools, setAllSchools ] = useState<SchoolRow[]>([]);
     const { data: schoolsData, refetch: refetchSchoolsData } = useGetPaginatedSchools({
         variables: {
@@ -228,10 +235,9 @@ export default function UserDialogForm (props: Props) {
     } = useValidations();
 
     const today = new Date();
-    const minDateAllowed = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = `${today.getMonth() + 1}`.padStart(2, `0`);
-    minDateAllowed.setFullYear(currentYear - 100);
+    const minDateAllowed = dayjs()
+        .subtract(100, `year`)
+        .toDate();
 
     useEffect(() => {
         refetchSchoolsData({
@@ -380,6 +386,15 @@ export default function UserDialogForm (props: Props) {
         }
     }, [ radioValue, gender ]);
 
+    const handleBirthday = (value: Dayjs) => {
+        const validBefore = beforeDate(today)(value?.toDate());
+        const validAfter = afterDate(minDateAllowed)(value?.toDate());
+        setBirthdayIsValid(validBefore === true && validAfter === true);
+        const errorMessage = validBefore === true && validAfter === true ? null : validBefore !== true ? validBefore : validAfter;
+        setBirthdayErrorMessage(errorMessage);
+        setBirthday(value?.format(`YYYY-MM`));
+    };
+
     const attributes = {
         givenName: intl.formatMessage({
             id: `users_firstName`,
@@ -506,25 +521,24 @@ export default function UserDialogForm (props: Props) {
                     onChange={setContactInfo}
                     onValidate={setContactInfoIsValid}
                 />
-                <TextField
-                    id={`birthday`}
+                <DatePicker
                     label={intl.formatMessage({
                         id: `user.birthday`,
                     })}
-                    type="month"
+                    openTo="year"
+                    minDate={dayjs()
+                        .subtract(100, `year`)
+                    }
+                    maxDate={dayjs()}
+                    views={[ `year`, `month` ]}
                     value={birthday}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    InputProps={{
-                        inputProps: {
-                            min: `${currentYear - 100}-${currentMonth}`,
-                            max: `${currentYear}-${currentMonth}`,
-                        },
-                    }}
-                    validations={[ beforeDate(today), afterDate(minDateAllowed) ]}
-                    onValidate={setBirthdayIsValid}
-                    onChange={setBirthday}
+                    renderInput={(params) =>
+                        (<MUITextField
+                            {...params}
+                            helperText={birthdayErrorMessge ? birthdayErrorMessge : undefined}
+                        />)
+                    }
+                    onChange={handleBirthday}
                 />
                 <TextField
                     id={`shortcode`}

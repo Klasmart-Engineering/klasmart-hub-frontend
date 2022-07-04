@@ -10,11 +10,9 @@ import {
     AgeRangeNode,
     GetAllProgramsPaginatedResponse,
 } from "./programs";
-import {
-    GetPaginatedSchoolsRequestResponse,
-    SchoolNode,
-} from "./schools";
+import { GetPaginatedSchoolsRequestResponse } from "./schools";
 import { GetAllSubjectsPaginatedResponse } from "./subjects";
+import { ADD_CLASS_TO_SCHOOLS } from "@/operations/mutations/addClassToSchools";
 import { CREATE_CLASS } from "@/operations/mutations/createClass";
 import { DELETE_CLASS } from "@/operations/mutations/deleteClass";
 import { EDIT_CLASS_ACADEMIC_TERMS } from "@/operations/mutations/editClassAcademicTerm";
@@ -113,17 +111,43 @@ export const useDeleteClass = (options?: MutationHookOptions<DeleteClassResponse
 };
 
 interface CreateClassRequest {
-    organization_id: string;
-    class_name: string;
-    school_ids: string[];
+    organizationId: string;
+    name: string;
+    shortcode?: string;
 }
 
 interface CreateClassResponse {
-    organization: Organization;
+    createClasses: {
+        classes: {
+            name: string;
+            id: string;
+            shortcode: string;
+        }[];
+    };
+}
+
+interface AddClassToSchoolsRequest {
+    input: {
+        schoolId: string;
+        classIds: string[];
+    }[];
+}
+
+interface AddClassToSchoolsResponse {
+    addClassesToSchools: {
+        schools: {
+            id: string;
+            name?: string;
+        };
+    };
 }
 
 export const useCreateClass = (options?: MutationHookOptions<CreateClassResponse, CreateClassRequest>) => {
     return useMutation<CreateClassResponse, CreateClassRequest>(CREATE_CLASS, options);
+};
+
+export const useAddClassToSchools = (options?: MutationHookOptions<AddClassToSchoolsResponse, AddClassToSchoolsRequest>) => {
+    return useMutation<AddClassToSchoolsResponse, AddClassToSchoolsRequest>(ADD_CLASS_TO_SCHOOLS, options);
 };
 
 interface EditClassProgramsRequest {

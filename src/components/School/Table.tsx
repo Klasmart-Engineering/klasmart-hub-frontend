@@ -233,7 +233,9 @@ export default function SchoolTable (props: Props) {
                     ]}
                     localization={getTableLocalization(intl, {
                         toolbar: {
-                            title: `Schools`,
+                            title: intl.formatMessage({
+                                id: `schools_title`,
+                            }),
                         },
                         search: {
                             placeholder: intl.formatMessage({

@@ -30,7 +30,7 @@ const mockQueryVariables = {
     filter: buildOrganizationClassesFilter({
         organizationId: mockOrgId,
         search: ``,
-        filters:  [],
+        filters: [],
     }),
 };
 
@@ -42,7 +42,7 @@ const mockSearchQueryVariables = {
     filter: buildOrganizationClassesFilter({
         organizationId: mockOrgId,
         search: `Mock Class`,
-        filters:  [],
+        filters: [],
     }),
 };
 
@@ -108,8 +108,10 @@ jest.mock(`@/utils/permissions`, () => {
 test(`Class page renders without records`, async () => {
     render(<ClassesPage />);
 
-    expect(await screen.findByText(`Classes`)).toBeInTheDocument();
-    expect(screen.getByText(`No records to display`)).toBeInTheDocument();
+    expect(await screen.findByText(`Classes`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`No records to display`))
+        .toBeInTheDocument();
 });
 
 test(`Class page renders with correct class names`, async () => {
@@ -119,16 +121,26 @@ test(`Class page renders with correct class names`, async () => {
 
     await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
-    expect(screen.getByText(`Class 6`)).toBeInTheDocument();
-    expect(screen.getByText(`Class 7`)).toBeInTheDocument();
-    expect(screen.getByText(`Class 9`)).toBeInTheDocument();
-    expect(screen.getByText(`Class Grade 2`)).toBeInTheDocument();
-    expect(screen.getByText(`Class Grade 3`)).toBeInTheDocument();
-    expect(screen.getByText(`Elem 10`)).toBeInTheDocument();
-    expect(screen.getByText(`Elem 8`)).toBeInTheDocument();
-    expect(screen.getByText(`Elementary 5`)).toBeInTheDocument();
-    expect(screen.getByText(`Grade 1 Class`)).toBeInTheDocument();
-    expect(screen.getByText(`Last Class`)).toBeInTheDocument();
+    expect(screen.getByText(`Class 6`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Class 7`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Class 9`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Class Grade 2`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Class Grade 3`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Elem 10`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Elem 8`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Elementary 5`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Grade 1 Class`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Last Class`))
+        .toBeInTheDocument();
 });
 
 test(`Class page renders with correct program chips`, async () => {
@@ -138,18 +150,30 @@ test(`Class page renders with correct program chips`, async () => {
 
     await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
-    expect(screen.getAllByText(`ESL`)).toHaveLength(2);
-    expect(screen.getAllByText(`Math`)).toHaveLength(4);
-    expect(screen.getAllByText(`Science`)).toHaveLength(3);
-    expect(screen.getAllByText(`Bada Genius`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada Math`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada Read`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada Rhyme`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada Sound`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada STEM`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada Talk`)).toHaveLength(2);
-    expect(screen.getAllByText(`Bada STEAM 1`)).toHaveLength(2);
-    expect(screen.getAllByText(`None Specified`)).toHaveLength(2);
+    expect(screen.getAllByText(`ESL`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Math`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Science`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Genius`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Math`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Read`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Rhyme`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Sound`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada STEM`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada Talk`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`Bada STEAM 1`))
+        .toHaveLength(2);
+    expect(screen.getAllByText(`None Specified`))
+        .toHaveLength(2);
 });
 
 test(`Class page results render when searching by name`, async () => {
@@ -163,6 +187,7 @@ test(`Class page results render when searching by name`, async () => {
 
     await waitForElementToBeRemoved(() => screen.queryByRole(`progressbar`));
 
-    expect(await screen.findByText(`Mock Class`)).toBeInTheDocument();
+    expect(await screen.findByText(`Mock Class`))
+        .toBeInTheDocument();
     expect(screen.queryByText(`Class Grade 3`)).not.toBeInTheDocument();
 });

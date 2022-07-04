@@ -1121,7 +1121,6 @@
     "home.student.completionWidget.totalAssignment": "全部的作业",
     "home.student.completionWidget.containerTitleLabel": "已完成项目",
     "home.student.completionWidget.containerUrlLabel": "查看所有已完成项目",
-    "home.student.completionWidget.title": "本周",
     "home.student.teacherFeedbackWidget.alexFeedback": "这是一个非常好地开始，也许你可以和你的朋友一起用英语玩 10 分钟。这会很有趣！",
     "home.student.teacherFeedbackWidget.christinaFeedback": "你做得非常出色非常出色！阅读书籍对提高词汇量有很大帮助。试试看一些英文书吧！",
     "home.student.teacherFeedbackWidget.butterflyClass": "蝴蝶班",
@@ -1316,5 +1315,6 @@
     "home.teacher.pendingAssesments.assesmentsToComplete": "Assessments to complete",
     "home.teacher.contentStatus.noData": "Create content, submit it, and check the status from here.",
     "home.teacher.contentStatus.createLessonPlan": "Create lesson plan",
-    "home.teacher.noDataStatus.scheduleClass": "Schedule a class"
+    "home.teacher.noDataStatus.scheduleClass": "Schedule a class",
+    "home.student.completionWidget.title": "过去 7 天"
 }

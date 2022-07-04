@@ -1121,7 +1121,6 @@
     "home.student.completionWidget.totalAssignment": "Asignación total",
     "home.student.completionWidget.containerTitleLabel": "Finalización",
     "home.student.completionWidget.containerUrlLabel": "Ver todas las finalizaciones",
-    "home.student.completionWidget.title": "Esta semana",
     "home.student.teacherFeedbackWidget.alexFeedback": "Ese es un gran comienzo, tal vez podrías jugar con tus amigos usando el inglés durante 10 minutos. ¡Será muy divertido!",
     "home.student.teacherFeedbackWidget.christinaFeedback": "¡Buen trabajo! Leer libros te ayudará mucho a mejorar tu vocabulario. ¡Intenta leer algunos libros en inglés!",
     "home.student.teacherFeedbackWidget.butterflyClass": "Clase Mariposa",
@@ -1316,5 +1315,6 @@
     "home.teacher.pendingAssesments.assesmentsToComplete": "Assessments to complete",
     "home.teacher.contentStatus.noData": "Create content, submit it, and check the status from here.",
     "home.teacher.contentStatus.createLessonPlan": "Create lesson plan",
-    "home.teacher.noDataStatus.scheduleClass": "Schedule a class"
+    "home.teacher.noDataStatus.scheduleClass": "Schedule a class",
+    "home.student.completionWidget.title": "Últimos 7 días"
 }

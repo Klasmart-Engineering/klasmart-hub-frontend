@@ -11,10 +11,8 @@ import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import moment from "moment";
+import { Dayjs } from "dayjs";
 import React,
 {
     useEffect,
@@ -210,65 +208,61 @@ export default function AcademicTermDialogForm (props: Props) {
                 onChange={(value) => setName(value)}
                 onValidate={setIsNameValid}
             />
+            <Stack spacing={3}>
+                <DatePicker
+                    label={intl.formatMessage({
+                        id: `common.startDate.label`,
+                        defaultMessage: `Start date`,
+                    })}
+                    openTo="day"
+                    views={[
+                        `year`,
+                        `month`,
+                        `day`,
+                    ]}
+                    value={startDateValue}
+                    renderInput={(params) =>
+                        (<TextField
+                            {...params}
+                            required
+                            error={startDateValidation.error}
+                            helperText={startDateValidation.error ? startDateValidation?.message : undefined}
+                        />)
+                    }
+                    onChange={(newValue: Dayjs) => {
+                        const isoDateString = newValue?.startOf(`hour`)
+                            .toISOString();
 
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-                <Stack spacing={3}>
-                    <DatePicker
-                        label={intl.formatMessage({
-                            id: `common.startDate.label`,
-                            defaultMessage: `Start date`,
-                        })}
-                        openTo="day"
-                        views={[
-                            `year`,
-                            `month`,
-                            `day`,
-                        ]}
-                        value={startDateValue}
-                        renderInput={(params) =>
-                            (<TextField
-                                {...params}
-                                required
-                                error={startDateValidation.error}
-                                helperText={startDateValidation.error ? startDateValidation?.message : undefined}
-                            />)
-                        }
-                        onChange={(newValue) => {
-                            const isoDateString = moment(newValue)
-                                .startOf(`hour`)
-                                .toISOString();
-                            setStartDateValue(isoDateString);
-                        }}
-                    />
-                    <DatePicker
-                        label={intl.formatMessage({
-                            id: `common.endDate.label`,
-                            defaultMessage: `End date`,
-                        })}
-                        openTo="day"
-                        views={[
-                            `year`,
-                            `month`,
-                            `day`,
-                        ]}
-                        value={endDateValue}
-                        renderInput={(params) =>
-                            (<TextField
-                                {...params}
-                                required
-                                error={endDateValidation.error}
-                                helperText={endDateValidation.error ? endDateValidation?.message : undefined}
-                            />)
-                        }
-                        onChange={(newValue) => {
-                            const isoDateString = moment(newValue)
-                                .startOf(`hour`)
-                                .toISOString();
-                            setEndDateValue(isoDateString);
-                        }}
-                    />
-                </Stack>
-            </LocalizationProvider>
+                        setStartDateValue(isoDateString);
+                    }}
+                />
+                <DatePicker
+                    label={intl.formatMessage({
+                        id: `common.endDate.label`,
+                        defaultMessage: `End date`,
+                    })}
+                    openTo="day"
+                    views={[
+                        `year`,
+                        `month`,
+                        `day`,
+                    ]}
+                    value={endDateValue}
+                    renderInput={(params) =>
+                        (<TextField
+                            {...params}
+                            required
+                            error={endDateValidation.error}
+                            helperText={endDateValidation.error ? endDateValidation?.message : undefined}
+                        />)
+                    }
+                    onChange={(newValue: Dayjs) => {
+                        const isoDateString = newValue?.startOf(`hour`)
+                            .toISOString();
+                        setEndDateValue(isoDateString);
+                    }}
+                />
+            </Stack>
         </div>
     );
 }

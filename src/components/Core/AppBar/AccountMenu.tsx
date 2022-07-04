@@ -105,11 +105,7 @@ export default function UserProfileMenu (props: Props) {
 
     const handleSignOut = async () => {
         try {
-            if (process.env.AUTH_LOGOUT_ROUTE_ENABLED !== `true`) {
-                // TODO: ATH-722 remove AUTH_LOGOUT_ROUTE_ENABLED feature flag
-                // once all environments have auth-frontend >=2.10.4 deployed
-                await authClient.signOut();
-            }
+            await authClient.signOut();
             setOrganizationStack([]);
             redirectToAuth();
         } catch (e) {

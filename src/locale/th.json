@@ -1121,7 +1121,6 @@
     "home.student.completionWidget.totalAssignment": "โปรดอัปโหลดอย่างน้อยหนึ่งงาน",
     "home.student.completionWidget.containerTitleLabel": "เสร็จสิ้นโดยรวม",
     "home.student.completionWidget.containerUrlLabel": "ดูสถานะเนื้อหาทั้งหมด",
-    "home.student.completionWidget.title": "ในสัปดาห์นี้",
     "home.student.teacherFeedbackWidget.alexFeedback": "นั่นเป็นการเริ่มต้นที่ยอดเยี่ยมมาก บางทีคุณอาจเล่นกับเพื่อนโดยใช้ภาษาอังกฤษเป็นเวลา 10 นาที มันจะสนุกดี!",
     "home.student.teacherFeedbackWidget.christinaFeedback": "คุณทำได้ดีมาก! การอ่านหนังสือจะช่วยพัฒนาคำศัพท์ของคุณได้มาก ลองอ่านหนังสือภาษาอังกฤษบ้าง!",
     "home.student.teacherFeedbackWidget.butterflyClass": "คลาสสด",
@@ -1316,5 +1315,6 @@
     "home.teacher.pendingAssesments.assesmentsToComplete": "Assessments to complete",
     "home.teacher.contentStatus.noData": "Create content, submit it, and check the status from here.",
     "home.teacher.contentStatus.createLessonPlan": "Create lesson plan",
-    "home.teacher.noDataStatus.scheduleClass": "Schedule a class"
+    "home.teacher.noDataStatus.scheduleClass": "Schedule a class",
+    "home.student.completionWidget.title": "อีก 7 วันข้างหน้า"
 }
