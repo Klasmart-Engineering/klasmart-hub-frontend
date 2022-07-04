@@ -40,6 +40,7 @@ import {
     Routes,
     useLocation,
 } from "react-router-dom";
+import CMSPage from "./pages/library/cms";
 
 interface Props {
 }
@@ -82,22 +83,9 @@ export default function Router (props: Props) {
                     element={<HomePage />}
                 />
                 <Route
-                    path="library"
-                    element={<ContentLibraryLayout />}
-                >
-                    <Route
-                        path="organization-content/*"
-                        element={<OrganizationContentPage />}
-                    />
-                    <Route
-                        path="badanamu-content/*"
-                        element={<BadanamuContentPage />}
-                    />
-                    <Route
-                        path="more-featured-content/*"
-                        element={<MoreFeaturedContentPage />}
-                    />
-                </Route>
+                    path="/library/*"
+                    element={<CMSPage />}
+                />
                 <Route
                     path="/schedule/*"
                     element={<SchedulePage />}

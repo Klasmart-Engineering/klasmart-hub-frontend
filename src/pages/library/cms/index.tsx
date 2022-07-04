@@ -7,7 +7,7 @@ import React,
 // @ts-expect-error
 const CMSPageMFE = React.lazy(() => import(`cms/pages`));
 
-export default function ReportsPage () {
+export default function CMSPage () {
 
     return (
         <Suspense
