@@ -165,51 +165,51 @@ const webpackConfig: Configuration = {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`react-dom`],
                 },
-                'react-intl': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`react-intl`],
-                },
-                'react-cookie': {
-                    singleton: true,
-                },
-                '@mui/icons-material': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/icons-material`],
-                },
-                '@mui/lab': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/lab`],
-                },
-                '@mui/material': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/material`],
-                },
-                '@mui/styles': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/styles`],
-                },
-                '@kl-engineering/reports-api-client': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@kl-engineering/reports-api-client`],
-                },
-                '@kl-engineering/cms-api-client': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@kl-engineering/cms-api-client`],
-                },
-                '@kl-engineering/kidsloop-px': {
-                    singleton: true,
-                },
-                lodash: {
-                    singleton: true,
-                },
-                '@emotion/styled': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@emotion/styled`],
-                },
-                '@emotion/react': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@emotion/react`],
-                },
+                // 'react-intl': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`react-intl`],
+                // },
+                // 'react-cookie': {
+                //     singleton: true,
+                // },
+                // '@mui/icons-material': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@mui/icons-material`],
+                // },
+                // '@mui/lab': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@mui/lab`],
+                // },
+                // '@mui/material': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@mui/material`],
+                // },
+                // '@mui/styles': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@mui/styles`],
+                // },
+                // '@kl-engineering/reports-api-client': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@kl-engineering/reports-api-client`],
+                // },
+                // '@kl-engineering/cms-api-client': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@kl-engineering/cms-api-client`],
+                // },
+                // '@kl-engineering/kidsloop-px': {
+                //     singleton: true,
+                // },
+                // lodash: {
+                //     singleton: true,
+                // },
+                // '@emotion/styled': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@emotion/styled`],
+                // },
+                // '@emotion/react': {
+                //     singleton: true,
+                //     requiredVersion: pkg.dependencies[`@emotion/react`],
+                // },
             },
         }),
         // new UnusedWebpackPlugin({
