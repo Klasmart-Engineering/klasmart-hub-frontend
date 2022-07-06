@@ -17,10 +17,7 @@ import {
 } from "@/api/organizationMemberships";
 import { UserNode } from "@/api/users";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import {
-    isActive,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { mapOrganizationMembershipEdges } from "@/utils/organizationMemberships";
 import { mapSchoolsMembershipEdges } from "@/utils/schools";
@@ -46,7 +43,6 @@ const useStyles = makeStyles((theme) => createStyles({}));
 export function mapUserNodeToFormState (organizationId: string, user: UserNode): State {
     const organizationMemberships = user.organizationMembershipsConnection?.edges.map(mapOrganizationMembershipEdges) ?? [];
     const schoolMemberships = user.schoolMembershipsConnection?.edges.map(mapSchoolsMembershipEdges) ?? [];
-
     return {
         givenName: user?.givenName ?? ``,
         familyName: user?.familyName ?? ``,
@@ -56,8 +52,17 @@ export function mapUserNodeToFormState (organizationId: string, user: UserNode):
         alternativeEmail: user?.alternateContactInfo?.email ?? ``,
         alternativePhone: user?.alternateContactInfo?.phone ?? ``,
         shortcode: user.organizationMembershipsConnection?.edges[0]?.node.shortCode ?? ``,
-        schools: schoolMemberships.filter((school) => organizationId === school.organizationId && school.status === Status.ACTIVE)?.map(school => school.id ?? ``) ?? [],
-        roles: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE)).flat().map((role) => role?.id ?? ``) ?? [],
+        schools: schoolMemberships.filter((school) => organizationId === school.organizationId && school.status === Status.ACTIVE)
+            ?.map((school) => ({
+                value: school?.id || ``,
+                label: school?.name || ``,
+            }) ?? ``) ?? [],
+        roles: organizationMemberships?.map(organization => organization?.roles?.filter((role) => role.status === Status.ACTIVE))
+            .flat()
+            .map((role) => ({
+                value: role?.id || ``,
+                label: role?.name || ``,
+            })) ?? [],
     };
 }
 
@@ -100,9 +105,9 @@ export default function EditUserDialog (props: Props) {
         },
         skip: !open || !organizationId || !userId,
     });
-
     const [ updateOrganizationMembership ] = useUpdateOrganizationMembership();
     const [ deleteUserInOrganization ] = useDeleteUsersInOrganization();
+
     useEffect(() => {
         if (!open || !userId || !organizationId) return;
         const state = organizationMembershipData?.userNode ? mapUserNodeToFormState(organizationId, organizationMembershipData.userNode) : defaultState;
@@ -142,15 +147,12 @@ export default function EditUserDialog (props: Props) {
                 genericErrorMessageId: `editDialog_savedError`,
             },
         });
-
         if (snackbarMessage) {
             enqueueSnackbar(snackbarMessage, {
                 variant: `error`,
             });
         }
-
         setFormErrors(newFormErrors);
-
         if (hasExpectedError) {
             setValid(false);
         }

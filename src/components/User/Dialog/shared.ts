@@ -24,12 +24,12 @@ function contactInfoStringToEmailPhoneObject (contactInfo: string) {
 
 export function mapFormStateToOrganizationMembership (state: State) {
     /* eslint-disable @typescript-eslint/naming-convention */
+    const organization_role_ids = state.roles.map((role)=>role.value);
+    const school_ids = state.schools.map((school)=>school.value);
     const {
         givenName: given_name,
         familyName: family_name,
         birthday: date_of_birth,
-        roles: organization_role_ids,
-        schools: school_ids,
         alternativeEmail: alternate_email,
         alternativePhone: alternate_phone,
         contactInfo,
@@ -37,6 +37,7 @@ export function mapFormStateToOrganizationMembership (state: State) {
         gender,
     } = state;
     /* eslint-enable @typescript-eslint/naming-convention */
+    // organization_role_ids
     const emailAndPhone = contactInfoStringToEmailPhoneObject(contactInfo);
     return {
         given_name,
@@ -75,8 +76,9 @@ export function updatedFormErrors (formState: State,
         if (
             uniqueUserFields.has(key) &&
                 value.code === APIErrorCode.ERR_DUPLICATE_ENTITY &&
-                Array.from(uniqueUserFields).some((field) =>
-                    changedFields.has(field))
+                Array.from(uniqueUserFields)
+                    .some((field) =>
+                        changedFields.has(field))
         ) {
             // One of the 3 fields which make a unique User was changed, error state of all 3 can be cleared
             return false;

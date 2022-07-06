@@ -7,11 +7,10 @@ import { FormErrors } from "@/types/form";
 import { isActive } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import { mapSchoolNodeToSchoolRow } from "@/utils/schools";
-import { roleNameTranslations } from "@/utils/userRoles";
 import { UserGenders } from "@/utils/users";
 import { useValidations } from "@/utils/validations";
 import {
-    Select,
+    ComboBox,
     TextField,
 } from "@kl-engineering/kidsloop-px";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -90,7 +89,6 @@ export const formatDateOfBirth = (date: string): string => {
         const [ month, year ] = mmYYYY;
         return `${year}-${month}`;
     }
-
     return ``;
 };
 
@@ -113,6 +111,10 @@ const genderHandler = (gender: string) => {
     }
 };
 
+export interface FilterValueOption {
+    value: string;
+    label: string;
+}
 export interface State {
     givenName: string;
     familyName: string;
@@ -120,8 +122,8 @@ export interface State {
     birthday: string;
     shortcode: string;
     gender: string;
-    roles: string[];
-    schools: string[];
+    roles: FilterValueOption[];
+    schools: FilterValueOption[];
     alternativeEmail: string;
     alternativePhone: string;
 }
@@ -139,7 +141,7 @@ export const defaultState: State = {
     alternativePhone: ``,
 };
 
-export interface Errors extends FormErrors<State> {}
+export interface Errors extends FormErrors<State> { }
 
 export interface Props {
     initialState: State;
@@ -177,13 +179,11 @@ export default function UserDialogForm (props: Props) {
         fetchPolicy: `no-cache`,
         skip: !organizationId,
     });
-
     const { data: organizationData, refetch: refetchOrganizationRoles } = useGetOrganizationRoles({
         variables: {
             organization_id: organizationId,
         },
     });
-
     const allRoles = organizationData?.organization?.roles?.filter(isActive) ?? [];
     const canBeGivenBySchoolAdminRoles = [
         `Parent`,
@@ -191,7 +191,6 @@ export default function UserDialogForm (props: Props) {
         `Teacher`,
         `School Admin`,
     ];
-
     const { loading, hasPermission: hasOrgAdminPermissions } = usePermission({
         OR: [ `create_users_40220`, `edit_users_40330` ],
     }, true);
@@ -292,11 +291,20 @@ export default function UserDialogForm (props: Props) {
             alternativeEmail,
             alternativePhone,
             gender: radioValue === UserGenders.OTHER ? gender : radioValue,
-            roles: availableRoles.filter((role) => roleIds.includes(role.role_id))
-                .map(({ role_id }) => role_id),
+            roles: availableRoles.filter((role) => roleIds.map((id) => id.value)
+                .includes(role.role_id))
+                .map((role) => ({
+                    value: role?.role_id,
+                    label: role?.role_name,
+                })) ?? [],
             schools: allSchools
-                .filter((school) => schoolIds.includes(school.id))
-                .map(({ id }) => id),
+                .filter((school) => schoolIds.map((id) => id.value)
+                    .includes(school.id))
+                .map((school) =>
+                    ({
+                        value: school.id,
+                        label: school.name,
+                    })),
             birthday: dateFormatMMYYYY(),
         };
         onChange(newState);
@@ -336,7 +344,7 @@ export default function UserDialogForm (props: Props) {
     useEffect(() => {
         const schools = schoolsData?.schoolsConnection?.edges
             .map((edge) => mapSchoolNodeToSchoolRow(edge.node))
-        ?? [];
+            ?? [];
 
         setAllSchools((values) => ([ ...values, ...schools ]));
 
@@ -426,7 +434,7 @@ export default function UserDialogForm (props: Props) {
         }),
     };
 
-    return ( loading ? null :
+    return (loading ? null :
         <div className={classes.root}>
             <div className={classes.heading}>
                 <TextField
@@ -643,37 +651,29 @@ export default function UserDialogForm (props: Props) {
                     />
                 )}
             </FormControl>
-            <Select
+            <ComboBox
                 multiple
                 fullWidth
                 id={`roles`}
                 label={intl.formatMessage({
                     id: `createUser_rolesLabel`,
                 })}
-                items={availableRoles}
+                options={availableRoles.map(roles => ({
+                    value: roles.role_id,
+                    label: roles.role_name,
+                }))}
                 value={roleIds}
-                validations={[
+                selectValidations={[
                     required(intl.formatMessage({
                         id: `validation.error.attribute.required`,
                     }, {
-                        attribute: attributes.roles,
+                        attribute: attributes.schools,
                     })),
                 ]}
-                itemText={(role) =>
-                    role.role_name && roleNameTranslations[role.role_name]
-                        ? intl.formatMessage({
-                            id: roleNameTranslations[role.role_name],
-                        })
-                        : role.role_name ?? ``
-                }
-                itemValue={(role) => role.role_id}
-                selectAllLabel={intl.formatMessage({
-                    id: `users_selectAll`,
-                })}
                 onChange={setRoleIds}
-                onValidate={setRoleIdsValid}
+                onValidate={setSchoolIdsValid}
             />
-            <Select
+            <ComboBox
                 multiple
                 fullWidth
                 id={`schools`}
@@ -686,22 +686,20 @@ export default function UserDialogForm (props: Props) {
                         id: `createUser_schoolsLabel`,
                     }),
                 }))}
-                items={allSchools}
+                options={allSchools.map(schools => ({
+                    value: schools.id,
+                    label: schools.name,
+                }))}
                 value={schoolIds}
-                itemText={(school) => school.name ?? ``}
-                itemValue={(school) => school.id}
-                selectAllLabel={intl.formatMessage({
-                    id: `users_selectAll`,
-                })}
-                validations={(!hasOrgAdminPermissions ? [
+                selectValidations={(!hasOrgAdminPermissions ? [
                     required(intl.formatMessage({
                         id: `validation.error.attribute.required`,
                     }, {
                         attribute: attributes.schools,
                     })),
-                ]: [])}
-                onValidate={!hasOrgAdminPermissions ? setSchoolIdsValid : undefined}
+                ] : [])}
                 onChange={setSchoolIds}
+                onValidate={!hasOrgAdminPermissions ? setSchoolIdsValid : undefined}
             />
             <Accordion
                 square
