@@ -25,23 +25,9 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
-import {
-    Paper,
-    Typography,
-} from "@mui/material";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React,
-{ useState } from "react";
+import { Typography } from "@mui/material";
+import { useState } from "react";
 import { useIntl } from "react-intl";
-
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
-}));
 
 export interface SchoolRow {
     id: string;
@@ -74,7 +60,6 @@ export default function SchoolTable (props: Props) {
         refetch,
     } = props;
 
-    const classes = useStyles();
     const [ uploadCsvDialogOpen, setUploadCsvDialogOpen ] = useState(false);
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -169,84 +154,78 @@ export default function SchoolTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    idField="id"
-                    rows={rows}
-                    columns={columns}
-                    loading={loading}
-                    search={search}
-                    cursor={cursor}
-                    order={order}
-                    orderBy={orderBy}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    rowsPerPage={rowsPerPage}
-                    total={total}
-                    primaryAction={{
+            <CursorTable
+                idField="id"
+                rows={rows}
+                columns={columns}
+                loading={loading}
+                search={search}
+                cursor={cursor}
+                order={order}
+                orderBy={orderBy}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                rowsPerPage={rowsPerPage}
+                total={total}
+                primaryAction={{
+                    label: intl.formatMessage({
+                        id: `schools_createSchoolLabel`,
+                    }),
+                    icon: AddIcon,
+                    disabled: !canCreate,
+                    onClick: () => setOpenCreateDialog(true),
+                }}
+                secondaryActions={[
+                    {
                         label: intl.formatMessage({
-                            id: `schools_createSchoolLabel`,
+                            id: `entity.user.template.download.button`,
                         }),
-                        icon: AddIcon,
+                        icon: AssignmentReturnedIcon,
                         disabled: !canCreate,
-                        onClick: () => setOpenCreateDialog(true),
-                    }}
-                    secondaryActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.template.download.button`,
-                            }),
-                            icon: AssignmentReturnedIcon,
-                            disabled: !canCreate,
-                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                        onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `entity.user.bulkImport.button`,
+                        }),
+                        icon: CloudIcon,
+                        disabled: !canCreate,
+                        onClick: () => {
+                            setUploadCsvDialogOpen(true);
                         },
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.bulkImport.button`,
-                            }),
-                            icon: CloudIcon,
-                            disabled: !canCreate,
-                            onClick: () => {
-                                setUploadCsvDialogOpen(true);
-                            },
-                        },
-                    ]}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `schools_editButton`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !(row.status === Status.ACTIVE && canEdit),
-                            onClick: editSelectedRow,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `schools_deleteButton`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !(row.status === Status.ACTIVE && canDelete),
-                            onClick: deleteSelectedRow,
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `schools_title`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `schools_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                    },
+                ]}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({
+                            id: `schools_editButton`,
+                        }),
+                        icon: EditIcon,
+                        disabled: !(row.status === Status.ACTIVE && canEdit),
+                        onClick: editSelectedRow,
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `schools_deleteButton`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: !(row.status === Status.ACTIVE && canDelete),
+                        onClick: deleteSelectedRow,
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `schools_title`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `schools_searchPlaceholder`,
+                    }),
+                })}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
 
             <CreateSchoolDialog
                 open={openCreateDialog}

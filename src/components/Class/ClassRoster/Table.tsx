@@ -37,7 +37,6 @@ import MoveDownIcon from '@mui/icons-material/MoveDown';
 import {
     Box,
     DialogContentText,
-    Paper,
     Typography,
 } from "@mui/material";
 import {
@@ -285,68 +284,37 @@ export default function ClassRoster (props: Props) {
                 onClose();
             }}
         >
-            <Paper className={classes.root}>
-                <CursorTable
-                    hideAllGroupTab
-                    hasNextPage={subgroupBy === `Student` ?
-                        rosterData?.classNode?.studentsConnection?.pageInfo.hasNextPage :
-                        rosterData?.classNode?.teachersConnection?.pageInfo.hasNextPage
-                    }
-                    hasPreviousPage={subgroupBy === `Student` ?
-                        rosterData?.classNode?.studentsConnection?.pageInfo.hasPreviousPage :
-                        rosterData?.classNode?.teachersConnection?.pageInfo.hasPreviousPage
-                    }
-                    total={subgroupBy === `Student` ?
-                        rosterData?.classNode?.studentsConnection?.totalCount :
-                        rosterData?.classNode?.teachersConnection?.totalCount
-                    }
-                    startCursor={subgroupBy === `Student` ?
-                        rosterData?.classNode?.studentsConnection?.pageInfo.startCursor :
-                        rosterData?.classNode?.teachersConnection?.pageInfo.startCursor
-                    }
-                    endCursor={subgroupBy === `Student` ?
-                        rosterData?.classNode?.studentsConnection?.pageInfo.endCursor :
-                        rosterData?.classNode?.teachersConnection?.pageInfo.endCursor
-                    }
-                    loading={loading}
-                    columns={columns}
-                    rows={rows}
-                    idField="id"
-                    orderBy="givenName"
-                    order="asc"
-                    groupBy="role"
-                    selectActions={
-                        [
-                            {
-                                label: intl.formatMessage({
-                                    id: `class_transferLabel`,
-                                    defaultMessage: `Transfer`,
-                                }),
-                                disabled: !enableClassRosterTransfer,
-                                icon: MoveDownIcon,
-                                onClick: () => {
-                                    handleClassTransferDialogOpen(selectedUserIds); },
-                            },
-                        ]
-                    }
-                    selectedRows={selectedUserIds}
-                    subgroupBy={subgroupBy}
-                    primaryAction={{
-                        label: intl.formatMessage({
-                            id: `class_addUserLabel`,
-                        }),
-                        icon: PersonAddIcon,
-                        // disabled: !canCreate,
-                        onClick: () => setSchoolRosterDialogOpen(true),
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `class_removeUserLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            onClick: () => handleRemoveUser(row),
-                        },
+            <CursorTable
+                hideAllGroupTab
+                hasNextPage={subgroupBy === `Student` ?
+                    rosterData?.classNode?.studentsConnection?.pageInfo.hasNextPage :
+                    rosterData?.classNode?.teachersConnection?.pageInfo.hasNextPage
+                }
+                hasPreviousPage={subgroupBy === `Student` ?
+                    rosterData?.classNode?.studentsConnection?.pageInfo.hasPreviousPage :
+                    rosterData?.classNode?.teachersConnection?.pageInfo.hasPreviousPage
+                }
+                total={subgroupBy === `Student` ?
+                    rosterData?.classNode?.studentsConnection?.totalCount :
+                    rosterData?.classNode?.teachersConnection?.totalCount
+                }
+                startCursor={subgroupBy === `Student` ?
+                    rosterData?.classNode?.studentsConnection?.pageInfo.startCursor :
+                    rosterData?.classNode?.teachersConnection?.pageInfo.startCursor
+                }
+                endCursor={subgroupBy === `Student` ?
+                    rosterData?.classNode?.studentsConnection?.pageInfo.endCursor :
+                    rosterData?.classNode?.teachersConnection?.pageInfo.endCursor
+                }
+                loading={loading}
+                columns={columns}
+                rows={rows}
+                idField="id"
+                orderBy="givenName"
+                order="asc"
+                groupBy="role"
+                selectActions={
+                    [
                         {
                             label: intl.formatMessage({
                                 id: `class_transferLabel`,
@@ -354,28 +322,53 @@ export default function ClassRoster (props: Props) {
                             }),
                             disabled: !enableClassRosterTransfer,
                             icon: MoveDownIcon,
-                            onClick: () => handleClassTransferDialogOpen([ row.id ]),
+                            onClick: () => {
+                                handleClassTransferDialogOpen(selectedUserIds); },
                         },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `class_classRosterLabel`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `class_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onSelected={(ids: string[]) => {
-                        setSelectedUserIds(ids);
-                    }}
-                    onChange={handleTableChange}
-                    onPageChange={handlePageChange}
-                />
-            </Paper>
+                    ]
+                }
+                selectedRows={selectedUserIds}
+                subgroupBy={subgroupBy}
+                primaryAction={{
+                    label: intl.formatMessage({
+                        id: `class_addUserLabel`,
+                    }),
+                    icon: PersonAddIcon,
+                    // disabled: !canCreate,
+                    onClick: () => setSchoolRosterDialogOpen(true),
+                }}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({
+                            id: `class_removeUserLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        onClick: () => handleRemoveUser(row),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `class_transferLabel`,
+                            defaultMessage: `Transfer`,
+                        }),
+                        disabled: !enableClassRosterTransfer,
+                        icon: MoveDownIcon,
+                        onClick: () => handleClassTransferDialogOpen([ row.id ]),
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `class_classRosterLabel`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `class_searchPlaceholder`,
+                    }),
+                })}
+                onSelected={(ids: string[]) => {
+                    setSelectedUserIds(ids);
+                }}
+                onChange={handleTableChange}
+                onPageChange={handlePageChange}
+            />
 
             {classId && (
                 <>

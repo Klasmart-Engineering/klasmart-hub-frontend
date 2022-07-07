@@ -280,45 +280,41 @@ export default function CategorySelectDialog (props: Props) {
             ]}
             onClose={() => onClose()}
         >
-            <Paper>
-                <PageTable
-                    showSelectables
-                    hideSelectStatus
-                    selectedRows={updatedCategory?.id ? [ updatedCategory.id ] : undefined}
-                    selectMode="single"
-                    order="asc"
-                    orderBy="name"
-                    idField="id"
-                    rows={rows}
-                    columns={columns}
-                    primaryAction={{
-                        label: `Create Category`,
-                        icon: AddIcon,
-                        onClick: createCategory,
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `generic_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: isSystemValue(row),
-                            onClick: deleteCategory,
-                        },
-                    ]}
-                    localization={{
-                        toolbar: {
-                            title: `Categories`,
-                        },
-                    }}
-                    onSelected={(rows: string[]) => {
-                        if (!rows.length) return;
-                        const [ categoryId ] = rows;
-                        const selectedCategory = categories.find((category) => category.id === categoryId);
-                        setUpdatedCategory(selectedCategory);
-                    }}
-                />
-            </Paper>
+            <PageTable
+                showSelectables
+                hideSelectStatus
+                selectedRows={updatedCategory?.id ? [ updatedCategory.id ] : undefined}
+                selectMode="single"
+                order="asc"
+                orderBy="name"
+                idField="id"
+                rows={rows}
+                columns={columns}
+                primaryAction={{
+                    label: `Create Category`,
+                    icon: AddIcon,
+                    onClick: createCategory,
+                }}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({
+                            id: `generic_deleteLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: isSystemValue(row),
+                        onClick: deleteCategory,
+                    },
+                ]}
+                localization={{
+                    title: `Categories`,
+                }}
+                onSelected={(rows: string[]) => {
+                    if (!rows.length) return;
+                    const [ categoryId ] = rows;
+                    const selectedCategory = categories.find((category) => category.id === categoryId);
+                    setUpdatedCategory(selectedCategory);
+                }}
+            />
         </Dialog>
     );
 }

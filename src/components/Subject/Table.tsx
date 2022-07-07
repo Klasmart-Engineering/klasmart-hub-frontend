@@ -23,24 +23,18 @@ import {
     Edit as EditIcon,
     ViewList as ViewListIcon,
 } from "@mui/icons-material";
-import {
-    Chip,
-    Paper,
-} from "@mui/material";
+import { Chip } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React, {
+import {
     useEffect,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
     chip: {
         margin: theme.spacing(0.25),
     },
@@ -288,71 +282,67 @@ export default function SubjectsTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    filters={!hideFilters ? filters : undefined}
-                    showSelectables={showSelectables}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rows={rows}
-                    rowsPerPage={rowsPerPage}
-                    columns={columns}
-                    selectedRows={tableSelectedIds}
-                    primaryAction={!disabled ? {
+            <CursorTable
+                filters={!hideFilters ? filters : undefined}
+                showSelectables={showSelectables}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rows={rows}
+                rowsPerPage={rowsPerPage}
+                columns={columns}
+                selectedRows={tableSelectedIds}
+                primaryAction={!disabled ? {
+                    label: intl.formatMessage({
+                        id: `subjects_createSubjectLabel`,
+                    }),
+                    icon: AddIcon,
+                    onClick: () => setOpenCreateDialog(true),
+                    disabled: !canCreate,
+                } : undefined}
+                rowActions={!disabled ? (row) => [
+                    {
                         label: intl.formatMessage({
-                            id: `subjects_createSubjectLabel`,
+                            id: `subjects_viewDetailsLabel`,
                         }),
-                        icon: AddIcon,
-                        onClick: () => setOpenCreateDialog(true),
-                        disabled: !canCreate,
-                    } : undefined}
-                    rowActions={!disabled ? (row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `subjects_viewDetailsLabel`,
-                            }),
-                            icon: ViewListIcon,
-                            disabled: !canView,
-                            onClick: handleViewDetailsRowClick,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `subjects_editLabel`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !canEdit || row.system,
-                            onClick: handleEditRowClick,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `generic_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete || row.system,
-                            onClick: handleDeleteRowClick,
-                        },
-                    ] : undefined}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `subjects_subjectsLabel`,
-                            }),
-                        },
-                    })}
-                    loading={loading}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    cursor={cursor}
-                    search={search}
-                    onSelected={selectIds}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                        icon: ViewListIcon,
+                        disabled: !canView,
+                        onClick: handleViewDetailsRowClick,
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `subjects_editLabel`,
+                        }),
+                        icon: EditIcon,
+                        disabled: !canEdit || row.system,
+                        onClick: handleEditRowClick,
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `generic_deleteLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: !canDelete || row.system,
+                        onClick: handleDeleteRowClick,
+                    },
+                ] : undefined}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `subjects_subjectsLabel`,
+                    }),
+                })}
+                loading={loading}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                cursor={cursor}
+                search={search}
+                onSelected={selectIds}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
             <ViewSubjectDetailsDrawer
                 subjectId={selectedSubjectId}
                 open={openViewDetailsDrawer}

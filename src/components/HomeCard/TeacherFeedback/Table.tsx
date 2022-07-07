@@ -47,17 +47,6 @@ const useStyles = makeStyles((theme) => {
     const { clickable } = globalStyles(theme);
     return createStyles({
         clickable,
-        cardHead: {
-            padding: theme.spacing(1 + 3/4, 4),
-            [theme.breakpoints.down(`sm`)]: {
-                padding: theme.spacing(1, 2),
-            },
-            borderBottom: `1px solid ${theme.palette.grey[300]}`,
-        },
-        cardTitle: {
-            textTransform: `uppercase`,
-            fontWeight: `bold`,
-        },
         cardBody: {
             minHeight: theme.spacing(8),
         },
@@ -393,18 +382,6 @@ export default function TeacherFeedback (props: Props) {
     return (
         <>
             <Box
-                className={classes.cardHead}
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-            >
-                <Typography className={classes.cardTitle}>
-                    {intl.formatMessage({
-                        id: `teacherFeedback.title`,
-                    })}
-                </Typography>
-            </Box>
-            <Box
                 className={classes.cardBody}
                 display="flex"
                 flexDirection="column"
@@ -424,13 +401,14 @@ export default function TeacherFeedback (props: Props) {
                     rowsPerPage={ROWS_PER_PAGE}
                     rowsPerPageOptions={[ ROWS_PER_PAGE ]}
                     localization={getTableLocalization(intl, {
-                        body: {
-                            noData: intl.formatMessage({
-                                id: `teacherFeedback.body.empty`,
-                            }, {
-                                count: 14,
-                            }),
-                        },
+                        title: intl.formatMessage({
+                            id: `teacherFeedback.title`,
+                        }),
+                        noData: intl.formatMessage({
+                            id: `teacherFeedback.body.empty`,
+                        }, {
+                            count: 14,
+                        }),
                     })}
                     onChange={handleTableOnChange}
                 />

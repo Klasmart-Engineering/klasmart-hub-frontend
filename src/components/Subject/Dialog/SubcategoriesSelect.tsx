@@ -303,41 +303,37 @@ export default function SubcategoriesSelectDialog (props: Props) {
             ]}
             onClose={() => onClose()}
         >
-            <Paper>
-                <PageTable
-                    showSelectables
-                    selectedRows={updatedSubcategories?.map((subcategory) => subcategory.id ?? ``)}
-                    order="asc"
-                    orderBy="name"
-                    idField="id"
-                    rows={rows}
-                    columns={columns}
-                    primaryAction={{
-                        label: `Create Subcategory`,
-                        icon: AddIcon,
-                        onClick: createSubcategory,
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `generic_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: isSystemValue(row),
-                            onClick: deleteSubcategory,
-                        },
-                    ]}
-                    localization={{
-                        toolbar: {
-                            title: `Subcategories`,
-                        },
-                    }}
-                    onSelected={(rows: string[]) => {
-                        const selectedSubcategories = subcategories.filter((subcategory) => rows.includes(subcategory.id ?? ``));
-                        setUpdatedSubcategories(selectedSubcategories);
-                    }}
-                />
-            </Paper>
+            <PageTable
+                showSelectables
+                selectedRows={updatedSubcategories?.map((subcategory) => subcategory.id ?? ``)}
+                order="asc"
+                orderBy="name"
+                idField="id"
+                rows={rows}
+                columns={columns}
+                primaryAction={{
+                    label: `Create Subcategory`,
+                    icon: AddIcon,
+                    onClick: createSubcategory,
+                }}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({
+                            id: `generic_deleteLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: isSystemValue(row),
+                        onClick: deleteSubcategory,
+                    },
+                ]}
+                localization={{
+                    title: `Subcategories`,
+                }}
+                onSelected={(rows: string[]) => {
+                    const selectedSubcategories = subcategories.filter((subcategory) => rows.includes(subcategory.id ?? ``));
+                    setUpdatedSubcategories(selectedSubcategories);
+                }}
+            />
         </Dialog>
     );
 }

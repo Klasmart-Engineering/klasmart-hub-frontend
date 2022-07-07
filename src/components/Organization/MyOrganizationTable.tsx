@@ -24,7 +24,6 @@ import {
 } from "@mui/icons-material";
 import {
     DialogContentText,
-    Paper,
     Typography,
 } from "@mui/material";
 import {
@@ -49,9 +48,6 @@ const useStyles = makeStyles((theme) => {
         statusText,
         successColor,
         errorColor,
-        root: {
-            width: `100%`,
-        },
     });
 });
 
@@ -240,55 +236,47 @@ export default function MyOrganizationTable (props: Props) {
     ];
 
     return (
-        <>
-            <Paper className={classes.root}>
-                <PageTable
-                    columns={columns}
-                    rows={rows}
-                    loading={organizationOwnershipLoading}
-                    idField={`id`}
-                    primaryAction={{
-                        label: intl.formatMessage({
-                            id: `button_create`,
-                        }),
-                        icon: AddIcon,
-                        onClick: () => navigate(`/admin/organizations/create`),
-                        disabled: organizationOwnerships.length > 0 || !canCreate,
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `allOrganization_editButton`,
-                            }),
-                            icon: EditIcon,
-                            disabled: row.status === Status.INACTIVE || !canEdit,
-                            onClick: (row) => navigate(`/admin/organizations/${row.id}/edit`),
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `allOrganization_deleteButton`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: row.status === Status.INACTIVE,
-                            onClick: handleDeleteSelectedOrganizationClick,
-                        },
-                    ]}
-                    rowsPerPage={1}
-                    rowsPerPageOptions={[]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `allOrganization_myOrganizations`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `allOrganization_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                />
-            </Paper>
-        </>
+        <PageTable
+            columns={columns}
+            rows={rows}
+            loading={organizationOwnershipLoading}
+            idField={`id`}
+            primaryAction={{
+                label: intl.formatMessage({
+                    id: `button_create`,
+                }),
+                icon: AddIcon,
+                onClick: () => navigate(`/admin/organizations/create`),
+                disabled: organizationOwnerships.length > 0 || !canCreate,
+            }}
+            rowActions={(row) => [
+                {
+                    label: intl.formatMessage({
+                        id: `allOrganization_editButton`,
+                    }),
+                    icon: EditIcon,
+                    disabled: row.status === Status.INACTIVE || !canEdit,
+                    onClick: (row) => navigate(`/admin/organizations/${row.id}/edit`),
+                },
+                {
+                    label: intl.formatMessage({
+                        id: `allOrganization_deleteButton`,
+                    }),
+                    icon: DeleteIcon,
+                    disabled: row.status === Status.INACTIVE,
+                    onClick: handleDeleteSelectedOrganizationClick,
+                },
+            ]}
+            rowsPerPage={1}
+            rowsPerPageOptions={[]}
+            localization={getTableLocalization(intl, {
+                title: intl.formatMessage({
+                    id: `allOrganization_myOrganizations`,
+                }),
+                placeholder: intl.formatMessage({
+                    id: `allOrganization_searchPlaceholder`,
+                }),
+            })}
+        />
     );
 }
