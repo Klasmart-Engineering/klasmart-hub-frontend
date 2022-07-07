@@ -40,7 +40,6 @@ import {
 import {
     Chip,
     Link,
-    Paper,
 } from "@mui/material";
 import {
     createStyles,
@@ -56,9 +55,6 @@ const useStyles = makeStyles((theme) => {
     return createStyles({
         clickable,
         primaryText,
-        root: {
-            width: `100%`,
-        },
         containerTable: {
             width: `100%`,
             "& table": {
@@ -667,16 +663,12 @@ export default function ClassesTable (props: Props) {
     ]);
 
     const localization = getTableLocalization(intl, {
-        toolbar: {
-            title: intl.formatMessage({
-                id: `adminHeader_viewClasses`,
-            }),
-        },
-        search: {
-            placeholder: intl.formatMessage({
-                id: `classes_searchPlaceholder`,
-            }),
-        },
+        title: intl.formatMessage({
+            id: `adminHeader_viewClasses`,
+        }),
+        placeholder: intl.formatMessage({
+            id: `classes_searchPlaceholder`,
+        }),
     });
 
     const primaryAction = ({
@@ -711,32 +703,30 @@ export default function ClassesTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    filters={filters}
-                    showSelectables={showSelectables}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rows={rows}
-                    rowsPerPage={rowsPerPage}
-                    selectedRows={selectedIds_}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    columns={columns}
-                    loading={loading}
-                    primaryAction={!disabled ? primaryAction : undefined}
-                    secondaryActions={secondaryActions}
-                    rowActions={!disabled ? rowActions : undefined}
-                    localization={localization}
-                    onSelected={setIds}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+            <CursorTable
+                filters={filters}
+                showSelectables={showSelectables}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rows={rows}
+                rowsPerPage={rowsPerPage}
+                selectedRows={selectedIds_}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                columns={columns}
+                loading={loading}
+                primaryAction={!disabled ? primaryAction : undefined}
+                secondaryActions={secondaryActions}
+                rowActions={!disabled ? rowActions : undefined}
+                localization={localization}
+                onSelected={setIds}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
 
             <EditClassDialog
                 open={editDialogOpen}

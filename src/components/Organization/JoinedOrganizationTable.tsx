@@ -8,26 +8,13 @@ import {
 } from "@kl-engineering/kidsloop-px";
 import { TableColumn } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Head";
 import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
-import {
-    Paper,
-    Typography,
-} from "@mui/material";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
+import { Typography } from "@mui/material";
 import React,
 {
     useMemo,
     useState,
 } from "react";
 import { useIntl } from "react-intl";
-
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
-}));
 
 interface JoinedOrganizationRow {
     id: string;
@@ -41,7 +28,6 @@ interface Props {
 }
 
 export default function JoinedOrganizationTable (props: Props) {
-    const classes = useStyles();
     const intl = useIntl();
     const confirm = useConfirm();
     const { enqueueSnackbar } = useSnackbar();
@@ -83,13 +69,15 @@ export default function JoinedOrganizationTable (props: Props) {
             title: intl.formatMessage({
                 id: `allOrganization_leaveOrganizationButton`,
             }),
-            content: <Typography color="textSecondary">
-                {intl.formatMessage({
-                    id: `allOrganization_leaveOrganizationConfirm`,
-                }, {
-                    name: <strong>{row.name}</strong>,
-                })}
-                     </Typography>,
+            content: (
+                <Typography color="textSecondary">
+                    {intl.formatMessage({
+                        id: `allOrganization_leaveOrganizationConfirm`,
+                    }, {
+                        name: <strong>{row.name}</strong>,
+                    })}
+                </Typography>
+            ),
             okLabel: intl.formatMessage({
                 id: `allOrganization_okButton`,
             }),
@@ -167,49 +155,40 @@ export default function JoinedOrganizationTable (props: Props) {
     ];
 
     return (
-        <>
-            <Paper className={classes.root}>
-                <PageTable
-                    hideSelectAll
-                    columns={columns}
-                    rows={rows}
-                    selectedRows={selectedOrganizationIds}
-                    loading={myUserLoading}
-                    idField="id"
-                    orderBy="name"
-                    selectActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `allOrganization_leaveOrganizationLabel`,
-                            }),
-                            icon: ExitToAppIcon,
-                            onClick: handleLeaveSelectedOrganizationsClick,
-                        },
-                    ]}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `allOrganization_leaveOrganizationButton`,
-                            }),
-                            icon: ExitToAppIcon,
-                            onClick: handleLeaveOrganizationRowClick,
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `allOrganization_joinedOrganizations`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `allOrganization_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onSelected={(ids: string[]) => setSelectedOrganizationIds(ids)}
-                />
-            </Paper>
-        </>
+        <PageTable
+            columns={columns}
+            rows={rows}
+            selectedRows={selectedOrganizationIds}
+            loading={myUserLoading}
+            idField="id"
+            orderBy="name"
+            selectActions={[
+                {
+                    label: intl.formatMessage({
+                        id: `allOrganization_leaveOrganizationLabel`,
+                    }),
+                    icon: ExitToAppIcon,
+                    onClick: handleLeaveSelectedOrganizationsClick,
+                },
+            ]}
+            rowActions={(row) => [
+                {
+                    label: intl.formatMessage({
+                        id: `allOrganization_leaveOrganizationButton`,
+                    }),
+                    icon: ExitToAppIcon,
+                    onClick: handleLeaveOrganizationRowClick,
+                },
+            ]}
+            localization={getTableLocalization(intl, {
+                title: intl.formatMessage({
+                    id: `allOrganization_joinedOrganizations`,
+                }),
+                placeholder: intl.formatMessage({
+                    id: `allOrganization_searchPlaceholder`,
+                }),
+            })}
+            onSelected={(ids: string[]) => setSelectedOrganizationIds(ids)}
+        />
     );
 }

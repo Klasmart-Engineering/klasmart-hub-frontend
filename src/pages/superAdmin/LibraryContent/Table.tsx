@@ -446,80 +446,74 @@ export default function LibraryTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <Breadcrumbs />
-                <Divider />
-                <PageTable
-                    rows={rows}
-                    columns={columns}
-                    idField="id"
-                    loading={loadingGet}
-                    orderBy="contentType"
-                    groupBy="contentType"
-                    secondaryActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_createFolderLabel`,
-                            }),
-                            icon: CreateNewFolderIcon,
-                            onClick: () => setOpenCreateDialog(true),
-                        },
-                    ]}
-                    selectActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_moveSelectedLabel`,
-                            }),
-                            icon: ExitToAppIcon,
-                            onClick: (rowIds: string[]) => moveSelectedBulk(rowIds),
-                        },
-                    ]}
-                    rowActions={(row) =>[
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_distributeLabel`,
-                            }),
-                            icon: ShareIcon,
-                            disabled: row.contentType !== ContentType.FOLDER || paths.length > 0,
-                            onClick: (row) => distributeSelectedRow(row),
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_moveLabel`,
-                            }),
-                            icon: ExitToAppIcon,
-                            onClick: () => moveSelectedRow(row),
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_editLabel`,
-                            }),
-                            icon: EditIcon,
-                            disabled: row.contentType !== ContentType.FOLDER,
-                            onClick: (row) => editSelectedRow(row),
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `superAdmin_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            onClick: (row) => deleteSelectedRow(row),
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `superAdmin_libraryLabel`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `superAdmin_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                />
-            </Paper>
+            <Breadcrumbs />
+            <Divider />
+            <PageTable
+                rows={rows}
+                columns={columns}
+                idField="id"
+                loading={loadingGet}
+                orderBy="contentType"
+                groupBy="contentType"
+                secondaryActions={[
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_createFolderLabel`,
+                        }),
+                        icon: CreateNewFolderIcon,
+                        onClick: () => setOpenCreateDialog(true),
+                    },
+                ]}
+                selectActions={[
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_moveSelectedLabel`,
+                        }),
+                        icon: ExitToAppIcon,
+                        onClick: (rowIds: string[]) => moveSelectedBulk(rowIds),
+                    },
+                ]}
+                rowActions={(row) =>[
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_distributeLabel`,
+                        }),
+                        icon: ShareIcon,
+                        disabled: row.contentType !== ContentType.FOLDER || paths.length > 0,
+                        onClick: (row) => distributeSelectedRow(row),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_moveLabel`,
+                        }),
+                        icon: ExitToAppIcon,
+                        onClick: () => moveSelectedRow(row),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_editLabel`,
+                        }),
+                        icon: EditIcon,
+                        disabled: row.contentType !== ContentType.FOLDER,
+                        onClick: (row) => editSelectedRow(row),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `superAdmin_deleteLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        onClick: (row) => deleteSelectedRow(row),
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `superAdmin_libraryLabel`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `superAdmin_searchPlaceholder`,
+                    }),
+                })}
+            />
             <CreateContentFolderDialog
                 parentId={folderId}
                 open={openCreateDialog}

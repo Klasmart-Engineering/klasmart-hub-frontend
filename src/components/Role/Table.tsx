@@ -29,17 +29,13 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
-import {
-    Link,
-    Paper,
-} from "@mui/material";
+import { Link } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
 import clsx from "clsx";
-import React,
-{ useState } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 
 const useStyles = makeStyles((theme) => {
@@ -47,9 +43,6 @@ const useStyles = makeStyles((theme) => {
     return createStyles({
         clickable,
         primaryText,
-        root: {
-            width: `100%`,
-        },
     });
 });
 
@@ -302,64 +295,58 @@ export default function RoleTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    columns={columns}
-                    rows={rows}
-                    loading={loading}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rowsPerPage={rowsPerPage}
-                    search={search}
-                    cursor={cursor}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    primaryAction={{
+            <CursorTable
+                columns={columns}
+                rows={rows}
+                loading={loading}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rowsPerPage={rowsPerPage}
+                search={search}
+                cursor={cursor}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                primaryAction={{
+                    label: intl.formatMessage({
+                        id: `roles_createRole`,
+                    }),
+                    icon: AddIcon,
+                    disabled: !canCreate,
+                    onClick: () => handleOpenDialog(initialRow),
+                }}
+                rowActions={(row) => [
+                    {
                         label: intl.formatMessage({
-                            id: `roles_createRole`,
+                            id: `roles_editButton`,
                         }),
-                        icon: AddIcon,
-                        disabled: !canCreate,
-                        onClick: () => handleOpenDialog(initialRow),
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `roles_editButton`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !canEdit || row.system,
-                            onClick: handleOpenDialog,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `roles_deleteButton`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete || row.system,
-                            onClick: handleOpenDeleteDialog,
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `roles_title`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `groups_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                        icon: EditIcon,
+                        disabled: !canEdit || row.system,
+                        onClick: handleOpenDialog,
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `roles_deleteButton`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: !canDelete || row.system,
+                        onClick: handleOpenDeleteDialog,
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `roles_title`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `groups_searchPlaceholder`,
+                    }),
+                })}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
             <CreateAndEditRoleDialog
                 open={openCreateDialog}
                 steps={steps}

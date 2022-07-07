@@ -20,6 +20,7 @@ import {
     waitFor,
 } from "@testing-library/react";
 import { renderHook } from "@testing-library/react-hooks";
+import userEvent from "@testing-library/user-event";
 import { mockClasses } from "@tests/mockDataClasses";
 import {
     grade2Id,
@@ -131,8 +132,10 @@ test(`Class table renders without records`, async () => {
     render(<ClassTable rows={[]} />);
 
     await waitFor(() => {
-        expect(screen.queryByText(`Classes`)).toBeInTheDocument();
-        expect(screen.queryByText(`No records to display`)).toBeInTheDocument();
+        expect(screen.queryByText(`Classes`))
+            .toBeInTheDocument();
+        expect(screen.queryByText(`No records to display`))
+            .toBeInTheDocument();
     });
 });
 
@@ -140,8 +143,10 @@ test(`Class table renders with records`, async () => {
     render(<ClassTable rows={rows} />);
 
     await waitFor(() => {
-        expect(screen.queryByText(`Classes`)).toBeInTheDocument();
-        expect(screen.queryByText(`Class Grade 2`)).toBeInTheDocument();
+        expect(screen.queryByText(`Classes`))
+            .toBeInTheDocument();
+        expect(screen.queryByText(`Class Grade 2`))
+            .toBeInTheDocument();
     });
 });
 
@@ -162,11 +167,16 @@ test(`useClassFilters hook should return mapped schools data for filter drop dow
     });
 
     await waitFor(() => {
-        expect(result.current.schoolsFilterValueOptions).toHaveLength(2);
-        expect(result.current.schoolsFilterValueOptions[0].label).toBe(mockSchoolName1);
-        expect(result.current.schoolsFilterValueOptions[1].label).toBe(mockSchoolName2);
-        expect(result.current.schoolsFilterValueOptions[0].value).toBe(mockSchoolId1);
-        expect(result.current.schoolsFilterValueOptions[1].value).toBe(mockSchoolId2);
+        expect(result.current.schoolsFilterValueOptions)
+            .toHaveLength(2);
+        expect(result.current.schoolsFilterValueOptions[0].label)
+            .toBe(mockSchoolName1);
+        expect(result.current.schoolsFilterValueOptions[1].label)
+            .toBe(mockSchoolName2);
+        expect(result.current.schoolsFilterValueOptions[0].value)
+            .toBe(mockSchoolId1);
+        expect(result.current.schoolsFilterValueOptions[1].value)
+            .toBe(mockSchoolId2);
     });
 });
 
@@ -187,15 +197,24 @@ test(`useClassFilters hook should return mapped programs data for filter drop do
     });
 
     await waitFor(() => {
-        expect(result.current.programsFilterValueOptions).toHaveLength(4);
-        expect(result.current.programsFilterValueOptions[0].label).toBe(programNameA);
-        expect(result.current.programsFilterValueOptions[0].value).toBe(programIdA);
-        expect(result.current.programsFilterValueOptions[1].label).toBe(programNameB);
-        expect(result.current.programsFilterValueOptions[1].value).toBe(programIdB);
-        expect(result.current.programsFilterValueOptions[2].label).toBe(programNameC);
-        expect(result.current.programsFilterValueOptions[2].value).toBe(programIdC);
-        expect(result.current.programsFilterValueOptions[3].label).toBe(programNameD);
-        expect(result.current.programsFilterValueOptions[3].value).toBe(programIdD);
+        expect(result.current.programsFilterValueOptions)
+            .toHaveLength(4);
+        expect(result.current.programsFilterValueOptions[0].label)
+            .toBe(programNameA);
+        expect(result.current.programsFilterValueOptions[0].value)
+            .toBe(programIdA);
+        expect(result.current.programsFilterValueOptions[1].label)
+            .toBe(programNameB);
+        expect(result.current.programsFilterValueOptions[1].value)
+            .toBe(programIdB);
+        expect(result.current.programsFilterValueOptions[2].label)
+            .toBe(programNameC);
+        expect(result.current.programsFilterValueOptions[2].value)
+            .toBe(programIdC);
+        expect(result.current.programsFilterValueOptions[3].label)
+            .toBe(programNameD);
+        expect(result.current.programsFilterValueOptions[3].value)
+            .toBe(programIdD);
     });
 });
 
@@ -216,46 +235,35 @@ test(`useClassFilters hook should return mapped grades data for filter drop down
     });
 
     await waitFor(() => {
-        expect(result.current.gradeFilterValueOptions).toHaveLength(2);
-        expect(result.current.gradeFilterValueOptions[0].label).toBe(grade2Name);
-        expect(result.current.gradeFilterValueOptions[0].value).toBe(grade2Id);
-        expect(result.current.gradeFilterValueOptions[1].label).toBe(grade3Name);
-        expect(result.current.gradeFilterValueOptions[1].value).toBe(grade3Id);
+        expect(result.current.gradeFilterValueOptions)
+            .toHaveLength(2);
     });
+    expect(result.current.gradeFilterValueOptions[0].label)
+        .toBe(grade2Name);
+    expect(result.current.gradeFilterValueOptions[0].value)
+        .toBe(grade2Id);
+    expect(result.current.gradeFilterValueOptions[1].label)
+        .toBe(grade3Name);
+    expect(result.current.gradeFilterValueOptions[1].value)
+        .toBe(grade3Id);
 });
 
-test(`Class page filter dropdown opens`, async () => {
+test(`Class page filter menu opens`, () => {
     render(<ClassTable rows={[]} />, {
         mockedResponses: mocks,
     });
 
-    await waitFor(() => {
-        expect(screen.queryAllByText(`Schools`)).toHaveLength(2);
-        expect(screen.queryByText(`Column`)).toBeFalsy();
+    const before = screen.queryAllByRole(`presentation`, {
+        hidden: true,
     });
 
-    fireEvent.click(screen.getByText(`Add Filter`));
+    userEvent.click(screen.getByRole(`button`, {
+        name: `Add Filter`,
+    }));
 
-    await waitFor(() => {
-        expect(screen.queryAllByText(`Schools`)).toHaveLength(3);
-        expect(screen.queryAllByText(`Schools`, {
-            selector: `span`,
-        })).toHaveLength(1);
-        expect(screen.queryAllByText(`Column`).length).toBeTruthy();
+    const after = screen.queryAllByRole(`presentation`, {
+        hidden: true,
     });
 
-    const schoolOption = await screen.findByText(`Schools`, {
-        selector: `span `,
-    });
-
-    const mockDropdownClick = jest.fn();
-    schoolOption.addEventListener(`click`, mockDropdownClick);
-
-    fireEvent.click(schoolOption, {
-        bubbles: true,
-    });
-
-    await waitFor(() => {
-        expect(mockDropdownClick).toHaveBeenCalledTimes(1);
-    });
+    expect(before).not.toHaveLength(after.length);
 });

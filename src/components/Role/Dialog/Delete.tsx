@@ -48,7 +48,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
     Box,
     LinearProgress,
-    Paper,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -523,40 +522,34 @@ export default function DeleteRoleDialog (props: Props) {
                             onChange={reAssignAllUsersHandler}
                         />
 
-                        <Paper className={classes.root}>
-                            <CursorTable
-                                columns={columns}
-                                filters={filters}
-                                rows={rows}
-                                idField="id"
-                                orderBy={serverPagination.orderBy}
-                                order={serverPagination.order}
-                                rowsPerPage={serverPagination.rowsPerPage}
-                                search={serverPagination.search}
-                                cursor={serverPagination.cursor}
-                                hasNextPage={!loadingOrganizationMemberships ? pageInfo?.hasNextPage : false}
-                                hasPreviousPage={!loadingOrganizationMemberships ? pageInfo?.hasPreviousPage : false}
-                                startCursor={pageInfo?.startCursor}
-                                endCursor={pageInfo?.endCursor}
-                                total={usersData?.usersConnection?.totalCount}
-                                localization={getTableLocalization(intl, {
-                                    toolbar: {
-                                        title: intl.formatMessage({
-                                            id: `roles_deleteRoleTitle`,
-                                        }, {
-                                            custom_role: row.name,
-                                        }),
-                                    },
-                                    search: {
-                                        placeholder: intl.formatMessage({
-                                            id: `users_searchPlaceholder`,
-                                        }),
-                                    },
-                                })}
-                                onPageChange={onPageChange}
-                                onChange={onTableChange}
-                            />
-                        </Paper>
+                        <CursorTable
+                            columns={columns}
+                            filters={filters}
+                            rows={rows}
+                            idField="id"
+                            orderBy={serverPagination.orderBy}
+                            order={serverPagination.order}
+                            rowsPerPage={serverPagination.rowsPerPage}
+                            search={serverPagination.search}
+                            cursor={serverPagination.cursor}
+                            hasNextPage={!loadingOrganizationMemberships ? pageInfo?.hasNextPage : false}
+                            hasPreviousPage={!loadingOrganizationMemberships ? pageInfo?.hasPreviousPage : false}
+                            startCursor={pageInfo?.startCursor}
+                            endCursor={pageInfo?.endCursor}
+                            total={usersData?.usersConnection?.totalCount}
+                            localization={getTableLocalization(intl, {
+                                title: intl.formatMessage({
+                                    id: `roles_deleteRoleTitle`,
+                                }, {
+                                    custom_role: row.name,
+                                }),
+                                placeholder: intl.formatMessage({
+                                    id: `users_searchPlaceholder`,
+                                }),
+                            })}
+                            onPageChange={onPageChange}
+                            onChange={onTableChange}
+                        />
                     </>
                 )}
             </Grid>

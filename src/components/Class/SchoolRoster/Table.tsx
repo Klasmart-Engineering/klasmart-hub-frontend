@@ -24,15 +24,13 @@ import {
 import { PageChange } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Common/Pagination/shared";
 import { CursorTableData } from "@kl-engineering/kidsloop-px/dist/src/components/Table/Cursor/Table";
 import {
-    Paper,
     Typography,
 } from "@mui/material";
 import {
     createStyles,
     makeStyles,
 } from '@mui/styles';
-import React,
-{
+import {
     useEffect,
     useState,
 } from "react";
@@ -305,60 +303,53 @@ export default function SchoolRoster (props: Props) {
                 onClose();
             }}
         >
-            <Paper className={classes.root}>
-                <CursorTable
-                    hideAllGroupTab
-                    hideSelectAll
-                    showSelectables
-                    selectedRows={selectedIds}
-                    columns={columns}
-                    rows={rows}
-                    idField="id"
-                    groupBy="role"
-                    loading={subgroupBy === `Student` ?
-                        loadingStudents :
-                        loadingTeachers
-                    }
-                    orderBy="givenName"
-                    order="asc"
-                    subgroupBy={subgroupBy}
-                    hasNextPage={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection?.pageInfo?.hasNextPage :
-                        teachersData?.eligibleTeachersConnection?.pageInfo?.hasNextPage
-                    }
-                    hasPreviousPage={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection?.pageInfo?.hasPreviousPage :
-                        teachersData?.eligibleTeachersConnection?.pageInfo?.hasPreviousPage
-                    }
-                    total={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection?.totalCount :
-                        teachersData?.eligibleTeachersConnection?.totalCount
-                    }
-                    startCursor={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection?.pageInfo?.startCursor :
-                        teachersData?.eligibleTeachersConnection?.pageInfo?.startCursor
-                    }
-                    endCursor={subgroupBy === `Student` ?
-                        studentsData?.eligibleStudentsConnection?.pageInfo?.endCursor :
-                        teachersData?.eligibleTeachersConnection?.pageInfo?.endCursor
-                    }
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `schools_schoolRosterLabel`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `schoolRoster_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onSelected={(rows) => setSelectedIds(rows as string[])}
-                    onChange={handleTableChange}
-                    onPageChange={handlePageChange}
-                />
-            </Paper>
+            <CursorTable
+                hideAllGroupTab
+                showSelectables
+                selectedRows={selectedIds}
+                columns={columns}
+                rows={rows}
+                idField="id"
+                groupBy="role"
+                loading={subgroupBy === `Student` ?
+                    loadingStudents :
+                    loadingTeachers
+                }
+                orderBy="givenName"
+                order="asc"
+                subgroupBy={subgroupBy}
+                hasNextPage={subgroupBy === `Student` ?
+                    studentsData?.eligibleStudentsConnection?.pageInfo?.hasNextPage :
+                    teachersData?.eligibleTeachersConnection?.pageInfo?.hasNextPage
+                }
+                hasPreviousPage={subgroupBy === `Student` ?
+                    studentsData?.eligibleStudentsConnection?.pageInfo?.hasPreviousPage :
+                    teachersData?.eligibleTeachersConnection?.pageInfo?.hasPreviousPage
+                }
+                total={subgroupBy === `Student` ?
+                    studentsData?.eligibleStudentsConnection?.totalCount :
+                    teachersData?.eligibleTeachersConnection?.totalCount
+                }
+                startCursor={subgroupBy === `Student` ?
+                    studentsData?.eligibleStudentsConnection?.pageInfo?.startCursor :
+                    teachersData?.eligibleTeachersConnection?.pageInfo?.startCursor
+                }
+                endCursor={subgroupBy === `Student` ?
+                    studentsData?.eligibleStudentsConnection?.pageInfo?.endCursor :
+                    teachersData?.eligibleTeachersConnection?.pageInfo?.endCursor
+                }
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `schools_schoolRosterLabel`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `schoolRoster_searchPlaceholder`,
+                    }),
+                })}
+                onSelected={(rows) => setSelectedIds(rows as string[])}
+                onChange={handleTableChange}
+                onPageChange={handlePageChange}
+            />
         </FullScreenDialog>
     );
 }
