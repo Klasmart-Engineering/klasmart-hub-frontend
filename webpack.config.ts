@@ -181,20 +181,13 @@ const webpackConfig: Configuration = {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
                 },
-                '@kl-engineering/kidsloop-px': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@kl-engineering/kidsloop-px`],
-                },
-                '@mui/material': {
-                    singleton: true,
-                    requiredVersion: pkg.dependencies[`@mui/material`],
-                },
-                '@mui/styles': {
-                    singleton: true,
-                },
                 '@emotion/react': {
                     singleton: true,
                     requiredVersion: pkg.dependencies[`@emotion/react`],
+                },
+                '@mui/styles': {
+                    singleton: true,
+                    shareKey: `reports`,
                 },
             },
         }),
