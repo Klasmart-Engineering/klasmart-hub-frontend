@@ -275,32 +275,30 @@ export default function (props: Props) {
                         </Tooltip>
                     </Toolbar>
                 </Paper>
-                <Paper className={clsx(classes.paperRoot, classes.organizationsPaper)}>
-                    <Toolbar>
-                        <FormControlLabel
-                            value={DistributeStatus.SELECTED}
-                            control={<Radio />}
-                            label={intl.formatMessage({
-                                id: `library_selectOrganizations`,
-                            })}
+                <Toolbar>
+                    <FormControlLabel
+                        value={DistributeStatus.SELECTED}
+                        control={<Radio />}
+                        label={intl.formatMessage({
+                            id: `library_selectOrganizations`,
+                        })}
+                    />
+                </Toolbar>
+                {distributeStatus === DistributeStatus.SELECTED && (
+                    <>
+                        <Divider />
+                        <PageTable
+                            showSelectables
+                            idField="id"
+                            orderBy="name"
+                            loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}
+                            rows={rows}
+                            columns={columns}
+                            selectedRows={selectedOrganizationIds}
+                            onSelected={handleSelected}
                         />
-                    </Toolbar>
-                    {distributeStatus === DistributeStatus.SELECTED && (
-                        <>
-                            <Divider />
-                            <PageTable
-                                showSelectables
-                                idField="id"
-                                orderBy="name"
-                                loading={loadingGetFolderDistributeStatus || loadingGetOrganizations}
-                                rows={rows}
-                                columns={columns}
-                                selectedRows={selectedOrganizationIds}
-                                onSelected={handleSelected}
-                            />
-                        </>
-                    )}
-                </Paper>
+                    </>
+                )}
             </RadioGroup>
         </FullScreenDialog>
     );

@@ -21,20 +21,8 @@ import {
     Delete as DeleteIcon,
     Edit as EditIcon,
 } from "@mui/icons-material";
-import { Paper } from "@mui/material";
-import {
-    createStyles,
-    makeStyles,
-} from '@mui/styles';
-import React,
-{ useState } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
-
-const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
-}));
 
 export interface GradeRow {
     id: string;
@@ -66,7 +54,6 @@ export default function GradeTable (props: Props) {
         hideFilters,
     } = props;
 
-    const classes = useStyles();
     const intl = useIntl();
     const deletePrompt = useDeleteEntityPrompt();
     const { enqueueSnackbar } = useSnackbar();
@@ -203,66 +190,60 @@ export default function GradeTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    filters={!hideFilters ? filters : undefined}
-                    showSelectables={showSelectables}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rows={rows}
-                    rowsPerPage={rowsPerPage}
-                    columns={columns}
-                    primaryAction={{
+            <CursorTable
+                filters={!hideFilters ? filters : undefined}
+                showSelectables={showSelectables}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rows={rows}
+                rowsPerPage={rowsPerPage}
+                columns={columns}
+                primaryAction={{
+                    label: intl.formatMessage({
+                        id: `grades_createGradeLabel`,
+                    }),
+                    icon: AddIcon,
+                    onClick: () => setOpenCreateDialog(true),
+                    disabled: !canCreate,
+                }}
+                rowActions={(row) => [
+                    {
                         label: intl.formatMessage({
-                            id: `grades_createGradeLabel`,
+                            id: `grades_editLabel`,
                         }),
-                        icon: AddIcon,
-                        onClick: () => setOpenCreateDialog(true),
-                        disabled: !canCreate,
-                    }}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `grades_editLabel`,
-                            }),
-                            icon: EditIcon,
-                            disabled: !canEdit || row.system,
-                            onClick: handleEditRowClick,
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `grades_deleteLabel`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete || row.system,
-                            onClick: handleDeleteRowClick,
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `grades_title`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `grades_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    loading={loading}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    cursor={cursor}
-                    search={search}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                        icon: EditIcon,
+                        disabled: !canEdit || row.system,
+                        onClick: handleEditRowClick,
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `grades_deleteLabel`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: !canDelete || row.system,
+                        onClick: handleDeleteRowClick,
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `grades_title`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `grades_searchPlaceholder`,
+                    }),
+                })}
+                loading={loading}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                cursor={cursor}
+                search={search}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
             <CreateGradeDialog
                 open={openCreateDialog}
                 onClose={() => {

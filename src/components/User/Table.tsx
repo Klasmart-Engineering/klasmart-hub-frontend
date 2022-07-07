@@ -53,16 +53,12 @@ import {
 } from '@mui/styles';
 import clsx from "clsx";
 import { escapeRegExp } from "lodash";
-import React,
-{ useState } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 import is from "date-fns/esm/locale/is/index.js";
 import { useQueryMyUser } from "@/api/myUser";
 
 const useStyles = makeStyles((theme) => createStyles({
-    root: {
-        width: `100%`,
-    },
     avatar: {
         width: theme.spacing(3),
         height: theme.spacing(3),
@@ -653,117 +649,111 @@ export default function UserTable(props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    showSelectables={canEdit}
-                    filters={filters}
-                    columns={columns}
-                    rows={rows}
-                    loading={loading}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rowsPerPage={rowsPerPage}
-                    search={search}
-                    cursor={cursor}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    onSelected={onSelected}
-                    selectedRows={selectedUsers.map(({ id }) => id)}
-                    primaryAction={{
+            <CursorTable
+                showSelectables={canEdit}
+                filters={filters}
+                columns={columns}
+                rows={rows}
+                loading={loading}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rowsPerPage={rowsPerPage}
+                search={search}
+                cursor={cursor}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                onSelected={onSelected}
+                selectedRows={selectedUsers.map(({ id }) => id)}
+                primaryAction={{
+                    label: intl.formatMessage({
+                        id: `users_createUser`,
+                    }),
+                    icon: PersonAddIcon,
+                    disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
+                    onClick: () => setCreateDialogOpen(true),
+                }}
+                selectActions={canEdit ? [
+                    {
                         label: intl.formatMessage({
-                            id: `users_createUser`,
+                            id: `entity.user.template.edit.button`,
                         }),
-                        icon: PersonAddIcon,
-                        disabled: !(createUsersPermissions || createMySchoolsUsersPermissions),
-                        onClick: () => setCreateDialogOpen(true),
-                    }}
-                    selectActions={canEdit ? [
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.template.edit.button`,
-                            }),
-                            icon: EditIcon,
-                            onClick: () => verifyEdit(selectedUsers),
-                        },
-                    ]: []}
-                    secondaryActions={[
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.template.download.button`,
-                            }),
-                            icon: AssignmentReturnedIcon,
-                            disabled: !createUsersPermissions,
-                            onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
-                        },
-                        {
-                            label: intl.formatMessage({
-                                id: `entity.user.bulkImport.button`,
-                            }),
-                            icon: CloudUploadIcon,
-                            disabled: !createUsersPermissions,
-                            onClick: () => setUploadCsvDialogOpen(true),
-                        },
-                    ]}
-                    rowActions={(row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `users_editButton`,
-                            }),
-                            icon: EditIcon,
-                            disabled: row.status === Status.INACTIVE || !canEdit,
-                            onClick: editSelectedRow,
-                        },
-                        ...(canReactivateUserInOrg && row.status === Status.INACTIVE) ?
-                            [
-                                {
-                                    label: intl.formatMessage({
-                                        id: `common.action.reactivate`,
-                                    }),
-                                    icon: RefreshIcon,
-                                    disabled: false,
-                                    onClick: reactivateSelectedRow,
-                                },
-                            ] : [],
-                        ...(canDeactivateUserInOrg && row.status === Status.ACTIVE) ?
-                            [
-                                {
-                                    label: intl.formatMessage({
-                                        id: `common.action.inactive`,
-                                    }),
-                                    disabled: false,
-                                    icon: InactiveIcon,
-                                    onClick: markInactiveSelectedRow,
-                                },
-                            ] : [],
-                        {
-                            label: intl.formatMessage({
-                                id: `users_deleteButton`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !canDelete,
-                            onClick: deleteSelectedRow,
-                        },
-                    ]}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `navMenu_usersTitle`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `classes_searchPlaceholder`,
-                            }),
-                        },
-                    })}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                        icon: EditIcon,
+                        onClick: () => verifyEdit(selectedUsers),
+                    },
+                ]: []}
+                secondaryActions={[
+                    {
+                        label: intl.formatMessage({
+                            id: `entity.user.template.download.button`,
+                        }),
+                        icon: AssignmentReturnedIcon,
+                        disabled: !createUsersPermissions,
+                        onClick: () => csvExporter.generateCsv(EMPTY_CSV_DATA),
+                    },
+                    {
+                        label: intl.formatMessage({
+                            id: `entity.user.bulkImport.button`,
+                        }),
+                        icon: CloudUploadIcon,
+                        disabled: !createUsersPermissions,
+                        onClick: () => setUploadCsvDialogOpen(true),
+                    },
+                ]}
+                rowActions={(row) => [
+                    {
+                        label: intl.formatMessage({
+                            id: `users_editButton`,
+                        }),
+                        icon: EditIcon,
+                        disabled: row.status === Status.INACTIVE || !canEdit,
+                        onClick: editSelectedRow,
+                    },
+                    ...(canReactivateUserInOrg && row.status === Status.INACTIVE) ?
+                        [
+                            {
+                                label: intl.formatMessage({
+                                    id: `common.action.reactivate`,
+                                }),
+                                icon: RefreshIcon,
+                                disabled: false,
+                                onClick: reactivateSelectedRow,
+                            },
+                        ] : [],
+                    ...(canDeactivateUserInOrg && row.status === Status.ACTIVE) ?
+                        [
+                            {
+                                label: intl.formatMessage({
+                                    id: `common.action.inactive`,
+                                }),
+                                disabled: false,
+                                icon: InactiveIcon,
+                                onClick: markInactiveSelectedRow,
+                            },
+                        ] : [],
+                    {
+                        label: intl.formatMessage({
+                            id: `users_deleteButton`,
+                        }),
+                        icon: DeleteIcon,
+                        disabled: !canDelete,
+                        onClick: deleteSelectedRow,
+                    },
+                ]}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `navMenu_usersTitle`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `classes_searchPlaceholder`,
+                    }),
+                })}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
             <EditUserDialog
                 open={editDialogOpen}
                 userId={selectedUserId}

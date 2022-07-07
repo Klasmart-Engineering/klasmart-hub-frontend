@@ -283,15 +283,17 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => (<>
-                {row.grades.map((grade, i) => (
-                    <Chip
-                        key={`grade-${i}`}
-                        label={grade}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.grades.map((grade, i) => (
+                        <Chip
+                            key={`grade-${i}`}
+                            label={grade}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
         {
             id: `ageRanges`,
@@ -300,15 +302,17 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => (<>
-                {row.ageRanges.map((ageRange, i) => (
-                    <Chip
-                        key={`ageRange-${i}`}
-                        label={ageRange}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.ageRanges.map((ageRange, i) => (
+                        <Chip
+                            key={`ageRange-${i}`}
+                            label={ageRange}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
         {
             id: `subjects`,
@@ -317,15 +321,17 @@ export default function ProgramTable (props: Props) {
             }),
             disableSearch: true,
             disableSort: true,
-            render: (row) => (<>
-                {row.subjects.map((subject, i) => (
-                    <Chip
-                        key={`subject-${i}`}
-                        label={subject}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.subjects.map((subject, i) => (
+                        <Chip
+                            key={`subject-${i}`}
+                            label={subject}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>
+            ),
         },
     ];
 
@@ -394,11 +400,9 @@ export default function ProgramTable (props: Props) {
     ]);
 
     const localization = getTableLocalization(intl, {
-        toolbar: {
-            title: intl.formatMessage({
-                id: `programs_title`,
-            }),
-        },
+        title: intl.formatMessage({
+            id: `programs_title`,
+        }),
     });
 
     const primaryAction = ({
@@ -412,34 +416,31 @@ export default function ProgramTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    hideSelectAll
-                    filters={!hideFilters ? filters : undefined}
-                    showSelectables={showSelectables}
-                    idField="id"
-                    orderBy={orderBy}
-                    order={order}
-                    rows={rows}
-                    rowsPerPage={rowsPerPage}
-                    columns={columns}
-                    selectedRows={tableSelectedIds}
-                    primaryAction={!disabled ? primaryAction : undefined}
-                    rowActions={!disabled ? rowActions : undefined}
-                    localization={localization}
-                    loading={loading}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    total={total}
-                    cursor={cursor}
-                    search={search}
-                    onSelected={selectIds}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+            <CursorTable
+                filters={!hideFilters ? filters : undefined}
+                showSelectables={showSelectables}
+                idField="id"
+                orderBy={orderBy}
+                order={order}
+                rows={rows}
+                rowsPerPage={rowsPerPage}
+                columns={columns}
+                selectedRows={tableSelectedIds}
+                primaryAction={!disabled ? primaryAction : undefined}
+                rowActions={!disabled ? rowActions : undefined}
+                localization={localization}
+                loading={loading}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                total={total}
+                cursor={cursor}
+                search={search}
+                onSelected={selectIds}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
             <ViewProgramDetailsDrawer
                 programId={selectedProgramId}
                 open={openViewDetailsDrawer}

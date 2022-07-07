@@ -151,60 +151,54 @@ export default function AcademicTermTable (props: Props) {
 
     return (
         <>
-            <Paper className={classes.root}>
-                <CursorTable
-                    idField="id"
-                    rows={rows}
-                    columns={columns}
-                    loading={loading}
-                    search={search}
-                    cursor={cursor}
-                    order={order}
-                    orderBy={orderBy}
-                    hasNextPage={!loading ? hasNextPage : false}
-                    hasPreviousPage={!loading ? hasPreviousPage : false}
-                    startCursor={startCursor}
-                    endCursor={endCursor}
-                    rowsPerPage={rowsPerPage}
-                    total={total}
-                    primaryAction={!disabled ? {
+            <CursorTable
+                idField="id"
+                rows={rows}
+                columns={columns}
+                loading={loading}
+                search={search}
+                cursor={cursor}
+                order={order}
+                orderBy={orderBy}
+                hasNextPage={!loading ? hasNextPage : false}
+                hasPreviousPage={!loading ? hasPreviousPage : false}
+                startCursor={startCursor}
+                endCursor={endCursor}
+                rowsPerPage={rowsPerPage}
+                total={total}
+                primaryAction={!disabled ? {
+                    label: intl.formatMessage({
+                        id: `academicTerm.create.action`,
+                        defaultMessage: `Create academic term`,
+                    }),
+                    icon: AddIcon,
+                    disabled: !canCreate,
+                    onClick: () => setOpenCreateDialog(true),
+                } : undefined}
+                rowActions={!disabled ? (row) => [
+                    {
                         label: intl.formatMessage({
-                            id: `academicTerm.create.action`,
-                            defaultMessage: `Create academic term`,
+                            id: `common.action.delete`,
+                            defaultMessage: `Delete`,
                         }),
-                        icon: AddIcon,
-                        disabled: !canCreate,
-                        onClick: () => setOpenCreateDialog(true),
-                    } : undefined}
-                    rowActions={!disabled ? (row) => [
-                        {
-                            label: intl.formatMessage({
-                                id: `common.action.delete`,
-                                defaultMessage: `Delete`,
-                            }),
-                            icon: DeleteIcon,
-                            disabled: !(canDelete),
-                            onClick: deleteSelectedRow,
-                        },
-                    ] : undefined}
-                    localization={getTableLocalization(intl, {
-                        toolbar: {
-                            title: intl.formatMessage({
-                                id: `academicTerm.label`,
-                                defaultMessage: `Academic Term`,
-                            }),
-                        },
-                        search: {
-                            placeholder: intl.formatMessage({
-                                id: `common.action.search`,
-                                defaultMessage: `Search`,
-                            }),
-                        },
-                    })}
-                    onPageChange={onPageChange}
-                    onChange={onTableChange}
-                />
-            </Paper>
+                        icon: DeleteIcon,
+                        disabled: !(canDelete),
+                        onClick: deleteSelectedRow,
+                    },
+                ] : undefined}
+                localization={getTableLocalization(intl, {
+                    title: intl.formatMessage({
+                        id: `academicTerm.label`,
+                        defaultMessage: `Academic Term`,
+                    }),
+                    placeholder: intl.formatMessage({
+                        id: `common.action.search`,
+                        defaultMessage: `Search`,
+                    }),
+                })}
+                onPageChange={onPageChange}
+                onChange={onTableChange}
+            />
 
             <CreateAcademicTermDialog
                 open={openCreateDialog}
