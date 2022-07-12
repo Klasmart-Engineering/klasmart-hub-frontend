@@ -10,6 +10,7 @@ import { GET_ALL_ORGANIZATIONS } from "@/operations/queries/getAllOrganizations"
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
 import {
+    MyUser,
     Organization,
     OrganizationMembership,
     User,
@@ -61,8 +62,8 @@ interface GetOrganizationOwnershipsRequest {
     user_id: string;
 }
 
-interface GetOrganizationOwnershipsResponse {
-    me: User;
+export interface GetOrganizationOwnershipsResponse {
+    myUser: MyUser;
 }
 
 export const useGetOrganizationOwnerships = (options?: QueryHookOptions<GetOrganizationOwnershipsResponse, GetOrganizationOwnershipsRequest>) => {

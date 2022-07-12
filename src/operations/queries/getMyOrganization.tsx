@@ -1,27 +1,44 @@
 import { gql } from "@apollo/client";
 
 export const GET_ORGANIZATION_OWNERSHIPS = gql`
-    query me {
-        me {
-            user_id
-            user_name
-            organization_ownerships {
-                organization_id
-                status
-                organization {
-                    organization_id
-                    organization_name
-                    phone
-                    roles {
-                        role_id
-                        role_name
-                        status
-                    }
+    query myUser {
+      myUser {
+      node {
+        id
+        organizationMembershipsConnection{
+          edges {
+            node {
+              status
+              organization {
+                id
+                name
+                contactInfo {
+                  phone
                 }
-                user {
+                owners {
                     email
                 }
+              }
+              rolesConnection{
+                edges {
+                  node {
+                    id
+                    name
+                    status
+                  }
+                }
+              }
+              user {
+                   contactInfo {
+                        email
+                        phone
+                        username
+                    }
+              }
             }
+          }
         }
+      }
     }
-`;
+  }
+  `;

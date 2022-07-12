@@ -358,7 +358,7 @@ export interface GradesMutationResult {
 }
 
 export interface SchoolsMutationResult {
-   schools: SchoolConnectionNode[];
+    schools: SchoolConnectionNode[];
 }
 
 export interface SchoolConnectionNode {
@@ -382,6 +382,106 @@ export interface SubjectsMutationResult {
 }
 
 export interface SubjectConnectionNode {
+    id: string;
+}
+
+export interface MyUser {
+    node: UserConnectionNode;
+}
+
+export interface UserConnectionNode {
+    id: string;
+    givenName: string;
+    familyName: string;
+    avatar: string;
+    contactInfo: ContactInfo;
+    alternateContactInfo: ContactInfo;
+    status: Status;
+    dateOfBirth: string;
+    username: string;
+    gender: string;
+    organizationMembershipsConnection: OrganizationMembershipsConnectionResponse;
+}
+
+export interface ContactInfo {
+    email: string;
+    phone: string;
+    username: string;
+}
+
+export interface OrganizationMembershipsConnectionResponse {
+    edges: OrganizationMembershipsConnectionEdge[];
+}
+
+export interface OrganizationMembershipsConnectionEdge {
+    [x: string]: any;
+    id: string;
+    status: string;
+    organization: any;
+    organization_id: string;
+    node: OrganizationMembershipConnectionNode;
+}
+
+export interface OrganizationMembershipConnectionNode {
+    userId: string;
+    organizationId: string;
+    status: Status;
+    shortCode: string;
+    joinTimestamp: Date;
+    user: UserConnectionNode;
+    organization: OrganizationConnectionNode;
+    rolesConnection: RolesConnectionResponse;
+}
+
+export interface UserConnectionNode {
+    contactInfo: ContactInfo;
+}
+
+export interface ContactInfo {
+    email: string;
+}
+
+export interface OrganizationConnectionNode {
+    id: string;
+    name: string;
+    contactInfo: OrganizationContactInfo;
+    owners: UserSummaryNode[];
+}
+
+export interface OrganizationContactInfo {
+    phone: string;
+}
+
+export interface UserSummaryNode {
+    email: string;
+}
+
+export interface RolesConnectionResponse {
+    edges: RolesConnectionEdge[];
+}
+
+export interface RolesConnectionEdge {
+    status: Status;
+    name: string;
+    node: RoleConnectionNode;
+}
+
+export interface RoleConnectionNode {
+    id: string;
+    name: string;
+    status: Status;
+    permissionsConnection: PermissionsConnectionResponse;
+}
+
+export interface PermissionsConnectionResponse {
+    edges: PermissionsConnectionEdge[];
+}
+
+export interface PermissionsConnectionEdge {
+    node: PermissionsConnectionNode;
+}
+
+export interface PermissionsConnectionNode {
     id: string;
 }
 

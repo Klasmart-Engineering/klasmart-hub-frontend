@@ -1,13 +1,11 @@
+/* eslint-disable react/no-array-index-key */
 import { useQueryMyUser } from "@/api/myUser";
 import {
     useDeleteOrganizationOwnership,
     useGetOrganizationOwnerships,
 } from "@/api/organizations";
 import globalStyles from "@/globalStyles";
-import {
-    OrganizationOwnership,
-    Status,
-} from "@/types/graphQL";
+import { Status } from "@/types/graphQL";
 import { usePermission } from "@/utils/permissions";
 import { getTableLocalization } from "@/utils/table";
 import { useValidations } from "@/utils/validations";
@@ -86,30 +84,29 @@ export default function MyOrganizationTable (props: Props) {
     const canEdit = usePermission({
         OR: [ `edit_this_organization_10330`, `edit_my_organization_10331` ],
     });
-    const organizationOwnerships = organizationOwnershipData?.me?.organization_ownerships ?? [];
-
+    const organizationOwnerships = organizationOwnershipData?.myUser?.node?.organizationMembershipsConnection.edges ?? [];
     useEffect(() => {
         if (!organizationOwnerships.length) {
             setRows([]);
             return;
         }
 
-        const rows: MyOrganizationRow[] = organizationOwnerships.map((organizationOwnership: OrganizationOwnership) => ({
-            id: organizationOwnership?.organization?.organization_id ?? ``,
-            name: organizationOwnership?.organization?.organization_name ?? ``,
-            phone: organizationOwnership?.organization?.phone ?? ``,
-            email: organizationOwnership?.user?.email ?? ``,
-            roles: organizationOwnership?.organization?.roles
-                ?.filter((role) => role.status === Status.ACTIVE)
-                .map((role) => role.role_name ?? ``) ?? [],
-            status: organizationOwnership?.status ?? ``,
+        const rows: MyOrganizationRow[] = organizationOwnerships.map((organizationMembershipConnectionNode) => ({
+            id: organizationMembershipConnectionNode.node?.organization?.id ?? ``,
+            name: organizationMembershipConnectionNode.node?.organization?.name ?? ``,
+            phone: organizationMembershipConnectionNode.node?.organization?.contactInfo?.phone ?? ``,
+            email: organizationMembershipConnectionNode.node?.user?.contactInfo?.email ?? ``,
+            roles: organizationMembershipConnectionNode.node?.rolesConnection?.edges
+                ?.filter((edges) => edges.node.status === Status.ACTIVE)
+                .map((edges) => edges.node.name ?? ``) ?? [],
+            status: organizationMembershipConnectionNode.node?.status ?? ``,
         }));
 
         setRows(rows);
     }, [ organizationOwnershipData ]);
 
     const handleDeleteSelectedOrganizationClick = async (row: MyOrganizationRow): Promise<void> => {
-        const membership = organizationOwnerships.find((membership) => membership.organization_id === row.id);
+        const membership = organizationOwnerships.find((node) => node.id === row.id);
         if (!membership) return;
         const organizationName = membership.organization?.organization_name;
         if (!(await prompt({

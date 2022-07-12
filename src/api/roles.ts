@@ -4,7 +4,6 @@ import { EDIT_ROLE } from "@/operations/mutations/editRole";
 import { REPLACE_ROLE } from "@/operations/mutations/replaceRole";
 import { GET_ORGANIZATION_ROLES } from "@/operations/queries/getOrganizationRoles";
 import { GET_ORGANIZATION_ROLES_PERMISSIONS } from "@/operations/queries/getOrganizationRolesPermissions";
-import { GET_ORGANIZATION_MEMBERSHIPS } from "@/operations/queries/getOrganizations";
 import { GET_PAGINATED_ORGANIZATION_ROLES } from "@/operations/queries/getPaginatedOrganizationRoles";
 import { GET_ROLE_PERMISSIONS } from "@/operations/queries/getRolePermissions";
 import {
@@ -125,7 +124,7 @@ export const useCreateRole = (options?: MutationHookOptions<CreateRoleResponse, 
     const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
     return useMutation<CreateRoleResponse, CreateRoleRequest>(CREATE_NEW_ROLE, {
         ...options,
-        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+        refetchQueries: [ ...refetchQueries ],
     });
 };
 
@@ -141,11 +140,7 @@ export const useDeleteRole = (options?: MutationHookOptions<DeleteRoleResponse, 
     const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
     return useMutation<DeleteRoleResponse, DeleteRoleRequest>(DELETE_ROLE, {
         ...options,
-        refetchQueries: [
-            GET_ORGANIZATION_MEMBERSHIPS,
-            GET_PAGINATED_ORGANIZATION_ROLES,
-            ...refetchQueries,
-        ],
+        refetchQueries: [ GET_PAGINATED_ORGANIZATION_ROLES, ...refetchQueries ],
     });
 };
 
@@ -163,7 +158,7 @@ export const useReplaceRole = (options?: MutationHookOptions<ReplaceRoleResponse
     const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
     return useMutation<ReplaceRoleResponse, ReplaceRoleRequest>(REPLACE_ROLE, {
         ...options,
-        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+        refetchQueries: [ ...refetchQueries ],
     });
 };
 
@@ -194,6 +189,6 @@ export const useEditRole = (options?: MutationHookOptions<EditRoleResponse, Edit
     const refetchQueries: InternalRefetchQueriesInclude = options?.refetchQueries as InternalRefetchQueriesInclude ?? [];
     return useMutation<EditRoleResponse, EditRoleRequest>(EDIT_ROLE, {
         ...options,
-        refetchQueries: [ GET_ORGANIZATION_MEMBERSHIPS, ...refetchQueries ],
+        refetchQueries: [ ...refetchQueries ],
     });
 };
