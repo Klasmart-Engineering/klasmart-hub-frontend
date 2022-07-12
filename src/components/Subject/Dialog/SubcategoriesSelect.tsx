@@ -1,7 +1,7 @@
 import { useGetAllCategories } from "@/api/categories";
 import { useGetAllPrograms } from "@/api/programs";
 import {
-    useCreateOrUpdateSubcategories,
+    useCreateSubcategories,
     useDeleteSubcategory,
     useGetAllSubcategories,
 } from "@/api/subcategories";
@@ -27,7 +27,6 @@ import {
 import {
     Chip,
     DialogContentText,
-    Paper,
 } from "@mui/material";
 import {
     createStyles,
@@ -81,7 +80,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
     const [ updatedSubcategories, setUpdatedSubcategories ] = useState(value);
     const currentOrganization = useCurrentOrganization();
     const organizationId = currentOrganization?.id ?? ``;
-    const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
+    const [ createSubcategories ] = useCreateSubcategories();
     const [ deleteSubcategoryReq ] = useDeleteSubcategory();
     const { data: programsData } = useGetAllPrograms({
         variables: {
@@ -136,14 +135,15 @@ export default function SubcategoriesSelectDialog (props: Props) {
         });
         if (!name) return;
         try {
-            await createOrUpdateSubcategories({
+            await createSubcategories({
                 variables: {
-                    organization_id: organizationId,
-                    subcategories: [
+                    input: [
                         {
                             name,
+                            organizationId,
                         },
                     ],
+
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -251,7 +251,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
         {
             id: `subjects`,
@@ -265,7 +265,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
         {
             id: `categories`,
@@ -279,7 +279,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-                              </>),
+            </>),
         },
     ];
 

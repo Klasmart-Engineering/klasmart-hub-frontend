@@ -3,13 +3,10 @@ import {
     useCreateOrUpdateCategories,
     useGetAllCategories,
 } from "@/api/categories";
-import { useCreateOrUpdateSubcategories } from "@/api/subcategories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
-    isCustomValue,
     isNonSpecified,
-    isSystemValue,
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
@@ -41,7 +38,6 @@ export default function CreateSubjectDialog (props: Props) {
     const [ newSubject, setNewSubject ] = useState(buildEmptySubject({
         categories: [ buildEmptyCategory() ],
     }));
-    const [ createOrUpdateSubcategories ] = useCreateOrUpdateSubcategories();
     const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const organizationId = currentOrganization?.id ?? ``;
@@ -67,31 +63,11 @@ export default function CreateSubjectDialog (props: Props) {
                 name,
                 categories,
             } = newSubject;
-
-            const updatedCategories = await Promise.all((categories ?? []).map(async (category) => {
-                const customSubcategories = category?.subcategories?.filter(isCustomValue) ?? [];
-                const systemSubcategories = category?.subcategories?.filter(isSystemValue) ?? [];
-                const subcategoriesResp = await createOrUpdateSubcategories({
-                    variables: {
-                        organization_id: organizationId,
-                        subcategories: customSubcategories.map((subcategory) => ({
-                            id: subcategory.id,
-                            name: subcategory.name ?? ``,
-                        })) ?? [],
-                    },
-                });
-                return buildEmptyCategory({
-                    ...category,
-                    subcategories: [ ...systemSubcategories, ...(subcategoriesResp.data?.organization.createOrUpdateSubcategories ?? []) ],
-                });
-            }));
-
-            const customCategories = updatedCategories.filter(isCustomValue);
-            const systemCategories = updatedCategories.filter(isSystemValue);
+            const updatedCategories = categories?.map(category => buildEmptyCategory(category)) ?? [];
             const updatedCategoriesResp = await createOrUpdateCategories({
                 variables: {
                     organization_id: organizationId,
-                    categories: customCategories.map((category) => ({
+                    categories: updatedCategories?.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
                         subcategories: category.subcategories?.map((subcategory) => subcategory.id)
@@ -107,7 +83,7 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
+                            categories: [ ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map(category => category.id)
                                 .filter((id): id is string => !!id),
                         },
                     ],

@@ -1,7 +1,7 @@
-import { CREATE_OR_UPDATE_SUBCATEGORIES } from "@/operations/mutations/createOrUpdateSubcategories";
+import { CREATE_SUBCATEGORIES } from "@/operations/mutations/createOrUpdateSubcategories";
 import { DELETE_SUBCATEGORY } from "@/operations/mutations/deleteSubcategory";
 import { GET_ALL_SUBCATEGORIES } from "@/operations/queries/getAllSubcategories";
-import { Subcategory } from "@/types/graphQL";
+import { BaseEntity, Subcategory } from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
@@ -9,22 +9,26 @@ import {
     useQuery,
 } from "@apollo/client";
 
-interface CreateOrUpdateSubcategoriesRequest {
-    organization_id: string;
-    subcategories: ({
-        id?: string | null;
+interface CreateSubcategoriesRequest {
+    input: ({
+        organizationId: string;
         name: string;
     })[];
 }
 
-interface CreateOrUpdateSubcategoriesResponse {
-    organization: {
-        createOrUpdateSubcategories: Subcategory[];
-    };
+interface SubcategoryConnectionNode extends BaseEntity {
 }
 
-export const useCreateOrUpdateSubcategories = (options?: MutationHookOptions<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>) => {
-    return useMutation<CreateOrUpdateSubcategoriesResponse, CreateOrUpdateSubcategoriesRequest>(CREATE_OR_UPDATE_SUBCATEGORIES, options);
+interface SubcategoriesMutationResult {
+    subcategories: [ SubcategoryConnectionNode ];
+}
+
+interface CreateSubcategoriesResponse {
+    createSubcategories: SubcategoriesMutationResult;
+}
+
+export const useCreateSubcategories = (options?: MutationHookOptions<CreateSubcategoriesResponse, CreateSubcategoriesRequest>) => {
+    return useMutation<CreateSubcategoriesResponse, CreateSubcategoriesRequest>(CREATE_SUBCATEGORIES, options);
 };
 
 interface DeleteSubcategoryRequest {
