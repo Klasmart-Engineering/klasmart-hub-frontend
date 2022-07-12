@@ -5,9 +5,6 @@ export const CREATE_SUBCATEGORIES = gql`
         createSubcategories(input: $input) {
             subcategories {
                 id
-                name
-                status
-                system
             }
         }
     }

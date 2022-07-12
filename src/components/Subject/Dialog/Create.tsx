@@ -6,7 +6,9 @@ import {
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
 import {
+    isCustomValue,
     isNonSpecified,
+    isSystemValue,
     Subject,
 } from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
@@ -64,10 +66,12 @@ export default function CreateSubjectDialog (props: Props) {
                 categories,
             } = newSubject;
             const updatedCategories = categories?.map(category => buildEmptyCategory(category)) ?? [];
+            const customCategories = updatedCategories.filter(isCustomValue);
+            const systemCategories = updatedCategories.filter(isSystemValue);
             const updatedCategoriesResp = await createOrUpdateCategories({
                 variables: {
                     organization_id: organizationId,
-                    categories: updatedCategories?.map((category) => ({
+                    categories: customCategories?.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
                         subcategories: category.subcategories?.map((subcategory) => subcategory.id)
@@ -83,7 +87,7 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map(category => category.id)
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map(category => category.id)
                                 .filter((id): id is string => !!id),
                         },
                     ],

@@ -6,7 +6,11 @@ import {
     useGetSubject,
 } from "@/api/subjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
-import { Subject } from "@/types/graphQL";
+import {
+    isCustomValue,
+    isSystemValue,
+    Subject,
+} from "@/types/graphQL";
 import { buildEmptyCategory } from "@/utils/categories";
 import { useDeleteEntityPrompt } from "@/utils/common";
 import { usePermission } from "@/utils/permissions";
@@ -70,10 +74,12 @@ export default function EditSubjectDialog (props: Props) {
             } = updatedSubject;
 
             const updatedCategories = categories?.map(category => buildEmptyCategory(category)) ?? [];
+            const customCategories = updatedCategories.filter(isCustomValue);
+            const systemCategories = updatedCategories.filter(isSystemValue);
             const updatedCategoriesResp = await createOrUpdateCategories({
                 variables: {
                     organization_id: organizationId,
-                    categories: updatedCategories?.map((category) => ({
+                    categories: customCategories?.map((category) => ({
                         id: category.id,
                         name: category.name ?? ``,
                         subcategories: category.subcategories?.map((subcategory) => subcategory.id)
@@ -89,7 +95,7 @@ export default function EditSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
                                 .filter((id): id is string => !!id),
                         },
                     ],
