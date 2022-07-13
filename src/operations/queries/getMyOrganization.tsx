@@ -5,7 +5,7 @@ export const GET_ORGANIZATION_OWNERSHIPS = gql`
       myUser {
       node {
         id
-        organizationMembershipsConnection{
+        organizationMembershipsConnection {
           edges {
             node {
               status
