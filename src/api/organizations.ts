@@ -62,7 +62,7 @@ interface GetOrganizationOwnershipsRequest {
     user_id: string;
 }
 
-export interface GetOrganizationOwnershipsResponse {
+interface GetOrganizationOwnershipsResponse {
     myUser: MyUser;
 }
 
