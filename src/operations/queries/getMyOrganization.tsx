@@ -16,7 +16,7 @@ export const GET_ORGANIZATION_OWNERSHIPS = gql`
                   phone
                 }
               }
-              rolesConnection{
+              rolesConnection {
                 edges {
                   node {
                     id
