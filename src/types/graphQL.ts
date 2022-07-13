@@ -391,15 +391,7 @@ export interface MyUser {
 
 interface UserConnectionNode {
     id: string;
-    givenName?: string;
-    familyName?: string;
-    avatar?: string;
     contactInfo?: ContactInfo;
-    alternateContactInfo?: ContactInfo;
-    status?: Status;
-    dateOfBirth?: string;
-    username?: string;
-    gender?: string;
     organizationMembershipsConnection: OrganizationMembershipsConnectionResponse;
 }
 
@@ -418,11 +410,7 @@ interface OrganizationMembershipsConnectionEdge {
 }
 
 interface OrganizationMembershipConnectionNode {
-    userId: string;
-    organizationId: string;
     status: Status;
-    shortCode?: string;
-    joinTimestamp?: Date;
     user?: UserConnectionNode;
     organization: OrganizationConnectionNode;
     rolesConnection: RolesConnectionResponse;
