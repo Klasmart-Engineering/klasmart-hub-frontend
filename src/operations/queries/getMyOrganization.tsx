@@ -15,9 +15,6 @@ export const GET_ORGANIZATION_OWNERSHIPS = gql`
                 contactInfo {
                   phone
                 }
-                owners {
-                    email
-                }
               }
               rolesConnection{
                 edges {

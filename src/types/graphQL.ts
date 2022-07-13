@@ -389,100 +389,67 @@ export interface MyUser {
     node: UserConnectionNode;
 }
 
-export interface UserConnectionNode {
+interface UserConnectionNode {
     id: string;
-    givenName: string;
-    familyName: string;
-    avatar: string;
-    contactInfo: ContactInfo;
-    alternateContactInfo: ContactInfo;
-    status: Status;
-    dateOfBirth: string;
-    username: string;
-    gender: string;
+    givenName?: string;
+    familyName?: string;
+    avatar?: string;
+    contactInfo?: ContactInfo;
+    alternateContactInfo?: ContactInfo;
+    status?: Status;
+    dateOfBirth?: string;
+    username?: string;
+    gender?: string;
     organizationMembershipsConnection: OrganizationMembershipsConnectionResponse;
 }
 
-export interface ContactInfo {
-    email: string;
-    phone: string;
-    username: string;
+interface ContactInfo {
+    email?: string;
+    phone?: string;
+    username?: string;
 }
 
-export interface OrganizationMembershipsConnectionResponse {
+interface OrganizationMembershipsConnectionResponse {
     edges: OrganizationMembershipsConnectionEdge[];
 }
 
-export interface OrganizationMembershipsConnectionEdge {
-    [x: string]: any;
-    id: string;
-    status: string;
-    organization: any;
-    organization_id: string;
+interface OrganizationMembershipsConnectionEdge {
     node: OrganizationMembershipConnectionNode;
 }
 
-export interface OrganizationMembershipConnectionNode {
+interface OrganizationMembershipConnectionNode {
     userId: string;
     organizationId: string;
     status: Status;
-    shortCode: string;
-    joinTimestamp: Date;
-    user: UserConnectionNode;
+    shortCode?: string;
+    joinTimestamp?: Date;
+    user?: UserConnectionNode;
     organization: OrganizationConnectionNode;
     rolesConnection: RolesConnectionResponse;
 }
 
-export interface UserConnectionNode {
-    contactInfo: ContactInfo;
-}
-
-export interface ContactInfo {
-    email: string;
-}
-
-export interface OrganizationConnectionNode {
+interface OrganizationConnectionNode {
     id: string;
-    name: string;
-    contactInfo: OrganizationContactInfo;
-    owners: UserSummaryNode[];
+    name?: string;
+    contactInfo?: OrganizationContactInfo;
 }
 
-export interface OrganizationContactInfo {
-    phone: string;
+interface OrganizationContactInfo {
+    phone?: string;
 }
 
-export interface UserSummaryNode {
-    email: string;
-}
-
-export interface RolesConnectionResponse {
+interface RolesConnectionResponse {
     edges: RolesConnectionEdge[];
 }
 
-export interface RolesConnectionEdge {
-    status: Status;
-    name: string;
+interface RolesConnectionEdge {
     node: RoleConnectionNode;
 }
 
-export interface RoleConnectionNode {
+interface RoleConnectionNode {
     id: string;
-    name: string;
+    name?: string;
     status: Status;
-    permissionsConnection: PermissionsConnectionResponse;
-}
-
-export interface PermissionsConnectionResponse {
-    edges: PermissionsConnectionEdge[];
-}
-
-export interface PermissionsConnectionEdge {
-    node: PermissionsConnectionNode;
-}
-
-export interface PermissionsConnectionNode {
-    id: string;
 }
 
 export type UuidOperator = `eq` | `neq`;

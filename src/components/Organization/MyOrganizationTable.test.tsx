@@ -1,5 +1,3 @@
-/* eslint-disable testing-library/no-wait-for-multiple-assertions */
-/* eslint-disable testing-library/prefer-presence-queries */
 import MyOrganizationTable from './MyOrganizationTable';
 import { GET_ORGANIZATION_OWNERSHIPS } from "@/operations/queries/getMyOrganization";
 import { Status } from '@/types/graphQL';
@@ -34,27 +32,6 @@ const mocks: MockedResponse[] = [
                                             name: `KidsLoop Miracle Squad`,
                                             contactInfo: {
                                                 phone: `1112223344`,
-                                            },
-                                            rolesConnection: {
-                                                edges: [
-                                                    {
-                                                        node: {
-                                                            id: `23d899cd-862e-4bb6-8e57-761d701bc9fb`,
-                                                            name: `Organization Admin`,
-                                                            status: Status.ACTIVE,
-                                                        },
-                                                    },
-                                                    {
-                                                        node: {
-                                                            id: `23d899cd-862e-4bb6-8e57-761d701bc9fc`,
-                                                            name: `School Admin`,
-                                                            status: Status.ACTIVE,
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                            owner: {
-                                                email: `owneremail@testing.com`,
                                             },
                                         },
                                         user: {
@@ -123,17 +100,17 @@ test(`MyOrganizationTable renders correctly`, async () => {
         .toHaveLength(2);
 
     await waitFor(() => {
-        expect(screen.queryByText(`KidsLoop Miracle Squad`))
-            .toBeInTheDocument();
-        expect(screen.queryByText(`1112223344`))
-            .toBeInTheDocument();
-        expect(screen.queryByText(`test@testing.com`))
-            .toBeInTheDocument();
-        expect(screen.queryByText(`Organization Admin`))
-            .toBeInTheDocument();
-        expect(screen.queryByText(`School Admin`))
-            .toBeInTheDocument();
-        expect(screen.queryByText(`Active`))
+        expect(screen.getByText(`KidsLoop Miracle Squad`))
             .toBeInTheDocument();
     });
+    expect(screen.getByText(`1112223344`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`test@testing.com`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Organization Admin`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`School Admin`))
+        .toBeInTheDocument();
+    expect(screen.getByText(`Active`))
+        .toBeInTheDocument();
 });

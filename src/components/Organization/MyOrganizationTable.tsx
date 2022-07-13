@@ -91,15 +91,15 @@ export default function MyOrganizationTable (props: Props) {
             return;
         }
 
-        const rows: MyOrganizationRow[] = organizationOwnerships.map((organizationMembershipConnectionNode) => ({
-            id: organizationMembershipConnectionNode.node?.organization?.id ?? ``,
-            name: organizationMembershipConnectionNode.node?.organization?.name ?? ``,
-            phone: organizationMembershipConnectionNode.node?.organization?.contactInfo?.phone ?? ``,
-            email: organizationMembershipConnectionNode.node?.user?.contactInfo?.email ?? ``,
-            roles: organizationMembershipConnectionNode.node?.rolesConnection?.edges
+        const rows: MyOrganizationRow[] = organizationOwnerships.map(({ node }) => ({
+            id: node?.organization?.id ?? ``,
+            name: node?.organization?.name ?? ``,
+            phone: node?.organization?.contactInfo?.phone ?? ``,
+            email: node?.user?.contactInfo?.email ?? ``,
+            roles: node?.rolesConnection?.edges
                 ?.filter((edges) => edges.node.status === Status.ACTIVE)
                 .map((edges) => edges.node.name ?? ``) ?? [],
-            status: organizationMembershipConnectionNode.node?.status ?? ``,
+            status: node?.status ?? ``,
         }));
 
         setRows(rows);
