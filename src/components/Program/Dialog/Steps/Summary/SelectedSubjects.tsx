@@ -21,10 +21,6 @@ import {
     useState,
 } from "react";
 
-interface Props {
-
-}
-
 export default function SelectedSubjectsTable (props: EntityStepContent<ProgramForm>) {
     const {
         value,
@@ -53,7 +49,7 @@ export default function SelectedSubjectsTable (props: EntityStepContent<ProgramF
             order: serverPagination.order,
             filter: paginationFilter,
         },
-        skip: !currentOrganization?.id,
+        skip: !currentOrganization?.id || !value?.subjects?.length,
         notifyOnNetworkStatusChange: true,
     });
 
