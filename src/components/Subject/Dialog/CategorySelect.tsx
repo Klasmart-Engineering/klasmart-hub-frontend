@@ -1,5 +1,5 @@
 import {
-    useCreateOrUpdateCategories,
+    useCreateCategories,
     useDeleteCategory,
     useGetAllCategories,
 } from "@/api/categories";
@@ -26,7 +26,6 @@ import {
 import {
     Chip,
     DialogContentText,
-    Paper,
 } from "@mui/material";
 import {
     createStyles,
@@ -78,7 +77,7 @@ export default function CategorySelectDialog (props: Props) {
     } = useValidations();
     const [ updatedCategory, setUpdatedCategory ] = useState(value);
     const currentOrganization = useCurrentOrganization();
-    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
+    const [ createCategories ] = useCreateCategories();
     const [ deleteCategoryReq ] = useDeleteCategory();
     const organizationId = currentOrganization?.id ?? ``;
     const { data: programsData } = useGetAllPrograms({
@@ -127,13 +126,12 @@ export default function CategorySelectDialog (props: Props) {
         });
         if (!name) return;
         try {
-            await createOrUpdateCategories({
+            await createCategories({
                 variables: {
-                    organization_id: organizationId,
-                    categories: [
+                    input: [
                         {
+                            organizationId,
                             name,
-                            subcategories: [],
                         },
                     ],
                 },

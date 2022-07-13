@@ -1,5 +1,5 @@
 import SubjectDialogForm from "./Form";
-import { useCreateOrUpdateCategories } from "@/api/categories";
+import { useUpdateCategories } from "@/api/categories";
 import {
     useCreateOrUpdateSubjects,
     useDeleteSubject,
@@ -43,7 +43,7 @@ export default function EditSubjectDialog (props: Props) {
     const canDelete = usePermission(`delete_subjects_20447`);
     const currentOrganization = useCurrentOrganization();
     const [ valid, setValid ] = useState(true);
-    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
+    const [ updateCategories ] = useUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const [ deleteSubject ] = useDeleteSubject();
     const organizationId = currentOrganization?.id ?? ``;
@@ -76,13 +76,11 @@ export default function EditSubjectDialog (props: Props) {
             const updatedCategories = categories?.map(category => buildEmptyCategory(category)) ?? [];
             const customCategories = updatedCategories.filter(isCustomValue);
             const systemCategories = updatedCategories.filter(isSystemValue);
-            const updatedCategoriesResp = await createOrUpdateCategories({
+            const updatedCategoriesResp = await updateCategories({
                 variables: {
-                    organization_id: organizationId,
-                    categories: customCategories?.map((category) => ({
-                        id: category.id,
-                        name: category.name ?? ``,
-                        subcategories: category.subcategories?.map((subcategory) => subcategory.id)
+                    input: customCategories.map((category) => ({
+                        id: category.id ?? ``,
+                        subcategoryIds: category.subcategories?.map((subcategory) => subcategory.id)
                             .filter((id): id is string => !!id) ?? [],
                     })),
                 },
@@ -95,7 +93,7 @@ export default function EditSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map((category) => category.id)
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.updateCategories.categories ?? []) ].map((category) => category.id)
                                 .filter((id): id is string => !!id),
                         },
                     ],

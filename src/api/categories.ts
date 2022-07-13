@@ -1,9 +1,12 @@
-import { CREATE_OR_UPDATE_CATEGORIES } from "@/operations/mutations/createOrUpdateCategories";
+import {
+    CREATE_CATEGORIES,
+    UPDATE_CATEGORIES,
+} from "@/operations/mutations/createAndUpdateCategories";
 import { DELETE_CATEGORY } from "@/operations/mutations/deleteCategory";
 import { GET_ALL_CATEGORIES } from "@/operations/queries/getAllCategories";
 import {
+    CategoriesMutationResult,
     Category,
-    Organization,
 } from "@/types/graphQL";
 import {
     MutationHookOptions,
@@ -12,23 +15,39 @@ import {
     useQuery,
 } from "@apollo/client";
 
-interface CreateOrUpdateCategoriesRequest {
-    organization_id: string;
-    categories: ({
-        id?: string | null;
+interface CreateCategoriesRequest {
+    input: ({
+        organizationId: string;
         name: string;
-        subcategories: string[];
+        subcategoryIds?: [string];
     })[];
 }
 
-interface CreateOrUpdateCategoriesResponse {
-    organization: {
-        createOrUpdateCategories: Category[];
-    };
+interface CreateCategoriesResponse {
+    createCategories: CategoriesMutationResult;
 }
 
-export const useCreateOrUpdateCategories = (options?: MutationHookOptions<CreateOrUpdateCategoriesResponse, CreateOrUpdateCategoriesRequest>) => {
-    return useMutation<CreateOrUpdateCategoriesResponse, CreateOrUpdateCategoriesRequest>(CREATE_OR_UPDATE_CATEGORIES, {
+export const useCreateCategories = (options?: MutationHookOptions<CreateCategoriesResponse, CreateCategoriesRequest>) => {
+    return useMutation<CreateCategoriesResponse, CreateCategoriesRequest>(CREATE_CATEGORIES, {
+        ...options,
+        refetchQueries: [ GET_ALL_CATEGORIES ],
+    });
+};
+
+interface UpdateCategoriesResponse {
+    updateCategories: CategoriesMutationResult;
+}
+
+interface UpdateCategoriesRequest {
+    input: ({
+        id: string;
+        name?: string;
+        subcategoryIds: string[];
+    })[];
+}
+
+export const useUpdateCategories = (options?: MutationHookOptions<UpdateCategoriesResponse, UpdateCategoriesRequest>) => {
+    return useMutation<UpdateCategoriesResponse, UpdateCategoriesRequest>(UPDATE_CATEGORIES, {
         ...options,
         refetchQueries: [ GET_ALL_CATEGORIES ],
     });

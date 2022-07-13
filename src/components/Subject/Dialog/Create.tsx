@@ -1,7 +1,7 @@
 import SubjectDialogForm from "./Form";
 import {
-    useCreateOrUpdateCategories,
     useGetAllCategories,
+    useUpdateCategories,
 } from "@/api/categories";
 import { useCreateOrUpdateSubjects } from "@/api/subjects";
 import { useCurrentOrganization } from "@/store/organizationMemberships";
@@ -40,7 +40,7 @@ export default function CreateSubjectDialog (props: Props) {
     const [ newSubject, setNewSubject ] = useState(buildEmptySubject({
         categories: [ buildEmptyCategory() ],
     }));
-    const [ createOrUpdateCategories ] = useCreateOrUpdateCategories();
+    const [ updateCategories ] = useUpdateCategories();
     const [ createOrUpdateSubjects ] = useCreateOrUpdateSubjects();
     const organizationId = currentOrganization?.id ?? ``;
     const { data: categoriesData } = useGetAllCategories({
@@ -68,13 +68,11 @@ export default function CreateSubjectDialog (props: Props) {
             const updatedCategories = categories?.map(category => buildEmptyCategory(category)) ?? [];
             const customCategories = updatedCategories.filter(isCustomValue);
             const systemCategories = updatedCategories.filter(isSystemValue);
-            const updatedCategoriesResp = await createOrUpdateCategories({
+            const updatedCategoriesResp = await updateCategories({
                 variables: {
-                    organization_id: organizationId,
-                    categories: customCategories?.map((category) => ({
-                        id: category.id,
-                        name: category.name ?? ``,
-                        subcategories: category.subcategories?.map((subcategory) => subcategory.id)
+                    input: customCategories.map((category) => ({
+                        id: category.id ?? ``,
+                        subcategoryIds: category.subcategories?.map((subcategory) => subcategory.id)
                             .filter((id): id is string => !!id) ?? [],
                     })),
                 },
@@ -87,7 +85,7 @@ export default function CreateSubjectDialog (props: Props) {
                         {
                             id,
                             name: name ?? ``,
-                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.organization.createOrUpdateCategories ?? []) ].map(category => category.id)
+                            categories: [ ...systemCategories, ...(updatedCategoriesResp.data?.updateCategories.categories ?? []) ].map((category) => category.id)
                                 .filter((id): id is string => !!id),
                         },
                     ],

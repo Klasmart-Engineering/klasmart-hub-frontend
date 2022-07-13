@@ -320,6 +320,10 @@ export interface AgeRangeConnectionNode {
     highValueUnit?: AgeRangeUnit;
 }
 
+export interface CategoriesMutationResult {
+    categories: CategoryConnectionNode[];
+}
+
 export interface CategoriesConnectionResponse extends PageBaseEntity {
     edges?: CategoriesConnectionEdge[];
 }
