@@ -5,9 +5,6 @@ export const CREATE_CATEGORIES = gql`
         createCategories(input: $input) {   
             categories {        
                 id
-                name
-                status
-                system
             }
         }
     }
@@ -18,9 +15,6 @@ export const UPDATE_CATEGORIES = gql`
         updateCategories(input: $input) {   
             categories {        
                 id
-                name
-                status
-                system
             }
         }
     }
