@@ -143,7 +143,6 @@ export default function SubcategoriesSelectDialog (props: Props) {
                             organizationId,
                         },
                     ],
-
                 },
             });
             enqueueSnackbar(intl.formatMessage({
@@ -243,15 +242,16 @@ export default function SubcategoriesSelectDialog (props: Props) {
             id: `programs`,
             label: `Programs using`,
             disableSort: true,
-            render: (row) => (<>
-                {row.programs.map((program, i) => (
-                    <Chip
-                        key={`program-${i}`}
-                        label={program}
-                        className={classes.chip}
-                    />
-                ))}
-            </>),
+            render: (row) => (
+                <>
+                    {row.programs.map((program, i) => (
+                        <Chip
+                            key={`program-${i}`}
+                            label={program}
+                            className={classes.chip}
+                        />
+                    ))}
+                </>),
         },
         {
             id: `subjects`,
@@ -265,7 +265,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>),
+                              </>),
         },
         {
             id: `categories`,
@@ -279,7 +279,7 @@ export default function SubcategoriesSelectDialog (props: Props) {
                         className={classes.chip}
                     />
                 ))}
-            </>),
+                              </>),
         },
     ];
 

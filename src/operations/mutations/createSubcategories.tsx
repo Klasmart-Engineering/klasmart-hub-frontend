@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_SUBCATEGORIES = gql`
-    mutation organization($input: [CreateSubcategoryInput!]!) {
+    mutation createSubcategories($input: [CreateSubcategoryInput!]!) {
         createSubcategories(input: $input) {
             subcategories {
                 id

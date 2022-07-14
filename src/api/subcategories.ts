@@ -1,7 +1,10 @@
 import { CREATE_SUBCATEGORIES } from "@/operations/mutations/createSubcategories";
 import { DELETE_SUBCATEGORY } from "@/operations/mutations/deleteSubcategory";
 import { GET_ALL_SUBCATEGORIES } from "@/operations/queries/getAllSubcategories";
-import { BaseEntity, Subcategory } from "@/types/graphQL";
+import {
+    BaseEntity,
+    Subcategory,
+} from "@/types/graphQL";
 import {
     MutationHookOptions,
     QueryHookOptions,
