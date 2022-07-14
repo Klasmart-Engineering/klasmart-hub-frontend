@@ -224,7 +224,6 @@ export default function ClassDetailsDrawer (props: Props) {
                                     onClick={() => {
                                         setSelectedClassId?.(classId ?? ``);
                                         setClassRosterDialogOpen?.(true);
-                                        onClose();
                                     }}
                                 >
                                     <span>{intl.formatMessage({
@@ -276,7 +275,6 @@ export default function ClassDetailsDrawer (props: Props) {
                                     onClick={() => {
                                         setSelectedClassId?.(classId ?? ``);
                                         setClassRosterDialogOpen?.(true);
-                                        onClose();
                                     }}
                                 >
                                     <span>{intl.formatMessage({

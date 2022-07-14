@@ -212,7 +212,6 @@ export default function ClassesTable (props: Props) {
             }, 500);
             return;
         }
-
         setSelectedClassId(classId);
         setClassRosterDialogOpen(true);
     };
@@ -324,7 +323,6 @@ export default function ClassesTable (props: Props) {
                 },
             ],
         },
-
         {
             id: `grades`,
             label: intl.formatMessage({
@@ -764,7 +762,6 @@ export default function ClassesTable (props: Props) {
                     classId={selectedClassId}
                     goToClassRoster={goToClassRoster}
                     onClose={() => {
-                        setSelectedClassId(undefined);
                         setClassRosterDialogOpen(false);
                     }}
                 />
