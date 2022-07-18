@@ -162,6 +162,14 @@ export interface Organization {
     };
 }
 
+export interface OrganizationsMutationResult {
+    organizations: OrganizationConnectionNode[];
+}
+
+interface OrganizationConnectionNode {
+    id: string;
+}
+
 export type OrganizationTab = `organizationInfo` | `personalization`
 
 export interface Role {

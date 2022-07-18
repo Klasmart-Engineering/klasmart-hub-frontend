@@ -12,6 +12,7 @@ import { GET_ORGANIZATION } from "@/operations/queries/getOrganization";
 import {
     Organization,
     OrganizationMembership,
+    OrganizationsMutationResult,
     User,
 } from "@/types/graphQL";
 import {
@@ -74,7 +75,7 @@ interface DeleteOrganizationRequest {
 }
 
 interface DeleteOrganizationResponse {
-    organization: Organization;
+    deleteOrganizations: OrganizationsMutationResult;
 }
 
 export const useDeleteOrganizationOwnership = () => {
