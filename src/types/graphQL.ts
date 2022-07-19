@@ -365,6 +365,7 @@ export interface SchoolConnectionNode {
     id: string;
     name: string;
 }
+
 export interface Branding {
     iconImageURL: string | null;
     primaryColor: string | null;
@@ -377,6 +378,7 @@ export interface AgeRangesMutationResult {
 export interface AgeRangeConnectionNode {
     id: string;
 }
+
 export interface SubjectsMutationResult {
     subjects: SubjectConnectionNode[];
 }
@@ -385,8 +387,29 @@ export interface SubjectConnectionNode {
     id: string;
 }
 
+interface PermissionsConnectionNode {
+    id: string;
+}
+
+interface PermissionsConnectionEdge {
+    node: PermissionsConnectionNode;
+}
+
+interface ConnectionPageInfo {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string;
+    endCursor: string;
+}
+
+interface PermissionsConnectionResponse {
+    edges?: PermissionsConnectionEdge[];
+    pageInfo: ConnectionPageInfo;
+}
+
 export interface MyUser {
     node: UserConnectionNode;
+    permissionsInOrganization: PermissionsConnectionResponse;
 }
 
 interface UserConnectionNode {
@@ -410,6 +433,8 @@ interface OrganizationMembershipsConnectionEdge {
 }
 
 interface OrganizationMembershipConnectionNode {
+    userId: string;
+    organizationId: string;
     status: Status;
     user?: UserConnectionNode;
     organization: OrganizationConnectionNode;

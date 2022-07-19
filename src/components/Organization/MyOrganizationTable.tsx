@@ -90,7 +90,6 @@ export default function MyOrganizationTable (props: Props) {
             setRows([]);
             return;
         }
-
         const rows: MyOrganizationRow[] = organizationOwnerships.map(({ node }) => ({
             id: node?.organization?.id ?? ``,
             name: node?.organization?.name ?? ``,
@@ -106,9 +105,9 @@ export default function MyOrganizationTable (props: Props) {
     }, [ organizationOwnershipData ]);
 
     const handleDeleteSelectedOrganizationClick = async (row: MyOrganizationRow): Promise<void> => {
-        const membership = organizationOwnerships.find((node) => node.id === row.id);
+        const membership = organizationOwnerships.find(({ node }) => node.organizationId === row.id);
         if (!membership) return;
-        const organizationName = membership.organization?.organization_name;
+        const organizationName = membership?.node?.organization?.name;
         if (!(await prompt({
             variant: `error`,
             title: intl.formatMessage({
@@ -141,7 +140,7 @@ export default function MyOrganizationTable (props: Props) {
         try {
             await deleteOrganization({
                 variables: {
-                    organization_id: membership.organization_id,
+                    organization_id: membership?.node?.organization?.id,
                 },
             });
             await Promise.all([ refetchMyUser(), refetchOrganizationOwnership() ]);

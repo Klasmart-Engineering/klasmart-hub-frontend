@@ -1,8 +1,5 @@
 import { systemRoles } from "./userRoles";
-import {
-    GetOrganizationMembershipsPermissionsResponse,
-    useGetOrganizationMembershipsPermissions,
-} from "@/api/organizationMemberships";
+import { useGetOrganizationMembershipsPermissions } from "@/api/organizationMemberships";
 import {
     Group,
     Permission,
@@ -10,6 +7,10 @@ import {
     Role,
 } from "@/components/Role/Dialog/CreateEdit";
 import { useCurrentOrganizationMembership } from "@/store/organizationMemberships";
+import {
+    useEffect,
+    useState,
+} from "react";
 
 export type PermissionId = typeof permissions[number]
 
@@ -432,13 +433,12 @@ function buildPermissionCondition (permissionOption: PermissionOption): Permissi
     };
 }
 
-const permissionsInOrganization = (data: GetOrganizationMembershipsPermissionsResponse | undefined) => {
-    return new Set((data?.me?.membership?.roles ?? []).flatMap((role) => role.permissions.map((permission) => permission.permission_id as PermissionId)));
+const permissionsInOrganization = (nodes: any[] | undefined) => {
+    return new Set((nodes ?? []).map(({ id }) => id as PermissionId));
 };
 
 const hasRequiredPermissions = (actualPermissions: Set<PermissionId>, permissionOption: PermissionOption) => {
     const root = buildPermissionCondition(permissionOption);
-
     const hasPermission = (perm: PermissionId | PermissionCondition) => {
         if (typeof perm === `string`) {
             return actualPermissions.has(perm);
@@ -468,25 +468,38 @@ export type UsePermissionResult = {
 export function usePermission (permissionOption: PermissionOption, wait?: undefined): boolean;
 export function usePermission (permissionOption: PermissionOption, wait: boolean): UsePermissionResult;
 export function usePermission (permissionOption: PermissionOption, wait?: boolean | undefined): boolean | UsePermissionResult {
+
     const currentOrganizationMembership = useCurrentOrganizationMembership();
     const organizationId = currentOrganizationMembership?.organization?.id ?? ``;
-
-    const { data, loading } = useGetOrganizationMembershipsPermissions({
+    const [ permissions, setPermissions ] = useState<any[]>([]);
+    const {
+        data: oraganizationPermission,
+        loading,
+        refetch,
+    } = useGetOrganizationMembershipsPermissions({
         variables: {
             organizationId,
         },
         skip: !organizationId,
     });
 
-    if (loading && wait) {
+    useEffect(() => {
+        const nodes = oraganizationPermission?.myUser?.permissionsInOrganization?.edges?.map(({ node }) => node) || [];
+        setPermissions((values) => ([ ...values, ...nodes ]));
+        if (oraganizationPermission?.myUser?.permissionsInOrganization?.pageInfo?.hasNextPage) {
+            refetch({
+                cursor: oraganizationPermission?.myUser?.permissionsInOrganization?.pageInfo?.endCursor ?? ``,
+            });
+        }
+    }, [ oraganizationPermission, refetch ]);
+
+    if (loading && wait && !oraganizationPermission?.myUser?.permissionsInOrganization?.pageInfo?.hasNextPage) {
         return {
             loading,
         };
     }
-
-    const actualPermissions = permissionsInOrganization(data);
+    const actualPermissions = permissionsInOrganization(permissions);
     const hasPermission = hasRequiredPermissions(actualPermissions, permissionOption);
-
     if (!wait) return hasPermission;
 
     return {

@@ -45,7 +45,7 @@ export default function JoinedOrganizationTable (props: Props) {
 
     const rows = useMemo(() => {
         const myEmail = currentUser?.contactInfo?.email;
-        return currentUser?.organizationMembershipsConnection.edges
+        return currentUser?.organizationMembershipsConnection?.edges
             ?.filter((organizationMembershipEdge) => myEmail !== organizationMembershipEdge?.node.organization?.owners?.[0]?.email)
             ?.map((organizationMembershipEdge) => ({
                 id: organizationMembershipEdge.node.organization?.id ?? ``,
@@ -92,7 +92,7 @@ export default function JoinedOrganizationTable (props: Props) {
                     userIds: [ currentUser.id ],
                 },
             });
-            const membership = myUserData?.myUser.node.organizationMembershipsConnection.edges.map((organizationMembershipEdge) => organizationMembershipEdge.node)
+            const membership = myUserData?.myUser?.node?.organizationMembershipsConnection?.edges.map((organizationMembershipEdge) => organizationMembershipEdge.node)
                 .find((organizationMembershipNode) => row.id === organizationMembershipNode.organization?.id);
             if (!membership) return;
             await myUserRefetch();

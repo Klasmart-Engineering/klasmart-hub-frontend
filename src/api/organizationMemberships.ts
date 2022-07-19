@@ -12,12 +12,13 @@ import { GET_ORGANIZATION_USER_NODE } from "@/operations/queries/getOrganization
 import { GET_ORGANIZATION_USERS } from "@/operations/queries/getOrganizationUsers";
 import { GET_PAGINATED_ORGANIZATION_USERS } from "@/operations/queries/getPaginatedOrganizationUsers";
 import {
+    BooleanFilter,
+    MyUser,
     Organization,
     OrganizationMembership,
     SortOrder,
     Status,
     StringFilter,
-    User,
     UuidExclusiveFilter,
     UuidFilter,
 } from "@/types/graphQL";
@@ -86,6 +87,7 @@ export interface ReactivateUsersInOrganizationRequest {
     organizationId: string;
     userIds: string[];
 }
+
 export interface DeactivateUsersInOrganizationRequest {
     organizationId: string;
     userIds: string[];
@@ -93,6 +95,7 @@ export interface DeactivateUsersInOrganizationRequest {
 
 export interface ReactivateUsersInOrganizationResponse {
 }
+
 export interface DeactivateUsersInOrganizationResponse {
 }
 
@@ -100,6 +103,7 @@ export interface DeactivateBulkUsersInOrganizationRequest {
     organizationId: string;
     userIds: string[];
 }
+
 export interface DeactivateBulkUsersInOrganizationResponse {
 }
 
@@ -107,6 +111,7 @@ export interface ReactivateBulkUsersInOrganizationRequest {
     organizationId: string;
     userIds: string[];
 }
+
 export interface ReactivateBulkUsersInOrganizationResponse {
 }
 
@@ -185,6 +190,7 @@ export interface GetOrganizationUserNodeRequest {
     organizationId: string;
     userId: string;
 }
+
 export interface GetOrganizationUserNodeResponse {
     userNode: UserNode;
 }
@@ -270,6 +276,7 @@ export interface GradeConnectionNode {
     id: string;
     name: string;
 }
+
 export interface RolesConnectionNode {
     id?: string;
     name?: string;
@@ -305,6 +312,7 @@ export interface ClassConnection {
 export interface GradeConnection {
     edges: GradeConnectionEdge[];
 }
+
 export interface RolesConnection {
     totalCount?: number;
     pageInfo?: {
@@ -315,6 +323,7 @@ export interface RolesConnection {
     };
     edges: RolesConnectionEdge[];
 }
+
 export interface OrganizationMembershipConnectionEdge {
     node: OrganizationMembershipConnectionNode;
 }
@@ -326,12 +335,15 @@ export interface SchoolsMembershipConnectionEdge {
 export interface ClassConnectionEdge {
     node: ClassConnectionNode;
 }
+
 export interface GradeConnectionEdge {
     node: GradeConnectionNode;
 }
+
 export interface RolesConnectionEdge {
     node: RolesConnectionNode;
 }
+
 export interface UserEdge {
     node: UserNode;
 }
@@ -353,14 +365,21 @@ export const useGetPaginatedOrganizationMemberships = (options?: QueryHookOption
     return useQuery<GetOrganizationMembershipsResponse2, GetOrganizationMembershipsRequest2>(GET_PAGINATED_ORGANIZATION_USERS, options);
 };
 
-interface GetOrganizationMembershipsPermissionsRequest {
+export interface PermissionFilter extends PaginationFilter<PermissionFilter> {
+   roleId: UuidFilter;
+   name?: StringFilter;
+   allow?: BooleanFilter;
+}
+
+export interface GetOrganizationMembershipsPermissionsRequest {
     organizationId: string;
+    cursor?: string;
+    direction?: `FORWARD` | `BACKWARD`;
+    filter?: PermissionFilter;
 }
 
 export interface GetOrganizationMembershipsPermissionsResponse {
-    me?: {
-        membership: OrganizationMembership;
-    };
+   myUser: MyUser;
 }
 
 export const useGetOrganizationMembershipsPermissions = (options?: QueryHookOptions<GetOrganizationMembershipsPermissionsResponse, GetOrganizationMembershipsPermissionsRequest>) => {
