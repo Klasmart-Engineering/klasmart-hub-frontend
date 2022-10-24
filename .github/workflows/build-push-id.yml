@@ -1,0 +1,81 @@
+name: container builds
+
+concurrency:
+  group: buildDeployContainers
+  cancel-in-progress: false
+
+on:
+  push:
+    branches:
+      - hotfix/*
+      - main
+      - id-build
+  workflow_dispatch:
+
+# Repository specific variables
+env:
+  ecr_repository: kidsloop-hub-frontend
+  argocd_app_chart_tag_path: hubFrontend.tag
+  argocd_app_component: hub-frontend
+
+jobs:
+  install:
+    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-ci.yml@v1.1.5
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN_SETH }}
+
+  build-container:
+    needs: [install]
+    outputs:
+      # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+      # https://github.community/t/bug-jobs-output-should-return-a-list-for-a-matrix-job/128626/24
+      # Outputs is a single string rather than a list/array.
+      # This does not work for front end images that have unique image tags for each environment.
+      # Each environment in the matrix will need its own output.
+      # For environment-agnostic builds (like backend) it can be just:
+      # image_version: ${{ steps.build-push.outputs.image_version}}
+      uk-landingzone: ${{steps.set-output-image-version.outputs.uk-landingzone}}
+    strategy:
+      matrix:
+        include:
+          - environment: beta
+            region: id
+          - environment: prod
+            region: id
+    name: build container
+    runs-on: ubuntu-latest
+    env:
+      region: ${{ matrix.region }}
+      environment: ${{ matrix.environment }}
+    steps:
+      - uses: KL-Engineering/github-action-workflows/.github/actions/npm-build-fe@v3.2.0
+        with:
+          environment: ${{ env.environment }}
+          region: ${{ env.region }}
+      - name: Add compiled files to the container deploy directory
+        run: cp -r dist deploy/
+
+      - name: Build and Push Container
+        id: build-push
+        uses: KL-Engineering/github-action-workflows/.github/actions/docker-build-push@v3.2.0
+        with:
+          image_name: ${{ env.ecr_repository }}
+          dockerfile: deploy/Dockerfile
+          docker_build_context: deploy
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}-{{sha}}
+            type=ref,event=tag,suffix=-${{ env.region }}-${{ env.environment }}-latest
+            type=ref,event=branch,suffix=-${{ env.region }}-${{ env.environment }}-{{sha}}
+            type=ref,event=branch,suffix=-${{ env.region }}-${{ env.environment }}-latest
+          ecr_registry: 789939988543.dkr.ecr.ap-southeast-3.amazonaws.com
+          ECR_AWS_ACCESS_KEY_ID: ${{ secrets.ID_ECR_AWS_ACCESS_KEY_ID }}
+          ECR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ID_ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: set-output-image-version
+        id: set-output-image-version
+        shell: bash
+        run: |
+          echo "Setting output: ${{ matrix.region }}-${{ matrix.environment }} to ${{ steps.build-push.outputs.image_version}}"
+          echo '::set-output name=${{ matrix.region }}-${{ matrix.environment }}::${{ steps.build-push.outputs.image_version}}'
