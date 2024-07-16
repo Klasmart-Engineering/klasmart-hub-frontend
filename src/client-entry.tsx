@@ -5,7 +5,7 @@ import { initializeFirebase } from '@/firebase/config';
 import * as ReactDOM from "react-dom";
 
 function main () {
-    initializeFirebase();
+    // initializeFirebase();
     const div = document.getElementById(`app`);
     ReactDOM.render(<AuthEntry />, div);
 }
